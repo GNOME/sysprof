@@ -1,6 +1,6 @@
 /* sysprof.h
  *
- * Copyright 2016-2019 Christian Hergert <christian@hergert.me>
+ * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,56 +14,74 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
 #pragma once
 
 #include <glib.h>
-#include <sysprof-capture.h>
 
 G_BEGIN_DECLS
 
 #define SYSPROF_INSIDE
-
-# include "sysprof-battery-source.h"
-# include "sysprof-callgraph-profile.h"
-# include "sysprof-capture-autocleanups.h"
-# include "sysprof-capture-frame-object.h"
-# include "sysprof-capture-gobject.h"
-# include "sysprof-capture-model.h"
-# include "sysprof-capture-symbol-resolver.h"
-# include "sysprof-control-source.h"
-# include "sysprof-diskstat-source.h"
-# include "sysprof-elf-symbol-resolver.h"
-# include "sysprof-gjs-source.h"
-# include "sysprof-governor-source.h"
-# include "sysprof-jitmap-symbol-resolver.h"
-# include "sysprof-kernel-symbol-resolver.h"
-# include "sysprof-kernel-symbol.h"
-# include "sysprof-local-profiler.h"
-# include "sysprof-memprof-profile.h"
-# include "sysprof-memprof-source.h"
-# include "sysprof-netdev-source.h"
-# include "sysprof-preload-source.h"
-# include "sysprof-process-model-item.h"
-# include "sysprof-process-model.h"
-# include "sysprof-profile.h"
+# include "sysprof-battery-charge.h"
+# include "sysprof-bundled-symbolizer.h"
+# include "sysprof-callgraph-frame.h"
+# include "sysprof-callgraph-symbol.h"
+# include "sysprof-callgraph.h"
+# include "sysprof-category-summary.h"
+# include "sysprof-cpu-info.h"
+# include "sysprof-cpu-usage.h"
+# include "sysprof-diagnostic.h"
+# include "sysprof-disk-usage.h"
+# include "sysprof-document-allocation.h"
+# include "sysprof-document-counter-value.h"
+# include "sysprof-document-counter.h"
+# include "sysprof-document-ctrdef.h"
+# include "sysprof-document-ctrset.h"
+# include "sysprof-document-exit.h"
+# include "sysprof-document-file-chunk.h"
+# include "sysprof-document-file.h"
+# include "sysprof-document-fork.h"
+# include "sysprof-document-frame.h"
+# include "sysprof-document-jitmap.h"
+# include "sysprof-document-loader.h"
+# include "sysprof-document-log.h"
+# include "sysprof-document-mark.h"
+# include "sysprof-document-metadata.h"
+# include "sysprof-document-mmap.h"
+# include "sysprof-document-overlay.h"
+# include "sysprof-document-process.h"
+# include "sysprof-document-sample.h"
+# include "sysprof-document-traceable.h"
+# include "sysprof-document.h"
+# include "sysprof-elf-symbolizer.h"
+# include "sysprof-energy-usage.h"
+# include "sysprof-enums.h"
+# include "sysprof-instrument.h"
+# include "sysprof-jitmap-symbolizer.h"
+# include "sysprof-kallsyms-symbolizer.h"
+# include "sysprof-malloc-tracing.h"
+# include "sysprof-mark-catalog.h"
+# include "sysprof-memory-usage.h"
+# include "sysprof-mount.h"
+# include "sysprof-multi-symbolizer.h"
+# include "sysprof-network-usage.h"
+# include "sysprof-no-symbolizer.h"
+# include "sysprof-power-profile.h"
 # include "sysprof-profiler.h"
-# include "sysprof-proxy-source.h"
-# include "sysprof-selection.h"
-# include "sysprof-source.h"
+# include "sysprof-proxied-instrument.h"
+# include "sysprof-recording.h"
+# include "sysprof-sampler.h"
 # include "sysprof-spawnable.h"
-# include "sysprof-symbol-resolver.h"
-# include "sysprof-symbols-source.h"
-# include "sysprof-tracefd-source.h"
-
-#ifdef __linux__
-# include "sysprof-hostinfo-source.h"
-# include "sysprof-memory-source.h"
-# include "sysprof-perf-source.h"
-# include "sysprof-proc-source.h"
-#endif
-
+# include "sysprof-symbol.h"
+# include "sysprof-symbolizer.h"
+# include "sysprof-symbols-bundle.h"
+# include "sysprof-system-logs.h"
+# include "sysprof-thread-info.h"
+# include "sysprof-time-span.h"
+# include "sysprof-tracer.h"
 #undef SYSPROF_INSIDE
 
 G_END_DECLS

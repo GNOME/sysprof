@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofCountersSection" parent="SysprofSection">
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="SysprofTimeScrubber" id="scrubber">
+            <binding name="session">
+              <lookup name="session">SysprofCountersSection</lookup>
+            </binding>
+            <child type="chart">
+              <object class="SysprofChart">
+                <property name="margin-top">6</property>
+                <property name="margin-bottom">6</property>
+                <property name="height-request">20</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="AdwViewStack" id="stack">
+            <property name="vexpand">true</property>
+            <child>
+              <object class="AdwViewStackPage">
+                <property name="title" translatable="yes">Counters Chart</property>
+                <property name="icon-name">mark-chart-symbolic</property>
+                <property name="child">
+                  <object class="GtkScrolledWindow">
+                    <child>
+                      <object class="GtkListView">
+                      </object>
+                    </child>
+                  </object>
+                </property>
+              </object>
+            </child>
+            <child>
+              <object class="AdwViewStackPage">
+                <property name="title" translatable="yes">Counters Table</property>
+                <property name="icon-name">mark-table-symbolic</property>
+                <property name="child">
+                  <object class="GtkScrolledWindow">
+                    <child>
+                      <object class="GtkColumnView">
+                      </object>
+                    </child>
+                  </object>
+                </property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="AdwViewSwitcherBar" id="switcher">
+            <property name="reveal">true</property>
+            <property name="stack">stack</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>
+
+

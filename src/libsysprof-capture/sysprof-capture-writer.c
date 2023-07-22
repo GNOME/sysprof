@@ -799,6 +799,42 @@ sysprof_capture_writer_add_sample (SysprofCaptureWriter        *self,
 }
 
 bool
+sysprof_capture_writer_add_trace (SysprofCaptureWriter        *self,
+                                  int64_t                      time,
+                                  int                          cpu,
+                                  int32_t                      pid,
+                                  int32_t                      tid,
+                                  const SysprofCaptureAddress *addrs,
+                                  unsigned int                 n_addrs,
+                                  bool                         entering)
+{
+  SysprofCaptureTrace *ev;
+  size_t len;
+
+  assert (self != NULL);
+
+  len = sizeof *ev + (n_addrs * sizeof (SysprofCaptureAddress));
+
+  ev = (SysprofCaptureTrace *)sysprof_capture_writer_allocate (self, &len);
+  if (!ev)
+    return false;
+
+  sysprof_capture_writer_frame_init (&ev->frame,
+                                     len,
+                                     cpu,
+                                     pid,
+                                     time,
+                                     SYSPROF_CAPTURE_FRAME_SAMPLE);
+  ev->n_addrs = n_addrs;
+  ev->tid = tid;
+  ev->entering = !!entering;
+
+  memcpy (ev->addrs, addrs, (n_addrs * sizeof (SysprofCaptureAddress)));
+
+  return true;
+}
+
+bool
 sysprof_capture_writer_add_fork (SysprofCaptureWriter *self,
                                  int64_t          time,
                                  int              cpu,
@@ -1659,7 +1695,7 @@ _sysprof_capture_writer_add_raw (SysprofCaptureWriter      *self,
     return false;
 
   assert (fr->len == len);
-  assert (fr->type < 16);
+  assert (fr->type < SYSPROF_CAPTURE_FRAME_LAST);
 
   memcpy (begin, fr, fr->len);
 
@@ -1667,4 +1703,15 @@ _sysprof_capture_writer_add_raw (SysprofCaptureWriter      *self,
     self->stat.frame_count[fr->type]++;
 
   return true;
+}
+
+int
+_sysprof_capture_writer_dup_fd (SysprofCaptureWriter *self)
+{
+  assert (self != NULL);
+
+  if (self->fd == -1)
+    return -1;
+
+  return dup (self->fd);
 }

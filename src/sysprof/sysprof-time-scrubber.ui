@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofTimeScrubber" parent="GtkWidget">
+    <child>
+      <object class="GtkBox" id="main">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkEventControllerMotion" id="motion">
+            <property name="propagation-phase">capture</property>
+            <signal name="enter" handler="sysprof_time_scrubber_motion_enter_cb" swapped="true"/>
+            <signal name="leave" handler="sysprof_time_scrubber_motion_leave_cb" swapped="true"/>
+            <signal name="motion" handler="sysprof_time_scrubber_motion_cb" swapped="true"/>
+          </object>
+        </child>
+        <child>
+          <object class="GtkGestureDrag" id="drag">
+            <property name="propagation-phase">bubble</property>
+            <signal name="drag-begin" handler="sysprof_time_scrubber_drag_begin_cb" swapped="true"/>
+            <signal name="drag-end" handler="sysprof_time_scrubber_drag_end_cb" swapped="true"/>
+            <signal name="drag-update" handler="sysprof_time_scrubber_drag_update_cb" swapped="true"/>
+          </object>
+        </child>
+        <child>
+          <object class="SysprofTimeRuler" id="ruler">
+            <binding name="session">
+              <lookup name="session">SysprofTimeScrubber</lookup>
+            </binding>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox" id="vbox">
+            <property name="orientation">vertical</property>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkButton" id="zoom">
+        <property name="action-name">zoom-to-selection</property>
+        <property name="icon-name">zoom-in-symbolic</property>
+        <property name="valign">center</property>
+        <property name="halign">center</property>
+        <property name="visible">false</property>
+        <style>
+          <class name="circular"/>
+        </style>
+      </object>
+    </child>
+    <child>
+      <object class="GtkLabel" id="timecode">
+        <property name="css-name">timecode</property>
+        <property name="can-focus">false</property>
+        <property name="can-target">false</property>
+        <property name="visible">false</property>
+        <property name="xalign">.5</property>
+        <property name="single-line-mode">true</property>
+        <property name="width-chars">10</property>
+        <property name="max-width-chars">10</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkLabel" id="informative">
+        <property name="css-name">informative</property>
+        <property name="can-focus">false</property>
+        <property name="can-target">false</property>
+        <property name="visible">false</property>
+        <property name="xalign">0</property>
+        <property name="single-line-mode">true</property>
+      </object>
+    </child>
+  </template>
+</interface>

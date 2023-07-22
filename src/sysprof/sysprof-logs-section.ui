@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofLogsSection" parent="SysprofSection">
+    <property name="title" translatable="yes">Logs</property>
+    <binding name="indicator">
+      <closure type="gchararray" function="format_number">
+        <lookup name="n-items" type="SysprofDocumentBitsetIndex">
+          <lookup name="logs" type="SysprofDocument">
+            <lookup name="document" type="SysprofSession">
+              <lookup name="session">SysprofLogsSection</lookup>
+            </lookup>
+          </lookup>
+        </lookup>
+      </closure>
+    </binding>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="SysprofTimeScrubber" id="scrubber">
+            <binding name="session">
+              <lookup name="session">SysprofLogsSection</lookup>
+            </binding>
+            <child type="chart">
+              <object class="SysprofChart">
+                <property name="height-request">32</property>
+                <signal name="activate-layer-item" handler="sysprof_logs_section_activate_layer_item_cb" swapped="true"/>
+                <child>
+                  <object class="SysprofTimeSpanLayer">
+                    <property name="title">Logs</property>
+                    <binding name="axis">
+                      <lookup name="visible-time-axis" type="SysprofSession">
+                        <lookup name="session">SysprofLogsSection</lookup>
+                      </lookup>
+                    </binding>
+                    <property name="series">
+                      <object class="SysprofTimeSeries">
+                        <property name="model">
+                          <object class="SysprofTimeFilterModel">
+                            <binding name="time-span">
+                              <lookup name="visible-time" type="SysprofSession">
+                                <lookup name="session">SysprofLogsSection</lookup>
+                              </lookup>
+                            </binding>
+                            <binding name="model">
+                              <lookup name="logs" type="SysprofDocument">
+                                <lookup name="document" type="SysprofSession">
+                                  <lookup name="session">SysprofLogsSection</lookup>
+                                </lookup>
+                              </lookup>
+                            </binding>
+                          </object>
+                        </property>
+                        <property name="begin-time-expression">
+                          <lookup name="time" type="SysprofDocumentFrame"/>
+                        </property>
+                        <property name="end-time-expression">
+                          <lookup name="time" type="SysprofDocumentFrame"/>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+          </object>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow">
+            <property name="vexpand">true</property>
+            <child>
+              <object class="GtkColumnView" id="column_view">
+                <property name="show-row-separators">true</property>
+                <style>
+                  <class name="data-table"/>
+                </style>
+                <property name="model">
+                  <object class="GtkSingleSelection" id="selection">
+                    <property name="model">
+                      <object class="GtkSortListModel">
+                        <binding name="sorter">
+                          <lookup name="sorter">column_view</lookup>
+                        </binding>
+                        <property name="model">
+                          <object class="SysprofTimeFilterModel">
+                            <binding name="time-span">
+                              <lookup name="selected-time" type="SysprofSession">
+                                <lookup name="session">SysprofLogsSection</lookup>
+                              </lookup>
+                            </binding>
+                            <binding name="model">
+                              <lookup name="logs" type="SysprofDocument">
+                                <lookup name="document" type="SysprofSession">
+                                  <lookup name="session">SysprofLogsSection</lookup>
+                                </lookup>
+                              </lookup>
+                            </binding>
+                          </object>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </property>
+                <child>
+                  <object class="GtkColumnViewColumn" id="time_column">
+                    <property name="title" translatable="yes">Time</property>
+                    <property name="sorter">
+                      <object class="GtkNumericSorter">
+                        <property name="expression">
+                          <lookup name="time-offset" type="SysprofDocumentLog"/>
+                        </property>
+                      </object>
+                    </property>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="SysprofTimeLabel">
+        <binding name="time-offset">
+          <lookup name="time-offset" type="SysprofDocumentLog">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkColumnViewColumn" id="cpu_column">
+                    <property name="title" translatable="yes">CPU</property>
+                    <property name="sorter">
+                      <object class="GtkNumericSorter">
+                        <property name="expression">
+                          <lookup name="cpu" type="SysprofDocumentLog"/>
+                        </property>
+                      </object>
+                    </property>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkInscription">
+        <property name="xalign">0</property>
+        <property name="min-chars">2</property>
+        <property name="nat-chars">2</property>
+        <binding name="text">
+          <lookup name="cpu" type="SysprofDocumentLog">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkColumnViewColumn" id="pid_column">
+                    <property name="title" translatable="yes">PID</property>
+                    <property name="sorter">
+                      <object class="GtkNumericSorter">
+                        <property name="expression">
+                          <lookup name="pid" type="SysprofDocumentLog"/>
+                        </property>
+                      </object>
+                    </property>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkInscription">
+        <property name="xalign">0</property>
+        <property name="min-chars">2</property>
+        <property name="nat-chars">2</property>
+        <binding name="text">
+          <lookup name="pid" type="SysprofDocumentLog">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkColumnViewColumn" id="severity_column">
+                    <property name="title" translatable="yes">Severity</property>
+                    <property name="sorter">
+                      <object class="GtkNumericSorter">
+                        <property name="expression">
+                          <lookup name="severity" type="SysprofDocumentLog"/>
+                        </property>
+                      </object>
+                    </property>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkLabel">
+        <property name="xalign">0</property>
+        <binding name="label">
+          <closure type="gchararray" function="format_severity">
+            <lookup name="severity" type="SysprofDocumentLog">
+              <lookup name="item">GtkListItem</lookup>
+            </lookup>
+          </closure>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkColumnViewColumn" id="domain_column">
+                    <property name="title" translatable="yes">Domain</property>
+                    <property name="sorter">
+                      <object class="GtkStringSorter">
+                        <property name="expression">
+                          <lookup name="domain" type="SysprofDocumentLog"/>
+                        </property>
+                      </object>
+                    </property>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkLabel">
+        <property name="xalign">0</property>
+        <property name="max-width-chars">32</property>
+        <binding name="label">
+          <lookup name="domain" type="SysprofDocumentLog">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkColumnViewColumn" id="message_column">
+                    <property name="title" translatable="yes">Message</property>
+                    <property name="expand">true</property>
+                    <property name="sorter">
+                      <object class="GtkStringSorter">
+                        <property name="expression">
+                          <lookup name="message" type="SysprofDocumentLog"/>
+                        </property>
+                      </object>
+                    </property>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkLabel">
+        <property name="xalign">0</property>
+        <binding name="label">
+          <lookup name="message" type="SysprofDocumentLog">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

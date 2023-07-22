@@ -99,6 +99,25 @@
             ]
         },
         {
+            "name" : "libdex",
+            "buildsystem" : "meson",
+            "config-opts" : [
+                "--buildtype=debugoptimized",
+                "-Ddocs=false",
+                "-Dintrospection=enabled",
+                "-Dexamples=false",
+                "-Dtests=false",
+                "-Dsysprof=false"
+            ],
+            "sources" : [
+                {
+                    "type" : "git",
+                    "url" : "https://gitlab.gnome.org/chergert/libdex.git",
+                    "branch" : "main"
+                }
+            ]
+        },
+        {
             "name" : "sysprof",
             "config-opts" : [
                 "--libdir=/app/lib",

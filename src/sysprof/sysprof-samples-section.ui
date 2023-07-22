@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofSamplesSection" parent="SysprofSection">
+    <property name="title" translatable="yes">Time Profiler</property>
+    <binding name="indicator">
+      <closure type="gchararray" function="format_number">
+        <lookup name="n-items" type="SysprofDocumentBitsetIndex">
+          <lookup name="samples" type="SysprofDocument">
+            <lookup name="document" type="SysprofSession">
+              <lookup name="session">SysprofSamplesSection</lookup>
+            </lookup>
+          </lookup>
+        </lookup>
+      </closure>
+    </binding>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="SysprofTimeScrubber" id="scrubber">
+            <binding name="session">
+              <lookup name="session">SysprofSamplesSection</lookup>
+            </binding>
+            <child type="chart">
+              <object class="SysprofChart">
+                <property name="height-request">32</property>
+                <child>
+                  <object class="SysprofColumnLayer">
+                    <property name="title">Stack Traces</property>
+                    <binding name="x-axis">
+                      <lookup name="visible-time-axis" type="SysprofSession">
+                        <lookup name="session">SysprofSamplesSection</lookup>
+                      </lookup>
+                    </binding>
+                    <property name="y-axis">
+                      <object class="SysprofValueAxis">
+                        <property name="min-value">0</property>
+                        <property name="max-value">128</property>
+                      </object>
+                    </property>
+                    <property name="series">
+                      <object class="SysprofXYSeries">
+                        <property name="model">
+                          <object class="SysprofTimeFilterModel">
+                            <binding name="time-span">
+                              <lookup name="visible-time" type="SysprofSession">
+                                <lookup name="session">SysprofSamplesSection</lookup>
+                              </lookup>
+                            </binding>
+                            <binding name="model">
+                              <lookup name="samples" type="SysprofDocument">
+                                <lookup name="document" type="SysprofSession">
+                                  <lookup name="session">SysprofSamplesSection</lookup>
+                                </lookup>
+                              </lookup>
+                            </binding>
+                          </object>
+                        </property>
+                        <property name="x-expression">
+                          <lookup name="time" type="SysprofDocumentFrame"/>
+                        </property>
+                        <property name="y-expression">
+                          <lookup name="stack-depth" type="SysprofDocumentTraceable"/>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+          </object>
+        </child>
+        <child>
+          <object class="SysprofWeightedCallgraphView" id="callgraph_view">
+            <property name="vexpand">true</property>
+            <binding name="include-threads">
+              <lookup name="include-threads" type="SysprofSession">
+                <lookup name="session">SysprofSamplesSection</lookup>
+              </lookup>
+            </binding>
+            <binding name="hide-system-libraries">
+              <lookup name="hide-system-libraries" type="SysprofSession">
+                <lookup name="session">SysprofSamplesSection</lookup>
+              </lookup>
+            </binding>
+            <binding name="bottom-up">
+              <lookup name="bottom-up" type="SysprofSession">
+                <lookup name="session">SysprofSamplesSection</lookup>
+              </lookup>
+            </binding>
+            <binding name="categorize-frames">
+              <lookup name="categorize-frames" type="SysprofSession">
+                <lookup name="session">SysprofSamplesSection</lookup>
+              </lookup>
+            </binding>
+            <binding name="document">
+              <lookup name="document" type="SysprofSession">
+                <lookup name="session">SysprofSamplesSection</lookup>
+              </lookup>
+            </binding>
+            <property name="traceables">
+              <object class="GtkFilterListModel">
+                <binding name="filter">
+                  <lookup name="filter">
+                    <lookup name="session">SysprofSamplesSection</lookup>
+                  </lookup>
+                </binding>
+                <property name="model">
+                  <object class="SysprofTimeFilterModel">
+                    <binding name="time-span">
+                      <lookup name="selected-time" type="SysprofSession">
+                        <lookup name="session">SysprofSamplesSection</lookup>
+                      </lookup>
+                    </binding>
+                    <binding name="model">
+                      <lookup name="samples" type="SysprofDocument">
+                        <lookup name="document" type="SysprofSession">
+                          <lookup name="session">SysprofSamplesSection</lookup>
+                        </lookup>
+                      </lookup>
+                    </binding>
+                  </object>
+                </property>
+              </object>
+            </property>
+          </object>
+        </child>
+      </object>
+    </child>
+    <property name="utility">
+      <object class="AdwToolbarView">
+        <style>
+          <class name="utility"/>
+        </style>
+        <child type="top">
+          <object class="AdwHeaderBar">
+            <property name="title-widget">
+              <object class="AdwWindowTitle">
+                <property name="title" translatable="yes">Stack Trace</property>
+              </object>
+            </property>
+          </object>
+        </child>
+        <property name="content">
+          <object class="GtkBox">
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="SysprofTraceablesUtility">
+                <property name="vexpand">true</property>
+                <binding name="session">
+                  <lookup name="session">SysprofSamplesSection</lookup>
+                </binding>
+                <binding name="traceables">
+                  <lookup name="utility-traceables">callgraph_view</lookup>
+                </binding>
+              </object>
+            </child>
+            <child>
+              <object class="GtkSeparator"/>
+            </child>
+            <child>
+              <object class="GtkScrolledWindow">
+                <property name="propagate-natural-width">true</property>
+                <property name="propagate-natural-height">true</property>
+                <child>
+                  <object class="GtkListView">
+                    <property name="model">
+                      <object class="GtkNoSelection">
+                        <binding name="model">
+                          <lookup name="utility-summary">callgraph_view</lookup>
+                        </binding>
+                      </object>
+                    </property>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkBox">
+        <property name="margin-top">1</property>
+        <property name="margin-bottom">1</property>
+        <property name="margin-start">6</property>
+        <property name="margin-end">6</property>
+        <property name="spacing">6</property>
+        <child>
+          <object class="SysprofCategoryIcon">
+            <property name="width-request">16</property>
+            <property name="height-request">16</property>
+            <binding name="category">
+              <lookup name="category" type="SysprofCategorySummary">
+                <lookup name="item">GtkListItem</lookup>
+              </lookup>
+            </binding>
+          </object>
+        </child>
+        <child>
+          <object class="GtkLabel">
+            <property name="xalign">0</property>
+            <property name="hexpand">true</property>
+            <binding name="label">
+              <lookup name="category-name" type="SysprofCategorySummary">
+                <lookup name="item">GtkListItem</lookup>
+              </lookup>
+            </binding>
+          </object>
+        </child>
+        <child>
+          <object class="SysprofProgressCell">
+            <binding name="fraction">
+              <lookup name="fraction" type="SysprofCategorySummary">
+                <lookup name="item">GtkListItem</lookup>
+              </lookup>
+            </binding>
+          </object>
+        </child>
+      </object>
+    </property>
+  </template>
+</interface>
+    ]]></property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </property>
+      </object>
+    </property>
+  </template>
+</interface>

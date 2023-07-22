@@ -925,6 +925,52 @@ sysprof_capture_reader_read_sample (SysprofCaptureReader *self)
   return sample;
 }
 
+const SysprofCaptureTrace *
+sysprof_capture_reader_read_trace (SysprofCaptureReader *self)
+{
+  SysprofCaptureTrace *trace;
+
+  assert (self != NULL);
+  assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
+  assert (self->pos <= self->bufsz);
+
+  if (!sysprof_capture_reader_ensure_space_for (self, sizeof *trace))
+    return NULL;
+
+  trace = (SysprofCaptureTrace *)(void *)&self->buf[self->pos];
+
+  sysprof_capture_reader_bswap_frame (self, &trace->frame);
+
+  if (trace->frame.type != SYSPROF_CAPTURE_FRAME_TRACE)
+    return NULL;
+
+  if (trace->frame.len < sizeof *trace)
+    return NULL;
+
+  if (self->endian != __BYTE_ORDER)
+    trace->n_addrs = bswap_16 (trace->n_addrs);
+
+  if (trace->frame.len < (sizeof *trace + (sizeof(SysprofCaptureAddress) * trace->n_addrs)))
+    return NULL;
+
+  if (!sysprof_capture_reader_ensure_space_for (self, trace->frame.len))
+    return NULL;
+
+  trace = (SysprofCaptureTrace *)(void *)&self->buf[self->pos];
+
+  if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
+    {
+      unsigned int i;
+
+      for (i = 0; i < trace->n_addrs; i++)
+        trace->addrs[i] = bswap_64 (trace->addrs[i]);
+    }
+
+  self->pos += trace->frame.len;
+
+  return trace;
+}
+
 const SysprofCaptureCounterDefine *
 sysprof_capture_reader_read_counter_define (SysprofCaptureReader *self)
 {
@@ -1343,7 +1389,7 @@ array_append (const char ***files,
       *files = new_files;
     }
 
-  (*files)[*n_files] = new_element ? strdup (new_element) : NULL;
+  (*files)[*n_files] = new_element ? sysprof_strdup (new_element) : NULL;
   *n_files = *n_files + 1;
   assert (*n_files <= *n_files_allocated);
 
@@ -1362,7 +1408,10 @@ array_deduplicate (const char **files,
   for (last_written = 0, next_to_read = 1; last_written <= next_to_read && next_to_read < *n_files;)
     {
       if (strcmp (files[next_to_read], files[last_written]) == 0)
-        next_to_read++;
+        {
+          free ((char *)files[next_to_read]);
+          next_to_read++;
+        }
       else
         files[++last_written] = files[next_to_read++];
     }

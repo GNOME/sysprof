@@ -1,6 +1,6 @@
 /* sysprof-profiler.c
  *
- * Copyright 2016-2019 Christian Hergert <chergert@redhat.com>
+ * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,295 +18,210 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#define G_LOG_DOMAIN "sysprof-profiler"
-
 #include "config.h"
 
+#include "sysprof-controlfd-instrument-private.h"
 #include "sysprof-profiler.h"
+#include "sysprof-recording-private.h"
 
-G_DEFINE_INTERFACE (SysprofProfiler, sysprof_profiler, G_TYPE_OBJECT)
+#ifdef __linux__
+# include "sysprof-linux-instrument-private.h"
+#endif
 
-enum {
-  FAILED,
-  STOPPED,
-  N_SIGNALS
+struct _SysprofProfiler
+{
+  GObject           parent_instance;
+  GPtrArray        *instruments;
+  SysprofSpawnable *spawnable;
 };
 
-static guint signals [N_SIGNALS];
+enum {
+  PROP_0,
+  PROP_SPAWNABLE,
+  N_PROPS
+};
+
+static GParamSpec *properties [N_PROPS];
+
+G_DEFINE_FINAL_TYPE (SysprofProfiler, sysprof_profiler, G_TYPE_OBJECT)
 
 static void
-sysprof_profiler_default_init (SysprofProfilerInterface *iface)
+sysprof_profiler_finalize (GObject *object)
 {
-  signals [FAILED] = g_signal_new ("failed",
-                                   G_TYPE_FROM_INTERFACE (iface),
-                                   G_SIGNAL_RUN_LAST,
-                                   G_STRUCT_OFFSET (SysprofProfilerInterface, failed),
-                                   NULL, NULL, NULL,
-                                   G_TYPE_NONE, 1, G_TYPE_ERROR);
+  SysprofProfiler *self = (SysprofProfiler *)object;
 
-  signals [STOPPED] = g_signal_new ("stopped",
-                                    G_TYPE_FROM_INTERFACE (iface),
-                                    G_SIGNAL_RUN_LAST,
-                                    G_STRUCT_OFFSET (SysprofProfilerInterface, stopped),
-                                    NULL, NULL, NULL,
-                                    G_TYPE_NONE, 0);
+  g_clear_pointer (&self->instruments, g_ptr_array_unref);
+  g_clear_object (&self->spawnable);
 
-  g_object_interface_install_property (iface,
-      g_param_spec_double ("elapsed",
-                           "Elapsed",
-                           "The amount of elapsed time profiling",
-                           0,
-                           G_MAXDOUBLE,
-                           0,
-                           (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
-
-  g_object_interface_install_property (iface,
-      g_param_spec_boolean ("is-running",
-                            "Is Running",
-                            "If the profiler is currently running.",
-                            FALSE,
-                            (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
-
-  g_object_interface_install_property (iface,
-      g_param_spec_boolean ("is-mutable",
-                            "Is Mutable",
-                            "If the profiler can still be prepared.",
-                            TRUE,
-                            (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
-
-  g_object_interface_install_property (iface,
-      g_param_spec_boolean ("spawn-inherit-environ",
-                            "Sysprofawn Inherit Environ",
-                            "If the spawned child should inherit the parents environment",
-                            TRUE,
-                            (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
-
-  g_object_interface_install_property (iface,
-      g_param_spec_boolean ("whole-system",
-                            "Whole System",
-                            "If the whole system should be profiled",
-                            TRUE,
-                            (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
-
-  g_object_interface_install_property (iface,
-      g_param_spec_boolean ("spawn",
-                            "Sysprofawn",
-                            "If configured child should be spawned",
-                            TRUE,
-                            (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
-
-  g_object_interface_install_property (iface,
-      g_param_spec_boxed ("spawn-argv",
-                          "Sysprofawn Argv",
-                          "The arguments for the spawn child",
-                          G_TYPE_STRV,
-                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
-
-  g_object_interface_install_property (iface,
-      g_param_spec_string ("spawn-cwd",
-                           "Spawn Working Directory",
-                           "The directory to spawn the application from",
-                           NULL,
-                           (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
-
-  g_object_interface_install_property (iface,
-      g_param_spec_boxed ("spawn-env",
-                          "Sysprofawn Environment",
-                          "The environment for the spawn child",
-                          G_TYPE_STRV,
-                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+  G_OBJECT_CLASS (sysprof_profiler_parent_class)->finalize (object);
 }
 
-gdouble
-sysprof_profiler_get_elapsed (SysprofProfiler *self)
+static void
+sysprof_profiler_get_property (GObject    *object,
+                               guint       prop_id,
+                               GValue     *value,
+                               GParamSpec *pspec)
 {
-  gdouble value = 0.0;
-  g_return_val_if_fail (SYSPROF_IS_PROFILER (self), 0.0);
-  g_object_get (self, "elapsed", &value, NULL);
-  return value;
+  SysprofProfiler *self = SYSPROF_PROFILER (object);
+
+  switch (prop_id)
+    {
+    case PROP_SPAWNABLE:
+      g_value_set_object (value, sysprof_profiler_get_spawnable (self));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
 }
 
-gboolean
-sysprof_profiler_get_is_running (SysprofProfiler *self)
+static void
+sysprof_profiler_set_property (GObject      *object,
+                               guint         prop_id,
+                               const GValue *value,
+                               GParamSpec   *pspec)
 {
-  gboolean is_running = FALSE;
-  g_return_val_if_fail (SYSPROF_IS_PROFILER (self), FALSE);
-  g_object_get (self, "is-running", &is_running, NULL);
-  return is_running;
+  SysprofProfiler *self = SYSPROF_PROFILER (object);
+
+  switch (prop_id)
+    {
+    case PROP_SPAWNABLE:
+      sysprof_profiler_set_spawnable (self, g_value_get_object (value));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
 }
 
-gboolean
-sysprof_profiler_get_is_mutable (SysprofProfiler *self)
+static void
+sysprof_profiler_class_init (SysprofProfilerClass *klass)
 {
-  gboolean is_mutable = FALSE;
-  g_return_val_if_fail (SYSPROF_IS_PROFILER (self), FALSE);
-  g_object_get (self, "is-mutable", &is_mutable, NULL);
-  return is_mutable;
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+
+  object_class->finalize = sysprof_profiler_finalize;
+  object_class->get_property = sysprof_profiler_get_property;
+  object_class->set_property = sysprof_profiler_set_property;
+
+  properties [PROP_SPAWNABLE] =
+    g_param_spec_object ("spawnable", NULL, NULL,
+                         SYSPROF_TYPE_SPAWNABLE,
+                         (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
-gboolean
-sysprof_profiler_get_spawn_inherit_environ (SysprofProfiler *self)
+static void
+sysprof_profiler_init (SysprofProfiler *self)
 {
-  gboolean spawn_inherit_environ = FALSE;
-  g_return_val_if_fail (SYSPROF_IS_PROFILER (self), FALSE);
-  g_object_get (self, "spawn-inherit-environ", &spawn_inherit_environ, NULL);
-  return spawn_inherit_environ;
+  self->instruments = g_ptr_array_new_with_free_func (g_object_unref);
+
+#ifdef __linux__
+  sysprof_profiler_add_instrument (self, _sysprof_linux_instrument_new ());
+#endif
+
+  sysprof_profiler_add_instrument (self, _sysprof_controlfd_instrument_new ());
 }
 
+SysprofProfiler *
+sysprof_profiler_new (void)
+{
+  return g_object_new (SYSPROF_TYPE_PROFILER, NULL);
+}
+
+/**
+ * sysprof_profiler_add_instrument:
+ * @self: a #SysprofProfiler
+ * @instrument: (transfer full): a #SysprofInstrument
+ *
+ * Adds @instrument to @profiler.
+ *
+ * When the recording session is started, @instrument will be directed to
+ * capture data into the destination capture file.
+ */
 void
-sysprof_profiler_set_spawn_inherit_environ (SysprofProfiler *self,
-                                            gboolean         spawn_inherit_environ)
+sysprof_profiler_add_instrument (SysprofProfiler   *self,
+                                 SysprofInstrument *instrument)
 {
   g_return_if_fail (SYSPROF_IS_PROFILER (self));
-  g_object_set (self, "spawn-inherit-environ", !!spawn_inherit_environ, NULL);
-}
+  g_return_if_fail (SYSPROF_IS_INSTRUMENT (instrument));
 
-gboolean
-sysprof_profiler_get_spawn (SysprofProfiler *self)
-{
-  gboolean spawn = FALSE;
-  g_return_val_if_fail (SYSPROF_IS_PROFILER (self), FALSE);
-  g_object_get (self, "spawn", &spawn, NULL);
-  return spawn;
+  g_ptr_array_add (self->instruments, instrument);
 }
 
 void
-sysprof_profiler_set_spawn_cwd (SysprofProfiler *self,
-                                const gchar     *spawn_cwd)
+sysprof_profiler_record_async (SysprofProfiler      *self,
+                               SysprofCaptureWriter *writer,
+                               GCancellable         *cancellable,
+                               GAsyncReadyCallback   callback,
+                               gpointer              user_data)
 {
-  g_return_if_fail (SYSPROF_IS_PROFILER (self));
-  g_object_set (self, "spawn-cwd", spawn_cwd, NULL);
-}
+  g_autoptr(SysprofRecording) recording = NULL;
+  g_autoptr(GTask) task = NULL;
 
-void
-sysprof_profiler_set_spawn (SysprofProfiler *self,
-                            gboolean    spawn)
-{
-  g_return_if_fail (SYSPROF_IS_PROFILER (self));
-  g_object_set (self, "spawn", !!spawn, NULL);
-}
-
-gboolean
-sysprof_profiler_get_whole_system (SysprofProfiler *self)
-{
-  gboolean whole_system = FALSE;
-  g_return_val_if_fail (SYSPROF_IS_PROFILER (self), FALSE);
-  g_object_get (self, "whole-system", &whole_system, NULL);
-  return whole_system;
-}
-
-void
-sysprof_profiler_set_whole_system (SysprofProfiler *self,
-                                   gboolean         whole_system)
-{
-  g_return_if_fail (SYSPROF_IS_PROFILER (self));
-  g_object_set (self, "whole-system", !!whole_system, NULL);
-}
-
-void
-sysprof_profiler_set_spawn_argv (SysprofProfiler     *self,
-                                 const gchar * const *spawn_argv)
-{
-  g_return_if_fail (SYSPROF_IS_PROFILER (self));
-  g_object_set (self, "spawn-argv", spawn_argv, NULL);
-}
-
-void
-sysprof_profiler_set_spawn_env (SysprofProfiler     *self,
-                                const gchar * const *spawn_env)
-{
-  g_return_if_fail (SYSPROF_IS_PROFILER (self));
-  g_object_set (self, "spawn-env", spawn_env, NULL);
-}
-
-void
-sysprof_profiler_add_source (SysprofProfiler *self,
-                             SysprofSource   *source)
-{
-  g_return_if_fail (SYSPROF_IS_PROFILER (self));
-  g_return_if_fail (SYSPROF_IS_SOURCE (source));
-
-  SYSPROF_PROFILER_GET_IFACE (self)->add_source (self, source);
-}
-
-void
-sysprof_profiler_set_writer (SysprofProfiler      *self,
-                             SysprofCaptureWriter *writer)
-{
   g_return_if_fail (SYSPROF_IS_PROFILER (self));
   g_return_if_fail (writer != NULL);
+  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
 
-  SYSPROF_PROFILER_GET_IFACE (self)->set_writer (self, writer);
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, sysprof_profiler_record_async);
+
+  recording = _sysprof_recording_new (writer,
+                                      self->spawnable,
+                                      (SysprofInstrument **)self->instruments->pdata,
+                                      self->instruments->len);
+
+  g_task_return_pointer (task, g_object_ref (recording), g_object_unref);
+
+  _sysprof_recording_start (recording);
 }
 
-SysprofCaptureWriter *
-sysprof_profiler_get_writer (SysprofProfiler *self)
+/**
+ * sysprof_profiler_record_finish:
+ * @self: a #SysprofProfiler
+ * @result: a #GAsyncResult
+ * @error: a location for a #GError
+ *
+ * Completes an asynchronous request to start recording.
+ *
+ * Returns: (transfer full): an active #SysprofRecording if successful;
+ *   otherwise %NULL and @error is set.
+ */
+SysprofRecording *
+sysprof_profiler_record_finish (SysprofProfiler  *self,
+                                GAsyncResult     *result,
+                                GError          **error)
+{
+  g_return_val_if_fail (SYSPROF_IS_PROFILER (self), NULL);
+  g_return_val_if_fail (G_IS_TASK (result), NULL);
+  g_return_val_if_fail (g_task_is_valid (result, self), NULL);
+
+  return g_task_propagate_pointer (G_TASK (result), error);
+}
+
+/**
+ * sysprof_profiler_get_spawnable:
+ * @self: a #SysprofProfiler
+ *
+ * Gets the #SysprofProfiler:spawnable property.
+ *
+ * Returns: (nullable) (transfer none): a #SysprofSpawnable or %NULL
+ */
+SysprofSpawnable *
+sysprof_profiler_get_spawnable (SysprofProfiler *self)
 {
   g_return_val_if_fail (SYSPROF_IS_PROFILER (self), NULL);
 
-  return SYSPROF_PROFILER_GET_IFACE (self)->get_writer (self);
+  return self->spawnable;
 }
 
 void
-sysprof_profiler_start (SysprofProfiler *self)
+sysprof_profiler_set_spawnable (SysprofProfiler  *self,
+                                SysprofSpawnable *spawnable)
 {
   g_return_if_fail (SYSPROF_IS_PROFILER (self));
+  g_return_if_fail (!spawnable || SYSPROF_IS_SPAWNABLE (spawnable));
 
-  SYSPROF_PROFILER_GET_IFACE (self)->start (self);
-}
-
-void
-sysprof_profiler_stop (SysprofProfiler *self)
-{
-  g_return_if_fail (SYSPROF_IS_PROFILER (self));
-
-  SYSPROF_PROFILER_GET_IFACE (self)->stop (self);
-}
-
-void
-sysprof_profiler_add_pid (SysprofProfiler *self,
-                          GPid             pid)
-{
-  g_return_if_fail (SYSPROF_IS_PROFILER (self));
-  g_return_if_fail (pid > -1);
-
-  SYSPROF_PROFILER_GET_IFACE (self)->add_pid (self, pid);
-}
-
-void
-sysprof_profiler_remove_pid (SysprofProfiler *self,
-                             GPid             pid)
-{
-  g_return_if_fail (SYSPROF_IS_PROFILER (self));
-  g_return_if_fail (pid > -1);
-
-  SYSPROF_PROFILER_GET_IFACE (self)->remove_pid (self, pid);
-}
-
-const GPid *
-sysprof_profiler_get_pids (SysprofProfiler *self,
-                           guint           *n_pids)
-{
-  g_return_val_if_fail (SYSPROF_IS_PROFILER (self), NULL);
-  g_return_val_if_fail (n_pids != NULL, NULL);
-
-  return SYSPROF_PROFILER_GET_IFACE (self)->get_pids (self, n_pids);
-}
-
-void
-sysprof_profiler_emit_failed (SysprofProfiler *self,
-                              const GError    *error)
-{
-  g_return_if_fail (SYSPROF_IS_PROFILER (self));
-  g_return_if_fail (error != NULL);
-
-  g_signal_emit (self, signals [FAILED], 0, error);
-}
-
-void
-sysprof_profiler_emit_stopped (SysprofProfiler *self)
-{
-  g_return_if_fail (SYSPROF_IS_PROFILER (self));
-
-  g_signal_emit (self, signals [STOPPED], 0);
+  if (g_set_object (&self->spawnable, spawnable))
+    g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_SPAWNABLE]);
 }

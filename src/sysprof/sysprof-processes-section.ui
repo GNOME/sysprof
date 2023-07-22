@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofProcessesSection" parent="SysprofSection">
+    <property name="title" translatable="yes">Processes</property>
+    <binding name="indicator">
+      <closure type="gchararray" function="format_number">
+        <lookup name="n-items" type="SysprofDocumentBitsetIndex">
+          <lookup name="processes" type="SysprofDocument">
+            <lookup name="document" type="SysprofSession">
+              <lookup name="session">SysprofProcessesSection</lookup>
+            </lookup>
+          </lookup>
+        </lookup>
+      </closure>
+    </binding>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="SysprofTimeScrubber" id="scrubber">
+            <binding name="session">
+              <lookup name="session">SysprofProcessesSection</lookup>
+            </binding>
+            <child type="chart">
+              <object class="SysprofChart">
+                <property name="margin-top">6</property>
+                <property name="margin-bottom">6</property>
+                <property name="height-request">20</property>
+                <child>
+                  <object class="SysprofTimeSpanLayer">
+                    <binding name="axis">
+                      <lookup name="visible-time-axis" type="SysprofSession">
+                        <lookup name="session">SysprofProcessesSection</lookup>
+                      </lookup>
+                    </binding>
+                    <property name="series">
+                      <object class="SysprofTimeSeries">
+                        <property name="model">
+                          <object class="SysprofTimeFilterModel">
+                            <binding name="time-span">
+                              <lookup name="visible-time" type="SysprofSession">
+                                <lookup name="session">SysprofProcessesSection</lookup>
+                              </lookup>
+                            </binding>
+                            <binding name="model">
+                              <lookup name="processes" type="SysprofDocument">
+                                <lookup name="document" type="SysprofSession">
+                                  <lookup name="session">SysprofProcessesSection</lookup>
+                                </lookup>
+                              </lookup>
+                            </binding>
+                          </object>
+                        </property>
+                        <property name="begin-time-expression">
+                          <lookup name="time" type="SysprofDocumentFrame"/>
+                        </property>
+                        <property name="end-time-expression">
+                          <lookup name="time" type="SysprofDocumentFrame"/>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="AdwViewStack" id="stack">
+            <property name="vexpand">true</property>
+            <child>
+              <object class="AdwViewStackPage">
+                <property name="title" translatable="yes">Process Chart</property>
+                <property name="icon-name">mark-chart-symbolic</property>
+                <property name="child">
+                  <object class="GtkScrolledWindow">
+                    <child>
+                      <object class="GtkListView" id="list_view">
+                        <style>
+                          <class name="data-table"/>
+                        </style>
+                        <property name="model">
+                          <object class="GtkSingleSelection">
+                            <property name="model">
+                              <object class="SysprofSessionModel">
+                                <binding name="session">
+                                  <lookup name="session">SysprofProcessesSection</lookup>
+                                </binding>
+                                <property name="model">
+                                  <object class="SysprofTimeFilterModel">
+                                    <binding name="time-span">
+                                      <lookup name="selected-time" type="SysprofSession">
+                                        <lookup name="session">SysprofProcessesSection</lookup>
+                                      </lookup>
+                                    </binding>
+                                    <binding name="model">
+                                      <lookup name="processes" type="SysprofDocument">
+                                        <lookup name="document" type="SysprofSession">
+                                          <lookup name="session">SysprofProcessesSection</lookup>
+                                        </lookup>
+                                      </lookup>
+                                    </binding>
+                                  </object>
+                                </property>
+                              </object>
+                            </property>
+                          </object>
+                        </property>
+                        <property name="factory">
+                          <object class="GtkBuilderListItemFactory">
+                            <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkBox">
+        <property name="height-request">16</property>
+        <child>
+          <object class="SysprofChart">
+            <signal name="activate-layer-item" handler="activate_layer_item_cb" swapped="true"/>
+            <property name="hexpand">true</property>
+            <child>
+              <object class="SysprofTimeSpanLayer">
+                <binding name="axis">
+                  <lookup name="selected-time-axis" type="SysprofSession">
+                    <lookup name="session" type="SysprofSessionModelItem">
+                      <lookup name="item">GtkListItem</lookup>
+                    </lookup>
+                  </lookup>
+                </binding>
+                <property name="series">
+                  <object class="SysprofTimeSeries">
+                    <property name="model">
+                      <object class="SysprofSingleModel">
+                        <binding name="item">
+                          <lookup name="item" type="SysprofSessionModelItem">
+                            <lookup name="item">GtkListItem</lookup>
+                          </lookup>
+                        </binding>
+                      </object>
+                    </property>
+                    <property name="begin-time-expression">
+                      <lookup name="time" type="SysprofDocumentFrame"/>
+                    </property>
+                    <property name="end-time-expression">
+                      <lookup name="exit-time" type="SysprofDocumentProcess"/>
+                    </property>
+                    <property name="label-expression">
+                      <lookup name="title" type="SysprofDocumentProcess"/>
+                    </property>
+                  </object>
+                </property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                            </property>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+              </object>
+            </child>
+            <child>
+              <object class="AdwViewStackPage">
+                <property name="title" translatable="yes">Process Table</property>
+                <property name="icon-name">mark-table-symbolic</property>
+                <property name="child">
+                  <object class="GtkScrolledWindow">
+                    <child>
+                      <object class="GtkColumnView" id="column_view">
+                        <style>
+                          <class name="data-table"/>
+                        </style>
+                        <signal name="activate" handler="process_table_activate_cb" swapped="true"/>
+                        <property name="model">
+                          <object class="GtkNoSelection">
+                            <property name="model">
+                              <object class="GtkSortListModel">
+                                <binding name="sorter">
+                                  <lookup name="sorter">column_view</lookup>
+                                </binding>
+                                <property name="model">
+                                  <object class="SysprofTimeFilterModel">
+                                    <binding name="time-span">
+                                      <lookup name="selected-time" type="SysprofSession">
+                                        <lookup name="session">SysprofProcessesSection</lookup>
+                                      </lookup>
+                                    </binding>
+                                    <binding name="model">
+                                      <lookup name="processes" type="SysprofDocument">
+                                        <lookup name="document" type="SysprofSession">
+                                          <lookup name="session">SysprofProcessesSection</lookup>
+                                        </lookup>
+                                      </lookup>
+                                    </binding>
+                                  </object>
+                                </property>
+                              </object>
+                            </property>
+                          </object>
+                        </property>
+                        <child>
+                          <object class="GtkColumnViewColumn" id="time_column">
+                            <property name="title" translatable="yes">Time</property>
+                            <property name="sorter">
+                              <object class="GtkNumericSorter">
+                                <property name="sort-order">ascending</property>
+                                <property name="expression">
+                                  <lookup name="time-offset" type="SysprofDocumentFrame"/>
+                                </property>
+                              </object>
+                            </property>
+                            <property name="factory">
+                              <object class="GtkBuilderListItemFactory">
+                                <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="SysprofTimeLabel">
+        <binding name="time-offset">
+          <lookup name="time-offset" type="SysprofDocumentFrame">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                </property>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkColumnViewColumn" id="duration_column">
+                            <property name="title" translatable="yes">Duration</property>
+                            <property name="sorter">
+                              <object class="GtkNumericSorter">
+                                <property name="sort-order">ascending</property>
+                                <property name="expression">
+                                  <lookup name="duration" type="SysprofDocumentProcess"/>
+                                </property>
+                              </object>
+                            </property>
+                            <property name="factory">
+                              <object class="GtkBuilderListItemFactory">
+                                <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="SysprofTimeLabel">
+        <binding name="duration">
+          <lookup name="duration" type="SysprofDocumentProcess">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                </property>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkColumnViewColumn" id="pid_column">
+                            <property name="title" translatable="yes">PID</property>
+                            <property name="sorter">
+                              <object class="GtkNumericSorter">
+                                <property name="expression">
+                                  <lookup name="pid" type="SysprofDocumentProcess"/>
+                                </property>
+                              </object>
+                            </property>
+                            <property name="factory">
+                              <object class="GtkBuilderListItemFactory">
+                                <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkLabel">
+        <property name="xalign">0</property>
+        <binding name="label">
+          <lookup name="pid" type="SysprofDocumentProcess">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                </property>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkColumnViewColumn" id="cmdline_column">
+                            <property name="title" translatable="yes">Command Line</property>
+                            <property name="expand">true</property>
+                            <property name="sorter">
+                              <object class="GtkStringSorter">
+                                <property name="expression">
+                                  <lookup name="command-line" type="SysprofDocumentProcess"/>
+                                </property>
+                              </object>
+                            </property>
+                            <property name="factory">
+                              <object class="GtkBuilderListItemFactory">
+                                <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkLabel">
+        <property name="xalign">0</property>
+        <binding name="label">
+          <lookup name="command-line" type="SysprofDocumentProcess">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                </property>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="AdwViewSwitcherBar" id="switcher">
+            <property name="reveal">true</property>
+            <property name="stack">stack</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

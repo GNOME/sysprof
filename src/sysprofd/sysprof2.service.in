@@ -1,8 +1,0 @@
-[Unit]
-Description=Sysprof Daemon
-
-[Service]
-Type=dbus
-BusName=org.gnome.Sysprof2
-ExecStart=@sysprofdprivdir@/sysprofd
-

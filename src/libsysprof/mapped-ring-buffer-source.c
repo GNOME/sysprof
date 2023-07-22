@@ -18,13 +18,11 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#define G_LOG_DOMAIN "sysprof-mapped-ring-buffer-source"
-
 #include "config.h"
 
 #include <glib.h>
 
-#include "mapped-ring-buffer-source.h"
+#include "mapped-ring-buffer-source-private.h"
 
 typedef struct _MappedRingSource
 {

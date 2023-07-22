@@ -143,6 +143,15 @@ bool                  sysprof_capture_writer_add_sample                      (Sy
                                                                               const SysprofCaptureAddress       *addrs,
                                                                               unsigned int                       n_addrs);
 SYSPROF_AVAILABLE_IN_ALL
+bool                  sysprof_capture_writer_add_trace                       (SysprofCaptureWriter              *self,
+                                                                              int64_t                            time,
+                                                                              int                                cpu,
+                                                                              int32_t                            pid,
+                                                                              int32_t                            tid,
+                                                                              const SysprofCaptureAddress       *addrs,
+                                                                              unsigned int                       n_addrs,
+                                                                              bool                               entering);
+SYSPROF_AVAILABLE_IN_ALL
 bool                  sysprof_capture_writer_add_fork                        (SysprofCaptureWriter              *self,
                                                                               int64_t                            time,
                                                                               int                                cpu,
@@ -235,5 +244,7 @@ SYSPROF_INTERNAL
 bool                  _sysprof_capture_writer_set_time_range                 (SysprofCaptureWriter              *self,
                                                                               int64_t                            start_time,
                                                                               int64_t                            end_time) SYSPROF_INTERNAL;
+SYSPROF_INTERNAL
+int                   _sysprof_capture_writer_dup_fd                         (SysprofCaptureWriter              *self);
 
 SYSPROF_END_DECLS

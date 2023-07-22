@@ -1,9 +1,9 @@
-project('sysprof', 'c',
+project('sysprof', ['c', 'cpp'],
           license: ['GPL3+', 'GPL2+'],
           version: '45.alpha',
     meson_version: '>=0.59.0',
-  default_options: [ 'c_std=gnu11',
-                     'cpp_std=c++11',
+  default_options: [ 'c_std=gnu17',
+                     'cpp_std=gnu++17',
                      'warning_level=2',
   ]
 )
@@ -20,28 +20,48 @@ else
   app_id = 'org.gnome.Sysprof'
 endif
 
-libsysprof_api_version = 4
-libsysprof_ui_api_version = 5
+# All libraries share an ABI revision as they are expected
+# to be updated as a set. However, we keep libsysprof-capture
+# at an older version since it's used as a static library
+# from various platform tooling
+soname_major_version = 6
+libsysprof_capture_api_version = 4
+libsysprof_api_version = soname_major_version
 
 version_split = meson.project_version().split('.')
 datadir = get_option('datadir')
 datadir_for_pc_file = join_paths('${prefix}', datadir)
 podir = join_paths(meson.current_source_dir(), 'po')
 
-glib_req = '2.73.0'
-gtk_req = '4.6'
+# Predetermine some features based on meson_options.txt
+need_gtk = get_option('gtk')
+need_glib = (need_gtk or
+             get_option('examples') or
+             get_option('sysprofd') != 'none' or
+             get_option('tools') or
+	     get_option('tests'))
+need_libsysprof = (need_gtk or
+                   get_option('libsysprof') or
+                   get_option('examples') or
+                   get_option('tools') or
+                   get_option('tests'))
+
+dex_req = '0.3'
+glib_req = '2.76.0'
+gtk_req = '4.10'
 polkit_req = '0.105'
 
+dex_req_version = '>= @0@'.format(dex_req)
 glib_req_version = '>= @0@'.format(glib_req)
 gtk_req_version = '>= @0@'.format(gtk_req)
 polkit_req_version = '>= @0@'.format(polkit_req)
 
 cc = meson.get_compiler('c')
+cxx = meson.get_compiler('cpp')
 
-if get_option('libsysprof') or get_option('agent')
-  add_languages('cpp', native: false)
-  cxx = meson.get_compiler('cpp')
-endif
+glib_dep = dependency('glib-2.0', version: glib_req_version, required: need_glib)
+gtk_dep = dependency('gtk4', version: gtk_req_version, required: need_gtk)
+libsystemd_dep = dependency('libsystemd', required: false)
 
 config_h = configuration_data()
 config_h.set_quoted('SYMBOLIC_VERSION', symbolic_version)
@@ -72,25 +92,19 @@ if get_option('default_library') != 'static'
   endif
 endif
 
-debugdir = get_option('debugdir')
-if debugdir == ''
-  debugdir = join_paths(get_option('prefix'), get_option('libdir'), 'debug')
-endif
-config_h.set_quoted('DEBUGDIR', debugdir)
-
-config_h.set_quoted('GETTEXT_PACKAGE', 'sysprof')
-config_h.set10('ENABLE_NLS', true)
-config_h.set_quoted('PACKAGE_LOCALE_DIR', join_paths(get_option('prefix'), get_option('datadir'), 'locale'))
-config_h.set('LOCALEDIR', 'PACKAGE_LOCALE_DIR')
 config_h.set('HAVE_EXECINFO_H', cc.has_header('execinfo.h'))
-
-config_h.set('HAVE_STRLCPY', cc.has_function('strlcpy'))
 config_h.set('HAVE_REALLOCARRAY', cc.has_function('reallocarray'))
+config_h.set('HAVE_STRLCPY', cc.has_function('strlcpy'))
+config_h.set('LOCALEDIR', 'PACKAGE_LOCALE_DIR')
+config_h.set10('ENABLE_NLS', true)
+config_h.set_quoted('GETTEXT_PACKAGE', 'sysprof')
+config_h.set_quoted('PACKAGE_LOCALE_DIR', join_paths(get_option('prefix'), get_option('datadir'), 'locale'))
+config_h.set10('HAVE_LIBSYSTEMD', libsystemd_dep.found())
 
 polkit_agent_dep = dependency('polkit-agent-1', required: false)
-polkit_dep = dependency('polkit-gobject-1', version: polkit_req_version, required: false)
-
 config_h.set10('HAVE_POLKIT_AGENT', polkit_agent_dep.found())
+
+polkit_dep = dependency('polkit-gobject-1', version: polkit_req_version, required: false)
 config_h.set10('HAVE_POLKIT', polkit_dep.found())
 
 if get_option('libunwind')
@@ -98,7 +112,11 @@ if get_option('libunwind')
   # and backtrace() showing up in builds
   libunwind_dep = dependency('libunwind-generic', required: true)
   config_h.set('ENABLE_LIBUNWIND', libunwind_dep.found())
-  config_h.set('HAVE_UNW_SET_CACHE_SIZE', libunwind_dep.found() and cc.has_header_symbol('libunwind.h', 'unw_set_cache_size', dependencies: [libunwind_dep]))
+  config_h.set('HAVE_UNW_SET_CACHE_SIZE',
+               (libunwind_dep.found() and
+                 cc.has_header_symbol('libunwind.h',
+                                      'unw_set_cache_size',
+                                      dependencies: [libunwind_dep])))
 endif
 
 # Development build setup
@@ -106,35 +124,48 @@ if get_option('development')
   config_h.set10('DEVELOPMENT_BUILD', true)
 endif
 
-has_use_clockid = cc.has_member('struct perf_event_attr', 'use_clockid', prefix: '#include <linux/perf_event.h>')
-has_clockid = cc.has_member('struct perf_event_attr', 'clockid', prefix: '#include <linux/perf_event.h>')
+has_use_clockid = cc.has_member('struct perf_event_attr',
+                                'use_clockid',
+                                prefix: '#include <linux/perf_event.h>')
+has_clockid = cc.has_member('struct perf_event_attr',
+                            'clockid', prefix:
+                            '#include <linux/perf_event.h>')
 config_h.set('HAVE_PERF_CLOCKID', has_use_clockid and has_clockid)
 
-add_project_arguments([
-  '-I' + meson.current_build_dir(), # config.h
-], language: 'c')
-
-glib_major = glib_req.split('.')[0].to_int()
-glib_minor = glib_req.split('.')[1].to_int()
-gtk_major = gtk_req.split('.')[0].to_int()
-gtk_minor = gtk_req.split('.')[1].to_int()
-
-if glib_minor % 2 == 1
-  glib_minor = glib_minor + 1
-endif
-if gtk_minor % 2 == 1
-  gtk_minor = gtk_minor + 1
-endif
-
+# For config.h
+add_project_arguments(['-I'+meson.current_build_dir()], language: 'c')
 
 global_c_args = [
+  '-DSYSPROF_COMPILATION',
   '-D_GNU_SOURCE',
   '-D_POSIX_C_SOURCE=200809L',
-  '-DGLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_@0@_@1@'.format(glib_major, glib_minor),
-  '-DGLIB_VERSION_MAX_ALLOWED=GLIB_VERSION_@0@_@1@'.format(glib_major, glib_minor),
-  '-DGDK_VERSION_MIN_REQUIRED=GDK_VERSION_@0@_@1@'.format(gtk_major, gtk_minor),
-  '-DGDK_VERSION_MAX_ALLOWED=GDK_VERSION_@0@_@1@'.format(gtk_major, gtk_minor),
 ]
+
+# Enforce GLib symbol access by required version
+if need_glib
+  glib_major = glib_req.split('.')[0].to_int()
+  glib_minor = glib_req.split('.')[1].to_int()
+  if glib_minor % 2 == 1
+    glib_minor = glib_minor + 1
+  endif
+  global_c_args += [
+    '-DGLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_@0@_@1@'.format(glib_major, glib_minor),
+    '-DGLIB_VERSION_MAX_ALLOWED=GLIB_VERSION_@0@_@1@'.format(glib_major, glib_minor),
+  ]
+endif
+
+# Enforce GTK symbol access by required version
+if need_gtk
+  gtk_major = gtk_req.split('.')[0].to_int()
+  gtk_minor = gtk_req.split('.')[1].to_int()
+  if gtk_minor % 2 == 1
+    gtk_minor = gtk_minor + 1
+  endif
+  global_c_args += [
+    '-DGDK_VERSION_MIN_REQUIRED=GDK_VERSION_@0@_@1@'.format(gtk_major, gtk_minor),
+    '-DGDK_VERSION_MAX_ALLOWED=GDK_VERSION_@0@_@1@'.format(gtk_major, gtk_minor),
+  ]
+endif
 
 if host_machine.system() == 'darwin'
   global_c_args += ['-D_DARWIN_C_SOURCE']
@@ -155,7 +186,7 @@ test_c_args = [
   '-Wswitch-default',
   '-Wswitch-enum',
   '-Wuninitialized',
-  ['-Werror=format-security', '-Werror=format=2' ],
+  ['-Werror=format-security', '-Werror=format=2'],
   '-Werror=empty-body',
   '-Werror=implicit-function-declaration',
   '-Werror=pointer-arith',
@@ -170,13 +201,6 @@ test_c_args = [
   '-Werror=strict-prototypes',
   '-Werror=undef',
 ]
-
-# Until GLib is fixed with regards to volatile type registration
-if cc.get_id() == 'clang'
-  test_c_args += ['-Wno-incompatible-pointer-types']
-else
-  test_c_args += ['-Werror=incompatible-pointer-types']
-endif
 
 foreach arg: test_c_args
   if cc.has_multi_arguments(arg)
@@ -229,8 +253,9 @@ int main(void) {
   config_h.set10('HAVE_STDATOMIC_H', true)
 endif
 
-needs_service_access = get_option('libsysprof') or get_option('agent')
-install_service_files = needs_service_access or get_option('sysprofd') == 'bundled'
+if need_glib
+  subdir('contrib')
+endif
 
 subdir('src')
 subdir('data')

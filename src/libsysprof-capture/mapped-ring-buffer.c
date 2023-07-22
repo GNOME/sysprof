@@ -335,6 +335,8 @@ mapped_ring_buffer_finalize (MappedRingBuffer *self)
       close (self->fd);
       self->fd = -1;
     }
+
+  free (self);
 }
 
 void

@@ -1,180 +1,213 @@
-libsysprof_c_args = [ '-DSYSPROF_COMPILATION' ]
-
 libsysprof_public_sources = [
-  'sysprof-battery-source.c',
-  'sysprof-callgraph-profile.c',
-  'sysprof-capture-frame-object.c',
-  'sysprof-capture-gobject.c',
-  'sysprof-capture-model.c',
-  'sysprof-capture-symbol-resolver.c',
-  'sysprof-control-source.c',
-  'sysprof-diskstat-source.c',
-  'sysprof-elf-symbol-resolver.c',
-  'sysprof-gjs-source.c',
-  'sysprof-governor-source.c',
-  'sysprof-hostinfo-source.c',
-  'sysprof-jitmap-symbol-resolver.c',
-  'sysprof-kernel-symbol.c',
-  'sysprof-kernel-symbol-resolver.c',
-  'sysprof-local-profiler.c',
-  'sysprof-memprof-profile.c',
-  'sysprof-memprof-source.c',
-  'sysprof-netdev-source.c',
-  'sysprof-preload-source.c',
-  'sysprof-process-model.c',
-  'sysprof-process-model-item.c',
-  'sysprof-profile.c',
+  'sysprof-battery-charge.c',
+  'sysprof-bundled-symbolizer.c',
+  'sysprof-callgraph-frame.c',
+  'sysprof-callgraph-symbol.c',
+  'sysprof-callgraph.c',
+  'sysprof-callgraph-categorize.c',
+  'sysprof-categories.c',
+  'sysprof-category-summary.c',
+  'sysprof-cpu-info.c',
+  'sysprof-cpu-usage.c',
+  'sysprof-diagnostic.c',
+  'sysprof-disk-usage.c',
+  'sysprof-document-allocation.c',
+  'sysprof-document-counter-value.c',
+  'sysprof-document-counter.c',
+  'sysprof-document-ctrdef.c',
+  'sysprof-document-ctrset.c',
+  'sysprof-document-exit.c',
+  'sysprof-document-file-chunk.c',
+  'sysprof-document-file.c',
+  'sysprof-document-fork.c',
+  'sysprof-document-frame.c',
+  'sysprof-document-jitmap.c',
+  'sysprof-document-loader.c',
+  'sysprof-document-log.c',
+  'sysprof-document-mark.c',
+  'sysprof-document-metadata.c',
+  'sysprof-document-mmap.c',
+  'sysprof-document-overlay.c',
+  'sysprof-document-process.c',
+  'sysprof-document-sample.c',
+  'sysprof-document-traceable.c',
+  'sysprof-document.c',
+  'sysprof-elf-symbolizer.c',
+  'sysprof-energy-usage.c',
+  'sysprof-instrument.c',
+  'sysprof-jitmap-symbolizer.c',
+  'sysprof-kallsyms-symbolizer.c',
+  'sysprof-malloc-tracing.c',
+  'sysprof-mark-catalog.c',
+  'sysprof-memory-usage.c',
+  'sysprof-multi-symbolizer.c',
+  'sysprof-network-usage.c',
+  'sysprof-no-symbolizer.c',
+  'sysprof-power-profile.c',
   'sysprof-profiler.c',
-  'sysprof-proxy-source.c',
-  'sysprof-selection.c',
-  'sysprof-source.c',
+  'sysprof-proxied-instrument.c',
+  'sysprof-recording.c',
+  'sysprof-sampler.c',
   'sysprof-spawnable.c',
-  'sysprof-symbol-resolver.c',
-  'sysprof-symbols-source.c',
-  'sysprof-tracefd-source.c',
+  'sysprof-symbol.c',
+  'sysprof-symbolizer.c',
+  'sysprof-symbols-bundle.c',
+  'sysprof-system-logs.c',
+  'sysprof-thread-info.c',
+  'sysprof-time-span.c',
+  'sysprof-tracer.c',
 ]
 
 libsysprof_public_headers = [
-  'sysprof-battery-source.h',
-  'sysprof-callgraph-profile.h',
-  'sysprof-capture-autocleanups.h',
-  'sysprof-capture-frame-object.h',
-  'sysprof-capture-gobject.h',
-  'sysprof-capture-model.h',
-  'sysprof-capture-symbol-resolver.h',
-  'sysprof-control-source.h',
-  'sysprof-diskstat-source.h',
-  'sysprof-elf-symbol-resolver.h',
-  'sysprof-gjs-source.h',
-  'sysprof-governor-source.h',
-  'sysprof-hostinfo-source.h',
-  'sysprof-jitmap-symbol-resolver.h',
-  'sysprof-netdev-source.h',
-  'sysprof-kernel-symbol.h',
-  'sysprof-kernel-symbol-resolver.h',
-  'sysprof-local-profiler.h',
-  'sysprof-memprof-profile.h',
-  'sysprof-memprof-source.h',
-  'sysprof-preload-source.h',
-  'sysprof-process-model.h',
-  'sysprof-process-model-item.h',
-  'sysprof-profile.h',
-  'sysprof-profiler.h',
-  'sysprof-proxy-source.h',
-  'sysprof-selection.h',
-  'sysprof-source.h',
-  'sysprof-spawnable.h',
-  'sysprof-symbol-resolver.h',
-  'sysprof-symbols-source.h',
-  'sysprof-tracefd-source.h',
   'sysprof.h',
+  'sysprof-battery-charge.h',
+  'sysprof-bundled-symbolizer.h',
+  'sysprof-callgraph-frame.h',
+  'sysprof-callgraph-symbol.h',
+  'sysprof-callgraph.h',
+  'sysprof-category-summary.h',
+  'sysprof-cpu-info.h',
+  'sysprof-cpu-usage.h',
+  'sysprof-diagnostic.h',
+  'sysprof-disk-usage.h',
+  'sysprof-document-allocation.h',
+  'sysprof-document-counter-value.h',
+  'sysprof-document-counter.h',
+  'sysprof-document-ctrdef.h',
+  'sysprof-document-ctrset.h',
+  'sysprof-document-exit.h',
+  'sysprof-document-file-chunk.h',
+  'sysprof-document-file.h',
+  'sysprof-document-fork.h',
+  'sysprof-document-frame.h',
+  'sysprof-document-jitmap.h',
+  'sysprof-document-loader.h',
+  'sysprof-document-log.h',
+  'sysprof-document-mark.h',
+  'sysprof-document-metadata.h',
+  'sysprof-document-mmap.h',
+  'sysprof-document-overlay.h',
+  'sysprof-document-process.h',
+  'sysprof-document-sample.h',
+  'sysprof-document-traceable.h',
+  'sysprof-document.h',
+  'sysprof-elf-symbolizer.h',
+  'sysprof-energy-usage.h',
+  'sysprof-instrument.h',
+  'sysprof-jitmap-symbolizer.h',
+  'sysprof-kallsyms-symbolizer.h',
+  'sysprof-malloc-tracing.h',
+  'sysprof-mark-catalog.h',
+  'sysprof-memory-usage.h',
+  'sysprof-mount.h',
+  'sysprof-multi-symbolizer.h',
+  'sysprof-network-usage.h',
+  'sysprof-no-symbolizer.h',
+  'sysprof-power-profile.h',
+  'sysprof-profiler.h',
+  'sysprof-proxied-instrument.h',
+  'sysprof-recording.h',
+  'sysprof-sampler.h',
+  'sysprof-spawnable.h',
+  'sysprof-symbol.h',
+  'sysprof-symbolizer.h',
+  'sysprof-symbols-bundle.h',
+  'sysprof-system-logs.h',
+  'sysprof-thread-info.h',
+  'sysprof-time-span.h',
+  'sysprof-tracer.h',
 ]
 
 libsysprof_private_sources = [
-  'binfile.c',
-  'demangle.cpp',
-  'elfparser.c',
   'mapped-ring-buffer-source.c',
-  'sysprof-flatpak.c',
-  'sysprof-helpers.c',
-  'sysprof-kallsyms.c',
-  'sysprof-line-reader.c',
-  'sysprof-map-lookaside.c',
-  'sysprof-mountinfo.c',
-  'sysprof-path-resolver.c',
+  'sysprof-address-layout.c',
+  'sysprof-controlfd-instrument.c',
+  'sysprof-descendants-model.c',
+  'sysprof-document-bitset-index.c',
+  'sysprof-document-symbols.c',
+  'sysprof-elf-loader.c',
+  'sysprof-elf.c',
+  'sysprof-journald-source.c',
+  'sysprof-maps-parser.c',
+  'sysprof-mount-device.c',
+  'sysprof-mount-namespace.c',
+  'sysprof-mount.c',
+  'sysprof-perf-event-stream.c',
   'sysprof-podman.c',
-  'sysprof-polkit.c',
-  'sysprof-symbol-map.c',
-  ipc_service_src,
-  stackstash_sources,
-  helpers_sources,
+  'sysprof-process-info.c',
+  'sysprof-strings.c',
+  'sysprof-symbol-cache.c',
 ]
 
-libsysprof_public_sources += libsysprof_capture_sources
-
-librax = static_library('rax', ['rax.c'],
-  c_args: [ '-Wno-declaration-after-statement',
-            '-Wno-format-nonliteral',
-            '-Wno-shadow' ],
-  gnu_symbol_visibility: 'hidden',
-)
-
-librax_dep = declare_dependency(
-           link_whole: librax,
-  include_directories: include_directories('.'),
-)
-
-polkit_dep = dependency('polkit-gobject-1', version: polkit_req_version, required: false)
 if polkit_dep.found()
-  libsysprof_c_args += ['-DHAVE_POLKIT']
+  libsysprof_private_sources += ['sysprof-polkit.c']
 endif
-
-if dependency('polkit-gobject-1', version: '>= 0.114', required: false).found()
-  libsysprof_c_args += ['-DHAVE_POLKIT_AUTOPTR']
-endif
-
-# Subset of dependencies used in generating the pkg-config file
-libsysprof_pkg_deps = [
-  dependency('gio-2.0', version: glib_req_version),
-  dependency('gio-unix-2.0', version: glib_req_version),
-  dependency('json-glib-1.0'),
-  polkit_dep,
-  libsysprof_capture_deps,
-]
 
 if host_machine.system() == 'linux'
-  libsysprof_public_sources += [
-    'sysprof-memory-source.c',
-    'sysprof-perf-counter.c',
-    'sysprof-perf-source.c',
-    'sysprof-proc-source.c',
-  ]
-
-  libsysprof_public_headers += [
-    'sysprof-memory-source.h',
-    'sysprof-perf-counter.h',
-    'sysprof-perf-source.h',
-    'sysprof-proc-source.h',
-  ]
+  libsysprof_private_sources += ['sysprof-linux-instrument.c']
 endif
 
-if host_machine.system() == 'darwin'
-  libsysprof_pkg_deps += [ dependency('libelf') ]
-  libsysprof_c_args += [ '-DNT_GNU_BUILD_ID=3', '-DELF_NOTE_GNU="GNU"', '-D__LIBELF_INTERNAL__' ]
-endif
+libsysprof_enum_headers = [
+  'sysprof-callgraph.h',
+]
 
-libsysprof_deps = libsysprof_pkg_deps
+libsysprof_enums = gnome.mkenums_simple('sysprof-enums',
+     body_prefix: '#include "config.h"',
+   header_prefix: '#include "sysprof-version-macros.h"',
+       decorator: '_SYSPROF_EXTERN',
+         sources: libsysprof_enum_headers,
+  install_header: true,
+     install_dir: sysprof_header_dir,
+)
 
-libsysprof_libs_private = []
+libsysprof_resources = gnome.compile_resources('libsysprof-resources', 'libsysprof.gresource.xml',
+  source_dir: 'resources',
+      c_name: 'libsysprof',
+)
 
-if host_machine.system() != 'darwin'
-  libsysprof_deps += [cxx.find_library('stdc++')]
-  libsysprof_libs_private += '-lstdc++'
-endif
+libsysprof_deps = [
+  dependency('gio-2.0', version: glib_req_version),
+  dependency('gio-unix-2.0',
+     version: glib_req_version,
+    required: host_machine.system() != 'windows'),
+  dependency('libdex-1', version: dex_req_version),
+  dependency('json-glib-1.0'),
+
+  libsystemd_dep,
+  polkit_dep,
+
+  libeggbitset_static_dep,
+  libelfparser_static_dep,
+  liblinereader_static_dep,
+  libsysprof_capture_dep,
+]
 
 libsysprof_static = static_library(
-  'sysprof',
-  libsysprof_public_sources + libsysprof_private_sources,
+  'sysprof-@0@'.format(soname_major_version),
+  libsysprof_public_sources +
+  libsysprof_private_sources +
+  libsysprof_enums,
+  libsysprof_resources,
 
     include_directories: [include_directories('.'),
-                          ipc_include_dirs,
                           libsysprof_capture_include_dirs],
            dependencies: libsysprof_deps,
-                 c_args: libsysprof_c_args,
   gnu_symbol_visibility: 'hidden',
 )
 
 libsysprof_static_dep = declare_dependency(
-            link_whole: libsysprof_static,
-          dependencies: libsysprof_deps + [librax_dep],
-   include_directories: [include_directories('.'), libsysprof_capture_include_dirs],
+            link_with: libsysprof_static,
+         dependencies: libsysprof_deps,
+  include_directories: [include_directories('.'),
+                        libsysprof_capture_include_dirs],
 )
 
-if get_option('libsysprof')
-libsysprof = shared_library('sysprof-@0@'.format(libsysprof_api_version),
-           dependencies: libsysprof_deps + [libsysprof_static_dep],
-                install: true,
-            install_dir: get_option('libdir'),
+libsysprof = library('sysprof-@0@'.format(soname_major_version),
+           dependencies: [libsysprof_static_dep],
+  gnu_symbol_visibility: 'hidden',
+                version: '@0@.0.0'.format(soname_major_version),
+        darwin_versions: '@0@.0'.format(soname_major_version),
+                install: get_option('libsysprof'),
 )
 
 libsysprof_dep = declare_dependency(
@@ -182,21 +215,18 @@ libsysprof_dep = declare_dependency(
          dependencies: libsysprof_deps,
   include_directories: [include_directories('.'), libsysprof_capture_include_dirs],
 )
-meson.override_dependency('sysprof-@0@'.format(libsysprof_api_version), libsysprof_dep)
+meson.override_dependency('sysprof-@0@'.format(soname_major_version), libsysprof_dep)
 
-pkgconfig.generate(
-               libsysprof,
-      subdirs: [ sysprof_header_subdir ],
-  description: 'The library for console applications embedding sysprof',
-  install_dir: join_paths(get_option('libdir'), 'pkgconfig'),
-     requires: [ 'gio-2.0' ],
-    libraries_private: [libsysprof_libs_private, libsysprof_pkg_deps],
-     variables: [
-       'datadir=' + datadir_for_pc_file,
-     ],
+pkgconfig.generate(libsysprof,
+            subdirs: [sysprof_header_subdir],
+        description: 'A library for recording and analyzing system performance',
+        install_dir: join_paths(get_option('libdir'), 'pkgconfig'),
+           requires: ['gio-2.0'],
+          variables: ['datadir=' + datadir_for_pc_file],
 )
 
 install_headers(libsysprof_public_headers, subdir: sysprof_header_subdir)
-endif
 
-subdir('preload')
+if get_option('tests')
+  subdir('tests')
+endif

@@ -1,6 +1,6 @@
 /* sysprof-window.h
  *
- * Copyright 2016-2019 Christian Hergert <chergert@redhat.com>
+ * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,10 @@
 
 #include <adwaita.h>
 
+#include <sysprof.h>
+
 #include "sysprof-application.h"
+#include "sysprof-session.h"
 
 G_BEGIN_DECLS
 
@@ -30,10 +33,13 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (SysprofWindow, sysprof_window, SYSPROF, WINDOW, AdwApplicationWindow)
 
-GtkWidget *sysprof_window_new              (SysprofApplication *application);
-void       sysprof_window_new_tab          (SysprofWindow      *self);
-void       sysprof_window_open             (SysprofWindow      *self,
-                                            GFile              *file);
-void       sysprof_window_open_from_dialog (SysprofWindow      *self);
+GtkWidget       *sysprof_window_new          (SysprofApplication *app,
+                                              SysprofDocument    *document);
+void             sysprof_window_open         (SysprofApplication *app,
+                                              GFile              *file);
+void             sysprof_window_open_fd      (SysprofApplication *app,
+                                              int                 fd);
+SysprofDocument *sysprof_window_get_document (SysprofWindow      *self);
+SysprofSession  *sysprof_window_get_session  (SysprofWindow      *self);
 
 G_END_DECLS

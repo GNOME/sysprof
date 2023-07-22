@@ -1,6 +1,6 @@
 /* sysprof-polkit-private.h
  *
- * Copyright 2019 Christian Hergert <chergert@redhat.com>
+ * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,19 +21,14 @@
 #pragma once
 
 #include <gio/gio.h>
+#include <libdex.h>
+#include <polkit/polkit.h>
 
 G_BEGIN_DECLS
 
-G_GNUC_INTERNAL
-void     _sysprof_polkit_authorize_for_bus_async  (GDBusConnection     *bus,
-                                                   const gchar         *policy,
-                                                   GHashTable          *details,
-                                                   gboolean             allow_user_interaction,
-                                                   GCancellable        *cancellable,
-                                                   GAsyncReadyCallback  callback,
-                                                   gpointer             user_data);
-G_GNUC_INTERNAL
-gboolean _sysprof_polkit_authorize_for_bus_finish (GAsyncResult         *result,
-                                                   GError              **error);
+DexFuture *_sysprof_polkit_authorize (GDBusConnection *connection,
+                                      const char      *policy,
+                                      PolkitDetails   *details,
+                                      gboolean         allow_user_interaction);
 
 G_END_DECLS

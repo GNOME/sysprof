@@ -1,0 +1,93 @@
+progresscell progress {
+ background: @accent_bg_color;
+ border-radius: 3px;
+ border: 1px solid shade(@accent_bg_color, .75);
+ border-right: none;
+}
+
+progresscell {
+  min-height: 18px;
+}
+
+progresscell progress:backdrop {
+ background: @borders;
+ border-color: shade(@borders, .9);
+}
+progresscell label:backdrop.in-progress {
+ color: inherit;
+}
+
+progresscell trough {
+ background: alpha(@borders, .5);
+ border: 1px solid @borders;
+ border-radius: 3px;
+}
+
+progresscell label {
+ font-size: 0.9em;
+ padding: 1px 3px;
+ font-feature-settings: 'tnum';
+}
+
+progresscell label.in-progress {
+ color: @accent_fg_color;
+}
+
+callgraphview {
+}
+
+callgraphview treeexpander indent { -gtk-icon-size: 8px; }
+callgraphview treeexpander indent:nth-child(n+20) { -gtk-icon-size: 0px; }
+
+callgraphview symbol {
+  margin: -1px -3px;
+  padding: 1px 6px;
+}
+callgraphview treeexpander expander:not(.expandable) {
+  -gtk-icon-source: -gtk-icontheme("empty-symbolic");
+}
+callgraphview row:not(:selected) treeexpander expander:checked+box symbol.process,
+callgraphview row:not(:selected) treeexpander expander:checked+box symbol.thread,
+callgraphview row:not(:selected) treeexpander expander:checked+box symbol.root {
+  border-radius: 9999px;
+  background-color: alpha(currentColor, .05);
+}
+callgraphview row:not(:selected) treeexpander symbol.context-switch {
+  border-radius: 9999px;
+  background-color: alpha(@warning_color, .1);
+}
+callgraphview row:not(:selected) treeexpander symbol.unwindable {
+  border-radius: 9999px;
+  background-color: alpha(@error_color, .1);
+}
+
+timeruler {
+  min-height: 24px;
+  font-size: 0.833em;
+  color: alpha(currentColor, .8);
+}
+
+timescrubber informative,
+timescrubber timecode {
+  border-radius: 7px;
+  background: @accent_bg_color;
+  color: @accent_fg_color;
+  padding: 1px 3px;
+  margin: 2px 6px;
+  box-shadow: 0 2px 8px 2px alpha(black, .27);
+  border: 1px solid shade(@accent_bg_color, .9);
+  font-feature-settings: "tnum";
+  font-size: .9em;
+}
+
+.utility .view {
+  background: transparent;
+}
+
+.navigation-sidebar label.indicator {
+  color: alpha(currentColor, .5);
+  border-radius: 50px;
+  padding: 1px 5px;
+  font-feature-settings: 'tnum';
+  font-size: .8em;
+}

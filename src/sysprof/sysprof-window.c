@@ -1,6 +1,6 @@
 /* sysprof-window.c
  *
- * Copyright 2016-2019 Christian Hergert <chergert@redhat.com>
+ * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,167 +18,348 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#define G_LOG_DOMAIN "sysprof-window"
-
 #include "config.h"
 
 #include <glib/gi18n.h>
-#include <sysprof-ui.h>
 
+#include "sysprof-counters-section.h"
+#include "sysprof-cpu-section.h"
+#include "sysprof-files-section.h"
+#include "sysprof-greeter.h"
+#include "sysprof-logs-section.h"
+#include "sysprof-marks-section.h"
+#include "sysprof-memory-section.h"
+#include "sysprof-metadata-section.h"
+#include "sysprof-processes-section.h"
+#include "sysprof-samples-section.h"
+#include "sysprof-sidebar.h"
 #include "sysprof-window.h"
 
 struct _SysprofWindow
 {
   AdwApplicationWindow  parent_instance;
 
-  GBindingGroup        *bindings;
+  SysprofDocument      *document;
+  SysprofSession       *session;
 
-  SysprofNotebook      *notebook;
-  GtkButton            *open_button;
-  GtkMenuButton        *menu_button;
+  GtkToggleButton      *show_right_sidebar;
+  GtkWidget            *left_split_overlay;
+  GtkWidget            *right_split_overlay;
+
+  guint                 disposed : 1;
 };
 
-G_DEFINE_TYPE (SysprofWindow, sysprof_window, ADW_TYPE_APPLICATION_WINDOW)
+enum {
+  PROP_0,
+  PROP_DOCUMENT,
+  PROP_SESSION,
+  N_PROPS
+};
 
-/**
- * sysprof_window_new:
- *
- * Create a new #SysprofWindow.
- *
- * Returns: (transfer full): a newly created #SysprofWindow
- */
-GtkWidget *
-sysprof_window_new (SysprofApplication *application)
-{
-  return g_object_new (SYSPROF_TYPE_WINDOW,
-                       "application", application,
-                       NULL);
-}
+G_DEFINE_FINAL_TYPE (SysprofWindow, sysprof_window, ADW_TYPE_APPLICATION_WINDOW)
+
+static GParamSpec *properties [N_PROPS];
 
 static void
-sysprof_window_notify_can_replay_cb (SysprofWindow   *self,
-                                     GParamSpec      *pspec,
-                                     SysprofNotebook *notebook)
+sysprof_window_update_zoom_actions (SysprofWindow *self)
 {
+  const SysprofTimeSpan *visible_time;
+  const SysprofTimeSpan *document_time;
+
   g_assert (SYSPROF_IS_WINDOW (self));
-  g_assert (SYSPROF_IS_NOTEBOOK (notebook));
+
+  if (self->session == NULL)
+    return;
+
+  visible_time = sysprof_session_get_visible_time (self->session);
+  document_time = sysprof_session_get_document_time (self->session);
 
   gtk_widget_action_set_enabled (GTK_WIDGET (self),
-                                 "win.replay-capture",
-                                 sysprof_notebook_get_can_replay (notebook));
-}
-
-static void
-sysprof_window_notify_can_save_cb (SysprofWindow   *self,
-                                   GParamSpec      *pspec,
-                                   SysprofNotebook *notebook)
-{
-  g_assert (SYSPROF_IS_WINDOW (self));
-  g_assert (SYSPROF_IS_NOTEBOOK (notebook));
-
+                                 "session.zoom-one",
+                                 !sysprof_time_span_equal (visible_time, document_time));
   gtk_widget_action_set_enabled (GTK_WIDGET (self),
-                                 "win.save-capture",
-                                 sysprof_notebook_get_can_save (notebook));
+                                 "session.zoom-out",
+                                 !sysprof_time_span_equal (visible_time, document_time));
+  gtk_widget_action_set_enabled (GTK_WIDGET (self),
+                                 "session.seek-backward",
+                                 visible_time->begin_nsec > document_time->begin_nsec);
+  gtk_widget_action_set_enabled (GTK_WIDGET (self),
+                                 "session.seek-forward",
+                                 visible_time->end_nsec < document_time->end_nsec);
 }
 
 static void
-new_tab_cb (GtkWidget  *widget,
-            const char *action_name,
-            GVariant   *param)
+show_greeter (SysprofWindow      *self,
+              SysprofGreeterPage  page)
 {
-  SysprofWindow *self = (SysprofWindow *)widget;
+  SysprofGreeter *greeter;
 
-  g_return_if_fail (SYSPROF_IS_WINDOW (self));
+  g_assert (SYSPROF_IS_WINDOW (self));
 
-  sysprof_window_new_tab (self);
+  greeter = g_object_new (SYSPROF_TYPE_GREETER,
+                          "transient-for", self,
+                          NULL);
+  sysprof_greeter_set_page (greeter, page);
+  gtk_window_present (GTK_WINDOW (greeter));
 }
 
 static void
-switch_tab_cb (GtkWidget  *widget,
-               const char *action_name,
-               GVariant   *param)
+sysprof_window_open_capture_action (GtkWidget  *widget,
+                                    const char *action_name,
+                                    GVariant   *param)
 {
-  SysprofWindow *self = (SysprofWindow *)widget;
-  int page;
-
-  g_return_if_fail (SYSPROF_IS_WINDOW (self));
-  g_return_if_fail (g_variant_is_of_type (param, G_VARIANT_TYPE_INT32));
-
-  page = g_variant_get_int32 (param);
-  sysprof_notebook_set_current_page (self->notebook, page - 1);
+  show_greeter (SYSPROF_WINDOW (widget), SYSPROF_GREETER_PAGE_OPEN);
 }
 
 static void
-close_tab_cb (GtkWidget  *widget,
-              const char *action_name,
-              GVariant   *param)
+sysprof_window_record_capture_action (GtkWidget  *widget,
+                                      const char *action_name,
+                                      GVariant   *param)
 {
-  SysprofWindow *self = (SysprofWindow *)widget;
+  show_greeter (SYSPROF_WINDOW (widget), SYSPROF_GREETER_PAGE_RECORD);
+}
 
-  g_return_if_fail (SYSPROF_IS_WINDOW (self));
+static void
+sysprof_window_set_document (SysprofWindow   *self,
+                             SysprofDocument *document)
+{
+  static const char *callgraph_actions[] = {
+    "bottom-up",
+    "categorize-frames",
+    "hide-system-libraries",
+    "include-threads",
+  };
 
-  if (sysprof_notebook_get_n_pages (self->notebook) == 1)
+  g_assert (SYSPROF_IS_WINDOW (self));
+  g_assert (SYSPROF_IS_DOCUMENT (document));
+  g_assert (self->document == NULL);
+  g_assert (self->session == NULL);
+
+  g_set_object (&self->document, document);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_DOCUMENT]);
+
+  self->session = sysprof_session_new (document);
+  g_signal_connect_object (self->session,
+                           "notify::selected-time",
+                           G_CALLBACK (sysprof_window_update_zoom_actions),
+                           self,
+                           G_CONNECT_SWAPPED);
+  g_signal_connect_object (self->session,
+                           "notify::visible-time",
+                           G_CALLBACK (sysprof_window_update_zoom_actions),
+                           self,
+                           G_CONNECT_SWAPPED);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SESSION]);
+
+  for (guint i = 0; i < G_N_ELEMENTS (callgraph_actions); i++)
     {
-      SysprofDisplay *child = sysprof_notebook_get_nth_page (self->notebook, 0);
+      g_autofree char *action_name = g_strdup_printf ("callgraph.%s", callgraph_actions[i]);
+      g_autoptr(GPropertyAction) action = g_property_action_new (action_name, self->session, callgraph_actions[i]);
 
-      if (SYSPROF_IS_DISPLAY (child) &&
-          sysprof_display_is_empty (SYSPROF_DISPLAY (child)))
-        {
-          gtk_window_destroy (GTK_WINDOW (self));
-          return;
-        }
+      g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (action));
     }
 
-  sysprof_notebook_close_current (self->notebook);
+  sysprof_window_update_zoom_actions (self);
 }
 
 static void
-replay_capture_cb (GtkWidget  *widget,
-                   const char *action_name,
-                   GVariant   *param)
+main_view_notify_sidebar (SysprofWindow       *self,
+                          GParamSpec          *pspec,
+                          AdwOverlaySplitView *main_view)
 {
-  SysprofWindow *self = (SysprofWindow *)widget;
+  GtkWidget *sidebar;
 
-  g_return_if_fail (SYSPROF_IS_WINDOW (self));
+  g_assert (SYSPROF_IS_WINDOW (self));
+  g_assert (ADW_IS_OVERLAY_SPLIT_VIEW (main_view));
 
-  sysprof_notebook_replay (self->notebook);
+  if (self->disposed)
+      return;
+
+  sidebar = adw_overlay_split_view_get_sidebar (main_view);
+
+  if (sidebar == NULL)
+    adw_overlay_split_view_set_show_sidebar (main_view, FALSE);
+
+  gtk_widget_set_sensitive (GTK_WIDGET (self->show_right_sidebar), sidebar != NULL);
 }
 
 static void
-save_capture_cb (GtkWidget  *widget,
-                 const char *action_name,
-                 GVariant   *param)
+sysprof_window_session_seek_backward (GtkWidget  *widget,
+                                      const char *action_name,
+                                      GVariant   *param)
 {
   SysprofWindow *self = (SysprofWindow *)widget;
-
-  g_return_if_fail (SYSPROF_IS_WINDOW (self));
-
-  sysprof_notebook_save (self->notebook);
-}
-
-static void
-stop_recording_cb (GtkWidget  *widget,
-                   const char *action_name,
-                   GVariant   *param)
-{
-  SysprofWindow *self = (SysprofWindow *)widget;
-  SysprofDisplay *current;
+  const SysprofTimeSpan *document_time;
+  const SysprofTimeSpan *visible_time;
+  SysprofTimeSpan select;
+  gint64 duration;
 
   g_assert (SYSPROF_IS_WINDOW (self));
 
-  if ((current = sysprof_notebook_get_current (self->notebook)))
-    sysprof_display_stop_recording (current);
+  if (self->session == NULL)
+    return;
+
+  visible_time = sysprof_session_get_visible_time (self->session);
+  document_time = sysprof_session_get_document_time (self->session);
+  duration = sysprof_time_span_duration (*visible_time);
+
+  select.begin_nsec = MAX (document_time->begin_nsec, visible_time->begin_nsec - duration);
+  select.end_nsec = select.begin_nsec + duration;
+
+  sysprof_session_select_time (self->session, &select);
+  sysprof_session_zoom_to_selection (self->session);
 }
 
 static void
-sysprof_window_finalize (GObject *object)
+sysprof_window_session_seek_forward (GtkWidget  *widget,
+                                     const char *action_name,
+                                     GVariant   *param)
+{
+  SysprofWindow *self = (SysprofWindow *)widget;
+  const SysprofTimeSpan *document_time;
+  const SysprofTimeSpan *visible_time;
+  SysprofTimeSpan select;
+  gint64 duration;
+
+  g_assert (SYSPROF_IS_WINDOW (self));
+
+  if (self->session == NULL)
+    return;
+
+  visible_time = sysprof_session_get_visible_time (self->session);
+  document_time = sysprof_session_get_document_time (self->session);
+  duration = sysprof_time_span_duration (*visible_time);
+
+  select.begin_nsec = MIN (document_time->end_nsec - duration, visible_time->begin_nsec + duration);
+  select.end_nsec = select.begin_nsec + duration;
+
+  sysprof_session_select_time (self->session, &select);
+  sysprof_session_zoom_to_selection (self->session);
+}
+
+static void
+sysprof_window_session_zoom_one (GtkWidget  *widget,
+                                 const char *action_name,
+                                 GVariant   *param)
+{
+  SysprofWindow *self = (SysprofWindow *)widget;
+
+  g_assert (SYSPROF_IS_WINDOW (self));
+
+  if (self->session == NULL)
+    return;
+
+  sysprof_session_select_time (self->session,
+                               sysprof_session_get_document_time (self->session));
+}
+
+static void
+sysprof_window_session_zoom_in (GtkWidget  *widget,
+                                const char *action_name,
+                                GVariant   *param)
+{
+  SysprofWindow *self = (SysprofWindow *)widget;
+  const SysprofTimeSpan *visible_time;
+  SysprofTimeSpan select;
+  gint64 duration;
+
+  g_assert (SYSPROF_IS_WINDOW (self));
+
+  if (self->session == NULL)
+    return;
+
+  visible_time = sysprof_session_get_visible_time (self->session);
+  duration = sysprof_time_span_duration (*visible_time);
+
+  select.begin_nsec = visible_time->begin_nsec + (duration / 4);
+  select.end_nsec = select.begin_nsec + (duration / 2);
+
+  sysprof_session_select_time (self->session, &select);
+  sysprof_session_zoom_to_selection (self->session);
+}
+
+static void
+sysprof_window_session_zoom_out (GtkWidget  *widget,
+                                 const char *action_name,
+                                 GVariant   *param)
+{
+  SysprofWindow *self = (SysprofWindow *)widget;
+  SysprofTimeSpan select;
+  gint64 duration;
+
+  g_assert (SYSPROF_IS_WINDOW (self));
+
+  if (self->session == NULL)
+    return;
+
+  select = *sysprof_session_get_visible_time (self->session);
+  duration = sysprof_time_span_duration (select);
+
+  select.begin_nsec -= floor (duration / 2.);
+  select.end_nsec += ceil (duration / 2.);
+
+  sysprof_session_select_time (self->session, &select);
+  sysprof_session_zoom_to_selection (self->session);
+}
+
+static void
+sysprof_window_dispose (GObject *object)
 {
   SysprofWindow *self = (SysprofWindow *)object;
 
-  g_binding_group_set_source (self->bindings, NULL);
-  g_clear_object (&self->bindings);
+  self->disposed = TRUE;
 
-  G_OBJECT_CLASS (sysprof_window_parent_class)->finalize (object);
+  if (self->right_split_overlay)
+    adw_overlay_split_view_set_sidebar (ADW_OVERLAY_SPLIT_VIEW (self->right_split_overlay), NULL);
+
+  gtk_widget_dispose_template (GTK_WIDGET (self), SYSPROF_TYPE_WINDOW);
+
+  g_clear_object (&self->document);
+  g_clear_object (&self->session);
+
+  G_OBJECT_CLASS (sysprof_window_parent_class)->dispose (object);
+}
+
+static void
+sysprof_window_get_property (GObject    *object,
+                             guint       prop_id,
+                             GValue     *value,
+                             GParamSpec *pspec)
+{
+  SysprofWindow *self = SYSPROF_WINDOW (object);
+
+  switch (prop_id)
+    {
+    case PROP_DOCUMENT:
+      g_value_set_object (value, sysprof_window_get_document (self));
+      break;
+
+    case PROP_SESSION:
+      g_value_set_object (value, sysprof_window_get_session (self));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
+}
+
+static void
+sysprof_window_set_property (GObject      *object,
+                             guint         prop_id,
+                             const GValue *value,
+                             GParamSpec   *pspec)
+{
+  SysprofWindow *self = SYSPROF_WINDOW (object);
+
+  switch (prop_id)
+    {
+    case PROP_DOCUMENT:
+      sysprof_window_set_document (self, g_value_get_object (value));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
 }
 
 static void
@@ -187,131 +368,215 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->finalize = sysprof_window_finalize;
+  object_class->dispose = sysprof_window_dispose;
+  object_class->get_property = sysprof_window_get_property;
+  object_class->set_property = sysprof_window_set_property;
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-window.ui");
-  gtk_widget_class_bind_template_child (widget_class, SysprofWindow, menu_button);
-  gtk_widget_class_bind_template_child (widget_class, SysprofWindow, open_button);
-  gtk_widget_class_bind_template_child (widget_class, SysprofWindow, notebook);
+  properties[PROP_DOCUMENT] =
+    g_param_spec_object ("document", NULL, NULL,
+                         SYSPROF_TYPE_DOCUMENT,
+                         (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
 
-  gtk_widget_class_install_action (widget_class, "win.close-tab", NULL, close_tab_cb);
-  gtk_widget_class_install_action (widget_class, "win.new-tab", NULL, new_tab_cb);
-  gtk_widget_class_install_action (widget_class, "win.switch-tab", "i", switch_tab_cb);
-  gtk_widget_class_install_action (widget_class, "win.replay-capture", NULL, replay_capture_cb);
-  gtk_widget_class_install_action (widget_class, "win.save-capture", NULL, save_capture_cb);
-  gtk_widget_class_install_action (widget_class, "win.stop-recording", NULL, stop_recording_cb);
+  properties[PROP_SESSION] =
+    g_param_spec_object ("session", NULL, NULL,
+                         SYSPROF_TYPE_SESSION,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
-  gtk_widget_class_add_binding_action (widget_class, GDK_KEY_Escape, 0, "win.stop-recording", NULL);
+  g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  g_type_ensure (SYSPROF_TYPE_NOTEBOOK);
-  g_type_ensure (SYSPROF_TYPE_DISPLAY);
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-window.ui");
+
+  gtk_widget_class_bind_template_child (widget_class, SysprofWindow, show_right_sidebar);
+  gtk_widget_class_bind_template_child (widget_class, SysprofWindow, left_split_overlay);
+  gtk_widget_class_bind_template_child (widget_class, SysprofWindow, right_split_overlay);
+
+  gtk_widget_class_bind_template_callback (widget_class, main_view_notify_sidebar);
+
+  gtk_widget_class_install_action (widget_class, "win.open-capture", NULL, sysprof_window_open_capture_action);
+  gtk_widget_class_install_action (widget_class, "win.record-capture", NULL, sysprof_window_record_capture_action);
+  gtk_widget_class_install_action (widget_class, "session.zoom-one", NULL, sysprof_window_session_zoom_one);
+  gtk_widget_class_install_action (widget_class, "session.zoom-out", NULL, sysprof_window_session_zoom_out);
+  gtk_widget_class_install_action (widget_class, "session.zoom-in", NULL, sysprof_window_session_zoom_in);
+  gtk_widget_class_install_action (widget_class, "session.seek-forward", NULL, sysprof_window_session_seek_forward);
+  gtk_widget_class_install_action (widget_class, "session.seek-backward", NULL, sysprof_window_session_seek_backward);
+
+  gtk_widget_class_add_binding_action (widget_class, GDK_KEY_plus, GDK_CONTROL_MASK, "session.zoom-in", NULL);
+  gtk_widget_class_add_binding_action (widget_class, GDK_KEY_equal, GDK_CONTROL_MASK, "session.zoom-in", NULL);
+  gtk_widget_class_add_binding_action (widget_class, GDK_KEY_minus, GDK_CONTROL_MASK, "session.zoom-out", NULL);
+  gtk_widget_class_add_binding_action (widget_class, GDK_KEY_0, GDK_CONTROL_MASK, "session.zoom-one", NULL);
+
+  gtk_widget_class_add_binding_action (widget_class, GDK_KEY_bracketleft, GDK_CONTROL_MASK, "session.seek-backward", NULL);
+  gtk_widget_class_add_binding_action (widget_class, GDK_KEY_bracketright, GDK_CONTROL_MASK, "session.seek-forward", NULL);
+
+  g_type_ensure (SYSPROF_TYPE_COUNTERS_SECTION);
+  g_type_ensure (SYSPROF_TYPE_CPU_SECTION);
+  g_type_ensure (SYSPROF_TYPE_DOCUMENT);
+  g_type_ensure (SYSPROF_TYPE_FILES_SECTION);
+  g_type_ensure (SYSPROF_TYPE_LOGS_SECTION);
+  g_type_ensure (SYSPROF_TYPE_MARKS_SECTION);
+  g_type_ensure (SYSPROF_TYPE_MEMORY_SECTION);
+  g_type_ensure (SYSPROF_TYPE_METADATA_SECTION);
+  g_type_ensure (SYSPROF_TYPE_PROCESSES_SECTION);
+  g_type_ensure (SYSPROF_TYPE_SAMPLES_SECTION);
+  g_type_ensure (SYSPROF_TYPE_SESSION);
+  g_type_ensure (SYSPROF_TYPE_SIDEBAR);
 }
 
 static void
 sysprof_window_init (SysprofWindow *self)
 {
-  GMenu *menu;
+  g_autoptr(GPropertyAction) show_left_sidebar = NULL;
+  g_autoptr(GPropertyAction) show_right_sidebar = NULL;
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
-  menu = gtk_application_get_menu_by_id (GTK_APPLICATION (g_application_get_default ()), "win-menu");
-  gtk_menu_button_set_menu_model (self->menu_button, G_MENU_MODEL (menu));
+  show_left_sidebar = g_property_action_new ("show-left-sidebar",
+                                             self->left_split_overlay,
+                                             "show-sidebar");
+  g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (show_left_sidebar));
 
-  g_signal_connect_object (self->notebook,
-                           "notify::can-replay",
-                           G_CALLBACK (sysprof_window_notify_can_replay_cb),
-                           self,
-                           G_CONNECT_SWAPPED);
-
-  g_signal_connect_object (self->notebook,
-                           "notify::can-save",
-                           G_CALLBACK (sysprof_window_notify_can_save_cb),
-                           self,
-                           G_CONNECT_SWAPPED);
-
-  self->bindings = g_binding_group_new ();
-  g_binding_group_bind (self->bindings, "title", self, "title", G_BINDING_SYNC_CREATE);
-  g_object_bind_property (self->notebook, "current", self->bindings, "source",
-                          G_BINDING_SYNC_CREATE);
-
-  gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.save-capture", FALSE);
-  gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.replay-capture", FALSE);
+  show_right_sidebar = g_property_action_new ("show-right-sidebar",
+                                              self->right_split_overlay,
+                                              "show-sidebar");
+  g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (show_right_sidebar));
 }
 
-void
-sysprof_window_open (SysprofWindow *self,
-                     GFile         *file)
+GtkWidget *
+sysprof_window_new (SysprofApplication *app,
+                    SysprofDocument    *document)
 {
-  g_return_if_fail (SYSPROF_IS_WINDOW (self));
-  g_return_if_fail (G_IS_FILE (file));
+  g_return_val_if_fail (SYSPROF_IS_APPLICATION (app), NULL);
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (document), NULL);
 
-  sysprof_notebook_open (self->notebook, file);
+  return g_object_new (SYSPROF_TYPE_WINDOW,
+                       "application", app,
+                       "document", document,
+                       NULL);
+}
+
+/**
+ * sysprof_window_get_session:
+ * @self: a #SysprofWindow
+ *
+ * Gets the session for the window.
+ *
+ * Returns: (transfer none): a #SysprofSession
+ */
+SysprofSession *
+sysprof_window_get_session (SysprofWindow *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_WINDOW (self), NULL);
+
+  return self->session;
+}
+
+/**
+ * sysprof_window_get_document:
+ * @self: a #SysprofWindow
+ *
+ * Gets the document for the window.
+ *
+ * Returns: (transfer none): a #SysprofDocument
+ */
+SysprofDocument *
+sysprof_window_get_document (SysprofWindow *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_WINDOW (self), NULL);
+
+  return self->document;
 }
 
 static void
-sysprof_window_open_from_dialog_cb (SysprofWindow        *self,
-                                    int                   response,
-                                    GtkFileChooserNative *dialog)
+sysprof_window_load_cb (GObject      *object,
+                        GAsyncResult *result,
+                        gpointer      user_data)
 {
-  g_assert (SYSPROF_IS_WINDOW (self));
-  g_assert (GTK_IS_FILE_CHOOSER_NATIVE (dialog));
+  SysprofDocumentLoader *loader = (SysprofDocumentLoader *)object;
+  g_autoptr(SysprofApplication) app = user_data;
+  g_autoptr(SysprofDocument) document = NULL;
+  g_autoptr(GError) error = NULL;
 
-  if (response == GTK_RESPONSE_ACCEPT)
+  g_assert (SYSPROF_IS_DOCUMENT_LOADER (loader));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (SYSPROF_IS_APPLICATION (app));
+
+  g_application_release (G_APPLICATION (app));
+
+  if (!(document = sysprof_document_loader_load_finish (loader, result, &error)))
     {
-      g_autoptr(GFile) file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (dialog));
+      GtkWidget *dialog;
 
-      if (g_file_is_native (file))
-        sysprof_window_open (self, file);
+      dialog = adw_message_dialog_new (NULL, _("Invalid Document"), NULL);
+      adw_message_dialog_format_body (ADW_MESSAGE_DIALOG (dialog),
+                                      _("The document could not be loaded. Please check that you have the correct capture file.\n\n%s"),
+                                      error->message);
+      adw_message_dialog_add_response (ADW_MESSAGE_DIALOG (dialog), "close", _("Close"));
+      gtk_application_add_window (GTK_APPLICATION (app), GTK_WINDOW (dialog));
+      gtk_window_present (GTK_WINDOW (dialog));
+    }
+  else
+    {
+      GtkWidget *window;
+
+      window = sysprof_window_new (app, document);
+      gtk_window_present (GTK_WINDOW (window));
+    }
+}
+
+static void
+sysprof_window_apply_loader_settings (SysprofDocumentLoader *loader)
+{
+  /* TODO: apply loader settings from gsettings/etc */
+}
+
+void
+sysprof_window_open (SysprofApplication *app,
+                     GFile              *file)
+{
+  g_autoptr(SysprofDocumentLoader) loader = NULL;
+
+  g_return_if_fail (SYSPROF_IS_APPLICATION (app));
+  g_return_if_fail (G_IS_FILE (file));
+
+  if (!g_file_is_native (file) ||
+      !(loader = sysprof_document_loader_new (g_file_peek_path (file))))
+    {
+      g_autofree char *uri = g_file_get_uri (file);
+      g_warning ("Cannot open non-native file \"%s\"", uri);
+      return;
     }
 
-  gtk_native_dialog_destroy (GTK_NATIVE_DIALOG (dialog));
+  g_application_hold (G_APPLICATION (app));
+  sysprof_window_apply_loader_settings (loader);
+  sysprof_document_loader_load_async (loader,
+                                      NULL,
+                                      sysprof_window_load_cb,
+                                      g_object_ref (app));
+
 }
 
 void
-sysprof_window_open_from_dialog (SysprofWindow *self)
+sysprof_window_open_fd (SysprofApplication *app,
+                        int                 fd)
 {
-  GtkFileChooserNative *dialog;
-  GtkFileFilter *filter;
+  g_autoptr(SysprofDocumentLoader) loader = NULL;
+  g_autoptr(GError) error = NULL;
 
-  g_return_if_fail (SYSPROF_IS_WINDOW (self));
+  g_return_if_fail (SYSPROF_IS_APPLICATION (app));
 
-  /* Translators: This is a window title. */
-  dialog = gtk_file_chooser_native_new (_("Open Capture…"),
-                                        GTK_WINDOW (self),
-                                        GTK_FILE_CHOOSER_ACTION_OPEN,
-                                        /* Translators: This is a button. */
-                                        _("Open"),
-                                        /* Translators: This is a button. */
-                                        _("Cancel"));
+  if (!(loader = sysprof_document_loader_new_for_fd (fd, &error)))
+    {
+      g_critical ("Failed to dup FD: %s", error->message);
+      return;
+    }
 
-  filter = gtk_file_filter_new ();
-  gtk_file_filter_set_name (filter, _("Sysprof Captures"));
-  gtk_file_filter_add_pattern (filter, "*.syscap");
-  gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog), filter);
+  g_debug ("Opening recording by FD");
 
-  filter = gtk_file_filter_new ();
-  gtk_file_filter_set_name (filter, _("All Files"));
-  gtk_file_filter_add_pattern (filter, "*");
-  gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog), filter);
+  g_application_hold (G_APPLICATION (app));
+  sysprof_window_apply_loader_settings (loader);
+  sysprof_document_loader_load_async (loader,
+                                      NULL,
+                                      sysprof_window_load_cb,
+                                      g_object_ref (app));
 
-  g_signal_connect_object (dialog,
-                           "response",
-                           G_CALLBACK (sysprof_window_open_from_dialog_cb),
-                           self,
-                           G_CONNECT_SWAPPED);
-
-  gtk_native_dialog_show (GTK_NATIVE_DIALOG (dialog));
-}
-
-void
-sysprof_window_new_tab (SysprofWindow *self)
-{
-  GtkWidget *display;
-  gint page;
-
-  g_return_if_fail (SYSPROF_IS_WINDOW (self));
-
-  display = sysprof_display_new ();
-  page = sysprof_notebook_append (self->notebook, SYSPROF_DISPLAY (display));
-  sysprof_notebook_set_current_page (self->notebook, page);
 }

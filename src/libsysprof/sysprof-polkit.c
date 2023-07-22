@@ -1,6 +1,6 @@
 /* sysprof-polkit.c
  *
- * Copyright 2019 Christian Hergert <chergert@redhat.com>
+ * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,24 +18,92 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#define G_LOG_DOMAIN "sysprof-polkit"
-
 #include "config.h"
 
-#if HAVE_POLKIT
-# include <polkit/polkit.h>
-#endif
-
 #include "sysprof-polkit-private.h"
-#include "sysprof-backport-autocleanups.h"
 
-#if HAVE_POLKIT
-typedef struct
+static void
+sysprof_polkit_authority_cb (GObject      *object,
+                             GAsyncResult *result,
+                             gpointer      user_data)
 {
-  const gchar   *policy;
-  PolkitSubject *subject;
-  GHashTable    *details;
-  guint          allow_user_interaction : 1;
+  g_autoptr(PolkitAuthority) authority = NULL;
+  g_autoptr(DexPromise) promise = user_data;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (DEX_IS_PROMISE (promise));
+
+  if (!(authority = polkit_authority_get_finish (result, &error)))
+    dex_promise_reject (promise, g_steal_pointer (&error));
+  else
+    dex_promise_resolve_object (promise, g_steal_pointer (&authority));
+}
+
+static DexFuture *
+_sysprof_polkit_authority (void)
+{
+  DexPromise *promise = dex_promise_new ();
+
+  polkit_authority_get_async (dex_promise_get_cancellable (DEX_PROMISE (promise)),
+                              sysprof_polkit_authority_cb,
+                              dex_ref (promise));
+
+  return DEX_FUTURE (promise);
+}
+
+static void
+sysprof_polkit_check_cb (GObject      *object,
+                         GAsyncResult *result,
+                         gpointer      user_data)
+{
+  PolkitAuthority *authority = (PolkitAuthority *)object;
+  g_autoptr(PolkitAuthorizationResult) res = NULL;
+  g_autoptr(DexPromise) promise = user_data;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (POLKIT_IS_AUTHORITY (authority));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (DEX_IS_PROMISE (promise));
+
+  if (!(res = polkit_authority_check_authorization_finish (authority, result, &error)))
+    dex_promise_reject (promise, g_steal_pointer (&error));
+  else if (!polkit_authorization_result_get_is_authorized (res))
+    dex_promise_reject (promise,
+                        g_error_new (G_DBUS_ERROR,
+                                     G_DBUS_ERROR_AUTH_FAILED,
+                                     "Failed to authorize user credentials"));
+  else
+    dex_promise_resolve_boolean (promise, TRUE);
+}
+
+static DexFuture *
+_sysprof_polkit_check (PolkitAuthority               *authority,
+                       PolkitSubject                 *subject,
+                       const char                    *policy,
+                       PolkitDetails                 *details,
+                       PolkitCheckAuthorizationFlags  flags)
+{
+  DexPromise *promise = dex_promise_new ();
+
+  polkit_authority_check_authorization (authority,
+                                        subject,
+                                        policy,
+                                        details,
+                                        flags,
+                                        dex_promise_get_cancellable (DEX_PROMISE (promise)),
+                                        sysprof_polkit_check_cb,
+                                        dex_ref (promise));
+
+  return DEX_FUTURE (promise);
+}
+
+typedef struct _Authorize
+{
+  GDBusConnection *connection;
+  char            *policy;
+  PolkitDetails   *details;
+  guint            allow_user_interaction : 1;
 } Authorize;
 
 static void
@@ -43,135 +111,71 @@ authorize_free (gpointer data)
 {
   Authorize *auth = data;
 
-  g_clear_object (&auth->subject);
-  g_clear_pointer (&auth->details, g_hash_table_unref);
-  g_slice_free (Authorize, auth);
+  g_clear_pointer (&auth->policy, g_free);
+  g_clear_object (&auth->connection);
+  g_clear_object (&auth->details);
+  g_free (auth);
 }
 
-static void
-sysprof_polkit_check_authorization_cb (GObject      *object,
-                                       GAsyncResult *result,
-                                       gpointer      user_data)
+static Authorize *
+authorize_new (GDBusConnection *connection,
+               const char      *policy,
+               PolkitDetails   *details,
+               gboolean         allow_user_interaction)
 {
-  PolkitAuthority *authority = (PolkitAuthority *)object;
-  g_autoptr(PolkitAuthorizationResult) res = NULL;
-  g_autoptr(GError) error = NULL;
-  g_autoptr(GTask) task = user_data;
+  Authorize *auth;
 
-  g_assert (POLKIT_IS_AUTHORITY (authority));
-  g_assert (G_IS_ASYNC_RESULT (result));
-  g_assert (G_IS_TASK (task));
+  auth = g_new0 (Authorize, 1);
+  g_set_object (&auth->connection, connection);
+  g_set_object (&auth->details, details);
+  auth->policy = g_strdup (policy);
+  auth->allow_user_interaction = !!allow_user_interaction;
 
-  if (!(res = polkit_authority_check_authorization_finish (authority, result, &error)))
-    g_task_return_error (task, g_steal_pointer (&error));
-  else if (!polkit_authorization_result_get_is_authorized (res))
-    g_task_return_new_error (task,
-                             G_IO_ERROR,
-                             G_IO_ERROR_PROXY_AUTH_FAILED,
-                             "Failed to authorize user credentials");
-  else
-    g_task_return_boolean (task, TRUE);
+  return auth;
 }
 
-static void
-sysprof_polkit_get_authority_cb (GObject      *object,
-                                 GAsyncResult *result,
-                                 gpointer      user_data)
+static DexFuture *
+authorize_fiber (gpointer data)
 {
   g_autoptr(PolkitAuthority) authority = NULL;
-  g_autoptr(PolkitDetails) details = NULL;
+  g_autoptr(PolkitSubject) subject = NULL;
   g_autoptr(GError) error = NULL;
-  g_autoptr(GTask) task = user_data;
-  GCancellable *cancellable;
-  Authorize *auth;
+  const char *bus_name;
+  Authorize *auth = data;
   guint flags = 0;
 
-  g_assert (G_IS_ASYNC_RESULT (result));
-  g_assert (G_IS_TASK (task));
-
-  cancellable = g_task_get_cancellable (task);
-  auth = g_task_get_task_data (task);
-
-  g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
   g_assert (auth != NULL);
-  g_assert (POLKIT_IS_SUBJECT (auth->subject));
+  g_assert (G_IS_DBUS_CONNECTION (auth->connection));
+  g_assert (!auth->details || POLKIT_IS_DETAILS (auth->details));
+  g_assert (auth->policy != NULL);
 
-  if (!(authority = polkit_authority_get_finish (result, &error)))
-    {
-      g_task_return_error (task, g_steal_pointer (&error));
-      return;
-    }
+  bus_name = g_dbus_connection_get_unique_name (auth->connection);
+  subject = polkit_system_bus_name_new (bus_name);
+
+  if (!(authority = dex_await_object (_sysprof_polkit_authority (), &error)))
+    return dex_future_new_for_error (g_steal_pointer (&error));
 
   if (auth->allow_user_interaction)
     flags |= POLKIT_CHECK_AUTHORIZATION_FLAGS_ALLOW_USER_INTERACTION;
 
-  if (auth->details != NULL)
-    {
-      GHashTableIter iter;
-      gpointer k, v;
+  if (!dex_await_boolean (_sysprof_polkit_check (authority, subject, auth->policy, auth->details, flags), &error))
+    return dex_future_new_for_error (g_steal_pointer (&error));
 
-      details = polkit_details_new ();
-      g_hash_table_iter_init (&iter, auth->details);
-      while (g_hash_table_iter_next (&iter, &k, &v))
-        polkit_details_insert (details, k, v);
-    }
-
-  polkit_authority_check_authorization (authority,
-                                        auth->subject,
-                                        auth->policy,
-                                        details,
-                                        flags,
-                                        cancellable,
-                                        sysprof_polkit_check_authorization_cb,
-                                        g_steal_pointer (&task));
-}
-#endif
-
-void
-_sysprof_polkit_authorize_for_bus_async (GDBusConnection     *bus,
-                                         const gchar         *policy,
-                                         GHashTable          *details,
-                                         gboolean             allow_user_interaction,
-                                         GCancellable        *cancellable,
-                                         GAsyncReadyCallback  callback,
-                                         gpointer             user_data)
-{
-  g_autoptr(GTask) task = NULL;
-#if HAVE_POLKIT
-  const gchar *bus_name;
-  Authorize *auth;
-#endif
-
-  g_return_if_fail (G_IS_DBUS_CONNECTION (bus));
-  g_return_if_fail (policy != NULL);
-  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
-
-  task = g_task_new (NULL, cancellable, callback, user_data);
-  g_task_set_source_tag (task, _sysprof_polkit_authorize_for_bus_async);
-
-#if HAVE_POLKIT
-  bus_name = g_dbus_connection_get_unique_name (bus);
-
-  auth = g_slice_new0 (Authorize);
-  auth->subject = polkit_system_bus_name_new (bus_name);
-  auth->policy = g_intern_string (policy);
-  auth->details = details ? g_hash_table_ref (details) : NULL;
-  auth->allow_user_interaction = !!allow_user_interaction;
-  g_task_set_task_data (task, auth, authorize_free);
-
-  polkit_authority_get_async (cancellable,
-                              sysprof_polkit_get_authority_cb,
-                              g_steal_pointer (&task));
-#else
-  g_task_return_boolean (task, TRUE);
-#endif
+  return dex_future_new_for_boolean (TRUE);
 }
 
-gboolean
-_sysprof_polkit_authorize_for_bus_finish (GAsyncResult  *result,
-                                          GError       **error)
+DexFuture *
+_sysprof_polkit_authorize (GDBusConnection *connection,
+                           const char      *policy,
+                           PolkitDetails   *details,
+                           gboolean         allow_user_interaction)
 {
-  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+  g_return_val_if_fail (G_IS_DBUS_CONNECTION (connection), NULL);
+  g_return_val_if_fail (policy != NULL, NULL);
+  g_return_val_if_fail (!details || POLKIT_IS_DETAILS (details), NULL);
 
-  return g_task_propagate_boolean (G_TASK (result), error);
+  return dex_scheduler_spawn (NULL, 0,
+                              authorize_fiber,
+                              authorize_new (connection, policy, details, allow_user_interaction),
+                              authorize_free);
 }

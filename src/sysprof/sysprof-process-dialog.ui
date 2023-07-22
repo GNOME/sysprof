@@ -1,0 +1,678 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofProcessDialog" parent="AdwWindow">
+    <property name="default-width">800</property>
+    <property name="default-height">600</property>
+    <property name="content">
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="AdwHeaderBar">
+            <property name="title-widget">
+              <object class="AdwWindowTitle">
+                <binding name="title">
+                  <lookup name="pid" type="SysprofDocumentProcess">
+                    <lookup name="process">SysprofProcessDialog</lookup>
+                  </lookup>
+                </binding>
+                <binding name="subtitle">
+                  <lookup name="command-line" type="SysprofDocumentProcess">
+                    <lookup name="process">SysprofProcessDialog</lookup>
+                  </lookup>
+                </binding>
+              </object>
+            </property>
+          </object>
+        </child>
+        <property name="content">
+          <object class="GtkBox">
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="AdwViewStack" id="view_stack">
+                <property name="vexpand">true</property>
+                <child>
+                  <object class="AdwViewStackPage">
+                    <property name="icon-name">address-layout-symbolic</property>
+                    <property name="title" translatable="yes">Address Layout</property>
+                    <property name="child">
+                      <object class="GtkScrolledWindow">
+                        <property name="vexpand">true</property>
+                        <child>
+                          <object class="GtkColumnView" id="column_view">
+                            <property name="show-column-separators">true</property>
+                            <property name="show-row-separators">true</property>
+                            <style>
+                              <class name="data-table"/>
+                            </style>
+                            <property name="model">
+                              <object class="GtkMultiSelection">
+                                <property name="model">
+                                  <object class="GtkSortListModel">
+                                    <binding name="sorter">
+                                      <lookup name="sorter">column_view</lookup>
+                                    </binding>
+                                    <binding name="model">
+                                      <lookup name="memory-maps" type="SysprofDocumentProcess">
+                                        <lookup name="process">SysprofProcessDialog</lookup>
+                                      </lookup>
+                                    </binding>
+                                  </object>
+                                </property>
+                              </object>
+                            </property>
+                            <child>
+                              <object class="GtkColumnViewColumn" id="time_column">
+                                <property name="title" translatable="yes">Time</property>
+                                <property name="sorter">
+                                  <object class="GtkNumericSorter">
+                                    <property name="expression">
+                                      <lookup name="time" type="SysprofDocumentMmap"/>
+                                    </property>
+                                  </object>
+                                </property>
+                                <property name="factory">
+                                  <object class="GtkBuilderListItemFactory">
+                                    <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="SysprofTimeLabel">
+        <binding name="time-offset">
+          <lookup name="time-offset" type="SysprofDocumentMmap">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                    </property>
+                                  </object>
+                                </property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkColumnViewColumn" id="start_address_column">
+                                <property name="title" translatable="yes">Start Address</property>
+                                <property name="sorter">
+                                  <object class="GtkNumericSorter">
+                                    <property name="expression">
+                                      <lookup name="start-address" type="SysprofDocumentMmap"/>
+                                    </property>
+                                  </object>
+                                </property>
+                                <property name="factory">
+                                  <object class="GtkBuilderListItemFactory">
+                                    <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkLabel">
+        <property name="xalign">0</property>
+        <attributes>
+          <attribute name="family" value="monospace"/>
+          <attribute name="font-features" value="'tnum'"/>
+        </attributes>
+        <binding name="label">
+          <closure type="gchararray" function="format_address">
+            <lookup name="start-address" type="SysprofDocumentMmap">
+              <lookup name="item">GtkListItem</lookup>
+            </lookup>
+          </closure>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                    </property>
+                                  </object>
+                                </property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkColumnViewColumn" id="end_address_column">
+                                <property name="title" translatable="yes">End Address</property>
+                                <property name="sorter">
+                                  <object class="GtkNumericSorter">
+                                    <property name="expression">
+                                      <lookup name="end-address" type="SysprofDocumentMmap"/>
+                                    </property>
+                                  </object>
+                                </property>
+                                <property name="factory">
+                                  <object class="GtkBuilderListItemFactory">
+                                    <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkLabel">
+        <property name="xalign">0</property>
+        <attributes>
+          <attribute name="family" value="monospace"/>
+          <attribute name="font-features" value="'tnum'"/>
+        </attributes>
+        <binding name="label">
+          <closure type="gchararray" function="format_address">
+            <lookup name="end-address" type="SysprofDocumentMmap">
+              <lookup name="item">GtkListItem</lookup>
+            </lookup>
+          </closure>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                    </property>
+                                  </object>
+                                </property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkColumnViewColumn" id="file_column">
+                                <property name="title" translatable="yes">File</property>
+                                <property name="expand">true</property>
+                                <property name="sorter">
+                                  <object class="GtkStringSorter">
+                                    <property name="expression">
+                                      <lookup name="file" type="SysprofDocumentMmap"/>
+                                    </property>
+                                  </object>
+                                </property>
+                                <property name="factory">
+                                  <object class="GtkBuilderListItemFactory">
+                                    <property name="bytes"><![CDATA[
+    <?xml version="1.0" encoding="UTF-8"?>
+    <interface>
+      <template class="GtkListItem">
+        <property name="child">
+          <object class="GtkLabel">
+            <property name="xalign">0</property>
+            <binding name="label">
+              <lookup name="file" type="SysprofDocumentMmap">
+                <lookup name="item">GtkListItem</lookup>
+              </lookup>
+            </binding>
+          </object>
+        </property>
+      </template>
+    </interface>
+    ]]>
+                                    </property>
+                                  </object>
+                                </property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwViewStackPage">
+                    <property name="icon-name">process-mounts-symbolic</property>
+                    <property name="title" translatable="yes">Mounts</property>
+                    <property name="child">
+                      <object class="GtkScrolledWindow">
+                        <property name="vexpand">true</property>
+                        <child>
+                          <object class="GtkColumnView" id="mounts_column_view">
+                            <property name="show-column-separators">true</property>
+                            <property name="show-row-separators">true</property>
+                            <style>
+                              <class name="data-table"/>
+                            </style>
+                            <property name="model">
+                              <object class="GtkMultiSelection">
+                                <property name="model">
+                                  <object class="GtkSortListModel">
+                                    <binding name="sorter">
+                                      <lookup name="sorter">mounts_column_view</lookup>
+                                    </binding>
+                                    <binding name="model">
+                                      <lookup name="mounts" type="SysprofDocumentProcess">
+                                        <lookup name="process">SysprofProcessDialog</lookup>
+                                      </lookup>
+                                    </binding>
+                                  </object>
+                                </property>
+                              </object>
+                            </property>
+                            <child>
+                              <object class="GtkColumnViewColumn">
+                                <property name="title" translatable="yes">ID</property>
+                                <property name="sorter">
+                                  <object class="GtkNumericSorter">
+                                    <property name="expression">
+                                      <lookup name="mount-id" type="SysprofMount"/>
+                                    </property>
+                                  </object>
+                                </property>
+                                <property name="factory">
+                                  <object class="GtkBuilderListItemFactory">
+                                    <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkInscription">
+        <property name="nat-chars">2</property>
+        <binding name="text">
+          <lookup name="mount-id" type="SysprofMount">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                    </property>
+                                  </object>
+                                </property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkColumnViewColumn">
+                                <property name="title" translatable="yes">Parent</property>
+                                <property name="sorter">
+                                  <object class="GtkNumericSorter">
+                                    <property name="expression">
+                                      <lookup name="parent-mount-id" type="SysprofMount"/>
+                                    </property>
+                                  </object>
+                                </property>
+                                <property name="factory">
+                                  <object class="GtkBuilderListItemFactory">
+                                    <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkInscription">
+        <property name="nat-chars">2</property>
+        <binding name="text">
+          <lookup name="parent-mount-id" type="SysprofMount">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                    </property>
+                                  </object>
+                                </property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkColumnViewColumn">
+                                <property name="title" translatable="yes">Major</property>
+                                <property name="sorter">
+                                  <object class="GtkNumericSorter">
+                                    <property name="expression">
+                                      <lookup name="device-major" type="SysprofMount"/>
+                                    </property>
+                                  </object>
+                                </property>
+                                <property name="factory">
+                                  <object class="GtkBuilderListItemFactory">
+                                    <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkInscription">
+        <property name="nat-chars">2</property>
+        <binding name="text">
+          <lookup name="device-major" type="SysprofMount">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                    </property>
+                                  </object>
+                                </property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkColumnViewColumn">
+                                <property name="title" translatable="yes">Minor</property>
+                                <property name="sorter">
+                                  <object class="GtkNumericSorter">
+                                    <property name="expression">
+                                      <lookup name="device-minor" type="SysprofMount"/>
+                                    </property>
+                                  </object>
+                                </property>
+                                <property name="factory">
+                                  <object class="GtkBuilderListItemFactory">
+                                    <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkInscription">
+        <property name="nat-chars">2</property>
+        <binding name="text">
+          <lookup name="device-minor" type="SysprofMount">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                    </property>
+                                  </object>
+                                </property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkColumnViewColumn">
+                                <property name="title" translatable="yes">Mount Point</property>
+                                <property name="sorter">
+                                  <object class="GtkStringSorter">
+                                    <property name="expression">
+                                      <lookup name="mount-point" type="SysprofMount"/>
+                                    </property>
+                                  </object>
+                                </property>
+                                <property name="factory">
+                                  <object class="GtkBuilderListItemFactory">
+                                    <property name="bytes"><![CDATA[
+    <?xml version="1.0" encoding="UTF-8"?>
+    <interface>
+      <template class="GtkListItem">
+        <property name="child">
+          <object class="GtkLabel">
+            <property name="xalign">0</property>
+            <binding name="label">
+              <lookup name="mount-point" type="SysprofMount">
+                <lookup name="item">GtkListItem</lookup>
+              </lookup>
+            </binding>
+          </object>
+        </property>
+      </template>
+    </interface>
+    ]]>
+                                    </property>
+                                  </object>
+                                </property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkColumnViewColumn">
+                                <property name="title" translatable="yes">Mount Source</property>
+                                <property name="sorter">
+                                  <object class="GtkStringSorter">
+                                    <property name="expression">
+                                      <lookup name="mount-source" type="SysprofMount"/>
+                                    </property>
+                                  </object>
+                                </property>
+                                <property name="factory">
+                                  <object class="GtkBuilderListItemFactory">
+                                    <property name="bytes"><![CDATA[
+    <?xml version="1.0" encoding="UTF-8"?>
+    <interface>
+      <template class="GtkListItem">
+        <property name="child">
+          <object class="GtkLabel">
+            <property name="xalign">0</property>
+            <binding name="label">
+              <lookup name="mount-source" type="SysprofMount">
+                <lookup name="item">GtkListItem</lookup>
+              </lookup>
+            </binding>
+          </object>
+        </property>
+      </template>
+    </interface>
+    ]]>
+                                    </property>
+                                  </object>
+                                </property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkColumnViewColumn">
+                                <property name="title" translatable="yes">Root</property>
+                                <property name="sorter">
+                                  <object class="GtkStringSorter">
+                                    <property name="expression">
+                                      <lookup name="root" type="SysprofMount"/>
+                                    </property>
+                                  </object>
+                                </property>
+                                <property name="factory">
+                                  <object class="GtkBuilderListItemFactory">
+                                    <property name="bytes"><![CDATA[
+    <?xml version="1.0" encoding="UTF-8"?>
+    <interface>
+      <template class="GtkListItem">
+        <property name="child">
+          <object class="GtkLabel">
+            <property name="xalign">0</property>
+            <binding name="label">
+              <lookup name="root" type="SysprofMount">
+                <lookup name="item">GtkListItem</lookup>
+              </lookup>
+            </binding>
+          </object>
+        </property>
+      </template>
+    </interface>
+    ]]>
+                                    </property>
+                                  </object>
+                                </property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkColumnViewColumn">
+                                <property name="title" translatable="yes">Filesystem</property>
+                                <property name="sorter">
+                                  <object class="GtkStringSorter">
+                                    <property name="expression">
+                                      <lookup name="filesystem-type" type="SysprofMount"/>
+                                    </property>
+                                  </object>
+                                </property>
+                                <property name="factory">
+                                  <object class="GtkBuilderListItemFactory">
+                                    <property name="bytes"><![CDATA[
+    <?xml version="1.0" encoding="UTF-8"?>
+    <interface>
+      <template class="GtkListItem">
+        <property name="child">
+          <object class="GtkLabel">
+            <property name="xalign">0</property>
+            <binding name="label">
+              <lookup name="filesystem-type" type="SysprofMount">
+                <lookup name="item">GtkListItem</lookup>
+              </lookup>
+            </binding>
+          </object>
+        </property>
+      </template>
+    </interface>
+    ]]>
+                                    </property>
+                                  </object>
+                                </property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkColumnViewColumn">
+                                <property name="title" translatable="yes">Options</property>
+                                <property name="expand">true</property>
+                                <property name="sorter">
+                                  <object class="GtkStringSorter">
+                                    <property name="expression">
+                                      <lookup name="superblock-options" type="SysprofMount"/>
+                                    </property>
+                                  </object>
+                                </property>
+                                <property name="factory">
+                                  <object class="GtkBuilderListItemFactory">
+                                    <property name="bytes"><![CDATA[
+    <?xml version="1.0" encoding="UTF-8"?>
+    <interface>
+      <template class="GtkListItem">
+        <property name="child">
+          <object class="GtkLabel">
+            <property name="xalign">0</property>
+            <binding name="label">
+              <lookup name="superblock-options" type="SysprofMount">
+                <lookup name="item">GtkListItem</lookup>
+              </lookup>
+            </binding>
+          </object>
+        </property>
+      </template>
+    </interface>
+    ]]>
+                                    </property>
+                                  </object>
+                                </property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwViewStackPage">
+                    <property name="icon-name">threads-symbolic</property>
+                    <property name="title" translatable="yes">Threads</property>
+                    <property name="child">
+                      <object class="GtkScrolledWindow">
+                        <property name="vexpand">true</property>
+                        <child>
+                          <object class="GtkColumnView" id="threads_column_view">
+                            <property name="show-column-separators">true</property>
+                            <property name="show-row-separators">true</property>
+                            <style>
+                              <class name="data-table"/>
+                            </style>
+                            <property name="model">
+                              <object class="GtkMultiSelection">
+                                <property name="model">
+                                  <object class="GtkSortListModel">
+                                    <binding name="sorter">
+                                      <lookup name="sorter">threads_column_view</lookup>
+                                    </binding>
+                                    <binding name="model">
+                                      <lookup name="threads" type="SysprofDocumentProcess">
+                                        <lookup name="process">SysprofProcessDialog</lookup>
+                                      </lookup>
+                                    </binding>
+                                  </object>
+                                </property>
+                              </object>
+                            </property>
+                            <child>
+                              <object class="GtkColumnViewColumn" id="pid">
+                                <property name="title" translatable="yes">Thread ID</property>
+                                <property name="sorter">
+                                  <object class="GtkNumericSorter">
+                                    <property name="expression">
+                                      <lookup name="thread-id" type="SysprofThreadInfo"/>
+                                    </property>
+                                  </object>
+                                </property>
+                                <property name="factory">
+                                  <object class="GtkBuilderListItemFactory">
+                                    <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkLabel">
+        <property name="xalign">1</property>
+        <binding name="label">
+          <lookup name="thread-id" type="SysprofThreadInfo">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                    </property>
+                                  </object>
+                                </property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkColumnViewColumn" id="main_thread_column">
+                                <property name="title" translatable="yes">Main Thread</property>
+                                <property name="expand">true</property>
+                                <property name="sorter">
+                                  <object class="GtkNumericSorter">
+                                    <property name="expression">
+                                      <lookup name="is-main-thread" type="SysprofThreadInfo"/>
+                                    </property>
+                                  </object>
+                                </property>
+                                <property name="factory">
+                                  <object class="GtkBuilderListItemFactory">
+                                    <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkImage">
+        <property name="halign">start</property>
+        <property name="icon-name">object-select-symbolic</property>
+        <binding name="visible">
+          <lookup name="is-main-thread" type="SysprofThreadInfo">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                    </property>
+                                  </object>
+                                </property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwViewSwitcherBar">
+                <property name="stack">view_stack</property>
+                <property name="reveal">true</property>
+              </object>
+            </child>
+          </object>
+        </property>
+      </object>
+    </property>
+  </template>
+</interface>

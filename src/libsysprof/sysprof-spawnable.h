@@ -22,7 +22,7 @@
 
 #include <gio/gio.h>
 
-#include "sysprof-version-macros.h"
+#include <sysprof-capture.h>
 
 G_BEGIN_DECLS
 
@@ -39,30 +39,32 @@ SYSPROF_AVAILABLE_IN_ALL
 SysprofSpawnable    *sysprof_spawnable_new             (void);
 SYSPROF_AVAILABLE_IN_ALL
 void                 sysprof_spawnable_prepend_argv    (SysprofSpawnable          *self,
-                                                        const gchar               *argv);
+                                                        const char                *argv);
 SYSPROF_AVAILABLE_IN_ALL
 void                 sysprof_spawnable_append_argv     (SysprofSpawnable          *self,
-                                                        const gchar               *argv);
+                                                        const char                *argv);
 SYSPROF_AVAILABLE_IN_ALL
 void                 sysprof_spawnable_append_args     (SysprofSpawnable          *self,
-                                                        const gchar * const       *argv);
+                                                        const char  * const       *argv);
+SYSPROF_AVAILABLE_IN_ALL
+const char          *sysprof_spawnable_get_cwd         (SysprofSpawnable          *self);
 SYSPROF_AVAILABLE_IN_ALL
 void                 sysprof_spawnable_set_cwd         (SysprofSpawnable          *self,
-                                                        const gchar               *cwd);
+                                                        const char                *cwd);
 SYSPROF_AVAILABLE_IN_ALL
-const gchar * const *sysprof_spawnable_get_argv        (SysprofSpawnable          *self);
+const char * const  *sysprof_spawnable_get_argv        (SysprofSpawnable          *self);
 SYSPROF_AVAILABLE_IN_ALL
-const gchar * const *sysprof_spawnable_get_environ     (SysprofSpawnable          *self);
+const char * const  *sysprof_spawnable_get_environ     (SysprofSpawnable          *self);
 SYSPROF_AVAILABLE_IN_ALL
 void                 sysprof_spawnable_set_environ     (SysprofSpawnable          *self,
-                                                        const gchar * const       *environ);
+                                                        const char  * const       *environ);
 SYSPROF_AVAILABLE_IN_ALL
 void                 sysprof_spawnable_setenv          (SysprofSpawnable          *self,
-                                                        const gchar               *key,
-                                                        const gchar               *value);
+                                                        const char                *key,
+                                                        const char                *value);
 SYSPROF_AVAILABLE_IN_ALL
-const gchar         *sysprof_spawnable_getenv          (SysprofSpawnable          *self,
-                                                        const gchar               *key);
+const char          *sysprof_spawnable_getenv          (SysprofSpawnable          *self,
+                                                        const char                *key);
 SYSPROF_AVAILABLE_IN_ALL
 gint                 sysprof_spawnable_take_fd         (SysprofSpawnable          *self,
                                                         gint                       fd,
@@ -75,11 +77,17 @@ SYSPROF_AVAILABLE_IN_ALL
 void                 sysprof_spawnable_set_starting_fd (SysprofSpawnable          *self,
                                                         gint                       starting_fd);
 SYSPROF_AVAILABLE_IN_ALL
+int                  sysprof_spawnable_add_trace_fd    (SysprofSpawnable          *self,
+                                                        const char                *envvar);
+SYSPROF_AVAILABLE_IN_ALL
+void                 sysprof_spawnable_add_ld_preload  (SysprofSpawnable          *self,
+                                                        const char                *library_path);
+SYSPROF_AVAILABLE_IN_ALL
 GSubprocess         *sysprof_spawnable_spawn           (SysprofSpawnable          *self,
                                                         GError                   **error);
-SYSPROF_AVAILABLE_IN_3_46
+SYSPROF_AVAILABLE_IN_ALL
 GSubprocessFlags     sysprof_spawnable_get_flags       (SysprofSpawnable          *self);
-SYSPROF_AVAILABLE_IN_3_46
+SYSPROF_AVAILABLE_IN_ALL
 void                 sysprof_spawnable_set_flags       (SysprofSpawnable          *self,
                                                         GSubprocessFlags           flags);
 

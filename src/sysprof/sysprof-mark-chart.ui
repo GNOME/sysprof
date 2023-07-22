@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofMarkChart" parent="GtkWidget">
+    <child>
+      <object class="GtkBox" id="box">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkScrolledWindow">
+            <property name="vexpand">true</property>
+            <child>
+              <object class="GtkListView" id="list_view">
+                <property name="show-separators">true</property>
+                <style>
+                  <class name="data-table"/>
+                </style>
+                <property name="header-factory">
+                  <object class="GtkBuilderListItemFactory">
+                    <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListHeader">
+    <property name="child">
+      <object class="GtkInscription">
+        <property name="xalign">0</property>
+        <property name="margin-start">6</property>
+        <binding name="text">
+          <lookup name="group" type="SysprofMarkCatalog">
+            <lookup name="catalog" type="SysprofMarkChartItem">
+              <lookup name="item">GtkListHeader</lookup>
+            </lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                    </property>
+                  </object>
+                </property>
+                <property name="factory">
+                  <object class="GtkBuilderListItemFactory">
+                    <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkBox">
+        <child>
+          <object class="GtkInscription">
+            <property name="xalign">1</property>
+            <property name="nat-chars">30</property>
+            <property name="min-chars">30</property>
+            <property name="margin-end">8</property>
+            <property name="text-overflow">ellipsize-end</property>
+            <binding name="text">
+              <lookup name="name" type="SysprofMarkCatalog">
+                <lookup name="catalog" type="SysprofMarkChartItem">
+                  <lookup name="item">GtkListItem</lookup>
+                </lookup>
+              </lookup>
+            </binding>
+          </object>
+        </child>
+        <child>
+          <object class="SysprofMarkChartRow">
+            <property name="hexpand">true</property>
+            <binding name="item">
+              <lookup name="item">GtkListItem</lookup>
+            </binding>
+          </object>
+        </child>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                    </property>
+                  </object>
+                </property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

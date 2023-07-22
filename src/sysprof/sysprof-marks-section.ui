@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofMarksSection" parent="SysprofSection">
+    <property name="title" translatable="yes">Marks</property>
+    <binding name="indicator">
+      <closure type="gchararray" function="format_number">
+        <lookup name="n-items" type="SysprofDocumentBitsetIndex">
+          <lookup name="marks" type="SysprofDocument">
+            <lookup name="document" type="SysprofSession">
+              <lookup name="session">SysprofMarksSection</lookup>
+            </lookup>
+          </lookup>
+        </lookup>
+      </closure>
+    </binding>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="SysprofTimeScrubber" id="scrubber">
+            <binding name="session">
+              <lookup name="session">SysprofMarksSection</lookup>
+            </binding>
+            <child type="chart">
+              <object class="SysprofChart">
+                <property name="margin-top">6</property>
+                <property name="margin-bottom">6</property>
+                <property name="height-request">20</property>
+                <child>
+                  <object class="SysprofTimeSpanLayer">
+                    <binding name="axis">
+                      <lookup name="visible-time-axis" type="SysprofSession">
+                        <lookup name="session">SysprofMarksSection</lookup>
+                      </lookup>
+                    </binding>
+                    <property name="series">
+                      <object class="SysprofTimeSeries">
+                        <property name="model">
+                          <object class="SysprofTimeFilterModel">
+                            <binding name="time-span">
+                              <lookup name="visible-time" type="SysprofSession">
+                                <lookup name="session">SysprofMarksSection</lookup>
+                              </lookup>
+                            </binding>
+                            <binding name="model">
+                              <lookup name="marks" type="SysprofDocument">
+                                <lookup name="document" type="SysprofSession">
+                                  <lookup name="session">SysprofMarksSection</lookup>
+                                </lookup>
+                              </lookup>
+                            </binding>
+                          </object>
+                        </property>
+                        <property name="begin-time-expression">
+                          <lookup name="time" type="SysprofDocumentFrame"/>
+                        </property>
+                        <property name="end-time-expression">
+                          <lookup name="end-time" type="SysprofDocumentMark"/>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="AdwViewStack" id="stack">
+            <property name="vexpand">true</property>
+            <child>
+              <object class="AdwViewStackPage">
+                <property name="title" translatable="yes">Mark Chart</property>
+                <property name="icon-name">mark-chart-symbolic</property>
+                <property name="child">
+                  <object class="SysprofMarkChart" id="mark_chart">
+                    <binding name="session">
+                      <lookup name="session">SysprofMarksSection</lookup>
+                    </binding>
+                  </object>
+                </property>
+              </object>
+            </child>
+            <child>
+              <object class="AdwViewStackPage">
+                <property name="title" translatable="yes">Mark Table</property>
+                <property name="icon-name">mark-table-symbolic</property>
+                <property name="child">
+                  <object class="SysprofMarkTable" id="mark_table">
+                    <binding name="session">
+                      <lookup name="session">SysprofMarksSection</lookup>
+                    </binding>
+                  </object>
+                </property>
+              </object>
+            </child>
+            <child>
+              <object class="AdwViewStackPage">
+                <property name="title" translatable="yes">Mark Waterfall</property>
+                <property name="icon-name">mark-waterfall-symbolic</property>
+                <property name="child">
+                  <object class="GtkScrolledWindow">
+                    <child>
+                      <object class="GtkListView">
+                        <property name="model">
+                          <object class="GtkNoSelection">
+                            <property name="model">
+                              <object class="SysprofSessionModel">
+                                <binding name="session">
+                                  <lookup name="session">SysprofMarksSection</lookup>
+                                </binding>
+                                <property name="model">
+                                  <object class="SysprofTimeFilterModel">
+                                    <binding name="time-span">
+                                      <lookup name="selected-time" type="SysprofSession">
+                                        <lookup name="session">SysprofMarksSection</lookup>
+                                      </lookup>
+                                    </binding>
+                                    <binding name="model">
+                                      <lookup name="marks" type="SysprofDocument">
+                                        <lookup name="document" type="SysprofSession">
+                                          <lookup name="session">SysprofMarksSection</lookup>
+                                        </lookup>
+                                      </lookup>
+                                    </binding>
+                                  </object>
+                                </property>
+                              </object>
+                            </property>
+                          </object>
+                        </property>
+                        <property name="factory">
+                          <object class="GtkBuilderListItemFactory">
+                            <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="SysprofChart">
+        <property name="height-request">16</property>
+        <binding name="tooltip-text">
+          <lookup name="tooltip" type="SysprofDocumentMark">
+            <lookup name="item" type="SysprofSessionModelItem">
+              <lookup name="item">GtkListItem</lookup>
+            </lookup>
+          </lookup>
+        </binding>
+        <child>
+          <object class="SysprofTimeSpanLayer">
+            <binding name="axis">
+              <lookup name="selected-time-axis" type="SysprofSession">
+                <lookup name="session" type="SysprofSessionModelItem">
+                  <lookup name="item">GtkListItem</lookup>
+                </lookup>
+              </lookup>
+            </binding>
+            <property name="series">
+              <object class="SysprofTimeSeries">
+                <property name="model">
+                  <object class="SysprofSingleModel">
+                    <binding name="item">
+                      <lookup name="item">GtkListItem</lookup>
+                    </binding>
+                  </object>
+                </property>
+                <property name="label-expression">
+                  <lookup name="message" type="SysprofDocumentMark">
+                    <lookup name="item" type="SysprofSessionModelItem"/>
+                  </lookup>
+                </property>
+                <property name="begin-time-expression">
+                  <lookup name="time" type="SysprofDocumentMark">
+                    <lookup name="item" type="SysprofSessionModelItem"/>
+                  </lookup>
+                </property>
+                <property name="end-time-expression">
+                  <lookup name="end-time" type="SysprofDocumentMark">
+                    <lookup name="item" type="SysprofSessionModelItem"/>
+                  </lookup>
+                </property>
+              </object>
+            </property>
+          </object>
+        </child>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                            </property>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="AdwViewSwitcherBar" id="switcher">
+            <property name="reveal">true</property>
+            <property name="stack">stack</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>
+

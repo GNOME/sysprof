@@ -1,15 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <gresources>
   <gresource prefix="/org/gnome/sysprof">
-    <!-- Automatic GTK resources -->
     <file preprocess="xml-stripblanks">gtk/help-overlay.ui</file>
     <file preprocess="xml-stripblanks">gtk/menus.ui</file>
-
-    <!-- Theme overrides -->
-    <file compressed="true">theme/shared.css</file>
-  </gresource>
-
-  <gresource prefix="/org/gnome/sysprof/ui">
+    <file preprocess="xml-stripblanks">icons/scalable/actions/address-layout-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/actions/empty-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/actions/mark-chart-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/actions/mark-table-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/actions/mark-waterfall-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/actions/memory-allocations-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/actions/metadata-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/actions/process-mounts-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/actions/storage-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/actions/system-log-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/actions/threads-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">sysprof-callgraph-view.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-counters-section.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-cpu-section.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-cpu-section-counter.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-files-section.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-frame-utility.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-greeter.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-logs-section.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-mark-chart-row.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-mark-chart.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-mark-table.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-marks-section.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-memory-callgraph-view.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-memory-section.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-metadata-section.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-process-dialog.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-processes-section.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-recording-pad.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-samples-section.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-sidebar.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-time-scrubber.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-traceables-utility.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-weighted-callgraph-view.ui</file>
     <file preprocess="xml-stripblanks">sysprof-window.ui</file>
+    <file>style.css</file>
   </gresource>
 </gresources>

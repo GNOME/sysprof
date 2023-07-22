@@ -19,8 +19,11 @@ if not meson.is_subproject()
   install_headers(libsysprof_capture_headers, subdir: sysprof_header_subdir)
 endif
 
-libsysprof_capture_sources = files([
+mapped_ring_buffer_sources = files([
   'mapped-ring-buffer.c',
+])
+
+libsysprof_capture_sources = files([
   'sysprof-address.c',
   'sysprof-capture-condition.c',
   'sysprof-capture-cursor.c',
@@ -46,8 +49,9 @@ libsysprof_capture_deps = [
 ]
 
 libsysprof_capture = static_library(
-  'sysprof-capture-@0@'.format(libsysprof_api_version),
-  libsysprof_capture_sources,
+  'sysprof-capture-@0@'.format(libsysprof_capture_api_version),
+  (libsysprof_capture_sources +
+   mapped_ring_buffer_sources),
 
            dependencies: libsysprof_capture_deps,
                  c_args: [ '-DSYSPROF_CAPTURE_COMPILATION' ],
@@ -64,7 +68,7 @@ libsysprof_capture_dep = declare_dependency(
          dependencies: libsysprof_capture_deps,
   include_directories: libsysprof_capture_include_dirs,
 )
-meson.override_dependency('sysprof-capture-@0@'.format(libsysprof_api_version), libsysprof_capture_dep)
+meson.override_dependency('sysprof-capture-@0@'.format(libsysprof_capture_api_version), libsysprof_capture_dep)
 
 if install_static
   pkgconfig.generate(
@@ -75,4 +79,8 @@ if install_static
       variables: [ 'datadir=' + datadir_for_pc_file ],
     libraries_private: libsysprof_capture_deps,
   )
+endif
+
+if get_option('tests')
+  subdir('tests')
 endif

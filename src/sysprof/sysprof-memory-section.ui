@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofMemorySection" parent="SysprofSection">
+    <property name="title" translatable="yes">Memory Allocations</property>
+    <binding name="indicator">
+      <closure type="gchararray" function="format_number">
+        <lookup name="n-items" type="SysprofDocumentBitsetIndex">
+          <lookup name="allocations" type="SysprofDocument">
+            <lookup name="document" type="SysprofSession">
+              <lookup name="session">SysprofMemorySection</lookup>
+            </lookup>
+          </lookup>
+        </lookup>
+      </closure>
+    </binding>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="SysprofTimeScrubber" id="scrubber">
+            <binding name="session">
+              <lookup name="session">SysprofMemorySection</lookup>
+            </binding>
+            <child type="chart">
+              <object class="SysprofChart">
+                <property name="height-request">32</property>
+                <child>
+                  <object class="SysprofColumnLayer">
+                    <property name="title">Stack Traces</property>
+                    <binding name="x-axis">
+                      <lookup name="visible-time-axis" type="SysprofSession">
+                        <lookup name="session">SysprofMemorySection</lookup>
+                      </lookup>
+                    </binding>
+                    <property name="y-axis">
+                      <object class="SysprofValueAxis">
+                        <property name="min-value">0</property>
+                        <property name="max-value">128</property>
+                      </object>
+                    </property>
+                    <property name="series">
+                      <object class="SysprofXYSeries">
+                        <property name="model">
+                          <object class="SysprofTimeFilterModel">
+                            <binding name="time-span">
+                              <lookup name="visible-time" type="SysprofSession">
+                                <lookup name="session">SysprofMemorySection</lookup>
+                              </lookup>
+                            </binding>
+                            <binding name="model">
+                              <lookup name="allocations" type="SysprofDocument">
+                                <lookup name="document" type="SysprofSession">
+                                  <lookup name="session">SysprofMemorySection</lookup>
+                                </lookup>
+                              </lookup>
+                            </binding>
+                          </object>
+                        </property>
+                        <property name="x-expression">
+                          <lookup name="time" type="SysprofDocumentFrame"/>
+                        </property>
+                        <property name="y-expression">
+                          <lookup name="stack-depth" type="SysprofDocumentTraceable"/>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+          </object>
+        </child>
+        <child>
+          <object class="SysprofMemoryCallgraphView" id="callgraph_view">
+            <property name="vexpand">true</property>
+            <binding name="include-threads">
+              <lookup name="include-threads" type="SysprofSession">
+                <lookup name="session">SysprofMemorySection</lookup>
+              </lookup>
+            </binding>
+            <binding name="hide-system-libraries">
+              <lookup name="hide-system-libraries" type="SysprofSession">
+                <lookup name="session">SysprofMemorySection</lookup>
+              </lookup>
+            </binding>
+            <binding name="bottom-up">
+              <lookup name="bottom-up" type="SysprofSession">
+                <lookup name="session">SysprofMemorySection</lookup>
+              </lookup>
+            </binding>
+            <binding name="categorize-frames">
+              <lookup name="categorize-frames" type="SysprofSession">
+                <lookup name="session">SysprofMemorySection</lookup>
+              </lookup>
+            </binding>
+            <binding name="document">
+              <lookup name="document" type="SysprofSession">
+                <lookup name="session">SysprofMemorySection</lookup>
+              </lookup>
+            </binding>
+            <binding name="traceables">
+              <!-- TODO: This should be filtered by Session selected time span -->
+              <lookup name="allocations" type="SysprofDocument">
+                <lookup name="document" type="SysprofSession">
+                  <lookup name="session">SysprofMemorySection</lookup>
+                </lookup>
+              </lookup>
+            </binding>
+          </object>
+        </child>
+      </object>
+    </child>
+    <property name="utility">
+      <object class="AdwToolbarView">
+        <style>
+          <class name="utility"/>
+        </style>
+        <child type="top">
+          <object class="AdwHeaderBar">
+            <property name="title-widget">
+              <object class="AdwWindowTitle">
+                <property name="title" translatable="yes">Stack Trace</property>
+              </object>
+            </property>
+          </object>
+        </child>
+        <property name="content">
+          <object class="SysprofTraceablesUtility">
+            <binding name="session">
+              <lookup name="session">SysprofMemorySection</lookup>
+            </binding>
+            <binding name="traceables">
+              <lookup name="utility-traceables">callgraph_view</lookup>
+            </binding>
+          </object>
+        </property>
+      </object>
+    </property>
+  </template>
+</interface>
+

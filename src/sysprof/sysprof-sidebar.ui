@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofSidebar" parent="GtkWidget">
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkScrolledWindow">
+            <property name="vexpand">true</property>
+            <property name="hscrollbar-policy">never</property>
+            <child>
+              <object class="GtkListBox" id="list_box">
+                <signal name="row-activated" handler="list_box_row_activated_cb" swapped="true"/>
+                <style>
+                  <class name="navigation-sidebar"/>
+                </style>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="halign">center</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-bottom">6</property>
+            <property name="margin-top">6</property>
+            <child>
+              <object class="GtkButton">
+                <property name="tooltip-text" translatable="yes">Seek Backward</property>
+                <property name="action-name">session.seek-backward</property>
+                <property name="icon-name">media-seek-backward-symbolic</property>
+                <style>
+                  <class name="flat"/>
+                </style>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton">
+                <property name="tooltip-text" translatable="yes">Zoom Out</property>
+                <property name="action-name">session.zoom-out</property>
+                <property name="icon-name">zoom-out-symbolic</property>
+                <style>
+                  <class name="flat"/>
+                </style>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton">
+                <property name="tooltip-text" translatable="yes">Reset Zoom</property>
+                <property name="action-name">session.zoom-one</property>
+                <property name="icon-name">zoom-original-symbolic</property>
+                <property name="width-request">48</property>
+                <style>
+                  <class name="flat"/>
+                </style>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton">
+                <property name="tooltip-text" translatable="yes">Zoom In</property>
+                <property name="action-name">session.zoom-in</property>
+                <property name="icon-name">zoom-in-symbolic</property>
+                <style>
+                  <class name="flat"/>
+                </style>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton">
+                <property name="tooltip-text" translatable="yes">Seek Forward</property>
+                <property name="action-name">session.seek-forward</property>
+                <property name="icon-name">media-seek-forward-symbolic</property>
+                <style>
+                  <class name="flat"/>
+                </style>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

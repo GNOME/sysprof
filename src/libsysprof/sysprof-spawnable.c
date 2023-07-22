@@ -18,11 +18,11 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#define G_LOG_DOMAIN "sysprof-spawnable"
-
 #include "config.h"
 
 #include <unistd.h>
+
+#include <glib/gstdio.h>
 
 #include "sysprof-spawnable.h"
 
@@ -65,8 +65,6 @@ sysprof_spawnable_new (void)
  * Gets the subprocess flags for spawning.
  *
  * Returns: the #GSubprocessFlags bitwise-or'd
- *
- * Since: 3.46
  */
 GSubprocessFlags
 sysprof_spawnable_get_flags (SysprofSpawnable *self)
@@ -81,8 +79,6 @@ sysprof_spawnable_get_flags (SysprofSpawnable *self)
  * @self: a #SysprofSpawnable
  *
  * Set the flags to use when spawning the process.
- *
- * Since: 3.46
  */
 void
 sysprof_spawnable_set_flags (SysprofSpawnable *self,
@@ -126,6 +122,8 @@ static void
 sysprof_spawnable_init (SysprofSpawnable *self)
 {
   self->next_fd = 3;
+
+  self->environ = g_get_environ ();
 
   self->argv = g_ptr_array_new_with_free_func (g_free);
   g_ptr_array_add (self->argv, NULL);
@@ -270,8 +268,6 @@ sysprof_spawnable_foreach_fd (SysprofSpawnable          *self,
  * will be taken and therefore unknown to the spawnable.
  *
  * The default for this is 2.
- *
- * Since: 3.34
  */
 void
 sysprof_spawnable_set_starting_fd (SysprofSpawnable *self,
@@ -292,8 +288,6 @@ sysprof_spawnable_set_starting_fd (SysprofSpawnable *self,
  *
  * Returns: (transfer full): a #GSubprocess or %NULL on failure and
  *   @error is set.
- *
- * Since: 3.34
  */
 GSubprocess *
 sysprof_spawnable_spawn (SysprofSpawnable  *self,
@@ -326,15 +320,83 @@ sysprof_spawnable_spawn (SysprofSpawnable  *self,
   return g_subprocess_launcher_spawnv (launcher, argv, error);
 }
 
+const char *
+sysprof_spawnable_get_cwd (SysprofSpawnable *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_SPAWNABLE (self), NULL);
+
+  return self->cwd;
+}
+
 void
 sysprof_spawnable_set_cwd (SysprofSpawnable *self,
                            const gchar      *cwd)
 {
   g_return_if_fail (SYSPROF_IS_SPAWNABLE (self));
 
-  if (g_strcmp0 (cwd, self->cwd) != 0)
-    {
-      g_free (self->cwd);
-      self->cwd = g_strdup (cwd);
-    }
+  g_set_str (&self->cwd, cwd);
+}
+
+/**
+ * sysprof_spawnable_add_trace_fd:
+ * @self: a #SysprofSpawnable
+ * @envvar: (nullable): the environment variable
+ *
+ * Adds an environment variable to the spawnable that will contain a
+ * "tracing file-descriptor". The spawned process can use
+ * `sysprof_capture_writer_new_from_env()` if @envvar is %NULL
+ * or with `getenv()` and `sysprof_capture_writer_new_from_fd()`.
+ *
+ * If @envvar is %NULL, "SYSPROF_TRACE_FD" will be used.
+ *
+ * The caller is responsible for closin the resulting FD.
+ *
+ * Returns: A file-descriptor which can be used to read the trace or
+ *   -1 upon failure and `errno` is set. Caller must `close()` the
+ *   FD if >= 0.
+ */
+int
+sysprof_spawnable_add_trace_fd (SysprofSpawnable *self,
+                                const char       *envvar)
+{
+  g_autofd int fd = -1;
+  g_autofd int dest = -1;
+  g_autofree char *name = NULL;
+  g_autofree char *fdstr = NULL;
+
+  g_return_val_if_fail (SYSPROF_IS_SPAWNABLE (self), -1);
+
+  if (envvar == NULL)
+    envvar = "SYSPROF_TRACE_FD";
+
+  name = g_strdup_printf ("[sysprof-tracefd:%s]", envvar);
+
+  if (-1 == (fd = sysprof_memfd_create (name)))
+    return -1;
+
+  if (-1 == (dest = dup (fd)))
+    return -1;
+
+  fdstr = g_strdup_printf ("%d", dest);
+
+  sysprof_spawnable_setenv (self, envvar, fdstr);
+  sysprof_spawnable_take_fd (self, g_steal_fd (&dest), -1);
+
+  return g_steal_fd (&fd);
+}
+
+void
+sysprof_spawnable_add_ld_preload (SysprofSpawnable *self,
+                                  const char       *library_path)
+{
+  g_autofree char *amended = NULL;
+  const char *val;
+
+  g_return_if_fail (SYSPROF_IS_SPAWNABLE (self));
+  g_return_if_fail (library_path != NULL);
+
+  if ((val = sysprof_spawnable_getenv (self, "LD_PRELOAD")))
+    library_path = amended = g_strdup_printf ("%s:%s", val, library_path);
+
+  sysprof_spawnable_setenv (self, "LD_PRELOAD", library_path);
 }

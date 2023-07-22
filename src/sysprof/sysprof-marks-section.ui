@@ -196,6 +196,250 @@
                 </property>
               </object>
             </child>
+            <child>
+              <object class="AdwViewStackPage">
+                <property name="title" translatable="yes">Summary</property>
+                <property name="icon-name">info-symbolic</property>
+                <property name="child">
+                  <object class="GtkScrolledWindow">
+                    <child>
+                      <object class="GtkColumnView" id="summary_column_view">
+                        <style>
+                          <class name="data-table"/>
+                        </style>
+                        <property name="model">
+                          <object class="GtkNoSelection">
+                            <property name="model">
+                              <object class="GtkSortListModel">
+                                <binding name="sorter">
+                                  <lookup name="sorter">summary_column_view</lookup>
+                                </binding>
+                                <!-- it might be nice to update these by selection -->
+                                <property name="model">
+                                  <object class="GtkFlattenListModel">
+                                    <binding name="model">
+                                      <lookup name="marks-catalog" type="SysprofDocument">
+                                        <lookup name="document" type="SysprofSession">
+                                          <lookup name="session">SysprofMarksSection</lookup>
+                                        </lookup>
+                                      </lookup>
+                                    </binding>
+                                  </object>
+                                </property>
+                              </object>
+                            </property>
+                          </object>
+                        </property>
+                        <child>
+                          <object class="GtkColumnViewColumn">
+                            <property name="title" translatable="yes">Category</property>
+                            <property name="sorter">
+                              <object class="GtkStringSorter">
+                                <property name="expression">
+                                  <lookup name="group" type="SysprofMarkCatalog"/>
+                                </property>
+                              </object>
+                            </property>
+                            <property name="factory">
+                              <object class="GtkBuilderListItemFactory">
+                                <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkLabel">
+        <property name="xalign">0</property>
+        <binding name="label">
+          <lookup name="group" type="SysprofMarkCatalog">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                </property>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkColumnViewColumn">
+                            <property name="title" translatable="yes">Name</property>
+                            <property name="sorter">
+                              <object class="GtkStringSorter">
+                                <property name="expression">
+                                  <lookup name="name" type="SysprofMarkCatalog"/>
+                                </property>
+                              </object>
+                            </property>
+                            <property name="factory">
+                              <object class="GtkBuilderListItemFactory">
+                                <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkLabel">
+        <property name="xalign">0</property>
+        <binding name="label">
+          <lookup name="name" type="SysprofMarkCatalog">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                </property>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkColumnViewColumn">
+                            <property name="title" translatable="yes">Minimum</property>
+                            <property name="sorter">
+                              <object class="GtkNumericSorter">
+                                <property name="expression">
+                                  <lookup name="min-duration" type="SysprofMarkCatalog"/>
+                                </property>
+                              </object>
+                            </property>
+                            <property name="factory">
+                              <object class="GtkBuilderListItemFactory">
+                                <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="SysprofTimeLabel">
+        <property name="show-zero">false</property>
+        <binding name="duration">
+          <lookup name="min-duration" type="SysprofMarkCatalog">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                </property>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkColumnViewColumn">
+                            <property name="title" translatable="yes">Maximum</property>
+                            <property name="sorter">
+                              <object class="GtkNumericSorter">
+                                <property name="expression">
+                                  <lookup name="max-duration" type="SysprofMarkCatalog"/>
+                                </property>
+                              </object>
+                            </property>
+                            <property name="factory">
+                              <object class="GtkBuilderListItemFactory">
+                                <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="SysprofTimeLabel">
+        <property name="show-zero">false</property>
+        <binding name="duration">
+          <lookup name="max-duration" type="SysprofMarkCatalog">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                </property>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkColumnViewColumn">
+                            <property name="title" translatable="yes">Average</property>
+                            <property name="sorter">
+                              <object class="GtkNumericSorter">
+                                <property name="expression">
+                                  <lookup name="average-duration" type="SysprofMarkCatalog"/>
+                                </property>
+                              </object>
+                            </property>
+                            <property name="factory">
+                              <object class="GtkBuilderListItemFactory">
+                                <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="SysprofTimeLabel">
+        <property name="show-zero">false</property>
+        <binding name="duration">
+          <lookup name="average-duration" type="SysprofMarkCatalog">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                </property>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkColumnViewColumn" id="median_column">
+                            <property name="title" translatable="yes">Median</property>
+                            <property name="sorter">
+                              <object class="GtkNumericSorter">
+                                <property name="expression">
+                                  <lookup name="median-duration" type="SysprofMarkCatalog"/>
+                                </property>
+                              </object>
+                            </property>
+                            <property name="factory">
+                              <object class="GtkBuilderListItemFactory">
+                                <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="SysprofTimeLabel">
+        <property name="show-zero">false</property>
+        <binding name="duration">
+          <lookup name="median-duration" type="SysprofMarkCatalog">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                </property>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+              </object>
+            </child>
           </object>
         </child>
         <child>
@@ -208,4 +452,3 @@
     </child>
   </template>
 </interface>
-

@@ -98,6 +98,26 @@
                 }
             ]
         },
+	{
+            "name" : "libpanel",
+            "buildsystem" : "meson",
+            "config-opts" : [
+                "--buildtype=debugoptimized",
+                "-Ddocs=disabled",
+                "-Dintrospection=disabled",
+                "-Dinstall-examples=false",
+                "-Ddevelopment=true",
+                "-Dtests=false",
+                "-Dvapi=false"
+            ],
+            "sources" : [
+                {
+                    "type" : "git",
+                    "url" : "https://gitlab.gnome.org/GNOME/libpanel.git",
+                    "branch" : "main"
+                }
+            ]
+	},
         {
             "name" : "libdex",
             "buildsystem" : "meson",
@@ -112,7 +132,7 @@
             "sources" : [
                 {
                     "type" : "git",
-                    "url" : "https://gitlab.gnome.org/chergert/libdex.git",
+                    "url" : "https://gitlab.gnome.org/GNOME/libdex.git",
                     "branch" : "main"
                 }
             ]

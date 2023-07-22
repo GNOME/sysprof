@@ -28,6 +28,10 @@ G_BEGIN_DECLS
 
 SysprofMarkCatalog *_sysprof_mark_catalog_new (const char *group,
                                                const char *name,
-                                               GListModel *items);
+                                               GListModel *items,
+                                               gint64      min,
+                                               gint64      max,
+                                               gint64      avg,
+                                               gint64      med);
 
 G_END_DECLS

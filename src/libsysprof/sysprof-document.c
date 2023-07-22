@@ -119,6 +119,7 @@ enum {
   PROP_FILES,
   PROP_LOGS,
   PROP_MARKS,
+  PROP_MARKS_CATALOG,
   PROP_METADATA,
   PROP_PROCESSES,
   PROP_SAMPLES,
@@ -389,6 +390,10 @@ sysprof_document_get_property (GObject    *object,
       g_value_take_object (value, sysprof_document_list_marks (self));
       break;
 
+    case PROP_MARKS_CATALOG:
+      g_value_take_object (value, sysprof_document_catalog_marks (self));
+      break;
+
     case PROP_METADATA:
       g_value_take_object (value, sysprof_document_list_metadata (self));
       break;
@@ -449,6 +454,11 @@ sysprof_document_class_init (SysprofDocumentClass *klass)
 
   properties [PROP_MARKS] =
     g_param_spec_object ("marks", NULL, NULL,
+                         G_TYPE_LIST_MODEL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_MARKS_CATALOG] =
+    g_param_spec_object ("marks-catalog", NULL, NULL,
                          G_TYPE_LIST_MODEL,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
@@ -2210,6 +2220,7 @@ sysprof_document_catalog_marks (SysprofDocument *self)
   while (g_hash_table_iter_next (&iter, &key, &value))
     {
       g_autoptr(GListStore) group = NULL;
+      g_autoptr(GArray) median = g_array_new (FALSE, FALSE, sizeof (gint64));
       g_autofree const char **keys = NULL;
       const char *group_name = key;
       GHashTable *names = value;
@@ -2225,8 +2236,41 @@ sysprof_document_catalog_marks (SysprofDocument *self)
           const char *name = keys[i];
           EggBitset *marks = g_hash_table_lookup (names, name);
           g_autoptr(GListModel) model = _sysprof_document_bitset_index_new (G_LIST_MODEL (self), marks);
-          g_autoptr(SysprofMarkCatalog) names_catalog = _sysprof_mark_catalog_new (group_name, name, model);
+          g_autoptr(SysprofMarkCatalog) names_catalog = NULL;
+          gint64 min = G_MAXINT64;
+          gint64 max = G_MININT64;
+          gint64 total = 0;
+          gint64 count = 0;
+          EggBitsetIter bitset;
+          guint pos;
 
+          median->len = 0;
+
+          if (egg_bitset_iter_init_first (&bitset, marks, &pos))
+            {
+              do
+                {
+                  const SysprofDocumentFramePointer *ptr = &g_array_index (self->frames, SysprofDocumentFramePointer, pos);
+                  const SysprofCaptureMark *tainted = (const SysprofCaptureMark *)(gpointer)&self->base[ptr->offset];
+                  gint64 duration = swap_int64 (self->needs_swap, tainted->duration);
+
+                  g_array_append_val (median, duration);
+
+                  min = MIN (min, duration);
+                  max = MAX (max, duration);
+                  total += duration;
+                  count++;
+                }
+              while (egg_bitset_iter_next (&bitset, &pos));
+            }
+
+          names_catalog = _sysprof_mark_catalog_new (group_name,
+                                                     name,
+                                                     model,
+                                                     min,
+                                                     max,
+                                                     count ? total/count : 0,
+                                                     median->len ? g_array_index (median, gint64, median->len/2) : 0);
           g_list_store_append (group, names_catalog);
         }
 

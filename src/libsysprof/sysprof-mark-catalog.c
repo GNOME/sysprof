@@ -28,12 +28,20 @@ struct _SysprofMarkCatalog
   GListModel *items;
   char *group;
   char *name;
+  gint64 min_duration;
+  gint64 max_duration;
+  gint64 avg_duration;
+  gint64 med_duration;
 } SysprofMarkCatalogPrivate;
 
 enum {
   PROP_0,
   PROP_GROUP,
   PROP_NAME,
+  PROP_MIN_DURATION,
+  PROP_MAX_DURATION,
+  PROP_AVERAGE_DURATION,
+  PROP_MEDIAN_DURATION,
   N_PROPS
 };
 
@@ -99,6 +107,22 @@ sysprof_mark_catalog_get_property (GObject    *object,
       g_value_set_string (value, sysprof_mark_catalog_get_name (self));
       break;
 
+    case PROP_MIN_DURATION:
+      g_value_set_int64 (value, sysprof_mark_catalog_get_min_duration (self));
+      break;
+
+    case PROP_MAX_DURATION:
+      g_value_set_int64 (value, sysprof_mark_catalog_get_max_duration (self));
+      break;
+
+    case PROP_AVERAGE_DURATION:
+      g_value_set_int64 (value, sysprof_mark_catalog_get_average_duration (self));
+      break;
+
+    case PROP_MEDIAN_DURATION:
+      g_value_set_int64 (value, sysprof_mark_catalog_get_median_duration (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -121,6 +145,26 @@ sysprof_mark_catalog_class_init (SysprofMarkCatalogClass *klass)
     g_param_spec_string ("name", NULL, NULL,
                          NULL,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_MIN_DURATION] =
+    g_param_spec_int64 ("min-duration", NULL, NULL,
+                        G_MININT64, G_MAXINT64, 0,
+                        (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_MAX_DURATION] =
+    g_param_spec_int64 ("max-duration", NULL, NULL,
+                        G_MININT64, G_MAXINT64, 0,
+                        (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_AVERAGE_DURATION] =
+    g_param_spec_int64 ("average-duration", NULL, NULL,
+                        G_MININT64, G_MAXINT64, 0,
+                        (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_MEDIAN_DURATION] =
+    g_param_spec_int64 ("median-duration", NULL, NULL,
+                        G_MININT64, G_MAXINT64, 0,
+                        (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
@@ -149,7 +193,11 @@ sysprof_mark_catalog_get_name (SysprofMarkCatalog *self)
 SysprofMarkCatalog *
 _sysprof_mark_catalog_new (const char *group,
                            const char *name,
-                           GListModel *items)
+                           GListModel *items,
+                           gint64      min,
+                           gint64      max,
+                           gint64      avg,
+                           gint64      med)
 {
   SysprofMarkCatalog *self;
 
@@ -160,6 +208,40 @@ _sysprof_mark_catalog_new (const char *group,
   self->group = g_strdup (group);
   self->name = g_strdup (name);
   self->items = g_object_ref (items);
+  self->min_duration = min;
+  self->max_duration = max;
+  self->avg_duration = avg;
+  self->med_duration = med;
 
   return self;
+}
+
+gint64
+sysprof_mark_catalog_get_min_duration (SysprofMarkCatalog *self)
+{
+  if (self->min_duration == G_MAXINT64)
+    return 0;
+
+  return self->min_duration;
+}
+
+gint64
+sysprof_mark_catalog_get_max_duration (SysprofMarkCatalog *self)
+{
+  if (self->max_duration == G_MININT64)
+    return 0;
+
+  return self->max_duration;
+}
+
+gint64
+sysprof_mark_catalog_get_average_duration (SysprofMarkCatalog *self)
+{
+  return self->avg_duration;
+}
+
+gint64
+sysprof_mark_catalog_get_median_duration (SysprofMarkCatalog *self)
+{
+  return self->med_duration;
 }

@@ -32,8 +32,16 @@ SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofMarkCatalog, sysprof_mark_catalog, SYSPROF, MARK_CATALOG, GObject)
 
 SYSPROF_AVAILABLE_IN_ALL
-const char *sysprof_mark_catalog_get_group (SysprofMarkCatalog *self);
+const char *sysprof_mark_catalog_get_group            (SysprofMarkCatalog *self);
 SYSPROF_AVAILABLE_IN_ALL
-const char *sysprof_mark_catalog_get_name  (SysprofMarkCatalog *self);
+const char *sysprof_mark_catalog_get_name             (SysprofMarkCatalog *self);
+SYSPROF_AVAILABLE_IN_ALL
+gint64      sysprof_mark_catalog_get_min_duration     (SysprofMarkCatalog *self);
+SYSPROF_AVAILABLE_IN_ALL
+gint64      sysprof_mark_catalog_get_max_duration     (SysprofMarkCatalog *self);
+SYSPROF_AVAILABLE_IN_ALL
+gint64      sysprof_mark_catalog_get_average_duration (SysprofMarkCatalog *self);
+SYSPROF_AVAILABLE_IN_ALL
+gint64      sysprof_mark_catalog_get_median_duration  (SysprofMarkCatalog *self);
 
 G_END_DECLS

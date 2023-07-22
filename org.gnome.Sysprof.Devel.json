@@ -98,7 +98,7 @@
                 }
             ]
         },
-	{
+        {
             "name" : "libpanel",
             "buildsystem" : "meson",
             "config-opts" : [
@@ -107,7 +107,6 @@
                 "-Dintrospection=disabled",
                 "-Dinstall-examples=false",
                 "-Ddevelopment=true",
-                "-Dtests=false",
                 "-Dvapi=false"
             ],
             "sources" : [
@@ -117,7 +116,7 @@
                     "branch" : "main"
                 }
             ]
-	},
+        },
         {
             "name" : "libdex",
             "buildsystem" : "meson",

@@ -27,9 +27,9 @@
                     <property name="filter">
                       <object class="GtkStringFilter">
                         <property name="match-mode">exact</property>
-                        <property name="search">CPU Percent/Combined</property>
+                        <property name="search">CPU Frequency</property>
                         <property name="expression">
-                          <lookup name="key" type="SysprofDocumentCounter"/>
+                          <lookup name="category" type="SysprofDocumentCounter"/>
                         </property>
                       </object>
                     </property>
@@ -43,8 +43,8 @@
   <template class="SysprofChartLayerItem">
     <property name="layer">
       <object class="SysprofLineLayer" id="layer">
+        <property name="dashed">true</property>
         <property name="spline">true</property>
-        <property name="fill">true</property>
         <binding name="x-axis">
           <lookup name="visible-time-axis" type="SysprofSession">
             <lookup name="session" type="SysprofChart">
@@ -99,9 +99,9 @@
                     <property name="filter">
                       <object class="GtkStringFilter">
                         <property name="match-mode">exact</property>
-                        <property name="search">CPU Frequency</property>
+                        <property name="search">CPU Percent/Combined</property>
                         <property name="expression">
-                          <lookup name="category" type="SysprofDocumentCounter"/>
+                          <lookup name="key" type="SysprofDocumentCounter"/>
                         </property>
                       </object>
                     </property>
@@ -115,8 +115,8 @@
   <template class="SysprofChartLayerItem">
     <property name="layer">
       <object class="SysprofLineLayer" id="layer">
-        <property name="dashed">true</property>
         <property name="spline">true</property>
+        <property name="fill">true</property>
         <binding name="x-axis">
           <lookup name="visible-time-axis" type="SysprofSession">
             <lookup name="session" type="SysprofChart">

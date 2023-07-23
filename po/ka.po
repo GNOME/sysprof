@@ -1,5 +1,5 @@
 # Georgian translation for sysprof.
-# Copyright (C) 2022 sysprof's COPYRIGHT HOLDER
+# Copyright (C) 2023 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
 # NorwayFun <temuri.doghonadze@gmail.com>, 2022.
 # Ekaterine Papava <papava.e@gtu.ge>, 2023
@@ -8,19 +8,20 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-02-13 19:52+0000\n"
-"PO-Revision-Date: 2023-02-14 08:26+0100\n"
+"POT-Creation-Date: 2023-07-22 23:43+0000\n"
+"PO-Revision-Date: 2023-07-23 05:42+0200\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language-Team: Georgian <ka@li.org>\n"
 "Language: ka\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.3.2\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:5
-#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:197
-#: src/sysprof/sysprof-application.c:287 src/sysprof/sysprof-window.ui:10
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:138
+#: src/sysprof/sysprof-application.c:185
+#: src/sysprof/sysprof-recording-pad.ui:18
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -37,6 +38,8 @@ msgid ""
 "Sysprof allows you to profile applications to aid in debugging and "
 "optimization."
 msgstr ""
+"Sysprof-ი გამართვისა და ოპტიმიზაციისთვის აპლიკაციების პროფილირების "
+"საშუალებას გაძლევთ."
 
 #: data/org.gnome.Sysprof.desktop.in.in:5
 msgid "Profiler"
@@ -46,588 +49,316 @@ msgstr "პროფაილერი"
 msgid "Profile an application or entire system."
 msgstr "აპლიკაციის ან მთელი სისტემის პროფილირება."
 
-#: src/libsysprof/sysprof-callgraph-profile.c:447
-msgid "Sysprof was unable to generate a callgraph from the system capture."
+#: src/libsysprof/sysprof-category-summary.c:138
+msgid "Uncategorized"
+msgstr "დაულაგებელი"
+
+#: src/libsysprof/sysprof-category-summary.c:141
+msgid "Accessibility"
+msgstr "წვდომადობა"
+
+#: src/libsysprof/sysprof-category-summary.c:144
+msgid "Actions"
+msgstr "ქმედებები"
+
+#: src/libsysprof/sysprof-category-summary.c:147
+msgid "Context Switches"
+msgstr "კონტექსტის გადართვები"
+
+#: src/libsysprof/sysprof-category-summary.c:150
+msgid "CSS"
+msgstr "CSS"
+
+#: src/libsysprof/sysprof-category-summary.c:153
+msgid "Graphics"
+msgstr "გრაფიკა"
+
+#: src/libsysprof/sysprof-category-summary.c:156
+msgid "Icons"
+msgstr "ხატულები"
+
+#: src/libsysprof/sysprof-category-summary.c:159
+msgid "Input"
+msgstr "შეყვანა"
+
+#: src/libsysprof/sysprof-category-summary.c:162
+msgid "IO"
+msgstr "IO"
+
+#: src/libsysprof/sysprof-category-summary.c:165
+msgid "IPC"
+msgstr "IPC"
+
+#: src/libsysprof/sysprof-category-summary.c:168
+msgid "JavaScript"
+msgstr "JavaScript"
+
+#: src/libsysprof/sysprof-category-summary.c:171
+msgid "Kernel"
+msgstr "ბირთვი"
+
+#: src/libsysprof/sysprof-category-summary.c:174
+msgid "Layout"
+msgstr "განლაგება"
+
+#: src/libsysprof/sysprof-category-summary.c:177
+msgid "Locking"
+msgstr "დაბლოკვა"
+
+#: src/libsysprof/sysprof-category-summary.c:180
+msgid "Main Loop"
+msgstr "მთავარი მარყუჟი"
+
+#: src/libsysprof/sysprof-category-summary.c:183
+#: src/sysprof/sysprof-greeter.ui:84
+msgid "Memory"
+msgstr "მეხსიერება"
+
+#: src/libsysprof/sysprof-category-summary.c:186
+msgid "Paint"
+msgstr "დახატვა"
+
+#: src/libsysprof/sysprof-category-summary.c:189
+msgid "Unwindable"
+msgstr "გადაუხვევადი"
+
+#: src/libsysprof/sysprof-category-summary.c:192
+msgid "Windowing"
+msgstr "ფანჯრული სისტემა"
+
+#: src/libsysprof/sysprof-document-allocation.c:151
+msgid "Allocation"
+msgstr "გამოყოფა"
+
+#: src/libsysprof/sysprof-document.c:1146
+#: src/libsysprof/sysprof-document.c:1182
+msgid "Indexing capture data frames"
 msgstr ""
 
-#: src/libsysprof/sysprof-perf-source.c:472
+#: src/libsysprof/sysprof-document.c:1356
+msgid "Discovering file system mounts"
+msgstr "ფაილური სისტემის მიმაგრებების აღმოჩენა"
+
+#: src/libsysprof/sysprof-document.c:1359
+msgid "Discovering process mount namespaces"
+msgstr "პროცესის მიმაგრების სახელის სივრცეების აღმოჩენა"
+
+#: src/libsysprof/sysprof-document.c:1362
+msgid "Analyzing process address layouts"
+msgstr "პროცესის მისამართის განლაგებების ანალიზი"
+
+#: src/libsysprof/sysprof-document.c:1365
+msgid "Analyzing process command line"
+msgstr "პროცესის ბრძანების სტრიქონის ანალიზი"
+
+#: src/libsysprof/sysprof-document.c:1368
+msgid "Analyzing file system overlays"
+msgstr ""
+
+#: src/libsysprof/sysprof-document.c:1371
+msgid "Processing counters"
+msgstr "მთვლელების დამუშავება"
+
+#: src/libsysprof/sysprof-document.c:2339
 #, c-format
-msgid "Sysprof failed to find field “%s”."
-msgstr ""
+msgid "Recording at %X %x"
+msgstr "ჩანაწერი %X %x"
 
-#: src/libsysprof/sysprof-perf-source.c:485
-#, c-format
-msgid "Sysprof failed to parse offset for “%s”."
-msgstr ""
-
-#: src/libsysprof/sysprof-perf-source.c:549
-#, c-format
-msgid "Sysprof failed to get perf_event ID."
-msgstr ""
-
-#: src/libsysprof/sysprof-perf-source.c:655
-#, c-format
-msgid "An error occurred while attempting to access performance counters"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-battery-aid.c:182
-msgid "Battery Charge"
-msgstr "ელემენტის მუხტი"
-
-#: src/libsysprof-ui/sysprof-battery-aid.c:198
-msgid "Battery Charge (All)"
-msgstr "ელემენტის მუხტი (ყველა)"
-
-#: src/libsysprof-ui/sysprof-battery-aid.c:240
-msgid "Battery"
-msgstr "ელემენტი"
-
-#: src/libsysprof-ui/sysprof-callgraph-aid.c:212
-#: src/libsysprof-ui/sysprof-callgraph-aid.c:218
-#: src/libsysprof-ui/sysprof-details-page.ui:73
-msgid "Stack Traces"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-callgraph-aid.c:226
-msgid "Stack Traces (In Kernel)"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-callgraph-aid.c:234
-msgid "Stack Traces (In User)"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-callgraph-aid.c:243
-#: src/libsysprof-ui/sysprof-callgraph-aid.c:273
-msgid "Callgraph"
-msgstr "გამოძახებების გრაფის პანელი"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:23
-#: src/libsysprof-ui/sysprof-memprof-page.ui:90
-msgid "Functions"
-msgstr "ფუნქციები"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:39
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:96
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:147
-#: src/libsysprof-ui/sysprof-memprof-page.ui:107
-#: src/libsysprof-ui/sysprof-memprof-page.ui:165
-#: src/libsysprof-ui/sysprof-memprof-page.ui:216
-msgid "Self"
-msgstr "Self"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:55
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:112
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:163
-#: src/libsysprof-ui/sysprof-memprof-page.ui:123
-#: src/libsysprof-ui/sysprof-memprof-page.ui:181
-#: src/libsysprof-ui/sysprof-memprof-page.ui:232
-msgid "Total"
-msgstr "ჯამში"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:80
-#: src/libsysprof-ui/sysprof-memprof-page.ui:148
-msgid "Callers"
-msgstr "გამომძახებლები"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:139
-#: src/libsysprof-ui/sysprof-memprof-page.ui:207
-msgid "Descendants"
-msgstr "შთამომავლები"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:178
-#: src/libsysprof-ui/sysprof-details-page.ui:215
-msgid "Hits"
-msgstr "მინიშნებები"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:198
-msgid "Generating Callgraph"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:199
-msgid "Sysprof is busy creating the selected callgraph."
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:205
-#: src/libsysprof-ui/sysprof-memprof-page.ui:271
-msgid "Not Enough Samples"
-msgstr "არ არის საკმარისი ნიმუშები"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:206
-#: src/libsysprof-ui/sysprof-memprof-page.ui:272
-msgid "More samples are necessary to display a callgraph."
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-cell-renderer-progress.c:102
-#: src/libsysprof-ui/sysprof-cell-renderer-progress.c:292
-#: src/libsysprof-ui/sysprof-cell-renderer-progress.c:322
-#, c-format
-msgctxt "progress bar label"
-msgid "%d %%"
-msgstr "%d %%"
-
-#: src/libsysprof-ui/sysprof-counters-aid.c:221
-#: src/libsysprof-ui/sysprof-counters-aid.c:226
-#: src/libsysprof-ui/sysprof-counters-aid.c:282
-#: src/libsysprof-ui/sysprof-details-page.ui:148
-msgid "Counters"
-msgstr "მთვლელები"
-
-#: src/libsysprof-ui/sysprof-cpu-aid.c:207
-#: src/libsysprof-ui/sysprof-cpu-aid.c:355
-msgid "CPU Usage"
-msgstr "CPU -ის გამოყენება"
-
-#: src/libsysprof-ui/sysprof-cpu-aid.c:214
-msgid "CPU Frequency"
-msgstr "CPU -ის სიხშირე"
-
-#: src/libsysprof-ui/sysprof-cpu-aid.c:218
-msgid "CPU Frequency (All)"
-msgstr "CPU -ის სიხშირე (ყველა)"
-
-#. Translators: CPU is the processor.
-#: src/libsysprof-ui/sysprof-cpu-aid.c:227
-#: src/libsysprof-ui/sysprof-cpu-aid.c:250
-msgid "CPU Usage (All)"
-msgstr "CPU გამოყენება (ყველა)"
-
-#: src/libsysprof-ui/sysprof-cpu-aid.c:316
-#: src/libsysprof-ui/sysprof-details-page.ui:103
-msgid "Processes"
-msgstr "პროცესები"
-
-#: src/libsysprof-ui/sysprof-details-page.c:239
-msgid "Memory Capture"
-msgstr "მეხსიერების გადაღება"
-
-#: src/libsysprof-ui/sysprof-details-page.c:253
-#, c-format
-msgid "%0.4lf seconds"
-msgstr "%0.4lf წამი"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:8
-msgid "Capture"
-msgstr "ჩაჭერა"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:12
-msgid "Location"
-msgstr "დებარეობა"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:26
-msgid "Recorded At"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-details-page.ui:40
-#: src/libsysprof-ui/sysprof-marks-page.ui:90
-#: src/libsysprof-ui/sysprof-marks-page.ui:196
-msgid "Duration"
-msgstr "ხანგრძლივობა"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:54
-msgid "CPU Model"
-msgstr "CPU მოდელი"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:69
-#: src/libsysprof-ui/sysprof-details-page.ui:164
-msgid "Statistics"
-msgstr "სტატისტიკა"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:74
-msgid "Number of stack traces sampled for performance callgraphs"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-details-page.ui:88
-msgid "Marks"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-details-page.ui:89
-msgid "Number of marks seen"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-details-page.ui:104
-msgid "Number of processes seen"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-details-page.ui:118
-msgid "Forks"
-msgstr "ფორკი"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:119
-msgid "Number of times a process forked"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-details-page.ui:133
-#: src/libsysprof-ui/sysprof-memprof-aid.c:193
-#: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
-msgid "Memory Allocations"
-msgstr "მეხსიერების გამოყოფები"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:134
-msgid "Number of stack traces recorded for tracing memory allocations"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-details-page.ui:149
-msgid "Number of recorded counter values"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-details-page.ui:180
-#: src/libsysprof-ui/sysprof-marks-page.ui:50
-msgid "Mark"
-msgstr "დანიშვნა"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:248
-msgid "Min"
-msgstr "მინ"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:281
-msgid "Max"
-msgstr "მაქს"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:314
-msgid "Avg"
-msgstr "საშუალო"
-
-#: src/libsysprof-ui/sysprof-diskstat-aid.c:205
-#: src/libsysprof-ui/sysprof-diskstat-aid.c:267
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:58
-msgid "Disk"
-msgstr "დისკი"
-
-#: src/libsysprof-ui/sysprof-diskstat-aid.c:239
-msgid "Reads"
-msgstr "წაკითხვები"
-
-#: src/libsysprof-ui/sysprof-diskstat-aid.c:239
-msgid "Writes"
-msgstr "ჩაწერები"
-
-#: src/libsysprof-ui/sysprof-display.c:228
-msgid "Recording Failed"
-msgstr "ჩაწერის შეცდომა"
-
-#: src/libsysprof-ui/sysprof-display.c:233
-msgid "Recording…"
-msgstr "ჩაწერა…"
-
-#. translators: %s is replaced with locale specific time of recording
-#: src/libsysprof-ui/sysprof-display.c:264
+#: src/libsysprof/sysprof-document.c:2341
 #, c-format
 msgid "Recording at %s"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-display.c:268
-msgid "New Recording"
-msgstr "ახალი ჩანაწერი"
+#: src/libsysprof/sysprof-document-frame.c:138
+msgid "Frame"
+msgstr "კადრი"
 
-#: src/libsysprof-ui/sysprof-display.c:1099
-msgid "The recording could not be opened"
+#: src/libsysprof/sysprof-document-loader.c:435
+msgid "Document loaded"
+msgstr "დოკუმენტი ჩაიტვირთა"
+
+#: src/libsysprof/sysprof-document-loader.c:466
+msgid "Loading failed"
+msgstr "ჩატვირთვის შეცდომა"
+
+#: src/libsysprof/sysprof-document-loader.c:478
+#: src/libsysprof/sysprof-document-symbols.c:217
+msgid "Symbolizing stack traces"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-display.c:1246
-#, c-format
-msgid "Failed to save recording: %s"
-msgstr ""
+#: src/libsysprof/sysprof-document-loader.c:547
+msgid "Loading document"
+msgstr "დოკუმენტის ჩატვირთვა"
 
-#: src/libsysprof-ui/sysprof-display.c:1279
-msgid "Save Recording"
-msgstr "ჩანაწერის შენახვა"
-
-#: src/libsysprof-ui/sysprof-display.c:1282
-msgid "Save"
-msgstr "შენახვა"
-
-#. Translators: This is a button.
-#: src/libsysprof-ui/sysprof-display.c:1283 src/sysprof/sysprof-window.c:285
-msgid "Cancel"
-msgstr "გაუქმება"
-
-#: src/libsysprof-ui/sysprof-display.ui:36
-#: src/libsysprof-ui/sysprof-marks-page.ui:16
-msgid "Details"
-msgstr "დეტალები"
-
-#: src/libsysprof-ui/sysprof-environ-editor-row.ui:29
-msgid "Remove environment variable"
-msgstr "გარემოს ცვლადის წაშლა"
-
-#: src/libsysprof-ui/sysprof-environ-editor.c:72
-msgid "New environment variable…"
-msgstr "ახალი გარემოს ცვლადი…"
-
-#: src/libsysprof-ui/sysprof-failed-state-view.ui:27
-msgid "Ouch, that hurt!"
-msgstr "ეს მეტკინა!"
-
-#: src/libsysprof-ui/sysprof-failed-state-view.ui:40
-msgid "Something unexpectedly went wrong while trying to profile your system."
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-log-model.c:210
-#: src/libsysprof-ui/sysprof-logs-page.ui:58
-#: src/libsysprof-ui/sysprof-marks-page.ui:103
-msgid "Message"
-msgstr "შეტყობინება"
-
-#: src/libsysprof-ui/sysprof-log-model.c:213
-msgid "Info"
-msgstr "ინფორმაცია"
-
-#: src/libsysprof-ui/sysprof-log-model.c:216
-msgid "Critical"
-msgstr "კრიტიკული"
-
-#: src/libsysprof-ui/sysprof-log-model.c:219
-msgid "Error"
-msgstr "შეცდომა"
-
-#: src/libsysprof-ui/sysprof-log-model.c:222
-msgid "Debug"
-msgstr "პროგრამის შეცდომის პოვნა"
-
-#: src/libsysprof-ui/sysprof-log-model.c:225
-msgid "Warning"
-msgstr "შეტყობინება"
-
-#: src/libsysprof-ui/sysprof-logs-aid.c:195
-#: src/libsysprof-ui/sysprof-logs-aid.c:199
-#: src/libsysprof-ui/sysprof-logs-aid.c:204
-#: src/libsysprof-ui/sysprof-logs-aid.c:210
-msgid "Logs"
+#: src/libsysprof/sysprof-document-log.c:85
+msgid "Log"
 msgstr "ჟურნალი"
 
-#: src/libsysprof-ui/sysprof-logs-page.ui:15
-#: src/libsysprof-ui/sysprof-marks-page.ui:64
-msgid "Time"
-msgstr "დრო"
+#: src/libsysprof/sysprof-document-mark.c:113
+msgid "Mark"
+msgstr "დანიშვნა"
 
-#: src/libsysprof-ui/sysprof-logs-page.ui:29
-msgid "Severity"
-msgstr "სიმძიმე"
-
-#: src/libsysprof-ui/sysprof-logs-page.ui:44
-msgid "Domain"
-msgstr "დომენი"
-
-#: src/libsysprof-ui/sysprof-marks-aid.c:408
-#: src/libsysprof-ui/sysprof-marks-aid.c:413
-msgid "Timings"
-msgstr "დრო"
-
-#: src/libsysprof-ui/sysprof-marks-page.ui:37
-msgid "Group"
-msgstr "GROUP"
-
-#: src/libsysprof-ui/sysprof-marks-page.ui:77
-msgid "End"
-msgstr "დასასრული"
-
-#: src/libsysprof-ui/sysprof-marks-page.ui:234
-msgid "No Timings Available"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-marks-page.ui:246
-msgid "No timing data was found for the current selection"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-memory-aid.c:68
-msgid "Memory Usage"
-msgstr "მეხსიერების გამოყენება"
-
-#: src/libsysprof-ui/sysprof-memprof-aid.c:182
-msgid "Memory"
-msgstr "მეხსიერება"
-
-#: src/libsysprof-ui/sysprof-memprof-aid.c:224
-msgid "Track Allocations"
-msgstr ""
-
-#. translators: %s is replaced with the the lower and upper bound memory sizes in bytes
-#: src/libsysprof-ui/sysprof-memprof-page.c:246
+#: src/libsysprof/sysprof-document-process.c:277
 #, c-format
-msgid "> %s to %s"
-msgstr "> %s to %s"
+msgid "%s [Process %d]"
+msgstr "%s [პროცესი %d]"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:16
-msgid "Number of Allocations"
-msgstr "გამოყოფების რაოდენობა"
+#: src/libsysprof/sysprof-document-process.c:279
+#, c-format
+msgid "Process %d"
+msgstr "პროცესი %d"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:17
-msgid "Total number of allocation and free records"
+#: src/libsysprof/sysprof-document-sample.c:136
+msgid "Sample"
+msgstr "მაგალითი"
+
+#: src/libsysprof/sysprof-system-logs.c:171 src/sysprof/sysprof-greeter.ui:235
+msgid "System Logs"
+msgstr "სისტემური ჟურნალი"
+
+#: src/libsysprof/sysprof-system-logs.c:172
+msgid "Recording system logs is not supported on your platform."
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:30
-#: src/libsysprof-ui/sysprof-memprof-page.ui:318
-msgid "Leaked Allocations"
-msgstr ""
+#: src/libsysprof/sysprof-tracer.c:65
+msgid "Tracer"
+msgstr "ტრეისერი"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:31
-msgid "Number of allocations without a free record"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-memprof-page.ui:44
-#: src/libsysprof-ui/sysprof-memprof-page.ui:311
-msgid "Temporary Allocations"
-msgstr "დროებით გამოყოფები"
-
-#: src/libsysprof-ui/sysprof-memprof-page.ui:45
-msgid "Number of allocations freed from similar stack trace"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-memprof-page.ui:59
-msgid "Allocations by Size"
-msgstr "გამოყოფები ზომის მიხედვით"
-
-#: src/libsysprof-ui/sysprof-memprof-page.ui:247
-msgid "Size"
-msgstr "ზომა"
-
-#: src/libsysprof-ui/sysprof-memprof-page.ui:264
-msgid "Analyzing Memory Allocations"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-memprof-page.ui:265
-msgid "Sysprof is busy analyzing memory allocations."
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-memprof-page.ui:298
-msgid "Summary"
-msgstr "ჯამში"
-
-#: src/libsysprof-ui/sysprof-memprof-page.ui:304
-msgid "All Allocations"
-msgstr "ყველა გამოყოფა"
-
-#: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
-msgid "Memory Used"
-msgstr "გამოყენებული მეხსიერება"
-
-#: src/libsysprof-ui/sysprof-netdev-aid.c:204
-#: src/libsysprof-ui/sysprof-netdev-aid.c:264
-msgid "Network"
-msgstr "ქსელი"
-
-#. translators: "Compositor" means desktop compositor, gnome-shell/mutter in particular
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:26
-msgid "GNOME Shell"
-msgstr "GNOME-ის გარსი"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:30
-msgid "Speedtrack"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:39
-msgid "GJS"
-msgstr "GJS"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:46
-msgid "Application"
-msgstr "აპლიკაცია"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:69
-msgid "Profiling Target"
-msgstr "სამიზნის პროფილირება"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:72
-msgid "Profile Entire System"
-msgstr "მთელი სისტემის პროფილირება"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:73
+#: src/libsysprof/sysprof-tracer.c:66
 msgid ""
-"Sysprof can generate callgraphs for one or more processes on your system."
+"Tracing requires spawning a program compiled with ‘-finstrument-functions’. "
+"Tracing will not be available."
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:84
-msgid "Search Processes"
-msgstr "პროცესების ძებნა"
+#: src/sysprof-cli/sysprof-cli.c:107
+msgid "--merge requires at least 2 filename arguments"
+msgstr ""
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:99
-msgid "Loading Processes…"
-msgstr "პროცესების ჩატვირთვა…"
+#: src/sysprof-cli/sysprof-cli.c:279
+msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
+msgstr ""
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:114
-msgid "Launch Application"
-msgstr "აპლიკაციის გაშვება"
+#: src/sysprof-cli/sysprof-cli.c:280
+msgid "Make sysprof specific to a task [Deprecated]"
+msgstr ""
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:115
+#: src/sysprof-cli/sysprof-cli.c:280 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof/sysprof-logs-section.ui:179
+#: src/sysprof/sysprof-processes-section.ui:280
+#: src/sysprof/sysprof-traceables-utility.ui:52
+msgid "PID"
+msgstr "PID"
+
+#: src/sysprof-cli/sysprof-cli.c:281
+msgid "Run a command and profile the process"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:281
+msgid "COMMAND"
+msgstr "ბრძანება"
+
+#: src/sysprof-cli/sysprof-cli.c:282
 msgid ""
-"Sysprof can launch an application to be profiled. The profiler will "
-"automatically stop when it exits."
+"Set environment variable for spawned process. Can be used multiple times."
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:126
-msgid "Command Line"
-msgstr "ბრძანების სტრიქონი"
+#: src/sysprof-cli/sysprof-cli.c:282
+msgid "VAR=VALUE"
+msgstr "VAR=VALUE"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:135
-msgid "Inherit Environment"
+#: src/sysprof-cli/sysprof-cli.c:283
+msgid "Force overwrite the capture file"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:136
+#: src/sysprof-cli/sysprof-cli.c:284
+msgid "Disable recording of battery statistics"
+msgstr "ელემენტის სტატისტიკის ჩაწერის გამორთვა"
+
+#: src/sysprof-cli/sysprof-cli.c:285
+msgid "Disable recording of CPU statistics"
+msgstr "CPU-ის სტატისტიკის ჩაწერის გამორთვა"
+
+#: src/sysprof-cli/sysprof-cli.c:286
+msgid "Disable recording of Disk statistics"
+msgstr "დისკის სტატისტიკის ჩაწერის გამორთვა"
+
+#: src/sysprof-cli/sysprof-cli.c:287
+msgid "Do not record stacktraces using Linux perf"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:288
+msgid "Do not append symbol name information from local machine"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:289
+msgid "Disable recording of memory statistics"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:290
+msgid "Disable recording of network statistics"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:291
+msgid "Set SYSPROF_TRACE_FD environment for subprocess"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:292
+msgid "Set GJS_TRACE_FD environment to trace GJS processes"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:293
+msgid "Set GTK_TRACE_FD environment to trace a GTK application"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:294
+msgid "Include RAPL energy statistics"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:295
+msgid "Profile memory allocations and frees"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:296
+msgid "Connect to org.gnome.Shell for profiler statistics"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:297
+msgid "Track performance of the applications main loop"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:299
+msgid "Merge all provided *.syscap files and write to stdout"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:300
+msgid "Print the sysprof-cli version and exit"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:333
+msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:336
 msgid ""
-"Enable to ensure your application shares the display, message-bus, and other "
-"desktop environment settings."
+"\n"
+"Examples:\n"
+"\n"
+"  # Record gtk4-widget-factory using trace-fd to get application provided\n"
+"  # data as well as GTK and GNOME Shell data providers\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"  # Merge multiple syscap files into one\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:153
-msgid "Performance"
-msgstr "წარმადობა"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:156
-msgid "Allow CPU Throttling"
-msgstr "CPU-ის შეზღუდვის დაშვება"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:157
-msgid ""
-"When enabled, your system is allowed to scale CPU frequency as necessary."
+#: src/sysprof-cli/sysprof-cli.c:372
+msgid "Too many arguments were passed to sysprof-cli:"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:172
-#: src/libsysprof-ui/sysprof-visualizers-frame.ui:27
-msgid "Instruments"
-msgstr "ინსტრუმენტები"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:245
-msgid ""
-"Track application memory allocations (Sysprof must launch target application)"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:252
-msgid "Track slow operations on your applications main loop"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:265
-msgid "_Record"
-msgstr "_ჩაწერა"
-
-#: src/libsysprof-ui/sysprof-rapl-aid.c:175
-#: src/libsysprof-ui/sysprof-rapl-aid.c:248
-msgid "Energy Usage"
-msgstr "ენერგიის გამოყენება"
-
-#: src/libsysprof-ui/sysprof-rapl-aid.c:180
-msgid "Energy Usage (All)"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:35
-msgid ""
-"Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:50
-msgid "Events"
-msgstr "მოვლენები"
-
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:76
-msgid "_Stop Recording"
-msgstr "_ჩაწერს შეჩერება"
-
-#: src/libsysprof-ui/sysprof-visualizer-group-header.c:192
-#: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
-msgid "Select for more details"
-msgstr "მონიშნეთ მეტი დეტალისთვის"
-
-#: src/libsysprof-ui/sysprof-visualizer-group-header.c:214
-msgid "Display supplemental graphs"
+#. Translators: %s is a file name.
+#: src/sysprof-cli/sysprof-cli.c:419
+#, c-format
+msgid "%s exists. Use --force to overwrite\n"
 msgstr ""
 
 #: src/sysprofd/org.gnome.sysprof3.policy.in:13
@@ -656,382 +387,888 @@ msgstr ""
 
 #: src/sysprof/gtk/help-overlay.ui:10
 msgctxt "shortcut window"
-msgid "Files"
-msgstr "ფაილები"
-
-#: src/sysprof/gtk/help-overlay.ui:13
-msgctxt "shortcut window"
-msgid "Save Recording"
-msgstr "ჩანაწერის შენახვა"
-
-#: src/sysprof/gtk/help-overlay.ui:14
-msgctxt "shortcut window"
-msgid "Saves the current recording"
-msgstr ""
-
-#: src/sysprof/gtk/help-overlay.ui:20
-msgctxt "shortcut window"
-msgid "Open recording"
-msgstr "ჩანაწერის გახსნა"
-
-#: src/sysprof/gtk/help-overlay.ui:21
-msgctxt "shortcut window"
-msgid "Opens a previously saved recording"
-msgstr ""
-
-#: src/sysprof/gtk/help-overlay.ui:29
-msgctxt "shortcut window"
-msgid "Recording"
-msgstr "ჩაწერა"
-
-#: src/sysprof/gtk/help-overlay.ui:32
-msgctxt "shortcut window"
-msgid "Record again"
-msgstr "თავიდან ჩაწერა"
-
-#: src/sysprof/gtk/help-overlay.ui:33
-msgctxt "shortcut window"
-msgid "Starts a new recording"
-msgstr ""
-
-#: src/sysprof/gtk/help-overlay.ui:39
-msgctxt "shortcut window"
-msgid "Stop recording"
-msgstr "ვიდეოს ჩაწერის გაჩერება"
-
-#: src/sysprof/gtk/help-overlay.ui:47
-msgctxt "shortcut window"
-msgid "Callgraph"
-msgstr "გამოძახებების გრაფის პანელი"
-
-#: src/sysprof/gtk/help-overlay.ui:50
-msgctxt "shortcut window"
-msgid "Expand function"
-msgstr "ფუნქციის ამოკეცვა"
-
-#: src/sysprof/gtk/help-overlay.ui:51
-msgctxt "shortcut window"
-msgid "Shows the direct descendants of the callgraph function"
-msgstr ""
-
-#: src/sysprof/gtk/help-overlay.ui:57
-msgctxt "shortcut window"
-msgid "Collapse function"
-msgstr "ფუნქცის ჩაკეცვა"
-
-#: src/sysprof/gtk/help-overlay.ui:58
-msgctxt "shortcut window"
-msgid "Hides all callgraph descendants below the selected function"
-msgstr ""
-
-#: src/sysprof/gtk/help-overlay.ui:64
-msgctxt "shortcut window"
-msgid "Jump into function"
-msgstr "ფუნქციაზე გადასვლა"
-
-#: src/sysprof/gtk/help-overlay.ui:65
-msgctxt "shortcut window"
-msgid "Selects the function or file as the top of the callgraph"
-msgstr ""
-
-#: src/sysprof/gtk/help-overlay.ui:73
-msgctxt "shortcut window"
-msgid "Visualizers"
-msgstr "ვიზუალიზერები"
-
-#: src/sysprof/gtk/help-overlay.ui:76
-msgctxt "shortcut window"
-msgid "Zoom in"
-msgstr "გადიდება"
-
-#: src/sysprof/gtk/help-overlay.ui:82
-msgctxt "shortcut window"
-msgid "Zoom out"
-msgstr "და_პატარავება"
-
-#: src/sysprof/gtk/help-overlay.ui:88
-msgctxt "shortcut window"
-msgid "Reset zoom"
-msgstr "გადიდების საწყისი პარამეტრები"
-
-#: src/sysprof/gtk/help-overlay.ui:96
-msgctxt "shortcut window"
 msgid "General"
 msgstr "ზოგადი"
 
-#: src/sysprof/gtk/help-overlay.ui:99
+#: src/sysprof/gtk/help-overlay.ui:13
 msgctxt "shortcut window"
 msgid "Show Help"
 msgstr "დახმარების ჩვენება"
 
-#: src/sysprof/gtk/help-overlay.ui:105
+#: src/sysprof/gtk/help-overlay.ui:19
 msgctxt "shortcut window"
 msgid "Keyboard Shortcuts"
 msgstr "კლავიატურის მალსახმობები"
 
-#: src/sysprof/gtk/help-overlay.ui:111
-msgctxt "shortcut window"
-msgid "New Tab"
-msgstr "ახალი ჩანართი"
-
-#: src/sysprof/gtk/help-overlay.ui:117
-msgctxt "shortcut window"
-msgid "Switch Tab"
-msgstr "ჩანართზე გადართვა"
-
-#: src/sysprof/gtk/help-overlay.ui:123
-msgctxt "shortcut window"
-msgid "New Window"
-msgstr "ახალი ფანჯარა"
-
-#: src/sysprof/gtk/help-overlay.ui:129
+#: src/sysprof/gtk/help-overlay.ui:25
 msgctxt "shortcut window"
 msgid "Close Window"
 msgstr "ფანჯრის დახურვა"
 
-#: src/sysprof/gtk/help-overlay.ui:135
+#: src/sysprof/gtk/help-overlay.ui:31
 msgctxt "shortcut window"
 msgid "Quit"
 msgstr "გამოსვლა"
 
 #: src/sysprof/gtk/menus.ui:6
-msgid "New Tab"
-msgstr "ახალი ჩანართი"
+msgid "_Preferences"
+msgstr "_გამართვა"
 
 #: src/sysprof/gtk/menus.ui:10
-msgid "New Window"
-msgstr "ახალი ფანჯარა"
+msgid "_Keyboard Shortcuts"
+msgstr "_კლავიატურის მალსახმობები"
 
-#: src/sysprof/gtk/menus.ui:16
-msgid "Open Recording…"
-msgstr "ჩანაწერის გახსნა…"
+#: src/sysprof/gtk/menus.ui:14
+msgid "_Help"
+msgstr "_დახმარება"
 
-#: src/sysprof/gtk/menus.ui:20
-msgid "Save Recording…"
-msgstr "ჩანაწერის შენახვა…"
+#: src/sysprof/gtk/menus.ui:18
+msgid "_About Sysprof"
+msgstr "Sysprof-ის შ_ესახებ"
 
-#: src/sysprof/gtk/menus.ui:26
-msgid "Record Again"
-msgstr "თავიდან ჩაწერა"
-
-#: src/sysprof/gtk/menus.ui:32
-msgid "Close"
-msgstr "დახურვა"
-
-#: src/sysprof/gtk/menus.ui:38
-msgid "Keyboard Shortcuts"
-msgstr "კლავიატურის მალსახმობები"
-
-#: src/sysprof/gtk/menus.ui:42
-msgid "Help"
-msgstr "დახმარება"
-
-#: src/sysprof/gtk/menus.ui:46
-msgid "About Sysprof"
-msgstr "Sysprof- ის შესახებ"
-
-#: src/sysprof/sysprof-application.c:206
+#: src/sysprof/sysprof-application.c:147
 msgid "A system profiler"
 msgstr "სისტემის პროფაილერი"
 
-#: src/sysprof/sysprof-application.c:207
+#: src/sysprof/sysprof-application.c:148
 msgid "translator-credits"
 msgstr "თემური დოღონაძე"
 
-#. Translators: This is a window title.
-#: src/sysprof/sysprof-window.c:279
-msgid "Open Capture…"
-msgstr "ჩანაწერის გახსნა…"
+#: src/sysprof/sysprof-callgraph-view.ui:18
+msgid "Functions"
+msgstr "ფუნქციები"
 
-#. Translators: This is a button.
-#: src/sysprof/sysprof-window.c:283
+#: src/sysprof/sysprof-callgraph-view.ui:73
+msgid "Callers"
+msgstr "გამომძახებლები"
+
+#: src/sysprof/sysprof-callgraph-view.ui:125
+msgid "Descendants"
+msgstr "შთამომავლები"
+
+#: src/sysprof/sysprof-counters-section.ui:26
+#: src/sysprof/sysprof-cpu-section.ui:166
+msgid "Counters Chart"
+msgstr "მთვლელების გრაფიკი"
+
+#: src/sysprof/sysprof-counters-section.ui:40
+#: src/sysprof/sysprof-cpu-section.ui:340
+msgid "Counters Table"
+msgstr "მთვლელების ცხრილი"
+
+#: src/sysprof/sysprof-cpu-section.ui:252
+msgid "Counter"
+msgstr "მთვლელი"
+
+#: src/sysprof/sysprof-cpu-section.ui:295
+msgid "Values"
+msgstr "მნიშვნელობები"
+
+#: src/sysprof/sysprof-cpu-section.ui:393
+#: src/sysprof/sysprof-frame-utility.ui:49
+#: src/sysprof/sysprof-logs-section.ui:110
+#: src/sysprof/sysprof-metadata-section.ui:38
+#: src/sysprof/sysprof-process-dialog.ui:64
+#: src/sysprof/sysprof-processes-section.ui:212
+#: src/sysprof/sysprof-traceables-utility.ui:23
+msgid "Time"
+msgstr "დრო"
+
+#: src/sysprof/sysprof-cpu-section.ui:427
+#: src/sysprof/sysprof-marks-section.ui:235
+msgid "Category"
+msgstr "კატეგორია"
+
+#: src/sysprof/sysprof-cpu-section.ui:465
+#: src/sysprof/sysprof-marks-section.ui:269
+msgid "Name"
+msgstr "სახელი"
+
+#: src/sysprof/sysprof-cpu-section.ui:503
+#: src/sysprof/sysprof-metadata-section.ui:105
+msgid "Value"
+msgstr "მნიშვნელობა"
+
+#: src/sysprof/sysprof-cpu-section.ui:543
+msgid "CPU Info"
+msgstr "CPU-ის ინფორმაცია"
+
+#: src/sysprof/sysprof-cpu-section.ui:574
+#: src/sysprof/sysprof-process-dialog.ui:248
+msgid "ID"
+msgstr "ID"
+
+#: src/sysprof/sysprof-cpu-section.ui:609
+msgid "Core"
+msgstr "ბირთვი"
+
+#: src/sysprof/sysprof-cpu-section.ui:644
+msgid "Model Name"
+msgstr "Მოდელის სახელი"
+
+#: src/sysprof/sysprof-files-section.ui:4
+msgid "Files"
+msgstr "ფაილები"
+
+#: src/sysprof/sysprof-files-section.ui:38
+msgid "Path"
+msgstr "ბილიკი"
+
+#: src/sysprof/sysprof-files-section.ui:73
+msgid "Compressed"
+msgstr "შეკუმშული"
+
+#: src/sysprof/sysprof-files-section.ui:107
+msgid "Size"
+msgstr "ზომა"
+
+#: src/sysprof/sysprof-frame-utility.ui:20
+#: src/sysprof/sysprof-mark-table.ui:220
+msgid "Type"
+msgstr "ტიპი"
+
+#: src/sysprof/sysprof-frame-utility.ui:80
+#: src/sysprof/sysprof-logs-section.ui:143
+#: src/sysprof/sysprof-mark-table.ui:115
+#: src/sysprof/sysprof-traceables-utility.ui:81
+msgid "CPU"
+msgstr "CPU"
+
+#: src/sysprof/sysprof-greeter.c:199 src/sysprof/sysprof-greeter.c:264
+msgid "Must Capture to Local File"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:200 src/sysprof/sysprof-greeter.c:265
+msgid "You must choose a local file to capture using Sysprof"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:201 src/sysprof/sysprof-greeter.c:266
+#: src/sysprof/sysprof-recording-pad.c:115 src/sysprof/sysprof-window.c:513
+msgid "Close"
+msgstr "დახურვა"
+
+#: src/sysprof/sysprof-greeter.c:222
+#, c-format
+msgid "System Capture from %s.syscap"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:226
+msgid "Record to File"
+msgstr "ფაილში ჩაწერა"
+
+#: src/sysprof/sysprof-greeter.c:227 src/sysprof/sysprof-greeter.ui:27
+msgid "Record"
+msgstr "ჩაწერა"
+
+#: src/sysprof/sysprof-greeter.c:285 src/sysprof/sysprof-greeter.ui:282
+msgid "Open Recording"
+msgstr "ჩანაწერის გახსნა"
+
+#: src/sysprof/sysprof-greeter.c:286 src/sysprof/sysprof-greeter.ui:277
 msgid "Open"
 msgstr "გახსნა"
 
-#: src/sysprof/sysprof-window.c:288
-msgid "Sysprof Captures"
-msgstr "Sysprof -ის ჩანაწერები"
+#: src/sysprof/sysprof-greeter.c:290
+msgid "Sysprof Capture (*.syscap)"
+msgstr "Sysprof -ის ჩანაწერები (*.syscap)"
 
-#: src/sysprof/sysprof-window.c:293
-msgid "All Files"
-msgstr "ყველა ფაილი"
+#: src/sysprof/sysprof-greeter.ui:33 src/sysprof/sysprof-samples-section.ui:4
+msgid "Time Profiler"
+msgstr "დროის პროფაილერი"
 
-#: src/sysprof/sysprof-window.ui:34
-msgid "_Open"
-msgstr "_გახსნა"
-
-#: src/sysprof/sysprof-window.ui:37
-msgid "Open Recording… (Ctrl+O)"
-msgstr "ჩანაწერის გახსნა… (Ctrl+O)"
-
-#: src/tools/sysprof-cli.c:63
-msgid "Stopping profiler. Press twice more ^C to force exit."
+#: src/sysprof/sysprof-greeter.ui:37
+msgid "Sample Native Stacks"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:76
-msgid "Profiler stopped."
-msgstr "პროფაილერი გაჩერდა."
-
-#: src/tools/sysprof-cli.c:109
-msgid "--merge requires at least 2 filename arguments"
+#: src/sysprof/sysprof-greeter.ui:38
+msgid "Record native stack traces using a sampling profiler"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:227
-msgid "Disable CPU throttling while profiling"
+#: src/sysprof/sysprof-greeter.ui:49
+msgid "Performance Profile"
+msgstr "წარმადობის პროფილი"
+
+#: src/sysprof/sysprof-greeter.ui:50
+msgid "Hold the performance profile for the duration of the recording"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:228
-msgid "Make sysprof specific to a task"
+#: src/sysprof/sysprof-greeter.ui:60
+msgid "Sample JavaScript Stacks"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:228
-msgid "PID"
-msgstr "PID"
-
-#: src/tools/sysprof-cli.c:229
-msgid "Run a command and profile the process"
+#: src/sysprof/sysprof-greeter.ui:61
+msgid "Record JavaScript stack traces using a sampling profiler"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:229
-msgid "COMMAND"
-msgstr "ბრძანება"
+#: src/sysprof/sysprof-greeter.ui:71
+msgid "This feature is only supported when launching a GJS-based application."
+msgstr ""
 
-#: src/tools/sysprof-cli.c:230
+#: src/sysprof/sysprof-greeter.ui:88
+msgid "System Memory Usage"
+msgstr "სისტემის მეხსიერების გამოყენება"
+
+#: src/sysprof/sysprof-greeter.ui:89
+msgid "Record coarse-grained counters about system memory usage"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:105
+msgid "Trace Memory Allocations"
+msgstr "მეხსიერების გამოყოფების ტრეისი"
+
+#: src/sysprof/sysprof-greeter.ui:106
 msgid ""
-"Set environment variable for spawned process. Can be used multiple times."
+"Record a strack trace when <tt>malloc</tt> or similar functions are used"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:230
-msgid "VAR=VALUE"
+#: src/sysprof/sysprof-greeter.ui:116
+msgid "Memory tracing is only supported when launching an application."
 msgstr ""
 
-#: src/tools/sysprof-cli.c:231
-msgid "Force overwrite the capture file"
+#: src/sysprof/sysprof-greeter.ui:129
+msgid "Display &amp; Graphics"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:232
-msgid "Disable recording of battery statistics"
+#: src/sysprof/sysprof-greeter.ui:133
+msgid "Compositor Frame Timings"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:233
-msgid "Disable recording of CPU statistics"
+#: src/sysprof/sysprof-greeter.ui:134
+msgid "Record frame-timing information from the GNOME Shell compositor"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:234
-msgid "Disable recording of Disk statistics"
+#: src/sysprof/sysprof-greeter.ui:150
+msgid "Detect Application Hangs"
+msgstr "აპლიკაციების დაკიდების აღმოჩენა"
+
+#: src/sysprof/sysprof-greeter.ui:151
+msgid "Detect hangs in the application main loop"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:235
-msgid "Do not record stacktraces using Linux perf"
-msgstr ""
-
-#: src/tools/sysprof-cli.c:236
-msgid "Do not append symbol name information from local machine"
-msgstr ""
-
-#: src/tools/sysprof-cli.c:237
-msgid "Disable recording of memory statistics"
-msgstr ""
-
-#: src/tools/sysprof-cli.c:238
-msgid "Disable recording of network statistics"
-msgstr ""
-
-#: src/tools/sysprof-cli.c:239
-msgid "Set SYSPROF_TRACE_FD environment for subprocess"
-msgstr ""
-
-#: src/tools/sysprof-cli.c:240
-msgid "Set GJS_TRACE_FD environment to trace GJS processes"
-msgstr ""
-
-#: src/tools/sysprof-cli.c:241
-msgid "Set GTK_TRACE_FD environment to trace a GTK application"
-msgstr ""
-
-#: src/tools/sysprof-cli.c:242
-msgid "Include RAPL energy statistics"
-msgstr ""
-
-#: src/tools/sysprof-cli.c:243
-msgid "Profile memory allocations and frees"
-msgstr ""
-
-#: src/tools/sysprof-cli.c:244
-msgid "Connect to org.gnome.Shell for profiler statistics"
-msgstr ""
-
-#: src/tools/sysprof-cli.c:245
-msgid "Track performance of the applications main loop"
-msgstr ""
-
-#: src/tools/sysprof-cli.c:246
-msgid "Merge all provided *.syscap files and write to stdout"
-msgstr ""
-
-#: src/tools/sysprof-cli.c:247
-msgid "Print the sysprof-cli version and exit"
-msgstr ""
-
-#: src/tools/sysprof-cli.c:280
-msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
-msgstr ""
-
-#: src/tools/sysprof-cli.c:283
+#: src/sysprof/sysprof-greeter.ui:161
 msgid ""
-"\n"
-"Examples:\n"
-"\n"
-"  # Record gtk4-widget-factory using trace-fd to get application provided\n"
-"  # data as well as GTK and GNOME Shell data providers\n"
-"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
-"\n"
-"  # Merge multiple syscap files into one\n"
-"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+"Hang detection is only supported when launching a GTK-based application."
 msgstr ""
 
-#: src/tools/sysprof-cli.c:316
-msgid "Too many arguments were passed to sysprof-cli:"
+#: src/sysprof/sysprof-greeter.ui:174
+msgid "Counters"
+msgstr "მთვლელები"
+
+#: src/sysprof/sysprof-greeter.ui:178
+msgid "Disk Usage"
+msgstr "დისკის გამოყენება"
+
+#: src/sysprof/sysprof-greeter.ui:179
+msgid "Record coarse-grained counters about storage throughput"
 msgstr ""
 
-#. Translators: %s is a file name.
-#: src/tools/sysprof-cli.c:377
+#: src/sysprof/sysprof-greeter.ui:191
+msgid "Network Usage"
+msgstr "ქსელის გამოყენება"
+
+#: src/sysprof/sysprof-greeter.ui:192
+msgid "Record coarse-grained counters about network traffic"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:204
+msgid "Energy Usage"
+msgstr "ენერგიის გამოყენება"
+
+#: src/sysprof/sysprof-greeter.ui:205
+msgid "Record coarse-grained counters about energy usage in Watts"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:217
+msgid "Battery Charge"
+msgstr "ელემენტის მუხტი"
+
+#: src/sysprof/sysprof-greeter.ui:218
+msgid "Record coarse-grained counters about battery charge or discharge rates"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:231
+msgid "System"
+msgstr "სისტემა"
+
+#: src/sysprof/sysprof-greeter.ui:236
+msgid "Watch the system log for new messages and record them"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:248
+msgid "Bundle Symbols"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:249
+msgid "Make recording shareable by bundling decoded symbols"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:267
+msgid "Recent"
+msgstr "Ბოლო"
+
+#: src/sysprof/sysprof-greeter.ui:286
+msgid "Capture File"
+msgstr "ჩაჭერის ფაილი"
+
+#: src/sysprof/sysprof-greeter.ui:308
+msgid "Symbols"
+msgstr "სიმბოლოები"
+
+#: src/sysprof/sysprof-greeter.ui:312
+msgid "Ignore Bundled Symbols"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:313
+msgid "Do not use embedded symbols that were resolved on the capture system"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:328
+msgid "Override Kernel Symbols"
+msgstr "ბირთვის სიმბოლოების გადაფარვა"
+
+#: src/sysprof/sysprof-greeter.ui:329
+msgid "Specify a “kallsyms” file overriding what is bundled with a recording"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:345
+msgid "Symbol Directories"
+msgstr "სიმბოლოს საქაღლდეები"
+
+#: src/sysprof/sysprof-greeter.ui:348
+msgid "Additional symbol directories to use when symbolizing stack traces."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:359
+msgid "Add Symbol Directory"
+msgstr "სიმბოლოების საქაღალდის დამატება"
+
+#: src/sysprof/sysprof-greeter.ui:383
+msgid "Record to _File…"
+msgstr "ჩაწერა _ფაილში…"
+
+#: src/sysprof/sysprof-greeter.ui:391
+msgid "_Record to Memory"
+msgstr "_მეხსიერებაში ჩაწერა"
+
+#: src/sysprof/sysprof-logs-section.c:95
+msgid "Critical"
+msgstr "კრიტიკული"
+
+#: src/sysprof/sysprof-logs-section.c:98
+msgid "Warning"
+msgstr "შეტყობინება"
+
+#: src/sysprof/sysprof-logs-section.c:101
+msgid "Debug"
+msgstr "პროგრამის შეცდომის პოვნა"
+
+#: src/sysprof/sysprof-logs-section.c:104
+#: src/sysprof/sysprof-logs-section.ui:286
+msgid "Message"
+msgstr "შეტყობინება"
+
+#: src/sysprof/sysprof-logs-section.c:107
+msgid "Info"
+msgstr "ინფორმაცია"
+
+#: src/sysprof/sysprof-logs-section.c:110
+msgid "Error"
+msgstr "შეცდომა"
+
+#: src/sysprof/sysprof-logs-section.ui:4
+msgid "Logs"
+msgstr "ჟურნალი"
+
+#: src/sysprof/sysprof-logs-section.ui:215
+msgid "Severity"
+msgstr "სიმძიმე"
+
+#: src/sysprof/sysprof-logs-section.ui:251
+msgid "Domain"
+msgstr "დომენი"
+
+#: src/sysprof/sysprof-marks-section.ui:4
+msgid "Marks"
+msgstr ""
+
+#: src/sysprof/sysprof-marks-section.ui:73
+msgid "Mark Chart"
+msgstr ""
+
+#: src/sysprof/sysprof-marks-section.ui:86
+msgid "Mark Table"
+msgstr ""
+
+#: src/sysprof/sysprof-marks-section.ui:99
+msgid "Mark Waterfall"
+msgstr ""
+
+#: src/sysprof/sysprof-marks-section.ui:201
+msgid "Summary"
+msgstr "ჯამში"
+
+#: src/sysprof/sysprof-marks-section.ui:303
+msgid "Minimum"
+msgstr "მინიმუმი"
+
+#: src/sysprof/sysprof-marks-section.ui:337
+msgid "Maximum"
+msgstr "მაქსიმუმი"
+
+#: src/sysprof/sysprof-marks-section.ui:371
+msgid "Average"
+msgstr "საშუალო"
+
+#: src/sysprof/sysprof-marks-section.ui:405
+msgid "Median"
+msgstr "საშუალო"
+
+#: src/sysprof/sysprof-mark-table.ui:46
+msgid "Start"
+msgstr "დაწყება"
+
+#: src/sysprof/sysprof-mark-table.ui:80
+#: src/sysprof/sysprof-processes-section.ui:246
+msgid "Duration"
+msgstr "ხანგრძლივობა"
+
+#: src/sysprof/sysprof-mark-table.ui:150
+msgid "Process"
+msgstr "პროცესი"
+
+#: src/sysprof/sysprof-mark-table.ui:185
+msgid "Group"
+msgstr "GROUP"
+
+#: src/sysprof/sysprof-mark-table.ui:255
+msgid "Description"
+msgstr "აღწერა"
+
+#: src/sysprof/sysprof-memory-callgraph-view.ui:8
+#: src/sysprof/sysprof-memory-callgraph-view.ui:75
+#: src/sysprof/sysprof-memory-callgraph-view.ui:142
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:8
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:75
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:142
+msgid "Self"
+msgstr "Self"
+
+#: src/sysprof/sysprof-memory-callgraph-view.ui:38
+#: src/sysprof/sysprof-memory-callgraph-view.ui:105
+#: src/sysprof/sysprof-memory-callgraph-view.ui:172
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:38
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:105
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:172
+msgid "Total"
+msgstr "ჯამში"
+
+#: src/sysprof/sysprof-memory-section.ui:4
+msgid "Memory Allocations"
+msgstr "მეხსიერების გამოყოფები"
+
+#: src/sysprof/sysprof-memory-section.ui:126
+#: src/sysprof/sysprof-samples-section.ui:143
+#: src/sysprof/sysprof-traceables-utility.ui:162
+msgid "Stack Trace"
+msgstr "სტეკის ტრეისი"
+
+#: src/sysprof/sysprof-metadata-section.ui:4
+msgid "Metadata"
+msgstr "მეტამონაცემები"
+
+#: src/sysprof/sysprof-metadata-section.ui:71
+msgid "Key"
+msgstr "გასაღები"
+
+#: src/sysprof/sysprof-process-dialog.ui:35
+msgid "Address Layout"
+msgstr "მისამართების განლაგება"
+
+#: src/sysprof/sysprof-process-dialog.ui:97
+msgid "Start Address"
+msgstr "საწყისი მისამართი"
+
+#: src/sysprof/sysprof-process-dialog.ui:137
+msgid "End Address"
+msgstr "ბოლო მისამართი"
+
+#: src/sysprof/sysprof-process-dialog.ui:177
+msgid "File"
+msgstr "ფაილი"
+
+#: src/sysprof/sysprof-process-dialog.ui:219
+msgid "Mounts"
+msgstr "მიმაგრებები"
+
+#: src/sysprof/sysprof-process-dialog.ui:282
+msgid "Parent"
+msgstr "მშობელი"
+
+#: src/sysprof/sysprof-process-dialog.ui:316
+msgid "Major"
+msgstr "ძირითადი"
+
+#: src/sysprof/sysprof-process-dialog.ui:350
+msgid "Minor"
+msgstr "მცირე"
+
+#: src/sysprof/sysprof-process-dialog.ui:384
+msgid "Mount Point"
+msgstr "მიმაგრების წერტილი"
+
+#: src/sysprof/sysprof-process-dialog.ui:418
+msgid "Mount Source"
+msgstr "წყაროს მიმაგრება"
+
+#: src/sysprof/sysprof-process-dialog.ui:452
+msgid "Root"
+msgstr "Root"
+
+#: src/sysprof/sysprof-process-dialog.ui:486
+msgid "Filesystem"
+msgstr "ფაილური სისტემა"
+
+#: src/sysprof/sysprof-process-dialog.ui:520
+msgid "Options"
+msgstr "მორგება"
+
+#: src/sysprof/sysprof-process-dialog.ui:562
+msgid "Threads"
+msgstr "ნაკადები"
+
+#: src/sysprof/sysprof-process-dialog.ui:591
+msgid "Thread ID"
+msgstr "ნაკადის ID"
+
+#: src/sysprof/sysprof-process-dialog.ui:625
+msgid "Main Thread"
+msgstr "მთავარი ნაკადი"
+
+#: src/sysprof/sysprof-processes-section.ui:4
+msgid "Processes"
+msgstr "პროცესები"
+
+#: src/sysprof/sysprof-processes-section.ui:73
+msgid "Process Chart"
+msgstr "პროცესების გრაფიკი"
+
+#: src/sysprof/sysprof-processes-section.ui:173
+msgid "Process Table"
+msgstr "პროცესის ცხრილი"
+
+#: src/sysprof/sysprof-processes-section.ui:314
+msgid "Command Line"
+msgstr "ბრძანების სტრიქონი"
+
+#. translators: this expands to the number of events recorded by the profiler as an indicator of progress
+#: src/sysprof/sysprof-recording-pad.c:56
+msgid "%"
+msgstr "%"
+
+#: src/sysprof/sysprof-recording-pad.c:111
+msgid "Recording Failed"
+msgstr "ჩაწერის შეცდომა"
+
+#: src/sysprof/sysprof-recording-pad.c:113
 #, c-format
-msgid "%s exists. Use --force to overwrite\n"
+msgid ""
+"Sysprof failed to record.\n"
+"\n"
+"%s"
+msgstr ""
+"Sysprof-ის შეცდომა ჩაწერისას.\n"
+"\n"
+"%s"
+
+#: src/sysprof/sysprof-recording-pad.ui:69
+msgid "Stop Recording"
+msgstr "ჩაწერის გაჩერება"
+
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:98
+msgid "Seek Backward"
+msgstr "უკან გადახვევა"
+
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:108
+msgid "Zoom Out"
+msgstr "დაპატარავება"
+
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:118
+msgid "Reset Zoom"
+msgstr "გადიდების საწყისი პარამეტრები"
+
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:128
+msgid "Zoom In"
+msgstr "გადიდება"
+
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:138
+msgid "Seek Forward"
+msgstr "წინ გადახვევა"
+
+#: src/sysprof/sysprof-traceables-utility.ui:109
+msgid "Depth"
+msgstr "სიღრმე"
+
+#: src/sysprof/sysprof-window.c:509
+msgid "Invalid Document"
+msgstr "არასწორი დოკუმენტი"
+
+#: src/sysprof/sysprof-window.c:511
+#, c-format
+msgid ""
+"The document could not be loaded. Please check that you have the correct "
+"capture file.\n"
+"\n"
+"%s"
 msgstr ""
 
-#: src/tools/sysprof-profiler-ctl.c:45
-msgid "Connect to the system bus"
-msgstr "სისტემურ მატარებელთან მიერთება"
+#: src/sysprof/sysprof-window.ui:211
+msgid "CPU Usage"
+msgstr "CPU -ის გამოყენება"
 
-#: src/tools/sysprof-profiler-ctl.c:46
-msgid "Connect to the session bus"
-msgstr "სესიის მატარებელთან მიერთება"
+#: src/sysprof/sysprof-window.ui:221
+msgid "Network"
+msgstr "ქსელი"
 
-#: src/tools/sysprof-profiler-ctl.c:47
-msgid "Connect to the given D-Bus address"
-msgstr ""
+#: src/sysprof/sysprof-window.ui:231
+msgid "Storage"
+msgstr "საცავი"
 
-#: src/tools/sysprof-profiler-ctl.c:48
-msgid "Destination D-Bus name to invoke method on"
-msgstr ""
+#: src/sysprof/sysprof-window.ui:276
+msgid "_Record Again…"
+msgstr "თავიდან _ჩაწერა…"
 
-#: src/tools/sysprof-profiler-ctl.c:49
-msgid "Object path to invoke method on"
-msgstr ""
+#: src/sysprof/sysprof-window.ui:280
+msgid "Open Recording…"
+msgstr "ჩანაწერის გახსნა…"
 
-#: src/tools/sysprof-profiler-ctl.c:49
-msgid "/org/gnome/Sysprof3/Profiler"
-msgstr "/org/gnome/Sysprof3/Profiler"
+#: src/sysprof/sysprof-window.ui:284
+msgid "Save As…"
+msgstr "შენახვა, როგორც…"
 
-#: src/tools/sysprof-profiler-ctl.c:50
-msgid "Timeout in seconds"
-msgstr "ვადა წამებში"
+#: src/sysprof/sysprof-window.ui:289
+msgid "Preferences"
+msgstr "მორგება"
 
-#: src/tools/sysprof-profiler-ctl.c:51
-msgid "Overwrite FILENAME if it exists"
-msgstr ""
+#: src/sysprof/sysprof-window.ui:294
+msgid "Help"
+msgstr "დახმარება"
 
-#: src/tools/sysprof-profiler-ctl.c:79
-msgid "--dest=BUS_NAME [FILENAME] - connect to an embedded sysprof profiler"
-msgstr ""
+#: src/sysprof/sysprof-window.ui:299
+msgid "About Sysprof"
+msgstr "Sysprof- ის შესახებ"
+
+#~ msgid "Battery Charge (All)"
+#~ msgstr "ელემენტის მუხტი (ყველა)"
+
+#~ msgid "Battery"
+#~ msgstr "ელემენტი"
+
+#~ msgid "Callgraph"
+#~ msgstr "გამოძახებების გრაფის პანელი"
+
+#~ msgid "Hits"
+#~ msgstr "მინიშნებები"
+
+#~ msgid "Not Enough Samples"
+#~ msgstr "არ არის საკმარისი ნიმუშები"
+
+#, c-format
+#~ msgctxt "progress bar label"
+#~ msgid "%d %%"
+#~ msgstr "%d %%"
+
+#~ msgid "CPU Frequency"
+#~ msgstr "CPU -ის სიხშირე"
+
+#~ msgid "CPU Frequency (All)"
+#~ msgstr "CPU -ის სიხშირე (ყველა)"
+
+#~ msgid "CPU Usage (All)"
+#~ msgstr "CPU გამოყენება (ყველა)"
+
+#~ msgid "Memory Capture"
+#~ msgstr "მეხსიერების გადაღება"
+
+#, c-format
+#~ msgid "%0.4lf seconds"
+#~ msgstr "%0.4lf წამი"
+
+#~ msgid "Location"
+#~ msgstr "დებარეობა"
+
+#~ msgid "CPU Model"
+#~ msgstr "CPU მოდელი"
+
+#~ msgid "Statistics"
+#~ msgstr "სტატისტიკა"
+
+#~ msgid "Forks"
+#~ msgstr "ფორკი"
+
+#~ msgid "Min"
+#~ msgstr "მინ"
+
+#~ msgid "Max"
+#~ msgstr "მაქს"
+
+#~ msgid "Avg"
+#~ msgstr "საშუალო"
+
+#~ msgid "Disk"
+#~ msgstr "დისკი"
+
+#~ msgid "Writes"
+#~ msgstr "ჩაწერები"
+
+#~ msgid "New Recording"
+#~ msgstr "ახალი ჩანაწერი"
+
+#~ msgid "Save Recording"
+#~ msgstr "ჩანაწერის შენახვა"
+
+#~ msgid "Save"
+#~ msgstr "შენახვა"
+
+#~ msgid "Cancel"
+#~ msgstr "გაუქმება"
+
+#~ msgid "Details"
+#~ msgstr "დეტალები"
+
+#~ msgid "Remove environment variable"
+#~ msgstr "გარემოს ცვლადის წაშლა"
+
+#~ msgid "New environment variable…"
+#~ msgstr "ახალი გარემოს ცვლადი…"
+
+#~ msgid "Ouch, that hurt!"
+#~ msgstr "ეს მეტკინა!"
+
+#~ msgid "Timings"
+#~ msgstr "დრო"
+
+#~ msgid "End"
+#~ msgstr "დასასრული"
+
+#, c-format
+#~ msgid "> %s to %s"
+#~ msgstr "> %s to %s"
+
+#~ msgid "Number of Allocations"
+#~ msgstr "გამოყოფების რაოდენობა"
+
+#~ msgid "Temporary Allocations"
+#~ msgstr "დროებით გამოყოფები"
+
+#~ msgid "Allocations by Size"
+#~ msgstr "გამოყოფები ზომის მიხედვით"
+
+#~ msgid "Memory Used"
+#~ msgstr "გამოყენებული მეხსიერება"
+
+#~ msgid "GNOME Shell"
+#~ msgstr "GNOME-ის გარსი"
+
+#~ msgid "GJS"
+#~ msgstr "GJS"
+
+#~ msgid "Profiling Target"
+#~ msgstr "სამიზნის პროფილირება"
+
+#~ msgid "Profile Entire System"
+#~ msgstr "მთელი სისტემის პროფილირება"
+
+#~ msgid "Search Processes"
+#~ msgstr "პროცესების ძებნა"
+
+#~ msgid "Launch Application"
+#~ msgstr "აპლიკაციის გაშვება"
+
+#~ msgid "Allow CPU Throttling"
+#~ msgstr "CPU-ის შეზღუდვის დაშვება"
+
+#~ msgid "Instruments"
+#~ msgstr "ინსტრუმენტები"
+
+#~ msgid "Events"
+#~ msgstr "მოვლენები"
+
+#~ msgid "Select for more details"
+#~ msgstr "მონიშნეთ მეტი დეტალისთვის"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Save Recording"
+#~ msgstr "ჩანაწერის შენახვა"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Record again"
+#~ msgstr "თავიდან ჩაწერა"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Stop recording"
+#~ msgstr "ვიდეოს ჩაწერის გაჩერება"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Callgraph"
+#~ msgstr "გამოძახებების გრაფის პანელი"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Expand function"
+#~ msgstr "ფუნქციის ამოკეცვა"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Collapse function"
+#~ msgstr "ფუნქცის ჩაკეცვა"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Jump into function"
+#~ msgstr "ფუნქციაზე გადასვლა"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Visualizers"
+#~ msgstr "ვიზუალიზერები"
+
+#~ msgctxt "shortcut window"
+#~ msgid "New Tab"
+#~ msgstr "ახალი ჩანართი"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Switch Tab"
+#~ msgstr "ჩანართზე გადართვა"
+
+#~ msgctxt "shortcut window"
+#~ msgid "New Window"
+#~ msgstr "ახალი ფანჯარა"
+
+#~ msgid "New Tab"
+#~ msgstr "ახალი ჩანართი"
+
+#~ msgid "Save Recording…"
+#~ msgstr "ჩანაწერის შენახვა…"
+
+#~ msgid "Open Capture…"
+#~ msgstr "ჩანაწერის გახსნა…"
+
+#~ msgid "All Files"
+#~ msgstr "ყველა ფაილი"
+
+#~ msgid "_Open"
+#~ msgstr "_გახსნა"
+
+#~ msgid "Open Recording… (Ctrl+O)"
+#~ msgstr "ჩანაწერის გახსნა… (Ctrl+O)"
+
+#~ msgid "Profiler stopped."
+#~ msgstr "პროფაილერი გაჩერდა."
+
+#~ msgid "Connect to the system bus"
+#~ msgstr "სისტემურ მატარებელთან მიერთება"
+
+#~ msgid "Connect to the session bus"
+#~ msgstr "სესიის მატარებელთან მიერთება"
+
+#~ msgid "/org/gnome/Sysprof3/Profiler"
+#~ msgstr "/org/gnome/Sysprof3/Profiler"
+
+#~ msgid "Timeout in seconds"
+#~ msgstr "ვადა წამებში"

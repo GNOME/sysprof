@@ -188,20 +188,20 @@ sysprof_time_label_set_internal (SysprofTimeLabel *self,
       if (t == 0 && !self->show_zero)
         str[0] = 0;
       else if (t == 0)
-        g_snprintf (str, sizeof str, "%.3lfs", .0);
+        g_snprintf (str, sizeof str, "%.3lf s", .0);
       else if (t < 1000000)
-        g_snprintf (str, sizeof str, "%.3lfμs", t/1000.);
+        g_snprintf (str, sizeof str, "%.3lf μs", t/1000.);
       else if (t < SYSPROF_NSEC_PER_SEC)
-        g_snprintf (str, sizeof str, "%.3lfms", t/1000000.);
+        g_snprintf (str, sizeof str, "%.3lf ms", t/1000000.);
       else
-        g_snprintf (str, sizeof str, "%.3lfs", t/(double)SYSPROF_NSEC_PER_SEC);
+        g_snprintf (str, sizeof str, "%.3lf s", t/(double)SYSPROF_NSEC_PER_SEC);
 
       gtk_label_set_label (self->label, str);
     }
   else
     {
       char str[32];
-      g_snprintf (str, sizeof str, "%0.3lfs", t/(double)SYSPROF_NSEC_PER_SEC);
+      g_snprintf (str, sizeof str, "%0.3lf s", t/(double)SYSPROF_NSEC_PER_SEC);
       gtk_label_set_label (self->label, str);
     }
 

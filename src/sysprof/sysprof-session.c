@@ -433,13 +433,13 @@ get_time_str (gint64 o)
   char str[32];
 
   if (o == 0)
-    g_snprintf (str, sizeof str, "%.3lfs", .0);
+    g_snprintf (str, sizeof str, "%.3lf s", .0);
   else if (o < 1000000)
-    g_snprintf (str, sizeof str, "%.3lfμs", o/1000.);
+    g_snprintf (str, sizeof str, "%.3lf μs", o/1000.);
   else if (o < SYSPROF_NSEC_PER_SEC)
-    g_snprintf (str, sizeof str, "%.3lfms", o/1000000.);
+    g_snprintf (str, sizeof str, "%.3lf ms", o/1000000.);
   else
-    g_snprintf (str, sizeof str, "%.3lfs", o/(double)SYSPROF_NSEC_PER_SEC);
+    g_snprintf (str, sizeof str, "%.3lf s", o/(double)SYSPROF_NSEC_PER_SEC);
 
   return g_strdup (str);
 }

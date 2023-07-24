@@ -140,6 +140,7 @@ typedef union _SysprofPerfEvent
   SysprofPerfEventComm       comm;
   SysprofPerfEventExit       exit;
   SysprofPerfEventMmap       mmap;
+  SysprofPerfEventMmap2      mmap2;
   SysprofPerfEventCallchain  callchain;
   SysprofPerfEventTracepoint tracepoint;
   guint8                     raw[0];

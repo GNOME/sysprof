@@ -176,6 +176,24 @@ sysprof_sampler_perf_event_stream_cb (const SysprofPerfEvent *event,
 
       break;
 
+    case PERF_RECORD_MMAP2:
+      offset = strlen (event->mmap2.filename) + 1;
+      realign (&offset, sizeof (guint64));
+      offset += sizeof (GPid) + sizeof (GPid);
+      memcpy (&time, event->mmap2.filename + offset, sizeof time);
+
+      sysprof_capture_writer_add_map (writer,
+                                      time,
+                                      cpu,
+                                      event->mmap2.pid,
+                                      event->mmap2.addr,
+                                      event->mmap2.addr + event->mmap2.len,
+                                      event->mmap2.pgoff,
+                                      0,
+                                      event->mmap2.filename);
+
+      break;
+
     case PERF_RECORD_READ:
       break;
 
@@ -213,6 +231,7 @@ sysprof_sampler_prepare_fiber (gpointer user_data)
   g_autoptr(GPtrArray) futures = NULL;
   g_autoptr(GError) error = NULL;
   struct perf_event_attr attr = {0};
+  gboolean with_mmap2 = TRUE;
   guint n_cpu;
 
   g_assert (prepare != NULL);
@@ -251,6 +270,7 @@ sysprof_sampler_prepare_fiber (gpointer user_data)
   futures = g_ptr_array_new_with_free_func (dex_unref);
   writer = _sysprof_recording_writer (prepare->recording);
 
+try_again:
   attr.sample_type = PERF_SAMPLE_IP
                    | PERF_SAMPLE_TID
                    | PERF_SAMPLE_IDENTIFIER
@@ -258,7 +278,8 @@ sysprof_sampler_prepare_fiber (gpointer user_data)
                    | PERF_SAMPLE_TIME;
   attr.wakeup_events = N_WAKEUP_EVENTS;
   attr.disabled = TRUE;
-  attr.mmap = 1;
+  attr.mmap = TRUE;
+  attr.mmap2 = with_mmap2;
   attr.comm = 1;
   attr.task = 1;
   attr.exclude_idle = 1;
@@ -303,17 +324,29 @@ sysprof_sampler_prepare_fiber (gpointer user_data)
           if (dex_future_get_status (future) == DEX_FUTURE_STATUS_REJECTED)
             {
               g_autoptr(GError) future_error = NULL;
+
               dex_future_get_value (future, &future_error);
-              _sysprof_recording_diagnostic (prepare->recording,
-                                             "Sampler",
-                                             "Failed to load Perf event stream for CPU %d: %s",
-                                             i, future_error->message);
+
+              if (!with_mmap2)
+                _sysprof_recording_diagnostic (prepare->recording,
+                                               "Sampler",
+                                               "Failed to load Perf event stream for CPU %d: %s",
+                                               i, future_error->message);
               failed++;
             }
         }
 
       if (failed == futures->len)
-        return dex_future_new_for_error (g_steal_pointer (&error));
+        {
+          if (with_mmap2)
+            {
+              with_mmap2 = FALSE;
+              g_ptr_array_remove_range (futures, 0, futures->len);
+              goto try_again;
+            }
+
+          return dex_future_new_for_error (g_steal_pointer (&error));
+        }
     }
 
   /* Save each of the streams (currently corked), so that we can

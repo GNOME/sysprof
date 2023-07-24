@@ -232,6 +232,8 @@ sysprof_perf_event_stream_flush (SysprofPerfEventStream *self)
         case PERF_RECORD_COMM:
         case PERF_RECORD_EXIT:
         case PERF_RECORD_FORK:
+        case PERF_RECORD_MMAP:
+        case PERF_RECORD_MMAP2:
           break;
 
         case PERF_RECORD_SAMPLE:

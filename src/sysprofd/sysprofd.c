@@ -31,13 +31,12 @@
 #include "ipc-rapl-profiler.h"
 #include "ipc-service-impl.h"
 
-#define V2_PATH                 "/org/gnome/Sysprof2"
 #define V3_PATH                 "/org/gnome/Sysprof3"
 #define RAPL_PATH               "/org/gnome/Sysprof3/RAPL"
 #define NAME_ACQUIRE_DELAY_SECS 3
 #define INACTIVITY_TIMEOUT_SECS 120
 
-static const gchar *bus_names[] = { "org.gnome.Sysprof3", "org.gnome.Sysprof2" };
+static const gchar *bus_names[] = { "org.gnome.Sysprof3" };
 static GMainLoop   *main_loop;
 static gboolean     name_acquired;
 static gint         exit_status = EXIT_SUCCESS;

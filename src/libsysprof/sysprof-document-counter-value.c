@@ -202,7 +202,7 @@ sysprof_document_counter_value_format (SysprofDocumentCounterValue *self)
   if (self->type == SYSPROF_CAPTURE_COUNTER_DOUBLE)
     return g_strdup_printf ("%lf", self->value.v_double);
   else
-    return g_strdup_printf ("%ld", self->value.v_int64);
+    return g_strdup_printf ("%"G_GINT64_FORMAT, self->value.v_int64);
 }
 
 /**

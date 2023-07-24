@@ -76,6 +76,35 @@ typedef struct _SysprofPerfEventMmap
 SYSPROF_ALIGNED_END(1);
 
 SYSPROF_ALIGNED_BEGIN(1)
+typedef struct _SysprofPerfEventMmap2
+{
+  struct perf_event_header header;
+  guint32 pid;
+  guint32 tid;
+  guint64 addr;
+  guint64 len;
+  guint64 pgoff;
+  union {
+    struct {
+      guint32 maj;
+      guint32 min;
+      guint64 ino;
+      guint64 ino_generation;
+    };
+    struct {
+      guint8  build_id_size;
+      guint8  __reserved_1;
+      guint16 __reserved_2;
+      guint8  build_id[20];
+    };
+  };
+  guint32 prot;
+  guint32 flags;
+  char filename[0];
+} SysprofPerfEventMmap2
+SYSPROF_ALIGNED_END(1);
+
+SYSPROF_ALIGNED_BEGIN(1)
 typedef struct _SysprofPerfEventCallchain
 {
   struct perf_event_header header;

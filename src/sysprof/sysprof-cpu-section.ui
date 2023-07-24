@@ -168,7 +168,7 @@
                 <property name="child">
                   <object class="GtkScrolledWindow">
                     <child>
-                      <object class="GtkColumnView">
+                      <object class="GtkListView">
                         <property name="header-factory">
                           <object class="GtkBuilderListItemFactory">
                             <property name="bytes"><![CDATA[
@@ -247,17 +247,15 @@
                             </property>
                           </object>
                         </property>
-                        <child>
-                          <object class="GtkColumnViewColumn">
-                            <property name="title" translatable="yes">Counter</property>
-                            <property name="factory">
-                              <object class="GtkBuilderListItemFactory">
-                                <property name="bytes"><![CDATA[
+                        <property name="factory">
+                          <object class="GtkBuilderListItemFactory">
+                            <property name="bytes"><![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="GtkListItem">
     <property name="child">
       <object class="GtkBox">
+        <property name="spacing">6</property>
         <child>
           <object class="GtkInscription">
             <property name="xalign">1</property>
@@ -280,55 +278,37 @@
             </binding>
           </object>
         </child>
+        <child>
+          <object class="SysprofChart">
+            <property name="hexpand">true</property>
+            <property name="height-request">24</property>
+            <binding name="session">
+              <lookup name="session" type="SysprofSessionModelItem">
+                <lookup name="item">GtkListItem</lookup>
+              </lookup>
+            </binding>
+            <property name="model">
+              <object class="SysprofSingleModel">
+                <binding name="item">
+                  <lookup name="item">GtkListItem</lookup>
+                </binding>
+              </object>
+            </property>
+            <property name="factory">
+              <object class="SysprofChartLayerFactory">
+                <property name="resource">/org/gnome/sysprof/sysprof-cpu-section-counter.ui</property>
+              </object>
+            </property>
+          </object>
+        </child>
       </object>
     </property>
   </template>
 </interface>
 ]]>
-                                </property>
-                              </object>
                             </property>
                           </object>
-                        </child>
-                        <child>
-                          <object class="GtkColumnViewColumn">
-                            <property name="title" translatable="yes">Values</property>
-                            <property name="expand">true</property>
-                            <property name="factory">
-                              <object class="GtkBuilderListItemFactory">
-                                <property name="bytes"><![CDATA[
-<?xml version="1.0" encoding="UTF-8"?>
-<interface>
-  <template class="GtkListItem">
-    <property name="child">
-        <object class="SysprofChart">
-          <binding name="session">
-            <lookup name="session" type="SysprofSessionModelItem">
-              <lookup name="item">GtkListItem</lookup>
-            </lookup>
-          </binding>
-          <property name="model">
-            <object class="SysprofSingleModel">
-              <binding name="item">
-                <lookup name="item">GtkListItem</lookup>
-              </binding>
-            </object>
-          </property>
-          <property name="factory">
-            <object class="SysprofChartLayerFactory">
-              <property name="resource">/org/gnome/sysprof/sysprof-cpu-section-counter.ui</property>
-            </object>
-          </property>
-        </object>
-    </property>
-  </template>
-</interface>
-]]>
-                                </property>
-                              </object>
-                            </property>
-                          </object>
-                        </child>
+                        </property>
                       </object>
                     </child>
                   </object>

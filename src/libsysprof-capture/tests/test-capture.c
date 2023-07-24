@@ -338,7 +338,7 @@ test_reader_basic (void)
   for (i = 0; i < 1000; i++)
     {
       SysprofCaptureAddress addr = ((SysprofCaptureAddress)i + 1L) | SYSPROF_CAPTURE_JITMAP_MARK;
-      const gchar *mapped = g_hash_table_lookup (jmap, (gpointer)addr);
+      const char *mapped = g_hash_table_lookup (jmap, (gpointer)(gsize)addr);
       gchar str[32];
 
       g_snprintf (str, sizeof str, "jitstring-%d", i);

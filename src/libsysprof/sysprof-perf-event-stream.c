@@ -122,6 +122,8 @@ build_options_dict (const struct perf_event_attr *attr)
                             "{'disabled', <%b>},"
                             "{'exclude_idle', <%b>},"
                             "{'mmap', <%b>},"
+                            "{'mmap2', <%b>},"
+                            "{'build_id', <%b>},"
                             "{'wakeup_events', <%u>},"
                             "{'sample_id_all', <%b>},"
                             "{'sample_period', <%t>},"
@@ -138,6 +140,8 @@ build_options_dict (const struct perf_event_attr *attr)
                           (gboolean)!!attr->disabled,
                           (gboolean)!!attr->exclude_idle,
                           (gboolean)!!attr->mmap,
+                          (gboolean)!!attr->mmap2,
+                          (gboolean)!!attr->build_id,
                           (guint32)attr->wakeup_events,
                           (gboolean)!!attr->sample_id_all,
                           (guint64)attr->sample_period,

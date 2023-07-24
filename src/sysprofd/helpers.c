@@ -120,20 +120,22 @@ helpers_perf_event_open (GVariant *options,
   struct perf_event_attr attr = {0};
   GVariantIter iter;
   GVariant *value;
-  gchar *key;
+  char *key;
   gint32 disabled = 0;
   gint32 wakeup_events = 149;
   gint32 type = 0;
   guint64 sample_period = 0;
   guint64 sample_type = 0;
   guint64 config = 0;
-  gint clockid = CLOCK_MONOTONIC;
-  gint comm = 0;
-  gint mmap_ = 0;
-  gint task = 0;
-  gint exclude_idle = 0;
-  gint use_clockid = 0;
-  gint sample_id_all = 0;
+  int clockid = CLOCK_MONOTONIC;
+  int comm = 0;
+  int mmap_ = 0;
+  int mmap2 = 0;
+  int build_id = 0;
+  int task = 0;
+  int exclude_idle = 0;
+  int use_clockid = 0;
+  int sample_id_all = 0;
 
   g_assert (out_fd != NULL);
 
@@ -162,6 +164,12 @@ helpers_perf_event_open (GVariant *options,
             goto bad_arg;
           sample_id_all = g_variant_get_boolean (value);
         }
+      else if (strcmp (key, "build_id") == 0)
+        {
+          if (!g_variant_is_of_type (value, G_VARIANT_TYPE_BOOLEAN))
+            goto bad_arg;
+          build_id = g_variant_get_boolean (value);
+        }
       else if (strcmp (key, "clockid") == 0)
         {
           if (!g_variant_is_of_type (value, G_VARIANT_TYPE_INT32))
@@ -185,6 +193,12 @@ helpers_perf_event_open (GVariant *options,
           if (!g_variant_is_of_type (value, G_VARIANT_TYPE_BOOLEAN))
             goto bad_arg;
           mmap_ = g_variant_get_boolean (value);
+        }
+      else if (strcmp (key, "mmap2") == 0)
+        {
+          if (!g_variant_is_of_type (value, G_VARIANT_TYPE_BOOLEAN))
+            goto bad_arg;
+          mmap2 = g_variant_get_boolean (value);
         }
       else if (strcmp (key, "config") == 0)
         {
@@ -235,6 +249,8 @@ helpers_perf_event_open (GVariant *options,
   attr.disabled = disabled;
   attr.exclude_idle = !!exclude_idle;
   attr.mmap = !!mmap_;
+  attr.mmap2 = !!mmap2;
+  attr.build_id = !!build_id;
   attr.sample_id_all = sample_id_all;
   attr.sample_period = sample_period;
   attr.sample_type = sample_type;

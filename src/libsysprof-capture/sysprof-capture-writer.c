@@ -613,6 +613,8 @@ sysprof_capture_writer_add_map (SysprofCaptureWriter *self,
   _sysprof_strlcpy (ev->filename, filename, len - sizeof *ev);
   ev->filename[len - sizeof *ev - 1] = '\0';
 
+  ((char*)ev)[len-1] = 0;
+
   self->stat.frame_count[SYSPROF_CAPTURE_FRAME_MAP]++;
 
   return true;

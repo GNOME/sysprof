@@ -182,16 +182,38 @@ sysprof_sampler_perf_event_stream_cb (const SysprofPerfEvent *event,
       offset += sizeof (GPid) + sizeof (GPid);
       memcpy (&time, event->mmap2.filename + offset, sizeof time);
 
-      sysprof_capture_writer_add_map (writer,
-                                      time,
-                                      cpu,
-                                      event->mmap2.pid,
-                                      event->mmap2.addr,
-                                      event->mmap2.addr + event->mmap2.len,
-                                      event->mmap2.pgoff,
-                                      0,
-                                      event->mmap2.filename);
+      if ((event->header.misc & PERF_RECORD_MISC_MMAP_BUILD_ID) != 0)
+        {
+          char build_id[G_N_ELEMENTS (event->mmap2.build_id) * 2 + 1];
+          guint len = MIN (G_N_ELEMENTS (event->mmap2.build_id), event->mmap2.build_id_size);
 
+          for (guint i = 0; i < len; i++)
+            g_snprintf (&build_id[len*2], 3, "%02x", event->mmap2.build_id[i]);
+          build_id[len*2] = 0;
+
+          sysprof_capture_writer_add_map_with_build_id (writer,
+                                                        time,
+                                                        cpu,
+                                                        event->mmap2.pid,
+                                                        event->mmap2.addr,
+                                                        event->mmap2.addr + event->mmap2.len,
+                                                        event->mmap2.pgoff,
+                                                        event->mmap2.ino,
+                                                        event->mmap2.filename,
+                                                        build_id);
+        }
+      else
+        {
+          sysprof_capture_writer_add_map (writer,
+                                          time,
+                                          cpu,
+                                          event->mmap2.pid,
+                                          event->mmap2.addr,
+                                          event->mmap2.addr + event->mmap2.len,
+                                          event->mmap2.pgoff,
+                                          event->mmap2.ino,
+                                          event->mmap2.filename);
+        }
       break;
 
     case PERF_RECORD_READ:

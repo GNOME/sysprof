@@ -129,19 +129,19 @@ sysprof_time_ruler_snapshot (GtkWidget   *widget,
       if (x >= 0 && (x - 6) >= last_x)
         {
           if (r == 0)
-            g_snprintf (str, sizeof str, "%.3lf s", .0);
+            g_snprintf (str, sizeof str, "%.3lf s", .0);
           else if (r < 1000000)
-            g_snprintf (str, sizeof str, "%.3lf μs", r/1000.);
+            g_snprintf (str, sizeof str, "%.3lf μs", r/1000.);
           else if (r < SYSPROF_NSEC_PER_SEC)
-            g_snprintf (str, sizeof str, "%.3lf ms", r/1000000.);
+            g_snprintf (str, sizeof str, "%.3lf ms", r/1000000.);
           else if (duration < SYSPROF_NSEC_PER_SEC/1000)
-            g_snprintf (str, sizeof str, "%.6lf s", r/(double)SYSPROF_NSEC_PER_SEC);
+            g_snprintf (str, sizeof str, "%.6lf s", r/(double)SYSPROF_NSEC_PER_SEC);
           else if (duration < SYSPROF_NSEC_PER_SEC/100)
-            g_snprintf (str, sizeof str, "%.5lf s", r/(double)SYSPROF_NSEC_PER_SEC);
+            g_snprintf (str, sizeof str, "%.5lf s", r/(double)SYSPROF_NSEC_PER_SEC);
           else if (duration < SYSPROF_NSEC_PER_SEC/10)
-            g_snprintf (str, sizeof str, "%.4lf s", r/(double)SYSPROF_NSEC_PER_SEC);
+            g_snprintf (str, sizeof str, "%.4lf s", r/(double)SYSPROF_NSEC_PER_SEC);
           else
-            g_snprintf (str, sizeof str, "%.3lf s", r/(double)SYSPROF_NSEC_PER_SEC);
+            g_snprintf (str, sizeof str, "%.3lf s", r/(double)SYSPROF_NSEC_PER_SEC);
 
           pango_layout_set_text (layout, str, -1);
           pango_layout_get_pixel_size (layout, &pw, &ph);
@@ -354,19 +354,19 @@ sysprof_time_ruler_get_label_at_point (SysprofTimeRuler *self,
   o = visible->begin_nsec + (x / (double)width * duration) - document_time->begin_nsec;
 
   if (o == 0)
-    g_snprintf (str, sizeof str, "%.3lf s", .0);
+    g_snprintf (str, sizeof str, "%.3lf s", .0);
   else if (o < 1000000)
-    g_snprintf (str, sizeof str, "%.3lf μs", o/1000.);
+    g_snprintf (str, sizeof str, "%.3lf μs", o/1000.);
   else if (o < SYSPROF_NSEC_PER_SEC)
-    g_snprintf (str, sizeof str, "%.3lf ms", o/1000000.);
+    g_snprintf (str, sizeof str, "%.3lf ms", o/1000000.);
   else if (duration < SYSPROF_NSEC_PER_SEC/1000)
-    g_snprintf (str, sizeof str, "%.6lf s", o/(double)SYSPROF_NSEC_PER_SEC);
+    g_snprintf (str, sizeof str, "%.6lf s", o/(double)SYSPROF_NSEC_PER_SEC);
   else if (duration < SYSPROF_NSEC_PER_SEC/100)
-    g_snprintf (str, sizeof str, "%.5lf s", o/(double)SYSPROF_NSEC_PER_SEC);
+    g_snprintf (str, sizeof str, "%.5lf s", o/(double)SYSPROF_NSEC_PER_SEC);
   else if (duration < SYSPROF_NSEC_PER_SEC/10)
-    g_snprintf (str, sizeof str, "%.4lf s", o/(double)SYSPROF_NSEC_PER_SEC);
+    g_snprintf (str, sizeof str, "%.4lf s", o/(double)SYSPROF_NSEC_PER_SEC);
   else
-    g_snprintf (str, sizeof str, "%.3lf s", o/(double)SYSPROF_NSEC_PER_SEC);
+    g_snprintf (str, sizeof str, "%.3lf s", o/(double)SYSPROF_NSEC_PER_SEC);
 
   return g_strdup (str);
 }

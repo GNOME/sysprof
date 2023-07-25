@@ -104,6 +104,7 @@ sysprof_callgraph_view_set_descendants (SysprofCallgraphView *self,
   descendants_sort_model = gtk_sort_list_model_new (g_object_ref (G_LIST_MODEL (descendants_tree)),
                                                     g_object_ref (GTK_SORTER (descendants_sorter)));
   descendants_selection = gtk_single_selection_new (g_object_ref (G_LIST_MODEL (descendants_sort_model)));
+  gtk_single_selection_set_autoselect (descendants_selection, FALSE);
   g_signal_connect_object (descendants_selection,
                            "selection-changed",
                            G_CALLBACK (descendants_selection_changed_cb),

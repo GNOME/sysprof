@@ -109,6 +109,17 @@ bool                  sysprof_capture_writer_add_map                         (Sy
                                                                               uint64_t                           inode,
                                                                               const char                        *filename);
 SYSPROF_AVAILABLE_IN_ALL
+bool                  sysprof_capture_writer_add_map_with_build_id           (SysprofCaptureWriter              *self,
+                                                                              int64_t                            time,
+                                                                              int                                cpu,
+                                                                              int32_t                            pid,
+                                                                              uint64_t                           start,
+                                                                              uint64_t                           end,
+                                                                              uint64_t                           offset,
+                                                                              uint64_t                           inode,
+                                                                              const char                        *filename,
+                                                                              const char                        *build_id);
+SYSPROF_AVAILABLE_IN_ALL
 bool                  sysprof_capture_writer_add_mark                        (SysprofCaptureWriter              *self,
                                                                               int64_t                            time,
                                                                               int                                cpu,

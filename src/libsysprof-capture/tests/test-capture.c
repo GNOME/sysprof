@@ -101,6 +101,32 @@ test_reader_basic (void)
       g_assert_cmpstr (map->filename, ==, str);
     }
 
+  r = sysprof_capture_writer_add_map_with_build_id (writer, t, -1, -1, 0, 0, 0, 0, "map", "build-id");
+  g_assert_cmpint (r, ==, TRUE);
+
+  sysprof_capture_writer_flush (writer);
+
+  {
+    SysprofCaptureFrameType type = -1;
+    const SysprofCaptureMap *map;
+
+    if (!sysprof_capture_reader_peek_type (reader, &type))
+      g_assert_not_reached ();
+    g_assert_cmpint (type, ==, SYSPROF_CAPTURE_FRAME_MAP);
+
+    map = sysprof_capture_reader_read_map (reader);
+    g_assert_nonnull (map);
+
+    g_assert_cmpint (map->frame.pid, ==, -1);
+    g_assert_cmpint (map->frame.cpu, ==, -1);
+    g_assert_cmpint (map->start, ==, 0);
+    g_assert_cmpint (map->end, ==, 0);
+    g_assert_cmpint (map->offset, ==, 0);
+    g_assert_cmpint (map->inode, ==, 0);
+    g_assert_cmpstr (map->filename, ==, "map");
+    g_assert_cmpstr (map->filename+strlen("map")+1, ==, "@build-id");
+  }
+
   /* Now that we have read a frame, we should start having updated
    * end times with each incoming frame.
    */

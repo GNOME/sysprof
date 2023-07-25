@@ -621,6 +621,64 @@ sysprof_capture_writer_add_map (SysprofCaptureWriter *self,
 }
 
 bool
+sysprof_capture_writer_add_map_with_build_id (SysprofCaptureWriter *self,
+                                              int64_t               time,
+                                              int                   cpu,
+                                              int32_t               pid,
+                                              uint64_t              start,
+                                              uint64_t              end,
+                                              uint64_t              offset,
+                                              uint64_t              inode,
+                                              const char           *filename,
+                                              const char           *build_id)
+{
+  SysprofCaptureMap *ev;
+  size_t len;
+  size_t filename_len;
+  size_t build_id_len;
+
+  if (filename == NULL)
+    filename = "";
+
+  if (build_id == NULL)
+    build_id = "";
+
+  assert (self != NULL);
+  assert (filename != NULL);
+  assert (build_id != NULL);
+
+  filename_len = strlen (filename) + 1;
+  build_id_len = strlen (build_id) + 1;
+
+  len = sizeof *ev + filename_len + strlen("@") + build_id_len;
+
+  ev = (SysprofCaptureMap *)sysprof_capture_writer_allocate (self, &len);
+  if (!ev)
+    return false;
+
+  sysprof_capture_writer_frame_init (&ev->frame,
+                                     len,
+                                     cpu,
+                                     pid,
+                                     time,
+                                     SYSPROF_CAPTURE_FRAME_MAP);
+  ev->start = start;
+  ev->end = end;
+  ev->offset = offset;
+  ev->inode = inode;
+
+  _sysprof_strlcpy (ev->filename, filename, filename_len);
+  ev->filename[filename_len] = '@';
+  _sysprof_strlcpy (&ev->filename[filename_len+1], build_id, build_id_len);
+
+  ((char*)ev)[len-1] = 0;
+
+  self->stat.frame_count[SYSPROF_CAPTURE_FRAME_MAP]++;
+
+  return true;
+}
+
+bool
 sysprof_capture_writer_add_mark (SysprofCaptureWriter *self,
                                  int64_t               time,
                                  int                   cpu,

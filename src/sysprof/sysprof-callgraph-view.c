@@ -315,11 +315,17 @@ make_descendant_root_action (GtkWidget  *widget,
       SysprofSymbol *symbol = sysprof_callgraph_frame_get_symbol (frame);
 
       if (sysprof_symbol_get_kind (symbol) != SYSPROF_SYMBOL_KIND_ROOT)
-        sysprof_callgraph_descendants_async (self->callgraph,
-                                             symbol,
-                                             NULL,
-                                             sysprof_callgraph_view_descendants_cb,
-                                             g_object_ref (self));
+        {
+          sysprof_callgraph_view_set_utility_summary (self, NULL);
+          sysprof_callgraph_view_set_utility_traceables (self, NULL);
+          gtk_column_view_set_model (self->descendants_column_view, NULL);
+
+          sysprof_callgraph_descendants_async (self->callgraph,
+                                               symbol,
+                                               NULL,
+                                               sysprof_callgraph_view_descendants_cb,
+                                               g_object_ref (self));
+        }
     }
 }
 

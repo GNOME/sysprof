@@ -93,6 +93,8 @@ sysprof_callgraph_view_set_descendants (SysprofCallgraphView *self,
   g_assert (SYSPROF_IS_CALLGRAPH_VIEW (self));
   g_assert (G_IS_LIST_MODEL (model));
 
+  gtk_root_set_focus (gtk_widget_get_root (GTK_WIDGET (self)), NULL);
+
   column_sorter = gtk_column_view_get_sorter (self->descendants_column_view);
   descendants_tree = gtk_tree_list_model_new (g_object_ref (model),
                                               FALSE, FALSE,

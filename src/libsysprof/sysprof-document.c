@@ -2498,3 +2498,40 @@ sysprof_document_serialize_symbols_finish (SysprofDocument  *self,
 
   return dex_async_result_propagate_pointer (DEX_ASYNC_RESULT (result), error);
 }
+
+/**
+ * sysprof_document_lookup_process:
+ * @self: a #SysprofDocument
+ * @pid: the process identifier
+ *
+ * Looks up a process by PID.
+ *
+ * If multiple copies of the process exist, the result is undefined.
+ *
+ * Returns: (transfer full) (nullable): a #SysprofDocumentProcess or %NULL
+ */
+SysprofDocumentProcess *
+sysprof_document_lookup_process (SysprofDocument *self,
+                                 int              pid)
+{
+  EggBitsetIter iter;
+  guint position;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  if (egg_bitset_iter_init_first (&iter, self->processes, &position))
+    {
+      do
+        {
+          g_autoptr(SysprofDocumentProcess) process = g_list_model_get_item (G_LIST_MODEL (self), position);
+
+          g_assert (SYSPROF_IS_DOCUMENT_PROCESS (process));
+
+          if (sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (process)) == pid)
+            return g_steal_pointer (&process);
+        }
+      while (egg_bitset_iter_next (&iter, &position));
+    }
+
+  return NULL;
+}

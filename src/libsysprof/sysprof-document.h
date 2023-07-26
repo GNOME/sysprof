@@ -27,6 +27,7 @@
 #include "sysprof-callgraph.h"
 #include "sysprof-document-counter.h"
 #include "sysprof-document-file.h"
+#include "sysprof-document-process.h"
 #include "sysprof-document-traceable.h"
 #include "sysprof-mark-catalog.h"
 #include "sysprof-symbol.h"
@@ -46,6 +47,9 @@ const SysprofTimeSpan  *sysprof_document_get_time_span                       (Sy
 SYSPROF_AVAILABLE_IN_ALL
 SysprofDocumentFile    *sysprof_document_lookup_file                         (SysprofDocument           *self,
                                                                               const char                *path);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofDocumentProcess *sysprof_document_lookup_process                      (SysprofDocument           *self,
+                                                                              int                        pid);
 SYSPROF_AVAILABLE_IN_ALL
 GListModel             *sysprof_document_list_cpu_info                       (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL

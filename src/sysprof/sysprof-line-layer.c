@@ -173,8 +173,17 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
       fill_color.alpha *= .25;
       gdk_cairo_set_source_rgba (cr, &fill_color);
 
-      cairo_line_to (cr, last_x, .5);
-      cairo_line_to (cr, first_x, .5);
+      if (sysprof_xy_layer_get_flip_y (SYSPROF_XY_LAYER (self)))
+        {
+          cairo_line_to (cr, last_x, height-.5);
+          cairo_line_to (cr, first_x, height-.5);
+        }
+      else
+        {
+          cairo_line_to (cr, last_x, .5);
+          cairo_line_to (cr, first_x, .5);
+        }
+
       cairo_line_to (cr, first_x, first_y);
       cairo_fill (cr);
     }

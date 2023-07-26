@@ -48,7 +48,7 @@ sysprof_callgraph_symbol_finalize (GObject *object)
 {
   SysprofCallgraphSymbol *self = (SysprofCallgraphSymbol *)object;
 
-  g_clear_weak_pointer (&self->callgraph);
+  g_clear_object (&self->callgraph);
   g_clear_object (&self->symbol);
 
   G_OBJECT_CLASS (sysprof_callgraph_symbol_parent_class)->finalize (object);
@@ -113,7 +113,7 @@ _sysprof_callgraph_symbol_new (SysprofCallgraph *callgraph,
   g_return_val_if_fail (SYSPROF_IS_SYMBOL (symbol), NULL);
 
   self = g_object_new (SYSPROF_TYPE_CALLGRAPH_SYMBOL, NULL);
-  g_set_weak_pointer (&self->callgraph, callgraph);
+  g_set_object (&self->callgraph, callgraph);
   g_set_object (&self->symbol, symbol);
 
   return self;
@@ -227,7 +227,7 @@ sysprof_callgraph_symbol_list_model_dispose (GObject *object)
   SysprofCallgraphSymbolListModel *self = (SysprofCallgraphSymbolListModel *)object;
 
   g_clear_pointer (&self->symbols, g_ptr_array_unref);
-  g_clear_weak_pointer (&self->callgraph);
+  g_clear_object (&self->callgraph);
 
   G_OBJECT_CLASS (sysprof_callgraph_symbol_parent_class)->dispose (object);
 }
@@ -254,7 +254,7 @@ _sysprof_callgraph_symbol_list_model_new (SysprofCallgraph *callgraph,
   g_return_val_if_fail (SYSPROF_IS_CALLGRAPH (callgraph), NULL);
 
   self = g_object_new (SYSPROF_TYPE_CALLGRAPH_SYMBOL_LIST_MODEL, NULL);
-  g_set_weak_pointer (&self->callgraph, callgraph);
+  g_set_object (&self->callgraph, callgraph);
 
   if (symbols != NULL)
     self->symbols = g_ptr_array_ref (symbols);

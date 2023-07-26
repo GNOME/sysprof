@@ -217,6 +217,16 @@
                           </object>
                         </child>
                         <child>
+                          <object class="SysprofEnergySection">
+                            <property name="title" translatable="yes">Energy</property>
+                            <property name="category">counters</property>
+                            <property name="icon-name">energy-symbolic</property>
+                            <binding name="session">
+                              <lookup name="session">SysprofWindow</lookup>
+                            </binding>
+                          </object>
+                        </child>
+                        <child>
                           <object class="SysprofNetworkSection">
                             <property name="title" translatable="yes">Network</property>
                             <property name="category">counters</property>

@@ -15,6 +15,7 @@ sysprof_sources = [
   'sysprof-cpu-section.c',
   'sysprof-css.c',
   'sysprof-duplex-layer.c',
+  'sysprof-energy-section.c',
   'sysprof-files-section.c',
   'sysprof-frame-utility.c',
   'sysprof-greeter.c',

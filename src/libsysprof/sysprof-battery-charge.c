@@ -174,7 +174,7 @@ sysprof_battery_charge_record_fiber (gpointer user_data)
         g_strlcpy (counter->name, g_strstrip (model_name_data), sizeof counter->name);
       else
         g_strlcpy (counter->name, name, sizeof counter->name);
-      g_snprintf (counter->description, sizeof counter->description, "%s (µAh)", counter->name);
+      g_snprintf (counter->description, sizeof counter->description, "%s (µAh)", counter->name);
       counter->value.v64 = 0;
 
       g_array_append_val (charge_fds, charge_fd);

@@ -28,6 +28,7 @@ sysprof_sources = [
   'sysprof-memory-callgraph-view.c',
   'sysprof-memory-section.c',
   'sysprof-metadata-section.c',
+  'sysprof-network-section.c',
   'sysprof-normalized-series-item.c',
   'sysprof-normalized-series.c',
   'sysprof-pair.c',

@@ -29,6 +29,7 @@
     <file preprocess="xml-stripblanks">sysprof-memory-callgraph-view.ui</file>
     <file preprocess="xml-stripblanks">sysprof-memory-section.ui</file>
     <file preprocess="xml-stripblanks">sysprof-metadata-section.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-network-section.ui</file>
     <file preprocess="xml-stripblanks">sysprof-process-dialog.ui</file>
     <file preprocess="xml-stripblanks">sysprof-processes-section.ui</file>
     <file preprocess="xml-stripblanks">sysprof-recording-pad.ui</file>

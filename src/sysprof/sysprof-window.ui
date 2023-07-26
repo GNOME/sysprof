@@ -217,7 +217,7 @@
                           </object>
                         </child>
                         <child>
-                          <object class="SysprofCountersSection">
+                          <object class="SysprofNetworkSection">
                             <property name="title" translatable="yes">Network</property>
                             <property name="category">counters</property>
                             <property name="icon-name">network-transmit-receive-symbolic</property>

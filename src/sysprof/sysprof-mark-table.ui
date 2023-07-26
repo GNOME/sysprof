@@ -14,6 +14,7 @@
                 </style>
                 <signal name="activate" handler="sysprof_mark_table_activate_cb" swapped="true"/>
                 <property name="show-column-separators">true</property>
+                <property name="show-row-separators">true</property>
                 <property name="model">
                   <object class="GtkSingleSelection">
                     <property name="model">

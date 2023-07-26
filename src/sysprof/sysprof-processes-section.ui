@@ -180,6 +180,8 @@
                           <class name="data-table"/>
                         </style>
                         <signal name="activate" handler="process_table_activate_cb" swapped="true"/>
+                        <property name="show-column-separators">true</property>
+                        <property name="show-row-separators">true</property>
                         <property name="model">
                           <object class="GtkNoSelection">
                             <property name="model">

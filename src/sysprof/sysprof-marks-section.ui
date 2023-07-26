@@ -207,6 +207,8 @@
                         <style>
                           <class name="data-table"/>
                         </style>
+                        <property name="show-column-separators">true</property>
+                        <property name="show-row-separators">true</property>
                         <property name="model">
                           <object class="GtkNoSelection">
                             <property name="model">
@@ -267,6 +269,7 @@
                         <child>
                           <object class="GtkColumnViewColumn">
                             <property name="title" translatable="yes">Name</property>
+                            <property name="expand">true</property>
                             <property name="sorter">
                               <object class="GtkStringSorter">
                                 <property name="expression">

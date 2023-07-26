@@ -30,6 +30,7 @@ sysprof_sources = [
   'sysprof-metadata-section.c',
   'sysprof-normalized-series-item.c',
   'sysprof-normalized-series.c',
+  'sysprof-pair.c',
   'sysprof-process-dialog.c',
   'sysprof-processes-section.c',
   'sysprof-progress-cell.c',

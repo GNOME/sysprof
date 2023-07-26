@@ -32,7 +32,11 @@
 struct _SysprofNetworkSection
 {
   SysprofSection parent_instance;
+
   GListStore *pairs;
+
+  GtkColumnView *column_view;
+  GtkColumnViewColumn *time_column;
 };
 
 G_DEFINE_FINAL_TYPE (SysprofNetworkSection, sysprof_network_section, SYSPROF_TYPE_SECTION)
@@ -156,6 +160,9 @@ sysprof_network_section_class_init (SysprofNetworkSectionClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-network-section.ui");
 
+  gtk_widget_class_bind_template_child (widget_class, SysprofNetworkSection, column_view);
+  gtk_widget_class_bind_template_child (widget_class, SysprofNetworkSection, time_column);
+
   g_type_ensure (SYSPROF_TYPE_CHART);
   g_type_ensure (SYSPROF_TYPE_DUPLEX_LAYER);
   g_type_ensure (SYSPROF_TYPE_PAIR);
@@ -167,4 +174,8 @@ sysprof_network_section_init (SysprofNetworkSection *self)
   self->pairs = g_list_store_new (SYSPROF_TYPE_PAIR);
 
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  gtk_column_view_sort_by_column (self->column_view,
+                                  self->time_column,
+                                  GTK_SORT_ASCENDING);
 }

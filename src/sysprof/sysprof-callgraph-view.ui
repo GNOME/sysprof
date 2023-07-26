@@ -14,6 +14,7 @@
                     <property name="vexpand">true</property>
                     <property name="propagate-natural-width">true</property>
                     <property name="hscrollbar-policy">never</property>
+                    <property name="width-request">300</property>
                     <child>
                       <object class="GtkColumnView" id="functions_column_view">
                         <child>

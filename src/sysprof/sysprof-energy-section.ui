@@ -236,26 +236,7 @@
                                     <binding name="session">
                                       <lookup name="session">SysprofEnergySection</lookup>
                                     </binding>
-                                    <property name="model">
-                                      <object class="GtkFilterListModel">
-                                        <binding name="model">
-                                          <lookup name="counters" type="SysprofDocument">
-                                            <lookup name="document" type="SysprofSession">
-                                              <lookup name="session">SysprofEnergySection</lookup>
-                                            </lookup>
-                                          </lookup>
-                                        </binding>
-                                        <property name="filter">
-                                          <object class="GtkStringFilter">
-                                            <property name="match-mode">prefix</property>
-                                            <property name="search">RAPL</property>
-                                            <property name="expression">
-                                              <lookup name="key" type="SysprofDocumentCounter"/>
-                                            </property>
-                                          </object>
-                                        </property>
-                                      </object>
-                                    </property>
+                                    <property name="model">energy_counters</property>
                                   </object>
                                 </property>
                               </object>
@@ -357,26 +338,7 @@
                                     </property>
                                     <property name="model">
                                       <object class="GtkFlattenListModel">
-                                        <property name="model">
-                                          <object class="GtkFilterListModel">
-                                            <property name="filter">
-                                              <object class="GtkStringFilter">
-                                                <property name="match-mode">prefix</property>
-                                                <property name="search">RAPL</property>
-                                                <property name="expression">
-                                                  <lookup name="category" type="SysprofDocumentCounter"/>
-                                                </property>
-                                              </object>
-                                            </property>
-                                            <binding name="model">
-                                              <lookup name="counters" type="SysprofDocument">
-                                                <lookup name="document" type="SysprofSession">
-                                                  <lookup name="session">SysprofEnergySection</lookup>
-                                                </lookup>
-                                              </lookup>
-                                            </binding>
-                                          </object>
-                                        </property>
+                                        <property name="model">energy_counters</property>
                                       </object>
                                     </property>
                                   </object>
@@ -547,8 +509,35 @@
       </object>
     </child>
   </template>
+  <object class="GtkFilterListModel" id="energy_counters">
+    <binding name="model">
+      <lookup name="counters" type="SysprofDocument">
+        <lookup name="document" type="SysprofSession">
+          <lookup name="session">SysprofEnergySection</lookup>
+        </lookup>
+      </lookup>
+    </binding>
+    <property name="filter">
+      <object class="GtkAnyFilter">
+        <child>
+          <object class="GtkStringFilter">
+            <property name="match-mode">prefix</property>
+            <property name="search">RAPL</property>
+            <property name="expression">
+              <lookup name="category" type="SysprofDocumentCounter"/>
+            </property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStringFilter">
+            <property name="match-mode">prefix</property>
+            <property name="search">Battery</property>
+            <property name="expression">
+              <lookup name="category" type="SysprofDocumentCounter"/>
+            </property>
+          </object>
+        </child>
+      </object>
+    </property>
+  </object>
 </interface>
-
-
-
-

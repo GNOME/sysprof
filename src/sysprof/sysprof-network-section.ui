@@ -32,6 +32,7 @@
                   <object class="GtkScrolledWindow">
                     <child>
                       <object class="GtkListView">
+                        <property name="show-separators">true</property>
                         <property name="model">
                           <object class="GtkNoSelection">
                             <property name="model">
@@ -54,6 +55,7 @@
   <template class="GtkListItem">
     <property name="child">
       <object class="GtkBox">
+        <property name="spacing">12</property>
         <child>
           <object class="GtkBox">
             <property name="orientation">vertical</property>
@@ -61,8 +63,8 @@
               <object class="GtkInscription">
                 <property name="vexpand">true</property>
                 <property name="xalign">1</property>
-                <property name="min-chars">30</property>
-                <property name="nat-chars">30</property>
+                <property name="min-chars">20</property>
+                <property name="nat-chars">20</property>
                 <binding name="text">
                   <lookup name="name" type="SysprofDocumentCounter">
                     <lookup name="first" type="SysprofPair">
@@ -78,8 +80,8 @@
               <object class="GtkInscription">
                 <property name="vexpand">true</property>
                 <property name="xalign">1</property>
-                <property name="min-chars">30</property>
-                <property name="nat-chars">30</property>
+                <property name="min-chars">20</property>
+                <property name="nat-chars">20</property>
                 <binding name="text">
                   <lookup name="name" type="SysprofDocumentCounter">
                     <lookup name="second" type="SysprofPair">
@@ -100,6 +102,8 @@
               <object class="SysprofDuplexLayer">
                 <property name="upper-layer">
                   <object class="SysprofLineLayer">
+                    <property name="margin-top">1</property>
+                    <property name="margin-bottom">1</property>
                     <property name="height-request">32</property>
                     <property name="fill">true</property>
                     <property name="spline">true</property>
@@ -153,6 +157,8 @@
                 </property>
                 <property name="lower-layer">
                   <object class="SysprofLineLayer">
+                    <property name="margin-top">1</property>
+                    <property name="margin-bottom">1</property>
                     <property name="height-request">32</property>
                     <property name="fill">true</property>
                     <property name="flip-y">true</property>

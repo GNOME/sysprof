@@ -34,6 +34,7 @@
 #include "sysprof-processes-section.h"
 #include "sysprof-samples-section.h"
 #include "sysprof-sidebar.h"
+#include "sysprof-storage-section.h"
 #include "sysprof-window.h"
 
 struct _SysprofWindow
@@ -420,6 +421,7 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   g_type_ensure (SYSPROF_TYPE_NETWORK_SECTION);
   g_type_ensure (SYSPROF_TYPE_PROCESSES_SECTION);
   g_type_ensure (SYSPROF_TYPE_SAMPLES_SECTION);
+  g_type_ensure (SYSPROF_TYPE_STORAGE_SECTION);
   g_type_ensure (SYSPROF_TYPE_SESSION);
   g_type_ensure (SYSPROF_TYPE_SIDEBAR);
 }

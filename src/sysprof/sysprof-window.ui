@@ -227,7 +227,7 @@
                           </object>
                         </child>
                         <child>
-                          <object class="SysprofCountersSection">
+                          <object class="SysprofStorageSection">
                             <property name="title" translatable="yes">Storage</property>
                             <property name="category">counters</property>
                             <property name="icon-name">storage-symbolic</property>

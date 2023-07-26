@@ -11,9 +11,66 @@
             </binding>
             <child type="chart">
               <object class="SysprofChart">
-                <property name="margin-top">6</property>
-                <property name="margin-bottom">6</property>
-                <property name="height-request">20</property>
+                <binding name="session">
+                  <lookup name="session">SysprofStorageSection</lookup>
+                </binding>
+                <property name="height-request">32</property>
+                <property name="model">
+                  <object class="GtkFilterListModel">
+                    <binding name="model">
+                      <lookup name="counters" type="SysprofDocument">
+                        <lookup name="document" type="SysprofSession">
+                          <lookup name="session">SysprofStorageSection</lookup>
+                        </lookup>
+                      </lookup>
+                    </binding>
+                    <property name="filter">
+                      <object class="GtkStringFilter">
+                        <property name="match-mode">exact</property>
+                        <property name="search">Disk</property>
+                        <property name="expression">
+                          <lookup name="category" type="SysprofDocumentCounter"/>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </property>
+                <property name="factory">
+                  <object class="SysprofChartLayerFactory">
+                    <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofChartLayerItem">
+    <property name="layer">
+      <object class="SysprofTimeSpanLayer" id="layer">
+        <binding name="axis">
+          <lookup name="visible-time-axis" type="SysprofSession">
+            <lookup name="session" type="SysprofChart">
+              <lookup name="chart">layer</lookup>
+            </lookup>
+          </lookup>
+        </binding>
+        <property name="series">
+          <object class="SysprofTimeSeries">
+            <binding name="model">
+              <lookup name="item">SysprofChartLayerItem</lookup>
+            </binding>
+            <property name="begin-time-expression">
+              <lookup name="time" type="SysprofDocumentCounterValue"/>
+            </property>
+            <property name="end-time-expression">
+              <lookup name="time" type="SysprofDocumentCounterValue"/>
+            </property>
+          </object>
+        </property>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                    </property>
+                  </object>
+                </property>
               </object>
             </child>
           </object>

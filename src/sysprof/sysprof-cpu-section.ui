@@ -82,6 +82,9 @@
               </object>
             </child>
             <child type="chart">
+              <object class="GtkSeparator"/>
+            </child>
+            <child type="chart">
               <object class="SysprofChart">
                 <binding name="session">
                   <lookup name="session">SysprofCpuSection</lookup>

@@ -514,6 +514,7 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, descendants_name_sorter);
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, functions_column_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, functions_name_sorter);
+  gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, function_filter);
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, paned);
 
   gtk_widget_class_install_action (widget_class, "callgraph.make-descendant-root", NULL, make_descendant_root_action);
@@ -523,6 +524,7 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
   g_resources_register (sysprof_get_resource ());
 
   g_type_ensure (PANEL_TYPE_PANED);
+  g_type_ensure (SYSPROF_TYPE_CALLGRAPH_SYMBOL);
   g_type_ensure (SYSPROF_TYPE_CATEGORY_ICON);
   g_type_ensure (SYSPROF_TYPE_SYMBOL_LABEL);
   g_type_ensure (SYSPROF_TYPE_TREE_EXPANDER);
@@ -589,6 +591,7 @@ sysprof_callgraph_view_reload_cb (GObject      *object,
 {
   SysprofDocument *document = (SysprofDocument *)object;
   g_autoptr(SysprofCallgraphView) self = user_data;
+  g_autoptr(GtkFilterListModel) filter_model = NULL;
   g_autoptr(SysprofCallgraph) callgraph = NULL;
   g_autoptr(GError) error = NULL;
   GtkSorter *column_sorter;
@@ -613,7 +616,10 @@ sysprof_callgraph_view_reload_cb (GObject      *object,
 
   column_sorter = gtk_column_view_get_sorter (self->functions_column_view);
   functions_model = sysprof_callgraph_list_symbols (callgraph);
-  functions_sort_model = gtk_sort_list_model_new (g_object_ref (functions_model),
+  filter_model = gtk_filter_list_model_new (g_object_ref (G_LIST_MODEL (functions_model)),
+                                            g_object_ref (GTK_FILTER (self->function_filter)));
+  gtk_filter_list_model_set_incremental (filter_model, TRUE);
+  functions_sort_model = gtk_sort_list_model_new (g_object_ref (G_LIST_MODEL (filter_model)),
                                                   g_object_ref (column_sorter));
   functions_selection = gtk_single_selection_new (g_object_ref (G_LIST_MODEL (functions_sort_model)));
   gtk_single_selection_set_autoselect (functions_selection, FALSE);

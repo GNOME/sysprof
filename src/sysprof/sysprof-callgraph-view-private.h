@@ -46,6 +46,7 @@ struct _SysprofCallgraphView
   GtkCustomSorter *functions_name_sorter;
   GtkScrolledWindow *scrolled_window;
   GtkWidget *paned;
+  GtkStringFilter *function_filter;
 
   GCancellable *cancellable;
 

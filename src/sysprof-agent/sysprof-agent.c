@@ -66,6 +66,8 @@ static gboolean aid_perf;
 static gboolean aid_tracefd;
 static gboolean no_throttle;
 static gboolean decode;
+static gboolean do_system_bus;
+static gboolean do_session_bus;
 static const GOptionEntry options[] = {
   { "read-fd", 0, 0, G_OPTION_ARG_INT, &read_fd, "The read side of the FD to use for D-Bus" },
   { "write-fd", 0, 0, G_OPTION_ARG_INT, &write_fd, "The write side of the FD to use for D-Bus" },
@@ -88,6 +90,8 @@ static const GOptionEntry options[] = {
   { "no-throttle", 0, 0, G_OPTION_ARG_NONE, &no_throttle, "Disable CPU throttling [Deprecated for --power-profile]" },
   { "tracefd", 0, 0, G_OPTION_ARG_NONE, &aid_tracefd, "Provide TRACEFD to subprocess" },
   { "power-profile", 0, 0, G_OPTION_ARG_STRING, &power_profile, "Use POWER_PROFILE for duration of recording", "power-saver|balanced|performance" },
+  { "session-bus", 0, 0, G_OPTION_ARG_NONE, &do_session_bus, "Profile the D-Bus session bus" },
+  { "system-bus", 0, 0, G_OPTION_ARG_NONE, &do_system_bus, "Profile the D-Bus system bus" },
   { NULL }
 };
 
@@ -518,6 +522,12 @@ main (int   argc,
                                      sysprof_proxied_instrument_new (G_BUS_TYPE_SESSION,
                                                                      "org.gnome.Shell",
                                                                      "/org/gnome/Sysprof3/Profiler"));
+
+  if (do_session_bus)
+    sysprof_profiler_add_instrument (profiler, sysprof_dbus_monitor_new (G_BUS_TYPE_SESSION));
+
+  if (do_system_bus)
+    sysprof_profiler_add_instrument (profiler, sysprof_dbus_monitor_new (G_BUS_TYPE_SYSTEM));
 
   if (decode)
     sysprof_profiler_add_instrument (profiler, sysprof_symbols_bundle_new ());

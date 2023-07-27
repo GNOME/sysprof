@@ -34,11 +34,13 @@ static gboolean gnome_shell;
 static gboolean bundle_symbols;
 static gboolean session_bus;
 static gboolean system_bus;
+static gboolean gjs;
 static char *power_profile;
 static const GOptionEntry entries[] = {
   { "capture", 'c', 0, G_OPTION_ARG_FILENAME, &capture_file, "The file to capture into", "CAPTURE" },
   { "memprof", 'm', 0, G_OPTION_ARG_NONE, &memprof, "Do memory allocation tracking on subprocess" },
   { "tracer", 't', 0, G_OPTION_ARG_NONE, &tracer, "Enable tracing with __cyg_profile_enter" },
+  { "gjs", 'g', 0, G_OPTION_ARG_NONE, &gjs, "export GJS_TRACE_FD" },
   { "gnome-shell", 's', 0, G_OPTION_ARG_NONE, &gnome_shell, "Request GNOME Shell to provide profiler data" },
   { "power-profile", 'p', 0, G_OPTION_ARG_STRING, &power_profile, "Use POWER_PROFILE for duration of recording", "power-saver|balanced|performance" },
   { "session-bus", 0, 0, G_OPTION_ARG_NONE, &session_bus, "Record D-Bus messages on the session bus" },
@@ -144,6 +146,7 @@ main (int   argc,
   SysprofCaptureWriter *writer = NULL;
   SysprofCaptureReader *reader = NULL;
   g_autofd int trace_fd = -1;
+  g_autofd int gjs_trace_fd = -1;
   int argv_copy_len = 0;
 
   sysprof_clock_init ();
@@ -224,9 +227,15 @@ main (int   argc,
 
           trace_fd = sysprof_spawnable_add_trace_fd (spawnable, NULL);
 
+          if (gjs)
+            gjs_trace_fd = sysprof_spawnable_add_trace_fd (spawnable, "GJS_TRACE_FD");
+
           break;
         }
     }
+
+  sysprof_profiler_add_instrument (profiler, sysprof_tracefd_consumer_new (g_steal_fd (&gjs_trace_fd)));
+  sysprof_profiler_add_instrument (profiler, sysprof_tracefd_consumer_new (g_steal_fd (&trace_fd)));
 
   sysprof_profiler_record_async (profiler, writer, NULL, record_cb, NULL);
 

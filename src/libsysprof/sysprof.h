@@ -83,6 +83,7 @@ G_BEGIN_DECLS
 # include "sysprof-system-logs.h"
 # include "sysprof-thread-info.h"
 # include "sysprof-time-span.h"
+# include "sysprof-tracefd-consumer.h"
 # include "sysprof-tracer.h"
 #undef SYSPROF_INSIDE
 

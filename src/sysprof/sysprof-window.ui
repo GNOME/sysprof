@@ -207,6 +207,16 @@
                           </object>
                         </child>
                         <child>
+                          <object class="SysprofDBusSection">
+                            <property name="title" translatable="yes">D-Bus Messages</property>
+                            <property name="category">processes</property>
+                            <property name="icon-name">dbus-symbolic</property>
+                            <binding name="session">
+                              <lookup name="session">SysprofWindow</lookup>
+                            </binding>
+                          </object>
+                        </child>
+                        <child>
                           <object class="SysprofCpuSection">
                             <property name="title" translatable="yes">CPU Usage</property>
                             <property name="category">counters</property>

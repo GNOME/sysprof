@@ -4,6 +4,7 @@
     <file preprocess="xml-stripblanks">gtk/help-overlay.ui</file>
     <file preprocess="xml-stripblanks">gtk/menus.ui</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/address-layout-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/actions/dbus-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/empty-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/energy-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/graphics-symbolic.svg</file>
@@ -20,6 +21,7 @@
     <file preprocess="xml-stripblanks">sysprof-counters-section.ui</file>
     <file preprocess="xml-stripblanks">sysprof-cpu-section.ui</file>
     <file preprocess="xml-stripblanks">sysprof-cpu-section-counter.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-dbus-section.ui</file>
     <file preprocess="xml-stripblanks">sysprof-energy-section.ui</file>
     <file preprocess="xml-stripblanks">sysprof-energy-section-counter.ui</file>
     <file preprocess="xml-stripblanks">sysprof-files-section.ui</file>

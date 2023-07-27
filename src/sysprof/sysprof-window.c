@@ -24,6 +24,7 @@
 
 #include "sysprof-counters-section.h"
 #include "sysprof-cpu-section.h"
+#include "sysprof-dbus-section.h"
 #include "sysprof-energy-section.h"
 #include "sysprof-files-section.h"
 #include "sysprof-graphics-section.h"
@@ -414,6 +415,7 @@ sysprof_window_class_init (SysprofWindowClass *klass)
 
   g_type_ensure (SYSPROF_TYPE_COUNTERS_SECTION);
   g_type_ensure (SYSPROF_TYPE_CPU_SECTION);
+  g_type_ensure (SYSPROF_TYPE_DBUS_SECTION);
   g_type_ensure (SYSPROF_TYPE_DOCUMENT);
   g_type_ensure (SYSPROF_TYPE_ENERGY_SECTION);
   g_type_ensure (SYSPROF_TYPE_FILES_SECTION);

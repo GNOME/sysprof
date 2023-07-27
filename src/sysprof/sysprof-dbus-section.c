@@ -125,6 +125,25 @@ format_flags (gpointer data,
   return flags_to_string (G_TYPE_DBUS_MESSAGE_FLAGS, flags);
 }
 
+static char *
+format_bus_type (gpointer data,
+                 guint    bus_type)
+{
+  if (bus_type == G_BUS_TYPE_SESSION)
+    return g_strdup ("Session");
+  else if (bus_type == G_BUS_TYPE_SYSTEM)
+    return g_strdup ("System");
+
+  return NULL;
+}
+
+static guint
+cast_bus_type (gpointer data,
+               guint    bus_type)
+{
+  return bus_type;
+}
+
 static void
 sysprof_dbus_section_dispose (GObject *object)
 {
@@ -147,6 +166,8 @@ sysprof_dbus_section_class_init (SysprofDBusSectionClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofDBusSection, column_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofDBusSection, scrubber);
   gtk_widget_class_bind_template_child (widget_class, SysprofDBusSection, time_column);
+  gtk_widget_class_bind_template_callback (widget_class, cast_bus_type);
+  gtk_widget_class_bind_template_callback (widget_class, format_bus_type);
   gtk_widget_class_bind_template_callback (widget_class, format_flags);
   gtk_widget_class_bind_template_callback (widget_class, format_serial);
   gtk_widget_class_bind_template_callback (widget_class, format_size);

@@ -125,6 +125,45 @@
                         </child>
                         <child>
                           <object class="GtkColumnViewColumn">
+                            <property name="title" translatable="yes">Bus</property>
+                            <property name="sorter">
+                              <object class="GtkNumericSorter">
+                                <property name="sort-order">ascending</property>
+                                <property name="expression">
+                                  <closure type="guint" function="cast_bus_type">
+                                    <lookup name="bus-type" type="SysprofDocumentDBusMessage"/>
+                                  </closure>
+                                </property>
+                              </object>
+                            </property>
+                            <property name="factory">
+                              <object class="GtkBuilderListItemFactory">
+                                <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkLabel">
+        <property name="xalign">0</property>
+        <binding name="label">
+          <closure type="gchararray" function="format_bus_type">
+            <lookup name="bus-type" type="SysprofDocumentDBusMessage">
+              <lookup name="item">GtkListItem</lookup>
+            </lookup>
+          </closure>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                </property>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkColumnViewColumn">
                             <property name="title" translatable="yes">Serial</property>
                             <property name="sorter">
                               <object class="GtkNumericSorter">

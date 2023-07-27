@@ -38,6 +38,7 @@ struct _SysprofDocumentDBusMessageClass
 
 enum {
   PROP_0,
+  PROP_BUS_TYPE,
   PROP_DESTINATION,
   PROP_FLAGS,
   PROP_INTERFACE,
@@ -77,6 +78,10 @@ sysprof_document_dbus_message_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_BUS_TYPE:
+      g_value_set_enum (value, sysprof_document_dbus_message_get_bus_type (self));
+      break;
+
     case PROP_FLAGS:
       g_value_set_flags (value, sysprof_document_dbus_message_get_flags (self));
       break;
@@ -140,6 +145,12 @@ sysprof_document_dbus_message_class_init (SysprofDocumentDBusMessageClass *klass
   object_class->get_property = sysprof_document_dbus_message_get_property;
 
   document_frame_class->type_name = N_("D-Bus Message");
+
+  properties[PROP_BUS_TYPE] =
+    g_param_spec_enum ("bus-type", NULL, NULL,
+                       G_TYPE_BUS_TYPE,
+                       0,
+                       (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   properties[PROP_MESSAGE_LENGTH] =
     g_param_spec_uint ("message-length", NULL, NULL,
@@ -417,4 +428,19 @@ sysprof_document_dbus_message_get_message_type (SysprofDocumentDBusMessage *self
     return 0;
 
   return g_dbus_message_get_message_type (message);
+}
+
+GBusType
+sysprof_document_dbus_message_get_bus_type (SysprofDocumentDBusMessage *self)
+{
+  const SysprofCaptureDBusMessage *dbus_message;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_DBUS_MESSAGE (self), FALSE);
+
+  dbus_message = SYSPROF_DOCUMENT_FRAME_GET (self, SysprofCaptureDBusMessage);
+
+  if (dbus_message->bus_type == 1 || dbus_message->bus_type == 2)
+    return dbus_message->bus_type;
+
+  return 0;
 }

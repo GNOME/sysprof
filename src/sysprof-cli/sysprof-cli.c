@@ -270,6 +270,8 @@ main (int   argc,
   gboolean memprof = FALSE;
   gboolean merge = FALSE;
   gboolean speedtrack = FALSE;
+  gboolean system_bus = FALSE;
+  gboolean session_bus = FALSE;
   g_autofd int gjs_trace_fd = -1;
   g_autofd int trace_fd = -1;
   int pid = -1;
@@ -289,6 +291,8 @@ main (int   argc,
     { "no-memory", 0, 0, G_OPTION_ARG_NONE, &no_memory, N_("Disable recording of memory statistics") },
     { "no-network", 0, 0, G_OPTION_ARG_NONE, &no_network, N_("Disable recording of network statistics") },
     { "use-trace-fd", 0, 0, G_OPTION_ARG_NONE, &use_trace_fd, N_("Set SYSPROF_TRACE_FD environment for subprocess") },
+    { "session-bus", 0, 0, G_OPTION_ARG_NONE, &session_bus, N_("Profile the D-Bus session bus") },
+    { "system-bus", 0, 0, G_OPTION_ARG_NONE, &system_bus, N_("Profile the D-Bus system bus") },
     { "gjs", 0, 0, G_OPTION_ARG_NONE, &gjs, N_("Set GJS_TRACE_FD environment to trace GJS processes") },
     { "gtk", 0, 0, G_OPTION_ARG_NONE, &gtk, N_("Set GTK_TRACE_FD environment to trace a GTK application") },
     { "rapl", 0, 0, G_OPTION_ARG_NONE, &rapl, N_("Include RAPL energy statistics") },
@@ -517,6 +521,12 @@ Examples:\n\
                                      sysprof_proxied_instrument_new (G_BUS_TYPE_SESSION,
                                                                      "org.gnome.Shell",
                                                                      "/org/gnome/Sysprof3/Profiler"));
+
+  if (session_bus)
+    sysprof_profiler_add_instrument (profiler, sysprof_dbus_monitor_new (G_BUS_TYPE_SESSION));
+
+  if (system_bus)
+    sysprof_profiler_add_instrument (profiler, sysprof_dbus_monitor_new (G_BUS_TYPE_SYSTEM));
 
   sysprof_profiler_record_async (profiler,
                                  writer,

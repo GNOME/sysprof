@@ -131,16 +131,12 @@
           <object class="SysprofValueAxis">
             <binding name="min-value">
               <lookup name="min-value" type="SysprofDocumentCounter">
-                <lookup name="item" type="SysprofChart">
-                  <lookup name="chart">layer</lookup>
-                </lookup>
+                <lookup name="item">SysprofChartLayerItem</lookup>
               </lookup>
             </binding>
             <binding name="max-value">
               <lookup name="max-value" type="SysprofDocumentCounter">
-                <lookup name="item" type="SysprofChart">
-                  <lookup name="chart">layer</lookup>
-                </lookup>
+                <lookup name="item">SysprofChartLayerItem</lookup>
               </lookup>
             </binding>
           </object>

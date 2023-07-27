@@ -40,6 +40,7 @@ enum {
   PROP_0,
   PROP_MESSAGE,
   PROP_MESSAGE_LENGTH,
+  PROP_MESSAGE_TYPE,
   PROP_SERIAL,
   PROP_SENDER,
   PROP_DESTINATION,
@@ -90,6 +91,10 @@ sysprof_document_dbus_message_get_property (GObject    *object,
       g_value_set_string (value, sysprof_document_dbus_message_get_destination (self));
       break;
 
+    case PROP_MESSAGE_TYPE:
+      g_value_set_enum (value, sysprof_document_dbus_message_get_message_type (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -130,6 +135,12 @@ sysprof_document_dbus_message_class_init (SysprofDocumentDBusMessageClass *klass
     g_param_spec_string ("destination", NULL, NULL,
                          NULL,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_MESSAGE_TYPE] =
+    g_param_spec_enum ("message-type", NULL, NULL,
+                       G_TYPE_DBUS_MESSAGE_TYPE,
+                       G_DBUS_MESSAGE_TYPE_INVALID,
+                       (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
@@ -250,4 +261,17 @@ sysprof_document_dbus_message_get_destination (SysprofDocumentDBusMessage *self)
 
   /* Safe because of self->message */
   return g_dbus_message_get_destination (message);
+}
+
+GDBusMessageType
+sysprof_document_dbus_message_get_message_type (SysprofDocumentDBusMessage *self)
+{
+  g_autoptr(GDBusMessage) message = NULL;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_DBUS_MESSAGE (self), 0);
+
+  if (!(message = sysprof_document_dbus_message_dup_message (self)))
+    return 0;
+
+  return g_dbus_message_get_message_type (message);
 }

@@ -208,7 +208,7 @@
                         </child>
                         <child>
                           <object class="SysprofDBusSection">
-                            <property name="title" translatable="yes">D-Bus Messages</property>
+                            <property name="title" translatable="yes">D-Bus</property>
                             <property name="category">processes</property>
                             <property name="icon-name">dbus-symbolic</property>
                             <binding name="session">

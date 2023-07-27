@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="SysprofDBusSection" parent="SysprofSection">
+    <binding name="indicator">
+      <closure type="gchararray" function="format_number">
+        <lookup name="n-items" type="SysprofDocumentBitsetIndex">
+          <lookup name="dbus-messages" type="SysprofDocument">
+            <lookup name="document" type="SysprofSession">
+              <lookup name="session">SysprofDBusSection</lookup>
+            </lookup>
+          </lookup>
+        </lookup>
+      </closure>
+    </binding>
     <child>
       <object class="GtkBox">
         <property name="orientation">vertical</property>

@@ -144,6 +144,15 @@ cast_bus_type (gpointer data,
   return bus_type;
 }
 
+static char *
+format_number (gpointer unused,
+               guint    number)
+{
+  if (number == 0)
+    return NULL;
+  return g_strdup_printf ("%'u", number);
+}
+
 static void
 sysprof_dbus_section_dispose (GObject *object)
 {
@@ -171,6 +180,7 @@ sysprof_dbus_section_class_init (SysprofDBusSectionClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, format_flags);
   gtk_widget_class_bind_template_callback (widget_class, format_serial);
   gtk_widget_class_bind_template_callback (widget_class, format_size);
+  gtk_widget_class_bind_template_callback (widget_class, format_number);
   gtk_widget_class_bind_template_callback (widget_class, format_message_type);
 
   g_type_ensure (SYSPROF_TYPE_CHART);

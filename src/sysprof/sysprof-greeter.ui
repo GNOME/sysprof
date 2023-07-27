@@ -171,6 +171,35 @@
                     </child>
                     <child>
                       <object class="AdwPreferencesGroup">
+                        <property name="title" translatable="yes">D-Bus Profiler</property>
+                        <child>
+                          <object class="AdwActionRow">
+                            <property name="activatable-widget">record_session_bus</property>
+                            <property name="title" translatable="yes">D-Bus Session Bus</property>
+                            <property name="subtitle" translatable="yes">Record messages on the D-Bus user session bus</property>
+                            <child type="suffix">
+                              <object class="GtkSwitch" id="record_session_bus">
+                                <property name="valign">center</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="AdwActionRow">
+                            <property name="activatable-widget">record_system_bus</property>
+                            <property name="title" translatable="yes">D-Bus System Bus</property>
+                            <property name="subtitle" translatable="yes">Record messages on the D-Bus system bus</property>
+                            <child type="suffix">
+                              <object class="GtkSwitch" id="record_system_bus">
+                                <property name="valign">center</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="AdwPreferencesGroup">
                         <property name="title" translatable="yes">Counters</property>
                         <child>
                           <object class="AdwActionRow">

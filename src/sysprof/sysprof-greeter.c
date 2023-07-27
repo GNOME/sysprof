@@ -47,6 +47,8 @@ struct _SysprofGreeter
   GtkSwitch          *record_network_usage;
   GtkSwitch          *record_compositor;
   GtkSwitch          *record_system_logs;
+  GtkSwitch          *record_session_bus;
+  GtkSwitch          *record_system_bus;
   GtkSwitch          *bundle_symbols;
 };
 
@@ -101,6 +103,12 @@ sysprof_greeter_create_profiler (SysprofGreeter *self)
 
   if (gtk_switch_get_active (self->bundle_symbols))
     sysprof_profiler_add_instrument (profiler, sysprof_symbols_bundle_new ());
+
+  if (gtk_switch_get_active (self->record_session_bus))
+    sysprof_profiler_add_instrument (profiler, sysprof_dbus_monitor_new (G_BUS_TYPE_SESSION));
+
+  if (gtk_switch_get_active (self->record_system_bus))
+    sysprof_profiler_add_instrument (profiler, sysprof_dbus_monitor_new (G_BUS_TYPE_SYSTEM));
 
   return g_steal_pointer (&profiler);
 }
@@ -389,6 +397,8 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_disk_usage);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_network_usage);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_page);
+  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_session_bus);
+  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_system_bus);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_system_logs);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, sample_native_stacks);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, toolbar);

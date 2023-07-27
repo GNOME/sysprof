@@ -81,4 +81,3 @@ sysprof_energy_section_init (SysprofEnergySection *self)
 
   gtk_column_view_sort_by_column (self->column_view, self->time_column, GTK_SORT_ASCENDING);
 }
-

@@ -6,6 +6,7 @@
     <file preprocess="xml-stripblanks">icons/scalable/actions/address-layout-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/empty-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/energy-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/actions/graphics-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/mark-chart-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/mark-table-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/mark-waterfall-symbolic.svg</file>
@@ -23,6 +24,8 @@
     <file preprocess="xml-stripblanks">sysprof-energy-section-counter.ui</file>
     <file preprocess="xml-stripblanks">sysprof-files-section.ui</file>
     <file preprocess="xml-stripblanks">sysprof-frame-utility.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-graphics-section.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-graphics-section-counter.ui</file>
     <file preprocess="xml-stripblanks">sysprof-greeter.ui</file>
     <file preprocess="xml-stripblanks">sysprof-logs-section.ui</file>
     <file preprocess="xml-stripblanks">sysprof-mark-chart-row.ui</file>

@@ -18,6 +18,7 @@ sysprof_sources = [
   'sysprof-energy-section.c',
   'sysprof-files-section.c',
   'sysprof-frame-utility.c',
+  'sysprof-graphics-section.c',
   'sysprof-greeter.c',
   'sysprof-line-layer.c',
   'sysprof-logs-section.c',

@@ -43,6 +43,7 @@ struct _SysprofGreeter
   GtkWidget          *open_page;
   GtkWidget          *recent_page;
   GtkSwitch          *sample_native_stacks;
+  GtkSwitch          *sample_javascript_stacks;
   GtkSwitch          *record_disk_usage;
   GtkSwitch          *record_network_usage;
   GtkSwitch          *record_compositor;
@@ -78,13 +79,24 @@ static SysprofProfiler *
 sysprof_greeter_create_profiler (SysprofGreeter *self)
 {
   g_autoptr(SysprofProfiler) profiler = NULL;
+  g_autoptr(SysprofSpawnable) spawnable = NULL;
 
   g_assert (SYSPROF_IS_GREETER (self));
 
   profiler = sysprof_profiler_new ();
 
+  /* TODO: Setup spawnable */
+
   if (gtk_switch_get_active (self->sample_native_stacks))
     sysprof_profiler_add_instrument (profiler, sysprof_sampler_new ());
+
+  if (gtk_switch_get_active (self->sample_javascript_stacks))
+    {
+      if (spawnable != NULL)
+        sysprof_profiler_add_instrument (profiler,
+                                         sysprof_tracefd_consumer_new (sysprof_spawnable_add_trace_fd (spawnable,
+                                                                                                       "GJS_TRACE_FD")));
+    }
 
   if (gtk_switch_get_active (self->record_disk_usage))
     sysprof_profiler_add_instrument (profiler, sysprof_disk_usage_new ());
@@ -401,6 +413,7 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_system_bus);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_system_logs);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, sample_native_stacks);
+  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, sample_javascript_stacks);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, toolbar);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, view_stack);
 

@@ -32,6 +32,8 @@ static gboolean memprof;
 static gboolean tracer;
 static gboolean gnome_shell;
 static gboolean bundle_symbols;
+static gboolean session_bus;
+static gboolean system_bus;
 static char *power_profile;
 static const GOptionEntry entries[] = {
   { "capture", 'c', 0, G_OPTION_ARG_FILENAME, &capture_file, "The file to capture into", "CAPTURE" },
@@ -39,6 +41,8 @@ static const GOptionEntry entries[] = {
   { "tracer", 't', 0, G_OPTION_ARG_NONE, &tracer, "Enable tracing with __cyg_profile_enter" },
   { "gnome-shell", 's', 0, G_OPTION_ARG_NONE, &gnome_shell, "Request GNOME Shell to provide profiler data" },
   { "power-profile", 'p', 0, G_OPTION_ARG_STRING, &power_profile, "Use POWER_PROFILE for duration of recording", "power-saver|balanced|performance" },
+  { "session-bus", 0, 0, G_OPTION_ARG_NONE, &session_bus, "Record D-Bus messages on the session bus" },
+  { "system-bus", 0, 0, G_OPTION_ARG_NONE, &system_bus, "Record D-Bus messages on the system bus" },
   { "bundle-symbols", 'b', 0, G_OPTION_ARG_STRING, &bundle_symbols, "Bundle synbols with the capture" },
   { 0 }
 };
@@ -200,6 +204,12 @@ main (int   argc,
     sysprof_profiler_add_instrument (profiler, sysprof_tracer_new ());
   else
     sysprof_profiler_add_instrument (profiler, sysprof_sampler_new ());
+
+  if (session_bus)
+    sysprof_profiler_add_instrument (profiler, sysprof_dbus_monitor_new (G_BUS_TYPE_SESSION));
+
+  if (system_bus)
+    sysprof_profiler_add_instrument (profiler, sysprof_dbus_monitor_new (G_BUS_TYPE_SYSTEM));
 
   for (int i = 1; i < argc; i++)
     {

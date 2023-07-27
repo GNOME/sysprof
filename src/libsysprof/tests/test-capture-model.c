@@ -84,6 +84,12 @@ main (int argc,
       else if (SYSPROF_IS_DOCUMENT_JITMAP (frame))
         g_print (" n_jitmaps=%u",
                  sysprof_document_jitmap_get_size (SYSPROF_DOCUMENT_JITMAP (frame)));
+      else if (SYSPROF_IS_DOCUMENT_DBUS_MESSAGE (frame))
+        g_print (" message-length=%u serial=0x%x sender=%s destination=%s",
+                 sysprof_document_dbus_message_get_message_length (SYSPROF_DOCUMENT_DBUS_MESSAGE (frame)),
+                 sysprof_document_dbus_message_get_serial (SYSPROF_DOCUMENT_DBUS_MESSAGE (frame)),
+                 sysprof_document_dbus_message_get_sender (SYSPROF_DOCUMENT_DBUS_MESSAGE (frame)),
+                 sysprof_document_dbus_message_get_destination (SYSPROF_DOCUMENT_DBUS_MESSAGE (frame)));
       else if (SYSPROF_IS_DOCUMENT_CTRDEF (frame))
         {
           guint n_counters = sysprof_document_ctrdef_get_n_counters (SYSPROF_DOCUMENT_CTRDEF (frame));

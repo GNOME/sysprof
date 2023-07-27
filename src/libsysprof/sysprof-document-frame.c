@@ -27,6 +27,7 @@
 #include "sysprof-document-allocation.h"
 #include "sysprof-document-ctrdef.h"
 #include "sysprof-document-ctrset.h"
+#include "sysprof-document-dbus-message.h"
 #include "sysprof-document-exit.h"
 #include "sysprof-document-file-chunk.h"
 #include "sysprof-document-fork.h"
@@ -256,6 +257,10 @@ _sysprof_document_frame_new (GMappedFile               *mapped_file,
 
     case SYSPROF_CAPTURE_FRAME_CTRSET:
       gtype = SYSPROF_TYPE_DOCUMENT_CTRSET;
+      break;
+
+    case SYSPROF_CAPTURE_FRAME_DBUS_MESSAGE:
+      gtype = SYSPROF_TYPE_DOCUMENT_DBUS_MESSAGE;
       break;
 
     default:

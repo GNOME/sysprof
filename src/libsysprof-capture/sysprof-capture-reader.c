@@ -782,6 +782,61 @@ sysprof_capture_reader_read_metadata (SysprofCaptureReader *self)
   return metadata;
 }
 
+static inline void
+sysprof_capture_reader_bswap_dbus_message (SysprofCaptureReader      *self,
+                                           SysprofCaptureDBusMessage *dbus_message)
+{
+  assert (self != NULL);
+  assert (dbus_message != NULL);
+
+  /* This only swaps the frame, not the endianness of the message data
+   * which is automatically handled by dbus libraries such as GDBus.
+   */
+
+  if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
+    {
+      dbus_message->flags = bswap_16 (dbus_message->flags);
+      dbus_message->message_len = bswap_16 (dbus_message->message_len);
+    }
+}
+
+const SysprofCaptureDBusMessage *
+sysprof_capture_reader_read_dbus_message (SysprofCaptureReader *self)
+{
+  SysprofCaptureDBusMessage *dbus_message;
+
+  assert (self != NULL);
+  assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
+  assert (self->pos <= self->bufsz);
+
+  if (!sysprof_capture_reader_ensure_space_for (self, sizeof *dbus_message))
+    return NULL;
+
+  dbus_message = (SysprofCaptureDBusMessage *)(void *)&self->buf[self->pos];
+
+  sysprof_capture_reader_bswap_frame (self, &dbus_message->frame);
+
+  if (dbus_message->frame.type != SYSPROF_CAPTURE_FRAME_DBUS_MESSAGE)
+    return NULL;
+
+  sysprof_capture_reader_bswap_dbus_message (self, dbus_message);
+
+  if (dbus_message->frame.len < (sizeof *dbus_message + dbus_message->message_len))
+    return NULL;
+
+  if (!sysprof_capture_reader_ensure_space_for (self, dbus_message->frame.len))
+    return NULL;
+
+  dbus_message = (SysprofCaptureDBusMessage *)(void *)&self->buf[self->pos];
+
+  self->pos += dbus_message->frame.len;
+
+  if ((self->pos % SYSPROF_CAPTURE_ALIGN) != 0)
+    return NULL;
+
+  return dbus_message;
+}
+
 const SysprofCaptureProcess *
 sysprof_capture_reader_read_process (SysprofCaptureReader *self)
 {

@@ -219,6 +219,10 @@ sysprof_capture_cursor_foreach (SysprofCaptureCursor         *self,
           delegate = READ_DELEGATE (sysprof_capture_reader_read_metadata);
           break;
 
+        case SYSPROF_CAPTURE_FRAME_DBUS_MESSAGE:
+          delegate = READ_DELEGATE (sysprof_capture_reader_read_dbus_message);
+          break;
+
         case SYSPROF_CAPTURE_FRAME_FILE_CHUNK:
           delegate = READ_DELEGATE (sysprof_capture_reader_read_file);
           break;

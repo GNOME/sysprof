@@ -141,10 +141,11 @@ typedef enum
   SYSPROF_CAPTURE_FRAME_ALLOCATION   = 14,
   SYSPROF_CAPTURE_FRAME_OVERLAY      = 15,
   SYSPROF_CAPTURE_FRAME_TRACE        = 16,
+  SYSPROF_CAPTURE_FRAME_DBUS_MESSAGE = 17,
 } SysprofCaptureFrameType;
 
 /* Not part of ABI */
-#define SYSPROF_CAPTURE_FRAME_LAST 17
+#define SYSPROF_CAPTURE_FRAME_LAST 18
 
 SYSPROF_ALIGNED_BEGIN(1)
 typedef struct
@@ -364,6 +365,24 @@ typedef struct
 } SysprofCaptureAllocation
 SYSPROF_ALIGNED_END(1);
 
+SYSPROF_ALIGNED_BEGIN(1)
+typedef struct
+{
+  SysprofCaptureFrame   frame;
+  uint16_t              bus_type : 2;
+  uint16_t              flags : 14;
+  uint16_t              message_len;
+  uint8_t               message[0];
+} SysprofCaptureDBusMessage
+SYSPROF_ALIGNED_END(1);
+
+#define SYSPROF_CAPTURE_DBUS_TYPE_SYSTEM  0
+#define SYSPROF_CAPTURE_DBUS_TYPE_SESSION 1
+#define SYSPROF_CAPTURE_DBUS_TYPE_A11Y    2
+#define SYSPROF_CAPTURE_DBUS_TYPE_OTHER   3
+
+#define SYSPROF_CAPTURE_DBUS_FLAGS_MESSAGE_TOO_LARGE (1<<0)
+
 SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureFileHeader) == 256, "SysprofCaptureFileHeader changed size");
 SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureFrame) == 24, "SysprofCaptureFrame changed size");
 SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureMap) == 56, "SysprofCaptureMap changed size");
@@ -384,6 +403,7 @@ SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureLog) == 64, "SysprofCaptureLog chan
 SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureFileChunk) == 284, "SysprofCaptureFileChunk changed size");
 SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureAllocation) == 48, "SysprofCaptureAllocation changed size");
 SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureOverlay) == 32, "SysprofCaptureOverlay changed size");
+SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureDBusMessage) == 28, "SysprofCaptureDBusMessage changed size");
 
 SYSPROF_STATIC_ASSERT ((offsetof (SysprofCaptureAllocation, addrs) % SYSPROF_CAPTURE_ALIGN) == 0, "SysprofCaptureAllocation.addrs is not aligned");
 SYSPROF_STATIC_ASSERT ((offsetof (SysprofCaptureSample, addrs) % SYSPROF_CAPTURE_ALIGN) == 0, "SysprofCaptureSample.addrs is not aligned");

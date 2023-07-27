@@ -230,6 +230,14 @@ bool                  sysprof_capture_writer_add_overlay                     (Sy
                                                                               const char                        *src,
                                                                               const char                        *dst);
 SYSPROF_AVAILABLE_IN_ALL
+bool                  sysprof_capture_writer_add_dbus_message                (SysprofCaptureWriter              *self,
+                                                                              int64_t                            time,
+                                                                              int                                cpu,
+                                                                              int32_t                            pid,
+                                                                              uint32_t                           flags,
+                                                                              const uint8_t                     *message_data,
+                                                                              size_t                             message_len);
+SYSPROF_AVAILABLE_IN_ALL
 bool                  sysprof_capture_writer_flush                           (SysprofCaptureWriter              *self);
 SYSPROF_AVAILABLE_IN_ALL
 bool                  sysprof_capture_writer_save_as                         (SysprofCaptureWriter              *self,

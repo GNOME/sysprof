@@ -101,6 +101,8 @@ const SysprofCaptureMark           *sysprof_capture_reader_read_mark           (
 SYSPROF_AVAILABLE_IN_ALL
 const SysprofCaptureMetadata       *sysprof_capture_reader_read_metadata       (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
+const SysprofCaptureDBusMessage    *sysprof_capture_reader_read_dbus_message   (SysprofCaptureReader      *self);
+SYSPROF_AVAILABLE_IN_ALL
 const SysprofCaptureExit           *sysprof_capture_reader_read_exit           (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
 const SysprofCaptureFork           *sysprof_capture_reader_read_fork           (SysprofCaptureReader      *self);

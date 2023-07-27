@@ -767,6 +767,48 @@ sysprof_capture_writer_add_metadata (SysprofCaptureWriter *self,
   return true;
 }
 
+bool
+sysprof_capture_writer_add_dbus_message (SysprofCaptureWriter *self,
+                                         int64_t               time,
+                                         int                   cpu,
+                                         int32_t               pid,
+                                         uint32_t              flags,
+                                         const uint8_t        *message_data,
+                                         size_t                message_len)
+{
+  SysprofCaptureDBusMessage *ev;
+  size_t len;
+
+  assert (self != NULL);
+  assert (message_data != NULL || message_len == 0);
+
+  if (message_len > (1<<16) - sizeof *ev - 16)
+    {
+      flags |= SYSPROF_CAPTURE_DBUS_FLAGS_MESSAGE_TOO_LARGE;
+      message_data = NULL;
+      message_len = 0;
+    }
+
+  len = sizeof *ev + message_len;
+
+  ev = (SysprofCaptureDBusMessage *)sysprof_capture_writer_allocate (self, &len);
+  if (!ev)
+    return false;
+
+  sysprof_capture_writer_frame_init (&ev->frame,
+                                     len,
+                                     cpu,
+                                     pid,
+                                     time,
+                                     SYSPROF_CAPTURE_FRAME_DBUS_MESSAGE);
+
+  ev->flags = flags;
+  ev->message_len = message_len;
+  memcpy (ev->message, message_data, message_len);
+
+  return true;
+}
+
 SysprofCaptureAddress
 sysprof_capture_writer_add_jitmap (SysprofCaptureWriter *self,
                                    const char           *name)

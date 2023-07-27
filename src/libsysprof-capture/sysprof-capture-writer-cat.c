@@ -391,6 +391,23 @@ sysprof_capture_writer_cat (SysprofCaptureWriter *self,
             break;
           }
 
+        case SYSPROF_CAPTURE_FRAME_DBUS_MESSAGE:
+          {
+            const SysprofCaptureDBusMessage *frame;
+
+            if (!(frame = sysprof_capture_reader_read_dbus_message (reader)))
+              goto panic;
+
+            sysprof_capture_writer_add_dbus_message (self,
+                                                     frame->frame.time,
+                                                     frame->frame.cpu,
+                                                     frame->frame.pid,
+                                                     frame->flags,
+                                                     frame->message,
+                                                     frame->message_len);
+            break;
+          }
+
         case SYSPROF_CAPTURE_FRAME_SAMPLE:
           {
             const SysprofCaptureSample *frame;

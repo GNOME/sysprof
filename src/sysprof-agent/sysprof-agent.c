@@ -599,6 +599,9 @@ main (int   argc,
         }
     }
 
+  sysprof_profiler_add_instrument (profiler, sysprof_tracefd_consumer_new (g_steal_fd (&gjs_trace_fd)));
+  sysprof_profiler_add_instrument (profiler, sysprof_tracefd_consumer_new (g_steal_fd (&trace_fd)));
+
   /* Now open the writer for our session */
   if (!(writer = sysprof_capture_writer_new (capture_filename, BUFFER_SIZE)))
     {
@@ -624,28 +627,6 @@ main (int   argc,
     g_dbus_connection_start_message_processing (connection);
 
   g_main_loop_run (main_loop);
-
-  if (gjs_trace_fd != -1)
-    {
-      SysprofCaptureReader *reader = NULL;
-
-      if ((reader = sysprof_capture_reader_new_from_fd (g_steal_fd (&gjs_trace_fd))))
-        {
-          sysprof_capture_writer_cat (writer, reader);
-          sysprof_capture_reader_unref (reader);
-        }
-    }
-
-  if (trace_fd != -1)
-    {
-      SysprofCaptureReader *reader = NULL;
-
-      if ((reader = sysprof_capture_reader_new_from_fd (g_steal_fd (&trace_fd))))
-        {
-          sysprof_capture_writer_cat (writer, reader);
-          sysprof_capture_reader_unref (reader);
-        }
-    }
 
   sysprof_capture_writer_flush (writer);
   sysprof_capture_writer_unref (writer);

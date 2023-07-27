@@ -236,6 +236,23 @@ sysprof_cli_record_cb (GObject      *object,
   g_set_object (&active_recording, recording);
 }
 
+static void
+add_trace_fd (SysprofProfiler  *profiler,
+              SysprofSpawnable *spawnable,
+              const char       *name)
+{
+  int trace_fd = -1;
+
+  g_assert (SYSPROF_IS_PROFILER (profiler));
+  g_assert (!spawnable || SYSPROF_IS_SPAWNABLE (spawnable));
+
+  if (spawnable == NULL)
+    return;
+
+  trace_fd = sysprof_spawnable_add_trace_fd (spawnable, name);
+  sysprof_profiler_add_instrument (profiler, sysprof_tracefd_consumer_new (g_steal_fd (&trace_fd)));
+}
+
 int
 main (int   argc,
       char *argv[])
@@ -272,8 +289,6 @@ main (int   argc,
   gboolean speedtrack = FALSE;
   gboolean system_bus = FALSE;
   gboolean session_bus = FALSE;
-  g_autofd int gjs_trace_fd = -1;
-  g_autofd int trace_fd = -1;
   int pid = -1;
   int fd;
   int flags;
@@ -473,10 +488,10 @@ Examples:\n\
       sysprof_profiler_set_spawnable (profiler, spawnable);
 
       if (gjs)
-        gjs_trace_fd = sysprof_spawnable_add_trace_fd (spawnable, "GJS_TRACE_FD");
+        add_trace_fd (profiler, spawnable, "GJS_TRACE_FD");
 
       if (use_trace_fd)
-        trace_fd = sysprof_spawnable_add_trace_fd (spawnable, NULL);
+        add_trace_fd (profiler, spawnable, NULL);
 
       if (memprof)
         sysprof_spawnable_add_ld_preload (spawnable, PACKAGE_LIBDIR"/libsysprof-memory-"API_VERSION_S".so");

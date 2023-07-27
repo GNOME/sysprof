@@ -402,6 +402,7 @@ sysprof_capture_writer_cat (SysprofCaptureWriter *self,
                                                      frame->frame.time,
                                                      frame->frame.cpu,
                                                      frame->frame.pid,
+                                                     frame->bus_type,
                                                      frame->flags,
                                                      frame->message,
                                                      frame->message_len);

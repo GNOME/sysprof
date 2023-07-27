@@ -772,7 +772,8 @@ sysprof_capture_writer_add_dbus_message (SysprofCaptureWriter *self,
                                          int64_t               time,
                                          int                   cpu,
                                          int32_t               pid,
-                                         uint32_t              flags,
+                                         uint16_t              bus_type,
+                                         uint16_t              flags,
                                          const uint8_t        *message_data,
                                          size_t                message_len)
 {
@@ -802,6 +803,7 @@ sysprof_capture_writer_add_dbus_message (SysprofCaptureWriter *self,
                                      time,
                                      SYSPROF_CAPTURE_FRAME_DBUS_MESSAGE);
 
+  ev->bus_type = bus_type;
   ev->flags = flags;
   ev->message_len = message_len;
   memcpy (ev->message, message_data, message_len);

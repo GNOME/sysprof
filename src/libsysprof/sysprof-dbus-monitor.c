@@ -173,6 +173,7 @@ sysprof_dbus_monitor_record_fiber (gpointer user_data)
                                                    SYSPROF_CAPTURE_CURRENT_TIME,
                                                    -1,
                                                    -1,
+                                                   record->bus_type,
                                                    SYSPROF_CAPTURE_DBUS_FLAGS_MESSAGE_TOO_LARGE,
                                                    NULL, 0);
 
@@ -209,6 +210,7 @@ sysprof_dbus_monitor_record_fiber (gpointer user_data)
                                                    SYSPROF_CAPTURE_CURRENT_TIME,
                                                    -1,
                                                    -1,
+                                                   record->bus_type,
                                                    0,
                                                    read_buffer, n_needed);
         }

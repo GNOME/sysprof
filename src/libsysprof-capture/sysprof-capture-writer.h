@@ -234,7 +234,8 @@ bool                  sysprof_capture_writer_add_dbus_message                (Sy
                                                                               int64_t                            time,
                                                                               int                                cpu,
                                                                               int32_t                            pid,
-                                                                              uint32_t                           flags,
+                                                                              uint16_t                           bus_type,
+                                                                              uint16_t                           flags,
                                                                               const uint8_t                     *message_data,
                                                                               size_t                             message_len);
 SYSPROF_AVAILABLE_IN_ALL

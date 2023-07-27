@@ -53,6 +53,12 @@ static const struct {
   const char *library;
   const char *nick;
 } nick_table[] = {
+  /* Self Tracking Sysprof */
+  { "libsysprof-memory-6.so", "Sysprof" },
+  { "libsysprof-tracer-6.so", "Sysprof" },
+  { "libsysprof-6.so", "Sysprof" },
+
+  /* Platform */
   { "libc.so", "libc" },
   { "libffi.so", "libffi" },
   { "ld-linux-x86-64.so", "glibc" },

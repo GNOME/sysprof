@@ -224,6 +224,16 @@ rsvg:
 *                                   icons        inherit
 
 
+Sysprof:
+malloc                              memory       inherit
+calloc                              memory       inherit
+free                                memory       inherit
+realloc                             memory       inherit
+aligned_alloc                       memory       inherit
+posix_memalign                      memory       inherit
+memalign                            memory       inherit
+
+
 Wayland Client:
 wl_*                                windowing    inherit
 

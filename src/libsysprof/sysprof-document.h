@@ -59,6 +59,8 @@ GListModel             *sysprof_document_list_traceables                     (Sy
 SYSPROF_AVAILABLE_IN_ALL
 GListModel             *sysprof_document_list_allocations                    (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL
+GListModel             *sysprof_document_list_dbus_messages                  (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
 GListModel             *sysprof_document_list_logs                           (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL
 GListModel             *sysprof_document_list_metadata                       (SysprofDocument           *self);

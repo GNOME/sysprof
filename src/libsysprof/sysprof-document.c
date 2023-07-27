@@ -77,20 +77,21 @@ struct _SysprofDocument
   SysprofStrings           *strings;
 
   EggBitset                *allocations;
+  EggBitset                *ctrdefs;
+  EggBitset                *ctrsets;
+  EggBitset                *dbus_messages;
   EggBitset                *file_chunks;
-  EggBitset                *samples;
-  EggBitset                *samples_with_context_switch;
-  EggBitset                *traceables;
-  EggBitset                *processes;
+  EggBitset                *jitmaps;
   EggBitset                *logs;
+  EggBitset                *marks;
+  EggBitset                *metadata;
   EggBitset                *mmaps;
   EggBitset                *overlays;
   EggBitset                *pids;
-  EggBitset                *jitmaps;
-  EggBitset                *ctrdefs;
-  EggBitset                *ctrsets;
-  EggBitset                *marks;
-  EggBitset                *metadata;
+  EggBitset                *processes;
+  EggBitset                *samples;
+  EggBitset                *samples_with_context_switch;
+  EggBitset                *traceables;
 
   GHashTable               *files_first_position;
   GHashTable               *pid_to_process_info;
@@ -116,6 +117,7 @@ enum {
   PROP_ALLOCATIONS,
   PROP_COUNTERS,
   PROP_CPU_INFO,
+  PROP_DBUS_MESSAGES,
   PROP_FILES,
   PROP_LOGS,
   PROP_MARKS,
@@ -328,6 +330,7 @@ sysprof_document_finalize (GObject *object)
   g_clear_pointer (&self->allocations, egg_bitset_unref);
   g_clear_pointer (&self->ctrdefs, egg_bitset_unref);
   g_clear_pointer (&self->ctrsets, egg_bitset_unref);
+  g_clear_pointer (&self->dbus_messages, egg_bitset_unref);
   g_clear_pointer (&self->marks, egg_bitset_unref);
   g_clear_pointer (&self->metadata, egg_bitset_unref);
   g_clear_pointer (&self->file_chunks, egg_bitset_unref);
@@ -376,6 +379,10 @@ sysprof_document_get_property (GObject    *object,
 
     case PROP_CPU_INFO:
       g_value_take_object (value, sysprof_document_list_cpu_info (self));
+      break;
+
+    case PROP_DBUS_MESSAGES:
+      g_value_take_object (value, sysprof_document_list_dbus_messages (self));
       break;
 
     case PROP_FILES:
@@ -439,6 +446,11 @@ sysprof_document_class_init (SysprofDocumentClass *klass)
 
   properties [PROP_CPU_INFO] =
     g_param_spec_object ("cpu-info", NULL, NULL,
+                         G_TYPE_LIST_MODEL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_DBUS_MESSAGES] =
+    g_param_spec_object ("dbus-messages", NULL, NULL,
                          G_TYPE_LIST_MODEL,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
@@ -506,6 +518,7 @@ sysprof_document_init (SysprofDocument *self)
   self->allocations = egg_bitset_new_empty ();
   self->ctrdefs = egg_bitset_new_empty ();
   self->ctrsets = egg_bitset_new_empty ();
+  self->dbus_messages = egg_bitset_new_empty ();
   self->marks = egg_bitset_new_empty ();
   self->metadata = egg_bitset_new_empty ();
   self->file_chunks = egg_bitset_new_empty ();
@@ -1230,6 +1243,10 @@ sysprof_document_load_worker (GTask        *task,
 
         case SYSPROF_CAPTURE_FRAME_CTRSET:
           egg_bitset_add (self->ctrsets, f);
+          break;
+
+        case SYSPROF_CAPTURE_FRAME_DBUS_MESSAGE:
+          egg_bitset_add (self->dbus_messages, f);
           break;
 
         case SYSPROF_CAPTURE_FRAME_MARK:
@@ -2535,4 +2552,20 @@ sysprof_document_lookup_process (SysprofDocument *self,
     }
 
   return NULL;
+}
+
+/**
+ * sysprof_document_list_dbus_messages:
+ * @self: a #SysprofDocument
+ *
+ * Gets a #GListModel of #SysprofDocumentDBusMessage.
+ *
+ * Returns: (transfer full): a #GListModel
+ */
+GListModel *
+sysprof_document_list_dbus_messages (SysprofDocument *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), self->dbus_messages);
 }

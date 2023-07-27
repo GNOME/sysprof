@@ -38,12 +38,18 @@ struct _SysprofDocumentDBusMessageClass
 
 enum {
   PROP_0,
+  PROP_DESTINATION,
+  PROP_FLAGS,
+  PROP_INTERFACE,
+  PROP_MEMBER,
   PROP_MESSAGE,
   PROP_MESSAGE_LENGTH,
   PROP_MESSAGE_TYPE,
-  PROP_SERIAL,
+  PROP_PATH,
+  PROP_REPLY_SERIAL,
+  PROP_SIGNATURE,
   PROP_SENDER,
-  PROP_DESTINATION,
+  PROP_SERIAL,
   N_PROPS
 };
 
@@ -71,12 +77,20 @@ sysprof_document_dbus_message_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_FLAGS:
+      g_value_set_flags (value, sysprof_document_dbus_message_get_flags (self));
+      break;
+
     case PROP_MESSAGE:
       g_value_take_object (value, sysprof_document_dbus_message_dup_message (self));
       break;
 
     case PROP_MESSAGE_LENGTH:
       g_value_set_uint (value, sysprof_document_dbus_message_get_message_length (self));
+      break;
+
+    case PROP_REPLY_SERIAL:
+      g_value_set_uint (value, sysprof_document_dbus_message_get_reply_serial (self));
       break;
 
     case PROP_SERIAL:
@@ -93,6 +107,22 @@ sysprof_document_dbus_message_get_property (GObject    *object,
 
     case PROP_MESSAGE_TYPE:
       g_value_set_enum (value, sysprof_document_dbus_message_get_message_type (self));
+      break;
+
+    case PROP_INTERFACE:
+      g_value_set_string (value, sysprof_document_dbus_message_get_interface (self));
+      break;
+
+    case PROP_PATH:
+      g_value_set_string (value, sysprof_document_dbus_message_get_path (self));
+      break;
+
+    case PROP_MEMBER:
+      g_value_set_string (value, sysprof_document_dbus_message_get_member (self));
+      break;
+
+    case PROP_SIGNATURE:
+      g_value_set_string (value, sysprof_document_dbus_message_get_signature (self));
       break;
 
     default:
@@ -121,6 +151,11 @@ sysprof_document_dbus_message_class_init (SysprofDocumentDBusMessageClass *klass
                          G_TYPE_DBUS_MESSAGE,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
+  properties[PROP_REPLY_SERIAL] =
+    g_param_spec_uint ("reply-serial", NULL, NULL,
+                       0, G_MAXUINT, 0,
+                       (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
   properties[PROP_SERIAL] =
     g_param_spec_uint ("serial", NULL, NULL,
                        0, G_MAXUINT, 0,
@@ -136,11 +171,37 @@ sysprof_document_dbus_message_class_init (SysprofDocumentDBusMessageClass *klass
                          NULL,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
+  properties[PROP_INTERFACE] =
+    g_param_spec_string ("interface", NULL, NULL,
+                         NULL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_PATH] =
+    g_param_spec_string ("path", NULL, NULL,
+                         NULL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_MEMBER] =
+    g_param_spec_string ("member", NULL, NULL,
+                         NULL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_SIGNATURE] =
+    g_param_spec_string ("signature", NULL, NULL,
+                         NULL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
   properties[PROP_MESSAGE_TYPE] =
     g_param_spec_enum ("message-type", NULL, NULL,
                        G_TYPE_DBUS_MESSAGE_TYPE,
                        G_DBUS_MESSAGE_TYPE_INVALID,
                        (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_FLAGS] =
+    g_param_spec_flags ("flags", NULL, NULL,
+                        G_TYPE_DBUS_MESSAGE_FLAGS,
+                        0,
+                        (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
@@ -222,6 +283,32 @@ sysprof_document_dbus_message_dup_message (SysprofDocumentDBusMessage *self)
   return self->message ? g_object_ref (self->message) : NULL;
 }
 
+GDBusMessageFlags
+sysprof_document_dbus_message_get_flags (SysprofDocumentDBusMessage *self)
+{
+  g_autoptr(GDBusMessage) message = NULL;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_DBUS_MESSAGE (self), 0);
+
+  if (!(message = sysprof_document_dbus_message_dup_message (self)))
+    return 0;
+
+  return g_dbus_message_get_flags (message);
+}
+
+guint
+sysprof_document_dbus_message_get_reply_serial (SysprofDocumentDBusMessage *self)
+{
+  g_autoptr(GDBusMessage) message = NULL;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_DBUS_MESSAGE (self), 0);
+
+  if (!(message = sysprof_document_dbus_message_dup_message (self)))
+    return 0;
+
+  return g_dbus_message_get_reply_serial (message);
+}
+
 guint
 sysprof_document_dbus_message_get_serial (SysprofDocumentDBusMessage *self)
 {
@@ -261,6 +348,62 @@ sysprof_document_dbus_message_get_destination (SysprofDocumentDBusMessage *self)
 
   /* Safe because of self->message */
   return g_dbus_message_get_destination (message);
+}
+
+const char *
+sysprof_document_dbus_message_get_interface (SysprofDocumentDBusMessage *self)
+{
+  g_autoptr(GDBusMessage) message = NULL;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_DBUS_MESSAGE (self), NULL);
+
+  if (!(message = sysprof_document_dbus_message_dup_message (self)))
+    return NULL;
+
+  /* Safe because of self->message */
+  return g_dbus_message_get_interface (message);
+}
+
+const char *
+sysprof_document_dbus_message_get_member (SysprofDocumentDBusMessage *self)
+{
+  g_autoptr(GDBusMessage) message = NULL;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_DBUS_MESSAGE (self), NULL);
+
+  if (!(message = sysprof_document_dbus_message_dup_message (self)))
+    return NULL;
+
+  /* Safe because of self->message */
+  return g_dbus_message_get_member (message);
+}
+
+const char *
+sysprof_document_dbus_message_get_path (SysprofDocumentDBusMessage *self)
+{
+  g_autoptr(GDBusMessage) message = NULL;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_DBUS_MESSAGE (self), NULL);
+
+  if (!(message = sysprof_document_dbus_message_dup_message (self)))
+    return NULL;
+
+  /* Safe because of self->message */
+  return g_dbus_message_get_path (message);
+}
+
+const char *
+sysprof_document_dbus_message_get_signature (SysprofDocumentDBusMessage *self)
+{
+  g_autoptr(GDBusMessage) message = NULL;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_DBUS_MESSAGE (self), NULL);
+
+  if (!(message = sysprof_document_dbus_message_dup_message (self)))
+    return NULL;
+
+  /* Safe because of self->message */
+  return g_dbus_message_get_signature (message);
 }
 
 GDBusMessageType

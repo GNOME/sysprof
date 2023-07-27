@@ -35,22 +35,34 @@ typedef struct _SysprofDocumentDBusMessage      SysprofDocumentDBusMessage;
 typedef struct _SysprofDocumentDBusMessageClass SysprofDocumentDBusMessageClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType             sysprof_document_dbus_message_get_type           (void) G_GNUC_CONST;
+GType              sysprof_document_dbus_message_get_type           (void) G_GNUC_CONST;
 SYSPROF_AVAILABLE_IN_ALL
-guint             sysprof_document_dbus_message_get_message_length (SysprofDocumentDBusMessage *self);
+guint              sysprof_document_dbus_message_get_message_length (SysprofDocumentDBusMessage *self);
 SYSPROF_AVAILABLE_IN_ALL
-const guint8     *sysprof_document_dbus_message_get_message_data   (SysprofDocumentDBusMessage *self,
-                                                                    guint                      *length);
+const guint8      *sysprof_document_dbus_message_get_message_data   (SysprofDocumentDBusMessage *self,
+                                                                     guint                      *length);
 SYSPROF_AVAILABLE_IN_ALL
-GDBusMessage     *sysprof_document_dbus_message_dup_message        (SysprofDocumentDBusMessage *self);
+GDBusMessage      *sysprof_document_dbus_message_dup_message        (SysprofDocumentDBusMessage *self);
 SYSPROF_AVAILABLE_IN_ALL
-guint             sysprof_document_dbus_message_get_serial         (SysprofDocumentDBusMessage *self);
+guint              sysprof_document_dbus_message_get_serial         (SysprofDocumentDBusMessage *self);
 SYSPROF_AVAILABLE_IN_ALL
-const char       *sysprof_document_dbus_message_get_destination    (SysprofDocumentDBusMessage *self);
+guint              sysprof_document_dbus_message_get_reply_serial   (SysprofDocumentDBusMessage *self);
 SYSPROF_AVAILABLE_IN_ALL
-const char       *sysprof_document_dbus_message_get_sender         (SysprofDocumentDBusMessage *self);
+const char        *sysprof_document_dbus_message_get_destination    (SysprofDocumentDBusMessage *self);
 SYSPROF_AVAILABLE_IN_ALL
-GDBusMessageType  sysprof_document_dbus_message_get_message_type   (SysprofDocumentDBusMessage *self);
+const char        *sysprof_document_dbus_message_get_sender         (SysprofDocumentDBusMessage *self);
+SYSPROF_AVAILABLE_IN_ALL
+GDBusMessageType   sysprof_document_dbus_message_get_message_type   (SysprofDocumentDBusMessage *self);
+SYSPROF_AVAILABLE_IN_ALL
+const char        *sysprof_document_dbus_message_get_interface      (SysprofDocumentDBusMessage *self);
+SYSPROF_AVAILABLE_IN_ALL
+const char        *sysprof_document_dbus_message_get_path           (SysprofDocumentDBusMessage *self);
+SYSPROF_AVAILABLE_IN_ALL
+const char        *sysprof_document_dbus_message_get_member         (SysprofDocumentDBusMessage *self);
+SYSPROF_AVAILABLE_IN_ALL
+const char        *sysprof_document_dbus_message_get_signature      (SysprofDocumentDBusMessage *self);
+SYSPROF_AVAILABLE_IN_ALL
+GDBusMessageFlags  sysprof_document_dbus_message_get_flags          (SysprofDocumentDBusMessage *self);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofDocumentDBusMessage, g_object_unref)
 

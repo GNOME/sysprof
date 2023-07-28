@@ -1,7 +1,7 @@
 # If this is a development build, which is used for our Flatpak build
 # so that we have a different app-id (.Devel suffix) than the regular
 # application.
-option('development', type: 'boolean', value: 'false')
+option('development', type: 'boolean', value: false)
 
 # Optionally disable the GTK application in case you're building the
 # sysprof-cli only for your platform. Might be useful in IoT or various

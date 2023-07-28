@@ -1,5 +1,5 @@
 liblinereader_deps = [
-  dependency('gio-2.0', version: glib_req_version),
+  gio_dep,
 ]
 
 liblinereader_static_dep = declare_dependency(

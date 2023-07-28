@@ -60,6 +60,8 @@ cc = meson.get_compiler('c')
 cxx = meson.get_compiler('cpp')
 
 glib_dep = dependency('glib-2.0', version: glib_req_version, required: need_glib)
+gio_dep = dependency('gio-2.0', version: glib_req_version, required: need_glib)
+gio_unix_dep = dependency('gio-unix-2.0', version: glib_req_version, required: host_machine.system() != 'windows')
 gtk_dep = dependency('gtk4', version: gtk_req_version, required: need_gtk)
 libsystemd_dep = dependency('libsystemd', required: false)
 

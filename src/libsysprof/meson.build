@@ -225,7 +225,6 @@ meson.override_dependency('sysprof-@0@'.format(soname_major_version), libsysprof
 pkgconfig.generate(libsysprof,
             subdirs: [sysprof_header_subdir],
         description: 'A library for recording and analyzing system performance',
-        install_dir: join_paths(get_option('libdir'), 'pkgconfig'),
            requires: ['gio-2.0'],
           variables: ['datadir=' + datadir_for_pc_file],
 )

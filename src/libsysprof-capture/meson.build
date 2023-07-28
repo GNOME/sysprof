@@ -75,7 +75,6 @@ if install_static
                  libsysprof_capture,
         subdirs: [ sysprof_header_subdir ],
     description: 'The static capture library for tools that generate profiling capture data',
-    install_dir: join_paths(get_option('libdir'), 'pkgconfig'),
       variables: [ 'datadir=' + datadir_for_pc_file ],
     libraries_private: libsysprof_capture_deps,
   )

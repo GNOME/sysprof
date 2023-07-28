@@ -41,6 +41,7 @@
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureReader, sysprof_capture_reader_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureWriter, sysprof_capture_writer_unref)
 
+static gboolean no_decode;
 static GMainLoop *main_loop;
 static SysprofRecording *active_recording;
 
@@ -80,6 +81,8 @@ sigint_handler (gpointer user_data)
   if (count == 0)
     {
       g_printerr ("%s\n", "Stopping profiler. Press twice more ^C to force exit.");
+      if (!no_decode)
+        g_printerr ("Decoding symbols and appending to capture.\n");
       sysprof_recording_stop_async (active_recording, NULL, NULL, NULL);
     }
 
@@ -273,7 +276,6 @@ main (int   argc,
   gboolean gtk = FALSE;
   gboolean no_battery = FALSE;
   gboolean no_cpu = FALSE;
-  gboolean no_decode = FALSE;
   gboolean no_disk = FALSE;
   gboolean no_memory = FALSE;
   gboolean no_network = FALSE;

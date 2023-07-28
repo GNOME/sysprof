@@ -1,4 +1,4 @@
-project('sysprof', ['c', 'cpp'],
+project('sysprof', 'c', 'cpp',
           license: 'GPL-3.0-or-later OR GPL-2.0-or-later',
           version: '45.alpha',
     meson_version: '>=0.62.0',
@@ -135,7 +135,7 @@ has_clockid = cc.has_member('struct perf_event_attr',
 config_h.set('HAVE_PERF_CLOCKID', has_use_clockid and has_clockid)
 
 # For config.h
-add_project_arguments(['-I'+meson.current_build_dir()], language: 'c')
+add_project_arguments('-I' + meson.current_build_dir(), language: 'c')
 
 global_c_args = [
   '-DSYSPROF_COMPILATION',

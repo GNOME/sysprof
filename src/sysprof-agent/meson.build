@@ -22,6 +22,6 @@ sysprof_agent = executable('sysprof-agent', sysprof_agent_sources,
        install: true,
 )
 
-install_data(['org.gnome.Sysprof.Agent.xml'],
+install_data('org.gnome.Sysprof.Agent.xml',
   install_dir: join_paths(datadir, 'dbus-1/interfaces'),
 )

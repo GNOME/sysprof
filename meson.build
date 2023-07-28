@@ -67,7 +67,7 @@ libsystemd_dep = dependency('libsystemd', required: false)
 
 config_h = configuration_data()
 config_h.set_quoted('SYMBOLIC_VERSION', symbolic_version)
-config_h.set_quoted('API_VERSION_S', '@0@'.format(libsysprof_api_version))
+config_h.set_quoted('API_VERSION_S', libsysprof_api_version.to_string())
 config_h.set_quoted('PACKAGE_NAME', 'sysprof')
 config_h.set_quoted('PACKAGE_VERSION', meson.project_version())
 config_h.set_quoted('PACKAGE_STRING', 'sysprof-' + meson.project_version())

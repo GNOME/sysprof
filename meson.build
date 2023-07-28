@@ -122,9 +122,7 @@ if get_option('libunwind')
 endif
 
 # Development build setup
-if get_option('development')
-  config_h.set10('DEVELOPMENT_BUILD', true)
-endif
+config_h.set10('DEVELOPMENT_BUILD', get_option('development'))
 
 has_use_clockid = cc.has_member('struct perf_event_attr',
                                 'use_clockid',

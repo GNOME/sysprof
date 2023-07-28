@@ -1,4 +1,4 @@
-libdl_dep = cc.find_library('dl', required: false)
+libdl_dep = dependency('dl', required: false)
 
 preload_deps = [
   dependency('glib-2.0'),

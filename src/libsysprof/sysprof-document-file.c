@@ -160,6 +160,7 @@ sysprof_document_file_get_path (SysprofDocumentFile *self)
 GBytes *
 sysprof_document_file_dup_bytes (SysprofDocumentFile *self)
 {
+  static const char zero = 0;
   GArray *ar;
   guint len;
 
@@ -184,15 +185,25 @@ sysprof_document_file_dup_bytes (SysprofDocumentFile *self)
       g_autoptr(GOutputStream) memory_output = g_memory_output_stream_new_resizable ();
       g_autoptr(GZlibDecompressor) zlib = g_zlib_decompressor_new (G_ZLIB_COMPRESSOR_FORMAT_GZIP);
       g_autoptr(GOutputStream) zlib_output = g_converter_output_stream_new (memory_output, G_CONVERTER (zlib));
+      g_autoptr(GBytes) bytes = NULL;
 
       g_output_stream_splice (zlib_output,
                               input,
-                              (G_OUTPUT_STREAM_SPLICE_CLOSE_SOURCE |
-                               G_OUTPUT_STREAM_SPLICE_CLOSE_TARGET),
+                              G_OUTPUT_STREAM_SPLICE_CLOSE_SOURCE,
                               NULL, NULL);
+      g_output_stream_write (memory_output, &zero, 1, NULL, NULL);
+      g_output_stream_close (memory_output, NULL, NULL);
+      bytes = g_memory_output_stream_steal_as_bytes (G_MEMORY_OUTPUT_STREAM (memory_output));
 
-      return g_memory_output_stream_steal_as_bytes (G_MEMORY_OUTPUT_STREAM (memory_output));
+      g_assert (bytes != NULL);
+      g_assert (g_bytes_get_size (bytes) > 0);
+      g_assert (((char *)g_bytes_get_data (bytes, NULL))[g_bytes_get_size (bytes)-1] == 0);
+
+      return g_bytes_new_from_bytes (bytes, 0, g_bytes_get_size (bytes) - 1);
     }
+
+  g_array_append_val (ar, zero);
+  g_assert (ar->data[len] == 0);
 
   return g_bytes_new_take (g_array_free (ar, FALSE), len);
 }

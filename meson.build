@@ -39,7 +39,7 @@ need_glib = (need_gtk or
              get_option('examples') or
              get_option('sysprofd') != 'none' or
              get_option('tools') or
-	     get_option('tests'))
+             get_option('tests'))
 need_libsysprof = (need_gtk or
                    get_option('libsysprof') or
                    get_option('examples') or

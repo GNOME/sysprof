@@ -143,6 +143,9 @@ sysprof_category_summary_get_category_name (SysprofCategorySummary *self)
     case SYSPROF_CALLGRAPH_CATEGORY_ACTIONS:
       return _("Actions");
 
+    case SYSPROF_CALLGRAPH_CATEGORY_COREDUMP:
+      return _("Crash Handler");
+
     case SYSPROF_CALLGRAPH_CATEGORY_CONTEXT_SWITCH:
       return _("Context Switches");
 

@@ -305,14 +305,11 @@ _sysprof_callgraph_categorize (SysprofCallgraph     *self,
       node->category = SYSPROF_CALLGRAPH_CATEGORY_CONTEXT_SWITCH;
       break;
 
-    case SYSPROF_SYMBOL_KIND_KERNEL:
-      node->category = SYSPROF_CALLGRAPH_CATEGORY_KERNEL;
-      break;
-
     case SYSPROF_SYMBOL_KIND_UNWINDABLE:
       node->category = SYSPROF_CALLGRAPH_CATEGORY_UNWINDABLE;
       break;
 
+    case SYSPROF_SYMBOL_KIND_KERNEL:
     case SYSPROF_SYMBOL_KIND_USER:
       node->category = _sysprof_callgraph_node_categorize (node);
 

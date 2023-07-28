@@ -144,6 +144,11 @@ JS:
 *                                   javascript   inherit
 
 
+Kernel:
+do_coredump                         coredump     inherit
+*                                   kernel       inherit
+
+
 libc:
 poll                                main-loop    inherit
 select                              main-loop    inherit

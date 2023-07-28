@@ -19,7 +19,6 @@ sysprof_agent_deps = [
 sysprof_agent = executable('sysprof-agent', sysprof_agent_sources,
   dependencies: sysprof_agent_deps,
         c_args: release_flags + sysprof_agent_c_args,
-   install_dir: get_option('bindir'),
        install: true,
 )
 

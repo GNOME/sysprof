@@ -1,5 +1,5 @@
 project('sysprof', 'c', 'cpp',
-          license: 'GPL-3.0-or-later OR GPL-2.0-or-later',
+          license: 'GPL-3.0-or-later',
           version: '45.alpha',
     meson_version: '>=0.62.0',
   default_options: [ 'c_std=gnu17',

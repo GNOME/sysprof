@@ -37,7 +37,7 @@ podir = join_paths(meson.current_source_dir(), 'po')
 need_gtk = get_option('gtk')
 need_glib = (need_gtk or
              get_option('examples') or
-             get_option('sysprofd') != 'none' or
+             get_option('sysprofd') == 'bundled' or
              get_option('tools') or
              get_option('tests'))
 need_libsysprof = (need_gtk or
@@ -61,7 +61,8 @@ cxx = meson.get_compiler('cpp')
 
 glib_dep = dependency('glib-2.0', version: glib_req_version, required: need_glib)
 gio_dep = dependency('gio-2.0', version: glib_req_version, required: need_glib)
-gio_unix_dep = dependency('gio-unix-2.0', version: glib_req_version, required: host_machine.system() != 'windows')
+gio_unix_dep = dependency('gio-unix-2.0', version: glib_req_version,
+                          required: need_glib and host_machine.system() != 'windows')
 gtk_dep = dependency('gtk4', version: gtk_req_version, required: need_gtk)
 libsystemd_dep = dependency('libsystemd', required: false)
 

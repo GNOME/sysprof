@@ -20,12 +20,12 @@ sysprofd_sources = [
   ipc_service_src,
 ]
 
-pkglibexecdir = join_paths(get_option('prefix'), get_option('libexecdir'))
+pkglibexecdir = get_option('libexecdir')
 
 sysprofd_deps = [
-  dependency('glib-2.0', version: glib_req_version),
-  dependency('gio-2.0', version: glib_req_version),
-  dependency('gio-unix-2.0', version: glib_req_version),
+  glib_dep,
+  gio_dep,
+  gio_unix_dep,
   polkit_dep,
 
   libsysprof_capture_dep,
@@ -80,9 +80,8 @@ i18n.merge_file(
   install_dir: join_paths(datadir, 'polkit-1/actions'),
 )
 
-install_data([
-    'org.gnome.Sysprof3.Profiler.xml',
-    'org.gnome.Sysprof3.Service.xml',
-  ],
+install_data(
+  'org.gnome.Sysprof3.Profiler.xml',
+  'org.gnome.Sysprof3.Service.xml',
   install_dir: join_paths(datadir, 'dbus-1/interfaces'),
 )

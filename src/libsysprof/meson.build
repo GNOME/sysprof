@@ -171,10 +171,8 @@ libsysprof_resources = gnome.compile_resources('libsysprof-resources', 'libsyspr
 )
 
 libsysprof_deps = [
-  dependency('gio-2.0', version: glib_req_version),
-  dependency('gio-unix-2.0',
-     version: glib_req_version,
-    required: host_machine.system() != 'windows'),
+  gio_dep,
+  gio_unix_dep,
   dependency('libdex-1', version: dex_req_version),
   dependency('json-glib-1.0'),
 
@@ -225,7 +223,6 @@ meson.override_dependency('sysprof-@0@'.format(soname_major_version), libsysprof
 pkgconfig.generate(libsysprof,
             subdirs: [sysprof_header_subdir],
         description: 'A library for recording and analyzing system performance',
-        install_dir: join_paths(get_option('libdir'), 'pkgconfig'),
            requires: ['gio-2.0'],
           variables: ['datadir=' + datadir_for_pc_file],
 )

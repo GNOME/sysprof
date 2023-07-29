@@ -3,7 +3,7 @@ libeggbitset_sources = [
 ]
 
 libeggbitset_deps = [
-  dependency('gio-2.0', version: glib_req_version),
+  gio_dep,
 ]
 
 libeggbitset_static = static_library('eggbitset', libeggbitset_sources,

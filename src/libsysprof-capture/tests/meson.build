@@ -25,7 +25,7 @@ libsysprof_capture_testsuite = {
 }
 
 libsysprof_capture_testsuite_deps = [
-  dependency('gio-2.0'),
+  gio_dep,
   libsysprof_capture_dep,
 ]
 

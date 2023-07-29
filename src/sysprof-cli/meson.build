@@ -14,6 +14,5 @@ sysprof_cli_deps = [
 sysprof_cli = executable('sysprof-cli', sysprof_cli_sources,
   dependencies: sysprof_cli_deps,
         c_args: release_flags + sysprof_cli_c_args,
-   install_dir: get_option('bindir'),
        install: true,
 )

@@ -1,7 +1,7 @@
-project('sysprof', ['c', 'cpp'],
-          license: ['GPL3+', 'GPL2+'],
+project('sysprof', 'c', 'cpp',
+          license: 'GPL-3.0-or-later OR GPL-2.0-or-later',
           version: '45.alpha',
-    meson_version: '>=0.59.0',
+    meson_version: '>=0.62.0',
   default_options: [ 'c_std=gnu17',
                      'cpp_std=gnu++17',
                      'warning_level=2',
@@ -39,7 +39,7 @@ need_glib = (need_gtk or
              get_option('examples') or
              get_option('sysprofd') != 'none' or
              get_option('tools') or
-	     get_option('tests'))
+             get_option('tests'))
 need_libsysprof = (need_gtk or
                    get_option('libsysprof') or
                    get_option('examples') or
@@ -60,18 +60,20 @@ cc = meson.get_compiler('c')
 cxx = meson.get_compiler('cpp')
 
 glib_dep = dependency('glib-2.0', version: glib_req_version, required: need_glib)
+gio_dep = dependency('gio-2.0', version: glib_req_version, required: need_glib)
+gio_unix_dep = dependency('gio-unix-2.0', version: glib_req_version, required: host_machine.system() != 'windows')
 gtk_dep = dependency('gtk4', version: gtk_req_version, required: need_gtk)
 libsystemd_dep = dependency('libsystemd', required: false)
 
 config_h = configuration_data()
 config_h.set_quoted('SYMBOLIC_VERSION', symbolic_version)
-config_h.set_quoted('API_VERSION_S', '@0@'.format(libsysprof_api_version))
+config_h.set_quoted('API_VERSION_S', libsysprof_api_version.to_string())
 config_h.set_quoted('PACKAGE_NAME', 'sysprof')
 config_h.set_quoted('PACKAGE_VERSION', meson.project_version())
 config_h.set_quoted('PACKAGE_STRING', 'sysprof-' + meson.project_version())
 config_h.set_quoted('PACKAGE_BUGREPORT', 'https://gitlab.gnome.org/GNOME/sysprof/-/issues/new')
-config_h.set_quoted('PACKAGE_LIBEXECDIR', join_paths(get_option('prefix'), get_option('libexecdir')))
-config_h.set_quoted('PACKAGE_LIBDIR', join_paths(get_option('prefix'), get_option('libdir')))
+config_h.set_quoted('PACKAGE_LIBEXECDIR', get_option('libexecdir'))
+config_h.set_quoted('PACKAGE_LIBDIR', get_option('libdir'))
 config_h.set('PACKAGE_TARNAME', 'PACKAGE_STRING')
 config_h.set('PACKAGE', 'PACKAGE_NAME')
 config_h.set('VERSION', 'PACKAGE_VERSION')
@@ -120,9 +122,7 @@ if get_option('libunwind')
 endif
 
 # Development build setup
-if get_option('development')
-  config_h.set10('DEVELOPMENT_BUILD', true)
-endif
+config_h.set10('DEVELOPMENT_BUILD', get_option('development'))
 
 has_use_clockid = cc.has_member('struct perf_event_attr',
                                 'use_clockid',
@@ -133,7 +133,7 @@ has_clockid = cc.has_member('struct perf_event_attr',
 config_h.set('HAVE_PERF_CLOCKID', has_use_clockid and has_clockid)
 
 # For config.h
-add_project_arguments(['-I'+meson.current_build_dir()], language: 'c')
+add_project_arguments('-I' + meson.current_build_dir(), language: 'c')
 
 global_c_args = [
   '-DSYSPROF_COMPILATION',

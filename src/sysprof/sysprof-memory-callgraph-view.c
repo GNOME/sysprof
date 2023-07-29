@@ -51,8 +51,8 @@ struct _SysprofMemoryCallgraphViewClass
 
 typedef struct _AugmentMemory
 {
-  gsize size;
-  gsize total;
+  gint64 size;
+  gint64 total;
 } AugmentMemory;
 
 G_DEFINE_FINAL_TYPE (SysprofMemoryCallgraphView, sysprof_memory_callgraph_view, SYSPROF_TYPE_CALLGRAPH_VIEW)

@@ -66,7 +66,7 @@ augment_memory (SysprofCallgraph     *callgraph,
 {
   AugmentMemory *cur;
   AugmentMemory *sum;
-  gsize size;
+  gint64 size;
 
   g_assert (SYSPROF_IS_CALLGRAPH (callgraph));
   g_assert (node != NULL);
@@ -74,6 +74,9 @@ augment_memory (SysprofCallgraph     *callgraph,
   g_assert (user_data == NULL);
 
   size = sysprof_document_allocation_get_size (SYSPROF_DOCUMENT_ALLOCATION (frame));
+
+  if (size < 0)
+    size = 0;
 
   cur = sysprof_callgraph_get_augment (callgraph, node);
   cur->size += size;
@@ -119,7 +122,7 @@ get_total_fraction (GObject *item)
       if (root->total == 0)
         return 0;
 
-      return sum->total / (double)root->total;
+      return CLAMP (sum->total / (double)root->total, 0, 1);
     }
 
   return 0;
@@ -143,7 +146,7 @@ get_self_fraction (GObject *item)
       if (root->total == 0)
         return 0;
 
-      return sum->size / (double)root->total;
+      return CLAMP (sum->size / (double)root->total, 0, 1);
     }
 
   return .0;
@@ -165,7 +168,7 @@ functions_get_total_fraction (GObject *item)
       if (root->total == 0)
         return 0;
 
-      return sum->total / (double)root->total;
+      return CLAMP (sum->total / (double)root->total, 0, 1);
     }
 
   return 0;
@@ -187,7 +190,7 @@ functions_get_self_fraction (GObject *item)
       if (root->total == 0)
         return 0;
 
-      return sum->size / (double)root->total;
+      return CLAMP (sum->size / (double)root->total, 0, 1);
     }
 
   return 0;

@@ -5,6 +5,7 @@ data/org.gnome.Sysprof.desktop.in.in
 src/libsysprof/sysprof-category-summary.c
 src/libsysprof/sysprof-document-allocation.c
 src/libsysprof/sysprof-document.c
+src/libsysprof/sysprof-document-dbus-message.c
 src/libsysprof/sysprof-document-frame.c
 src/libsysprof/sysprof-document-loader.c
 src/libsysprof/sysprof-document-log.c
@@ -22,8 +23,11 @@ src/sysprof/sysprof-application.c
 src/sysprof/sysprof-callgraph-view.ui
 src/sysprof/sysprof-counters-section.ui
 src/sysprof/sysprof-cpu-section.ui
+src/sysprof/sysprof-dbus-section.ui
+src/sysprof/sysprof-energy-section.ui
 src/sysprof/sysprof-files-section.ui
 src/sysprof/sysprof-frame-utility.ui
+src/sysprof/sysprof-graphics-section.ui
 src/sysprof/sysprof-greeter.c
 src/sysprof/sysprof-greeter.ui
 src/sysprof/sysprof-logs-section.c
@@ -33,12 +37,14 @@ src/sysprof/sysprof-mark-table.ui
 src/sysprof/sysprof-memory-callgraph-view.ui
 src/sysprof/sysprof-memory-section.ui
 src/sysprof/sysprof-metadata-section.ui
+src/sysprof/sysprof-network-section.ui
 src/sysprof/sysprof-process-dialog.ui
 src/sysprof/sysprof-processes-section.ui
 src/sysprof/sysprof-recording-pad.c
 src/sysprof/sysprof-recording-pad.ui
 src/sysprof/sysprof-samples-section.ui
 src/sysprof/sysprof-sidebar.ui
+src/sysprof/sysprof-storage-section.ui
 src/sysprof/sysprof-traceables-utility.ui
 src/sysprof/sysprof-weighted-callgraph-view.ui
 src/sysprof/sysprof-window.c

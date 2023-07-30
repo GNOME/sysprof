@@ -79,6 +79,7 @@ libsysprof_public_headers = [
   'sysprof-document-counter.h',
   'sysprof-document-ctrdef.h',
   'sysprof-document-ctrset.h',
+  'sysprof-document-dbus-message.h',
   'sysprof-document-exit.h',
   'sysprof-document-file-chunk.h',
   'sysprof-document-file.h',

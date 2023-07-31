@@ -200,6 +200,11 @@ static const struct {
   { "libgnutls.so", "Cryptography" },
   { "libgnutlsxx.so", "Cryptography" },
   { "libgnutls-dane.so", "Cryptography" },
+
+  /* App Store */
+  { "libgnomesoftware.so", "App Store" },
+  { "libappstream.so", "App Store" },
+  { "libappstream-glib.so", "App Store" },
 };
 
 static void

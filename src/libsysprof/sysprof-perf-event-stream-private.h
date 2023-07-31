@@ -159,7 +159,7 @@ DexFuture *sysprof_perf_event_stream_new     (GDBusConnection           *connect
                                               struct perf_event_attr    *attr,
                                               int                        cpu,
                                               int                        group_fd,
-                                              gulong                     flags,
+                                              guint64                    flags,
                                               SysprofPerfEventCallback   callback,
                                               gpointer                   callback_data,
                                               GDestroyNotify             callback_data_destroy);

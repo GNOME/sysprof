@@ -98,6 +98,25 @@ augment_weight (SysprofCallgraph     *callgraph,
     }
 }
 
+static gint64
+get_total_hits (GObject *item)
+{
+  g_autoptr(GObject) row = NULL;
+
+  g_object_get (item, "item", &row, NULL);
+
+  if (GTK_IS_TREE_LIST_ROW (row))
+    {
+      GtkTreeListRow *tree_row = GTK_TREE_LIST_ROW (row);
+      SysprofCallgraphFrame *frame = SYSPROF_CALLGRAPH_FRAME (gtk_tree_list_row_get_item (tree_row));
+      AugmentWeight *sum = sysprof_callgraph_frame_get_augment (frame);
+
+      return sum->total;
+    }
+
+  return 0;
+}
+
 static double
 get_total_fraction (GObject *item)
 {
@@ -329,6 +348,7 @@ sysprof_weighted_callgraph_view_class_init (SysprofWeightedCallgraphViewClass *k
 
   gtk_widget_class_bind_template_callback (widget_class, get_self_fraction);
   gtk_widget_class_bind_template_callback (widget_class, get_total_fraction);
+  gtk_widget_class_bind_template_callback (widget_class, get_total_hits);
   gtk_widget_class_bind_template_callback (widget_class, functions_get_self_fraction);
   gtk_widget_class_bind_template_callback (widget_class, functions_get_total_fraction);
 

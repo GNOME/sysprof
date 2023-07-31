@@ -323,6 +323,7 @@ typedef struct _FilterByPrefix
   GListModel *traceables;
   GPtrArray *prefix;
   EggBitset *bitset;
+  guint max_results;
 } FilterByPrefix;
 
 static void
@@ -347,6 +348,7 @@ filter_by_prefix_worker (GTask        *task,
   GListModel *model;
   GPtrArray *prefix;
   EggBitsetIter iter;
+  guint n_results = 0;
   guint i;
 
   g_assert (G_IS_TASK (task));
@@ -371,9 +373,13 @@ filter_by_prefix_worker (GTask        *task,
           g_autoptr(SysprofDocumentTraceable) traceable = g_list_model_get_item (model, i);
 
           if (traceable_has_prefix (document, traceable, prefix))
-            egg_bitset_add (bitset, i);
+            {
+              egg_bitset_add (bitset, i);
+              n_results++;
+            }
         }
-      while (egg_bitset_iter_next (&iter, &i));
+      while (n_results < state->max_results &&
+             egg_bitset_iter_next (&iter, &i));
     }
 
   g_task_return_pointer (task,
@@ -483,6 +489,7 @@ sysprof_callgraph_frame_list_traceables_async (SysprofCallgraphFrame *self,
   state->traceables = g_object_ref (self->callgraph->traceables);
   state->prefix = g_steal_pointer (&prefix);
   state->bitset = g_steal_pointer (&bitset);
+  state->max_results = 1000;
 
   g_task_set_task_data (task, state, (GDestroyNotify)filter_by_prefix_free);
   g_task_run_in_thread (task, filter_by_prefix_worker);

@@ -381,6 +381,24 @@ filter_by_prefix_worker (GTask        *task,
                          g_object_unref);
 }
 
+static int
+sort_by_size_asc (gconstpointer a,
+                  gconstpointer b)
+{
+  const EggBitset *bitset_a = *(const EggBitset * const *)a;
+  const EggBitset *bitset_b = *(const EggBitset * const *)a;
+  gsize size_a = egg_bitset_get_size (bitset_a);
+  gsize size_b = egg_bitset_get_size (bitset_b);
+
+  if (size_a < size_b)
+    return -1;
+
+  if (size_a > size_b)
+    return 1;
+
+  return 0;
+}
+
 /**
  * sysprof_callgraph_frame_list_traceables:
  * @self: a #SysprofCallgraphFrame
@@ -398,6 +416,7 @@ sysprof_callgraph_frame_list_traceables_async (SysprofCallgraphFrame *self,
 {
   g_autoptr(GTask) task = NULL;
   g_autoptr(GPtrArray) prefix = NULL;
+  g_autoptr(GPtrArray) bitsets = NULL;
   g_autoptr(EggBitset) bitset = NULL;
   FilterByPrefix *state;
 
@@ -417,6 +436,7 @@ sysprof_callgraph_frame_list_traceables_async (SysprofCallgraphFrame *self,
     }
 
   prefix = g_ptr_array_new ();
+  bitsets = g_ptr_array_new ();
 
   for (SysprofCallgraphNode *node = self->node;
        node != NULL;
@@ -429,15 +449,28 @@ sysprof_callgraph_frame_list_traceables_async (SysprofCallgraphFrame *self,
             symbol->kind != SYSPROF_SYMBOL_KIND_KERNEL)
           continue;
 
-        if (bitset == NULL)
-          bitset = egg_bitset_copy (summary->traceables);
-        else
-          egg_bitset_intersect (bitset, summary->traceables);
-
+        g_ptr_array_add (bitsets, summary->traceables);
         g_ptr_array_add (prefix, symbol);
       }
 
-  if (prefix->len == 0 || egg_bitset_is_empty (bitset))
+  if (prefix->len == 0)
+    {
+      g_task_return_pointer (task,
+                             g_list_store_new (SYSPROF_TYPE_DOCUMENT_TRACEABLE),
+                             g_object_unref);
+      return;
+    }
+
+  /* Sort the bitsets by size to shrink potential interscetions */
+  g_ptr_array_sort (bitsets, sort_by_size_asc);
+  bitset = egg_bitset_copy (g_ptr_array_index (bitsets, 0));
+  for (guint i = 1; i < bitsets->len; i++)
+    {
+      const EggBitset *other = g_ptr_array_index (bitsets, i);
+      egg_bitset_intersect (bitset, other);
+    }
+
+  if (egg_bitset_is_empty (bitset))
     {
       g_task_return_pointer (task,
                              g_list_store_new (SYSPROF_TYPE_DOCUMENT_TRACEABLE),
@@ -449,7 +482,7 @@ sysprof_callgraph_frame_list_traceables_async (SysprofCallgraphFrame *self,
   state->document = g_object_ref (self->callgraph->document);
   state->traceables = g_object_ref (self->callgraph->traceables);
   state->prefix = g_steal_pointer (&prefix);
-  state->bitset = egg_bitset_ref (bitset);
+  state->bitset = g_steal_pointer (&bitset);
 
   g_task_set_task_data (task, state, (GDestroyNotify)filter_by_prefix_free);
   g_task_run_in_thread (task, filter_by_prefix_worker);

@@ -74,7 +74,7 @@
                         <property name="show-column-separators">true</property>
                         <property name="show-row-separators">true</property>
                         <property name="model">
-                          <object class="GtkSingleSelection">
+                          <object class="GtkSingleSelection" id="selection">
                             <property name="model">
                               <object class="GtkSortListModel">
                                 <binding name="sorter">
@@ -555,9 +555,12 @@
         </child>
       </object>
     </child>
+    <property name="utility">
+      <object class="SysprofDBusUtility">
+        <binding name="message">
+          <lookup name="selected-item">selection</lookup>
+        </binding>
+      </object>
+    </property>
   </template>
 </interface>
-
-
-
-

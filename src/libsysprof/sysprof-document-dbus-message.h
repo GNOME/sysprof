@@ -65,6 +65,8 @@ SYSPROF_AVAILABLE_IN_ALL
 GDBusMessageFlags  sysprof_document_dbus_message_get_flags          (SysprofDocumentDBusMessage *self);
 SYSPROF_AVAILABLE_IN_ALL
 GBusType           sysprof_document_dbus_message_get_bus_type       (SysprofDocumentDBusMessage *self);
+SYSPROF_AVAILABLE_IN_ALL
+char              *sysprof_document_dbus_message_dup_string         (SysprofDocumentDBusMessage *self);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofDocumentDBusMessage, g_object_unref)
 

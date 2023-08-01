@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofDBusUtility" parent="GtkWidget">
+    <child>
+      <object class="AdwToolbarView">
+        <style>
+          <class name="utility"/>
+        </style>
+        <child type="top">
+          <object class="AdwHeaderBar">
+            <child type="title">
+              <object class="AdwWindowTitle">
+                <property name="title" translatable="yes">Message</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <property name="content">
+          <object class="GtkScrolledWindow">
+            <property name="vexpand">true</property>
+            <child>
+              <object class="GtkTextView">
+                <property name="editable">false</property>
+                <property name="monospace">true</property>
+                <property name="top-margin">3</property>
+                <property name="left-margin">3</property>
+                <property name="right-margin">3</property>
+                <property name="bottom-margin">3</property>
+                <property name="buffer">
+                  <object class="GtkTextBuffer">
+                    <binding name="text">
+                      <lookup name="string" type="SysprofDocumentDBusMessage">
+                        <lookup name="message">SysprofDBusUtility</lookup>
+                      </lookup>
+                    </binding>
+                  </object>
+                </property>
+              </object>
+            </child>
+          </object>
+        </property>
+      </object>
+    </child>
+  </template>
+</interface>

@@ -22,6 +22,7 @@
 
 #include "sysprof-chart.h"
 #include "sysprof-dbus-section.h"
+#include "sysprof-dbus-utility.h"
 #include "sysprof-line-layer.h"
 #include "sysprof-time-filter-model.h"
 #include "sysprof-time-scrubber.h"
@@ -184,6 +185,7 @@ sysprof_dbus_section_class_init (SysprofDBusSectionClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, format_message_type);
 
   g_type_ensure (SYSPROF_TYPE_CHART);
+  g_type_ensure (SYSPROF_TYPE_DBUS_UTILITY);
   g_type_ensure (SYSPROF_TYPE_DOCUMENT_MARK);
   g_type_ensure (SYSPROF_TYPE_DOCUMENT_DBUS_MESSAGE);
 }

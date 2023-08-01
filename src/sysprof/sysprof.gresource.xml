@@ -22,6 +22,7 @@
     <file preprocess="xml-stripblanks">sysprof-cpu-section.ui</file>
     <file preprocess="xml-stripblanks">sysprof-cpu-section-counter.ui</file>
     <file preprocess="xml-stripblanks">sysprof-dbus-section.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-dbus-utility.ui</file>
     <file preprocess="xml-stripblanks">sysprof-energy-section.ui</file>
     <file preprocess="xml-stripblanks">sysprof-energy-section-counter.ui</file>
     <file preprocess="xml-stripblanks">sysprof-files-section.ui</file>

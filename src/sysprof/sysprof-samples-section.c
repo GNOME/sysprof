@@ -74,15 +74,17 @@ sysprof_samples_section_class_init (SysprofSamplesSectionClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofSamplesSection, callgraph_view);
   gtk_widget_class_bind_template_callback (widget_class, format_number);
 
+  g_type_ensure (SYSPROF_TYPE_CATEGORY_SUMMARY);
   g_type_ensure (SYSPROF_TYPE_CHART);
-  g_type_ensure (SYSPROF_TYPE_XY_SERIES);
   g_type_ensure (SYSPROF_TYPE_COLUMN_LAYER);
+  g_type_ensure (SYSPROF_TYPE_DOCUMENT_SAMPLE);
+  g_type_ensure (SYSPROF_TYPE_DOCUMENT_TRACEABLE);
   g_type_ensure (SYSPROF_TYPE_TIME_FILTER_MODEL);
   g_type_ensure (SYSPROF_TYPE_TIME_SCRUBBER);
   g_type_ensure (SYSPROF_TYPE_TRACEABLES_UTILITY);
   g_type_ensure (SYSPROF_TYPE_VALUE_AXIS);
   g_type_ensure (SYSPROF_TYPE_WEIGHTED_CALLGRAPH_VIEW);
-  g_type_ensure (SYSPROF_TYPE_CATEGORY_SUMMARY);
+  g_type_ensure (SYSPROF_TYPE_XY_SERIES);
 }
 
 static void

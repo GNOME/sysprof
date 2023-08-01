@@ -72,10 +72,12 @@ sysprof_memory_section_class_init (SysprofMemorySectionClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, format_number);
 
   g_type_ensure (SYSPROF_TYPE_CHART);
-  g_type_ensure (SYSPROF_TYPE_XY_SERIES);
   g_type_ensure (SYSPROF_TYPE_COLUMN_LAYER);
-  g_type_ensure (SYSPROF_TYPE_VALUE_AXIS);
+  g_type_ensure (SYSPROF_TYPE_DOCUMENT_ALLOCATION);
+  g_type_ensure (SYSPROF_TYPE_DOCUMENT_TRACEABLE);
   g_type_ensure (SYSPROF_TYPE_MEMORY_CALLGRAPH_VIEW);
+  g_type_ensure (SYSPROF_TYPE_VALUE_AXIS);
+  g_type_ensure (SYSPROF_TYPE_XY_SERIES);
 }
 
 static void

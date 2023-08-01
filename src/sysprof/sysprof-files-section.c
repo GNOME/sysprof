@@ -133,7 +133,7 @@ sysprof_files_section_class_init (SysprofFilesSectionClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, sysprof_files_section_activate_cb);
   gtk_widget_class_bind_template_callback (widget_class, format_size);
 
-  g_type_ensure (SYSPROF_TYPE_DOCUMENT_LOG);
+  g_type_ensure (SYSPROF_TYPE_DOCUMENT_FILE);
   g_type_ensure (SYSPROF_TYPE_TIME_LABEL);
 }
 

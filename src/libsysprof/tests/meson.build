@@ -12,6 +12,7 @@ libsysprof_testsuite_c_args = [
 
 libsysprof_testsuite = {
   'read-build-id'            : {'skip': true},
+  'ninja-to-marks'           : {'skip': true},
   'test-allocs-by-func'      : {'skip': true},
   'test-callgraph'           : {'skip': true},
   'test-capture-model'       : {'skip': true},
@@ -34,6 +35,7 @@ libsysprof_testsuite = {
 
 libsysprof_testsuite_deps = [
   libsysprof_static_dep,
+  liblinereader_static_dep,
 ]
 
 foreach test, params: libsysprof_testsuite

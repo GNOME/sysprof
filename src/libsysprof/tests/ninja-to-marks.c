@@ -79,7 +79,7 @@ main (int argc,
                                            -1,
                                            -1,
                                            end_time - begin_time,
-                                           "ninja", parts[3], parts[4]);
+                                           "ninja", parts[4], parts[3]);
 
         }
     }

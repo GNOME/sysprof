@@ -29,7 +29,7 @@
 #include "sysprof-instrument-private.h"
 #include "sysprof-recording-private.h"
 
-#ifdef HAVE_LIBSYSTEMD
+#if HAVE_LIBSYSTEMD
 # include "sysprof-journald-source.h"
 #endif
 
@@ -45,7 +45,7 @@ struct _SysprofSystemLogsClass
 
 G_DEFINE_FINAL_TYPE (SysprofSystemLogs, sysprof_system_logs, SYSPROF_TYPE_INSTRUMENT)
 
-#ifdef HAVE_LIBSYSTEMD
+#if HAVE_LIBSYSTEMD
 static char *
 journal_get_data (sd_journal *journal,
                   const char *field)
@@ -129,7 +129,7 @@ sysprof_system_logs_callback (SysprofCaptureWriter *writer,
 }
 #endif
 
-#ifdef HAVE_LIBSYSTEMD
+#if HAVE_LIBSYSTEMD
 static DexFuture *
 sysprof_system_logs_record_finished (DexFuture *future,
                                      gpointer   user_data)
@@ -145,7 +145,7 @@ sysprof_system_logs_record (SysprofInstrument *instrument,
                             SysprofRecording  *recording,
                             GCancellable      *cancellable)
 {
-#ifdef HAVE_LIBSYSTEMD
+#if HAVE_LIBSYSTEMD
   SysprofCaptureWriter *writer;
   GSource *source;
 

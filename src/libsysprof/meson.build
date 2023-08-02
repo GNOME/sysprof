@@ -133,7 +133,6 @@ libsysprof_private_sources = [
   'sysprof-document-symbols.c',
   'sysprof-elf-loader.c',
   'sysprof-elf.c',
-  'sysprof-journald-source.c',
   'sysprof-maps-parser.c',
   'sysprof-mount-device.c',
   'sysprof-mount-namespace.c',
@@ -151,6 +150,10 @@ endif
 
 if host_machine.system() == 'linux'
   libsysprof_private_sources += ['sysprof-linux-instrument.c']
+endif
+
+if libsystemd_dep.found()
+  libsysprof_private_sources += ['sysprof-journald-source.c']
 endif
 
 libsysprof_enum_headers = [

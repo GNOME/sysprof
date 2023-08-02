@@ -194,6 +194,13 @@ sysprof_recording_fiber (gpointer user_data)
   add_metadata (self, "org.gnome.sysprof.app-id", APP_ID_S);
   add_metadata (self, "org.gnome.sysprof.version", PACKAGE_VERSION);
 
+  /* Give a readable timestamp to the user */
+  {
+    g_autoptr(GDateTime) now = g_date_time_new_now_local ();
+    g_autofree char *now_str = g_date_time_format_iso8601 (now);
+    add_metadata (self, "capture-time", now_str);
+  }
+
   /* Include some host/kernel/arch information */
   add_metadata_int (self, "n-cpu", g_get_num_processors ());
   add_metadata_int (self, "page-size", sysprof_getpagesize ());

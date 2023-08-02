@@ -20,7 +20,7 @@ sysprofd_sources = [
   ipc_service_src,
 ]
 
-pkglibexecdir = get_option('libexecdir')
+pkglibexecdir = join_paths(get_option('prefix'), get_option('libexecdir'))
 
 sysprofd_deps = [
   glib_dep,

@@ -24,6 +24,7 @@ src/sysprof/sysprof-callgraph-view.ui
 src/sysprof/sysprof-counters-section.ui
 src/sysprof/sysprof-cpu-section.ui
 src/sysprof/sysprof-dbus-section.ui
+src/sysprof/sysprof-dbus-utility.ui
 src/sysprof/sysprof-energy-section.ui
 src/sysprof/sysprof-files-section.ui
 src/sysprof/sysprof-frame-utility.ui

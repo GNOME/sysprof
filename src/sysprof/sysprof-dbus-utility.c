@@ -39,13 +39,17 @@ G_DEFINE_FINAL_TYPE (SysprofDBusUtility, sysprof_dbus_utility, GTK_TYPE_WIDGET)
 static GParamSpec *properties [N_PROPS];
 
 static void
-sysprof_dbus_utility_finalize (GObject *object)
+sysprof_dbus_utility_dispose (GObject *object)
 {
   SysprofDBusUtility *self = (SysprofDBusUtility *)object;
+  GtkWidget *child;
 
   g_clear_object (&self->message);
 
-  G_OBJECT_CLASS (sysprof_dbus_utility_parent_class)->finalize (object);
+  while ((child = gtk_widget_get_first_child (GTK_WIDGET (self))))
+    gtk_widget_unparent (child);
+
+  G_OBJECT_CLASS (sysprof_dbus_utility_parent_class)->dispose (object);
 }
 
 static void
@@ -92,7 +96,7 @@ sysprof_dbus_utility_class_init (SysprofDBusUtilityClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->finalize = sysprof_dbus_utility_finalize;
+  object_class->dispose = sysprof_dbus_utility_dispose;
   object_class->get_property = sysprof_dbus_utility_get_property;
   object_class->set_property = sysprof_dbus_utility_set_property;
 

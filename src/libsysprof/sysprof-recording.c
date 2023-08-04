@@ -26,61 +26,7 @@
 
 #include <libdex.h>
 
-#include "sysprof-diagnostic-private.h"
-#include "sysprof-instrument-private.h"
 #include "sysprof-recording-private.h"
-
-typedef enum _SysprofRecordingCommand
-{
-  SYSPROF_RECORDING_COMMAND_STOP = 1,
-} SysprofRecordingCommand;
-
-struct _SysprofRecording
-{
-  GObject parent_instance;
-
-  /* Used to calculate the duration of the recording */
-  gint64 start_time;
-  gint64 end_time;
-
-  /* Used to calculate event count */
-  SysprofCaptureStat stat;
-
-  /* Diagnostics that may be added by instruments during the recording.
-   * Some may be fatal, meaning that they stop the recording when the
-   * diagnostic is submitted. That can happen in situations like
-   * miss-configuration or failed authorization.
-   */
-  GListStore *diagnostics;
-
-  /* If we are spawning a process as part of this recording, this
-   * is the SysprofSpawnable used to spawn the process.
-   */
-  SysprofSpawnable *spawnable;
-
-  /* This is where all of the instruments will write to. They are
-   * expected to do this from the main-thread only. To work from
-   * additional threads they need to proxy that state to the
-   * main thread for writing.
-   */
-  SysprofCaptureWriter *writer;
-
-  /* An array of SysprofInstrument that are part of this recording */
-  GPtrArray *instruments;
-
-  /* A DexFiber that will complete when the recording has finished,
-   * been stopped, or failed.
-   */
-  DexFuture *fiber;
-
-  /* The channel is used ot send state change messages to the fiber
-   * from outside of the fiber.
-   */
-  DexChannel *channel;
-
-  /* The process we have spawned, if any */
-  GSubprocess *subprocess;
-};
 
 enum {
   PROP_0,
@@ -94,12 +40,10 @@ G_DEFINE_FINAL_TYPE (SysprofRecording, sysprof_recording, G_TYPE_OBJECT)
 static GParamSpec *properties[N_PROPS];
 
 static DexFuture *
-_sysprof_recording_spawn (SysprofRecording  *self,
-                          SysprofSpawnable  *spawnable,
+_sysprof_recording_spawn (SysprofSpawnable  *spawnable,
                           GSubprocess      **subprocess)
 {
   g_autoptr(GError) error = NULL;
-  const char *identifier;
   DexFuture *ret;
 
   g_assert (SYSPROF_IS_SPAWNABLE (spawnable));
@@ -108,12 +52,6 @@ _sysprof_recording_spawn (SysprofRecording  *self,
 
   if (!(*subprocess = sysprof_spawnable_spawn (spawnable, &error)))
     return dex_future_new_for_error (g_steal_pointer (&error));
-
-  if ((identifier = g_subprocess_get_identifier (*subprocess)))
-    {
-      int pid = atoi (identifier);
-      dex_await (_sysprof_instruments_process_started (self->instruments, self, pid), NULL);
-    }
 
   ret = dex_subprocess_wait_check (*subprocess);
   dex_async_pair_set_cancel_on_discard (DEX_ASYNC_PAIR (ret), FALSE);
@@ -197,7 +135,7 @@ sysprof_recording_fiber (gpointer user_data)
 
   /* If we need to spawn a subprocess, do it now */
   if (self->spawnable != NULL)
-    monitor = _sysprof_recording_spawn (self, self->spawnable, &self->subprocess);
+    monitor = _sysprof_recording_spawn (self->spawnable, &self->subprocess);
   else
     monitor = dex_future_new_infinite ();
 
@@ -562,14 +500,6 @@ _sysprof_recording_get_spawnable (SysprofRecording *self)
   g_return_val_if_fail (SYSPROF_IS_RECORDING (self), NULL);
 
   return self->spawnable;
-}
-
-SysprofCaptureWriter *
-_sysprof_recording_writer (SysprofRecording *self)
-{
-  g_return_val_if_fail (SYSPROF_IS_RECORDING (self), NULL);
-
-  return self->writer;
 }
 
 typedef struct _AddFile
@@ -965,4 +895,14 @@ sysprof_recording_get_subprocess (SysprofRecording *self)
   g_return_val_if_fail (SYSPROF_IS_RECORDING (self), NULL);
 
   return self->subprocess;
+}
+
+void
+_sysprof_recording_follow_fork (SysprofRecording *self,
+                                int               pid)
+{
+  g_return_if_fail (SYSPROF_IS_RECORDING (self));
+  g_return_if_fail (pid > 0);
+
+  dex_future_disown (_sysprof_instruments_process_started (self->instruments, self, pid));
 }

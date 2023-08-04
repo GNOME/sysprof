@@ -105,7 +105,8 @@ sysprof_sampler_perf_event_stream_cb (const SysprofPerfEvent *event,
                                       guint                   cpu,
                                       gpointer                user_data)
 {
-  SysprofCaptureWriter *writer = user_data;
+  SysprofRecording *recording = user_data;
+  SysprofCaptureWriter *writer = _sysprof_recording_writer (recording);
   gsize offset;
   gint64 time;
 
@@ -148,10 +149,7 @@ sysprof_sampler_perf_event_stream_cb (const SysprofPerfEvent *event,
                                        event->fork.ptid,
                                        event->fork.tid);
 
-      /*
-       * TODO: We should add support for "follow fork" of the GPid if we are
-       *       targetting it.
-       */
+      _sysprof_recording_follow_fork (recording, event->fork.tid);
 
       break;
 
@@ -248,7 +246,6 @@ static DexFuture *
 sysprof_sampler_prepare_fiber (gpointer user_data)
 {
   Prepare *prepare = user_data;
-  SysprofCaptureWriter *writer;
   g_autoptr(GDBusConnection) connection = NULL;
   g_autoptr(GPtrArray) futures = NULL;
   g_autoptr(GError) error = NULL;
@@ -290,7 +287,6 @@ sysprof_sampler_prepare_fiber (gpointer user_data)
    */
   n_cpu = g_get_num_processors ();
   futures = g_ptr_array_new_with_free_func (dex_unref);
-  writer = _sysprof_recording_writer (prepare->recording);
 
 try_again:
   attr.sample_type = PERF_SAMPLE_IP
@@ -332,8 +328,8 @@ try_again:
                                                     -1,
                                                     0,
                                                     sysprof_sampler_perf_event_stream_cb,
-                                                    sysprof_capture_writer_ref (writer),
-                                                    (GDestroyNotify)sysprof_capture_writer_unref));
+                                                    g_object_ref (prepare->recording),
+                                                    g_object_unref));
 
   if (!dex_await (dex_future_allv ((DexFuture **)futures->pdata, futures->len), &error))
     {

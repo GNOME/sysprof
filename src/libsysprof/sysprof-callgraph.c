@@ -356,6 +356,11 @@ sysprof_callgraph_add_traceable (SysprofCallgraph         *self,
   g_assert (SYSPROF_IS_DOCUMENT_TRACEABLE (traceable));
 
   pid = sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (traceable));
+
+  /* Ignore "Process 0" (the Idle process) if requested */
+  if (pid == 0 && (self->flags & SYSPROF_CALLGRAPH_FLAGS_IGNORE_PROCESS_0) != 0)
+    return;
+
   tid = sysprof_document_traceable_get_thread_id (traceable);
   stack_depth = sysprof_document_traceable_get_stack_depth (traceable);
 

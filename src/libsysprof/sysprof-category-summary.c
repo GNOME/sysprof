@@ -188,6 +188,9 @@ sysprof_category_summary_get_category_name (SysprofCategorySummary *self)
     case SYSPROF_CALLGRAPH_CATEGORY_PAINT:
       return _("Paint");
 
+    case SYSPROF_CALLGRAPH_CATEGORY_TYPE_SYSTEM:
+      return _("Type System");
+
     case SYSPROF_CALLGRAPH_CATEGORY_UNWINDABLE:
       return _("Unwindable");
 

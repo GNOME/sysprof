@@ -135,6 +135,7 @@ sysprof_category_icon_class_init (SysprofCategoryIconClass *klass)
   gdk_rgba_parse (&category_colors[SYSPROF_CALLGRAPH_CATEGORY_MAIN_LOOP], "#5e5c64");
   gdk_rgba_parse (&category_colors[SYSPROF_CALLGRAPH_CATEGORY_MEMORY], "#f9f06b");
   gdk_rgba_parse (&category_colors[SYSPROF_CALLGRAPH_CATEGORY_PAINT], "#2ec27e");
+  gdk_rgba_parse (&category_colors[SYSPROF_CALLGRAPH_CATEGORY_TYPE_SYSTEM], "#241f31");
   gdk_rgba_parse (&category_colors[SYSPROF_CALLGRAPH_CATEGORY_WINDOWING], "#c64600");
 }
 

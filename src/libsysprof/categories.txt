@@ -71,6 +71,24 @@ g_io_*                              io           inherit
 g_zlib_*                            io           inherit
 
 
+GObject:
+g_enum_register_*                   type-system  inherit
+g_enum_complete_*                   type-system  inherit
+g_enum_get_*                        type-system  inherit
+g_flags_register_*                  type-system  inherit
+g_flags_complete_*                  type-system  inherit
+g_flags_get_*                       type-system  inherit
+g_type_*                            type-system  inherit
+g_param_spec_*                      type-system  inherit
+g_pointer_type_*                    type-system  inherit
+g_boxed_type_*                      type-system  inherit
+g_value_type_compatible             type-system  inherit
+g_value_type_transformable          type-system  inherit
+g_value_init                        type-system  inherit
+g_value_fits_pointer                type-system  inherit
+g_value_register_transform_func     type-system  inherit
+
+
 GTK 4:
 gsk_gl_command_queue*               graphics     inherit
 
@@ -130,6 +148,8 @@ gtk_icon_*                          icons        inherit
 load_theme_thread                   icons        inherit
 load_icon_thread                    icons        inherit
 
+gtk_param_spec_*                    type-system  inherit
+
 
 GtkSourceView:
 update_syntax                       layout       inherit
@@ -138,6 +158,43 @@ gtk_source_scheduler_dispatch       layout       inherit
 
 Harfbuzz:
 *                                   layout       inherit
+
+
+Introspection:
+g_arg_*                             type-system  inherit
+g_base_*                            type-system  inherit
+g_constant_*                        type-system  inherit
+g_enum_*                            type-system  inherit
+g_field_*                           type-system  inherit
+g_info_*                            type-system  inherit
+g_interface_*                       type-system  inherit
+g_object_*                          type-system  inherit
+g_property_*                        type-system  inherit
+g_registered_type_*                 type-system  inherit
+g_signal_*                          type-system  inherit
+g_struct_*                          type-system  inherit
+g_type_*                            type-system  inherit
+g_union_*                           type-system  inherit
+g_vfunc_*                           type-system  inherit
+
+g_function_invoker_*                type-system  inherit
+g_function_info_get_flags           type-system  inherit
+g_function_info_get_property        type-system  inherit
+g_function_info_get_symbol          type-system  inherit
+g_function_info_get_vfunc           type-system  inherit
+
+g_callable_info_can_*               type-system  inherit
+g_callable_info_get_*               type-system  inherit
+g_callable_info_is_*                type-system  inherit
+g_callable_info_iterate*            type-system  inherit
+g_callable_info_load*               type-system  inherit
+g_callable_info_may_*               type-system  inherit
+g_callable_info_skip_*              type-system  inherit
+g_callable_info_create_*            type-system  inherit
+g_callable_info_destroy_*           type-system  inherit
+
+g_typelib_*                         type-system  inherit
+g_irepository_*                     type-system  inherit
 
 
 JS:

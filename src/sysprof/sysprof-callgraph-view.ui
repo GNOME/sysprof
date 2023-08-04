@@ -271,6 +271,10 @@
         <attribute name="label" translatable="yes">Bottom Up</attribute>
         <attribute name="action">win.callgraph.bottom-up</attribute>
       </item>
+      <item>
+        <attribute name="label" translatable="yes">Ignore Process 0</attribute>
+        <attribute name="action">win.callgraph.ignore-process-0</attribute>
+      </item>
     </section>
   </menu>
 </interface>

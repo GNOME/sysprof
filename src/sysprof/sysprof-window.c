@@ -132,6 +132,7 @@ sysprof_window_set_document (SysprofWindow   *self,
     "bottom-up",
     "categorize-frames",
     "hide-system-libraries",
+    "ignore-process-0",
     "include-threads",
   };
 

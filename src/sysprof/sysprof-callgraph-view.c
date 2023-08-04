@@ -36,6 +36,7 @@ enum {
   PROP_CALLGRAPH,
   PROP_DOCUMENT,
   PROP_HIDE_SYSTEM_LIBRARIES,
+  PROP_IGNORE_PROCESS_0,
   PROP_INCLUDE_THREADS,
   PROP_TRACEABLES,
   PROP_UTILITY_SUMMARY,
@@ -435,6 +436,10 @@ sysprof_callgraph_view_set_property (GObject      *object,
       sysprof_callgraph_view_set_hide_system_libraries (self, g_value_get_boolean (value));
       break;
 
+    case PROP_IGNORE_PROCESS_0:
+      sysprof_callgraph_view_set_ignore_process_0 (self, g_value_get_boolean (value));
+      break;
+
     case PROP_INCLUDE_THREADS:
       sysprof_callgraph_view_set_include_threads (self, g_value_get_boolean (value));
       break;
@@ -485,6 +490,11 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
 
   properties[PROP_INCLUDE_THREADS] =
     g_param_spec_boolean ("include-threads", NULL, NULL,
+                          FALSE,
+                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_IGNORE_PROCESS_0] =
+    g_param_spec_boolean ("ignore-process-0", NULL, NULL,
                           FALSE,
                           (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
@@ -652,6 +662,9 @@ sysprof_callgraph_view_reload (SysprofCallgraphView *self)
   g_assert (SYSPROF_IS_CALLGRAPH_VIEW (self));
 
   g_clear_handle_id (&self->reload_source, g_source_remove);
+
+  if (self->ignore_process_0)
+    flags |= SYSPROF_CALLGRAPH_FLAGS_IGNORE_PROCESS_0;
 
   if (self->include_threads)
     flags |= SYSPROF_CALLGRAPH_FLAGS_INCLUDE_THREADS;
@@ -891,6 +904,30 @@ sysprof_callgraph_view_set_include_threads (SysprofCallgraphView *self,
     {
       self->include_threads = include_threads;
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_INCLUDE_THREADS]);
+      sysprof_callgraph_view_queue_reload (self);
+    }
+}
+
+gboolean
+sysprof_callgraph_view_get_ignore_process_0 (SysprofCallgraphView *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_VIEW (self), FALSE);
+
+  return self->ignore_process_0;
+}
+
+void
+sysprof_callgraph_view_set_ignore_process_0 (SysprofCallgraphView *self,
+                                             gboolean              ignore_process_0)
+{
+  g_return_if_fail (SYSPROF_IS_CALLGRAPH_VIEW (self));
+
+  ignore_process_0 = !!ignore_process_0;
+
+  if (self->ignore_process_0 != ignore_process_0)
+    {
+      self->ignore_process_0 = ignore_process_0;
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_IGNORE_PROCESS_0]);
       sysprof_callgraph_view_queue_reload (self);
     }
 }

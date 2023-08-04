@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include <stdlib.h>
 #include <sys/sysinfo.h>
 #include <sys/utsname.h>
 
@@ -93,16 +94,26 @@ G_DEFINE_FINAL_TYPE (SysprofRecording, sysprof_recording, G_TYPE_OBJECT)
 static GParamSpec *properties[N_PROPS];
 
 static DexFuture *
-_sysprof_recording_spawn (SysprofSpawnable  *spawnable,
+_sysprof_recording_spawn (SysprofRecording  *self,
+                          SysprofSpawnable  *spawnable,
                           GSubprocess      **subprocess)
 {
   g_autoptr(GError) error = NULL;
+  const char *identifier;
   DexFuture *ret;
 
   g_assert (SYSPROF_IS_SPAWNABLE (spawnable));
+  g_assert (subprocess != NULL);
+  g_assert (*subprocess == NULL);
 
   if (!(*subprocess = sysprof_spawnable_spawn (spawnable, &error)))
     return dex_future_new_for_error (g_steal_pointer (&error));
+
+  if ((identifier = g_subprocess_get_identifier (*subprocess)))
+    {
+      int pid = atoi (identifier);
+      dex_await (_sysprof_instruments_process_started (self->instruments, self, pid), NULL);
+    }
 
   ret = dex_subprocess_wait_check (*subprocess);
   dex_async_pair_set_cancel_on_discard (DEX_ASYNC_PAIR (ret), FALSE);
@@ -186,7 +197,7 @@ sysprof_recording_fiber (gpointer user_data)
 
   /* If we need to spawn a subprocess, do it now */
   if (self->spawnable != NULL)
-    monitor = _sysprof_recording_spawn (self->spawnable, &self->subprocess);
+    monitor = _sysprof_recording_spawn (self, self->spawnable, &self->subprocess);
   else
     monitor = dex_future_new_infinite ();
 

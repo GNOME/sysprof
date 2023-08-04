@@ -386,18 +386,10 @@ sysprof_linux_instrument_process_started (SysprofInstrument *instrument,
 }
 
 static void
-sysprof_linux_instrument_finalize (GObject *object)
-{
-  G_OBJECT_CLASS (sysprof_linux_instrument_parent_class)->finalize (object);
-}
-
-static void
 sysprof_linux_instrument_class_init (SysprofLinuxInstrumentClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   SysprofInstrumentClass *instrument_class = SYSPROF_INSTRUMENT_CLASS (klass);
-
-  object_class->finalize = sysprof_linux_instrument_finalize;
 
   instrument_class->list_required_policy = sysprof_linux_instrument_list_required_policy;
   instrument_class->prepare = sysprof_linux_instrument_prepare;

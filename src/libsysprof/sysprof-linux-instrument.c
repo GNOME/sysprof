@@ -394,18 +394,17 @@ sysprof_linux_instrument_process_started (SysprofInstrument *instrument,
                                           SysprofRecording  *recording,
                                           int                pid)
 {
-  g_autofree char *mountinfo_path = NULL;
-
   g_assert (SYSPROF_IS_INSTRUMENT (instrument));
   g_assert (SYSPROF_IS_RECORDING (recording));
 
-  mountinfo_path = g_strdup_printf ("/proc/%u/mountinfo", pid);
-
-  /* TODO: If we get the process cgroup and keep our saved podman
-   *       state around, we could poopulate overlays for new processes.
+  /* We can't actually make a request of sysprofd to get
+   * information on the process right now because that would
+   * create a new process to verify our authentication.
+   *
+   * And that would just amplify this request further.
    */
 
-  return _sysprof_recording_add_file (recording, mountinfo_path, TRUE);
+  return dex_future_new_for_boolean (TRUE);
 }
 
 static void

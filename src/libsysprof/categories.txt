@@ -72,21 +72,34 @@ g_zlib_*                            io           inherit
 
 
 GObject:
-g_enum_register_*                   type-system  inherit
+g_boxed_type_*                      type-system  inherit
 g_enum_complete_*                   type-system  inherit
 g_enum_get_*                        type-system  inherit
-g_flags_register_*                  type-system  inherit
+g_enum_register_*                   type-system  inherit
 g_flags_complete_*                  type-system  inherit
 g_flags_get_*                       type-system  inherit
-g_type_*                            type-system  inherit
+g_flags_register_*                  type-system  inherit
 g_param_spec_*                      type-system  inherit
 g_pointer_type_*                    type-system  inherit
-g_boxed_type_*                      type-system  inherit
+g_type_add_*                        type-system  inherit
+g_type_check_*                      type-system  inherit
+g_type_class_*                      type-system  inherit
+g_type_fundamental*                 type-system  inherit
+g_type_get_plugin                   type-system  inherit
+g_type_get_qdata                    type-system  inherit
+g_type_interface_*                  type-system  inherit
+g_type_is_a                         type-system  inherit
+g_type_name*                        type-system  inherit
+g_type_parent                       type-system  inherit
+g_type_register_*                   type-system  inherit
+g_type_remove_*                     type-system  inherit
+g_type_test_*                       type-system  inherit
+g_type_value_table_*                type-system  inherit
+g_value_fits_pointer                type-system  inherit
+g_value_init                        type-system  inherit
+g_value_register_transform_func     type-system  inherit
 g_value_type_compatible             type-system  inherit
 g_value_type_transformable          type-system  inherit
-g_value_init                        type-system  inherit
-g_value_fits_pointer                type-system  inherit
-g_value_register_transform_func     type-system  inherit
 
 
 GTK 4:

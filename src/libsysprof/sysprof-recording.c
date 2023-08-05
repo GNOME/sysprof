@@ -324,6 +324,12 @@ stop_recording:
   /* Clear buffers and ensure the disk layer has access to them */
   sysprof_capture_writer_flush (self->writer);
 
+  /* Aggressively release our instruments so if they have references back
+   * to the recording any reference cycles are broken.
+   */
+  if (self->instruments->len > 0)
+    g_ptr_array_remove_range (self->instruments, 0, self->instruments->len);
+
   /* Ignore error types we use to bail out of loops */
   if (error != NULL &&
       !g_error_matches (error, DEX_ERROR, DEX_ERROR_TIMED_OUT) &&

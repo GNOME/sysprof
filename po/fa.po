@@ -7,26 +7,26 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-08-03 20:40+0000\n"
-"PO-Revision-Date: 2023-08-04 18:31+0330\n"
+"POT-Creation-Date: 2023-08-05 05:54+0000\n"
+"PO-Revision-Date: 2023-08-05 15:32+0330\n"
 "Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
 "Language-Team: Persian <fa@li.org>\n"
 "Language: fa\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.3.2\n"
+"X-Generator: Poedit 3.2.2\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:5
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:138
 #: src/sysprof/sysprof-application.c:185
 #: src/sysprof/sysprof-recording-pad.ui:18
 msgid "Sysprof"
-msgstr ""
+msgstr "سامانما"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:6
 msgid "Profile an application or entire system"
-msgstr ""
+msgstr "نمایه سازی از یک برنامه یا کل سامانه"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:9
 msgid "The GNOME Foundation"
@@ -37,14 +37,15 @@ msgid ""
 "Sysprof allows you to profile applications to aid in debugging and "
 "optimization."
 msgstr ""
+"سامانما می‌گذارد برنامه‌ها را برای کمک به اشکال‌زدایی و بهینه‌سازی نمایه کنید."
 
 #: data/org.gnome.Sysprof.desktop.in.in:5
 msgid "Profiler"
-msgstr ""
+msgstr "نمایه‌گر"
 
 #: data/org.gnome.Sysprof.desktop.in.in:6
 msgid "Profile an application or entire system."
-msgstr ""
+msgstr "نمایه سازی از یک برنامه یا کل سامانه."
 
 #: src/libsysprof/sysprof-category-summary.c:138
 msgid "Uncategorized"
@@ -121,10 +122,14 @@ msgid "Paint"
 msgstr "رنگ‌آمیزی"
 
 #: src/libsysprof/sysprof-category-summary.c:192
-msgid "Unwindable"
-msgstr ""
+msgid "Type System"
+msgstr "سامانهٔ نوشتن"
 
 #: src/libsysprof/sysprof-category-summary.c:195
+msgid "Unwindable"
+msgstr "بازنشدنی"
+
+#: src/libsysprof/sysprof-category-summary.c:198
 msgid "Windowing"
 msgstr "پنجره سازی"
 
@@ -135,31 +140,31 @@ msgstr "تخصیص"
 #: src/libsysprof/sysprof-document.c:1160
 #: src/libsysprof/sysprof-document.c:1196
 msgid "Indexing capture data frames"
-msgstr ""
+msgstr "شاخص سازی از قاب‌های دادهٔ ضبط"
 
 #: src/libsysprof/sysprof-document.c:1374
 msgid "Discovering file system mounts"
-msgstr ""
+msgstr "کشف سوار شدن‌ها سامانهٔ پرونده"
 
 #: src/libsysprof/sysprof-document.c:1377
 msgid "Discovering process mount namespaces"
-msgstr ""
+msgstr "کشف فضانام‌های سوار شدن فرایند"
 
 #: src/libsysprof/sysprof-document.c:1380
 msgid "Analyzing process address layouts"
-msgstr ""
+msgstr "تحلیل چینش‌های نشانی فرایند"
 
 #: src/libsysprof/sysprof-document.c:1383
 msgid "Analyzing process command line"
-msgstr ""
+msgstr "تحلیل خط فرمان فرایند"
 
 #: src/libsysprof/sysprof-document.c:1386
 msgid "Analyzing file system overlays"
-msgstr ""
+msgstr "تحلیل پوشش‌های سامانهٔ پرونده"
 
 #: src/libsysprof/sysprof-document.c:1389
 msgid "Processing counters"
-msgstr ""
+msgstr "شمارشگرهای پردازش"
 
 #: src/libsysprof/sysprof-document.c:2357
 #, c-format
@@ -181,7 +186,7 @@ msgstr "قاب"
 
 #: src/libsysprof/sysprof-document-loader.c:435
 msgid "Document loaded"
-msgstr ""
+msgstr "سند بار شد"
 
 #: src/libsysprof/sysprof-document-loader.c:466
 msgid "Loading failed"
@@ -190,7 +195,7 @@ msgstr "بار کردن شکست خورد"
 #: src/libsysprof/sysprof-document-loader.c:478
 #: src/libsysprof/sysprof-document-symbols.c:217
 msgid "Symbolizing stack traces"
-msgstr ""
+msgstr "نماد سازی از ردگیری‌های پشته"
 
 #: src/libsysprof/sysprof-document-loader.c:547
 msgid "Loading document"
@@ -218,7 +223,7 @@ msgstr "فرایند %Id"
 msgid "Sample"
 msgstr "نمونه"
 
-#: src/libsysprof/sysprof-system-logs.c:171 src/sysprof/sysprof-greeter.ui:264
+#: src/libsysprof/sysprof-system-logs.c:171 src/sysprof/sysprof-greeter.ui:275
 msgid "System Logs"
 msgstr "گزارش‌های سامانه"
 
@@ -246,7 +251,7 @@ msgstr ""
 
 #: src/sysprof-cli/sysprof-cli.c:299
 msgid "Make sysprof specific to a task [Deprecated]"
-msgstr ""
+msgstr "محدود کردن سامانما به یک وظیفه [منسوخ]"
 
 #: src/sysprof-cli/sysprof-cli.c:299 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:179
@@ -274,19 +279,19 @@ msgstr "VAR=VALUE"
 
 #: src/sysprof-cli/sysprof-cli.c:302
 msgid "Force overwrite the capture file"
-msgstr ""
+msgstr "پایمالی اجباری پروندهٔ ضبط"
 
 #: src/sysprof-cli/sysprof-cli.c:303
 msgid "Disable recording of battery statistics"
-msgstr ""
+msgstr "از کار انداختن ضبط آمار باتری"
 
 #: src/sysprof-cli/sysprof-cli.c:304
 msgid "Disable recording of CPU statistics"
-msgstr ""
+msgstr "از کار انداختن ضبط آمار پردازنده"
 
 #: src/sysprof-cli/sysprof-cli.c:305
 msgid "Disable recording of Disk statistics"
-msgstr ""
+msgstr "از کار انداختن ضبط آمار دیسک"
 
 #: src/sysprof-cli/sysprof-cli.c:306
 msgid "Do not record stacktraces using Linux perf"
@@ -298,31 +303,31 @@ msgstr ""
 
 #: src/sysprof-cli/sysprof-cli.c:308
 msgid "Disable recording of memory statistics"
-msgstr ""
+msgstr "از کار انداختن ضبط آمار حافظه"
 
 #: src/sysprof-cli/sysprof-cli.c:309
 msgid "Disable recording of network statistics"
-msgstr ""
+msgstr "از کار انداختن ضبط آمار شبکه"
 
 #: src/sysprof-cli/sysprof-cli.c:310
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
-msgstr ""
+msgstr "تنظیم متغیّر SYSPROF_TRACE_FD برای زیرفرایندها"
 
 #: src/sysprof-cli/sysprof-cli.c:311
 msgid "Profile the D-Bus session bus"
-msgstr ""
+msgstr "نمایه سازی گذرگاه نشست D-Bus"
 
 #: src/sysprof-cli/sysprof-cli.c:312
 msgid "Profile the D-Bus system bus"
-msgstr ""
+msgstr "نمایه سازی گذرگاه سامانهٔ D-Bus"
 
 #: src/sysprof-cli/sysprof-cli.c:313
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
-msgstr ""
+msgstr "تنظیم متغیّر GJS_TRACE_FD برای فرایندهای GJS"
 
 #: src/sysprof-cli/sysprof-cli.c:314
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
-msgstr ""
+msgstr "تنظیم متغیّر GTK_TRACE_FD برای فرایندهای GTK"
 
 #: src/sysprof-cli/sysprof-cli.c:315
 msgid "Include RAPL energy statistics"
@@ -346,11 +351,11 @@ msgstr ""
 
 #: src/sysprof-cli/sysprof-cli.c:321
 msgid "Print the sysprof-cli version and exit"
-msgstr ""
+msgstr "چاپ نگارش sysprof-cli و خروج"
 
 #: src/sysprof-cli/sysprof-cli.c:354
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
-msgstr ""
+msgstr "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 
 #: src/sysprof-cli/sysprof-cli.c:357
 msgid ""
@@ -367,21 +372,21 @@ msgstr ""
 
 #: src/sysprof-cli/sysprof-cli.c:393
 msgid "Too many arguments were passed to sysprof-cli:"
-msgstr ""
+msgstr "آرگومان‌های داده شده به sysprof-cli بیش از حد است:"
 
 #. Translators: %s is a file name.
 #: src/sysprof-cli/sysprof-cli.c:440
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
-msgstr ""
+msgstr "%s موجود است. برای پایمالی از ‪--force‬ استفاده کنید\n"
 
 #: src/sysprofd/org.gnome.sysprof3.policy.in:13
 msgid "Profile the system"
-msgstr ""
+msgstr "نمایه سازی از سامانه"
 
 #: src/sysprofd/org.gnome.sysprof3.policy.in:14
 msgid "Authentication is required to profile the system."
-msgstr ""
+msgstr "برای نمایه سازی از سامانه نیاز به هویت‌سنجیست."
 
 #: src/sysprof/gtk/help-overlay.ui:10
 msgctxt "shortcut window"
@@ -422,11 +427,11 @@ msgstr "_راهنما"
 
 #: src/sysprof/gtk/menus.ui:18
 msgid "_About Sysprof"
-msgstr ""
+msgstr "_دربارهٔ سامانما"
 
 #: src/sysprof/sysprof-application.c:147
 msgid "A system profiler"
-msgstr ""
+msgstr "نمایه‌گر سامانه"
 
 #: src/sysprof/sysprof-application.c:148
 msgid "translator-credits"
@@ -438,15 +443,15 @@ msgstr "توابع"
 
 #: src/sysprof/sysprof-callgraph-view.ui:71
 msgid "Filter Functions"
-msgstr ""
+msgstr "پالایش توابع"
 
 #: src/sysprof/sysprof-callgraph-view.ui:94
 msgid "Callers"
-msgstr ""
+msgstr "فراخوانندگان"
 
 #: src/sysprof/sysprof-callgraph-view.ui:146
 msgid "Descendants"
-msgstr ""
+msgstr "نوادگان"
 
 #: src/sysprof/sysprof-counters-section.ui:26
 #: src/sysprof/sysprof-cpu-section.ui:169
@@ -455,7 +460,7 @@ msgstr ""
 #: src/sysprof/sysprof-network-section.ui:86
 #: src/sysprof/sysprof-storage-section.ui:86
 msgid "Counters Chart"
-msgstr ""
+msgstr "نمودار شمارشگرها"
 
 #: src/sysprof/sysprof-counters-section.ui:40
 #: src/sysprof/sysprof-cpu-section.ui:323
@@ -464,7 +469,7 @@ msgstr ""
 #: src/sysprof/sysprof-network-section.ui:291
 #: src/sysprof/sysprof-storage-section.ui:291
 msgid "Counters Table"
-msgstr ""
+msgstr "جدول شمارشگرها"
 
 #: src/sysprof/sysprof-cpu-section.ui:378
 #: src/sysprof/sysprof-dbus-section.ui:105
@@ -595,103 +600,104 @@ msgstr "فشرده"
 #: src/sysprof/sysprof-logs-section.ui:143
 #: src/sysprof/sysprof-mark-table.ui:116
 #: src/sysprof/sysprof-traceables-utility.ui:81
+#: src/sysprof/sysprof-window.ui:221
 msgid "CPU"
 msgstr "پردازنده"
 
-#: src/sysprof/sysprof-greeter.c:219 src/sysprof/sysprof-greeter.c:284
+#: src/sysprof/sysprof-greeter.c:225 src/sysprof/sysprof-greeter.c:290
 msgid "Must Capture to Local File"
-msgstr ""
+msgstr "باید روی پروندهٔ محلی ضبط شود"
 
-#: src/sysprof/sysprof-greeter.c:220 src/sysprof/sysprof-greeter.c:285
+#: src/sysprof/sysprof-greeter.c:226 src/sysprof/sysprof-greeter.c:291
 msgid "You must choose a local file to capture using Sysprof"
-msgstr ""
+msgstr "باید پرونده‌ای محلی برای ضبط با سامانما برگزینید"
 
-#: src/sysprof/sysprof-greeter.c:221 src/sysprof/sysprof-greeter.c:286
-#: src/sysprof/sysprof-recording-pad.c:115 src/sysprof/sysprof-window.c:523
+#: src/sysprof/sysprof-greeter.c:227 src/sysprof/sysprof-greeter.c:292
+#: src/sysprof/sysprof-recording-pad.c:115 src/sysprof/sysprof-window.c:524
 msgid "Close"
 msgstr "بستن"
 
-#: src/sysprof/sysprof-greeter.c:242
+#: src/sysprof/sysprof-greeter.c:248
 #, c-format
 msgid "System Capture from %s.syscap"
-msgstr ""
+msgstr "ضبط سامانه از ‪%s.syscap"
 
-#: src/sysprof/sysprof-greeter.c:246
+#: src/sysprof/sysprof-greeter.c:252
 msgid "Record to File"
 msgstr "ضبط در پرونده"
 
-#: src/sysprof/sysprof-greeter.c:247 src/sysprof/sysprof-greeter.ui:27
+#: src/sysprof/sysprof-greeter.c:253 src/sysprof/sysprof-greeter.ui:27
 msgid "Record"
 msgstr "ضبط"
 
-#: src/sysprof/sysprof-greeter.c:305 src/sysprof/sysprof-greeter.ui:311
+#: src/sysprof/sysprof-greeter.c:311 src/sysprof/sysprof-greeter.ui:312
 msgid "Open Recording"
 msgstr "گشودن ضبط"
 
-#: src/sysprof/sysprof-greeter.c:306 src/sysprof/sysprof-greeter.ui:306
+#: src/sysprof/sysprof-greeter.c:312 src/sysprof/sysprof-greeter.ui:307
 msgid "Open"
 msgstr "گشودن"
 
-#: src/sysprof/sysprof-greeter.c:310
+#: src/sysprof/sysprof-greeter.c:316
 msgid "Sysprof Capture (*.syscap)"
-msgstr ""
+msgstr "ضبط سامانما (‪*.syscap‬)"
 
 #: src/sysprof/sysprof-greeter.ui:33 src/sysprof/sysprof-samples-section.ui:4
 msgid "Time Profiler"
-msgstr ""
+msgstr "نمایه‌گر زمان"
 
 #: src/sysprof/sysprof-greeter.ui:37
 msgid "Sample Native Stacks"
-msgstr ""
+msgstr "پشته‌های بومی نمونه"
 
 #: src/sysprof/sysprof-greeter.ui:38
 msgid "Record native stack traces using a sampling profiler"
-msgstr ""
+msgstr "ضبط ردگیری‌های پشتهٔ بومی نمونه با استفاده از یک نمایه‌گر نمونه"
 
 #: src/sysprof/sysprof-greeter.ui:49
 msgid "Performance Profile"
-msgstr ""
+msgstr "نمایه‌گر کارایی"
 
 #: src/sysprof/sysprof-greeter.ui:50
 msgid "Hold the performance profile for the duration of the recording"
-msgstr ""
+msgstr "نگه داشتن نمایه‌گر کارایی در طول ضبط"
 
 #: src/sysprof/sysprof-greeter.ui:60
 msgid "Sample JavaScript Stacks"
-msgstr ""
+msgstr "پشته‌های جاوااسکریپت نمونه"
 
 #: src/sysprof/sysprof-greeter.ui:61
 msgid "Record JavaScript stack traces using a sampling profiler"
-msgstr ""
+msgstr "ضبط ردگیری‌های پشتهٔ جاوااسکریپت نمونه با استفاده از یک نمایه‌گر نمونه"
 
 #: src/sysprof/sysprof-greeter.ui:71
 msgid "This feature is only supported when launching a GJS-based application."
-msgstr ""
+msgstr "این ویژگی تنها هنگام اجرای برنامه‌های مبتنی بر GJS پشتیبانی می‌شود."
 
 #: src/sysprof/sysprof-greeter.ui:88
 msgid "System Memory Usage"
-msgstr ""
+msgstr "استفادهٔ سامانه از حافظه"
 
 #: src/sysprof/sysprof-greeter.ui:89
 msgid "Record coarse-grained counters about system memory usage"
-msgstr ""
+msgstr "ضبط شمارشگرهای درشت‌دانه دربارهٔ استفادهٔ سامانه از حافظه"
 
 #: src/sysprof/sysprof-greeter.ui:105
 msgid "Trace Memory Allocations"
-msgstr ""
+msgstr "ردگیری تخصیص‌های حافظه"
 
 #: src/sysprof/sysprof-greeter.ui:106
 msgid ""
 "Record a strack trace when <tt>malloc</tt> or similar functions are used"
-msgstr ""
+msgstr "ضبط ردگیری پشته هنگام استفاده از <tt>malloc</tt> یا توابع مشابه"
 
 #: src/sysprof/sysprof-greeter.ui:116
 msgid "Memory tracing is only supported when launching an application."
-msgstr ""
+msgstr "ردگیری حافظه تنها هنگام اجرای برنامه‌های کاربردی پشتیبانی می‌شود."
 
 #: src/sysprof/sysprof-greeter.ui:129
 msgid "Display &amp; Graphics"
-msgstr ""
+msgstr "نمایش و نگاشتار"
 
 #: src/sysprof/sysprof-greeter.ui:133
 msgid "Compositor Frame Timings"
@@ -716,7 +722,7 @@ msgstr ""
 
 #: src/sysprof/sysprof-greeter.ui:174
 msgid "D-Bus Profiler"
-msgstr ""
+msgstr "نمایه‌گر D-Bus"
 
 #: src/sysprof/sysprof-greeter.ui:178
 msgid "D-Bus Session Bus"
@@ -734,105 +740,111 @@ msgstr "گذرگاه سامانهٔ D-Bus"
 msgid "Record messages on the D-Bus system bus"
 msgstr "ضبط پیام‌ها روی گذرکاه سانانهٔ D-Bus"
 
-#: src/sysprof/sysprof-greeter.ui:203
+#: src/sysprof/sysprof-greeter.ui:201
+msgid ""
+"Recording your session bus may include sensitive information such as "
+"keyboard usage."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:214
 msgid "Counters"
 msgstr "شمارنده‌ها"
 
-#: src/sysprof/sysprof-greeter.ui:207
+#: src/sysprof/sysprof-greeter.ui:218
 msgid "Disk Usage"
 msgstr "مصرف دیسک"
 
-#: src/sysprof/sysprof-greeter.ui:208
+#: src/sysprof/sysprof-greeter.ui:219
 msgid "Record coarse-grained counters about storage throughput"
 msgstr ""
 
-#: src/sysprof/sysprof-greeter.ui:220
+#: src/sysprof/sysprof-greeter.ui:231
 msgid "Network Usage"
 msgstr "مصرف شبکه"
 
-#: src/sysprof/sysprof-greeter.ui:221
+#: src/sysprof/sysprof-greeter.ui:232
 msgid "Record coarse-grained counters about network traffic"
 msgstr ""
 
-#: src/sysprof/sysprof-greeter.ui:233
+#: src/sysprof/sysprof-greeter.ui:244
 msgid "Energy Usage"
 msgstr "مصرف نیرو"
 
-#: src/sysprof/sysprof-greeter.ui:234
+#: src/sysprof/sysprof-greeter.ui:245
 msgid "Record coarse-grained counters about energy usage in Watts"
 msgstr ""
 
-#: src/sysprof/sysprof-greeter.ui:246
+#: src/sysprof/sysprof-greeter.ui:257
 msgid "Battery Charge"
 msgstr "شارژ باتری"
 
-#: src/sysprof/sysprof-greeter.ui:247
+#: src/sysprof/sysprof-greeter.ui:258
 msgid "Record coarse-grained counters about battery charge or discharge rates"
 msgstr ""
 
-#: src/sysprof/sysprof-greeter.ui:260
+#: src/sysprof/sysprof-greeter.ui:271
 msgid "System"
 msgstr "سامانه"
 
-#: src/sysprof/sysprof-greeter.ui:265
+#: src/sysprof/sysprof-greeter.ui:276
 msgid "Watch the system log for new messages and record them"
 msgstr ""
 
-#: src/sysprof/sysprof-greeter.ui:277
+#: src/sysprof/sysprof-greeter.ui:288
 msgid "Bundle Symbols"
 msgstr ""
 
-#: src/sysprof/sysprof-greeter.ui:278
+#: src/sysprof/sysprof-greeter.ui:289
 msgid "Make recording shareable by bundling decoded symbols"
 msgstr ""
 
-#: src/sysprof/sysprof-greeter.ui:296
-msgid "Recent"
-msgstr "اخیر"
-
-#: src/sysprof/sysprof-greeter.ui:315
+#: src/sysprof/sysprof-greeter.ui:316
 msgid "Capture File"
-msgstr ""
+msgstr "ضبط پرونده"
 
-#: src/sysprof/sysprof-greeter.ui:337
+#: src/sysprof/sysprof-greeter.ui:338
 msgid "Symbols"
 msgstr "نمادها"
 
-#: src/sysprof/sysprof-greeter.ui:341
+#: src/sysprof/sysprof-greeter.ui:342
 msgid "Ignore Bundled Symbols"
 msgstr ""
 
-#: src/sysprof/sysprof-greeter.ui:342
+#: src/sysprof/sysprof-greeter.ui:343
 msgid "Do not use embedded symbols that were resolved on the capture system"
 msgstr ""
 
-#: src/sysprof/sysprof-greeter.ui:357
+#: src/sysprof/sysprof-greeter.ui:358
 msgid "Override Kernel Symbols"
 msgstr ""
 
-#: src/sysprof/sysprof-greeter.ui:358
+#: src/sysprof/sysprof-greeter.ui:359
 msgid "Specify a “kallsyms” file overriding what is bundled with a recording"
 msgstr ""
 
-#: src/sysprof/sysprof-greeter.ui:374
+#: src/sysprof/sysprof-greeter.ui:375
 msgid "Symbol Directories"
 msgstr "شاخه‌های نماد"
 
-#: src/sysprof/sysprof-greeter.ui:377
+#: src/sysprof/sysprof-greeter.ui:378
 msgid "Additional symbol directories to use when symbolizing stack traces."
 msgstr "شاخه‌های نماد اضافی برای استفاده هنگام نمادین کردن ردگیری‌های پشته."
 
-#: src/sysprof/sysprof-greeter.ui:388
+#: src/sysprof/sysprof-greeter.ui:389
 msgid "Add Symbol Directory"
 msgstr "افزودن شاخهٔ نماد"
 
-#: src/sysprof/sysprof-greeter.ui:412
+#: src/sysprof/sysprof-greeter.ui:416
 msgid "Record to _File…"
 msgstr "ضبط در _پرونده…"
 
-#: src/sysprof/sysprof-greeter.ui:420
+#: src/sysprof/sysprof-greeter.ui:424
 msgid "_Record to Memory"
 msgstr "ضبط در _حافظه"
+
+#: src/sysprof/sysprof-greeter.ui:450
+msgid "_Open Capture…"
+msgstr "_گشودن ضبط…"
 
 #: src/sysprof/sysprof-logs-section.c:95
 msgid "Critical"
@@ -946,7 +958,7 @@ msgid "Memory Allocations"
 msgstr "تخصیص حافظه‌ها"
 
 #: src/sysprof/sysprof-memory-section.ui:126
-#: src/sysprof/sysprof-samples-section.ui:143
+#: src/sysprof/sysprof-samples-section.ui:148
 #: src/sysprof/sysprof-traceables-utility.ui:162
 msgid "Stack Trace"
 msgstr "ردگیری پشته"
@@ -977,7 +989,7 @@ msgstr "پرونده"
 
 #: src/sysprof/sysprof-process-dialog.ui:219
 msgid "Mounts"
-msgstr ""
+msgstr "سوار شدن‌ها"
 
 #: src/sysprof/sysprof-process-dialog.ui:282
 msgid "Parent"
@@ -989,15 +1001,15 @@ msgstr "بیشی"
 
 #: src/sysprof/sysprof-process-dialog.ui:350
 msgid "Minor"
-msgstr ""
+msgstr "جزیی"
 
 #: src/sysprof/sysprof-process-dialog.ui:384
 msgid "Mount Point"
-msgstr ""
+msgstr "نقطهٔ اتّصال"
 
 #: src/sysprof/sysprof-process-dialog.ui:418
 msgid "Mount Source"
-msgstr ""
+msgstr "منبع اتّصال"
 
 #: src/sysprof/sysprof-process-dialog.ui:452
 msgid "Root"
@@ -1055,6 +1067,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"شکست در ضبط سامانما.\n"
+"\n"
+"%s"
 
 #: src/sysprof/sysprof-recording-pad.ui:69
 msgid "Stop Recording"
@@ -1088,11 +1103,11 @@ msgstr "عمق"
 msgid "Hits"
 msgstr "ضربه‌ها"
 
-#: src/sysprof/sysprof-window.c:519
+#: src/sysprof/sysprof-window.c:520
 msgid "Invalid Document"
 msgstr "سند نامعتبر"
 
-#: src/sysprof/sysprof-window.c:521
+#: src/sysprof/sysprof-window.c:522
 #, c-format
 msgid ""
 "The document could not be loaded. Please check that you have the correct "
@@ -1107,10 +1122,6 @@ msgstr ""
 #: src/sysprof/sysprof-window.ui:211
 msgid "D-Bus"
 msgstr "D-Bus"
-
-#: src/sysprof/sysprof-window.ui:221
-msgid "CPU Usage"
-msgstr "مصرف پردازنده"
 
 #: src/sysprof/sysprof-window.ui:231
 msgid "Energy"
@@ -1146,4 +1157,10 @@ msgstr "راهنما"
 
 #: src/sysprof/sysprof-window.ui:329
 msgid "About Sysprof"
-msgstr ""
+msgstr "دربارهٔ سامانما"
+
+#~ msgid "Recent"
+#~ msgstr "اخیر"
+
+#~ msgid "CPU Usage"
+#~ msgstr "مصرف پردازنده"

@@ -196,6 +196,17 @@
                             </child>
                           </object>
                         </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Recording your session bus may include sensitive information such as keyboard usage.</property>
+                            <property name="xalign">0</property>
+                            <property name="margin-top">8</property>
+                            <style>
+                              <class name="caption"/>
+                              <class name="dim-label"/>
+                            </style>
+                          </object>
+                        </child>
                       </object>
                     </child>
                     <child>

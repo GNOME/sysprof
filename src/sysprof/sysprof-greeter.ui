@@ -24,7 +24,8 @@
             <child>
               <object class="AdwViewStackPage">
                 <property name="icon-name">org.gnome.Sysprof-symbolic</property>
-                <property name="title" translatable="yes">Record</property>
+                <property name="title" translatable="yes">_Record</property>
+                <property name="use-underline">true</property>
                 <property name="child">
                   <object class="AdwPreferencesPage" id="record_page">
                     <property name="vexpand">true</property>
@@ -304,7 +305,8 @@
             <child>
               <object class="AdwViewStackPage">
                 <property name="icon-name">document-open-symbolic</property>
-                <property name="title" translatable="yes">Open</property>
+                <property name="title" translatable="yes">_Open</property>
+                <property name="use-underline">true</property>
                 <property name="child">
                   <object class="AdwPreferencesPage" id="open_page">
                     <child>
@@ -421,7 +423,7 @@
                     </child>
                     <child>
                       <object class="GtkButton">
-                        <property name="label" translatable="yes">_Record to Memory</property>
+                        <property name="label" translatable="yes">Record to _Memory</property>
                         <property name="action-name">win.record-to-memory</property>
                         <property name="use-underline">true</property>
                         <property name="hexpand">true</property>

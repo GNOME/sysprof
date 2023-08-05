@@ -38,7 +38,8 @@ struct _SysprofGreeter
   GFile              *file;
 
   AdwViewStack       *view_stack;
-  GtkBox             *toolbar;
+  GtkWidget          *open_buttons;
+  GtkWidget          *record_buttons;
   AdwPreferencesPage *record_page;
   GtkWidget          *open_page;
   GtkSwitch          *sample_native_stacks;
@@ -67,11 +68,17 @@ sysprof_greeter_view_stack_notify_visible_child (SysprofGreeter *self,
                                                  GParamSpec     *pspec,
                                                  AdwViewStack   *stack)
 {
+  GtkWidget *visible_child;
+
   g_assert (SYSPROF_IS_GREETER (self));
   g_assert (ADW_IS_VIEW_STACK (stack));
 
-  gtk_widget_set_visible (GTK_WIDGET (self->toolbar),
-                          GTK_WIDGET (self->record_page) == adw_view_stack_get_visible_child (stack));
+  visible_child = adw_view_stack_get_visible_child (stack);
+
+  gtk_widget_set_visible (GTK_WIDGET (self->record_buttons),
+                          GTK_WIDGET (self->record_page) == visible_child);
+  gtk_widget_set_visible (GTK_WIDGET (self->open_buttons),
+                          GTK_WIDGET (self->open_page) == visible_child);
 }
 
 static SysprofProfiler *
@@ -402,6 +409,7 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-greeter.ui");
 
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, bundle_symbols);
+  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, open_buttons);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, open_page);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_compositor);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_disk_usage);
@@ -412,7 +420,7 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_system_logs);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, sample_native_stacks);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, sample_javascript_stacks);
-  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, toolbar);
+  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_buttons);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, view_stack);
 
   gtk_widget_class_bind_template_callback (widget_class, sysprof_greeter_view_stack_notify_visible_child);

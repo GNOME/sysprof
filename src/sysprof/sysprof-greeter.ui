@@ -388,32 +388,63 @@
           </object>
         </property>
         <child type="bottom">
-          <object class="GtkBox" id="toolbar">
+          <object class="GtkBox">
+            <property name="orientation">vertical</property>
             <child>
-              <object class="GtkBox" id="record_buttons">
-                <style>
-                  <class name="toolbar"/>
-                </style>
-                <property name="homogeneous">true</property>
-                <property name="halign">center</property>
-                <property name="width-request">500</property>
+              <object class="AdwClamp" id="record_buttons">
+                <property name="maximum-size">500</property>
                 <child>
-                  <object class="GtkButton">
-                    <property name="label" translatable="yes">Record to _File…</property>
-                    <property name="action-name">win.record-to-file</property>
-                    <property name="use-underline">true</property>
+                  <object class="GtkBox">
+                    <style>
+                      <class name="toolbar"/>
+                    </style>
                     <property name="hexpand">true</property>
+                    <property name="homogeneous">true</property>
+                    <child>
+                      <object class="GtkButton">
+                        <property name="label" translatable="yes">Record to _File…</property>
+                        <property name="action-name">win.record-to-file</property>
+                        <property name="use-underline">true</property>
+                        <property name="hexpand">true</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton">
+                        <property name="label" translatable="yes">_Record to Memory</property>
+                        <property name="action-name">win.record-to-memory</property>
+                        <property name="use-underline">true</property>
+                        <property name="hexpand">true</property>
+                        <style>
+                          <class name="suggested-action"/>
+                        </style>
+                      </object>
+                    </child>
                   </object>
                 </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwClamp" id="open_buttons">
+                <property name="maximum-size">500</property>
+                <property name="visible">false</property>
                 <child>
-                  <object class="GtkButton">
-                    <property name="label" translatable="yes">_Record to Memory</property>
-                    <property name="action-name">win.record-to-memory</property>
-                    <property name="use-underline">true</property>
-                    <property name="hexpand">true</property>
+                  <object class="GtkBox">
                     <style>
-                      <class name="suggested-action"/>
+                      <class name="toolbar"/>
                     </style>
+                    <property name="hexpand">true</property>
+                    <property name="homogeneous">true</property>
+                    <child>
+                      <object class="GtkButton">
+                        <property name="label" translatable="yes">_Open Capture…</property>
+                        <property name="action-name">win.open-capture</property>
+                        <property name="use-underline">true</property>
+                        <property name="hexpand">true</property>
+                        <style>
+                          <class name="suggested-action"/>
+                        </style>
+                      </object>
+                    </child>
                   </object>
                 </child>
               </object>

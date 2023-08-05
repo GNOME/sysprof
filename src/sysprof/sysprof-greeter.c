@@ -41,7 +41,6 @@ struct _SysprofGreeter
   GtkBox             *toolbar;
   AdwPreferencesPage *record_page;
   GtkWidget          *open_page;
-  GtkWidget          *recent_page;
   GtkSwitch          *sample_native_stacks;
   GtkSwitch          *sample_javascript_stacks;
   GtkSwitch          *record_disk_usage;
@@ -404,7 +403,6 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
 
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, bundle_symbols);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, open_page);
-  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, recent_page);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_compositor);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_disk_usage);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_network_usage);
@@ -447,10 +445,6 @@ sysprof_greeter_set_page (SysprofGreeter     *self,
     {
     case SYSPROF_GREETER_PAGE_OPEN:
       adw_view_stack_set_visible_child (self->view_stack, GTK_WIDGET (self->open_page));
-      break;
-
-    case SYSPROF_GREETER_PAGE_RECENT:
-      adw_view_stack_set_visible_child (self->view_stack, GTK_WIDGET (self->recent_page));
       break;
 
     default:

@@ -31,7 +31,6 @@ G_DECLARE_FINAL_TYPE (SysprofGreeter, sysprof_greeter, SYSPROF, GREETER, AdwWind
 typedef enum _SysprofGreeterPage
 {
   SYSPROF_GREETER_PAGE_RECORD,
-  SYSPROF_GREETER_PAGE_RECENT,
   SYSPROF_GREETER_PAGE_OPEN,
 } SysprofGreeterPage;
 

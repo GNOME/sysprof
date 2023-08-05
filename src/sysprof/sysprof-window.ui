@@ -218,7 +218,7 @@
                         </child>
                         <child>
                           <object class="SysprofCpuSection">
-                            <property name="title" translatable="yes">CPU Usage</property>
+                            <property name="title" translatable="yes">CPU</property>
                             <property name="category">counters</property>
                             <property name="icon-name">system-run-symbolic</property>
                             <binding name="session">

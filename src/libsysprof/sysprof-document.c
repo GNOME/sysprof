@@ -2102,29 +2102,41 @@ _sysprof_document_thread_symbol (SysprofDocument *self,
                                  int              pid,
                                  int              tid)
 {
+  static GRWLock rwlock;
   SysprofSymbol *ret;
 
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
-  if (!(ret = g_hash_table_lookup (self->tid_to_symbol, GINT_TO_POINTER (tid))))
+  g_rw_lock_reader_lock (&rwlock);
+  ret = g_hash_table_lookup (self->tid_to_symbol, GINT_TO_POINTER (tid));
+  g_rw_lock_reader_unlock (&rwlock);
+
+  if (ret == NULL)
     {
-      char pidstr[32];
-      char tidstr[32];
+      g_rw_lock_writer_lock (&rwlock);
 
-      g_snprintf (pidstr, sizeof pidstr, "(%d)", pid);
+      if (!(ret = g_hash_table_lookup (self->tid_to_symbol, GINT_TO_POINTER (tid))))
+        {
+          char pidstr[32];
+          char tidstr[32];
 
-      if (tid == pid)
-        g_snprintf (tidstr, sizeof tidstr, "Thread-%d (Main)", tid);
-      else
-        g_snprintf (tidstr, sizeof tidstr, "Thread-%d", tid);
+          g_snprintf (pidstr, sizeof pidstr, "(%d)", pid);
 
-      ret = _sysprof_symbol_new (g_ref_string_new (tidstr),
-                                 NULL,
-                                 g_ref_string_new (pidstr),
-                                 0, 0,
-                                 SYSPROF_SYMBOL_KIND_THREAD);
+          if (tid == pid)
+            g_snprintf (tidstr, sizeof tidstr, "Thread-%d (Main)", tid);
+          else
+            g_snprintf (tidstr, sizeof tidstr, "Thread-%d", tid);
 
-      g_hash_table_insert (self->tid_to_symbol, GINT_TO_POINTER (tid), ret);
+          ret = _sysprof_symbol_new (g_ref_string_new (tidstr),
+                                     NULL,
+                                     g_ref_string_new (pidstr),
+                                     0, 0,
+                                     SYSPROF_SYMBOL_KIND_THREAD);
+
+          g_hash_table_insert (self->tid_to_symbol, GINT_TO_POINTER (tid), ret);
+        }
+
+      g_rw_lock_writer_unlock (&rwlock);
     }
 
   return ret;

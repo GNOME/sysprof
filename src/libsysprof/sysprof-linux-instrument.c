@@ -50,69 +50,6 @@ sysprof_linux_instrument_list_required_policy (SysprofInstrument *instrument)
 }
 
 static void
-add_process_output_as_file_cb (GObject      *object,
-                               GAsyncResult *result,
-                               gpointer      user_data)
-{
-  g_autoptr(DexPromise) promise = user_data;
-  g_autoptr(GError) error = NULL;
-  g_autofree char *stdout_buf = NULL;
-
-  g_assert (G_IS_SUBPROCESS (object));
-  g_assert (G_IS_ASYNC_RESULT (result));
-  g_assert (DEX_IS_PROMISE (promise));
-
-  if (g_subprocess_communicate_utf8_finish (G_SUBPROCESS (object), result, &stdout_buf, NULL, &error))
-    dex_promise_resolve_string (promise, g_steal_pointer (&stdout_buf));
-  else
-    dex_promise_reject (promise, g_steal_pointer (&error));
-}
-
-static void
-add_process_output_as_file (SysprofRecording *recording,
-                            const char       *command_line,
-                            const char       *filename,
-                            gboolean          compress)
-{
-  g_autoptr(GSubprocessLauncher) launcher = NULL;
-  g_autoptr(GSubprocess) subprocess = NULL;
-  g_autoptr(DexPromise) promise = NULL;
-  g_autoptr(GError) error = NULL;
-  g_auto(GStrv) argv = NULL;
-  g_autofree char *string = NULL;
-  int argc;
-
-  g_assert (SYSPROF_IS_RECORDING (recording));
-
-  if (!g_shell_parse_argv (command_line, &argc, &argv, &error))
-    goto error;
-
-  launcher = g_subprocess_launcher_new (G_SUBPROCESS_FLAGS_STDOUT_PIPE | G_SUBPROCESS_FLAGS_STDERR_SILENCE);
-  if (!(subprocess = g_subprocess_launcher_spawnv (launcher, (const char * const *)argv, &error)))
-    goto error;
-
-  promise = dex_promise_new ();
-  g_subprocess_communicate_utf8_async (subprocess,
-                                       NULL,
-                                       dex_promise_get_cancellable (promise),
-                                       add_process_output_as_file_cb,
-                                       dex_ref (promise));
-
-  if (!(string = dex_await_string (dex_ref (promise), &error)))
-    goto error;
-
-  _sysprof_recording_add_file_data (recording, filename, string, -1, compress);
-
-  return;
-
-error:
-  _sysprof_recording_diagnostic (recording,
-                                 "Linux",
-                                 "Failed to get output for '%s': %s",
-                                 command_line, error->message);
-}
-
-static void
 add_mmaps (SysprofRecording *recording,
            GPid              pid,
            const char       *mapsstr,
@@ -314,9 +251,6 @@ sysprof_linux_instrument_prepare_fiber (gpointer user_data)
                                   NULL),
                   &error))
     return dex_future_new_for_error (g_steal_pointer (&error));
-
-  /* Try to get some info into our capture for decoding */
-  add_process_output_as_file (recording, "lsusb -v", "lsusb", TRUE);
 
   return dex_future_new_for_boolean (TRUE);
 }

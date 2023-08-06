@@ -441,7 +441,7 @@
                             <child>
                               <object class="AdwActionRow">
                                 <property name="activatable-widget">record_graphics_info</property>
-                                <property name="title" translatable="yes">Include Device Information</property>
+                                <property name="title" translatable="yes">Include GPU Information</property>
                                 <property name="subtitle" translatable="yes">Records information about graphics hardware and drivers</property>
                                 <child type="suffix">
                                   <object class="GtkSwitch" id="record_graphics_info">
@@ -476,7 +476,7 @@
                         </child>
                         <child>
                           <object class="AdwPreferencesGroup">
-                            <property name="title" translatable="yes">Logging</property>
+                            <property name="title" translatable="yes">Details</property>
                             <child>
                               <object class="AdwActionRow">
                                 <property name="activatable-widget">record_system_logs</property>
@@ -485,6 +485,23 @@
                                 <child type="suffix">
                                   <object class="GtkSwitch" id="record_system_logs">
                                     <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="system-log"/>
+                                    <property name="valign">center</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="AdwPreferencesGroup">
+                            <child>
+                              <object class="AdwActionRow">
+                                <property name="activatable-widget">record_hardware_info</property>
+                                <property name="title" translatable="yes">Include Hardware Information</property>
+                                <property name="subtitle" translatable="yes">Records information about PCI and USB devices</property>
+                                <child type="suffix">
+                                  <object class="GtkSwitch" id="record_hardware_info">
+                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="hardware-info"/>
                                     <property name="valign">center</property>
                                   </object>
                                 </child>

@@ -87,8 +87,8 @@
                                 <property name="subtitle" translatable="yes">Record native stack traces using a sampling profiler</property>
                                 <child type="suffix">
                                   <object class="GtkSwitch" id="sample_native_stacks">
-                                    <property name="active">true</property>
                                     <property name="valign">center</property>
+                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="native-stacks"/>
                                   </object>
                                 </child>
                               </object>
@@ -105,6 +105,7 @@
                                 <child type="suffix">
                                   <object class="GtkSwitch" id="sample_javascript_stacks">
                                     <property name="valign">center</property>
+                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="javascript-stacks"/>
                                   </object>
                                 </child>
                               </object>
@@ -133,6 +134,7 @@
                                 <child type="suffix">
                                   <object class="GtkSwitch" id="trace_malloc">
                                     <property name="valign">center</property>
+                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="memory-allocations"/>
                                   </object>
                                 </child>
                               </object>
@@ -166,6 +168,7 @@
                             <child>
                               <object class="AdwEntryRow" id="app_command_line">
                                 <property name="title" translatable="yes">Command Line</property>
+                                <property name="text" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="command-line"/>
                               </object>
                             </child>
                             <child>
@@ -191,8 +194,8 @@
                                 <property name="subtitle" translatable="yes">Clear the environment before launching application</property>
                                 <child type="suffix">
                                   <object class="GtkSwitch" id="clear_environment">
-                                    <property name="active">false</property>
                                     <property name="valign">center</property>
+                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="clear-environ"/>
                                   </object>
                                 </child>
                               </object>
@@ -251,8 +254,8 @@
                                 <property name="subtitle" translatable="yes">Record coarse-grained counters about CPU usage and frequency</property>
                                 <child type="suffix">
                                   <object class="GtkSwitch" id="record_cpu_usage">
-                                    <property name="active">true</property>
                                     <property name="valign">center</property>
+                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="cpu-usage"/>
                                   </object>
                                 </child>
                               </object>
@@ -264,8 +267,8 @@
                                 <property name="subtitle" translatable="yes">Record coarse-grained counters about system memory usage</property>
                                 <child type="suffix">
                                   <object class="GtkSwitch" id="record_memory_counters">
-                                    <property name="active">true</property>
                                     <property name="valign">center</property>
+                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="memory-usage"/>
                                   </object>
                                 </child>
                               </object>
@@ -277,7 +280,7 @@
                                 <property name="subtitle" translatable="yes">Record coarse-grained counters about storage throughput</property>
                                 <child type="suffix">
                                   <object class="GtkSwitch" id="record_disk_usage">
-                                    <property name="active">true</property>
+                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="disk-usage"/>
                                     <property name="valign">center</property>
                                   </object>
                                 </child>
@@ -290,7 +293,7 @@
                                 <property name="subtitle" translatable="yes">Record coarse-grained counters about network traffic</property>
                                 <child type="suffix">
                                   <object class="GtkSwitch" id="record_network_usage">
-                                    <property name="active">true</property>
+                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="network-usage"/>
                                     <property name="valign">center</property>
                                   </object>
                                 </child>
@@ -307,7 +310,7 @@
                                 <property name="subtitle" translatable="yes">Record coarse-grained counters about energy usage in Watts</property>
                                 <child type="suffix">
                                   <object class="GtkSwitch" id="record_energy_usage">
-                                    <property name="active">true</property>
+                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="energy-usage"/>
                                     <property name="valign">center</property>
                                   </object>
                                 </child>
@@ -320,7 +323,7 @@
                                 <property name="subtitle" translatable="yes">Record coarse-grained counters about battery charge or discharge rates</property>
                                 <child type="suffix">
                                   <object class="GtkSwitch" id="record_battery_charge">
-                                    <property name="active">true</property>
+                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="battery-charge"/>
                                     <property name="valign">center</property>
                                   </object>
                                 </child>
@@ -348,6 +351,7 @@
                                 <property name="subtitle" translatable="yes">Record messages on the D-Bus system bus</property>
                                 <child type="suffix">
                                   <object class="GtkSwitch" id="record_system_bus">
+                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="system-bus"/>
                                     <property name="valign">center</property>
                                   </object>
                                 </child>
@@ -364,6 +368,7 @@
                                 <property name="subtitle" translatable="yes">Record messages on the D-Bus user session bus</property>
                                 <child type="suffix">
                                   <object class="GtkSwitch" id="record_session_bus">
+                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="session-bus"/>
                                     <property name="valign">center</property>
                                   </object>
                                 </child>
@@ -402,7 +407,7 @@
                                 <property name="subtitle" translatable="yes">Record frame-timing information from the GNOME Shell compositor</property>
                                 <child type="suffix">
                                   <object class="GtkSwitch" id="record_compositor">
-                                    <property name="active">true</property>
+                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="frame-timings"/>
                                     <property name="valign">center</property>
                                   </object>
                                 </child>
@@ -479,7 +484,7 @@
                                 <property name="subtitle" translatable="yes">Watch the system log for new messages and record them</property>
                                 <child type="suffix">
                                   <object class="GtkSwitch" id="record_system_logs">
-                                    <property name="active">true</property>
+                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="system-log"/>
                                     <property name="valign">center</property>
                                   </object>
                                 </child>
@@ -497,7 +502,7 @@
                                 <property name="subtitle" translatable="yes">Make recording shareable by symbolizing stack traces after recording</property>
                                 <child type="suffix">
                                   <object class="GtkSwitch" id="bundle_symbols">
-                                    <property name="active">true</property>
+                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="bundle-symbols"/>
                                     <property name="valign">center</property>
                                   </object>
                                 </child>
@@ -535,4 +540,8 @@
       </item>
     </section>
   </menu>
+  <object class="SysprofRecordingTemplate" id="recording_template">
+  </object>
+  <object class="GtkStringList" id="envvars">
+  </object>
 </interface>

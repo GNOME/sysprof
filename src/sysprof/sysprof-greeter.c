@@ -29,29 +29,31 @@
 #include "sysprof-entry-popover.h"
 #include "sysprof-greeter.h"
 #include "sysprof-recording-pad.h"
+#include "sysprof-recording-template.h"
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureWriter, sysprof_capture_writer_unref)
 
 struct _SysprofGreeter
 {
-  AdwWindow           parent_instance;
+  AdwWindow                 parent_instance;
 
-  GFile              *file;
-  GtkStringList      *envvars;
+  GFile                    *file;
+  GtkStringList            *envvars;
 
-  AdwViewStack       *view_stack;
-  GtkListBox         *sidebar_list_box;
-  AdwPreferencesPage *record_page;
-  GtkListBox         *app_environment;
-  GtkSwitch          *sample_native_stacks;
-  GtkSwitch          *sample_javascript_stacks;
-  GtkSwitch          *record_disk_usage;
-  GtkSwitch          *record_network_usage;
-  GtkSwitch          *record_compositor;
-  GtkSwitch          *record_system_logs;
-  GtkSwitch          *record_session_bus;
-  GtkSwitch          *record_system_bus;
-  GtkSwitch          *bundle_symbols;
+  AdwViewStack             *view_stack;
+  GtkListBox               *sidebar_list_box;
+  AdwPreferencesPage       *record_page;
+  GtkListBox               *app_environment;
+  GtkSwitch                *sample_native_stacks;
+  GtkSwitch                *sample_javascript_stacks;
+  GtkSwitch                *record_disk_usage;
+  GtkSwitch                *record_network_usage;
+  GtkSwitch                *record_compositor;
+  GtkSwitch                *record_system_logs;
+  GtkSwitch                *record_session_bus;
+  GtkSwitch                *record_system_bus;
+  GtkSwitch                *bundle_symbols;
+  SysprofRecordingTemplate *recording_template;
 };
 
 enum {
@@ -590,6 +592,7 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
 
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, app_environment);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, bundle_symbols);
+  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, envvars);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_compositor);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_disk_usage);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_network_usage);
@@ -597,8 +600,9 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_session_bus);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_system_bus);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_system_logs);
-  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, sample_native_stacks);
+  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, recording_template);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, sample_javascript_stacks);
+  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, sample_native_stacks);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, sidebar_list_box);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, view_stack);
 
@@ -612,6 +616,7 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
   gtk_widget_class_install_action (widget_class, "win.select-file", NULL, sysprof_greeter_select_file_action);
 
   g_type_ensure (SYSPROF_TYPE_ENTRY_POPOVER);
+  g_type_ensure (SYSPROF_TYPE_RECORDING_TEMPLATE);
 }
 
 static void
@@ -619,14 +624,14 @@ sysprof_greeter_init (SysprofGreeter *self)
 {
   GtkListBoxRow *row;
 
-  self->envvars = gtk_string_list_new (NULL);
+  gtk_widget_init_template (GTK_WIDGET (self));
+
   g_signal_connect_object (self->envvars,
                            "items-changed",
                            G_CALLBACK (on_env_items_changed_cb),
                            self,
                            G_CONNECT_SWAPPED);
-
-  gtk_widget_init_template (GTK_WIDGET (self));
+  on_env_items_changed_cb (self, 0, 0, 0, G_LIST_MODEL (self->envvars));
 
   gtk_list_box_bind_model (self->sidebar_list_box,
                            G_LIST_MODEL (adw_view_stack_get_pages (self->view_stack)),

@@ -147,6 +147,10 @@ sysprof_recording_template_get_property (GObject    *object,
       g_value_set_boolean (value, self->memory_allocations);
       break;
 
+    case PROP_MEMORY_USAGE:
+      g_value_set_boolean (value, self->memory_usage);
+      break;
+
     case PROP_NATIVE_STACKS:
       g_value_set_boolean (value, self->native_stacks);
       break;
@@ -233,6 +237,10 @@ sysprof_recording_template_set_property (GObject      *object,
 
     case PROP_MEMORY_ALLOCATIONS:
       self->memory_allocations = g_value_get_boolean (value);
+      break;
+
+    case PROP_MEMORY_USAGE:
+      self->memory_usage = g_value_get_boolean (value);
       break;
 
     case PROP_NATIVE_STACKS:
@@ -382,6 +390,7 @@ sysprof_recording_template_init (SysprofRecordingTemplate *self)
   self->native_stacks = TRUE;
   self->network_usage = TRUE;
   self->system_log = TRUE;
+  self->command_line = g_strdup ("");
 }
 
 SysprofRecordingTemplate *

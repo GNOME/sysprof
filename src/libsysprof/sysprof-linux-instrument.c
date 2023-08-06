@@ -34,11 +34,6 @@ struct _SysprofLinuxInstrument
   SysprofInstrument parent_instance;
 };
 
-enum {
-  PROP_0,
-  N_PROPS
-};
-
 G_DEFINE_FINAL_TYPE (SysprofLinuxInstrument, sysprof_linux_instrument, SYSPROF_TYPE_INSTRUMENT)
 
 static char **

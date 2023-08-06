@@ -602,6 +602,17 @@ main (int   argc,
   sysprof_profiler_add_instrument (profiler, sysprof_tracefd_consumer_new (g_steal_fd (&gjs_trace_fd)));
   sysprof_profiler_add_instrument (profiler, sysprof_tracefd_consumer_new (g_steal_fd (&trace_fd)));
 
+  sysprof_profiler_add_instrument (profiler,
+                                   g_object_new (SYSPROF_TYPE_SUBPROCESS_OUTPUT,
+                                                 "stdout-path", "eglinfo",
+                                                 "command-argv", (const char * const[]) {"eglinfo", NULL},
+                                                 NULL));
+  sysprof_profiler_add_instrument (profiler,
+                                   g_object_new (SYSPROF_TYPE_SUBPROCESS_OUTPUT,
+                                                 "stdout-path", "glxinfo",
+                                                 "command-argv", (const char * const[]) {"glxinfo", NULL},
+                                                 NULL));
+
   /* Now open the writer for our session */
   if (!(writer = sysprof_capture_writer_new (capture_filename, BUFFER_SIZE)))
     {

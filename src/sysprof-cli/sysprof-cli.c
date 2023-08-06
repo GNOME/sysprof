@@ -545,6 +545,17 @@ Examples:\n\
   if (system_bus)
     sysprof_profiler_add_instrument (profiler, sysprof_dbus_monitor_new (G_BUS_TYPE_SYSTEM));
 
+  sysprof_profiler_add_instrument (profiler,
+                                   g_object_new (SYSPROF_TYPE_SUBPROCESS_OUTPUT,
+                                                 "stdout-path", "eglinfo",
+                                                 "command-argv", (const char * const[]) {"eglinfo", NULL},
+                                                 NULL));
+  sysprof_profiler_add_instrument (profiler,
+                                   g_object_new (SYSPROF_TYPE_SUBPROCESS_OUTPUT,
+                                                 "stdout-path", "glxinfo",
+                                                 "command-argv", (const char * const[]) {"glxinfo", NULL},
+                                                 NULL));
+
   sysprof_profiler_record_async (profiler,
                                  writer,
                                  NULL,

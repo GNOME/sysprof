@@ -237,6 +237,12 @@ main (int   argc,
   sysprof_profiler_add_instrument (profiler, sysprof_tracefd_consumer_new (g_steal_fd (&gjs_trace_fd)));
   sysprof_profiler_add_instrument (profiler, sysprof_tracefd_consumer_new (g_steal_fd (&trace_fd)));
 
+  sysprof_profiler_add_instrument (profiler,
+                                   g_object_new (SYSPROF_TYPE_SUBPROCESS_OUTPUT,
+                                                 "stdout-path", "__zoneinfo__",
+                                                 "command-argv", (const char * const[]) { "cat", "/proc/zoneinfo", NULL },
+                                                 NULL));
+
   sysprof_profiler_record_async (profiler, writer, NULL, record_cb, NULL);
 
   g_unix_signal_add (SIGINT, sigint_handler, main_loop);

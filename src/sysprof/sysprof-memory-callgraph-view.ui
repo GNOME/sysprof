@@ -63,6 +63,36 @@
             </property>
           </object>
         </child>
+        <child>
+          <object class="GtkColumnViewColumn" id="descendants_hits_column">
+            <property name="title" translatable="yes">Size</property>
+            <property name="factory">
+              <object class="GtkBuilderListItemFactory">
+                <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkLabel" id="progress">
+        <property name="xalign">1</property>
+        <binding name="label">
+          <closure type="gchararray" function="get_total_size">
+            <lookup name="item">GtkListItem</lookup>
+          </closure>
+        </binding>
+        <attributes>
+          <attribute name="scale" value=".9"/>
+        </attributes>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                </property>
+              </object>
+            </property>
+          </object>
+        </child>
       </object>
     </child>
     <child internal-child="functions_column_view">

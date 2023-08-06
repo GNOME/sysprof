@@ -318,6 +318,25 @@ sysprof_memory_callgraph_view_load (SysprofCallgraphView *view,
                                   GTK_SORT_DESCENDING);
 }
 
+static char *
+get_total_size (GObject *item)
+{
+  g_autoptr(GObject) row = NULL;
+
+  g_object_get (item, "item", &row, NULL);
+
+  if (GTK_IS_TREE_LIST_ROW (row))
+    {
+      GtkTreeListRow *tree_row = GTK_TREE_LIST_ROW (row);
+      SysprofCallgraphFrame *frame = SYSPROF_CALLGRAPH_FRAME (gtk_tree_list_row_get_item (tree_row));
+      AugmentMemory *sum = sysprof_callgraph_frame_get_augment (frame);
+
+      return g_format_size (sum->total);
+    }
+
+  return NULL;
+}
+
 static void
 sysprof_memory_callgraph_view_class_init (SysprofMemoryCallgraphViewClass *klass)
 {
@@ -347,6 +366,7 @@ sysprof_memory_callgraph_view_class_init (SysprofMemoryCallgraphViewClass *klass
 
   gtk_widget_class_bind_template_callback (widget_class, get_self_fraction);
   gtk_widget_class_bind_template_callback (widget_class, get_total_fraction);
+  gtk_widget_class_bind_template_callback (widget_class, get_total_size);
   gtk_widget_class_bind_template_callback (widget_class, functions_get_self_fraction);
   gtk_widget_class_bind_template_callback (widget_class, functions_get_total_fraction);
 

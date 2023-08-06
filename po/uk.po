@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-36\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-08-05 05:54+0000\n"
-"PO-Revision-Date: 2023-08-05 09:49+0300\n"
+"POT-Creation-Date: 2023-08-06 08:44+0000\n"
+"PO-Revision-Date: 2023-08-06 15:33+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -42,7 +42,7 @@ msgstr ""
 "За допомогою Sysprof ви зможете профілювати програми з метою діагностики та "
 "оптимізації."
 
-#: data/org.gnome.Sysprof.desktop.in.in:5
+#: data/org.gnome.Sysprof.desktop.in.in:5 src/sysprof/sysprof-greeter.ui:58
 msgid "Profiler"
 msgstr "Profiler"
 
@@ -75,7 +75,7 @@ msgid "CSS"
 msgstr "CSS"
 
 #: src/libsysprof/sysprof-category-summary.c:156
-#: src/sysprof/sysprof-window.ui:241
+#: src/sysprof/sysprof-greeter.ui:379 src/sysprof/sysprof-window.ui:241
 msgid "Graphics"
 msgstr "Графіка"
 
@@ -116,7 +116,6 @@ msgid "Main Loop"
 msgstr "Основний цикл"
 
 #: src/libsysprof/sysprof-category-summary.c:186
-#: src/sysprof/sysprof-greeter.ui:84
 msgid "Memory"
 msgstr "Пам'ять"
 
@@ -125,7 +124,6 @@ msgid "Paint"
 msgstr "Малювання"
 
 #: src/libsysprof/sysprof-category-summary.c:192
-#| msgid "System"
 msgid "Type System"
 msgstr "Система введення"
 
@@ -227,7 +225,7 @@ msgstr "Процес %d"
 msgid "Sample"
 msgstr "Зразок"
 
-#: src/libsysprof/sysprof-system-logs.c:171 src/sysprof/sysprof-greeter.ui:275
+#: src/libsysprof/sysprof-system-logs.c:171
 msgid "System Logs"
 msgstr "Журнали системи"
 
@@ -252,7 +250,8 @@ msgid "--merge requires at least 2 filename arguments"
 msgstr "--merge потребує принаймні 2 аргументів назв файлів"
 
 #: src/sysprof-cli/sysprof-cli.c:298
-msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
+msgid ""
+"Disable CPU throttling while profiling [Deprecated for --power-profile]"
 msgstr ""
 "Вимкнути дроселювання процесора під час профілювання [застаріле для --power-"
 "profile]"
@@ -627,263 +626,333 @@ msgstr "Стиснений"
 msgid "CPU"
 msgstr "Процесор"
 
-#: src/sysprof/sysprof-greeter.c:225 src/sysprof/sysprof-greeter.c:290
+#: src/sysprof/sysprof-greeter.c:108
+#| msgid "Remove environment variable"
+msgid "Use KEY=VALUE to set an environment variable"
+msgstr ""
+"Скористайтеся синтаксичною конструкцією КЛЮЧ=ЗНАЧЕННЯ, щоб встановити змінну "
+"середовища"
+
+#: src/sysprof/sysprof-greeter.c:114
+msgid "Keys may not start with a number"
+msgstr "Ключі не повинні починатися з цифри"
+
+#: src/sysprof/sysprof-greeter.c:124
+msgid "Keys may only contain alpha-numerics or underline."
+msgstr ""
+"Ключі можуть містити лише літерно-цифрові символи і символи підкреслювання."
+
+#: src/sysprof/sysprof-greeter.c:249 src/sysprof/sysprof-greeter.c:314
 msgid "Must Capture to Local File"
 msgstr "Слід захоплювати до локального файла"
 
-#: src/sysprof/sysprof-greeter.c:226 src/sysprof/sysprof-greeter.c:291
+#: src/sysprof/sysprof-greeter.c:250 src/sysprof/sysprof-greeter.c:315
 msgid "You must choose a local file to capture using Sysprof"
 msgstr ""
 "Для захоплення даних за допомогою Sysprof вам слід вибрати локальний файл"
 
-#: src/sysprof/sysprof-greeter.c:227 src/sysprof/sysprof-greeter.c:292
+#: src/sysprof/sysprof-greeter.c:251 src/sysprof/sysprof-greeter.c:316
 #: src/sysprof/sysprof-recording-pad.c:115 src/sysprof/sysprof-window.c:524
 msgid "Close"
 msgstr "Закрити"
 
-#: src/sysprof/sysprof-greeter.c:248
+#: src/sysprof/sysprof-greeter.c:272
 #, c-format
 msgid "System Capture from %s.syscap"
 msgstr "Захоплення системи з %s.syscap"
 
-#: src/sysprof/sysprof-greeter.c:252
+#: src/sysprof/sysprof-greeter.c:276
 msgid "Record to File"
 msgstr "Не вдалося записати"
 
-#: src/sysprof/sysprof-greeter.c:253 src/sysprof/sysprof-greeter.ui:27
+#: src/sysprof/sysprof-greeter.c:277
 msgid "Record"
 msgstr "Записати"
 
-#: src/sysprof/sysprof-greeter.c:311 src/sysprof/sysprof-greeter.ui:312
+#: src/sysprof/sysprof-greeter.c:335
 msgid "Open Recording"
 msgstr "Відкрити запис"
 
-#: src/sysprof/sysprof-greeter.c:312 src/sysprof/sysprof-greeter.ui:307
+#: src/sysprof/sysprof-greeter.c:336
 msgid "Open"
 msgstr "Відкрити"
 
-#: src/sysprof/sysprof-greeter.c:316
+#: src/sysprof/sysprof-greeter.c:340
 msgid "Sysprof Capture (*.syscap)"
 msgstr "захоплені дані Sysprof (*.syscap)"
 
-#: src/sysprof/sysprof-greeter.ui:33 src/sysprof/sysprof-samples-section.ui:4
-msgid "Time Profiler"
-msgstr "Профілювання за часом"
+#: src/sysprof/sysprof-greeter.ui:64
+#| msgid "Sample"
+msgid "Sampling"
+msgstr "Дискретизація"
 
-#: src/sysprof/sysprof-greeter.ui:37
+#: src/sysprof/sysprof-greeter.ui:68
 msgid "Sample Native Stacks"
 msgstr "Записати зразок власних стеків"
 
-#: src/sysprof/sysprof-greeter.ui:38
+#: src/sysprof/sysprof-greeter.ui:69
 msgid "Record native stack traces using a sampling profiler"
 msgstr ""
 "Записати власні трасування стека за допомогою засобу профілювання зразків"
 
-#: src/sysprof/sysprof-greeter.ui:49
-msgid "Performance Profile"
-msgstr "Профілювання за швидкодією"
-
-#: src/sysprof/sysprof-greeter.ui:50
-msgid "Hold the performance profile for the duration of the recording"
-msgstr "Затримати профілювання швидкодії на тривалість запису"
-
-#: src/sysprof/sysprof-greeter.ui:60
+#: src/sysprof/sysprof-greeter.ui:85
 msgid "Sample JavaScript Stacks"
 msgstr "Зразок стосів JavaScript"
 
-#: src/sysprof/sysprof-greeter.ui:61
+#: src/sysprof/sysprof-greeter.ui:86
 msgid "Record JavaScript stack traces using a sampling profiler"
 msgstr ""
 "Записати трасування стека JavaScript за допомогою засобу профілювання зразків"
 
-#: src/sysprof/sysprof-greeter.ui:71
-msgid "This feature is only supported when launching a GJS-based application."
+#: src/sysprof/sysprof-greeter.ui:97
+msgid ""
+"Sysprof must launch your application to record JavaScript stacks using GJS."
 msgstr ""
-"Підтримку цієї можливості передбачено лише при запуску програм на основі GJS."
+"Sysprof має запустити вашу програму для записування стеків JavaScript за"
+" допомогою GJS."
 
-#: src/sysprof/sysprof-greeter.ui:88
-msgid "System Memory Usage"
-msgstr "Використання пам'яті системи"
+#: src/sysprof/sysprof-greeter.ui:110
+#| msgid "Tracer"
+msgid "Tracing"
+msgstr "Трасування"
 
-#: src/sysprof/sysprof-greeter.ui:89
-msgid "Record coarse-grained counters about system memory usage"
-msgstr "Записати грубі дані обліку щодо використання пам'яті системи"
-
-#: src/sysprof/sysprof-greeter.ui:105
+#: src/sysprof/sysprof-greeter.ui:114
 msgid "Trace Memory Allocations"
 msgstr "Трасувати розміщення у пам'яті"
 
-#: src/sysprof/sysprof-greeter.ui:106
+#: src/sysprof/sysprof-greeter.ui:115
 msgid ""
 "Record a strack trace when <tt>malloc</tt> or similar functions are used"
 msgstr ""
 "Записати трасування стека, якщо використано <tt>malloc</tt> або подібні "
 "функції"
 
-#: src/sysprof/sysprof-greeter.ui:116
-msgid "Memory tracing is only supported when launching an application."
-msgstr "Підтримку трасування пам'яті передбачено лише при запуску програми."
-
-#: src/sysprof/sysprof-greeter.ui:129
-msgid "Display &amp; Graphics"
-msgstr "Показ і графіка"
-
-#: src/sysprof/sysprof-greeter.ui:133
-msgid "Compositor Frame Timings"
-msgstr "Облік часу для кадрів засобу композиції"
-
-#: src/sysprof/sysprof-greeter.ui:134
-msgid "Record frame-timing information from the GNOME Shell compositor"
-msgstr "Записати дані щодо часу для кадрів від засобу композиції GNOME Shell"
-
-#: src/sysprof/sysprof-greeter.ui:150
-msgid "Detect Application Hangs"
-msgstr "Виявляти зависання програми"
-
-#: src/sysprof/sysprof-greeter.ui:151
-msgid "Detect hangs in the application main loop"
-msgstr "Виявляти зависання у основному циклі програми"
-
-#: src/sysprof/sysprof-greeter.ui:161
-msgid ""
-"Hang detection is only supported when launching a GTK-based application."
+#: src/sysprof/sysprof-greeter.ui:126
+#| msgid "Sysprof is busy analyzing memory allocations."
+msgid "Sysprof must launch your application to record memory allocations."
 msgstr ""
-"Підтримку виявлення зависань передбачено лише при запуску програм на основі "
-"GTK."
+"Sysprof має запустити вашу програму для записування розподілу пам'яті."
 
-#: src/sysprof/sysprof-greeter.ui:174
-msgid "D-Bus Profiler"
-msgstr "Профілятор D-Bus"
+#: src/sysprof/sysprof-greeter.ui:144 src/sysprof/sysprof-greeter.ui:149
+#| msgid "Allocation"
+msgid "Application"
+msgstr "Програма"
 
-#: src/sysprof/sysprof-greeter.ui:178
-msgid "D-Bus Session Bus"
-msgstr "Шина сеансу D-Bus"
+#: src/sysprof/sysprof-greeter.ui:152
+#: src/sysprof/sysprof-processes-section.ui:316
+msgid "Command Line"
+msgstr "Командний рядок"
 
-#: src/sysprof/sysprof-greeter.ui:179
-msgid "Record messages on the D-Bus user session bus"
-msgstr "Записати повідомлення на каналі сеансу користувача D-Bus"
+#: src/sysprof/sysprof-greeter.ui:158
+msgid "The application will be run as a subprocess of Sysprof."
+msgstr "програму буде запущено як підпроцес Sysprof."
 
-#: src/sysprof/sysprof-greeter.ui:190
-msgid "D-Bus System Bus"
-msgstr "Системна шина D-Bus"
+#: src/sysprof/sysprof-greeter.ui:171
+msgid "Environment"
+msgstr "Середовище"
 
-#: src/sysprof/sysprof-greeter.ui:191
-msgid "Record messages on the D-Bus system bus"
-msgstr "Записати повідомлення на каналі системи D-Bus"
+#: src/sysprof/sysprof-greeter.ui:175
+#| msgid "Environment"
+msgid "Clear Environment"
+msgstr "Спорожнити середовище"
 
-#: src/sysprof/sysprof-greeter.ui:201
-msgid ""
-"Recording your session bus may include sensitive information such as "
-"keyboard usage."
-msgstr ""
-"Під час записування обміну даними шиною вашого сеансу може бути збережено"
-" конфіденційні дані, зокрема щодо користування клавіатурою."
+#: src/sysprof/sysprof-greeter.ui:176
+#| msgid "Set GTK_TRACE_FD environment to trace a GTK application"
+msgid "Clear the environment before launching application"
+msgstr "Спорожнити середовище до запуску програми"
 
-#: src/sysprof/sysprof-greeter.ui:214
+#: src/sysprof/sysprof-greeter.ui:202
+msgid "Add _Variable"
+msgstr "Додати з_мінну"
+
+#: src/sysprof/sysprof-greeter.ui:208
+msgid "Add Variable"
+msgstr "Додати змінну"
+
+#: src/sysprof/sysprof-greeter.ui:209
+msgid "_Add"
+msgstr "_Додати"
+
+#: src/sysprof/sysprof-greeter.ui:226 src/sysprof/sysprof-greeter.ui:231
 msgid "Counters"
 msgstr "Лічильники"
 
-#: src/sysprof/sysprof-greeter.ui:218
+#: src/sysprof/sysprof-greeter.ui:235
+msgid "CPU Usage"
+msgstr "Вжиток процесора"
+
+#: src/sysprof/sysprof-greeter.ui:236
+#| msgid "Record coarse-grained counters about energy usage in Watts"
+msgid "Record coarse-grained counters about CPU usage and frequency"
+msgstr "Записати грубі дані обліку щодо використання та частоти процесора"
+
+#: src/sysprof/sysprof-greeter.ui:248
+#| msgid "Memory Used"
+msgid "Memory Usage"
+msgstr "Використання пам'яті"
+
+#: src/sysprof/sysprof-greeter.ui:249
+msgid "Record coarse-grained counters about system memory usage"
+msgstr "Записати грубі дані обліку щодо використання пам'яті системи"
+
+#: src/sysprof/sysprof-greeter.ui:261
 msgid "Disk Usage"
 msgstr "Використання диска"
 
-#: src/sysprof/sysprof-greeter.ui:219
+#: src/sysprof/sysprof-greeter.ui:262
 msgid "Record coarse-grained counters about storage throughput"
 msgstr "Записати грубі дані обліку щодо продуктивності сховища даних"
 
-#: src/sysprof/sysprof-greeter.ui:231
+#: src/sysprof/sysprof-greeter.ui:274
 msgid "Network Usage"
 msgstr "Використання мережі"
 
-#: src/sysprof/sysprof-greeter.ui:232
+#: src/sysprof/sysprof-greeter.ui:275
 msgid "Record coarse-grained counters about network traffic"
 msgstr "Записати грубі дані обліку щодо обміну даними мережею"
 
-#: src/sysprof/sysprof-greeter.ui:244
+#: src/sysprof/sysprof-greeter.ui:291
 msgid "Energy Usage"
 msgstr "Споживання енергії"
 
-#: src/sysprof/sysprof-greeter.ui:245
+#: src/sysprof/sysprof-greeter.ui:292
 msgid "Record coarse-grained counters about energy usage in Watts"
 msgstr "Записати грубі дані обліку щодо споживання енергії у ватах"
 
-#: src/sysprof/sysprof-greeter.ui:257
+#: src/sysprof/sysprof-greeter.ui:304
 msgid "Battery Charge"
 msgstr "Заряд акумулятора"
 
-#: src/sysprof/sysprof-greeter.ui:258
+#: src/sysprof/sysprof-greeter.ui:305
 msgid "Record coarse-grained counters about battery charge or discharge rates"
 msgstr "Записати грубий облік щодо швидкості заряджання і розряджання батареї"
 
-#: src/sysprof/sysprof-greeter.ui:271
+#: src/sysprof/sysprof-greeter.ui:323 src/sysprof/sysprof-greeter.ui:328
+#: src/sysprof/sysprof-window.ui:211
+msgid "D-Bus"
+msgstr "D-Bus"
+
+#: src/sysprof/sysprof-greeter.ui:332
+#| msgid "D-Bus System Bus"
+msgid "Record System Bus"
+msgstr "Записувати системну шину"
+
+#: src/sysprof/sysprof-greeter.ui:333
+msgid "Record messages on the D-Bus system bus"
+msgstr "Записати повідомлення на каналі системи D-Bus"
+
+#: src/sysprof/sysprof-greeter.ui:349
+#| msgid "D-Bus Session Bus"
+msgid "Record Session Bus"
+msgstr "Записувати шину сеансу"
+
+#: src/sysprof/sysprof-greeter.ui:350
+msgid "Record messages on the D-Bus user session bus"
+msgstr "Записати повідомлення на каналі сеансу користувача D-Bus"
+
+#: src/sysprof/sysprof-greeter.ui:361
+#| msgid ""
+#| "Recording your session bus may include sensitive information such as "
+#| "keyboard usage."
+msgid ""
+"The session bus may contain sensitive information such as keyboard usage and "
+"passwords."
+msgstr ""
+"У даних шини сеансу може бути збережено конфіденційні дані, зокрема щодо"
+" користування клавіатурою та паролів."
+
+#: src/sysprof/sysprof-greeter.ui:384
+msgid "Timings"
+msgstr "Хронометражі"
+
+#: src/sysprof/sysprof-greeter.ui:388
+msgid "Compositor Frame Timings"
+msgstr "Облік часу для кадрів засобу композиції"
+
+#: src/sysprof/sysprof-greeter.ui:389
+msgid "Record frame-timing information from the GNOME Shell compositor"
+msgstr "Записати дані щодо часу для кадрів від засобу композиції GNOME Shell"
+
+#: src/sysprof/sysprof-greeter.ui:400
+msgid ""
+"Applications launched by Sysprof will automatically collect GTK frame timing "
+"information."
+msgstr ""
+"Програми, які запущено Sysprof, автоматично збиратимуть дані щодо часових"
+" параметрів фрейму GTK."
+
+#: src/sysprof/sysprof-greeter.ui:445
 msgid "System"
 msgstr "Система"
 
-#: src/sysprof/sysprof-greeter.ui:276
+#: src/sysprof/sysprof-greeter.ui:450
+#| msgid "Time Profiler"
+msgid "Power Profile"
+msgstr "Профіль живлення"
+
+#: src/sysprof/sysprof-greeter.ui:453
+#| msgid "Record to File"
+msgid "Record with Power Profile"
+msgstr "Записувати з профілем живлення"
+
+#: src/sysprof/sysprof-greeter.ui:454
+#| msgid "Hold the performance profile for the duration of the recording"
+msgid ""
+"Hold the power profile for the duration of the recording and restore when "
+"finished"
+msgstr ""
+"Затримати дію профілю споживання енергії на тривалість запису і відновлювати"
+" профіль після завершення обробки"
+
+#: src/sysprof/sysprof-greeter.ui:461
+msgid "Logging"
+msgstr "Журналювання"
+
+#: src/sysprof/sysprof-greeter.ui:465
+#| msgid "System Logs"
+msgid "Record System Log"
+msgstr "Записати журнал системи"
+
+#: src/sysprof/sysprof-greeter.ui:466
 msgid "Watch the system log for new messages and record them"
 msgstr "Стежити за новими повідомленнями у журналі системи і записувати їх"
 
-#: src/sysprof/sysprof-greeter.ui:288
-msgid "Bundle Symbols"
-msgstr "Пакетувати символи"
-
-#: src/sysprof/sysprof-greeter.ui:289
-msgid "Make recording shareable by bundling decoded symbols"
-msgstr "Зробити запис поширюваним пакетуванням декодованих символів"
-
-#: src/sysprof/sysprof-greeter.ui:316
-msgid "Capture File"
-msgstr "Файл захоплених даних"
-
-#: src/sysprof/sysprof-greeter.ui:338
+#: src/sysprof/sysprof-greeter.ui:479
 msgid "Symbols"
 msgstr "Символи"
 
-#: src/sysprof/sysprof-greeter.ui:342
-msgid "Ignore Bundled Symbols"
-msgstr "Ігнорувати пакетовані символи"
+#: src/sysprof/sysprof-greeter.ui:483
+msgid "Bundle Symbols"
+msgstr "Пакетувати символи"
 
-#: src/sysprof/sysprof-greeter.ui:343
-msgid "Do not use embedded symbols that were resolved on the capture system"
+#: src/sysprof/sysprof-greeter.ui:484
+#| msgid "Make recording shareable by bundling decoded symbols"
+msgid "Make recording shareable by symbolizing stack traces after recording"
 msgstr ""
-"Не використовувати вбудованих символів, які було визначено на системі "
-"захоплення"
+"Зробити запис придатним до розповсюдження записом символів у трасування"
+" стеку після завершення записування"
 
-#: src/sysprof/sysprof-greeter.ui:358
-msgid "Override Kernel Symbols"
-msgstr "Перевизначити символи ядра"
+#: src/sysprof/sysprof-greeter.ui:512
+#| msgid "_Open Capture…"
+msgid "_Open File…"
+msgstr "_Відкрити файл…"
 
-#: src/sysprof/sysprof-greeter.ui:359
-msgid "Specify a “kallsyms” file overriding what is bundled with a recording"
-msgstr ""
-"Вказати файл «kallsyms», який перевизначає те, що пакетовано із записом"
-
-#: src/sysprof/sysprof-greeter.ui:375
-msgid "Symbol Directories"
-msgstr "Каталоги символів"
-
-#: src/sysprof/sysprof-greeter.ui:378
-msgid "Additional symbol directories to use when symbolizing stack traces."
-msgstr ""
-"Додаткові каталоги символів, якими слід скористатися при пов'язуванні із "
-"символами трасувань стека."
-
-#: src/sysprof/sysprof-greeter.ui:389
-msgid "Add Symbol Directory"
-msgstr "Додати каталог символів"
-
-#: src/sysprof/sysprof-greeter.ui:416
+#: src/sysprof/sysprof-greeter.ui:519
 msgid "Record to _File…"
 msgstr "Записати до _файла…"
 
-#: src/sysprof/sysprof-greeter.ui:424
-msgid "_Record to Memory"
+#: src/sysprof/sysprof-greeter.ui:526
+#| msgid "_Record to Memory"
+msgid "Record to _Memory"
 msgstr "_Записати до пам'яті"
 
-#: src/sysprof/sysprof-greeter.ui:450
-#| msgid "Open Capture…"
-msgid "_Open Capture…"
-msgstr "_Відкрити захоплене…"
+#: src/sysprof/sysprof-greeter.ui:541 src/sysprof/sysprof-window.ui:324
+msgid "Help"
+msgstr "Довідка"
+
+#: src/sysprof/sysprof-greeter.ui:546 src/sysprof/sysprof-window.ui:329
+msgid "About Sysprof"
+msgstr "Про Sysprof"
 
 #: src/sysprof/sysprof-logs-section.c:95
 msgid "Critical"
@@ -1086,10 +1155,6 @@ msgstr "Діаграма процесів"
 msgid "Process Table"
 msgstr "Таблиця процесів"
 
-#: src/sysprof/sysprof-processes-section.ui:316
-msgid "Command Line"
-msgstr "Командний рядок"
-
 #. translators: this expands to the number of events recorded by the profiler as an indicator of progress
 #: src/sysprof/sysprof-recording-pad.c:56
 msgid "%"
@@ -1113,6 +1178,10 @@ msgstr ""
 #: src/sysprof/sysprof-recording-pad.ui:69
 msgid "Stop Recording"
 msgstr "Припинити запис"
+
+#: src/sysprof/sysprof-samples-section.ui:4
+msgid "Time Profiler"
+msgstr "Профілювання за часом"
 
 #: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:98
 msgid "Seek Backward"
@@ -1159,10 +1228,6 @@ msgstr ""
 "\n"
 "%s"
 
-#: src/sysprof/sysprof-window.ui:211
-msgid "D-Bus"
-msgstr "D-Bus"
-
 #: src/sysprof/sysprof-window.ui:231
 msgid "Energy"
 msgstr "Енергія"
@@ -1191,19 +1256,71 @@ msgstr "Зберегти як…"
 msgid "Preferences"
 msgstr "Налаштування"
 
-#: src/sysprof/sysprof-window.ui:324
-msgid "Help"
-msgstr "Довідка"
+#~ msgid "Performance Profile"
+#~ msgstr "Профілювання за швидкодією"
 
-#: src/sysprof/sysprof-window.ui:329
-msgid "About Sysprof"
-msgstr "Про Sysprof"
+#~ msgid ""
+#~ "This feature is only supported when launching a GJS-based application."
+#~ msgstr ""
+#~ "Підтримку цієї можливості передбачено лише при запуску програм на основі "
+#~ "GJS."
+
+#~ msgid "System Memory Usage"
+#~ msgstr "Використання пам'яті системи"
+
+#~ msgid "Memory tracing is only supported when launching an application."
+#~ msgstr "Підтримку трасування пам'яті передбачено лише при запуску програми."
+
+#~ msgid "Display &amp; Graphics"
+#~ msgstr "Показ і графіка"
+
+#~ msgid "Detect Application Hangs"
+#~ msgstr "Виявляти зависання програми"
+
+#~ msgid "Detect hangs in the application main loop"
+#~ msgstr "Виявляти зависання у основному циклі програми"
+
+#~ msgid ""
+#~ "Hang detection is only supported when launching a GTK-based application."
+#~ msgstr ""
+#~ "Підтримку виявлення зависань передбачено лише при запуску програм на "
+#~ "основі GTK."
+
+#~ msgid "D-Bus Profiler"
+#~ msgstr "Профілятор D-Bus"
+
+#~ msgid "Capture File"
+#~ msgstr "Файл захоплених даних"
+
+#~ msgid "Ignore Bundled Symbols"
+#~ msgstr "Ігнорувати пакетовані символи"
+
+#~ msgid "Do not use embedded symbols that were resolved on the capture system"
+#~ msgstr ""
+#~ "Не використовувати вбудованих символів, які було визначено на системі "
+#~ "захоплення"
+
+#~ msgid "Override Kernel Symbols"
+#~ msgstr "Перевизначити символи ядра"
+
+#~ msgid ""
+#~ "Specify a “kallsyms” file overriding what is bundled with a recording"
+#~ msgstr ""
+#~ "Вказати файл «kallsyms», який перевизначає те, що пакетовано із записом"
+
+#~ msgid "Symbol Directories"
+#~ msgstr "Каталоги символів"
+
+#~ msgid "Additional symbol directories to use when symbolizing stack traces."
+#~ msgstr ""
+#~ "Додаткові каталоги символів, якими слід скористатися при пов'язуванні із "
+#~ "символами трасувань стека."
+
+#~ msgid "Add Symbol Directory"
+#~ msgstr "Додати каталог символів"
 
 #~ msgid "Recent"
 #~ msgstr "Нещодавні"
-
-#~ msgid "CPU Usage"
-#~ msgstr "Вжиток процесора"
 
 #~ msgid "Open a perf event stream"
 #~ msgstr "Відкриття потоку подій швидкодії"
@@ -1362,9 +1479,6 @@ msgstr "Про Sysprof"
 #~ msgid "Details"
 #~ msgstr "Подробиці"
 
-#~ msgid "Remove environment variable"
-#~ msgstr "Вилучити змінну середовища"
-
 #~ msgid "New environment variable…"
 #~ msgstr "Створити змінну середовища…"
 
@@ -1375,9 +1489,6 @@ msgstr "Про Sysprof"
 #~ "Something unexpectedly went wrong while trying to profile your system."
 #~ msgstr ""
 #~ "Під час спроби профілювання вашої системи сталося щось неочікувано погане."
-
-#~ msgid "Timings"
-#~ msgstr "Хронометражі"
 
 #~ msgid "End"
 #~ msgstr "Кінець"
@@ -1418,12 +1529,6 @@ msgstr "Про Sysprof"
 
 #~ msgid "Analyzing Memory Allocations"
 #~ msgstr "Аналізуємо розміщення у пам'яті"
-
-#~ msgid "Sysprof is busy analyzing memory allocations."
-#~ msgstr "Sysprof зайнято аналізом розміщення даних у пам'яті."
-
-#~ msgid "Memory Used"
-#~ msgstr "Використано пам'яті"
 
 #~ msgid "GNOME Shell"
 #~ msgstr "GNOME Shell"
@@ -1691,9 +1796,6 @@ msgstr "Про Sysprof"
 
 #~ msgid "Enable to launch a program of your choosing before profiling."
 #~ msgstr "Увімкнути запуск вибраної вами програми до профілювання."
-
-#~ msgid "Environment"
-#~ msgstr "Середовище"
 
 #~ msgid ""
 #~ "If disabled, your CPU will be placed in performance mode. It will be "

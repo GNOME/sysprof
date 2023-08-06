@@ -22,9 +22,9 @@
       </object>
     </child>
     <property name="content">
-      <object class="GtkBox">
-        <property name="orientation">vertical</property>
-        <child>
+      <object class="AdwToolbarView">
+        <property name="bottom-bar-style">raised</property>
+        <child type="top">
           <object class="AdwHeaderBar">
             <property name="title-widget">
               <object class="AdwViewSwitcher">
@@ -33,7 +33,7 @@
             </property>
           </object>
         </child>
-        <child>
+        <property name="content">
           <object class="GtkBox">
             <child>
               <object class="GtkScrolledWindow">
@@ -499,8 +499,8 @@
               </object>
             </child>
           </object>
-        </child>
-        <child>
+        </property>
+        <child type="bottom">
           <object class="GtkBox">
             <property name="homogeneous">true</property>
             <style>

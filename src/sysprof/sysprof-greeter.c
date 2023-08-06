@@ -26,6 +26,7 @@
 #include <sysprof-capture.h>
 #include <sysprof-profiler.h>
 
+#include "sysprof-entry-popover.h"
 #include "sysprof-greeter.h"
 #include "sysprof-recording-pad.h"
 
@@ -36,12 +37,12 @@ struct _SysprofGreeter
   AdwWindow           parent_instance;
 
   GFile              *file;
+  GtkStringList      *envvars;
 
   AdwViewStack       *view_stack;
-  GtkWidget          *open_buttons;
-  GtkWidget          *record_buttons;
+  GtkListBox         *sidebar_list_box;
   AdwPreferencesPage *record_page;
-  GtkWidget          *open_page;
+  GtkListBox         *app_environment;
   GtkSwitch          *sample_native_stacks;
   GtkSwitch          *sample_javascript_stacks;
   GtkSwitch          *record_disk_usage;
@@ -63,22 +64,85 @@ G_DEFINE_FINAL_TYPE (SysprofGreeter, sysprof_greeter, ADW_TYPE_WINDOW)
 
 static GParamSpec *properties [N_PROPS];
 
-static void
-sysprof_greeter_view_stack_notify_visible_child (SysprofGreeter *self,
-                                                 GParamSpec     *pspec,
-                                                 AdwViewStack   *stack)
+#define STRV_INIT(...) (const char * const[]){__VA_ARGS__,NULL}
+
+static inline gboolean
+str_empty0 (const char *str)
 {
-  GtkWidget *visible_child;
+  return str == NULL || str[0] == 0;
+}
+
+static void
+on_env_items_changed_cb (SysprofGreeter *self,
+                         guint           position,
+                         guint           removed,
+                         guint           added,
+                         GListModel     *model)
+{
+  g_assert (SYSPROF_IS_GREETER (self));
+  g_assert (G_IS_LIST_MODEL (model));
+
+  gtk_widget_set_visible (GTK_WIDGET (self->app_environment),
+                          g_list_model_get_n_items (model) > 0);
+}
+
+static void
+on_env_entry_changed_cb (SysprofGreeter      *self,
+                         SysprofEntryPopover *popover)
+{
+  const char *errstr = NULL;
+  gboolean valid = FALSE;
+  const char *text;
+  const char *eq;
 
   g_assert (SYSPROF_IS_GREETER (self));
-  g_assert (ADW_IS_VIEW_STACK (stack));
+  g_assert (SYSPROF_IS_ENTRY_POPOVER (popover));
 
-  visible_child = adw_view_stack_get_visible_child (stack);
+  text = sysprof_entry_popover_get_text (popover);
+  eq = strchr (text, '=');
 
-  gtk_widget_set_visible (GTK_WIDGET (self->record_buttons),
-                          GTK_WIDGET (self->record_page) == visible_child);
-  gtk_widget_set_visible (GTK_WIDGET (self->open_buttons),
-                          GTK_WIDGET (self->open_page) == visible_child);
+  if (!str_empty0 (text) && eq == NULL)
+    errstr = _("Use KEY=VALUE to set an environment variable");
+
+  if (eq != NULL && eq != text)
+    {
+      if (g_unichar_isdigit (g_utf8_get_char (text)))
+        {
+          errstr = _("Keys may not start with a number");
+          goto failure;
+
+        }
+      for (const char *iter = text; iter < eq; iter = g_utf8_next_char (iter))
+        {
+          gunichar ch = g_utf8_get_char (iter);
+
+          if (!g_unichar_isalnum (ch) && ch != '_')
+            {
+              errstr = _("Keys may only contain alpha-numerics or underline.");
+              goto failure;
+            }
+        }
+
+      if (g_ascii_isalpha (*text))
+        valid = TRUE;
+    }
+
+failure:
+  sysprof_entry_popover_set_ready (popover, valid);
+  sysprof_entry_popover_set_message (popover, errstr);
+}
+
+static void
+on_env_entry_activate_cb (SysprofGreeter      *self,
+                          const char          *text,
+                          SysprofEntryPopover *popover)
+{
+  g_assert (SYSPROF_IS_GREETER (self));
+  g_assert (SYSPROF_IS_ENTRY_POPOVER (popover));
+  g_assert (GTK_IS_STRING_LIST (self->envvars));
+
+  gtk_string_list_append (self->envvars, text);
+  sysprof_entry_popover_set_text (popover, "");
 }
 
 static SysprofProfiler *
@@ -342,11 +406,127 @@ get_file_path (gpointer  unused,
 }
 
 static void
+sidebar_row_activated_cb (SysprofGreeter *self,
+                          GtkListBoxRow  *row,
+                          GtkListBox     *list_box)
+{
+  AdwViewStackPage *page = g_object_get_data (G_OBJECT (row), "GREETER_PAGE");
+
+  adw_view_stack_set_visible_child (self->view_stack,
+                                    adw_view_stack_page_get_child (page));
+  //adw_window_title_set_title (self->view_title,
+                              //adw_view_stack_page_get_title (page));
+}
+
+static GtkWidget *
+sysprof_greeter_create_sidebar_row (gpointer item,
+                                    gpointer user_data)
+{
+  AdwViewStackPage *page = item;
+  GtkLabel *label;
+  GtkBox *box;
+  GtkImage *image;
+  GtkWidget *row;
+
+  g_assert (ADW_IS_VIEW_STACK_PAGE (page));
+
+  box = g_object_new (GTK_TYPE_BOX,
+                      "spacing", 6,
+                      NULL);
+  image = g_object_new (GTK_TYPE_IMAGE,
+                        "icon-name", adw_view_stack_page_get_icon_name (page),
+                        NULL);
+  label = g_object_new (GTK_TYPE_LABEL,
+                        "label", adw_view_stack_page_get_title (page),
+                        "use-underline", TRUE,
+                        "xalign", .0f,
+                        NULL);
+  gtk_box_append (box, GTK_WIDGET (image));
+  gtk_box_append (box, GTK_WIDGET (label));
+  row = g_object_new (GTK_TYPE_LIST_BOX_ROW,
+                      "child", box,
+                      NULL);
+  g_object_set_data_full (G_OBJECT (row),
+                          "GREETER_PAGE",
+                          g_object_ref (page),
+                          g_object_unref);
+  return row;
+}
+
+static void
+delete_envvar_cb (SysprofGreeter *self,
+                  GtkButton      *button)
+{
+  const char *envvar;
+  guint n_items;
+
+  g_assert (SYSPROF_IS_GREETER (self));
+  g_assert (GTK_IS_BUTTON (button));
+
+  envvar = g_object_get_data (G_OBJECT (button), "ENVVAR");
+  n_items = g_list_model_get_n_items (G_LIST_MODEL (self->envvars));
+
+  for (guint i = 0; i < n_items; i++)
+    {
+      g_autoptr(GtkStringObject) str = g_list_model_get_item (G_LIST_MODEL (self->envvars), i);
+
+      if (g_strcmp0 (envvar, gtk_string_object_get_string (str)) == 0)
+        {
+          gtk_string_list_remove (self->envvars, i);
+          break;
+        }
+    }
+}
+
+static GtkWidget *
+create_envvar_row_cb (gpointer item,
+                      gpointer user_data)
+{
+  SysprofGreeter *self = user_data;
+  GtkStringObject *obj = item;
+  const char *str;
+  g_autofree char *markup = NULL;
+  g_autofree char *escaped = NULL;
+  AdwActionRow *row;
+  GtkButton *button;
+
+  g_assert (SYSPROF_IS_GREETER (self));
+  g_assert (GTK_IS_STRING_OBJECT (obj));
+
+  str = gtk_string_object_get_string (obj);
+  escaped = g_markup_escape_text (str, -1);
+  markup = g_strdup_printf ("<tt>%s</tt>", escaped);
+  row = g_object_new (ADW_TYPE_ACTION_ROW,
+                      "title", markup,
+                      "title-selectable", TRUE,
+                      NULL);
+  button = g_object_new (GTK_TYPE_BUTTON,
+                         "icon-name", "list-remove-symbolic",
+                         "css-classes", STRV_INIT ("flat", "circular"),
+                         "valign", GTK_ALIGN_CENTER,
+                         NULL);
+  g_object_set_data_full (G_OBJECT (button),
+                          "ENVVAR",
+                          g_strdup (str),
+                          g_free);
+  g_signal_connect_object (button,
+                           "clicked",
+                           G_CALLBACK (delete_envvar_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+  adw_action_row_add_suffix (row, GTK_WIDGET (button));
+
+  return GTK_WIDGET (row);
+}
+
+static void
 sysprof_greeter_dispose (GObject *object)
 {
   SysprofGreeter *self = (SysprofGreeter *)object;
 
   gtk_widget_dispose_template (GTK_WIDGET (self), SYSPROF_TYPE_GREETER);
+
+  g_clear_object (&self->envvars);
 
   G_OBJECT_CLASS (sysprof_greeter_parent_class)->dispose (object);
 }
@@ -408,9 +588,8 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-greeter.ui");
 
+  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, app_environment);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, bundle_symbols);
-  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, open_buttons);
-  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, open_page);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_compositor);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_disk_usage);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_network_usage);
@@ -420,21 +599,48 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_system_logs);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, sample_native_stacks);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, sample_javascript_stacks);
-  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_buttons);
+  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, sidebar_list_box);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, view_stack);
 
-  gtk_widget_class_bind_template_callback (widget_class, sysprof_greeter_view_stack_notify_visible_child);
+  gtk_widget_class_bind_template_callback (widget_class, sidebar_row_activated_cb);
   gtk_widget_class_bind_template_callback (widget_class, get_file_path);
+  gtk_widget_class_bind_template_callback (widget_class, on_env_entry_activate_cb);
+  gtk_widget_class_bind_template_callback (widget_class, on_env_entry_changed_cb);
 
   gtk_widget_class_install_action (widget_class, "win.record-to-memory", NULL, sysprof_greeter_record_to_memory_action);
   gtk_widget_class_install_action (widget_class, "win.record-to-file", NULL, sysprof_greeter_record_to_file_action);
   gtk_widget_class_install_action (widget_class, "win.select-file", NULL, sysprof_greeter_select_file_action);
+
+  g_type_ensure (SYSPROF_TYPE_ENTRY_POPOVER);
 }
 
 static void
 sysprof_greeter_init (SysprofGreeter *self)
 {
+  GtkListBoxRow *row;
+
+  self->envvars = gtk_string_list_new (NULL);
+  g_signal_connect_object (self->envvars,
+                           "items-changed",
+                           G_CALLBACK (on_env_items_changed_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  gtk_list_box_bind_model (self->sidebar_list_box,
+                           G_LIST_MODEL (adw_view_stack_get_pages (self->view_stack)),
+                           sysprof_greeter_create_sidebar_row,
+                           NULL, NULL);
+
+  gtk_list_box_bind_model (self->app_environment,
+                           G_LIST_MODEL (self->envvars),
+                           create_envvar_row_cb,
+                           self, NULL);
+
+  row = gtk_list_box_get_row_at_index (self->sidebar_list_box, 0);
+  gtk_list_box_select_row (self->sidebar_list_box, row);
+  sidebar_row_activated_cb (self, row, self->sidebar_list_box);
 }
 
 GtkWidget *
@@ -452,7 +658,7 @@ sysprof_greeter_set_page (SysprofGreeter     *self,
   switch (page)
     {
     case SYSPROF_GREETER_PAGE_OPEN:
-      adw_view_stack_set_visible_child (self->view_stack, GTK_WIDGET (self->open_page));
+      //adw_view_stack_set_visible_child (self->view_stack, GTK_WIDGET (self->open_page));
       break;
 
     default:

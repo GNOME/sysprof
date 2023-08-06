@@ -18,6 +18,7 @@ sysprof_sources = [
   'sysprof-dbus-utility.c',
   'sysprof-duplex-layer.c',
   'sysprof-energy-section.c',
+  'sysprof-entry-popover.c',
   'sysprof-files-section.c',
   'sysprof-frame-utility.c',
   'sysprof-graphics-section.c',

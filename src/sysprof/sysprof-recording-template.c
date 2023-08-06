@@ -38,6 +38,7 @@ struct _SysprofRecordingTemplate
   guint disk_usage : 1;
   guint energy_usage : 1;
   guint frame_timings : 1;
+  guint graphics_info : 1;
   guint javascript_stacks : 1;
   guint memory_allocations : 1;
   guint memory_usage : 1;
@@ -60,6 +61,7 @@ enum {
   PROP_ENERGY_USAGE,
   PROP_ENVIRON,
   PROP_FRAME_TIMINGS,
+  PROP_GRAPHICS_INFO,
   PROP_JAVASCRIPT_STACKS,
   PROP_MEMORY_ALLOCATIONS,
   PROP_MEMORY_USAGE,
@@ -137,6 +139,10 @@ sysprof_recording_template_get_property (GObject    *object,
 
     case PROP_FRAME_TIMINGS:
       g_value_set_boolean (value, self->frame_timings);
+      break;
+
+    case PROP_GRAPHICS_INFO:
+      g_value_set_boolean (value, self->graphics_info);
       break;
 
     case PROP_JAVASCRIPT_STACKS:
@@ -229,6 +235,10 @@ sysprof_recording_template_set_property (GObject      *object,
 
     case PROP_FRAME_TIMINGS:
       self->frame_timings = g_value_get_boolean (value);
+      break;
+
+    case PROP_GRAPHICS_INFO:
+      self->graphics_info = g_value_get_boolean (value);
       break;
 
     case PROP_JAVASCRIPT_STACKS:
@@ -331,6 +341,11 @@ sysprof_recording_template_class_init (SysprofRecordingTemplateClass *klass)
                           TRUE,
                           (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
+  properties[PROP_GRAPHICS_INFO] =
+    g_param_spec_boolean ("graphics-info", NULL, NULL,
+                          TRUE,
+                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
   properties[PROP_JAVASCRIPT_STACKS] =
     g_param_spec_boolean ("javascript-stacks", NULL, NULL,
                           FALSE,
@@ -386,6 +401,7 @@ sysprof_recording_template_init (SysprofRecordingTemplate *self)
   self->cpu_usage = TRUE;
   self->disk_usage = TRUE;
   self->frame_timings = TRUE;
+  self->graphics_info = TRUE;
   self->memory_usage = TRUE;
   self->native_stacks = TRUE;
   self->network_usage = TRUE;
@@ -523,6 +539,20 @@ sysprof_recording_template_apply (SysprofRecordingTemplate  *self,
                                      sysprof_proxied_instrument_new (G_BUS_TYPE_SESSION,
                                                                      "org.gnome.Shell",
                                                                      "/org/gnome/Sysprof3/Profiler"));
+
+  if (self->graphics_info)
+    {
+      sysprof_profiler_add_instrument (profiler,
+                                       g_object_new (SYSPROF_TYPE_SUBPROCESS_OUTPUT,
+                                                     "stdout-path", "eglinfo",
+                                                     "command-argv", (const char * const[]) {"eglinfo", NULL},
+                                                     NULL));
+      sysprof_profiler_add_instrument (profiler,
+                                       g_object_new (SYSPROF_TYPE_SUBPROCESS_OUTPUT,
+                                                     "stdout-path", "glxinfo",
+                                                     "command-argv", (const char * const[]) {"glxinfo", NULL},
+                                                     NULL));
+    }
 
   if (self->memory_usage)
     sysprof_profiler_add_instrument (profiler, sysprof_memory_usage_new ());

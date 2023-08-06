@@ -435,6 +435,24 @@
                             </child>
                           </object>
                         </child-->
+                        <child>
+                          <object class="AdwPreferencesGroup">
+                            <property name="title" translatable="yes">Devices</property>
+                            <child>
+                              <object class="AdwActionRow">
+                                <property name="activatable-widget">record_graphics_info</property>
+                                <property name="title" translatable="yes">Include Device Information</property>
+                                <property name="subtitle" translatable="yes">Records information about graphics hardware and drivers</property>
+                                <child type="suffix">
+                                  <object class="GtkSwitch" id="record_graphics_info">
+                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="graphics-info"/>
+                                    <property name="valign">center</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
                       </object>
                     </property>
                   </object>

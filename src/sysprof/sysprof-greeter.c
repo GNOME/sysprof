@@ -53,6 +53,7 @@ struct _SysprofGreeter
   GtkSwitch                *record_session_bus;
   GtkSwitch                *record_system_bus;
   GtkSwitch                *bundle_symbols;
+  GtkButton                *record_to_memory;
   SysprofRecordingTemplate *recording_template;
 };
 
@@ -147,56 +148,6 @@ on_env_entry_activate_cb (SysprofGreeter      *self,
   sysprof_entry_popover_set_text (popover, "");
 }
 
-static SysprofProfiler *
-sysprof_greeter_create_profiler (SysprofGreeter *self)
-{
-  g_autoptr(SysprofProfiler) profiler = NULL;
-  g_autoptr(SysprofSpawnable) spawnable = NULL;
-
-  g_assert (SYSPROF_IS_GREETER (self));
-
-  profiler = sysprof_profiler_new ();
-
-  /* TODO: Setup spawnable */
-
-  if (gtk_switch_get_active (self->sample_native_stacks))
-    sysprof_profiler_add_instrument (profiler, sysprof_sampler_new ());
-
-  if (gtk_switch_get_active (self->sample_javascript_stacks))
-    {
-      if (spawnable != NULL)
-        sysprof_profiler_add_instrument (profiler,
-                                         sysprof_tracefd_consumer_new (sysprof_spawnable_add_trace_fd (spawnable,
-                                                                                                       "GJS_TRACE_FD")));
-    }
-
-  if (gtk_switch_get_active (self->record_disk_usage))
-    sysprof_profiler_add_instrument (profiler, sysprof_disk_usage_new ());
-
-  if (gtk_switch_get_active (self->record_network_usage))
-    sysprof_profiler_add_instrument (profiler, sysprof_network_usage_new ());
-
-  if (gtk_switch_get_active (self->record_compositor))
-    sysprof_profiler_add_instrument (profiler,
-                                     sysprof_proxied_instrument_new (G_BUS_TYPE_SESSION,
-                                                                     "org.gnome.Shell",
-                                                                     "/org/gnome/Sysprof3/Profiler"));
-
-  if (gtk_switch_get_active (self->record_system_logs))
-    sysprof_profiler_add_instrument (profiler, sysprof_system_logs_new ());
-
-  if (gtk_switch_get_active (self->bundle_symbols))
-    sysprof_profiler_add_instrument (profiler, sysprof_symbols_bundle_new ());
-
-  if (gtk_switch_get_active (self->record_session_bus))
-    sysprof_profiler_add_instrument (profiler, sysprof_dbus_monitor_new (G_BUS_TYPE_SESSION));
-
-  if (gtk_switch_get_active (self->record_system_bus))
-    sysprof_profiler_add_instrument (profiler, sysprof_dbus_monitor_new (G_BUS_TYPE_SYSTEM));
-
-  return g_steal_pointer (&profiler);
-}
-
 static void
 sysprof_greeter_record_cb (GObject      *object,
                            GAsyncResult *result,
@@ -233,13 +184,17 @@ sysprof_greeter_record_to_memory_action (GtkWidget  *widget,
   SysprofGreeter *self = (SysprofGreeter *)widget;
   g_autoptr(SysprofCaptureWriter) writer = NULL;
   g_autoptr(SysprofProfiler) profiler = NULL;
+  g_autoptr(GError) error = NULL;
   g_autofd int fd = -1;
 
   g_assert (SYSPROF_IS_GREETER (self));
 
   fd = sysprof_memfd_create ("[sysprof-profile]");
 
-  profiler = sysprof_greeter_create_profiler (self);
+  /* TODO: Handle recording error */
+  if (!(profiler = sysprof_recording_template_apply (self->recording_template, &error)))
+    return;
+
   writer = sysprof_capture_writer_new_from_fd (g_steal_fd (&fd), 0);
 
   gtk_widget_set_sensitive (GTK_WIDGET (self), FALSE);
@@ -272,7 +227,10 @@ sysprof_greeter_choose_file_for_record_cb (GObject      *object,
           g_autoptr(SysprofCaptureWriter) writer = NULL;
           g_autoptr(SysprofProfiler) profiler = NULL;
 
-          profiler = sysprof_greeter_create_profiler (self);
+          /* TODO: Handle recording error */
+          if (!(profiler = sysprof_recording_template_apply (self->recording_template, &error)))
+            return;
+
           writer = sysprof_capture_writer_new (g_file_peek_path (file), 0);
 
           gtk_widget_set_sensitive (GTK_WIDGET (self), FALSE);
@@ -600,6 +558,7 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_session_bus);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_system_bus);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_system_logs);
+  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_to_memory);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, recording_template);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, sample_javascript_stacks);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, sample_native_stacks);
@@ -646,6 +605,8 @@ sysprof_greeter_init (SysprofGreeter *self)
   row = gtk_list_box_get_row_at_index (self->sidebar_list_box, 0);
   gtk_list_box_select_row (self->sidebar_list_box, row);
   sidebar_row_activated_cb (self, row, self->sidebar_list_box);
+
+  gtk_widget_grab_focus (GTK_WIDGET (self->record_to_memory));
 }
 
 GtkWidget *

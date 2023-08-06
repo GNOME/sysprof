@@ -26,29 +26,11 @@
         <property name="orientation">vertical</property>
         <child>
           <object class="AdwHeaderBar">
-            <property name="show-end-title-buttons">false</property>
             <property name="title-widget">
-              <object class="AdwWindowTitle">
-                <property name="title">New Session</property>
+              <object class="AdwViewSwitcher">
+                <property name="stack">view_stack</property>
               </object>
             </property>
-            <child type="start">
-              <object class="GtkButton">
-                <property name="label" translatable="yes">Open…</property>
-                <property name="action-name">win.select-file</property>
-                <property name="width-request">100</property>
-              </object>
-            </child>
-            <child type="end">
-              <object class="GtkButton">
-                <property name="label" translatable="yes">Record</property>
-                <property name="action-name">win.record-to-memory</property>
-                <property name="width-request">100</property>
-                <style>
-                  <class name="suggested-action"/>
-                </style>
-              </object>
-            </child>
           </object>
         </child>
         <child>
@@ -519,9 +501,35 @@
           </object>
         </child>
         <child>
-          <object class="AdwViewSwitcherBar">
-            <property name="stack">view_stack</property>
-            <property name="reveal">true</property>
+          <object class="GtkBox">
+            <property name="homogeneous">true</property>
+            <style>
+              <class name="toolbar"/>
+            </style>
+            <child>
+              <object class="GtkButton">
+                <property name="action-name">win.select-file</property>
+                <property name="label" translatable="yes">_Open File…</property>
+                <property name="use-underline">true</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton">
+                <property name="action-name">win.record-to-file</property>
+                <property name="label" translatable="yes">Record to _File…</property>
+                <property name="use-underline">true</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="record_to_memory">
+                <property name="action-name">win.record-to-memory</property>
+                <property name="label" translatable="yes">Record to _Memory</property>
+                <property name="use-underline">true</property>
+                <style>
+                  <class name="suggested-action"/>
+                </style>
+              </object>
+            </child>
           </object>
         </child>
       </object>

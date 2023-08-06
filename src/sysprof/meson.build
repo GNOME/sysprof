@@ -41,6 +41,7 @@ sysprof_sources = [
   'sysprof-processes-section.c',
   'sysprof-progress-cell.c',
   'sysprof-recording-pad.c',
+  'sysprof-recording-template.c',
   'sysprof-samples-section.c',
   'sysprof-scheduler.c',
   'sysprof-section.c',

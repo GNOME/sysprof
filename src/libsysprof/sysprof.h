@@ -77,6 +77,7 @@ G_BEGIN_DECLS
 # include "sysprof-recording.h"
 # include "sysprof-sampler.h"
 # include "sysprof-spawnable.h"
+# include "sysprof-subprocess-output.h"
 # include "sysprof-symbol.h"
 # include "sysprof-symbolizer.h"
 # include "sysprof-symbols-bundle.h"

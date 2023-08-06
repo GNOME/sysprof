@@ -316,8 +316,6 @@ sysprof_linux_instrument_prepare_fiber (gpointer user_data)
     return dex_future_new_for_error (g_steal_pointer (&error));
 
   /* Try to get some info into our capture for decoding */
-  add_process_output_as_file (recording, "eglinfo", "eglinfo", TRUE);
-  add_process_output_as_file (recording, "glxinfo", "glxinfo", TRUE);
   add_process_output_as_file (recording, "lsusb -v", "lsusb", TRUE);
 
   return dex_future_new_for_boolean (TRUE);

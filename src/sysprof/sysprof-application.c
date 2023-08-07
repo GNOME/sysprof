@@ -77,7 +77,7 @@ sysprof_application_window_added (GtkApplication *application,
   g_assert (SYSPROF_IS_APPLICATION (application));
   g_assert (GTK_IS_WINDOW (window));
 
-#ifdef DEVELOPMENT_BUILD
+#if DEVELOPMENT_BUILD
   gtk_widget_add_css_class (GTK_WIDGET (window), "devel");
 #endif
 

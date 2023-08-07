@@ -38,7 +38,7 @@
   </provides>
 
   <releases>
-    <release version="3.48.0" date="2023-03-17"/>
+    <release version="45.beta" date="2023-08-07"/>
   </releases>
 
   <metadata_license>CC0-1.0</metadata_license>

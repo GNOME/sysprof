@@ -1,3 +1,71 @@
+Overview of changes in Sysprof 45.beta
+=======================================
+
+Sysprof has largely been redesigned and rewriten from the ground up this cycle
+to provide better GTK 4 integration and more advanced features.
+
+libsysprof-capture
+------------------
+
+This library is our static library used by many applications and libraries to
+augment capture collection. It is still installed as libsysprof-capture-4.a
+as a static library for consumers. The ABI is the same, however some new data
+types have been added.
+
+libsysprof
+----------
+
+This library has been rewritten around a new document model for captures.
+Instead of using SysprofCaptureReader (a buffered capture reader) the
+SysprofDocument object exposes a GListModel of a mmap()'d capture file.
+
+This has allowed for many new indexing performance improvements as well
+as simpler data-binding in the user interface.
+
+You can read more about this at
+https://blogs.gnome.org/chergert/2023/07/18/glistmodel-as-a-data-format/
+
+Additionally, a new SysprofProfiler API has been added. It has been much
+simplified and allows for easier implementation of instruments in a race
+free manner.
+
+The library heavily builds upon libdex for Futures which I created this past
+window to simplify features in GNOME Builder.
+
+sysprof-cli and sysprof-agent
+-----------------------------
+
+These tools both provide similar features albeit from a different standpoint.
+They have both been updated to use the new profiler interface in libsysprof.
+
+sysprofd
+--------
+
+Very minimal changes have been made to sysprofd to help ensure that the
+application and libraries can still work on systems with an older sysprofd
+installed on the host.
+
+sysprof
+-------
+
+The application has been completely redesigned and is now window focused
+rather than tabs. The constraint of tabs was becoming too cumbersome to
+maintain so as the author, I felt this was the right move.
+
+Howto and More
+--------------
+
+I wrote a series of blog posts on how to use Sysprof which you might
+find useful.
+
+https://blogs.gnome.org/chergert/2023/07/28/how-to-use-sysprof-again/
+https://blogs.gnome.org/chergert/2023/08/04/more-sysprofing/
+
+You can see an overview of the new features here:
+
+https://blogs.gnome.org/chergert/2023/07/27/sysprof-45/
+
+
 Overview of changes in Sysprof 3.48.0
 =====================================
 

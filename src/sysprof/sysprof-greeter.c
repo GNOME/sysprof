@@ -31,6 +31,7 @@
 #include "sysprof-power-profiles.h"
 #include "sysprof-recording-pad.h"
 #include "sysprof-recording-template.h"
+#include "sysprof-window.h"
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureWriter, sysprof_capture_writer_unref)
 
@@ -38,7 +39,6 @@ struct _SysprofGreeter
 {
   AdwWindow                 parent_instance;
 
-  GFile                    *file;
   GtkStringList            *envvars;
 
   AdwViewStack             *view_stack;
@@ -59,15 +59,7 @@ struct _SysprofGreeter
   SysprofRecordingTemplate *recording_template;
 };
 
-enum {
-  PROP_0,
-  PROP_FILE,
-  N_PROPS
-};
-
 G_DEFINE_FINAL_TYPE (SysprofGreeter, sysprof_greeter, ADW_TYPE_WINDOW)
-
-static GParamSpec *properties [N_PROPS];
 
 #define STRV_INIT(...) (const char * const[]){__VA_ARGS__,NULL}
 
@@ -327,8 +319,8 @@ sysprof_greeter_choose_file_for_open_cb (GObject      *object,
     {
       if (g_file_is_native (file))
         {
-          if (g_set_object (&self->file, file))
-            g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_FILE]);
+          sysprof_window_open (SYSPROF_APPLICATION_DEFAULT, file);
+          gtk_window_destroy (GTK_WINDOW (self));
         }
       else
         {
@@ -368,9 +360,6 @@ sysprof_greeter_select_file_action (GtkWidget  *widget,
   filters = g_list_store_new (GTK_TYPE_FILE_FILTER);
   g_list_store_append (filters, filter);
   gtk_file_dialog_set_filters (dialog, G_LIST_MODEL (filters));
-
-  if (self->file)
-    gtk_file_dialog_set_initial_file (dialog, self->file);
 
   gtk_file_dialog_open (dialog,
                         GTK_WINDOW (self),
@@ -536,59 +525,12 @@ sysprof_greeter_dispose (GObject *object)
 }
 
 static void
-sysprof_greeter_get_property (GObject    *object,
-                              guint       prop_id,
-                              GValue     *value,
-                              GParamSpec *pspec)
-{
-  SysprofGreeter *self = SYSPROF_GREETER (object);
-
-  switch (prop_id)
-    {
-    case PROP_FILE:
-      g_value_set_object (value, self->file);
-      break;
-
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-    }
-}
-
-static void
-sysprof_greeter_set_property (GObject      *object,
-                              guint         prop_id,
-                              const GValue *value,
-                              GParamSpec   *pspec)
-{
-  SysprofGreeter *self = SYSPROF_GREETER (object);
-
-  switch (prop_id)
-    {
-    case PROP_FILE:
-      g_set_object (&self->file, g_value_get_object (value));
-      break;
-
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-    }
-}
-
-static void
 sysprof_greeter_class_init (SysprofGreeterClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
   object_class->dispose = sysprof_greeter_dispose;
-  object_class->get_property = sysprof_greeter_get_property;
-  object_class->set_property = sysprof_greeter_set_property;
-
-  properties [PROP_FILE] =
-    g_param_spec_object ("file", NULL, NULL,
-                         G_TYPE_FILE,
-                         (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
-
-  g_object_class_install_properties (object_class, N_PROPS, properties);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-greeter.ui");
 

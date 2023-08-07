@@ -52,8 +52,6 @@
 
 #mesondefine PACKAGE_VERSION
 
-#mesondefine SYMBOLIC_VERSION
-
 #mesondefine VERSION
 
 #ifndef SYSPROF_CAPTURE_COMPILATION

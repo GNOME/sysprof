@@ -1,14 +1,12 @@
 project('sysprof', 'c', 'cpp',
           license: 'GPL-3.0-or-later',
-          version: '45.alpha',
+          version: '45.beta',
     meson_version: '>=0.62.0',
   default_options: [ 'c_std=gnu17',
                      'cpp_std=gnu++17',
                      'warning_level=2',
   ]
 )
-
-symbolic_version = '45.0'
 
 gnome = import('gnome', required: get_option('gtk'))
 pkgconfig = import('pkgconfig')
@@ -67,7 +65,6 @@ gtk_dep = dependency('gtk4', version: gtk_req_version, required: need_gtk)
 libsystemd_dep = dependency('libsystemd', required: false)
 
 config_h = configuration_data()
-config_h.set_quoted('SYMBOLIC_VERSION', symbolic_version)
 config_h.set_quoted('API_VERSION_S', libsysprof_api_version.to_string())
 config_h.set_quoted('PACKAGE_NAME', 'sysprof')
 config_h.set_quoted('PACKAGE_VERSION', meson.project_version())

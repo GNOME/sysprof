@@ -467,9 +467,12 @@
                           <object class="AdwPreferencesGroup">
                             <property name="title" translatable="yes">Power Profile</property>
                             <child>
-                              <object class="AdwComboRow">
+                              <object class="AdwComboRow" id="power_combo">
                                 <property name="title" translatable="yes">Record with Power Profile</property>
-                                <property name="subtitle" translatable="yes">Hold the power profile for the duration of the recording and restore when finished</property>
+                                <property name="subtitle" translatable="yes">Switch to power profile while recording</property>
+                                <property name="expression">
+                                  <closure type="gchararray" function="translate_power_profile"/>
+                                </property>
                               </object>
                             </child>
                           </object>

@@ -40,6 +40,7 @@ sysprof_sources = [
   'sysprof-process-dialog.c',
   'sysprof-processes-section.c',
   'sysprof-progress-cell.c',
+  'sysprof-power-profiles.c',
   'sysprof-recording-pad.c',
   'sysprof-recording-template.c',
   'sysprof-samples-section.c',

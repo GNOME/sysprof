@@ -28,6 +28,7 @@
 
 #include "sysprof-entry-popover.h"
 #include "sysprof-greeter.h"
+#include "sysprof-power-profiles.h"
 #include "sysprof-recording-pad.h"
 #include "sysprof-recording-template.h"
 
@@ -54,6 +55,7 @@ struct _SysprofGreeter
   GtkSwitch                *record_system_bus;
   GtkSwitch                *bundle_symbols;
   GtkButton                *record_to_memory;
+  AdwComboRow              *power_combo;
   SysprofRecordingTemplate *recording_template;
 };
 
@@ -176,6 +178,28 @@ sysprof_greeter_record_cb (GObject      *object,
   gtk_window_destroy (GTK_WINDOW (self));
 }
 
+static SysprofProfiler *
+sysprof_greeter_create_profiler (SysprofGreeter  *self,
+                                 GError         **error)
+{
+  g_autoptr(SysprofProfiler) profiler = NULL;
+  GtkStringObject *strobj;
+  const char *str;
+
+  g_assert (SYSPROF_IS_GREETER (self));
+
+  if ((strobj = adw_combo_row_get_selected_item (self->power_combo)) &&
+      (str = gtk_string_object_get_string (strobj)))
+    g_object_set (self->recording_template,
+                  "power-profile", str,
+                  NULL);
+
+  if (!(profiler = sysprof_recording_template_apply (self->recording_template, error)))
+    return NULL;
+
+  return g_steal_pointer (&profiler);
+}
+
 static void
 sysprof_greeter_record_to_memory_action (GtkWidget  *widget,
                                          const char *action_name,
@@ -192,7 +216,7 @@ sysprof_greeter_record_to_memory_action (GtkWidget  *widget,
   fd = sysprof_memfd_create ("[sysprof-profile]");
 
   /* TODO: Handle recording error */
-  if (!(profiler = sysprof_recording_template_apply (self->recording_template, &error)))
+  if (!(profiler = sysprof_greeter_create_profiler (self, &error)))
     return;
 
   writer = sysprof_capture_writer_new_from_fd (g_steal_fd (&fd), 0);
@@ -228,7 +252,7 @@ sysprof_greeter_choose_file_for_record_cb (GObject      *object,
           g_autoptr(SysprofProfiler) profiler = NULL;
 
           /* TODO: Handle recording error */
-          if (!(profiler = sysprof_recording_template_apply (self->recording_template, &error)))
+          if (!(profiler = sysprof_greeter_create_profiler (self, &error)))
             return;
 
           writer = sysprof_capture_writer_new (g_file_peek_path (file), 0);
@@ -479,6 +503,26 @@ create_envvar_row_cb (gpointer item,
   return GTK_WIDGET (row);
 }
 
+static char *
+translate_power_profile (GtkStringObject *strobj)
+{
+  const char *str = gtk_string_object_get_string (strobj);
+
+  if (g_str_equal (str, ""))
+    return g_strdup (_("No Change"));
+
+  if (g_str_equal (str, "balanced"))
+    return g_strdup (_("Balanced"));
+
+  if (g_str_equal (str, "power-saver"))
+    return g_strdup (_("Power Saver"));
+
+  if (g_str_equal (str, "performance"))
+    return g_strdup (_("Performance"));
+
+  return g_strdup (str);
+}
+
 static void
 sysprof_greeter_dispose (GObject *object)
 {
@@ -551,6 +595,7 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, app_environment);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, bundle_symbols);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, envvars);
+  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, power_combo);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_compositor);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_disk_usage);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_network_usage);
@@ -569,6 +614,7 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, get_file_path);
   gtk_widget_class_bind_template_callback (widget_class, on_env_entry_activate_cb);
   gtk_widget_class_bind_template_callback (widget_class, on_env_entry_changed_cb);
+  gtk_widget_class_bind_template_callback (widget_class, translate_power_profile);
 
   gtk_widget_class_install_action (widget_class, "win.record-to-memory", NULL, sysprof_greeter_record_to_memory_action);
   gtk_widget_class_install_action (widget_class, "win.record-to-file", NULL, sysprof_greeter_record_to_file_action);
@@ -581,9 +627,12 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
 static void
 sysprof_greeter_init (SysprofGreeter *self)
 {
+  g_autoptr(GListModel) power_profiles = sysprof_power_profiles_new ();
   GtkListBoxRow *row;
 
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  adw_combo_row_set_model (self->power_combo, power_profiles);
 
   g_signal_connect_object (self->envvars,
                            "items-changed",

@@ -43,6 +43,8 @@ G_DECLARE_FINAL_TYPE (SysprofDocument, sysprof_document, SYSPROF, DOCUMENT, GObj
 SYSPROF_AVAILABLE_IN_ALL
 char                   *sysprof_document_dup_title                           (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL
+char                   *sysprof_document_dup_subtitle                        (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
 const SysprofTimeSpan  *sysprof_document_get_time_span                       (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofDocumentFile    *sysprof_document_lookup_file                         (SysprofDocument           *self,

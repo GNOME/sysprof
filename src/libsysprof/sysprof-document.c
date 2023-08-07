@@ -127,6 +127,7 @@ enum {
   PROP_SAMPLES,
   PROP_TIME_SPAN,
   PROP_TITLE,
+  PROP_SUBTITLE,
   N_PROPS
 };
 
@@ -421,6 +422,10 @@ sysprof_document_get_property (GObject    *object,
       g_value_take_string (value, sysprof_document_dup_title (self));
       break;
 
+    case PROP_SUBTITLE:
+      g_value_take_string (value, sysprof_document_dup_subtitle (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -496,6 +501,11 @@ sysprof_document_class_init (SysprofDocumentClass *klass)
 
   properties [PROP_TITLE] =
     g_param_spec_string ("title", NULL, NULL,
+                         NULL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_SUBTITLE] =
+    g_param_spec_string ("subtitle", NULL, NULL,
                          NULL,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
@@ -2371,6 +2381,22 @@ sysprof_document_dup_title (SysprofDocument *self)
   return g_strdup_printf (_("Recording at %s"), self->header.capture_time);
 }
 
+char *
+sysprof_document_dup_subtitle (SysprofDocument *self)
+{
+  g_autoptr(GDateTime) date_time = NULL;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  if (self->title == NULL)
+    return NULL;
+
+  if ((date_time = g_date_time_new_from_iso8601 (self->header.capture_time, NULL)))
+    return g_date_time_format (date_time, _("Recording at %X %x"));
+
+  return g_strdup_printf (_("Recording at %s"), self->header.capture_time);
+}
+
 void
 _sysprof_document_set_title (SysprofDocument *self,
                              const char *title)
@@ -2378,7 +2404,10 @@ _sysprof_document_set_title (SysprofDocument *self,
   g_return_if_fail (SYSPROF_IS_DOCUMENT (self));
 
   if (g_set_str (&self->title, title))
-    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TITLE]);
+    {
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TITLE]);
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SUBTITLE]);
+    }
 }
 
 /**

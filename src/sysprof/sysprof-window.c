@@ -94,18 +94,67 @@ sysprof_window_update_zoom_actions (SysprofWindow *self)
 }
 
 static void
-show_greeter (SysprofWindow      *self,
-              SysprofGreeterPage  page)
+sysprof_window_open_file_cb (GObject      *object,
+                             GAsyncResult *result,
+                             gpointer      user_data)
 {
-  SysprofGreeter *greeter;
+  GtkFileDialog *dialog = (GtkFileDialog *)object;
+  g_autoptr(GtkWindow) transient_for = user_data;
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GFile) file = NULL;
 
-  g_assert (SYSPROF_IS_WINDOW (self));
+  g_assert (GTK_IS_FILE_DIALOG (dialog));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (!transient_for || GTK_IS_WINDOW (transient_for));
 
-  greeter = g_object_new (SYSPROF_TYPE_GREETER,
-                          "transient-for", self,
-                          NULL);
-  sysprof_greeter_set_page (greeter, page);
-  gtk_window_present (GTK_WINDOW (greeter));
+  if ((file = gtk_file_dialog_open_finish (dialog, result, &error)))
+    {
+      if (g_file_is_native (file))
+        {
+          sysprof_window_open (SYSPROF_APPLICATION_DEFAULT, file);
+
+          if (transient_for && !SYSPROF_IS_WINDOW (transient_for))
+            gtk_window_destroy (transient_for);
+        }
+      else
+        {
+          GtkWidget *message;
+
+          message = adw_message_dialog_new (NULL,
+                                            _("Must Capture to Local File"),
+                                            _("You must choose a local file to capture using Sysprof"));
+          adw_message_dialog_add_response (ADW_MESSAGE_DIALOG (message), "close", _("Close"));
+          gtk_window_present (GTK_WINDOW (message));
+        }
+    }
+}
+
+void
+sysprof_window_open_file (GtkWindow *parent)
+{
+  g_autoptr(GtkFileDialog) dialog = NULL;
+  g_autoptr(GtkFileFilter) filter = NULL;
+  g_autoptr(GListStore) filters = NULL;
+
+  dialog = gtk_file_dialog_new ();
+  gtk_file_dialog_set_title (dialog, _("Open Recording"));
+  gtk_file_dialog_set_accept_label (dialog, _("Open"));
+  gtk_file_dialog_set_modal (dialog, TRUE);
+
+  filter = gtk_file_filter_new ();
+  gtk_file_filter_set_name (filter, _("Sysprof Capture (*.syscap)"));
+  gtk_file_filter_add_mime_type (filter, "application/x-sysprof-capture");
+  gtk_file_filter_add_suffix (filter, "syscap");
+
+  filters = g_list_store_new (GTK_TYPE_FILE_FILTER);
+  g_list_store_append (filters, filter);
+  gtk_file_dialog_set_filters (dialog, G_LIST_MODEL (filters));
+
+  gtk_file_dialog_open (dialog,
+                        parent,
+                        NULL,
+                        sysprof_window_open_file_cb,
+                        parent ? g_object_ref (parent) : NULL);
 }
 
 static void
@@ -113,7 +162,7 @@ sysprof_window_open_capture_action (GtkWidget  *widget,
                                     const char *action_name,
                                     GVariant   *param)
 {
-  show_greeter (SYSPROF_WINDOW (widget), SYSPROF_GREETER_PAGE_OPEN);
+  sysprof_window_open_file (GTK_WINDOW (widget));
 }
 
 static void
@@ -121,7 +170,15 @@ sysprof_window_record_capture_action (GtkWidget  *widget,
                                       const char *action_name,
                                       GVariant   *param)
 {
-  show_greeter (SYSPROF_WINDOW (widget), SYSPROF_GREETER_PAGE_RECORD);
+  SysprofWindow *self = (SysprofWindow *)widget;
+  SysprofGreeter *greeter;
+
+  g_assert (SYSPROF_IS_WINDOW (self));
+
+  greeter = g_object_new (SYSPROF_TYPE_GREETER,
+                          "transient-for", self,
+                          NULL);
+  gtk_window_present (GTK_WINDOW (greeter));
 }
 
 static void

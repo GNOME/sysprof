@@ -35,6 +35,7 @@ G_DECLARE_FINAL_TYPE (SysprofWindow, sysprof_window, SYSPROF, WINDOW, AdwApplica
 
 GtkWidget       *sysprof_window_new          (SysprofApplication *app,
                                               SysprofDocument    *document);
+void             sysprof_window_open_file    (GtkWindow          *transient_for);
 void             sysprof_window_open         (SysprofApplication *app,
                                               GFile              *file);
 void             sysprof_window_open_fd      (SysprofApplication *app,

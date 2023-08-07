@@ -302,70 +302,11 @@ sysprof_greeter_record_to_file_action (GtkWidget  *widget,
 }
 
 static void
-sysprof_greeter_choose_file_for_open_cb (GObject      *object,
-                                         GAsyncResult *result,
-                                         gpointer      user_data)
-{
-  GtkFileDialog *dialog = (GtkFileDialog *)object;
-  g_autoptr(SysprofGreeter) self = user_data;
-  g_autoptr(GError) error = NULL;
-  g_autoptr(GFile) file = NULL;
-
-  g_assert (GTK_IS_FILE_DIALOG (dialog));
-  g_assert (G_IS_ASYNC_RESULT (result));
-  g_assert (SYSPROF_IS_GREETER (self));
-
-  if ((file = gtk_file_dialog_open_finish (dialog, result, &error)))
-    {
-      if (g_file_is_native (file))
-        {
-          sysprof_window_open (SYSPROF_APPLICATION_DEFAULT, file);
-          gtk_window_destroy (GTK_WINDOW (self));
-        }
-      else
-        {
-          GtkWidget *message;
-
-          message = adw_message_dialog_new (NULL,
-                                            _("Must Capture to Local File"),
-                                            _("You must choose a local file to capture using Sysprof"));
-          adw_message_dialog_add_response (ADW_MESSAGE_DIALOG (message), "close", _("Close"));
-          gtk_window_present (GTK_WINDOW (message));
-        }
-    }
-}
-
-static void
 sysprof_greeter_select_file_action (GtkWidget  *widget,
                                     const char *action_name,
                                     GVariant   *param)
 {
-  SysprofGreeter *self = (SysprofGreeter *)widget;
-  g_autoptr(GtkFileDialog) dialog = NULL;
-  g_autoptr(GtkFileFilter) filter = NULL;
-  g_autoptr(GListStore) filters = NULL;
-
-  g_assert (SYSPROF_IS_GREETER (self));
-
-  dialog = gtk_file_dialog_new ();
-  gtk_file_dialog_set_title (dialog, _("Open Recording"));
-  gtk_file_dialog_set_accept_label (dialog, _("Open"));
-  gtk_file_dialog_set_modal (dialog, TRUE);
-
-  filter = gtk_file_filter_new ();
-  gtk_file_filter_set_name (filter, _("Sysprof Capture (*.syscap)"));
-  gtk_file_filter_add_mime_type (filter, "application/x-sysprof-capture");
-  gtk_file_filter_add_suffix (filter, "syscap");
-
-  filters = g_list_store_new (GTK_TYPE_FILE_FILTER);
-  g_list_store_append (filters, filter);
-  gtk_file_dialog_set_filters (dialog, G_LIST_MODEL (filters));
-
-  gtk_file_dialog_open (dialog,
-                        GTK_WINDOW (self),
-                        NULL,
-                        sysprof_greeter_choose_file_for_open_cb,
-                        g_object_ref (self));
+  sysprof_window_open_file (GTK_WINDOW (widget));
 }
 
 static char *
@@ -387,8 +328,6 @@ sidebar_row_activated_cb (SysprofGreeter *self,
 
   adw_view_stack_set_visible_child (self->view_stack,
                                     adw_view_stack_page_get_child (page));
-  //adw_window_title_set_title (self->view_title,
-                              //adw_view_stack_page_get_title (page));
 }
 
 static GtkWidget *
@@ -604,23 +543,4 @@ GtkWidget *
 sysprof_greeter_new (void)
 {
   return g_object_new (SYSPROF_TYPE_GREETER, NULL);
-}
-
-void
-sysprof_greeter_set_page (SysprofGreeter     *self,
-                          SysprofGreeterPage  page)
-{
-  g_return_if_fail (SYSPROF_IS_GREETER (self));
-
-  switch (page)
-    {
-    case SYSPROF_GREETER_PAGE_OPEN:
-      //adw_view_stack_set_visible_child (self->view_stack, GTK_WIDGET (self->open_page));
-      break;
-
-    default:
-    case SYSPROF_GREETER_PAGE_RECORD:
-      adw_view_stack_set_visible_child (self->view_stack, GTK_WIDGET (self->record_page));
-      break;
-    }
 }

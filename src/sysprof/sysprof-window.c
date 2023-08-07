@@ -194,14 +194,16 @@ sysprof_window_set_document (SysprofWindow   *self,
   };
 
   g_assert (SYSPROF_IS_WINDOW (self));
-  g_assert (SYSPROF_IS_DOCUMENT (document));
+  g_assert (!document || SYSPROF_IS_DOCUMENT (document));
   g_assert (self->document == NULL);
   g_assert (self->session == NULL);
 
-  g_set_object (&self->document, document);
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_DOCUMENT]);
+  if (document == NULL)
+    return;
 
+  g_set_object (&self->document, document);
   self->session = sysprof_session_new (document);
+
   g_signal_connect_object (self->session,
                            "notify::selected-time",
                            G_CALLBACK (sysprof_window_update_zoom_actions),
@@ -212,7 +214,6 @@ sysprof_window_set_document (SysprofWindow   *self,
                            G_CALLBACK (sysprof_window_update_zoom_actions),
                            self,
                            G_CONNECT_SWAPPED);
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SESSION]);
 
   for (guint i = 0; i < G_N_ELEMENTS (callgraph_actions); i++)
     {
@@ -223,6 +224,9 @@ sysprof_window_set_document (SysprofWindow   *self,
     }
 
   sysprof_window_update_zoom_actions (self);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_DOCUMENT]);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SESSION]);
 }
 
 static void
@@ -551,6 +555,7 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   g_type_ensure (SYSPROF_TYPE_SAMPLES_SECTION);
   g_type_ensure (SYSPROF_TYPE_STORAGE_SECTION);
   g_type_ensure (SYSPROF_TYPE_SESSION);
+  g_type_ensure (SYSPROF_TYPE_SYMBOL);
   g_type_ensure (SYSPROF_TYPE_SIDEBAR);
 }
 
@@ -624,13 +629,16 @@ sysprof_window_load_cb (GObject      *object,
                         gpointer      user_data)
 {
   SysprofDocumentLoader *loader = (SysprofDocumentLoader *)object;
-  g_autoptr(SysprofApplication) app = user_data;
+  g_autoptr(SysprofWindow) self = user_data;
   g_autoptr(SysprofDocument) document = NULL;
+  SysprofApplication *app;
   g_autoptr(GError) error = NULL;
 
   g_assert (SYSPROF_IS_DOCUMENT_LOADER (loader));
   g_assert (G_IS_ASYNC_RESULT (result));
-  g_assert (SYSPROF_IS_APPLICATION (app));
+  g_assert (SYSPROF_IS_WINDOW (self));
+
+  app = SYSPROF_APPLICATION_DEFAULT;
 
   g_application_release (G_APPLICATION (app));
 
@@ -645,14 +653,13 @@ sysprof_window_load_cb (GObject      *object,
       adw_message_dialog_add_response (ADW_MESSAGE_DIALOG (dialog), "close", _("Close"));
       gtk_application_add_window (GTK_APPLICATION (app), GTK_WINDOW (dialog));
       gtk_window_present (GTK_WINDOW (dialog));
-    }
-  else
-    {
-      GtkWidget *window;
 
-      window = sysprof_window_new (app, document);
-      gtk_window_present (GTK_WINDOW (window));
+      return;
     }
+
+  sysprof_window_set_document (self, document);
+
+  gtk_widget_set_sensitive (GTK_WIDGET (self), TRUE);
 }
 
 static void
@@ -666,6 +673,7 @@ sysprof_window_open (SysprofApplication *app,
                      GFile              *file)
 {
   g_autoptr(SysprofDocumentLoader) loader = NULL;
+  SysprofWindow *self;
 
   g_return_if_fail (SYSPROF_IS_APPLICATION (app));
   g_return_if_fail (G_IS_FILE (file));
@@ -678,13 +686,19 @@ sysprof_window_open (SysprofApplication *app,
       return;
     }
 
-  g_application_hold (G_APPLICATION (app));
   sysprof_window_apply_loader_settings (loader);
+
+  g_application_hold (G_APPLICATION (app));
+
+  self = g_object_new (SYSPROF_TYPE_WINDOW,
+                       "application", app,
+                       "sensitive", FALSE,
+                       NULL);
   sysprof_document_loader_load_async (loader,
                                       NULL,
                                       sysprof_window_load_cb,
-                                      g_object_ref (app));
-
+                                      g_object_ref (self));
+  gtk_window_present (GTK_WINDOW (self));
 }
 
 void

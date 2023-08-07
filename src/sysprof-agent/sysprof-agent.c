@@ -356,7 +356,7 @@ sysprof_agent_record_cb (GObject      *object,
   g_assert (G_IS_ASYNC_RESULT (result));
   g_assert (user_data == NULL);
 
-  if (!(recording = sysprof_profiler_record_finish (SYSPROF_PROFILER (object), result, &error)))
+  if (!(recording = sysprof_profiler_record_finish (profiler, result, &error)))
     g_error ("Failed to start profiling session: %s", error->message);
 
   diagnostics = sysprof_recording_list_diagnostics (recording);

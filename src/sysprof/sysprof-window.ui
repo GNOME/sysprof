@@ -46,6 +46,9 @@
         <property name="max-sidebar-width">200</property>
         <property name="sidebar">
           <object class="AdwNavigationPage">
+            <binding name="sensitive">
+              <lookup name="is-loaded">SysprofWindow</lookup>
+            </binding>
             <property name="child">
               <object class="AdwToolbarView">
                 <child type="top">
@@ -165,129 +168,141 @@
                       </object>
                     </child>
                     <property name="content">
-                      <object class="GtkStack" id="section_stack">
-                        <property name="vexpand">true</property>
-                        <child>
-                          <object class="SysprofSamplesSection">
-                            <property name="category">callgraph</property>
-                            <property name="icon-name">org.gnome.Sysprof-symbolic</property>
-                            <binding name="session">
-                              <lookup name="session">SysprofWindow</lookup>
-                            </binding>
+                      <object class="GtkOverlay">
+                        <child type="overlay">
+                          <object class="GtkProgressBar" id="progress_bar">
+                            <property name="hexpand">true</property>
+                            <style>
+                              <class name="osd"/>
+                            </style>
                           </object>
                         </child>
                         <child>
-                          <object class="SysprofMemorySection">
-                            <property name="category">callgraph</property>
-                            <property name="icon-name">memory-allocations-symbolic</property>
-                            <binding name="session">
-                              <lookup name="session">SysprofWindow</lookup>
-                            </binding>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="SysprofLogsSection">
-                            <property name="category">processes</property>
-                            <property name="icon-name">system-log-symbolic</property>
-                            <binding name="session">
-                              <lookup name="session">SysprofWindow</lookup>
-                            </binding>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="SysprofMarksSection">
-                            <property name="category">processes</property>
-                            <property name="icon-name">mark-chart-symbolic</property>
-                            <binding name="session">
-                              <lookup name="session">SysprofWindow</lookup>
-                            </binding>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="SysprofProcessesSection">
-                            <property name="category">processes</property>
-                            <property name="icon-name">application-x-executable-symbolic</property>
-                            <binding name="session">
-                              <lookup name="session">SysprofWindow</lookup>
-                            </binding>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="SysprofDBusSection">
-                            <property name="title" translatable="yes">D-Bus</property>
-                            <property name="category">processes</property>
-                            <property name="icon-name">dbus-symbolic</property>
-                            <binding name="session">
-                              <lookup name="session">SysprofWindow</lookup>
-                            </binding>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="SysprofCpuSection">
-                            <property name="title" translatable="yes">CPU</property>
-                            <property name="category">counters</property>
-                            <property name="icon-name">system-run-symbolic</property>
-                            <binding name="session">
-                              <lookup name="session">SysprofWindow</lookup>
-                            </binding>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="SysprofEnergySection">
-                            <property name="title" translatable="yes">Energy</property>
-                            <property name="category">counters</property>
-                            <property name="icon-name">energy-symbolic</property>
-                            <binding name="session">
-                              <lookup name="session">SysprofWindow</lookup>
-                            </binding>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="SysprofGraphicsSection">
-                            <property name="title" translatable="yes">Graphics</property>
-                            <property name="category">counters</property>
-                            <property name="icon-name">graphics-symbolic</property>
-                            <binding name="session">
-                              <lookup name="session">SysprofWindow</lookup>
-                            </binding>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="SysprofNetworkSection">
-                            <property name="title" translatable="yes">Network</property>
-                            <property name="category">counters</property>
-                            <property name="icon-name">network-transmit-receive-symbolic</property>
-                            <binding name="session">
-                              <lookup name="session">SysprofWindow</lookup>
-                            </binding>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="SysprofStorageSection">
-                            <property name="title" translatable="yes">Storage</property>
-                            <property name="category">counters</property>
-                            <property name="icon-name">storage-symbolic</property>
-                            <binding name="session">
-                              <lookup name="session">SysprofWindow</lookup>
-                            </binding>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="SysprofFilesSection">
-                            <property name="category">auxiliary</property>
-                            <property name="icon-name">folder-symbolic</property>
-                            <binding name="session">
-                              <lookup name="session">SysprofWindow</lookup>
-                            </binding>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="SysprofMetadataSection">
-                            <property name="category">auxiliary</property>
-                            <property name="icon-name">metadata-symbolic</property>
-                            <binding name="session">
-                              <lookup name="session">SysprofWindow</lookup>
-                            </binding>
+                          <object class="GtkStack" id="section_stack">
+                            <property name="vexpand">true</property>
+                            <child>
+                              <object class="SysprofSamplesSection">
+                                <property name="category">callgraph</property>
+                                <property name="icon-name">org.gnome.Sysprof-symbolic</property>
+                                <binding name="session">
+                                  <lookup name="session">SysprofWindow</lookup>
+                                </binding>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="SysprofMemorySection">
+                                <property name="category">callgraph</property>
+                                <property name="icon-name">memory-allocations-symbolic</property>
+                                <binding name="session">
+                                  <lookup name="session">SysprofWindow</lookup>
+                                </binding>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="SysprofLogsSection">
+                                <property name="category">processes</property>
+                                <property name="icon-name">system-log-symbolic</property>
+                                <binding name="session">
+                                  <lookup name="session">SysprofWindow</lookup>
+                                </binding>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="SysprofMarksSection">
+                                <property name="category">processes</property>
+                                <property name="icon-name">mark-chart-symbolic</property>
+                                <binding name="session">
+                                  <lookup name="session">SysprofWindow</lookup>
+                                </binding>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="SysprofProcessesSection">
+                                <property name="category">processes</property>
+                                <property name="icon-name">application-x-executable-symbolic</property>
+                                <binding name="session">
+                                  <lookup name="session">SysprofWindow</lookup>
+                                </binding>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="SysprofDBusSection">
+                                <property name="title" translatable="yes">D-Bus</property>
+                                <property name="category">processes</property>
+                                <property name="icon-name">dbus-symbolic</property>
+                                <binding name="session">
+                                  <lookup name="session">SysprofWindow</lookup>
+                                </binding>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="SysprofCpuSection">
+                                <property name="title" translatable="yes">CPU</property>
+                                <property name="category">counters</property>
+                                <property name="icon-name">system-run-symbolic</property>
+                                <binding name="session">
+                                  <lookup name="session">SysprofWindow</lookup>
+                                </binding>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="SysprofEnergySection">
+                                <property name="title" translatable="yes">Energy</property>
+                                <property name="category">counters</property>
+                                <property name="icon-name">energy-symbolic</property>
+                                <binding name="session">
+                                  <lookup name="session">SysprofWindow</lookup>
+                                </binding>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="SysprofGraphicsSection">
+                                <property name="title" translatable="yes">Graphics</property>
+                                <property name="category">counters</property>
+                                <property name="icon-name">graphics-symbolic</property>
+                                <binding name="session">
+                                  <lookup name="session">SysprofWindow</lookup>
+                                </binding>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="SysprofNetworkSection">
+                                <property name="title" translatable="yes">Network</property>
+                                <property name="category">counters</property>
+                                <property name="icon-name">network-transmit-receive-symbolic</property>
+                                <binding name="session">
+                                  <lookup name="session">SysprofWindow</lookup>
+                                </binding>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="SysprofStorageSection">
+                                <property name="title" translatable="yes">Storage</property>
+                                <property name="category">counters</property>
+                                <property name="icon-name">storage-symbolic</property>
+                                <binding name="session">
+                                  <lookup name="session">SysprofWindow</lookup>
+                                </binding>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="SysprofFilesSection">
+                                <property name="category">auxiliary</property>
+                                <property name="icon-name">folder-symbolic</property>
+                                <binding name="session">
+                                  <lookup name="session">SysprofWindow</lookup>
+                                </binding>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="SysprofMetadataSection">
+                                <property name="category">auxiliary</property>
+                                <property name="icon-name">metadata-symbolic</property>
+                                <binding name="session">
+                                  <lookup name="session">SysprofWindow</lookup>
+                                </binding>
+                              </object>
+                            </child>
                           </object>
                         </child>
                       </object>

@@ -38,6 +38,7 @@
 #include "sysprof-samples-section.h"
 #include "sysprof-sidebar.h"
 #include "sysprof-storage-section.h"
+#include "sysprof-util.h"
 #include "sysprof-window.h"
 
 struct _SysprofWindow
@@ -50,6 +51,7 @@ struct _SysprofWindow
   GtkToggleButton      *show_right_sidebar;
   GtkWidget            *left_split_overlay;
   GtkWidget            *right_split_overlay;
+  GtkProgressBar       *progress_bar;
 
   guint                 disposed : 1;
 };
@@ -57,6 +59,7 @@ struct _SysprofWindow
 enum {
   PROP_0,
   PROP_DOCUMENT,
+  PROP_IS_LOADED,
   PROP_SESSION,
   N_PROPS
 };
@@ -91,6 +94,33 @@ sysprof_window_update_zoom_actions (SysprofWindow *self)
   gtk_widget_action_set_enabled (GTK_WIDGET (self),
                                  "session.seek-forward",
                                  visible_time->end_nsec < document_time->end_nsec);
+}
+
+static void
+sysprof_window_update_action_state (SysprofWindow *self)
+{
+  g_assert (SYSPROF_IS_WINDOW (self));
+
+  if (self->session == NULL)
+    {
+      gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.open-capture", FALSE);
+      gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.record-capture", FALSE);
+      gtk_widget_action_set_enabled (GTK_WIDGET (self), "session.zoom-one", FALSE);
+      gtk_widget_action_set_enabled (GTK_WIDGET (self), "session.zoom-out", FALSE);
+      gtk_widget_action_set_enabled (GTK_WIDGET (self), "session.zoom-in", FALSE);
+      gtk_widget_action_set_enabled (GTK_WIDGET (self), "session.seek-forward", FALSE);
+      gtk_widget_action_set_enabled (GTK_WIDGET (self), "session.seek-backward", FALSE);
+      gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.save-capture", FALSE);
+    }
+  else
+    {
+      gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.open-capture", TRUE);
+      gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.record-capture", TRUE);
+      gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.save-capture", TRUE);
+      gtk_widget_action_set_enabled (GTK_WIDGET (self), "session.zoom-in", TRUE);
+
+      sysprof_window_update_zoom_actions (self);
+    }
 }
 
 static void
@@ -223,9 +253,10 @@ sysprof_window_set_document (SysprofWindow   *self,
       g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (action));
     }
 
-  sysprof_window_update_zoom_actions (self);
+  sysprof_window_update_action_state (self);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_DOCUMENT]);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_IS_LOADED]);
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SESSION]);
 }
 
@@ -464,6 +495,10 @@ sysprof_window_get_property (GObject    *object,
       g_value_set_object (value, sysprof_window_get_document (self));
       break;
 
+    case PROP_IS_LOADED:
+      g_value_set_boolean (value, !!sysprof_window_get_document (self));
+      break;
+
     case PROP_SESSION:
       g_value_set_object (value, sysprof_window_get_session (self));
       break;
@@ -507,6 +542,11 @@ sysprof_window_class_init (SysprofWindowClass *klass)
                          SYSPROF_TYPE_DOCUMENT,
                          (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
 
+  properties [PROP_IS_LOADED] =
+    g_param_spec_boolean ("is-loaded", NULL, NULL,
+                          FALSE,
+                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
   properties[PROP_SESSION] =
     g_param_spec_object ("session", NULL, NULL,
                          SYSPROF_TYPE_SESSION,
@@ -516,9 +556,10 @@ sysprof_window_class_init (SysprofWindowClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-window.ui");
 
-  gtk_widget_class_bind_template_child (widget_class, SysprofWindow, show_right_sidebar);
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, left_split_overlay);
+  gtk_widget_class_bind_template_child (widget_class, SysprofWindow, progress_bar);
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, right_split_overlay);
+  gtk_widget_class_bind_template_child (widget_class, SysprofWindow, show_right_sidebar);
 
   gtk_widget_class_bind_template_callback (widget_class, main_view_notify_sidebar);
 
@@ -566,6 +607,8 @@ sysprof_window_init (SysprofWindow *self)
   g_autoptr(GPropertyAction) show_right_sidebar = NULL;
 
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  sysprof_window_update_action_state (self);
 
   show_left_sidebar = g_property_action_new ("show-left-sidebar",
                                              self->left_split_overlay,
@@ -642,6 +685,8 @@ sysprof_window_load_cb (GObject      *object,
 
   g_application_release (G_APPLICATION (app));
 
+  _gtk_widget_hide_with_fade (GTK_WIDGET (self->progress_bar));
+
   if (!(document = sysprof_document_loader_load_finish (loader, result, &error)))
     {
       GtkWidget *dialog;
@@ -658,8 +703,6 @@ sysprof_window_load_cb (GObject      *object,
     }
 
   sysprof_window_set_document (self, document);
-
-  gtk_widget_set_sensitive (GTK_WIDGET (self), TRUE);
 }
 
 static void
@@ -692,8 +735,10 @@ sysprof_window_open (SysprofApplication *app,
 
   self = g_object_new (SYSPROF_TYPE_WINDOW,
                        "application", app,
-                       "sensitive", FALSE,
                        NULL);
+  g_object_bind_property (loader, "fraction",
+                          self->progress_bar, "fraction",
+                          G_BINDING_SYNC_CREATE);
   sysprof_document_loader_load_async (loader,
                                       NULL,
                                       sysprof_window_load_cb,

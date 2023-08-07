@@ -218,7 +218,8 @@ sysprof_sampler_perf_event_stream_cb (const SysprofPerfEvent *event,
       break;
 
     case PERF_RECORD_SAMPLE:
-      sysprof_sampler_add_callback (writer, cpu, &event->callchain);
+      if (recording->start_time != 0 && event->callchain.time >= recording->start_time)
+        sysprof_sampler_add_callback (writer, cpu, &event->callchain);
       break;
 
     case PERF_RECORD_THROTTLE:
@@ -382,6 +383,22 @@ try_again:
         g_ptr_array_add (prepare->sampler->perf_event_streams, g_steal_pointer (&stream));
     }
 
+  /* Start all of the samplers immediately as we will drop events that
+   * are incoming before our start time. This allows the linux instrument
+   * to collect processes in prepare and not race to get new process info.
+   */
+  for (guint i = 0; i < prepare->sampler->perf_event_streams->len; i++)
+    {
+      SysprofPerfEventStream *stream = g_ptr_array_index (prepare->sampler->perf_event_streams, i);
+
+      if (!sysprof_perf_event_stream_enable (stream, &error))
+        g_debug ("%s", error->message);
+      else
+        g_debug ("Sampler %d enabled", i);
+
+      g_clear_error (&error);
+    }
+
   return dex_future_new_for_boolean (TRUE);
 }
 
@@ -431,18 +448,6 @@ sysprof_sampler_record_fiber (gpointer user_data)
   g_assert (SYSPROF_IS_SAMPLER (record->sampler));
   g_assert (SYSPROF_IS_RECORDING (record->recording));
   g_assert (DEX_IS_FUTURE (record->cancellable));
-
-  for (guint i = 0; i < record->sampler->perf_event_streams->len; i++)
-    {
-      SysprofPerfEventStream *stream = g_ptr_array_index (record->sampler->perf_event_streams, i);
-
-      if (!sysprof_perf_event_stream_enable (stream, &error))
-        g_debug ("%s", error->message);
-      else
-        g_debug ("Sampler %d enabled", i);
-
-      g_clear_error (&error);
-    }
 
   if (!dex_await (dex_ref (record->cancellable), &error))
     g_debug ("Sampler shutting down for reason: %s", error->message);

@@ -52,6 +52,7 @@ struct _SysprofWindow
   GtkWidget            *left_split_overlay;
   GtkWidget            *right_split_overlay;
   GtkProgressBar       *progress_bar;
+  AdwWindowTitle       *stack_title;
 
   guint                 disposed : 1;
 };
@@ -560,6 +561,7 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, progress_bar);
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, right_split_overlay);
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, show_right_sidebar);
+  gtk_widget_class_bind_template_child (widget_class, SysprofWindow, stack_title);
 
   gtk_widget_class_bind_template_callback (widget_class, main_view_notify_sidebar);
 
@@ -619,6 +621,8 @@ sysprof_window_init (SysprofWindow *self)
                                               self->right_split_overlay,
                                               "show-sidebar");
   g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (show_right_sidebar));
+
+  adw_window_title_set_title (self->stack_title, _("Loading..."));
 }
 
 GtkWidget *
@@ -738,6 +742,9 @@ sysprof_window_open (SysprofApplication *app,
                        NULL);
   g_object_bind_property (loader, "fraction",
                           self->progress_bar, "fraction",
+                          G_BINDING_SYNC_CREATE);
+  g_object_bind_property (loader, "message",
+                          self->stack_title, "subtitle",
                           G_BINDING_SYNC_CREATE);
   sysprof_document_loader_load_async (loader,
                                       NULL,

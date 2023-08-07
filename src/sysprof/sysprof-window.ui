@@ -83,7 +83,7 @@
                     <child type="top">
                       <object class="AdwHeaderBar">
                         <property name="title-widget">
-                          <object class="AdwWindowTitle">
+                          <object class="AdwWindowTitle" id="stack_title">
                             <binding name="title">
                               <lookup name="title" type="SysprofDocument">
                                 <lookup name="document">SysprofWindow</lookup>

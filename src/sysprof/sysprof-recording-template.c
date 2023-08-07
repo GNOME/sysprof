@@ -348,7 +348,7 @@ sysprof_recording_template_class_init (SysprofRecordingTemplateClass *klass)
 
   properties[PROP_FRAME_TIMINGS] =
     g_param_spec_boolean ("frame-timings", NULL, NULL,
-                          TRUE,
+                          FALSE,
                           (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   properties[PROP_GRAPHICS_INFO] =
@@ -415,7 +415,6 @@ sysprof_recording_template_init (SysprofRecordingTemplate *self)
   self->bundle_symbols = TRUE;
   self->cpu_usage = TRUE;
   self->disk_usage = TRUE;
-  self->frame_timings = TRUE;
   self->graphics_info = TRUE;
   self->hardware_info = TRUE;
   self->memory_usage = TRUE;

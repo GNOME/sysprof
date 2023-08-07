@@ -256,6 +256,10 @@ sysprof_window_set_document (SysprofWindow   *self,
 
   sysprof_window_update_action_state (self);
 
+  g_object_bind_property (self->document, "subtitle",
+                          self->stack_title, "subtitle",
+                          G_BINDING_SYNC_CREATE);
+
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_DOCUMENT]);
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_IS_LOADED]);
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SESSION]);
@@ -691,6 +695,9 @@ sysprof_window_load_cb (GObject      *object,
 
   _gtk_widget_hide_with_fade (GTK_WIDGET (self->progress_bar));
 
+  g_binding_unbind (g_object_get_data (G_OBJECT (loader), "message-binding"));
+  g_object_set_data (G_OBJECT (loader), "message-binding", NULL);
+
   if (!(document = sysprof_document_loader_load_finish (loader, result, &error)))
     {
       GtkWidget *dialog;
@@ -743,9 +750,10 @@ sysprof_window_open (SysprofApplication *app,
   g_object_bind_property (loader, "fraction",
                           self->progress_bar, "fraction",
                           G_BINDING_SYNC_CREATE);
-  g_object_bind_property (loader, "message",
-                          self->stack_title, "subtitle",
-                          G_BINDING_SYNC_CREATE);
+  g_object_set_data (G_OBJECT (loader), "message-binding",
+                     g_object_bind_property (loader, "message",
+                                             self->stack_title, "subtitle",
+                                             G_BINDING_SYNC_CREATE));
   sysprof_document_loader_load_async (loader,
                                       NULL,
                                       sysprof_window_load_cb,

@@ -160,6 +160,7 @@ endif
 
 libsysprof_enum_headers = [
   'sysprof-callgraph.h',
+  'sysprof-recording.h',
 ]
 
 libsysprof_enums = gnome.mkenums_simple('sysprof-enums',

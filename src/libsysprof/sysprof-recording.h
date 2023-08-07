@@ -28,6 +28,13 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_RECORDING (sysprof_recording_get_type())
 
+typedef enum _SysprofRecordingPhase
+{
+  SYSPROF_RECORDING_PHASE_PREPARE = 1,
+  SYSPROF_RECORDING_PHASE_RECORD,
+  SYSPROF_RECORDING_PHASE_AUGMENT,
+} SysprofRecordingPhase;
+
 SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofRecording, sysprof_recording, SYSPROF, RECORDING, GObject)
 

@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include "sysprof-enums.h"
 #include "sysprof-instrument-private.h"
 #include "sysprof-recording-private.h"
 #include "sysprof-subprocess-output.h"
@@ -35,6 +36,8 @@ struct _SysprofSubprocessOutput
 
   SysprofRecording *recording;
   GCancellable *cancellable;
+
+  SysprofRecordingPhase phase;
 };
 
 struct _SysprofSubprocessOutputClass
@@ -47,6 +50,7 @@ enum {
   PROP_COMMAND_ARGV,
   PROP_COMMAND_ENVIRON,
   PROP_COMMAND_CWD,
+  PROP_PHASE,
   PROP_STDOUT_PATH,
   N_PROPS
 };
@@ -146,8 +150,51 @@ sysprof_subprocess_output_record (SysprofInstrument *instrument,
   g_assert (SYSPROF_IS_RECORDING (recording));
   g_assert (G_IS_CANCELLABLE (cancellable));
 
+  if (self->phase != SYSPROF_RECORDING_PHASE_RECORD)
+    return dex_future_new_for_boolean (TRUE);
+
   g_set_object (&self->recording, recording);
   g_set_object (&self->cancellable, cancellable);
+
+  return dex_scheduler_spawn (NULL, 0,
+                              sysprof_subprocess_output_record_fiber,
+                              g_object_ref (self),
+                              g_object_unref);
+}
+
+static DexFuture *
+sysprof_subprocess_output_prepare (SysprofInstrument *instrument,
+                                   SysprofRecording  *recording)
+{
+  SysprofSubprocessOutput *self = (SysprofSubprocessOutput *)instrument;
+
+  g_assert (SYSPROF_IS_SUBPROCESS_OUTPUT (self));
+  g_assert (SYSPROF_IS_RECORDING (recording));
+
+  if (self->phase != SYSPROF_RECORDING_PHASE_PREPARE)
+    return dex_future_new_for_boolean (TRUE);
+
+  g_set_object (&self->recording, recording);
+
+  return dex_scheduler_spawn (NULL, 0,
+                              sysprof_subprocess_output_record_fiber,
+                              g_object_ref (self),
+                              g_object_unref);
+}
+
+static DexFuture *
+sysprof_subprocess_output_augment (SysprofInstrument *instrument,
+                                   SysprofRecording  *recording)
+{
+  SysprofSubprocessOutput *self = (SysprofSubprocessOutput *)instrument;
+
+  g_assert (SYSPROF_IS_SUBPROCESS_OUTPUT (self));
+  g_assert (SYSPROF_IS_RECORDING (recording));
+
+  if (self->phase != SYSPROF_RECORDING_PHASE_AUGMENT)
+    return dex_future_new_for_boolean (TRUE);
+
+  g_set_object (&self->recording, recording);
 
   return dex_scheduler_spawn (NULL, 0,
                               sysprof_subprocess_output_record_fiber,
@@ -192,6 +239,10 @@ sysprof_subprocess_output_get_property (GObject    *object,
       g_value_set_boxed (value, sysprof_subprocess_output_get_command_environ (self));
       break;
 
+    case PROP_PHASE:
+      g_value_set_enum (value, sysprof_subprocess_output_get_phase (self));
+      break;
+
     case PROP_STDOUT_PATH:
       g_value_set_string (value, sysprof_subprocess_output_get_stdout_path (self));
       break;
@@ -223,6 +274,10 @@ sysprof_subprocess_output_set_property (GObject      *object,
       sysprof_subprocess_output_set_command_environ (self, g_value_get_boxed (value));
       break;
 
+    case PROP_PHASE:
+      sysprof_subprocess_output_set_phase (self, g_value_get_enum (value));
+      break;
+
     case PROP_STDOUT_PATH:
       sysprof_subprocess_output_set_stdout_path (self, g_value_get_string (value));
       break;
@@ -242,7 +297,9 @@ sysprof_subprocess_output_class_init (SysprofSubprocessOutputClass *klass)
   object_class->get_property = sysprof_subprocess_output_get_property;
   object_class->set_property = sysprof_subprocess_output_set_property;
 
+  instrument_class->prepare = sysprof_subprocess_output_prepare;
   instrument_class->record = sysprof_subprocess_output_record;
+  instrument_class->augment = sysprof_subprocess_output_augment;
 
   properties[PROP_COMMAND_CWD] =
     g_param_spec_string ("command-cwd", NULL, NULL,
@@ -259,6 +316,12 @@ sysprof_subprocess_output_class_init (SysprofSubprocessOutputClass *klass)
                         G_TYPE_STRV,
                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
+  properties[PROP_PHASE] =
+    g_param_spec_enum ("phase", NULL, NULL,
+                       SYSPROF_TYPE_RECORDING_PHASE,
+                       SYSPROF_RECORDING_PHASE_PREPARE,
+                       (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
   properties[PROP_STDOUT_PATH] =
     g_param_spec_string ("stdout-path", NULL, NULL,
                          NULL,
@@ -270,6 +333,7 @@ sysprof_subprocess_output_class_init (SysprofSubprocessOutputClass *klass)
 static void
 sysprof_subprocess_output_init (SysprofSubprocessOutput *self)
 {
+  self->phase = SYSPROF_RECORDING_PHASE_PREPARE;
 }
 
 const char *
@@ -364,4 +428,26 @@ sysprof_subprocess_output_set_stdout_path (SysprofSubprocessOutput *self,
 
   if (g_set_str (&self->stdout_path, stdout_path))
     g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_STDOUT_PATH]);
+}
+
+SysprofRecordingPhase
+sysprof_subprocess_output_get_phase (SysprofSubprocessOutput *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_SUBPROCESS_OUTPUT (self), 0);
+
+  return self->phase;
+}
+
+void
+sysprof_subprocess_output_set_phase (SysprofSubprocessOutput *self,
+                                     SysprofRecordingPhase    phase)
+{
+  g_return_if_fail (phase > 0);
+  g_return_if_fail (phase <= SYSPROF_RECORDING_PHASE_AUGMENT);
+
+  if (phase == self->phase)
+    return;
+
+  self->phase = phase;
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_PHASE]);
 }

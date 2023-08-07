@@ -209,6 +209,8 @@ sysprof_window_record_capture_action (GtkWidget  *widget,
   greeter = g_object_new (SYSPROF_TYPE_GREETER,
                           "transient-for", self,
                           NULL);
+  gtk_application_add_window (GTK_APPLICATION (SYSPROF_APPLICATION_DEFAULT),
+                              GTK_WINDOW (greeter));
   gtk_window_present (GTK_WINDOW (greeter));
 }
 

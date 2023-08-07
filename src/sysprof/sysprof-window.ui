@@ -32,6 +32,12 @@
             <property name="action">action(win.open-capture)</property>
           </object>
         </child>
+        <child>
+          <object class="GtkShortcut">
+            <property name="trigger">&lt;ctrl&gt;s</property>
+            <property name="action">action(win.save-capture)</property>
+          </object>
+        </child>
       </object>
     </child>
     <property name="content">
@@ -312,6 +318,7 @@
       </item>
       <item>
         <attribute name="label" translatable="yes">Save As…</attribute>
+        <attribute name="action">win.save-capture</attribute>
       </item>
     </section>
     <section>

@@ -2581,3 +2581,69 @@ sysprof_document_list_dbus_messages (SysprofDocument *self)
 
   return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), self->dbus_messages);
 }
+
+static void
+sysprof_document_save_cb (GObject      *object,
+                          GAsyncResult *result,
+                          gpointer      user_data)
+{
+  GFile *file = (GFile *)object;
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GTask) task = user_data;
+
+  g_assert (G_IS_FILE (file));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (G_IS_TASK (task));
+
+  if (!g_file_replace_contents_finish (file, result, NULL, &error))
+    g_task_return_error (task, g_steal_pointer (&error));
+  else
+    g_task_return_boolean (task, TRUE);
+}
+
+/**
+ * sysprof_document_save_async:
+ * @self: a #SysprofDocument
+ * @file: a #GFile
+ * @cancellable: (nullable): a #GCancellable or %NULL
+ *
+ */
+void
+sysprof_document_save_async (SysprofDocument     *self,
+                             GFile               *file,
+                             GCancellable        *cancellable,
+                             GAsyncReadyCallback  callback,
+                             gpointer             user_data)
+{
+  g_autoptr(GTask) task = NULL;
+  g_autoptr(GBytes) bytes = NULL;
+
+  g_return_if_fail (SYSPROF_IS_DOCUMENT (self));
+  g_return_if_fail (G_IS_FILE (file));
+  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, sysprof_document_save_async);
+
+  bytes = g_mapped_file_get_bytes (self->mapped_file);
+
+  g_file_replace_contents_bytes_async (file,
+                                       bytes,
+                                       NULL,
+                                       FALSE,
+                                       G_FILE_CREATE_REPLACE_DESTINATION,
+                                       cancellable,
+                                       sysprof_document_save_cb,
+                                       g_steal_pointer (&task));
+}
+
+gboolean
+sysprof_document_save_finish (SysprofDocument  *self,
+                              GAsyncResult     *result,
+                              GError          **error)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), FALSE);
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+
+  return g_task_propagate_boolean (G_TASK (result), error);
+}

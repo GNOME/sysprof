@@ -120,5 +120,15 @@ SYSPROF_AVAILABLE_IN_ALL
 GBytes                 *sysprof_document_serialize_symbols_finish            (SysprofDocument           *self,
                                                                               GAsyncResult              *result,
                                                                               GError                   **error);
+SYSPROF_AVAILABLE_IN_ALL
+void                    sysprof_document_save_async                          (SysprofDocument           *self,
+                                                                              GFile                     *file,
+                                                                              GCancellable              *cancellable,
+                                                                              GAsyncReadyCallback        callback,
+                                                                              gpointer                   user_data);
+SYSPROF_AVAILABLE_IN_ALL
+gboolean                sysprof_document_save_finish                         (SysprofDocument           *self,
+                                                                              GAsyncResult              *result,
+                                                                              GError                   **error);
 
 G_END_DECLS

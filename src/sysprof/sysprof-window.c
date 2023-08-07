@@ -309,6 +309,69 @@ sysprof_window_session_zoom_out (GtkWidget  *widget,
 }
 
 static void
+sysprof_window_write_document_cb (GObject      *object,
+                                  GAsyncResult *result,
+                                  gpointer      user_data)
+{
+  SysprofDocument *document = (SysprofDocument *)object;
+  g_autoptr(SysprofWindow) self = user_data;
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GFile) file = NULL;
+
+  g_assert (SYSPROF_IS_DOCUMENT (document));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (SYSPROF_IS_WINDOW (self));
+
+  if (!sysprof_document_save_finish (document, result, &error))
+    g_warning ("%s", error->message);
+}
+
+static void
+sysprof_window_save_cb (GObject      *object,
+                        GAsyncResult *result,
+                        gpointer      user_data)
+{
+  GtkFileDialog *dialog = (GtkFileDialog *)object;
+  g_autoptr(SysprofWindow) self = user_data;
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GFile) file = NULL;
+
+  g_assert (GTK_IS_FILE_DIALOG (dialog));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (SYSPROF_IS_WINDOW (self));
+
+  if ((file = gtk_file_dialog_save_finish (dialog, result, &error)))
+    sysprof_document_save_async (self->document,
+                                 file,
+                                 NULL,
+                                 sysprof_window_write_document_cb,
+                                 g_object_ref (self));
+}
+
+static void
+sysprof_window_save_capture (GtkWidget  *widget,
+                             const char *action_name,
+                             GVariant   *param)
+{
+  SysprofWindow *self = (SysprofWindow *)widget;
+  g_autoptr(GtkFileDialog) dialog = NULL;
+
+  g_assert (SYSPROF_IS_WINDOW (self));
+
+  dialog = gtk_file_dialog_new ();
+  gtk_file_dialog_set_title (dialog, _("Save to File"));
+  gtk_file_dialog_set_accept_label (dialog, _("Save"));
+  gtk_file_dialog_set_modal (dialog, TRUE);
+  gtk_file_dialog_set_initial_name (dialog, "capture.syscap");
+
+  gtk_file_dialog_save (dialog,
+                        GTK_WINDOW (self),
+                        NULL,
+                        sysprof_window_save_cb,
+                        g_object_ref (self));
+}
+
+static void
 sysprof_window_dispose (GObject *object)
 {
   SysprofWindow *self = (SysprofWindow *)object;
@@ -405,6 +468,7 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   gtk_widget_class_install_action (widget_class, "session.zoom-in", NULL, sysprof_window_session_zoom_in);
   gtk_widget_class_install_action (widget_class, "session.seek-forward", NULL, sysprof_window_session_seek_forward);
   gtk_widget_class_install_action (widget_class, "session.seek-backward", NULL, sysprof_window_session_seek_backward);
+  gtk_widget_class_install_action (widget_class, "win.save-capture", NULL, sysprof_window_save_capture);
 
   gtk_widget_class_add_binding_action (widget_class, GDK_KEY_plus, GDK_CONTROL_MASK, "session.zoom-in", NULL);
   gtk_widget_class_add_binding_action (widget_class, GDK_KEY_equal, GDK_CONTROL_MASK, "session.zoom-in", NULL);

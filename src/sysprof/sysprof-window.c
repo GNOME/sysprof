@@ -722,6 +722,28 @@ sysprof_window_apply_loader_settings (SysprofDocumentLoader *loader)
   /* TODO: apply loader settings from gsettings/etc */
 }
 
+static SysprofWindow *
+sysprof_window_create (SysprofApplication    *app,
+                       SysprofDocumentLoader *loader)
+{
+  SysprofWindow *self;
+
+  g_assert (SYSPROF_IS_APPLICATION (app));
+
+  self = g_object_new (SYSPROF_TYPE_WINDOW,
+                       "application", app,
+                       NULL);
+  g_object_bind_property (loader, "fraction",
+                          self->progress_bar, "fraction",
+                          G_BINDING_SYNC_CREATE);
+  g_object_set_data (G_OBJECT (loader), "message-binding",
+                     g_object_bind_property (loader, "message",
+                                             self->stack_title, "subtitle",
+                                             G_BINDING_SYNC_CREATE));
+
+  return self;
+}
+
 void
 sysprof_window_open (SysprofApplication *app,
                      GFile              *file)
@@ -740,20 +762,9 @@ sysprof_window_open (SysprofApplication *app,
       return;
     }
 
-  sysprof_window_apply_loader_settings (loader);
-
   g_application_hold (G_APPLICATION (app));
-
-  self = g_object_new (SYSPROF_TYPE_WINDOW,
-                       "application", app,
-                       NULL);
-  g_object_bind_property (loader, "fraction",
-                          self->progress_bar, "fraction",
-                          G_BINDING_SYNC_CREATE);
-  g_object_set_data (G_OBJECT (loader), "message-binding",
-                     g_object_bind_property (loader, "message",
-                                             self->stack_title, "subtitle",
-                                             G_BINDING_SYNC_CREATE));
+  sysprof_window_apply_loader_settings (loader);
+  self = sysprof_window_create (app, loader);
   sysprof_document_loader_load_async (loader,
                                       NULL,
                                       sysprof_window_load_cb,
@@ -767,6 +778,7 @@ sysprof_window_open_fd (SysprofApplication *app,
 {
   g_autoptr(SysprofDocumentLoader) loader = NULL;
   g_autoptr(GError) error = NULL;
+  SysprofWindow *self;
 
   g_return_if_fail (SYSPROF_IS_APPLICATION (app));
 
@@ -780,9 +792,10 @@ sysprof_window_open_fd (SysprofApplication *app,
 
   g_application_hold (G_APPLICATION (app));
   sysprof_window_apply_loader_settings (loader);
+  self = sysprof_window_create (app, loader);
   sysprof_document_loader_load_async (loader,
                                       NULL,
                                       sysprof_window_load_cb,
-                                      g_object_ref (app));
-
+                                      g_object_ref (self));
+  gtk_window_present (GTK_WINDOW (self));
 }

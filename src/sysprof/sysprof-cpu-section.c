@@ -65,6 +65,7 @@ sysprof_cpu_section_class_init (SysprofCpuSectionClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofCpuSection, time_column);
 
   g_type_ensure (SYSPROF_TYPE_CHART);
+  g_type_ensure (SYSPROF_TYPE_CPU_INFO);
   g_type_ensure (SYSPROF_TYPE_DOCUMENT_MARK);
   g_type_ensure (SYSPROF_TYPE_DOCUMENT_COUNTER);
   g_type_ensure (SYSPROF_TYPE_DOCUMENT_COUNTER_VALUE);

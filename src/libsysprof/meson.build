@@ -206,6 +206,7 @@ libsysprof_static = static_library(
 )
 
 libsysprof_static_dep = declare_dependency(
+              sources: libsysprof_enums,
             link_with: libsysprof_static,
          dependencies: libsysprof_deps,
   include_directories: [include_directories('.'),

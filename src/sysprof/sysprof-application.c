@@ -33,6 +33,11 @@ struct _SysprofApplication
 
 G_DEFINE_TYPE (SysprofApplication, sysprof_application, ADW_TYPE_APPLICATION)
 
+static const GOptionEntry option_entries[] = {
+  { "version", 0, 0, G_OPTION_ARG_NONE, NULL, N_("Show Sysprof version and exit") },
+  { 0 }
+};
+
 static void
 sysprof_application_activate (GApplication *app)
 {
@@ -70,6 +75,23 @@ sysprof_application_open (GApplication  *app,
     sysprof_window_open (SYSPROF_APPLICATION (app), files[i]);
 }
 
+static int
+sysprof_application_handle_local_options (GApplication *app,
+                                          GVariantDict *options)
+{
+  gboolean version = FALSE;
+
+  g_assert (SYSPROF_IS_APPLICATION (app));
+
+  if (g_variant_dict_lookup (options, "version", "b", &version) && version)
+    {
+      g_print ("Sysprof version " PACKAGE_VERSION "\n");
+      return 0;
+    }
+
+  return G_APPLICATION_CLASS (sysprof_application_parent_class)->handle_local_options (app, options);
+}
+
 static void
 sysprof_application_window_added (GtkApplication *application,
                                   GtkWindow      *window)
@@ -92,6 +114,7 @@ sysprof_application_class_init (SysprofApplicationClass *klass)
 
   app_class->open = sysprof_application_open;
   app_class->activate = sysprof_application_activate;
+  app_class->handle_local_options = sysprof_application_handle_local_options;
 
   gtk_app_class->window_added = sysprof_application_window_added;
 }
@@ -183,6 +206,8 @@ sysprof_application_init (SysprofApplication *self)
   textdomain (GETTEXT_PACKAGE);
 
   g_set_application_name (_("Sysprof"));
+
+  g_application_add_main_option_entries (G_APPLICATION (self), option_entries);
 
   g_action_map_add_action_entries (G_ACTION_MAP (self),
                                    actions,

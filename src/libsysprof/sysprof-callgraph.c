@@ -373,6 +373,8 @@ sysprof_callgraph_add_traceable (SysprofCallgraph         *self,
                                                     symbols,
                                                     stack_depth,
                                                     &final_context);
+  if (n_symbols == 0)
+    return;
 
   g_assert (n_symbols <= stack_depth);
 

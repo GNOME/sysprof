@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-36\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-08-07 01:00+0000\n"
-"PO-Revision-Date: 2023-08-07 19:06+0300\n"
+"POT-Creation-Date: 2023-08-07 22:05+0000\n"
+"PO-Revision-Date: 2023-08-08 09:24+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -20,8 +20,8 @@ msgstr ""
 "X-Generator: Lokalize 20.12.0\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:5
-#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:138
-#: src/sysprof/sysprof-application.c:185
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
+#: src/sysprof/sysprof-application.c:208
 #: src/sysprof/sysprof-recording-pad.ui:18
 msgid "Sysprof"
 msgstr "Sysprof"
@@ -75,7 +75,7 @@ msgid "CSS"
 msgstr "CSS"
 
 #: src/libsysprof/sysprof-category-summary.c:156
-#: src/sysprof/sysprof-greeter.ui:379 src/sysprof/sysprof-window.ui:247
+#: src/sysprof/sysprof-greeter.ui:379 src/sysprof/sysprof-window.ui:260
 msgid "Graphics"
 msgstr "Графіка"
 
@@ -139,41 +139,43 @@ msgstr "Керування вікнами"
 msgid "Allocation"
 msgstr "Розміщення"
 
-#: src/libsysprof/sysprof-document.c:1160
-#: src/libsysprof/sysprof-document.c:1196
+#: src/libsysprof/sysprof-document.c:1170
+#: src/libsysprof/sysprof-document.c:1206
 msgid "Indexing capture data frames"
 msgstr "Індексування кадрів даних захоплення"
 
-#: src/libsysprof/sysprof-document.c:1374
+#: src/libsysprof/sysprof-document.c:1384
 msgid "Discovering file system mounts"
 msgstr "Вивчення монтувань файлових систем"
 
-#: src/libsysprof/sysprof-document.c:1377
+#: src/libsysprof/sysprof-document.c:1387
 msgid "Discovering process mount namespaces"
 msgstr "Вивчення просторів назв монтування процесу"
 
-#: src/libsysprof/sysprof-document.c:1380
+#: src/libsysprof/sysprof-document.c:1390
 msgid "Analyzing process address layouts"
 msgstr "Аналіз компонування адрес процесу"
 
-#: src/libsysprof/sysprof-document.c:1383
+#: src/libsysprof/sysprof-document.c:1393
 msgid "Analyzing process command line"
 msgstr "Аналіз командного рядка процесу"
 
-#: src/libsysprof/sysprof-document.c:1386
+#: src/libsysprof/sysprof-document.c:1396
 msgid "Analyzing file system overlays"
 msgstr "Аналіз накладок на файлову систему"
 
-#: src/libsysprof/sysprof-document.c:1389
+#: src/libsysprof/sysprof-document.c:1399
 msgid "Processing counters"
 msgstr "Лічильники обробки"
 
-#: src/libsysprof/sysprof-document.c:2369
+#: src/libsysprof/sysprof-document.c:2379
+#: src/libsysprof/sysprof-document.c:2395
 #, c-format
 msgid "Recording at %X %x"
 msgstr "Записано %X %x"
 
-#: src/libsysprof/sysprof-document.c:2371
+#: src/libsysprof/sysprof-document.c:2381
+#: src/libsysprof/sysprof-document.c:2397
 #, c-format
 msgid "Recording at %s"
 msgstr "Записано о %s"
@@ -451,11 +453,16 @@ msgstr "_Довідка"
 msgid "_About Sysprof"
 msgstr "_Про Sysprof"
 
-#: src/sysprof/sysprof-application.c:147
+#: src/sysprof/sysprof-application.c:37
+#| msgid "Print the sysprof-cli version and exit"
+msgid "Show Sysprof version and exit"
+msgstr "Вивести дані щодо версії sysprof і вийти"
+
+#: src/sysprof/sysprof-application.c:170
 msgid "A system profiler"
 msgstr "Засіб профілювання системи"
 
-#: src/sysprof/sysprof-application.c:148
+#: src/sysprof/sysprof-application.c:171
 msgid "translator-credits"
 msgstr "Юрій Чорноіван <yurchor@ukr.net>"
 
@@ -623,78 +630,65 @@ msgstr "Стиснений"
 #: src/sysprof/sysprof-logs-section.ui:143
 #: src/sysprof/sysprof-mark-table.ui:116
 #: src/sysprof/sysprof-traceables-utility.ui:81
-#: src/sysprof/sysprof-window.ui:227
+#: src/sysprof/sysprof-window.ui:240
 msgid "CPU"
 msgstr "Процесор"
 
-#: src/sysprof/sysprof-greeter.c:110
+#: src/sysprof/sysprof-greeter.c:102
 msgid "Use KEY=VALUE to set an environment variable"
 msgstr ""
 "Скористайтеся синтаксичною конструкцією КЛЮЧ=ЗНАЧЕННЯ, щоб встановити змінну "
 "середовища"
 
-#: src/sysprof/sysprof-greeter.c:116
+#: src/sysprof/sysprof-greeter.c:108
 msgid "Keys may not start with a number"
 msgstr "Ключі не повинні починатися з цифри"
 
-#: src/sysprof/sysprof-greeter.c:126
+#: src/sysprof/sysprof-greeter.c:118
 msgid "Keys may only contain alpha-numerics or underline."
 msgstr ""
 "Ключі можуть містити лише літерно-цифрові символи і символи підкреслювання."
 
-#: src/sysprof/sysprof-greeter.c:273 src/sysprof/sysprof-greeter.c:338
+#: src/sysprof/sysprof-greeter.c:265 src/sysprof/sysprof-window.c:155
 msgid "Must Capture to Local File"
 msgstr "Слід захоплювати до локального файла"
 
-#: src/sysprof/sysprof-greeter.c:274 src/sysprof/sysprof-greeter.c:339
+#: src/sysprof/sysprof-greeter.c:266 src/sysprof/sysprof-window.c:156
 msgid "You must choose a local file to capture using Sysprof"
 msgstr ""
 "Для захоплення даних за допомогою Sysprof вам слід вибрати локальний файл"
 
-#: src/sysprof/sysprof-greeter.c:275 src/sysprof/sysprof-greeter.c:340
-#: src/sysprof/sysprof-recording-pad.c:115 src/sysprof/sysprof-window.c:588
+#: src/sysprof/sysprof-greeter.c:267 src/sysprof/sysprof-recording-pad.c:115
+#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:709
 msgid "Close"
 msgstr "Закрити"
 
-#: src/sysprof/sysprof-greeter.c:296
+#: src/sysprof/sysprof-greeter.c:288
 #, c-format
 msgid "System Capture from %s.syscap"
 msgstr "Захоплення системи з %s.syscap"
 
-#: src/sysprof/sysprof-greeter.c:300
+#: src/sysprof/sysprof-greeter.c:292
 msgid "Record to File"
 msgstr "Не вдалося записати"
 
-#: src/sysprof/sysprof-greeter.c:301
+#: src/sysprof/sysprof-greeter.c:293
 msgid "Record"
 msgstr "Записати"
 
-#: src/sysprof/sysprof-greeter.c:359
-msgid "Open Recording"
-msgstr "Відкрити запис"
-
-#: src/sysprof/sysprof-greeter.c:360
-msgid "Open"
-msgstr "Відкрити"
-
-#: src/sysprof/sysprof-greeter.c:364
-msgid "Sysprof Capture (*.syscap)"
-msgstr "захоплені дані Sysprof (*.syscap)"
-
-#: src/sysprof/sysprof-greeter.c:512
+#: src/sysprof/sysprof-greeter.c:440
 msgid "No Change"
 msgstr "Без змін"
 
-#: src/sysprof/sysprof-greeter.c:515
+#: src/sysprof/sysprof-greeter.c:443
 msgid "Balanced"
 msgstr "Збалансований"
 
-#: src/sysprof/sysprof-greeter.c:518
+#: src/sysprof/sysprof-greeter.c:446
 msgid "Power Saver"
 msgstr "Заощадження"
 
-#: src/sysprof/sysprof-greeter.c:521
-#| msgid "Performance Profile"
+#: src/sysprof/sysprof-greeter.c:449
 msgid "Performance"
 msgstr "Швидкодія"
 
@@ -837,7 +831,7 @@ msgid "Record coarse-grained counters about battery charge or discharge rates"
 msgstr "Записати грубий облік щодо швидкості заряджання і розряджання батареї"
 
 #: src/sysprof/sysprof-greeter.ui:323 src/sysprof/sysprof-greeter.ui:328
-#: src/sysprof/sysprof-window.ui:217
+#: src/sysprof/sysprof-window.ui:230
 msgid "D-Bus"
 msgstr "D-Bus"
 
@@ -959,11 +953,11 @@ msgstr "Записати до _файла…"
 msgid "Record to _Memory"
 msgstr "_Записати до пам'яті"
 
-#: src/sysprof/sysprof-greeter.ui:584 src/sysprof/sysprof-window.ui:326
+#: src/sysprof/sysprof-greeter.ui:584 src/sysprof/sysprof-window.ui:341
 msgid "Help"
 msgstr "Довідка"
 
-#: src/sysprof/sysprof-greeter.ui:589 src/sysprof/sysprof-window.ui:331
+#: src/sysprof/sysprof-greeter.ui:589 src/sysprof/sysprof-window.ui:346
 msgid "About Sysprof"
 msgstr "Про Sysprof"
 
@@ -1196,23 +1190,23 @@ msgstr "Припинити запис"
 msgid "Time Profiler"
 msgstr "Профілювання за часом"
 
-#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:104
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:107
 msgid "Seek Backward"
 msgstr "Перемотати назад"
 
-#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:114
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:117
 msgid "Zoom Out"
 msgstr "Зменшити"
 
-#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:124
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:127
 msgid "Reset Zoom"
 msgstr "Відновити масштаб"
 
-#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:134
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:137
 msgid "Zoom In"
 msgstr "Збільшити"
 
-#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:144
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:147
 msgid "Seek Forward"
 msgstr "Перемотати вперед"
 
@@ -1224,20 +1218,35 @@ msgstr "Глибина"
 msgid "Hits"
 msgstr "Вдалі спроби"
 
-#: src/sysprof/sysprof-window.c:362
-#| msgid "Record to File"
+#: src/sysprof/sysprof-window.c:171
+msgid "Open Recording"
+msgstr "Відкрити запис"
+
+#: src/sysprof/sysprof-window.c:172
+msgid "Open"
+msgstr "Відкрити"
+
+#: src/sysprof/sysprof-window.c:176
+msgid "Sysprof Capture (*.syscap)"
+msgstr "захоплені дані Sysprof (*.syscap)"
+
+#: src/sysprof/sysprof-window.c:459
 msgid "Save to File"
 msgstr "Зберегти у файл"
 
-#: src/sysprof/sysprof-window.c:363
+#: src/sysprof/sysprof-window.c:460
 msgid "Save"
 msgstr "Зберегти"
 
-#: src/sysprof/sysprof-window.c:584
+#: src/sysprof/sysprof-window.c:629
+msgid "Loading..."
+msgstr "Завантаження…"
+
+#: src/sysprof/sysprof-window.c:705
 msgid "Invalid Document"
 msgstr "Некоректний документ"
 
-#: src/sysprof/sysprof-window.c:586
+#: src/sysprof/sysprof-window.c:707
 #, c-format
 msgid ""
 "The document could not be loaded. Please check that you have the correct "
@@ -1250,27 +1259,27 @@ msgstr ""
 "\n"
 "%s"
 
-#: src/sysprof/sysprof-window.ui:237
+#: src/sysprof/sysprof-window.ui:250
 msgid "Energy"
 msgstr "Енергія"
 
-#: src/sysprof/sysprof-window.ui:257
+#: src/sysprof/sysprof-window.ui:270
 msgid "Network"
 msgstr "Мережа"
 
-#: src/sysprof/sysprof-window.ui:267
+#: src/sysprof/sysprof-window.ui:280
 msgid "Storage"
 msgstr "Сховище даних"
 
-#: src/sysprof/sysprof-window.ui:312
+#: src/sysprof/sysprof-window.ui:327
 msgid "_Record Again…"
 msgstr "З_аписати ще раз…"
 
-#: src/sysprof/sysprof-window.ui:316
+#: src/sysprof/sysprof-window.ui:331
 msgid "Open Recording…"
 msgstr "Відкрити записане…"
 
-#: src/sysprof/sysprof-window.ui:320
+#: src/sysprof/sysprof-window.ui:335
 msgid "Save As…"
 msgstr "Зберегти як…"
 

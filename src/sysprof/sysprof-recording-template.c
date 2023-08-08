@@ -543,6 +543,9 @@ sysprof_recording_template_apply (SysprofRecordingTemplate  *self,
   if (self->bundle_symbols)
     sysprof_profiler_add_instrument (profiler, sysprof_symbols_bundle_new ());
 
+  if (self->cpu_usage)
+    sysprof_profiler_add_instrument (profiler, sysprof_cpu_usage_new ());
+
   if (self->disk_usage)
     sysprof_profiler_add_instrument (profiler, sysprof_disk_usage_new ());
 

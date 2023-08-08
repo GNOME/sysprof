@@ -47,17 +47,39 @@ struct _SysprofMemoryUsageClass
   SysprofInstrumentClass parent_class;
 };
 
+static const char *counter_names[] = {
+  "Used",
+  "Total",
+  "Available",
+  "Free",
+  "Buffers",
+  "Cached",
+  "Swap Cached",
+  "Mapped",
+  "Shmem",
+  "Swap Total",
+  "Swap Free",
+};
+
 typedef struct _MemStat
 {
   int stat_fd;
 
   union {
     struct {
-      SysprofCaptureCounterValue used;
+      gint64 used;
       gint64 total;
       gint64 avail;
       gint64 free;
+      gint64 buffers;
+      gint64 cached;
+      gint64 swap_cached;
+      gint64 mapped;
+      gint64 shmem;
+      gint64 swap_total;
+      gint64 swap_free;
     } sys;
+    SysprofCaptureCounterValue values[11];
   };
 } MemStat;
 
@@ -107,7 +129,7 @@ mem_stat_parse (MemStat *st,
 
   for (;;)
     {
-      goffset off;
+      gssize off;
       char *key;
       char *value;
       char *unit;
@@ -123,8 +145,8 @@ mem_stat_parse (MemStat *st,
       /* Offset from self to save value. Stop after getting to
        * last value we care about.
        */
-      if (!(off = GPOINTER_TO_UINT (g_hash_table_lookup (keys, key))))
-        break;
+      if (!g_hash_table_lookup_extended (keys, key, NULL, (gpointer *)&off))
+        off = -1;
 
       /* Get the data value */
       if (!(value = strtok_r (bufptr, " \n\t:", &save)))
@@ -139,17 +161,21 @@ mem_stat_parse (MemStat *st,
       unit = strtok_r (bufptr, " \n\t:", &save);
 
       if (g_strcmp0 (unit, "kB") == 0)
-        v64 *= 1024;
+        v64 *= 1024L;
       else if (g_strcmp0 (unit, "mB") == 0)
-        v64 *= 1024 * 1024;
+        v64 *= 1024L * 1024L;
+      else if (g_strcmp0 (unit, "gB") == 0)
+        v64 *= 1024L * 1024L * 1024L;
 
-      v64ptr = (gint64 *)(gpointer)(((gchar *)st) + off);
-
-      *v64ptr = v64;
+      if (off >= 0)
+        {
+          v64ptr = (gint64 *)(gpointer)(((gchar *)st) + off);
+          *v64ptr = v64;
+        }
     }
 
   /* Create pre-compiled value for used to simplify display */
-  st->sys.used.vdbl = (gdouble)st->sys.total - (gdouble)st->sys.avail;
+  st->sys.used = (gdouble)st->sys.total - (gdouble)st->sys.avail;
 }
 
 typedef struct _Record
@@ -175,9 +201,11 @@ sysprof_memory_usage_record_fiber (gpointer user_data)
   Record *record = user_data;
   SysprofCaptureWriter *writer;
   g_autoptr(GError) error = NULL;
-  SysprofCaptureCounter counters[1];
+  SysprofCaptureCounter counters[11];
   MemStat st;
-  guint counter_id;
+  guint counter_base;
+  g_autofree guint *counter_ids = g_new0 (guint, 11);
+  g_autofree SysprofCaptureCounterValue *values = g_new0 (SysprofCaptureCounterValue, 11);
 
   g_assert (record != NULL);
   g_assert (SYSPROF_IS_RECORDING (record->recording));
@@ -191,22 +219,27 @@ sysprof_memory_usage_record_fiber (gpointer user_data)
   if (!mem_stat_open (&st, &error))
     return dex_future_new_for_error (g_steal_pointer (&error));
 
-  counter_id = sysprof_capture_writer_request_counter (writer, 1);
+  counter_base = sysprof_capture_writer_request_counter (writer, 11);
 
-  g_strlcpy (counters[0].category, "Memory", sizeof counters[0].category);
-  g_strlcpy (counters[0].name, "Used", sizeof counters[0].name);
-  g_strlcpy (counters[0].description, "Memory used by system", sizeof counters[0].description);
-
-  counters[0].id = counter_id;
-  counters[0].type = SYSPROF_CAPTURE_COUNTER_DOUBLE;
-  counters[0].value.vdbl = 0;
+  for (guint i = 0; i < 11; i++)
+    {
+      g_strlcpy (counters[i].category, "Memory", sizeof counters[i].category);
+      g_strlcpy (counters[i].name, counter_names[i], sizeof counters[i].name);
+      g_strlcpy (counters[i].description, "", sizeof counters[0].description);
+      counters[i].id = counter_base + i;
+      counters[i].type = SYSPROF_CAPTURE_COUNTER_INT64;
+      counters[i].value.v64 = 0;
+    }
 
   sysprof_capture_writer_define_counters (writer,
                                           SYSPROF_CAPTURE_CURRENT_TIME,
                                           -1,
                                           -1,
                                           counters,
-                                          1);
+                                          11);
+
+  for (guint i = 0; i < 11; i++)
+    counter_ids[i] = counter_base + i;
 
   for (;;)
     {
@@ -235,9 +268,9 @@ sysprof_memory_usage_record_fiber (gpointer user_data)
                                                SYSPROF_CAPTURE_CURRENT_TIME,
                                                -1,
                                                -1,
-                                               &counter_id,
-                                               &st.sys.used,
-                                               1);
+                                               counter_ids,
+                                               st.values,
+                                               11);
         }
 
       dex_await (dex_future_first (dex_ref (record->cancellable),
@@ -290,6 +323,13 @@ sysprof_memory_usage_class_init (SysprofMemoryUsageClass *klass)
   ADD_OFFSET ("MemTotal", G_STRUCT_OFFSET (MemStat, sys.total));
   ADD_OFFSET ("MemFree", G_STRUCT_OFFSET (MemStat, sys.free));
   ADD_OFFSET ("MemAvailable", G_STRUCT_OFFSET (MemStat, sys.avail));
+  ADD_OFFSET ("Buffers", G_STRUCT_OFFSET (MemStat, sys.buffers));
+  ADD_OFFSET ("Cached", G_STRUCT_OFFSET (MemStat, sys.cached));
+  ADD_OFFSET ("SwapCached", G_STRUCT_OFFSET (MemStat, sys.swap_cached));
+  ADD_OFFSET ("Mapped", G_STRUCT_OFFSET (MemStat, sys.mapped));
+  ADD_OFFSET ("Shmem", G_STRUCT_OFFSET (MemStat, sys.shmem));
+  ADD_OFFSET ("SwapTotal", G_STRUCT_OFFSET (MemStat, sys.swap_total));
+  ADD_OFFSET ("SwapFree", G_STRUCT_OFFSET (MemStat, sys.swap_free));
 #undef ADD_OFFSET
 }
 

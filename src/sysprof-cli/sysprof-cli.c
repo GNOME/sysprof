@@ -198,7 +198,11 @@ sysprof_cli_wait_cb (GObject      *object,
   g_assert (user_data == NULL);
 
   if (!sysprof_recording_wait_finish (recording, result, &error))
-    g_error ("Failed to complete recording: %s", error->message);
+    {
+      if (error->domain != G_SPAWN_EXIT_ERROR)
+        g_printerr ("Failed to complete recording: %s\n",
+                    error->message);
+    }
 
   g_main_loop_quit (main_loop);
 }

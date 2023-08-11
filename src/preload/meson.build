@@ -3,13 +3,9 @@ libdl_dep = dependency('dl', required: false)
 preload_deps = [
   dependency('glib-2.0'),
   libsysprof_capture_dep,
+  libunwind_dep,
   libdl_dep,
 ]
-
-if get_option('libunwind')
-  preload_deps += [libunwind_dep]
-endif
-
 
 libsysprof_memory_preload = shared_library('sysprof-memory-@0@'.format(libsysprof_api_version),
   ['sysprof-memory-collector.c'],

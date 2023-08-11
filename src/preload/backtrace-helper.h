@@ -20,22 +20,15 @@
 
 #pragma once
 
-#ifdef HAVE_EXECINFO_H
-# include <execinfo.h>
-#endif
-#ifdef ENABLE_LIBUNWIND
-# define UNW_LOCAL_ONLY
-# include <libunwind.h>
-#endif
+#define UNW_LOCAL_ONLY
+#include <libunwind.h>
 
 static void
 backtrace_init (void)
 {
-#ifdef ENABLE_LIBUNWIND
   unw_set_caching_policy (unw_local_addr_space, UNW_CACHE_PER_THREAD);
-# ifdef HAVE_UNW_SET_CACHE_SIZE
+#ifdef HAVE_UNW_SET_CACHE_SIZE
   unw_set_cache_size (unw_local_addr_space, 1024, 0);
-#endif
 #endif
 }
 
@@ -44,36 +37,20 @@ backtrace_func (SysprofCaptureAddress  *addrs,
                 guint                   n_addrs,
                 G_GNUC_UNUSED gpointer  user_data)
 {
-#if defined(ENABLE_LIBUNWIND)
-# if GLIB_SIZEOF_VOID_P == 8
+#if GLIB_SIZEOF_VOID_P == 8
   /* We know that collector will overwrite fields *AFTER* it
    * has called the backtrace function allowing us to cheat
    * and subtract an offset from addrs to avoid having to
    * copy frame pointers around.
    */
   return unw_backtrace ((void **)addrs - 2, n_addrs) - 2;
-# else
+#else
   static const int skip = 2;
   void **stack = alloca (n_addrs * sizeof (gpointer));
   int n = unw_backtrace (stack, n_addrs);
   for (guint i = skip; i < n; i++)
     addrs[i-skip] = GPOINTER_TO_SIZE (stack[i]);
   return MAX (0, n - skip);
-# endif
-#elif defined(HAVE_EXECINFO_H)
-# if GLIB_SIZEOF_VOID_P == 8
-  /* See note on unw_backtrace() */
-  return backtrace ((void **)addrs - 2, n_addrs) - 2;
-# else /* GLIB_SIZEOF_VOID_P != 8 */
-  static const int skip = 2;
-  void **stack = alloca (n_addrs * sizeof (gpointer));
-  int n = backtrace (stack, n_addrs);
-  for (guint i = skip; i < n; i++)
-    addrs[i-skip] = GPOINTER_TO_SIZE (stack[i]);
-  return MAX (0, n - skip);
-# endif /* GLIB_SIZEOF_VOID_P */
-#else
-  return 0;
 #endif
 }
 

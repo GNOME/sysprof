@@ -29,9 +29,6 @@ option('systemdunitdir', type: 'string',
 # If Yelp documentation should be installed
 option('help', type: 'boolean')
 
-# Disable use of libunwind
-option('libunwind', type: 'boolean')
-
 # Build libsysprof (required by tools, tests, sysprof, etc)
 option('libsysprof', type: 'boolean')
 

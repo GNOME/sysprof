@@ -92,7 +92,6 @@ if get_option('default_library') != 'static'
   endif
 endif
 
-config_h.set('HAVE_EXECINFO_H', cc.has_header('execinfo.h'))
 config_h.set('HAVE_REALLOCARRAY', cc.has_function('reallocarray'))
 config_h.set('HAVE_STRLCPY', cc.has_function('strlcpy'))
 config_h.set('LOCALEDIR', 'PACKAGE_LOCALE_DIR')
@@ -107,16 +106,13 @@ config_h.set10('HAVE_POLKIT_AGENT', polkit_agent_dep.found())
 polkit_dep = dependency('polkit-gobject-1', version: polkit_req_version, required: false)
 config_h.set10('HAVE_POLKIT', polkit_dep.found())
 
-if get_option('libunwind')
-  # Force libunwind usage if it's specified to avoid back compiles
-  # and backtrace() showing up in builds
+if get_option('libsysprof')
   libunwind_dep = dependency('libunwind-generic', required: true)
   config_h.set('ENABLE_LIBUNWIND', libunwind_dep.found())
   config_h.set('HAVE_UNW_SET_CACHE_SIZE',
-               (libunwind_dep.found() and
-                 cc.has_header_symbol('libunwind.h',
-                                      'unw_set_cache_size',
-                                      dependencies: [libunwind_dep])))
+               cc.has_header_symbol('libunwind.h',
+                                    'unw_set_cache_size',
+                                    dependencies: [libunwind_dep]))
 endif
 
 # Development build setup

@@ -6,8 +6,8 @@
 msgid ""
 msgstr "Project-Id-Version: sysprof sysprof-3-30\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-08-05 05:54+0000\n"
-"PO-Revision-Date: 2023-08-05 10:00+0100\n"
+"POT-Creation-Date: 2023-08-07 22:05+0000\n"
+"PO-Revision-Date: 2023-08-12 10:00+0100\n"
 "Last-Translator: Asier Sarasua Garmendia <asiersarasua@ni.eus>\n"
 "Language-Team: Basque <librezale@librezale.eus>\n"
 "Language: eu\n"
@@ -17,8 +17,8 @@ msgstr "Project-Id-Version: sysprof sysprof-3-30\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:5
-#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:138
-#: src/sysprof/sysprof-application.c:185
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
+#: src/sysprof/sysprof-application.c:208
 #: src/sysprof/sysprof-recording-pad.ui:18
 msgid "Sysprof"
 msgstr "Sysprof"
@@ -37,7 +37,7 @@ msgid ""
 "optimization."
 msgstr "Aplikazioak profilatzea ahalbidetzen du arazketan eta optimizazioetan laguntzeko."
 
-#: data/org.gnome.Sysprof.desktop.in.in:5
+#: data/org.gnome.Sysprof.desktop.in.in:5 src/sysprof/sysprof-greeter.ui:58
 msgid "Profiler"
 msgstr "Profilatzailea"
 
@@ -70,7 +70,7 @@ msgid "CSS"
 msgstr "CSS"
 
 #: src/libsysprof/sysprof-category-summary.c:156
-#: src/sysprof/sysprof-window.ui:241
+#: src/sysprof/sysprof-greeter.ui:379 src/sysprof/sysprof-window.ui:260
 msgid "Graphics"
 msgstr "Grafikoak"
 
@@ -111,7 +111,6 @@ msgid "Main Loop"
 msgstr "Begizta nagusia"
 
 #: src/libsysprof/sysprof-category-summary.c:186
-#: src/sysprof/sysprof-greeter.ui:84
 msgid "Memory"
 msgstr "Memoria"
 
@@ -135,41 +134,43 @@ msgstr "Leihoak"
 msgid "Allocation"
 msgstr "Esleipena"
 
-#: src/libsysprof/sysprof-document.c:1160
-#: src/libsysprof/sysprof-document.c:1196
+#: src/libsysprof/sysprof-document.c:1170
+#: src/libsysprof/sysprof-document.c:1206
 msgid "Indexing capture data frames"
 msgstr "Kapturako datu-markoak indexatzen"
 
-#: src/libsysprof/sysprof-document.c:1374
+#: src/libsysprof/sysprof-document.c:1384
 msgid "Discovering file system mounts"
 msgstr "Fitxategi-sistemaren muntaketak aurkitzen"
 
-#: src/libsysprof/sysprof-document.c:1377
+#: src/libsysprof/sysprof-document.c:1387
 msgid "Discovering process mount namespaces"
 msgstr "Prozesuen muntaketako izen-espazioak aurkitzen"
 
-#: src/libsysprof/sysprof-document.c:1380
+#: src/libsysprof/sysprof-document.c:1390
 msgid "Analyzing process address layouts"
 msgstr "Prozesuaren helbide-diseinuak analizatzen"
 
-#: src/libsysprof/sysprof-document.c:1383
+#: src/libsysprof/sysprof-document.c:1393
 msgid "Analyzing process command line"
 msgstr "Prozesuaren komando-lerroa analizatzen"
 
-#: src/libsysprof/sysprof-document.c:1386
+#: src/libsysprof/sysprof-document.c:1396
 msgid "Analyzing file system overlays"
 msgstr "Fitxategi-sistemaren gainjartzeak analizatzen"
 
-#: src/libsysprof/sysprof-document.c:1389
+#: src/libsysprof/sysprof-document.c:1399
 msgid "Processing counters"
 msgstr "Kontagailuak prozesatzen"
 
-#: src/libsysprof/sysprof-document.c:2357
+#: src/libsysprof/sysprof-document.c:2379
+#: src/libsysprof/sysprof-document.c:2395
 #, c-format
 msgid "Recording at %X %x"
 msgstr "Grabatzen hemen: %X %x"
 
-#: src/libsysprof/sysprof-document.c:2359
+#: src/libsysprof/sysprof-document.c:2381
+#: src/libsysprof/sysprof-document.c:2397
 #, c-format
 msgid "Recording at %s"
 msgstr "Grabazioa %s orduan"
@@ -221,7 +222,7 @@ msgstr "%d. prozesua"
 msgid "Sample"
 msgstr "Lagina"
 
-#: src/libsysprof/sysprof-system-logs.c:171 src/sysprof/sysprof-greeter.ui:275
+#: src/libsysprof/sysprof-system-logs.c:171
 msgid "System Logs"
 msgstr "Sistemaren egunkaria"
 
@@ -237,7 +238,7 @@ msgstr "Aztarnaria"
 msgid ""
 "Tracing requires spawning a program compiled with ‘-finstrument-functions’. "
 "Tracing will not be available."
-msgstr "Aztarnen jarraipenerako, ‘-finstrument-functions’ parametroarekin konpilatutako programa bat abiarazi behar da. Aztarnen jarraipena ez dago erabilgarri."
+msgstr "Aztarnak jarraitzeko, ‘-finstrument-functions’ parametroarekin konpilatutako programa bat abiarazi behar da. Aztarnen jarraipena ez da erabilgarri egongo."
 
 #: src/sysprof-cli/sysprof-cli.c:110
 msgid "--merge requires at least 2 filename arguments"
@@ -246,7 +247,7 @@ msgstr "--merge ekintzak gutxienez 2 fitxategi-izen behar ditu argumentu gisa"
 #: src/sysprof-cli/sysprof-cli.c:298
 msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
 msgstr "Desgaitu PUZa bizkortzea profilatzea abian dagoen bitartean [zaharkituta --power-profile parametroarekin]\n"
-"Desgaitu PUZa bizkortzea profilatzea abian dagoen bitartean "
+"Desgaitu PUZa bizkortzea profilatzea abian dagoen bitartean"
 
 #: src/sysprof-cli/sysprof-cli.c:299
 msgid "Make sysprof specific to a task [Deprecated]"
@@ -436,11 +437,15 @@ msgstr "_Laguntza"
 msgid "_About Sysprof"
 msgstr "Sysprof aplikazioari _buruz"
 
-#: src/sysprof/sysprof-application.c:147
+#: src/sysprof/sysprof-application.c:37
+msgid "Show Sysprof version and exit"
+msgstr "Erakutsi Sysprof-en bertsioa eta irten"
+
+#: src/sysprof/sysprof-application.c:170
 msgid "A system profiler"
 msgstr "Sistemaren profilatzaile bat"
 
-#: src/sysprof/sysprof-application.c:148
+#: src/sysprof/sysprof-application.c:171
 msgid "translator-credits"
 msgstr "translator-credits"
 
@@ -555,6 +560,7 @@ msgstr "Banderak"
 
 #: src/sysprof/sysprof-dbus-section.ui:281
 #: src/sysprof/sysprof-files-section.ui:107
+#: src/sysprof/sysprof-memory-callgraph-view.ui:68
 msgid "Size"
 msgstr "Tamaina"
 
@@ -607,251 +613,319 @@ msgstr "Konprimatua"
 #: src/sysprof/sysprof-logs-section.ui:143
 #: src/sysprof/sysprof-mark-table.ui:116
 #: src/sysprof/sysprof-traceables-utility.ui:81
-#: src/sysprof/sysprof-window.ui:221
+#: src/sysprof/sysprof-window.ui:240
 msgid "CPU"
 msgstr "PUZa"
 
-#: src/sysprof/sysprof-greeter.c:225 src/sysprof/sysprof-greeter.c:290
+#: src/sysprof/sysprof-greeter.c:102
+msgid "Use KEY=VALUE to set an environment variable"
+msgstr "Erabili GAKOA=BALIOA ingurune-aldagai bat ezartzeko"
+
+#: src/sysprof/sysprof-greeter.c:108
+msgid "Keys may not start with a number"
+msgstr "Gakoek ez dute zenbakiekin hasi behar"
+
+#: src/sysprof/sysprof-greeter.c:118
+msgid "Keys may only contain alpha-numerics or underline."
+msgstr "Gakoek balio alfanumerikoak eta azpimarrak soilik eduki ditzakete."
+
+#: src/sysprof/sysprof-greeter.c:265 src/sysprof/sysprof-window.c:155
 msgid "Must Capture to Local File"
 msgstr "Fitxategi lokala kapturatu behar du"
 
-#: src/sysprof/sysprof-greeter.c:226 src/sysprof/sysprof-greeter.c:291
+#: src/sysprof/sysprof-greeter.c:266 src/sysprof/sysprof-window.c:156
 msgid "You must choose a local file to capture using Sysprof"
 msgstr "Fitxategi lokal bat aukeratu behar da Sysprof bidez kapturatua izan dadin"
 
-#: src/sysprof/sysprof-greeter.c:227 src/sysprof/sysprof-greeter.c:292
-#: src/sysprof/sysprof-recording-pad.c:115 src/sysprof/sysprof-window.c:524
+#: src/sysprof/sysprof-greeter.c:267 src/sysprof/sysprof-recording-pad.c:115
+#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:709
 msgid "Close"
 msgstr "Itxi"
 
-#: src/sysprof/sysprof-greeter.c:248
+#: src/sysprof/sysprof-greeter.c:288
 #, c-format
 msgid "System Capture from %s.syscap"
 msgstr "Sistemaren kaptura hemen: %s.syscap"
 
-#: src/sysprof/sysprof-greeter.c:252
+#: src/sysprof/sysprof-greeter.c:292
 msgid "Record to File"
 msgstr "Grabatu fitxategian"
 
-#: src/sysprof/sysprof-greeter.c:253 src/sysprof/sysprof-greeter.ui:27
+#: src/sysprof/sysprof-greeter.c:293
 msgid "Record"
 msgstr "Grabatu"
 
-#: src/sysprof/sysprof-greeter.c:311 src/sysprof/sysprof-greeter.ui:312
-msgid "Open Recording"
-msgstr "Ireki grabazioa"
+#: src/sysprof/sysprof-greeter.c:440
+msgid "No Change"
+msgstr "Aldaketarik ez"
 
-#: src/sysprof/sysprof-greeter.c:312 src/sysprof/sysprof-greeter.ui:307
-msgid "Open"
-msgstr "Ireki"
+#: src/sysprof/sysprof-greeter.c:443
+msgid "Balanced"
+msgstr "Orekatua"
 
-#: src/sysprof/sysprof-greeter.c:316
-msgid "Sysprof Capture (*.syscap)"
-msgstr "Sysprof kaptura (*.syscap)"
+#: src/sysprof/sysprof-greeter.c:446
+msgid "Power Saver"
+msgstr "Energiaren aurrezpena"
 
-#: src/sysprof/sysprof-greeter.ui:33 src/sysprof/sysprof-samples-section.ui:4
-msgid "Time Profiler"
-msgstr "Denbora-profilatzailea"
+#: src/sysprof/sysprof-greeter.c:449
+msgid "Performance"
+msgstr "Errendimendua"
 
-#: src/sysprof/sysprof-greeter.ui:37
+#: src/sysprof/sysprof-greeter.ui:64
+msgid "Sampling"
+msgstr "Lagintzea"
+
+#: src/sysprof/sysprof-greeter.ui:68
 msgid "Sample Native Stacks"
 msgstr "Adibideko jatorrizko pilak"
 
-#: src/sysprof/sysprof-greeter.ui:38
+#: src/sysprof/sysprof-greeter.ui:69
 msgid "Record native stack traces using a sampling profiler"
 msgstr "Grabatu jatorrizko pila-aztarnak laginketa-profilatzaile baten bidez"
 
-#: src/sysprof/sysprof-greeter.ui:49
-msgid "Performance Profile"
-msgstr "Errendimendu-profila"
-
-#: src/sysprof/sysprof-greeter.ui:50
-msgid "Hold the performance profile for the duration of the recording"
-msgstr "Eutsi errendimendu-profilari grabazioaren iraupenean zehar"
-
-#: src/sysprof/sysprof-greeter.ui:60
+#: src/sysprof/sysprof-greeter.ui:85
 msgid "Sample JavaScript Stacks"
 msgstr "Adibideko JavaScript pilak"
 
-#: src/sysprof/sysprof-greeter.ui:61
+#: src/sysprof/sysprof-greeter.ui:86
 msgid "Record JavaScript stack traces using a sampling profiler"
 msgstr "Grabatu JavaScript pila-aztarnak laginketa-profilatzaile baten bidez"
 
-#: src/sysprof/sysprof-greeter.ui:71
-msgid "This feature is only supported when launching a GJS-based application."
-msgstr "Eginbide hau GJSn oinarritutako aplikazio bat abiaraztean soilik onartzen da."
+#: src/sysprof/sysprof-greeter.ui:97
+msgid ""
+"Sysprof must launch your application to record JavaScript stacks using GJS."
+msgstr "Sysprof-ek zure aplikazioa abiarazi behar du JavaScript pilak grabatzeko GJS bidez."
 
-#: src/sysprof/sysprof-greeter.ui:88
-msgid "System Memory Usage"
-msgstr "Sistemaren memoria-erabilera"
+#: src/sysprof/sysprof-greeter.ui:110
+msgid "Tracing"
+msgstr "Aztarnak jarraitzea"
 
-#: src/sysprof/sysprof-greeter.ui:89
-msgid "Record coarse-grained counters about system memory usage"
-msgstr "Grabatu sistemaren memoria-erabilerari buzuko kontagailu orokorrak"
-
-#: src/sysprof/sysprof-greeter.ui:105
+#: src/sysprof/sysprof-greeter.ui:114
 msgid "Trace Memory Allocations"
 msgstr "Jarraitu memoria-esleipenen aztarna"
 
-#: src/sysprof/sysprof-greeter.ui:106
+#: src/sysprof/sysprof-greeter.ui:115
 msgid ""
 "Record a strack trace when <tt>malloc</tt> or similar functions are used"
 msgstr "Grabatu pila-aztarna bat <tt>malloc</tt> edo antzeko funtzioak erabiltzen direnean"
 
-#: src/sysprof/sysprof-greeter.ui:116
-msgid "Memory tracing is only supported when launching an application."
-msgstr "Memoriaren aztarna jarraitzea aplikazio bat abiaraztean soilik onartzen da."
+#: src/sysprof/sysprof-greeter.ui:126
+msgid "Sysprof must launch your application to record memory allocations."
+msgstr "Sysprof-ek zure aplikazioa abiarazi behar du memoria-esleipenak grabatzeko."
 
-#: src/sysprof/sysprof-greeter.ui:129
-msgid "Display &amp; Graphics"
-msgstr "Pantaila eta grafikoak"
+#: src/sysprof/sysprof-greeter.ui:144 src/sysprof/sysprof-greeter.ui:149
+msgid "Application"
+msgstr "Aplikazioa"
 
-#: src/sysprof/sysprof-greeter.ui:133
-msgid "Compositor Frame Timings"
-msgstr "Konposatzailearen markoen tenporizazioa"
+#: src/sysprof/sysprof-greeter.ui:152
+#: src/sysprof/sysprof-processes-section.ui:316
+msgid "Command Line"
+msgstr "Komando-lerroa"
 
-#: src/sysprof/sysprof-greeter.ui:134
-msgid "Record frame-timing information from the GNOME Shell compositor"
-msgstr "Grabatu GNOME Shell konposatzailearen markoen tenporizazioaren informazioa"
+#: src/sysprof/sysprof-greeter.ui:158
+msgid "The application will be run as a subprocess of Sysprof."
+msgstr "Aplikazioa Sysprof-en azpiprozesu gisa exekutatuko da."
 
-#: src/sysprof/sysprof-greeter.ui:150
-msgid "Detect Application Hangs"
-msgstr "Detektatu aplikazio-blokeoak"
+#: src/sysprof/sysprof-greeter.ui:171
+msgid "Environment"
+msgstr "Ingurunea"
 
-#: src/sysprof/sysprof-greeter.ui:151
-msgid "Detect hangs in the application main loop"
-msgstr "Detektatu blokeoak aplikazioaren begizta nagusian"
+#: src/sysprof/sysprof-greeter.ui:175
+msgid "Clear Environment"
+msgstr "Garbitu ingurunea"
 
-#: src/sysprof/sysprof-greeter.ui:161
-msgid ""
-"Hang detection is only supported when launching a GTK-based application."
-msgstr "Blokeoen detekzioa GTKn oinarritutako aplikazio bat abiaraztean soilik onartzen da."
+#: src/sysprof/sysprof-greeter.ui:176
+msgid "Clear the environment before launching application"
+msgstr "Garbitu ingurunea aplikazioa abiarazi baino lehen"
 
-#: src/sysprof/sysprof-greeter.ui:174
-msgid "D-Bus Profiler"
-msgstr "D-Bus profilatzailea"
+#: src/sysprof/sysprof-greeter.ui:202
+msgid "Add _Variable"
+msgstr "Gehitu a_ldagaia"
 
-#: src/sysprof/sysprof-greeter.ui:178
-msgid "D-Bus Session Bus"
-msgstr "D-Bus saioaren bus-a"
+#: src/sysprof/sysprof-greeter.ui:208
+msgid "Add Variable"
+msgstr "Gehitu aldagaia"
 
-#: src/sysprof/sysprof-greeter.ui:179
-msgid "Record messages on the D-Bus user session bus"
-msgstr "Grabatu D-Bus erabiltzaile-saioaren bus-aren mezuak"
+#: src/sysprof/sysprof-greeter.ui:209
+msgid "_Add"
+msgstr "_Gehitu"
 
-#: src/sysprof/sysprof-greeter.ui:190
-msgid "D-Bus System Bus"
-msgstr "D-Bus sistemaren bus-a"
-
-#: src/sysprof/sysprof-greeter.ui:191
-msgid "Record messages on the D-Bus system bus"
-msgstr "Grabatu D-Bus sistemaren bus-aren mezuak"
-
-#: src/sysprof/sysprof-greeter.ui:201
-msgid ""
-"Recording your session bus may include sensitive information such as "
-"keyboard usage."
-msgstr "Zure saioaren bus-a grabatzen bada, informazio sentikorra grabatu daiteke, abididez teklatuaren erabilera."
-
-#: src/sysprof/sysprof-greeter.ui:214
+#: src/sysprof/sysprof-greeter.ui:226 src/sysprof/sysprof-greeter.ui:231
 msgid "Counters"
 msgstr "Zenbatzaileak"
 
-#: src/sysprof/sysprof-greeter.ui:218
+#: src/sysprof/sysprof-greeter.ui:235
+msgid "CPU Usage"
+msgstr "PUZ erabilera"
+
+#: src/sysprof/sysprof-greeter.ui:236
+msgid "Record coarse-grained counters about CPU usage and frequency"
+msgstr "Grabatu PUZaren erabilerari eta maiztasunari buzuko kontagailu orokorrak"
+
+#: src/sysprof/sysprof-greeter.ui:248
+msgid "Memory Usage"
+msgstr "Memoria-erabilera"
+
+#: src/sysprof/sysprof-greeter.ui:249
+msgid "Record coarse-grained counters about system memory usage"
+msgstr "Grabatu sistemaren memoria-erabilerari buzuko kontagailu orokorrak"
+
+#: src/sysprof/sysprof-greeter.ui:261
 msgid "Disk Usage"
 msgstr "Diskoaren erabilera"
 
-#: src/sysprof/sysprof-greeter.ui:219
+#: src/sysprof/sysprof-greeter.ui:262
 msgid "Record coarse-grained counters about storage throughput"
 msgstr "Grabatu biltegiratzearen transferentzia-tasari buzuko kontagailu orokorrak"
 
-#: src/sysprof/sysprof-greeter.ui:231
+#: src/sysprof/sysprof-greeter.ui:274
 msgid "Network Usage"
 msgstr "Sarearen erabilera"
 
-#: src/sysprof/sysprof-greeter.ui:232
+#: src/sysprof/sysprof-greeter.ui:275
 msgid "Record coarse-grained counters about network traffic"
 msgstr "Grabatu sareko trafikoari buzuko kontagailu orokorrak"
 
-#: src/sysprof/sysprof-greeter.ui:244
+#: src/sysprof/sysprof-greeter.ui:291
 msgid "Energy Usage"
 msgstr "Energia-erabilera"
 
-#: src/sysprof/sysprof-greeter.ui:245
+#: src/sysprof/sysprof-greeter.ui:292
 msgid "Record coarse-grained counters about energy usage in Watts"
 msgstr "Grabatu sistemaren energia-erabilerari (watt-ak) buzuko kontagailu orokorrak"
 
-#: src/sysprof/sysprof-greeter.ui:257
+#: src/sysprof/sysprof-greeter.ui:304
 msgid "Battery Charge"
 msgstr "Bateria-karga"
 
-#: src/sysprof/sysprof-greeter.ui:258
+#: src/sysprof/sysprof-greeter.ui:305
 msgid "Record coarse-grained counters about battery charge or discharge rates"
 msgstr "Grabatu bateriaren karga- eta deskarga-tasei buruzko kontagailu orokorrak"
 
-#: src/sysprof/sysprof-greeter.ui:271
+#: src/sysprof/sysprof-greeter.ui:323 src/sysprof/sysprof-greeter.ui:328
+#: src/sysprof/sysprof-window.ui:230
+msgid "D-Bus"
+msgstr "D-Bus"
+
+#: src/sysprof/sysprof-greeter.ui:332
+msgid "Record System Bus"
+msgstr "Grabatu sistemaren bus-a"
+
+#: src/sysprof/sysprof-greeter.ui:333
+msgid "Record messages on the D-Bus system bus"
+msgstr "Grabatu D-Bus sistemaren bus-aren mezuak"
+
+#: src/sysprof/sysprof-greeter.ui:349
+msgid "Record Session Bus"
+msgstr "Grabatu saioaren bus-a"
+
+#: src/sysprof/sysprof-greeter.ui:350
+msgid "Record messages on the D-Bus user session bus"
+msgstr "Grabatu D-Bus erabiltzaile-saioaren bus-aren mezuak"
+
+#: src/sysprof/sysprof-greeter.ui:361
+msgid ""
+"The session bus may contain sensitive information such as keyboard usage and "
+"passwords."
+msgstr "Saioaren bus-ak informazio sentikorra eduki dezake, abididez teklatuaren erabilera eta pasahitzak."
+
+#: src/sysprof/sysprof-greeter.ui:384
+msgid "Timings"
+msgstr "Tenporizazioak"
+
+#: src/sysprof/sysprof-greeter.ui:388
+msgid "Compositor Frame Timings"
+msgstr "Konposatzailearen markoen tenporizazioa"
+
+#: src/sysprof/sysprof-greeter.ui:389
+msgid "Record frame-timing information from the GNOME Shell compositor"
+msgstr "Grabatu GNOME Shell konposatzailearen markoen tenporizazioaren informazioa"
+
+#: src/sysprof/sysprof-greeter.ui:400
+msgid ""
+"Applications launched by Sysprof will automatically collect GTK frame timing "
+"information."
+msgstr "Sysprof bidez abiarazitako aplikazioek GTK markoen denbora-informazioa automatikoki bilduko dute."
+
+#: src/sysprof/sysprof-greeter.ui:440
+msgid "Devices"
+msgstr "Gailuak"
+
+#: src/sysprof/sysprof-greeter.ui:444
+msgid "Include GPU Information"
+msgstr "Sartu PUZaren informazioa"
+
+#: src/sysprof/sysprof-greeter.ui:445
+msgid "Records information about graphics hardware and drivers"
+msgstr "Hardware grafikoen eta kontrolagailuen informazioa grabatzen du"
+
+#: src/sysprof/sysprof-greeter.ui:463
 msgid "System"
 msgstr "Sistema"
 
-#: src/sysprof/sysprof-greeter.ui:276
+#: src/sysprof/sysprof-greeter.ui:468
+msgid "Power Profile"
+msgstr "Energia-profila"
+
+#: src/sysprof/sysprof-greeter.ui:471
+msgid "Record with Power Profile"
+msgstr "Grabatu energia-profilarekin"
+
+#: src/sysprof/sysprof-greeter.ui:472
+msgid "Switch to power profile while recording"
+msgstr "Aldatu energia-profilera grabatzean"
+
+#: src/sysprof/sysprof-greeter.ui:482
+msgid "Details"
+msgstr "Xehetasunak"
+
+#: src/sysprof/sysprof-greeter.ui:486
+msgid "Record System Log"
+msgstr "Grabatu sistemaren egunkaria"
+
+#: src/sysprof/sysprof-greeter.ui:487
 msgid "Watch the system log for new messages and record them"
 msgstr "Behatu sistemaren egunkaria mezu berriak dauden jakiteko eta grabatu haiek"
 
-#: src/sysprof/sysprof-greeter.ui:288
-msgid "Bundle Symbols"
-msgstr "Bildu ikurrak"
+#: src/sysprof/sysprof-greeter.ui:503
+msgid "Include Hardware Information"
+msgstr "Sartu hardwarearen informazioa"
 
-#: src/sysprof/sysprof-greeter.ui:289
-msgid "Make recording shareable by bundling decoded symbols"
-msgstr "Ahalbidetu grabazioa partekatzea deskodetutako ikurrak bildumetan gordez"
+#: src/sysprof/sysprof-greeter.ui:504
+msgid "Records information about PCI and USB devices"
+msgstr "PCI eta USB gailuen informazioa grabatzen du"
 
-#: src/sysprof/sysprof-greeter.ui:316
-msgid "Capture File"
-msgstr "Kapturatu fitxategia"
-
-#: src/sysprof/sysprof-greeter.ui:338
+#: src/sysprof/sysprof-greeter.ui:517
 msgid "Symbols"
 msgstr "Ikurrak"
 
-#: src/sysprof/sysprof-greeter.ui:342
-msgid "Ignore Bundled Symbols"
-msgstr "Ez ikusiarena egin bildutako ikurrei"
+#: src/sysprof/sysprof-greeter.ui:521
+msgid "Bundle Symbols"
+msgstr "Bildu ikurrak"
 
-#: src/sysprof/sysprof-greeter.ui:343
-msgid "Do not use embedded symbols that were resolved on the capture system"
-msgstr "Ez erabili kaptura-sisteman ebatzi ziren ikur kapsulatuak"
+#: src/sysprof/sysprof-greeter.ui:522
+msgid "Make recording shareable by symbolizing stack traces after recording"
+msgstr "Ahalbidetu grabazioa partekatzea grabazioaren ondoren pila-aztarnak sinbolizatuz"
 
-#: src/sysprof/sysprof-greeter.ui:358
-msgid "Override Kernel Symbols"
-msgstr "Indargabetu kernelaren ikurrak"
+#: src/sysprof/sysprof-greeter.ui:555
+msgid "_Open File…"
+msgstr "Ireki _fitxategia…"
 
-#: src/sysprof/sysprof-greeter.ui:359
-msgid "Specify a “kallsyms” file overriding what is bundled with a recording"
-msgstr "Zehaztu “kallsyms” fitxategi bat grabazio batean bildu dena indargabetu dezan"
-
-#: src/sysprof/sysprof-greeter.ui:375
-msgid "Symbol Directories"
-msgstr "Ikurren direktorioak"
-
-#: src/sysprof/sysprof-greeter.ui:378
-msgid "Additional symbol directories to use when symbolizing stack traces."
-msgstr "Pila-aztarnak sinbolizatzean erabiliko diren ikurren direktorio gehigarriak."
-
-#: src/sysprof/sysprof-greeter.ui:389
-msgid "Add Symbol Directory"
-msgstr "Gehitu ikurren direktorioa"
-
-#: src/sysprof/sysprof-greeter.ui:416
+#: src/sysprof/sysprof-greeter.ui:562
 msgid "Record to _File…"
 msgstr "Grabatu _fitxategian…"
 
-#: src/sysprof/sysprof-greeter.ui:424
-msgid "_Record to Memory"
+#: src/sysprof/sysprof-greeter.ui:569
+msgid "Record to _Memory"
 msgstr "Grabatu _memorian"
 
-#: src/sysprof/sysprof-greeter.ui:450
-msgid "_Open Capture…"
-msgstr "Ireki _kaptura…"
+#: src/sysprof/sysprof-greeter.ui:584 src/sysprof/sysprof-window.ui:341
+msgid "Help"
+msgstr "Laguntza"
+
+#: src/sysprof/sysprof-greeter.ui:589 src/sysprof/sysprof-window.ui:346
+msgid "About Sysprof"
+msgstr "Sysprof aplikazioari buruz"
 
 #: src/sysprof/sysprof-logs-section.c:95
 msgid "Critical"
@@ -943,8 +1017,8 @@ msgid "Description"
 msgstr "Deskribapena"
 
 #: src/sysprof/sysprof-memory-callgraph-view.ui:8
-#: src/sysprof/sysprof-memory-callgraph-view.ui:75
-#: src/sysprof/sysprof-memory-callgraph-view.ui:142
+#: src/sysprof/sysprof-memory-callgraph-view.ui:105
+#: src/sysprof/sysprof-memory-callgraph-view.ui:172
 #: src/sysprof/sysprof-weighted-callgraph-view.ui:8
 #: src/sysprof/sysprof-weighted-callgraph-view.ui:105
 #: src/sysprof/sysprof-weighted-callgraph-view.ui:172
@@ -952,8 +1026,8 @@ msgid "Self"
 msgstr "Norberarena"
 
 #: src/sysprof/sysprof-memory-callgraph-view.ui:38
-#: src/sysprof/sysprof-memory-callgraph-view.ui:105
-#: src/sysprof/sysprof-memory-callgraph-view.ui:172
+#: src/sysprof/sysprof-memory-callgraph-view.ui:135
+#: src/sysprof/sysprof-memory-callgraph-view.ui:202
 #: src/sysprof/sysprof-weighted-callgraph-view.ui:38
 #: src/sysprof/sysprof-weighted-callgraph-view.ui:135
 #: src/sysprof/sysprof-weighted-callgraph-view.ui:202
@@ -1054,10 +1128,6 @@ msgstr "Prozesuaren diagrama"
 msgid "Process Table"
 msgstr "Prozesuaren taula"
 
-#: src/sysprof/sysprof-processes-section.ui:316
-msgid "Command Line"
-msgstr "Komando-lerroa"
-
 #. translators: this expands to the number of events recorded by the profiler as an indicator of progress
 #: src/sysprof/sysprof-recording-pad.c:56
 msgid "%"
@@ -1073,7 +1143,7 @@ msgid ""
 "Sysprof failed to record.\n"
 "\n"
 "%s"
-msgstr "Sysprof-ek huts egin du grabatzean.\n"
+msgstr "Sysprof-ek ezin izan du grabatu.\n"
 "\n"
 "%s"
 
@@ -1081,23 +1151,27 @@ msgstr "Sysprof-ek huts egin du grabatzean.\n"
 msgid "Stop Recording"
 msgstr "Gelditu grabatzea"
 
-#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:98
+#: src/sysprof/sysprof-samples-section.ui:4
+msgid "Time Profiler"
+msgstr "Denbora-profilatzailea"
+
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:107
 msgid "Seek Backward"
 msgstr "Bilatu atzerantz"
 
-#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:108
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:117
 msgid "Zoom Out"
 msgstr "Txikiagotu"
 
-#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:118
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:127
 msgid "Reset Zoom"
 msgstr "Berrezarri zooma"
 
-#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:128
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:137
 msgid "Zoom In"
 msgstr "Handiagotu"
 
-#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:138
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:147
 msgid "Seek Forward"
 msgstr "Bilatu aurrerantz"
 
@@ -1109,60 +1183,135 @@ msgstr "Sakonera"
 msgid "Hits"
 msgstr "Bisitak"
 
-#: src/sysprof/sysprof-window.c:520
+#: src/sysprof/sysprof-window.c:171
+msgid "Open Recording"
+msgstr "Ireki grabazioa"
+
+#: src/sysprof/sysprof-window.c:172
+msgid "Open"
+msgstr "Ireki"
+
+#: src/sysprof/sysprof-window.c:176
+msgid "Sysprof Capture (*.syscap)"
+msgstr "Sysprof kaptura (*.syscap)"
+
+#: src/sysprof/sysprof-window.c:459
+msgid "Save to File"
+msgstr "Gorde fitxategian"
+
+#: src/sysprof/sysprof-window.c:460
+msgid "Save"
+msgstr "Gorde"
+
+#: src/sysprof/sysprof-window.c:629
+msgid "Loading..."
+msgstr "Kargatzen…"
+
+#: src/sysprof/sysprof-window.c:705
 msgid "Invalid Document"
 msgstr "Dokumentu baliogabea"
 
-#: src/sysprof/sysprof-window.c:522
+#: src/sysprof/sysprof-window.c:707
 #, c-format
 msgid ""
 "The document could not be loaded. Please check that you have the correct "
 "capture file.\n"
 "\n"
 "%s"
-msgstr "Ezin izan da dokumentua kargatu. Egiaztatu kaptura-fitxategi zuzena duzula.\n"
+msgstr "Dokumentua ezin da kargatu. Egiaztatu kaptura-fitxategi zuzena duzula.\n"
 "\n"
 "%s"
 
-#: src/sysprof/sysprof-window.ui:211
-msgid "D-Bus"
-msgstr "D-Bus"
-
-#: src/sysprof/sysprof-window.ui:231
+#: src/sysprof/sysprof-window.ui:250
 msgid "Energy"
 msgstr "Energia"
 
-#: src/sysprof/sysprof-window.ui:251
+#: src/sysprof/sysprof-window.ui:270
 msgid "Network"
 msgstr "Sarea"
 
-#: src/sysprof/sysprof-window.ui:261
+#: src/sysprof/sysprof-window.ui:280
 msgid "Storage"
 msgstr "Biltegiratzea"
 
-#: src/sysprof/sysprof-window.ui:306
+#: src/sysprof/sysprof-window.ui:327
 msgid "_Record Again…"
 msgstr "_Grabatu berriro…"
 
-#: src/sysprof/sysprof-window.ui:310
+#: src/sysprof/sysprof-window.ui:331
 msgid "Open Recording…"
 msgstr "Ireki grabazioa…"
 
-#: src/sysprof/sysprof-window.ui:314
+#: src/sysprof/sysprof-window.ui:335
 msgid "Save As…"
 msgstr "Gorde honela…"
 
-#: src/sysprof/sysprof-window.ui:319
-msgid "Preferences"
-msgstr "Hobespenak"
+#~ msgid "Hold the performance profile for the duration of the recording"
+#~ msgstr "Eutsi errendimendu-profilari grabazioaren iraupenean zehar"
 
-#: src/sysprof/sysprof-window.ui:324
-msgid "Help"
-msgstr "Laguntza"
+#~ msgid ""
+#~ "This feature is only supported when launching a GJS-based application."
+#~ msgstr ""
+#~ "Eginbide hau GJSn oinarritutako aplikazio bat abiaraztean soilik onartzen "
+#~ "da."
 
-#: src/sysprof/sysprof-window.ui:329
-msgid "About Sysprof"
-msgstr "Sysprof aplikazioari buruz"
+#~ msgid "System Memory Usage"
+#~ msgstr "Sistemaren memoria-erabilera"
+
+#~ msgid "Memory tracing is only supported when launching an application."
+#~ msgstr ""
+#~ "Memoriaren aztarna jarraitzea aplikazio bat abiaraztean soilik onartzen "
+#~ "da."
+
+#~ msgid "Display &amp; Graphics"
+#~ msgstr "Pantaila eta grafikoak"
+
+#~ msgid "Detect Application Hangs"
+#~ msgstr "Detektatu aplikazio-blokeoak"
+
+#~ msgid "Detect hangs in the application main loop"
+#~ msgstr "Detektatu blokeoak aplikazioaren begizta nagusian"
+
+#~ msgid ""
+#~ "Hang detection is only supported when launching a GTK-based application."
+#~ msgstr ""
+#~ "Blokeoen detekzioa GTKn oinarritutako aplikazio bat abiaraztean soilik "
+#~ "onartzen da."
+
+#~ msgid "D-Bus Profiler"
+#~ msgstr "D-Bus profilatzailea"
+
+#~ msgid "Capture File"
+#~ msgstr "Kapturatu fitxategia"
+
+#~ msgid "Ignore Bundled Symbols"
+#~ msgstr "Ez ikusiarena egin bildutako ikurrei"
+
+#~ msgid "Do not use embedded symbols that were resolved on the capture system"
+#~ msgstr "Ez erabili kaptura-sisteman ebatzi ziren ikur kapsulatuak"
+
+#~ msgid "Override Kernel Symbols"
+#~ msgstr "Indargabetu kernelaren ikurrak"
+
+#~ msgid ""
+#~ "Specify a “kallsyms” file overriding what is bundled with a recording"
+#~ msgstr ""
+#~ "Zehaztu “kallsyms” fitxategi bat grabazio batean bildu dena indargabetu "
+#~ "dezan"
+
+#~ msgid "Symbol Directories"
+#~ msgstr "Ikurren direktorioak"
+
+#~ msgid "Additional symbol directories to use when symbolizing stack traces."
+#~ msgstr ""
+#~ "Pila-aztarnak sinbolizatzean erabiliko diren ikurren direktorio "
+#~ "gehigarriak."
+
+#~ msgid "Add Symbol Directory"
+#~ msgstr "Gehitu ikurren direktorioa"
+
+#~ msgid "Preferences"
+#~ msgstr "Hobespenak"
 
 #~ msgid "Sysprof was unable to generate a callgraph from the system capture."
 #~ msgstr ""
@@ -1218,9 +1367,6 @@ msgstr "Sysprof aplikazioari buruz"
 
 #~ msgid "CPU Frequency (All)"
 #~ msgstr "PUZ maiztasuna (dena)"
-
-#~ msgid "CPU Usage (All)"
-#~ msgstr "PUZ erabilera (dena)"
 
 #~ msgid "Memory Capture"
 #~ msgstr "Memoria-kaptura"
@@ -1292,17 +1438,8 @@ msgstr "Sysprof aplikazioari buruz"
 #~ msgid "Save Recording"
 #~ msgstr "Gorde grabazioa"
 
-#~ msgid "Save"
-#~ msgstr "Gorde"
-
 #~ msgid "Cancel"
 #~ msgstr "Utzi"
-
-#~ msgid "Details"
-#~ msgstr "Xehetasunak"
-
-#~ msgid "Remove environment variable"
-#~ msgstr "Kendu inguruneko aldagaia"
 
 #~ msgid "New environment variable…"
 #~ msgstr "Inguruneko aldagai berria…"
@@ -1313,9 +1450,6 @@ msgstr "Sysprof aplikazioari buruz"
 #~ msgid ""
 #~ "Something unexpectedly went wrong while trying to profile your system."
 #~ msgstr "Zerbait gaizki joan da zure sistema profilatzen saiatzean."
-
-#~ msgid "Timings"
-#~ msgstr "Tenporizazioak"
 
 #~ msgid "End"
 #~ msgstr "Amaiera"
@@ -1356,12 +1490,6 @@ msgstr "Sysprof aplikazioari buruz"
 
 #~ msgid "Analyzing Memory Allocations"
 #~ msgstr "Memoria-esleipenak analizatzen"
-
-#~ msgid "Sysprof is busy analyzing memory allocations."
-#~ msgstr "Sysprof lanpetuta dago memoria-esleipenak analizatzen"
-
-#~ msgid "Memory Used"
-#~ msgstr "Erabilitako memoria"
 
 #~ msgid "GNOME Shell"
 #~ msgstr "GNOME Shell"
@@ -1659,9 +1787,6 @@ msgstr "Sysprof aplikazioari buruz"
 #~ msgid "Enable to launch a program of your choosing before profiling."
 #~ msgstr ""
 #~ "Gaitu aukerako programa bat abiaraztea profilatzea hasi baino lehen."
-
-#~ msgid "Environment"
-#~ msgstr "Ingurunea"
 
 #~ msgid ""
 #~ "If disabled, your CPU will be placed in performance mode. It will be "

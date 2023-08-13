@@ -26,7 +26,7 @@
                 <property name="height-request">32</property>
                 <child>
                   <object class="SysprofColumnLayer">
-                    <property name="title">Stack Traces</property>
+                    <property name="title" translatable="yes">Stack Traces</property>
                     <binding name="x-axis">
                       <lookup name="visible-time-axis" type="SysprofSession">
                         <lookup name="session">SysprofSamplesSection</lookup>

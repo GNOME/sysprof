@@ -81,5 +81,6 @@ SysprofSymbol   *_sysprof_document_thread_symbol    (SysprofDocument      *self,
                                                      int                   tid);
 SysprofSymbol   *_sysprof_document_kernel_symbol    (SysprofDocument      *self);
 GArray          *_sysprof_document_get_frames       (SysprofDocument      *self);
+EggBitset       *_sysprof_document_get_allocations  (SysprofDocument      *self);
 
 G_END_DECLS

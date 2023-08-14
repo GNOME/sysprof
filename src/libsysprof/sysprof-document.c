@@ -2678,3 +2678,11 @@ _sysprof_document_get_frames (SysprofDocument *self)
 
   return g_array_ref (self->frames);
 }
+
+EggBitset *
+_sysprof_document_get_allocations (SysprofDocument *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  return egg_bitset_ref (self->allocations);
+}

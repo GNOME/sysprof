@@ -12,6 +12,7 @@
     <file preprocess="xml-stripblanks">icons/scalable/actions/mark-table-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/mark-waterfall-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/memory-allocations-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/actions/memory-leaks-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/metadata-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/process-mounts-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/storage-symbolic.svg</file>

@@ -75,41 +75,97 @@
           </object>
         </child>
         <child>
-          <object class="SysprofMemoryCallgraphView" id="callgraph_view">
+          <object class="AdwViewStack" id="stack">
             <property name="vexpand">true</property>
-            <binding name="include-threads">
-              <lookup name="include-threads" type="SysprofSession">
-                <lookup name="session">SysprofMemorySection</lookup>
-              </lookup>
-            </binding>
-            <binding name="hide-system-libraries">
-              <lookup name="hide-system-libraries" type="SysprofSession">
-                <lookup name="session">SysprofMemorySection</lookup>
-              </lookup>
-            </binding>
-            <binding name="bottom-up">
-              <lookup name="bottom-up" type="SysprofSession">
-                <lookup name="session">SysprofMemorySection</lookup>
-              </lookup>
-            </binding>
-            <binding name="categorize-frames">
-              <lookup name="categorize-frames" type="SysprofSession">
-                <lookup name="session">SysprofMemorySection</lookup>
-              </lookup>
-            </binding>
-            <binding name="document">
-              <lookup name="document" type="SysprofSession">
-                <lookup name="session">SysprofMemorySection</lookup>
-              </lookup>
-            </binding>
-            <binding name="traceables">
-              <!-- TODO: This should be filtered by Session selected time span -->
-              <lookup name="allocations" type="SysprofDocument">
-                <lookup name="document" type="SysprofSession">
-                  <lookup name="session">SysprofMemorySection</lookup>
-                </lookup>
-              </lookup>
-            </binding>
+            <child>
+              <object class="AdwViewStackPage">
+                <property name="icon-name">memory-allocations-symbolic</property>
+                <property name="title" translatable="yes">Allocations</property>
+                <property name="child">
+                  <object class="SysprofMemoryCallgraphView" id="callgraph_view">
+                    <property name="vexpand">true</property>
+                    <binding name="include-threads">
+                      <lookup name="include-threads" type="SysprofSession">
+                        <lookup name="session">SysprofMemorySection</lookup>
+                      </lookup>
+                    </binding>
+                    <binding name="hide-system-libraries">
+                      <lookup name="hide-system-libraries" type="SysprofSession">
+                        <lookup name="session">SysprofMemorySection</lookup>
+                      </lookup>
+                    </binding>
+                    <binding name="bottom-up">
+                      <lookup name="bottom-up" type="SysprofSession">
+                        <lookup name="session">SysprofMemorySection</lookup>
+                      </lookup>
+                    </binding>
+                    <binding name="categorize-frames">
+                      <lookup name="categorize-frames" type="SysprofSession">
+                        <lookup name="session">SysprofMemorySection</lookup>
+                      </lookup>
+                    </binding>
+                    <binding name="document">
+                      <lookup name="document" type="SysprofSession">
+                        <lookup name="session">SysprofMemorySection</lookup>
+                      </lookup>
+                    </binding>
+                    <binding name="traceables">
+                      <!-- TODO: This should be filtered by Session selected time span -->
+                      <lookup name="allocations" type="SysprofDocument">
+                        <lookup name="document" type="SysprofSession">
+                          <lookup name="session">SysprofMemorySection</lookup>
+                        </lookup>
+                      </lookup>
+                    </binding>
+                  </object>
+                </property>
+              </object>
+            </child>
+            <child>
+              <object class="AdwViewStackPage">
+                <property name="icon-name">memory-leaks-symbolic</property>
+                <property name="title" translatable="yes">Leaks</property>
+                <property name="child">
+                  <object class="SysprofMemoryCallgraphView" id="leaks_callgraph_view">
+                    <property name="vexpand">true</property>
+                    <binding name="include-threads">
+                      <lookup name="include-threads" type="SysprofSession">
+                        <lookup name="session">SysprofMemorySection</lookup>
+                      </lookup>
+                    </binding>
+                    <binding name="hide-system-libraries">
+                      <lookup name="hide-system-libraries" type="SysprofSession">
+                        <lookup name="session">SysprofMemorySection</lookup>
+                      </lookup>
+                    </binding>
+                    <binding name="bottom-up">
+                      <lookup name="bottom-up" type="SysprofSession">
+                        <lookup name="session">SysprofMemorySection</lookup>
+                      </lookup>
+                    </binding>
+                    <binding name="categorize-frames">
+                      <lookup name="categorize-frames" type="SysprofSession">
+                        <lookup name="session">SysprofMemorySection</lookup>
+                      </lookup>
+                    </binding>
+                    <binding name="document">
+                      <lookup name="document" type="SysprofSession">
+                        <lookup name="session">SysprofMemorySection</lookup>
+                      </lookup>
+                    </binding>
+                    <binding name="traceables">
+                      <lookup name="leaks">SysprofMemorySection</lookup>
+                    </binding>
+                  </object>
+                </property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="AdwViewSwitcherBar" id="switcher">
+            <property name="reveal">true</property>
+            <property name="stack">stack</property>
           </object>
         </child>
       </object>

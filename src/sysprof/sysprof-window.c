@@ -376,7 +376,7 @@ sysprof_window_session_zoom_in (GtkWidget  *widget,
   visible_time = sysprof_session_get_visible_time (self->session);
   duration = sysprof_time_span_duration (*visible_time);
 
-  select.begin_nsec = visible_time->begin_nsec + (duration / 4);
+  select.begin_nsec = visible_time->begin_nsec;
   select.end_nsec = select.begin_nsec + (duration / 2);
 
   sysprof_session_select_time (self->session, &select);
@@ -399,9 +399,7 @@ sysprof_window_session_zoom_out (GtkWidget  *widget,
 
   select = *sysprof_session_get_visible_time (self->session);
   duration = sysprof_time_span_duration (select);
-
-  select.begin_nsec -= floor (duration / 2.);
-  select.end_nsec += ceil (duration / 2.);
+  select.end_nsec += duration;
 
   sysprof_session_select_time (self->session, &select);
   sysprof_session_zoom_to_selection (self->session);

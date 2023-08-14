@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-36\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-08-13 06:39+0000\n"
-"PO-Revision-Date: 2023-08-13 13:31+0300\n"
+"POT-Creation-Date: 2023-08-14 17:26+0000\n"
+"PO-Revision-Date: 2023-08-14 20:35+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -247,130 +247,134 @@ msgstr ""
 "Трасування потребує породження програми, зібраної із «-finstrument-"
 "functions». Трасування буде недоступним."
 
-#: src/sysprof-cli/sysprof-cli.c:110
+#: src/sysprof-cli/sysprof-cli.c:112
 msgid "--merge requires at least 2 filename arguments"
 msgstr "--merge потребує принаймні 2 аргументів назв файлів"
 
-#: src/sysprof-cli/sysprof-cli.c:302
+#: src/sysprof-cli/sysprof-cli.c:305
 msgid ""
 "Disable CPU throttling while profiling [Deprecated for --power-profile]"
 msgstr ""
 "Вимкнути дроселювання процесора під час профілювання [застаріле для --power-"
 "profile]"
 
-#: src/sysprof-cli/sysprof-cli.c:303
+#: src/sysprof-cli/sysprof-cli.c:306
 msgid "Make sysprof specific to a task [Deprecated]"
 msgstr "Налаштувати sysprof на виконання специфічного завдання [застаріле]"
 
-#: src/sysprof-cli/sysprof-cli.c:303 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof-cli/sysprof-cli.c:306 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:179
 #: src/sysprof/sysprof-processes-section.ui:282
 #: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "PID"
 
-#: src/sysprof-cli/sysprof-cli.c:304
+#: src/sysprof-cli/sysprof-cli.c:307
 msgid "Run a command and profile the process"
 msgstr "Виконати команду і профілювати процес"
 
-#: src/sysprof-cli/sysprof-cli.c:304
+#: src/sysprof-cli/sysprof-cli.c:307
 msgid "COMMAND"
 msgstr "КОМАНДА"
 
-#: src/sysprof-cli/sysprof-cli.c:305
+#: src/sysprof-cli/sysprof-cli.c:308
 msgid ""
 "Set environment variable for spawned process. Can be used multiple times."
 msgstr ""
 "Встановити змінну середовища для запущеного процесу. Можна вказувати "
 "декілька разів."
 
-#: src/sysprof-cli/sysprof-cli.c:305
+#: src/sysprof-cli/sysprof-cli.c:308
 msgid "VAR=VALUE"
 msgstr "ЗМІННА=ЗНАЧЕННЯ"
 
-#: src/sysprof-cli/sysprof-cli.c:306
+#: src/sysprof-cli/sysprof-cli.c:309
 msgid "Force overwrite the capture file"
 msgstr "Примусово перезаписати файл захоплених даних"
 
-#: src/sysprof-cli/sysprof-cli.c:307
+#: src/sysprof-cli/sysprof-cli.c:310
 msgid "Disable recording of battery statistics"
 msgstr "Вимкнути записування статистичних даних щодо акумулятора"
 
-#: src/sysprof-cli/sysprof-cli.c:308
+#: src/sysprof-cli/sysprof-cli.c:311
 msgid "Disable recording of CPU statistics"
 msgstr "Вимкнути записування статистичних даних щодо процесора"
 
-#: src/sysprof-cli/sysprof-cli.c:309
+#: src/sysprof-cli/sysprof-cli.c:312
 msgid "Disable recording of Disk statistics"
 msgstr "Вимкнути записування статистичних даних щодо диска"
 
-#: src/sysprof-cli/sysprof-cli.c:310
+#: src/sysprof-cli/sysprof-cli.c:313
 msgid "Do not record stacktraces using Linux perf"
 msgstr "Не записувати трасування стека за допомогою perf Linux"
 
-#: src/sysprof-cli/sysprof-cli.c:311
+#: src/sysprof-cli/sysprof-cli.c:314
 msgid "Do not append symbol name information from local machine"
 msgstr "Не долучати дані щодо назви символів з локальної машини"
 
-#: src/sysprof-cli/sysprof-cli.c:312
+#: src/sysprof-cli/sysprof-cli.c:315
 msgid "Disable recording of memory statistics"
 msgstr "Вимкнути записування статистичних даних щодо пам'яті"
 
-#: src/sysprof-cli/sysprof-cli.c:313
+#: src/sysprof-cli/sysprof-cli.c:316
 msgid "Disable recording of network statistics"
 msgstr "Вимкнути записування статистичних даних щодо мережі"
 
-#: src/sysprof-cli/sysprof-cli.c:314
+#: src/sysprof-cli/sysprof-cli.c:317
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr "Встановити середовище SYSPROF_TRACE_FD для підпроцесу"
 
-#: src/sysprof-cli/sysprof-cli.c:315
+#: src/sysprof-cli/sysprof-cli.c:318
 msgid "Profile the D-Bus session bus"
 msgstr "Профілювати шину сеансу D-Bus"
 
-#: src/sysprof-cli/sysprof-cli.c:316
+#: src/sysprof-cli/sysprof-cli.c:319
 msgid "Profile the D-Bus system bus"
 msgstr "Профілювати системну шину D-Bus"
 
-#: src/sysprof-cli/sysprof-cli.c:317
+#: src/sysprof-cli/sysprof-cli.c:320
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr "Встановити середовище GJS_TRACE_FD для трасування процесів GJS"
 
-#: src/sysprof-cli/sysprof-cli.c:318
+#: src/sysprof-cli/sysprof-cli.c:321
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr ""
 "Встановити середовище GTK_TRACE_FD для трасування програми на основі GTK"
 
-#: src/sysprof-cli/sysprof-cli.c:319
+#: src/sysprof-cli/sysprof-cli.c:322
 msgid "Include RAPL energy statistics"
 msgstr "Включити статистичні дані щодо споживання енергії RAPL"
 
-#: src/sysprof-cli/sysprof-cli.c:320
+#: src/sysprof-cli/sysprof-cli.c:323
 msgid "Profile memory allocations and frees"
 msgstr "Профілювати розміщення даних у пам'яті і звільнення пам'яті"
 
-#: src/sysprof-cli/sysprof-cli.c:321
+#: src/sysprof-cli/sysprof-cli.c:324
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr ""
 "З'єднатися із org.gnome.Shell для отримання статистичних даних профілювання"
 
-#: src/sysprof-cli/sysprof-cli.c:322
+#: src/sysprof-cli/sysprof-cli.c:325
 msgid "Track performance of the applications main loop"
 msgstr "Стежити за швидкодією у основному циклі програм"
 
-#: src/sysprof-cli/sysprof-cli.c:324
+#: src/sysprof-cli/sysprof-cli.c:327
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr "Об'єднати усі надані файли *.syscap і записати до stdout"
 
-#: src/sysprof-cli/sysprof-cli.c:325
+#: src/sysprof-cli/sysprof-cli.c:328
 msgid "Print the sysprof-cli version and exit"
 msgstr "Вивести дані щодо версії sysprof-cli і вийти"
 
-#: src/sysprof-cli/sysprof-cli.c:358
+#: src/sysprof-cli/sysprof-cli.c:329
+msgid "The size of the buffer in pages (1 = 1 page)"
+msgstr "Розмір буфера у сторінках (1 = 1 сторінка)"
+
+#: src/sysprof-cli/sysprof-cli.c:362
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[ФАЙЛ_ЗАХОПЛЕННЯ] [-- КОМАНДА АРГУМЕНТИ] — Sysprof"
 
-#: src/sysprof-cli/sysprof-cli.c:361
+#: src/sysprof-cli/sysprof-cli.c:365
 msgid ""
 "\n"
 "Examples:\n"
@@ -393,12 +397,12 @@ msgstr ""
 "  # Об'єднати декілька файлів syscap у один\n"
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 
-#: src/sysprof-cli/sysprof-cli.c:397
+#: src/sysprof-cli/sysprof-cli.c:401
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "sysprof-cli передано забагато аргументів:"
 
 #. Translators: %s is a file name.
-#: src/sysprof-cli/sysprof-cli.c:444
+#: src/sysprof-cli/sysprof-cli.c:448
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s вже існує. Скорисайтеся --force, щоб його перезаписати.\n"
@@ -1073,7 +1077,6 @@ msgstr "Розміщення у пам'яті"
 
 #: src/sysprof/sysprof-memory-section.ui:29
 #: src/sysprof/sysprof-samples-section.ui:29
-#| msgid "Stack Trace"
 msgid "Stack Traces"
 msgstr "Трасування стека"
 

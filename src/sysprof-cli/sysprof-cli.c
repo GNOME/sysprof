@@ -38,6 +38,8 @@
 
 #include "sysprof-capture-util-private.h"
 
+#define DEFAULT_BUFFER_SIZE (1024L * 1024L * 8L /* 8mb */)
+
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureReader, sysprof_capture_reader_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureWriter, sysprof_capture_writer_unref)
 
@@ -298,7 +300,7 @@ main (int   argc,
   int pid = -1;
   int fd;
   int flags;
-  int n_buffer_pages = 0;
+  int n_buffer_pages = (DEFAULT_BUFFER_SIZE / sysprof_getpagesize ());
   GOptionEntry entries[] = {
     { "no-throttle", 0, 0, G_OPTION_ARG_NONE, &no_throttle, N_("Disable CPU throttling while profiling [Deprecated for --power-profile]") },
     { "pid", 'p', 0, G_OPTION_ARG_INT, &pid, N_("Make sysprof specific to a task [Deprecated]"), N_("PID") },

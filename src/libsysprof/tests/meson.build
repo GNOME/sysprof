@@ -17,6 +17,7 @@ libsysprof_testsuite = {
   'test-callgraph'           : {'skip': true},
   'test-capture-model'       : {'skip': true},
   'test-elf-loader'          : {'skip': true},
+  'test-leak-detector'       : {'skip': true},
   'test-list-counters'       : {'skip': true},
   'test-list-cpu'            : {'skip': true},
   'test-list-files'          : {'skip': true},

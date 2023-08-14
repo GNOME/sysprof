@@ -298,6 +298,7 @@ main (int   argc,
   int pid = -1;
   int fd;
   int flags;
+  int n_buffer_pages = 0;
   GOptionEntry entries[] = {
     { "no-throttle", 0, 0, G_OPTION_ARG_NONE, &no_throttle, N_("Disable CPU throttling while profiling [Deprecated for --power-profile]") },
     { "pid", 'p', 0, G_OPTION_ARG_INT, &pid, N_("Make sysprof specific to a task [Deprecated]"), N_("PID") },
@@ -323,6 +324,7 @@ main (int   argc,
     { "power-profile", 0, 0, G_OPTION_ARG_STRING, &power_profile, "Use POWER_PROFILE for duration of recording", "power-saver|balanced|performance" },
     { "merge", 0, 0, G_OPTION_ARG_NONE, &merge, N_("Merge all provided *.syscap files and write to stdout") },
     { "version", 0, 0, G_OPTION_ARG_NONE, &version, N_("Print the sysprof-cli version and exit") },
+    { "buffer-size", 0, 0, G_OPTION_ARG_INT, &n_buffer_pages, N_("The size of the buffer in pages (1 = 1 page)") },
     { NULL }
   };
 
@@ -451,7 +453,7 @@ Examples:\n\
       return EXIT_FAILURE;
     }
 
-  writer = sysprof_capture_writer_new_from_fd (fd, 0);
+  writer = sysprof_capture_writer_new_from_fd (fd, n_buffer_pages * sysprof_getpagesize ());
 
   if (command != NULL || child_argv != NULL)
     {

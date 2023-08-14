@@ -106,12 +106,6 @@ struct _SysprofDocument
   guint                     needs_swap : 1;
 };
 
-typedef struct _SysprofDocumentFramePointer
-{
-  guint64 offset : 48;
-  guint64 length : 16;
-} SysprofDocumentFramePointer;
-
 enum {
   PROP_0,
   PROP_ALLOCATIONS,
@@ -2675,4 +2669,12 @@ sysprof_document_save_finish (SysprofDocument  *self,
   g_return_val_if_fail (G_IS_TASK (result), FALSE);
 
   return g_task_propagate_boolean (G_TASK (result), error);
+}
+
+GArray *
+_sysprof_document_get_frames (SysprofDocument *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  return g_array_ref (self->frames);
 }

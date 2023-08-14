@@ -28,6 +28,12 @@
 
 G_BEGIN_DECLS
 
+typedef struct _SysprofDocumentFramePointer
+{
+  guint64 offset : 48;
+  guint64 length : 16;
+} SysprofDocumentFramePointer;
+
 typedef struct _SysprofDocumentTimedValue
 {
   gint64 time;
@@ -74,5 +80,6 @@ SysprofSymbol   *_sysprof_document_thread_symbol    (SysprofDocument      *self,
                                                      int                   pid,
                                                      int                   tid);
 SysprofSymbol   *_sysprof_document_kernel_symbol    (SysprofDocument      *self);
+GArray          *_sysprof_document_get_frames       (SysprofDocument      *self);
 
 G_END_DECLS

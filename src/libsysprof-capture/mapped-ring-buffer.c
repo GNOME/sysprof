@@ -69,6 +69,7 @@ struct _MappedRingBuffer
   void         *map;
   size_t        body_size;
   size_t        page_size;
+  unsigned      has_failed : 1;
 };
 
 static inline MappedRingHeader *
@@ -405,27 +406,37 @@ mapped_ring_buffer_allocate (MappedRingBuffer *self,
   assert (length < self->body_size);
   assert ((length & 0x7) == 0);
 
-  header = get_header (self);
-  __atomic_load (&header->head, &headpos, __ATOMIC_SEQ_CST);
-  __atomic_load (&header->tail, &tailpos, __ATOMIC_SEQ_CST);
+  for (unsigned i = 0; i < 1000; i++)
+    {
+      header = get_header (self);
+      __atomic_load (&header->head, &headpos, __ATOMIC_SEQ_CST);
+      __atomic_load (&header->tail, &tailpos, __ATOMIC_SEQ_CST);
 
-  /* We need to check that there is enough space for @length at the
-   * current position in the write buffer. We cannot fully catch up
-   * to head, we must be at least one byte short of it. If we do not
-   * have enough space, then return NULL.
-   *
-   * When we have finished writing our frame data, we will push the tail
-   * forward with an atomic write.
-   */
+      /* We need to check that there is enough space for @length at the
+       * current position in the write buffer. We cannot fully catch up
+       * to head, we must be at least one byte short of it. If we do not
+       * have enough space, then return NULL.
+       *
+       * When we have finished writing our frame data, we will push the tail
+       * forward with an atomic write.
+       */
 
-  if (tailpos == headpos)
-    return get_body_at_pos (self, tailpos);
+      if (tailpos == headpos)
+        return get_body_at_pos (self, tailpos);
 
-  if (headpos < tailpos)
-    headpos += self->body_size;
+      if (headpos < tailpos)
+        headpos += self->body_size;
 
-  if (tailpos + length < headpos)
-    return get_body_at_pos (self, tailpos);
+      if (tailpos + length < headpos)
+        return get_body_at_pos (self, tailpos);
+
+      if (self->has_failed)
+        break;
+
+      usleep (1000); /* 1 msec */
+    }
+
+  self->has_failed = true;
 
   return NULL;
 }

@@ -182,13 +182,8 @@ realloc (void   *ptr,
          size_t  size)
 {
   void *ret = real_realloc (ptr, size);
-
-  if (ret != ptr)
-    {
-      track_free (ptr);
-      track_malloc (ret, size);
-    }
-
+  track_free (ptr);
+  track_malloc (ret, size);
   return ret;
 }
 

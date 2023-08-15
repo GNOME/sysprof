@@ -33,7 +33,7 @@
 
 #include "mapped-ring-buffer.h"
 
-#define DEFAULT_N_PAGES 32
+#define DEFAULT_N_PAGES 63
 #define BUFFER_MAX_SIZE ((UINT32_MAX/2)-_sysprof_getpagesize())
 
 enum {

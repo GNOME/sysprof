@@ -241,7 +241,8 @@ sysprof_controlfd_instrument_record_fiber (gpointer user_data)
           ring_data = g_new0 (RingData, 1);
           ring_data->writer = sysprof_capture_writer_ref (temp_writer);
           ring_data->source_ids = g_array_ref (state->source_ids);
-          ring_data->id = mapped_ring_buffer_create_source_full (ring_buffer,
+          ring_data->id = mapped_ring_buffer_create_source_full (G_PRIORITY_HIGH,
+                                                                 ring_buffer,
                                                                  sysprof_controlfd_instrument_frame_cb,
                                                                  ring_data,
                                                                  (GDestroyNotify)ring_data_free);

@@ -33,7 +33,8 @@ guint mapped_ring_buffer_create_source      (MappedRingBuffer         *self,
                                              MappedRingBufferCallback  callback,
                                              gpointer                  user_data);
 G_GNUC_INTERNAL
-guint mapped_ring_buffer_create_source_full (MappedRingBuffer         *self,
+guint mapped_ring_buffer_create_source_full (int                       priority,
+                                             MappedRingBuffer         *self,
                                              MappedRingBufferCallback  callback,
                                              gpointer                  user_data,
                                              GDestroyNotify            destroy);

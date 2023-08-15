@@ -89,7 +89,8 @@ static GSourceFuncs mapped_ring_source_funcs = {
 };
 
 guint
-mapped_ring_buffer_create_source_full (MappedRingBuffer         *self,
+mapped_ring_buffer_create_source_full (int                       priority,
+                                       MappedRingBuffer         *self,
                                        MappedRingBufferCallback  source_func,
                                        gpointer                  user_data,
                                        GDestroyNotify            destroy)
@@ -103,7 +104,8 @@ mapped_ring_buffer_create_source_full (MappedRingBuffer         *self,
   source = (MappedRingSource *)g_source_new (&mapped_ring_source_funcs, sizeof (MappedRingSource));
   source->buffer = mapped_ring_buffer_ref (self);
   g_source_set_callback ((GSource *)source, (GSourceFunc)source_func, user_data, destroy);
-  g_source_set_name ((GSource *)source, "MappedRingSource");
+  g_source_set_static_name ((GSource *)source, "MappedRingSource");
+  g_source_set_priority ((GSource *)source, priority);
   ret = g_source_attach ((GSource *)source, g_main_context_default ());
   g_source_unref ((GSource *)source);
 
@@ -115,5 +117,5 @@ mapped_ring_buffer_create_source (MappedRingBuffer         *self,
                                   MappedRingBufferCallback  source_func,
                                   gpointer                  user_data)
 {
-  return mapped_ring_buffer_create_source_full (self, source_func, user_data, NULL);
+  return mapped_ring_buffer_create_source_full (G_PRIORITY_DEFAULT, self, source_func, user_data, NULL);
 }

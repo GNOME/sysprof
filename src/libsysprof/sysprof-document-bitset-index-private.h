@@ -29,7 +29,10 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (SysprofDocumentBitsetIndex, sysprof_document_bitset_index, SYSPROF, DOCUMENT_BITSET_INDEX, GObject)
 
-GListModel *_sysprof_document_bitset_index_new (GListModel *model,
-                                                EggBitset  *bitset);
+GListModel *_sysprof_document_bitset_index_new      (GListModel *model,
+                                                     EggBitset  *bitset);
+GListModel *_sysprof_document_bitset_index_new_full (GListModel *model,
+                                                     EggBitset  *bitset,
+                                                     GType       type);
 
 G_END_DECLS

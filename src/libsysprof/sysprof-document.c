@@ -32,6 +32,7 @@
 #include "sysprof-bundled-symbolizer-private.h"
 #include "sysprof-callgraph-private.h"
 #include "sysprof-cpu-info-private.h"
+#include "sysprof-document-allocation.h"
 #include "sysprof-document-bitset-index-private.h"
 #include "sysprof-document-counter-private.h"
 #include "sysprof-document-ctrdef.h"
@@ -43,6 +44,7 @@
 #include "sysprof-document-mmap.h"
 #include "sysprof-document-overlay.h"
 #include "sysprof-document-process-private.h"
+#include "sysprof-document-sample.h"
 #include "sysprof-document-symbols-private.h"
 #include "sysprof-mark-catalog-private.h"
 #include "sysprof-mount-private.h"
@@ -1789,7 +1791,7 @@ sysprof_document_list_allocations (SysprofDocument *self)
 {
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
-  return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), self->allocations);
+  return _sysprof_document_bitset_index_new_full (G_LIST_MODEL (self), self->allocations, SYSPROF_TYPE_DOCUMENT_ALLOCATION);
 }
 
 /**
@@ -1806,7 +1808,7 @@ sysprof_document_list_samples (SysprofDocument *self)
 {
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
-  return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), self->samples);
+  return _sysprof_document_bitset_index_new_full (G_LIST_MODEL (self), self->samples, SYSPROF_TYPE_DOCUMENT_SAMPLE);
 }
 
 /**
@@ -1823,7 +1825,7 @@ sysprof_document_list_samples_with_context_switch (SysprofDocument *self)
 {
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
-  return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), self->samples_with_context_switch);
+  return _sysprof_document_bitset_index_new_full (G_LIST_MODEL (self), self->samples_with_context_switch, SYSPROF_TYPE_DOCUMENT_SAMPLE);
 }
 
 /**
@@ -1845,7 +1847,7 @@ sysprof_document_list_samples_without_context_switch (SysprofDocument *self)
   bitset = egg_bitset_copy (self->samples);
   egg_bitset_subtract (bitset, self->samples_with_context_switch);
 
-  return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), bitset);
+  return _sysprof_document_bitset_index_new_full (G_LIST_MODEL (self), bitset, SYSPROF_TYPE_DOCUMENT_SAMPLE);
 }
 
 /**

@@ -27,12 +27,16 @@ struct _SysprofDocumentBitsetIndex
   GObject parent_instance;
   GListModel *model;
   EggBitset *bitset;
+  GType type;
 };
 
 static GType
 sysprof_document_bitset_index_get_item_type (GListModel *model)
 {
   SysprofDocumentBitsetIndex *self = SYSPROF_DOCUMENT_BITSET_INDEX (model);
+
+  if (self->type)
+    return self->type;
 
   if (self->model != NULL)
     return g_list_model_get_item_type (self->model);
@@ -138,8 +142,9 @@ sysprof_document_bitset_index_init (SysprofDocumentBitsetIndex *self)
 }
 
 GListModel *
-_sysprof_document_bitset_index_new (GListModel *model,
-                                    EggBitset  *bitset)
+_sysprof_document_bitset_index_new_full (GListModel *model,
+                                         EggBitset  *bitset,
+                                         GType       type)
 {
   SysprofDocumentBitsetIndex *self;
 
@@ -149,6 +154,14 @@ _sysprof_document_bitset_index_new (GListModel *model,
   self = g_object_new (SYSPROF_TYPE_DOCUMENT_BITSET_INDEX, NULL);
   self->model = g_object_ref (model);
   self->bitset = egg_bitset_ref (bitset);
+  self->type = type;
 
   return G_LIST_MODEL (self);
+}
+
+GListModel *
+_sysprof_document_bitset_index_new (GListModel *model,
+                                    EggBitset  *bitset)
+{
+  return _sysprof_document_bitset_index_new_full (model, bitset, G_TYPE_INVALID);
 }

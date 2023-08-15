@@ -26,8 +26,11 @@
 
 typedef struct _MappedRingSource
 {
-  GSource           source;
-  MappedRingBuffer *buffer;
+  GSource                   source;
+  MappedRingBuffer         *buffer;
+  MappedRingBufferCallback  callback;
+  gpointer                  callback_data;
+  GDestroyNotify            callback_data_destroy;
 } MappedRingSource;
 
 static gboolean
@@ -39,9 +42,7 @@ mapped_ring_source_dispatch (GSource     *source,
 
   g_assert (source != NULL);
 
-  return mapped_ring_buffer_drain (real_source->buffer,
-                                   (MappedRingBufferCallback)callback,
-                                   user_data);
+  return mapped_ring_buffer_drain (real_source->buffer, real_source->callback, real_source->callback_data);
 }
 
 static void
@@ -50,7 +51,18 @@ mapped_ring_source_finalize (GSource *source)
   MappedRingSource *real_source = (MappedRingSource *)source;
 
   if (real_source != NULL)
-    g_clear_pointer (&real_source->buffer, mapped_ring_buffer_unref);
+    {
+      mapped_ring_buffer_drain (real_source->buffer, real_source->callback, real_source->callback_data);
+
+      if (real_source->callback_data_destroy)
+        real_source->callback_data_destroy (real_source->callback_data);
+
+      real_source->callback = NULL;
+      real_source->callback_data = NULL;
+      real_source->callback_data_destroy = NULL;
+
+      g_clear_pointer (&real_source->buffer, mapped_ring_buffer_unref);
+    }
 }
 
 static gboolean
@@ -103,7 +115,9 @@ mapped_ring_buffer_create_source_full (int                       priority,
 
   source = (MappedRingSource *)g_source_new (&mapped_ring_source_funcs, sizeof (MappedRingSource));
   source->buffer = mapped_ring_buffer_ref (self);
-  g_source_set_callback ((GSource *)source, (GSourceFunc)source_func, user_data, destroy);
+  source->callback = source_func;
+  source->callback_data = user_data;
+  source->callback_data_destroy = destroy;
   g_source_set_static_name ((GSource *)source, "MappedRingSource");
   g_source_set_priority ((GSource *)source, priority);
   ret = g_source_attach ((GSource *)source, g_main_context_default ());

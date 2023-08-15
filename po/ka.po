@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-08-13 06:39+0000\n"
-"PO-Revision-Date: 2023-08-14 06:14+0200\n"
+"POT-Creation-Date: 2023-08-14 23:44+0000\n"
+"PO-Revision-Date: 2023-08-15 06:11+0200\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language-Team: Georgian <ka@li.org>\n"
 "Language: ka\n"
@@ -138,43 +138,43 @@ msgstr "ფანჯრული სისტემა"
 msgid "Allocation"
 msgstr "გამოყოფა"
 
-#: src/libsysprof/sysprof-document.c:1170
-#: src/libsysprof/sysprof-document.c:1206
+#: src/libsysprof/sysprof-document.c:1164
+#: src/libsysprof/sysprof-document.c:1200
 msgid "Indexing capture data frames"
-msgstr ""
+msgstr "ჩაწერილი მონაცემის კადრების ინდექსირება"
 
-#: src/libsysprof/sysprof-document.c:1384
+#: src/libsysprof/sysprof-document.c:1378
 msgid "Discovering file system mounts"
 msgstr "ფაილური სისტემის მიმაგრებების აღმოჩენა"
 
-#: src/libsysprof/sysprof-document.c:1387
+#: src/libsysprof/sysprof-document.c:1381
 msgid "Discovering process mount namespaces"
 msgstr "პროცესის მიმაგრების სახელის სივრცეების აღმოჩენა"
 
-#: src/libsysprof/sysprof-document.c:1390
+#: src/libsysprof/sysprof-document.c:1384
 msgid "Analyzing process address layouts"
 msgstr "პროცესის მისამართის განლაგებების ანალიზი"
 
-#: src/libsysprof/sysprof-document.c:1393
+#: src/libsysprof/sysprof-document.c:1387
 msgid "Analyzing process command line"
 msgstr "პროცესის ბრძანების სტრიქონის ანალიზი"
 
-#: src/libsysprof/sysprof-document.c:1396
+#: src/libsysprof/sysprof-document.c:1390
 msgid "Analyzing file system overlays"
 msgstr "ფაილური სისტემების განლაგების ანალიზი"
 
-#: src/libsysprof/sysprof-document.c:1399
+#: src/libsysprof/sysprof-document.c:1393
 msgid "Processing counters"
 msgstr "მთვლელების დამუშავება"
 
-#: src/libsysprof/sysprof-document.c:2379
-#: src/libsysprof/sysprof-document.c:2395
+#: src/libsysprof/sysprof-document.c:2373
+#: src/libsysprof/sysprof-document.c:2389
 #, c-format
 msgid "Recording at %X %x"
 msgstr "ჩანაწერი %X %x"
 
-#: src/libsysprof/sysprof-document.c:2381
-#: src/libsysprof/sysprof-document.c:2397
+#: src/libsysprof/sysprof-document.c:2375
+#: src/libsysprof/sysprof-document.c:2391
 #, c-format
 msgid "Recording at %s"
 msgstr "ჩაწერა მისამართზე %s"
@@ -198,7 +198,7 @@ msgstr "ჩატვირთვის შეცდომა"
 #: src/libsysprof/sysprof-document-loader.c:478
 #: src/libsysprof/sysprof-document-symbols.c:217
 msgid "Symbolizing stack traces"
-msgstr ""
+msgstr "სტეკის ტრეისების სიმბოლოების ამოხსნა"
 
 #: src/libsysprof/sysprof-document-loader.c:547
 msgid "Loading document"
@@ -232,7 +232,7 @@ msgstr "სისტემური ჟურნალი"
 
 #: src/libsysprof/sysprof-system-logs.c:172
 msgid "Recording system logs is not supported on your platform."
-msgstr ""
+msgstr "თქვენს პლატფორმაზე სისტემური ჟურნალის ჩაწერა მხარდაჭერილი არაა."
 
 #: src/libsysprof/sysprof-tracer.c:65
 msgid "Tracer"
@@ -244,123 +244,127 @@ msgid ""
 "Tracing will not be available."
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:110
+#: src/sysprof-cli/sysprof-cli.c:112
 msgid "--merge requires at least 2 filename arguments"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:302
+#: src/sysprof-cli/sysprof-cli.c:305
 msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:303
+#: src/sysprof-cli/sysprof-cli.c:306
 msgid "Make sysprof specific to a task [Deprecated]"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:303 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof-cli/sysprof-cli.c:306 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:179
 #: src/sysprof/sysprof-processes-section.ui:282
 #: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "PID"
 
-#: src/sysprof-cli/sysprof-cli.c:304
+#: src/sysprof-cli/sysprof-cli.c:307
 msgid "Run a command and profile the process"
 msgstr "ბრძანების გაშვება და პროცესის პროფილი"
 
-#: src/sysprof-cli/sysprof-cli.c:304
+#: src/sysprof-cli/sysprof-cli.c:307
 msgid "COMMAND"
 msgstr "ბრძანება"
 
-#: src/sysprof-cli/sysprof-cli.c:305
+#: src/sysprof-cli/sysprof-cli.c:308
 msgid ""
 "Set environment variable for spawned process. Can be used multiple times."
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:305
+#: src/sysprof-cli/sysprof-cli.c:308
 msgid "VAR=VALUE"
 msgstr "VAR=VALUE"
 
-#: src/sysprof-cli/sysprof-cli.c:306
+#: src/sysprof-cli/sysprof-cli.c:309
 msgid "Force overwrite the capture file"
 msgstr "ჩაჭერის ფაილის ნაძალადევი გადაწერა"
 
-#: src/sysprof-cli/sysprof-cli.c:307
+#: src/sysprof-cli/sysprof-cli.c:310
 msgid "Disable recording of battery statistics"
 msgstr "ელემენტის სტატისტიკის ჩაწერის გამორთვა"
 
-#: src/sysprof-cli/sysprof-cli.c:308
+#: src/sysprof-cli/sysprof-cli.c:311
 msgid "Disable recording of CPU statistics"
 msgstr "CPU-ის სტატისტიკის ჩაწერის გამორთვა"
 
-#: src/sysprof-cli/sysprof-cli.c:309
+#: src/sysprof-cli/sysprof-cli.c:312
 msgid "Disable recording of Disk statistics"
 msgstr "დისკის სტატისტიკის ჩაწერის გამორთვა"
 
-#: src/sysprof-cli/sysprof-cli.c:310
+#: src/sysprof-cli/sysprof-cli.c:313
 msgid "Do not record stacktraces using Linux perf"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:311
+#: src/sysprof-cli/sysprof-cli.c:314
 msgid "Do not append symbol name information from local machine"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:312
+#: src/sysprof-cli/sysprof-cli.c:315
 msgid "Disable recording of memory statistics"
 msgstr "მეხსიერების სტატისტიკის ჩაწერის გამორთვა"
 
-#: src/sysprof-cli/sysprof-cli.c:313
+#: src/sysprof-cli/sysprof-cli.c:316
 msgid "Disable recording of network statistics"
 msgstr "ქსელის სტატისტიკის ჩაწერის გამორთვა"
 
-#: src/sysprof-cli/sysprof-cli.c:314
+#: src/sysprof-cli/sysprof-cli.c:317
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:315
+#: src/sysprof-cli/sysprof-cli.c:318
 msgid "Profile the D-Bus session bus"
 msgstr "D-Bus-ის სესიის მატარებლის პროფილირება"
 
-#: src/sysprof-cli/sysprof-cli.c:316
+#: src/sysprof-cli/sysprof-cli.c:319
 msgid "Profile the D-Bus system bus"
 msgstr "D-Bus-ის სისტემური მატარებლის პროფილირება"
 
-#: src/sysprof-cli/sysprof-cli.c:317
+#: src/sysprof-cli/sysprof-cli.c:320
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:318
+#: src/sysprof-cli/sysprof-cli.c:321
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:319
+#: src/sysprof-cli/sysprof-cli.c:322
 msgid "Include RAPL energy statistics"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:320
+#: src/sysprof-cli/sysprof-cli.c:323
 msgid "Profile memory allocations and frees"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:321
+#: src/sysprof-cli/sysprof-cli.c:324
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:322
+#: src/sysprof-cli/sysprof-cli.c:325
 msgid "Track performance of the applications main loop"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:324
+#: src/sysprof-cli/sysprof-cli.c:327
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:325
+#: src/sysprof-cli/sysprof-cli.c:328
 msgid "Print the sysprof-cli version and exit"
 msgstr "ეკრანზე sysprof-cli-ის ვერსიის ჩვენება და გასვლა"
 
-#: src/sysprof-cli/sysprof-cli.c:358
+#: src/sysprof-cli/sysprof-cli.c:329
+msgid "The size of the buffer in pages (1 = 1 page)"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:362
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[ჩაწერის_ფაილი] [-- ბრძანება არგუმენტები] — Sysprof"
 
-#: src/sysprof-cli/sysprof-cli.c:361
+#: src/sysprof-cli/sysprof-cli.c:365
 msgid ""
 "\n"
 "Examples:\n"
@@ -373,12 +377,12 @@ msgid ""
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:397
+#: src/sysprof-cli/sysprof-cli.c:401
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr ""
 
 #. Translators: %s is a file name.
-#: src/sysprof-cli/sysprof-cli.c:444
+#: src/sysprof-cli/sysprof-cli.c:448
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s უკვე არსებობს.თავზე გადასაწერად გამოიყენეთ --force.\n"
@@ -626,14 +630,14 @@ msgstr ""
 
 #: src/sysprof/sysprof-greeter.c:265 src/sysprof/sysprof-window.c:155
 msgid "Must Capture to Local File"
-msgstr ""
+msgstr "ლოკალურ ფაილში ჩაწერა აუცილებელია"
 
 #: src/sysprof/sysprof-greeter.c:266 src/sysprof/sysprof-window.c:156
 msgid "You must choose a local file to capture using Sysprof"
 msgstr ""
 
 #: src/sysprof/sysprof-greeter.c:267 src/sysprof/sysprof-recording-pad.c:115
-#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:711
+#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:709
 msgid "Close"
 msgstr "დახურვა"
 
@@ -848,7 +852,7 @@ msgstr "მოწყობილობები"
 
 #: src/sysprof/sysprof-greeter.ui:450
 msgid "Include GPU Information"
-msgstr ""
+msgstr "GPU-ის ინფორმაციის ჩასმა"
 
 #: src/sysprof/sysprof-greeter.ui:451
 msgid "Records information about graphics hardware and drivers"
@@ -884,7 +888,7 @@ msgstr ""
 
 #: src/sysprof/sysprof-greeter.ui:509
 msgid "Include Hardware Information"
-msgstr ""
+msgstr "პარატურული ინფორმაციის ჩასმა"
 
 #: src/sysprof/sysprof-greeter.ui:510
 msgid "Records information about PCI and USB devices"
@@ -896,7 +900,7 @@ msgstr "სიმბოლოები"
 
 #: src/sysprof/sysprof-greeter.ui:527
 msgid "Bundle Symbols"
-msgstr ""
+msgstr "სიმბოლოების მიყოლება"
 
 #: src/sysprof/sysprof-greeter.ui:528
 msgid "Make recording shareable by symbolizing stack traces after recording"
@@ -1038,7 +1042,15 @@ msgstr "მეხსიერების გამოყოფები"
 msgid "Stack Traces"
 msgstr "სტეკის ტრეისები"
 
-#: src/sysprof/sysprof-memory-section.ui:126
+#: src/sysprof/sysprof-memory-section.ui:83
+msgid "Allocations"
+msgstr "გამოყოფები"
+
+#: src/sysprof/sysprof-memory-section.ui:127
+msgid "Leaks"
+msgstr "გაჟონვები"
+
+#: src/sysprof/sysprof-memory-section.ui:182
 #: src/sysprof/sysprof-samples-section.ui:148
 #: src/sysprof/sysprof-traceables-utility.ui:162
 msgid "Stack Trace"
@@ -1196,23 +1208,23 @@ msgstr "გახსნა"
 msgid "Sysprof Capture (*.syscap)"
 msgstr "Sysprof -ის ჩანაწერები (*.syscap)"
 
-#: src/sysprof/sysprof-window.c:461
+#: src/sysprof/sysprof-window.c:459
 msgid "Save to File"
 msgstr "ფაილში შენახვა"
 
-#: src/sysprof/sysprof-window.c:462
+#: src/sysprof/sysprof-window.c:460
 msgid "Save"
 msgstr "შენახვა"
 
-#: src/sysprof/sysprof-window.c:631
+#: src/sysprof/sysprof-window.c:629
 msgid "Loading..."
-msgstr ""
+msgstr "იტვირთება..."
 
-#: src/sysprof/sysprof-window.c:707
+#: src/sysprof/sysprof-window.c:705
 msgid "Invalid Document"
 msgstr "არასწორი დოკუმენტი"
 
-#: src/sysprof/sysprof-window.c:709
+#: src/sysprof/sysprof-window.c:707
 #, c-format
 msgid ""
 "The document could not be loaded. Please check that you have the correct "

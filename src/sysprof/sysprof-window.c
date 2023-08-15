@@ -225,6 +225,8 @@ sysprof_window_set_document (SysprofWindow   *self,
     "ignore-process-0",
     "include-threads",
   };
+  g_autofree char *title = NULL;
+  g_autofree char *full_title = NULL;
 
   g_assert (SYSPROF_IS_WINDOW (self));
   g_assert (!document || SYSPROF_IS_DOCUMENT (document));
@@ -233,6 +235,10 @@ sysprof_window_set_document (SysprofWindow   *self,
 
   if (document == NULL)
     return;
+
+  title = sysprof_document_dup_title (document);
+  full_title = g_strdup_printf ("%s — %s", _("Sysprof"), title);
+  gtk_window_set_title (GTK_WINDOW (self), full_title);
 
   g_set_object (&self->document, document);
   self->session = sysprof_session_new (document);

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-36\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-08-14 17:26+0000\n"
-"PO-Revision-Date: 2023-08-14 20:35+0300\n"
+"POT-Creation-Date: 2023-08-14 23:44+0000\n"
+"PO-Revision-Date: 2023-08-15 14:30+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -139,43 +139,43 @@ msgstr "Керування вікнами"
 msgid "Allocation"
 msgstr "Розміщення"
 
-#: src/libsysprof/sysprof-document.c:1170
-#: src/libsysprof/sysprof-document.c:1206
+#: src/libsysprof/sysprof-document.c:1164
+#: src/libsysprof/sysprof-document.c:1200
 msgid "Indexing capture data frames"
 msgstr "Індексування кадрів даних захоплення"
 
-#: src/libsysprof/sysprof-document.c:1384
+#: src/libsysprof/sysprof-document.c:1378
 msgid "Discovering file system mounts"
 msgstr "Вивчення монтувань файлових систем"
 
-#: src/libsysprof/sysprof-document.c:1387
+#: src/libsysprof/sysprof-document.c:1381
 msgid "Discovering process mount namespaces"
 msgstr "Вивчення просторів назв монтування процесу"
 
-#: src/libsysprof/sysprof-document.c:1390
+#: src/libsysprof/sysprof-document.c:1384
 msgid "Analyzing process address layouts"
 msgstr "Аналіз компонування адрес процесу"
 
-#: src/libsysprof/sysprof-document.c:1393
+#: src/libsysprof/sysprof-document.c:1387
 msgid "Analyzing process command line"
 msgstr "Аналіз командного рядка процесу"
 
-#: src/libsysprof/sysprof-document.c:1396
+#: src/libsysprof/sysprof-document.c:1390
 msgid "Analyzing file system overlays"
 msgstr "Аналіз накладок на файлову систему"
 
-#: src/libsysprof/sysprof-document.c:1399
+#: src/libsysprof/sysprof-document.c:1393
 msgid "Processing counters"
 msgstr "Лічильники обробки"
 
-#: src/libsysprof/sysprof-document.c:2379
-#: src/libsysprof/sysprof-document.c:2395
+#: src/libsysprof/sysprof-document.c:2373
+#: src/libsysprof/sysprof-document.c:2389
 #, c-format
 msgid "Recording at %X %x"
 msgstr "Записано %X %x"
 
-#: src/libsysprof/sysprof-document.c:2381
-#: src/libsysprof/sysprof-document.c:2397
+#: src/libsysprof/sysprof-document.c:2375
+#: src/libsysprof/sysprof-document.c:2391
 #, c-format
 msgid "Recording at %s"
 msgstr "Записано о %s"
@@ -252,8 +252,7 @@ msgid "--merge requires at least 2 filename arguments"
 msgstr "--merge потребує принаймні 2 аргументів назв файлів"
 
 #: src/sysprof-cli/sysprof-cli.c:305
-msgid ""
-"Disable CPU throttling while profiling [Deprecated for --power-profile]"
+msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
 msgstr ""
 "Вимкнути дроселювання процесора під час профілювання [застаріле для --power-"
 "profile]"
@@ -662,7 +661,7 @@ msgstr ""
 "Для захоплення даних за допомогою Sysprof вам слід вибрати локальний файл"
 
 #: src/sysprof/sysprof-greeter.c:267 src/sysprof/sysprof-recording-pad.c:115
-#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:711
+#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:709
 msgid "Close"
 msgstr "Закрити"
 
@@ -741,8 +740,7 @@ msgstr ""
 
 #: src/sysprof/sysprof-greeter.ui:132
 msgid "Sysprof must launch your application to record memory allocations."
-msgstr ""
-"Sysprof має запустити вашу програму для записування розподілу пам'яті."
+msgstr "Sysprof має запустити вашу програму для записування розподілу пам'яті."
 
 #: src/sysprof/sysprof-greeter.ui:150 src/sysprof/sysprof-greeter.ui:155
 msgid "Application"
@@ -1080,7 +1078,16 @@ msgstr "Розміщення у пам'яті"
 msgid "Stack Traces"
 msgstr "Трасування стека"
 
-#: src/sysprof/sysprof-memory-section.ui:126
+#: src/sysprof/sysprof-memory-section.ui:83
+#| msgid "Allocation"
+msgid "Allocations"
+msgstr "Розміщення"
+
+#: src/sysprof/sysprof-memory-section.ui:127
+msgid "Leaks"
+msgstr "Витоки"
+
+#: src/sysprof/sysprof-memory-section.ui:182
 #: src/sysprof/sysprof-samples-section.ui:148
 #: src/sysprof/sysprof-traceables-utility.ui:162
 msgid "Stack Trace"
@@ -1238,23 +1245,23 @@ msgstr "Відкрити"
 msgid "Sysprof Capture (*.syscap)"
 msgstr "захоплені дані Sysprof (*.syscap)"
 
-#: src/sysprof/sysprof-window.c:461
+#: src/sysprof/sysprof-window.c:459
 msgid "Save to File"
 msgstr "Зберегти у файл"
 
-#: src/sysprof/sysprof-window.c:462
+#: src/sysprof/sysprof-window.c:460
 msgid "Save"
 msgstr "Зберегти"
 
-#: src/sysprof/sysprof-window.c:631
+#: src/sysprof/sysprof-window.c:629
 msgid "Loading..."
 msgstr "Завантаження…"
 
-#: src/sysprof/sysprof-window.c:707
+#: src/sysprof/sysprof-window.c:705
 msgid "Invalid Document"
 msgstr "Некоректний документ"
 
-#: src/sysprof/sysprof-window.c:709
+#: src/sysprof/sysprof-window.c:707
 #, c-format
 msgid ""
 "The document could not be loaded. Please check that you have the correct "

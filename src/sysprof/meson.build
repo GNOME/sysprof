@@ -43,6 +43,7 @@ sysprof_sources = [
   'sysprof-power-profiles.c',
   'sysprof-recording-pad.c',
   'sysprof-recording-template.c',
+  'sysprof-sampled-model.c',
   'sysprof-samples-section.c',
   'sysprof-scheduler.c',
   'sysprof-section.c',

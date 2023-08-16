@@ -28,6 +28,7 @@
 struct _SysprofAddressLayout
 {
   GObject    parent_instance;
+  GRWLock    rwlock;
   GPtrArray *mmaps;
   guint      mmaps_dirty : 1;
 };
@@ -73,6 +74,7 @@ sysprof_address_layout_finalize (GObject *object)
   SysprofAddressLayout *self = (SysprofAddressLayout *)object;
 
   g_clear_pointer (&self->mmaps, g_ptr_array_unref);
+  g_rw_lock_clear (&self->rwlock);
 
   G_OBJECT_CLASS (sysprof_address_layout_parent_class)->finalize (object);
 }
@@ -88,6 +90,7 @@ sysprof_address_layout_class_init (SysprofAddressLayoutClass *klass)
 static void
 sysprof_address_layout_init (SysprofAddressLayout *self)
 {
+  g_rw_lock_init (&self->rwlock);
   self->mmaps = g_ptr_array_new_with_free_func (g_object_unref);
 }
 
@@ -104,9 +107,13 @@ sysprof_address_layout_take (SysprofAddressLayout *self,
   g_return_if_fail (SYSPROF_IS_ADDRESS_LAYOUT (self));
   g_return_if_fail (SYSPROF_IS_DOCUMENT_MMAP (map));
 
+  g_rw_lock_writer_lock (&self->rwlock);
+
   g_ptr_array_add (self->mmaps, map);
 
   self->mmaps_dirty = TRUE;
+
+  g_rw_lock_writer_unlock (&self->rwlock);
 }
 
 static int
@@ -195,26 +202,42 @@ sysprof_address_layout_lookup (SysprofAddressLayout *self,
 
   g_return_val_if_fail (SYSPROF_IS_ADDRESS_LAYOUT (self), NULL);
 
-  if (self->mmaps_dirty)
+  g_rw_lock_reader_lock (&self->rwlock);
+
+  while (self->mmaps_dirty)
     {
       g_autoptr(EggBitset) dups = NULL;
       EggBitsetIter iter;
-      guint old_len = self->mmaps->len;
       guint i;
 
-      self->mmaps_dirty = FALSE;
+      g_rw_lock_reader_unlock (&self->rwlock);
+      g_rw_lock_writer_lock (&self->rwlock);
 
-      g_ptr_array_sort (self->mmaps, compare_mmaps);
-      dups = find_duplicates (self->mmaps);
-
-      if (egg_bitset_iter_init_last (&iter, dups, &i))
+      if (self->mmaps_dirty)
         {
-          do
-            g_ptr_array_remove_index (self->mmaps, i);
-          while (egg_bitset_iter_previous (&iter, &i));
+          self->mmaps_dirty = FALSE;
+
+          g_ptr_array_sort (self->mmaps, compare_mmaps);
+          dups = find_duplicates (self->mmaps);
+
+          if (egg_bitset_iter_init_last (&iter, dups, &i))
+            {
+              do
+                g_ptr_array_remove_index (self->mmaps, i);
+              while (egg_bitset_iter_previous (&iter, &i));
+            }
+
+          /* We can't be monitored when we're in this path as the
+           * application cannot have gotten access yet. Ignore
+           * any sort of items changes.
+           *
+           * g_list_model_items_changed (G_LIST_MODEL (self),
+           *                             0, old_len, self->mmaps->len);
+           */
         }
 
-      g_list_model_items_changed (G_LIST_MODEL (self), 0, old_len, self->mmaps->len);
+      g_rw_lock_writer_unlock (&self->rwlock);
+      g_rw_lock_reader_lock (&self->rwlock);
     }
 
   ret = bsearch (&address,
@@ -222,6 +245,8 @@ sysprof_address_layout_lookup (SysprofAddressLayout *self,
                  self->mmaps->len,
                  sizeof (gpointer),
                  find_by_address);
+
+  g_rw_lock_reader_unlock (&self->rwlock);
 
   return ret ? *ret : NULL;
 }

@@ -32,6 +32,7 @@
 #include "sysprof-column-layer.h"
 #include "sysprof-memory-callgraph-view.h"
 #include "sysprof-memory-section.h"
+#include "sysprof-sampled-model.h"
 #include "sysprof-session-model-item.h"
 #include "sysprof-session-model.h"
 #include "sysprof-time-series.h"
@@ -181,6 +182,7 @@ sysprof_memory_section_class_init (SysprofMemorySectionClass *klass)
   g_type_ensure (SYSPROF_TYPE_DOCUMENT_ALLOCATION);
   g_type_ensure (SYSPROF_TYPE_DOCUMENT_TRACEABLE);
   g_type_ensure (SYSPROF_TYPE_MEMORY_CALLGRAPH_VIEW);
+  g_type_ensure (SYSPROF_TYPE_SAMPLED_MODEL);
   g_type_ensure (SYSPROF_TYPE_VALUE_AXIS);
   g_type_ensure (SYSPROF_TYPE_XY_SERIES);
 }

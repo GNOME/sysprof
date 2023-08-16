@@ -41,19 +41,24 @@
                     <property name="series">
                       <object class="SysprofXYSeries">
                         <property name="model">
-                          <object class="SysprofTimeFilterModel">
-                            <binding name="time-span">
-                              <lookup name="visible-time" type="SysprofSession">
-                                <lookup name="session">SysprofMemorySection</lookup>
-                              </lookup>
-                            </binding>
-                            <binding name="model">
-                              <lookup name="allocations" type="SysprofDocument">
-                                <lookup name="document" type="SysprofSession">
-                                  <lookup name="session">SysprofMemorySection</lookup>
-                                </lookup>
-                              </lookup>
-                            </binding>
+                          <object class="SysprofSampledModel">
+                            <property name="max-items">5000</property>
+                            <property name="model">
+                              <object class="SysprofTimeFilterModel">
+                                <binding name="time-span">
+                                  <lookup name="visible-time" type="SysprofSession">
+                                    <lookup name="session">SysprofMemorySection</lookup>
+                                  </lookup>
+                                </binding>
+                                <binding name="model">
+                                  <lookup name="allocations" type="SysprofDocument">
+                                    <lookup name="document" type="SysprofSession">
+                                      <lookup name="session">SysprofMemorySection</lookup>
+                                    </lookup>
+                                  </lookup>
+                                </binding>
+                              </object>
+                            </property>
                           </object>
                         </property>
                         <property name="x-expression">

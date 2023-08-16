@@ -27,7 +27,7 @@ struct _SysprofSampledModel
   GObject parent_instance;
   GListModel *model;
   guint max_items;
-  guint n_items;
+  guint real_n_items;
 };
 
 enum {
@@ -54,7 +54,7 @@ sysprof_sampled_model_get_n_items (GListModel *model)
   SysprofSampledModel *self = (SysprofSampledModel *)model;
 
   if (self->model != NULL)
-    return MIN (self->max_items, g_list_model_get_n_items (self->model));
+    return MIN (self->max_items, self->real_n_items);
 
   return 0;
 }
@@ -69,10 +69,10 @@ sysprof_sampled_model_get_item (GListModel *model,
   if (self->model == NULL)
     return NULL;
 
-  if (self->n_items <= self->max_items)
+  if (self->real_n_items <= self->max_items)
     return g_list_model_get_item (self->model, position);
 
-  new_position = position / (double)g_list_model_get_n_items (G_LIST_MODEL (self)) * self->n_items;
+  new_position = position / (double)g_list_model_get_n_items (G_LIST_MODEL (self)) * self->real_n_items;
 
   return g_list_model_get_item (self->model, new_position);
 }
@@ -97,10 +97,12 @@ sysprof_sampled_model_items_changed (SysprofSampledModel *self,
                                      guint                added,
                                      GListModel          *model)
 {
-  guint old_n_items = self->n_items;
-  guint new_n_items = MIN (self->max_items, g_list_model_get_n_items (model));
+  guint old_n_items;
+  guint new_n_items;
 
-  self->n_items = g_list_model_get_n_items (model);
+  old_n_items = g_list_model_get_n_items (G_LIST_MODEL (self));
+  self->real_n_items = g_list_model_get_n_items (model);
+  new_n_items = g_list_model_get_n_items (G_LIST_MODEL (self));
 
   g_list_model_items_changed (G_LIST_MODEL (self), 0, old_n_items, new_n_items);
 }
@@ -265,7 +267,7 @@ sysprof_sampled_model_set_model (SysprofSampledModel *self,
 
   if (self->model)
     {
-      self->n_items = 0;
+      self->real_n_items = 0;
       g_signal_handlers_disconnect_by_func (self->model,
                                             G_CALLBACK (sysprof_sampled_model_items_changed),
                                             self);
@@ -275,7 +277,7 @@ sysprof_sampled_model_set_model (SysprofSampledModel *self,
 
   if (self->model)
     {
-      self->n_items = g_list_model_get_n_items (self->model);
+      self->real_n_items = g_list_model_get_n_items (self->model);
       g_signal_connect_object (self->model,
                                "items-changed",
                                G_CALLBACK (sysprof_sampled_model_items_changed),

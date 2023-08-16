@@ -42,7 +42,6 @@ struct _SysprofSymbolCacheNode
 struct _SysprofSymbolCache
 {
   GObject parent_instance;
-  GRWLock rwlock;
   RB_HEAD(sysprof_symbol_cache, _SysprofSymbolCacheNode) head;
 };
 
@@ -105,8 +104,6 @@ sysprof_symbol_cache_finalize (GObject *object)
   if (node != NULL)
     sysprof_symbol_cache_node_free (node);
 
-  g_rw_lock_clear (&self->rwlock);
-
   G_OBJECT_CLASS (sysprof_symbol_cache_parent_class)->finalize (object);
 }
 
@@ -121,7 +118,6 @@ sysprof_symbol_cache_class_init (SysprofSymbolCacheClass *klass)
 static void
 sysprof_symbol_cache_init (SysprofSymbolCache *self)
 {
-  g_rw_lock_init (&self->rwlock);
   RB_INIT (&self->head);
 }
 
@@ -158,14 +154,11 @@ sysprof_symbol_cache_take (SysprofSymbolCache *self,
   node->high = symbol->end_address-1;
   node->max = node->high;
 
-  g_rw_lock_writer_lock (&self->rwlock);
-
   /* If there is a collision, then the node is returned. Otherwise
    * if the node was inserted, NULL is returned.
    */
   if ((ret = RB_INSERT(sysprof_symbol_cache, &self->head, node)))
     {
-      g_rw_lock_writer_unlock (&self->rwlock);
       sysprof_symbol_cache_node_free (node);
       return;
     }
@@ -179,8 +172,6 @@ sysprof_symbol_cache_take (SysprofSymbolCache *self,
       node = parent;
       parent = RB_PARENT(parent, link);
     }
-
-  g_rw_lock_writer_unlock (&self->rwlock);
 }
 
 SysprofSymbol *
@@ -194,8 +185,6 @@ sysprof_symbol_cache_lookup (SysprofSymbolCache *self,
   if (address == 0)
     return NULL;
 
-  g_rw_lock_reader_lock (&self->rwlock);
-
   node = RB_ROOT(&self->head);
 
   /* The root node contains our calculated max as augmented in RBTree.
@@ -203,10 +192,7 @@ sysprof_symbol_cache_lookup (SysprofSymbolCache *self,
    * in O(1) without having to add a branch to the while loop below.
    */
   if (node == NULL || node->max < address)
-    {
-      g_rw_lock_reader_unlock (&self->rwlock);
-      return NULL;
-    }
+    return NULL;
 
   while (node != NULL)
     {
@@ -216,18 +202,13 @@ sysprof_symbol_cache_lookup (SysprofSymbolCache *self,
                 node->max >= RB_RIGHT(node, link)->max);
 
       if (address >= node->low && address <= node->high)
-        {
-          g_rw_lock_reader_unlock (&self->rwlock);
-          return node->symbol;
-        }
+        return node->symbol;
 
       if (RB_LEFT(node, link) && RB_LEFT(node, link)->max >= address)
         node = RB_LEFT(node, link);
       else
         node = RB_RIGHT(node, link);
     }
-
-  g_rw_lock_reader_unlock (&self->rwlock);
 
   return NULL;
 }

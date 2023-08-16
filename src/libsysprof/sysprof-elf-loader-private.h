@@ -33,10 +33,10 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (SysprofElfLoader, sysprof_elf_loader, SYSPROF, ELF_LOADER, GObject)
 
 SysprofElfLoader   *sysprof_elf_loader_new                     (void);
-const char * const *sysprof_elf_loader_get_debug_dirs          (SysprofElfLoader       *self);
+char              **sysprof_elf_loader_dup_debug_dirs          (SysprofElfLoader       *self);
 void                sysprof_elf_loader_set_debug_dirs          (SysprofElfLoader       *self,
                                                                 const char * const     *debug_dirs);
-const char * const *sysprof_elf_loader_get_external_debug_dirs (SysprofElfLoader       *self);
+char              **sysprof_elf_loader_dup_external_debug_dirs (SysprofElfLoader       *self);
 void                sysprof_elf_loader_set_external_debug_dirs (SysprofElfLoader       *self,
                                                                 const char * const     *debug_dirs);
 SysprofElf         *sysprof_elf_loader_load                    (SysprofElfLoader       *self,

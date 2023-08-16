@@ -199,11 +199,11 @@ sysprof_elf_symbolizer_get_property (GObject    *object,
   switch (prop_id)
     {
     case PROP_DEBUG_DIRS:
-      g_value_set_boxed (value, sysprof_elf_symbolizer_get_debug_dirs (self));
+      g_value_take_boxed (value, sysprof_elf_symbolizer_dup_debug_dirs (self));
       break;
 
     case PROP_EXTERNAL_DEBUG_DIRS:
-      g_value_set_boxed (value, sysprof_elf_symbolizer_get_external_debug_dirs (self));
+      g_value_take_boxed (value, sysprof_elf_symbolizer_dup_external_debug_dirs (self));
       break;
 
     default:
@@ -277,12 +277,12 @@ sysprof_elf_symbolizer_new (void)
   return g_object_new (SYSPROF_TYPE_ELF_SYMBOLIZER, NULL);
 }
 
-const char * const *
-sysprof_elf_symbolizer_get_debug_dirs (SysprofElfSymbolizer *self)
+char **
+sysprof_elf_symbolizer_dup_debug_dirs (SysprofElfSymbolizer *self)
 {
   g_return_val_if_fail (SYSPROF_IS_ELF_SYMBOLIZER (self), NULL);
 
-  return sysprof_elf_loader_get_debug_dirs (self->loader);
+  return sysprof_elf_loader_dup_debug_dirs (self->loader);
 }
 
 void
@@ -294,12 +294,12 @@ sysprof_elf_symbolizer_set_debug_dirs (SysprofElfSymbolizer *self,
   sysprof_elf_loader_set_debug_dirs (self->loader, debug_dirs);
 }
 
-const char * const *
-sysprof_elf_symbolizer_get_external_debug_dirs (SysprofElfSymbolizer *self)
+char **
+sysprof_elf_symbolizer_dup_external_debug_dirs (SysprofElfSymbolizer *self)
 {
   g_return_val_if_fail (SYSPROF_IS_ELF_SYMBOLIZER (self), NULL);
 
-  return sysprof_elf_loader_get_external_debug_dirs (self->loader);
+  return sysprof_elf_loader_dup_external_debug_dirs (self->loader);
 }
 
 void

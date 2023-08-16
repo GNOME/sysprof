@@ -461,13 +461,6 @@ sysprof_callgraph_new_worker (GTask        *task,
     {
       g_autoptr(SysprofDocumentTraceable) traceable = g_list_model_get_item (self->traceables, i);
 
-      /* Currently, we might be racing against changes in the model. And we
-       * definitely need to address that. But this at least keeps things
-       * recovering in the meantime.
-       */
-      if (traceable == NULL)
-        break;
-
       sysprof_callgraph_add_traceable (self, traceable, i);
     }
 

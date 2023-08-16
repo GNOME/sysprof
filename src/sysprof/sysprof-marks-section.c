@@ -24,6 +24,7 @@
 #include "sysprof-mark-chart.h"
 #include "sysprof-mark-table.h"
 #include "sysprof-marks-section.h"
+#include "sysprof-sampled-model.h"
 #include "sysprof-session-model.h"
 #include "sysprof-session-model-item.h"
 #include "sysprof-time-series.h"
@@ -80,6 +81,7 @@ sysprof_marks_section_class_init (SysprofMarksSectionClass *klass)
   g_type_ensure (SYSPROF_TYPE_MARK_CATALOG);
   g_type_ensure (SYSPROF_TYPE_MARK_CHART);
   g_type_ensure (SYSPROF_TYPE_MARK_TABLE);
+  g_type_ensure (SYSPROF_TYPE_SAMPLED_MODEL);
   g_type_ensure (SYSPROF_TYPE_SESSION_MODEL);
   g_type_ensure (SYSPROF_TYPE_SESSION_MODEL_ITEM);
   g_type_ensure (SYSPROF_TYPE_TIME_SERIES);

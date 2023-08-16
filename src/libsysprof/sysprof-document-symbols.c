@@ -22,8 +22,6 @@
 
 #include <glib/gi18n.h>
 
-#include <libdex.h>
-
 #include "sysprof-address-layout-private.h"
 #include "sysprof-document-private.h"
 #include "sysprof-document-symbols-private.h"
@@ -72,9 +70,6 @@ typedef struct _Symbolize
   ProgressFunc            progress_func;
   gpointer                progress_data;
   GDestroyNotify          progress_data_destroy;
-  guint                   n_partitions;
-  guint                   partition_seq;
-  guint                   progress;
 } Symbolize;
 
 static void
@@ -145,108 +140,41 @@ add_traceable (SysprofDocumentSymbols   *self,
     }
 }
 
-static DexFuture *
-symbolize_fiber (gpointer user_data)
+static void
+sysprof_document_symbols_worker (GTask        *task,
+                                 gpointer      source_object,
+                                 gpointer      task_data,
+                                 GCancellable *cancellable)
 {
-  Symbolize *state = user_data;
-  g_autoptr(GListModel) model = NULL;
-  guint partition;
-  guint count;
-  guint n_items;
-  guint max;
+  static const struct {
+    const char *name;
+    guint value;
+  } context_switches[] = {
+    { "- - Hypervisor - -", SYSPROF_ADDRESS_CONTEXT_HYPERVISOR },
+    { "- - Kernel - -", SYSPROF_ADDRESS_CONTEXT_KERNEL },
+    { "- - User - -", SYSPROF_ADDRESS_CONTEXT_USER },
+    { "- - Guest - -", SYSPROF_ADDRESS_CONTEXT_GUEST },
+    { "- - Guest Kernel - -", SYSPROF_ADDRESS_CONTEXT_GUEST_KERNEL },
+    { "- - Guest User - -", SYSPROF_ADDRESS_CONTEXT_GUEST_USER },
+  };
+  g_autoptr(GRefString) context_switch = g_ref_string_new_intern ("Context Switch");
+  Symbolize *state = task_data;
+  EggBitsetIter iter;
+  EggBitset *bitset;
+  GListModel *model;
+  guint count = 0;
+  guint i;
 
+  g_assert (source_object == NULL);
+  g_assert (G_IS_TASK (task));
+  g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
   g_assert (state != NULL);
   g_assert (SYSPROF_IS_DOCUMENT (state->document));
   g_assert (SYSPROF_IS_SYMBOLIZER (state->symbolizer));
   g_assert (SYSPROF_IS_DOCUMENT_SYMBOLS (state->symbols));
-  g_assert (state->n_partitions > 1);
 
-  if (SYSPROF_IS_NO_SYMBOLIZER (state->symbolizer))
-    return dex_future_new_for_boolean (TRUE);
-
-  model = sysprof_document_list_traceables (state->document);
-  n_items = g_list_model_get_n_items (model);
-  partition = g_atomic_int_add (&state->partition_seq, 1);
-  count = n_items / (state->n_partitions - 1);
-  max = MIN (n_items, (partition + 1) * count);
-
-  for (guint i = count * partition; i < max; i++)
-    {
-      g_autoptr(SysprofDocumentTraceable) traceable = g_list_model_get_item (model, i);
-      int pid = sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (traceable));
-      SysprofProcessInfo *process_info = g_hash_table_lookup (state->pid_to_process_info, GINT_TO_POINTER (pid));
-
-      add_traceable (state->symbols,
-                     state->strings,
-                     process_info,
-                     traceable,
-                     state->symbolizer);
-
-      if (g_atomic_int_add (&state->progress, 1) % 100 == 0)
-        {
-          if (state->progress_func)
-            state->progress_func (state->progress / (double)n_items, _("Symbolizing stack traces"), state->progress_data);
-        }
-    }
-
-  return dex_future_new_for_boolean (TRUE);
-}
-
-static DexFuture *
-handle_symbolize_result (DexFuture *completed,
-                         gpointer   user_data)
-{
-  Symbolize *state = user_data;
-
-  if (dex_future_get_status (completed) == DEX_FUTURE_STATUS_REJECTED)
-    return NULL;
-
-  return dex_future_new_take_object (g_object_ref (state->symbols));
-}
-
-static const struct {
-  const char *name;
-  guint value;
-} context_switches[] = {
-  { "- - Hypervisor - -", SYSPROF_ADDRESS_CONTEXT_HYPERVISOR },
-  { "- - Kernel - -", SYSPROF_ADDRESS_CONTEXT_KERNEL },
-  { "- - User - -", SYSPROF_ADDRESS_CONTEXT_USER },
-  { "- - Guest - -", SYSPROF_ADDRESS_CONTEXT_GUEST },
-  { "- - Guest Kernel - -", SYSPROF_ADDRESS_CONTEXT_GUEST_KERNEL },
-  { "- - Guest User - -", SYSPROF_ADDRESS_CONTEXT_GUEST_USER },
-};
-
-void
-_sysprof_document_symbols_new (SysprofDocument     *document,
-                               SysprofStrings      *strings,
-                               SysprofSymbolizer   *symbolizer,
-                               GHashTable          *pid_to_process_info,
-                               ProgressFunc         progress_func,
-                               gpointer             progress_data,
-                               GDestroyNotify       progress_data_destroy,
-                               GCancellable        *cancellable,
-                               GAsyncReadyCallback  callback,
-                               gpointer             user_data)
-{
-  g_autoptr(GRefString) context_switch = g_ref_string_new_intern ("Context Switch");
-  g_autoptr(DexAsyncResult) result = NULL;
-  g_autoptr(GPtrArray) futures = NULL;
-  DexFuture *future;
-  Symbolize *state;
-
-  g_return_if_fail (SYSPROF_IS_DOCUMENT (document));
-  g_return_if_fail (SYSPROF_IS_SYMBOLIZER (symbolizer));
-
-  state = g_new0 (Symbolize, 1);
-  state->document = g_object_ref (document);
-  state->symbolizer = g_object_ref (symbolizer);
-  state->symbols = g_object_new (SYSPROF_TYPE_DOCUMENT_SYMBOLS, NULL);
-  state->strings = sysprof_strings_ref (strings);
-  state->pid_to_process_info = g_hash_table_ref (pid_to_process_info);
-  state->progress_func = progress_func;
-  state->progress_data = progress_data;
-  state->progress_data_destroy = progress_data_destroy;
-  state->n_partitions = MAX (1, g_get_num_processors () / 2) + 1;
+  bitset = _sysprof_document_traceables (state->document);
+  model = G_LIST_MODEL (state->document);
 
   /* Create static symbols for context switch use */
   for (guint cs = 0; cs < G_N_ELEMENTS (context_switches); cs++)
@@ -265,36 +193,80 @@ _sysprof_document_symbols_new (SysprofDocument     *document,
       state->symbols->context_switches[context_switches[cs].value] = g_steal_pointer (&symbol);
     }
 
-  futures = g_ptr_array_new_with_free_func (dex_unref);
-
-  for (guint i = 0; i < state->n_partitions; i++)
+  /* Walk through the available traceables which need symbols extracted */
+  if (!SYSPROF_IS_NO_SYMBOLIZER (state->symbolizer) &&
+      egg_bitset_iter_init_first (&iter, bitset, &i))
     {
-      DexScheduler *scheduler = dex_thread_pool_scheduler_get_default ();
+      guint n_items = egg_bitset_get_size (bitset);
 
-      g_ptr_array_add (futures,
-                       dex_scheduler_spawn (scheduler, 0,
-                                            symbolize_fiber,
-                                            state,
-                                            NULL));
+      do
+        {
+          g_autoptr(SysprofDocumentTraceable) traceable = g_list_model_get_item (model, i);
+          int pid = sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (traceable));
+          SysprofProcessInfo *process_info = g_hash_table_lookup (state->pid_to_process_info, GINT_TO_POINTER (pid));
+
+          add_traceable (state->symbols,
+                         state->strings,
+                         process_info,
+                         traceable,
+                         state->symbolizer);
+
+          count++;
+
+          if (state->progress_func != NULL && count % 100 == 0)
+            state->progress_func (count / (double)n_items, _("Symbolizing stack traces"), state->progress_data);
+        }
+      while (egg_bitset_iter_next (&iter, &i));
     }
 
-  future = dex_future_allv ((DexFuture **)futures->pdata, futures->len);
-  future = dex_future_finally (future,
-                               handle_symbolize_result,
-                               state,
-                               (GDestroyNotify)symbolize_free);
+  g_task_return_pointer (task,
+                         g_object_ref (state->symbols),
+                         g_object_unref);
+}
 
-  result = dex_async_result_new (NULL, cancellable, callback, user_data);
-  dex_async_result_await (result, future);
+void
+_sysprof_document_symbols_new (SysprofDocument     *document,
+                               SysprofStrings      *strings,
+                               SysprofSymbolizer   *symbolizer,
+                               GHashTable          *pid_to_process_info,
+                               ProgressFunc         progress_func,
+                               gpointer             progress_data,
+                               GDestroyNotify       progress_data_destroy,
+                               GCancellable        *cancellable,
+                               GAsyncReadyCallback  callback,
+                               gpointer             user_data)
+{
+  g_autoptr(GTask) task = NULL;
+  Symbolize *state;
+
+  g_return_if_fail (SYSPROF_IS_DOCUMENT (document));
+  g_return_if_fail (SYSPROF_IS_SYMBOLIZER (symbolizer));
+
+  state = g_new0 (Symbolize, 1);
+  state->document = g_object_ref (document);
+  state->symbolizer = g_object_ref (symbolizer);
+  state->symbols = g_object_new (SYSPROF_TYPE_DOCUMENT_SYMBOLS, NULL);
+  state->strings = sysprof_strings_ref (strings);
+  state->pid_to_process_info = g_hash_table_ref (pid_to_process_info);
+  state->progress_func = progress_func;
+  state->progress_data = progress_data;
+  state->progress_data_destroy = progress_data_destroy;
+
+  task = g_task_new (NULL, cancellable, callback, user_data);
+  g_task_set_source_tag (task, _sysprof_document_symbols_new);
+  g_task_set_task_data (task, state, (GDestroyNotify)symbolize_free);
+  g_task_run_in_thread (task, sysprof_document_symbols_worker);
 }
 
 SysprofDocumentSymbols *
 _sysprof_document_symbols_new_finish (GAsyncResult  *result,
                                       GError       **error)
 {
-  g_return_val_if_fail (DEX_IS_ASYNC_RESULT (result), NULL);
+  g_return_val_if_fail (G_IS_TASK (result), NULL);
+  g_return_val_if_fail (g_task_is_valid (result, NULL), NULL);
+  g_return_val_if_fail (g_task_get_source_tag (G_TASK (result)) == _sysprof_document_symbols_new, NULL);
 
-  return dex_async_result_propagate_pointer (DEX_ASYNC_RESULT (result), error);
+  return g_task_propagate_pointer (G_TASK (result), error);
 }
 
 /**

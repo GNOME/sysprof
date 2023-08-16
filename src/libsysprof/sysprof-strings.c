@@ -24,7 +24,7 @@
 
 struct _SysprofStrings
 {
-  GRWLock     rwlock;
+  GMutex      mutex;
   GHashTable *hashtable;
 };
 
@@ -34,7 +34,7 @@ sysprof_strings_new (void)
   SysprofStrings *self;
 
   self = g_atomic_rc_box_new0 (SysprofStrings);
-  g_rw_lock_init (&self->rwlock);
+  g_mutex_init (&self->mutex);
   self->hashtable = g_hash_table_new_full (g_str_hash,
                                            g_str_equal,
                                            (GDestroyNotify)g_ref_string_release,
@@ -54,7 +54,7 @@ sysprof_strings_finalize (gpointer data)
 {
   SysprofStrings *self = data;
 
-  g_rw_lock_clear (&self->rwlock);
+  g_mutex_clear (&self->mutex);
   g_clear_pointer (&self->hashtable, g_hash_table_unref);
 }
 
@@ -73,24 +73,14 @@ sysprof_strings_get (SysprofStrings *self,
   if (string == NULL)
     return NULL;
 
-  g_rw_lock_reader_lock (&self->rwlock);
+  g_mutex_lock (&self->mutex);
   if (!(ret = g_hash_table_lookup (self->hashtable, string)))
     {
-      g_rw_lock_reader_unlock (&self->rwlock);
-      g_rw_lock_writer_lock (&self->rwlock);
-
-      /* Check again, now with write lock */
-      if (!(ret = g_hash_table_lookup (self->hashtable, string)))
-        {
-          ret = g_ref_string_new (string);
-          g_hash_table_insert (self->hashtable, ret, ret);
-        }
-
-      g_rw_lock_writer_unlock (&self->rwlock);
-
-      return g_ref_string_acquire (ret);
+      ret = g_ref_string_new (string);
+      g_hash_table_insert (self->hashtable, ret, ret);
     }
-  g_rw_lock_reader_unlock (&self->rwlock);
+  g_ref_string_acquire (ret);
+  g_mutex_unlock (&self->mutex);
 
-  return g_ref_string_acquire (ret);
+  return ret;
 }

@@ -32,7 +32,6 @@
 struct _SysprofElfLoader
 {
   GObject parent_instance;
-  GRecMutex mutex;
   GHashTable *cache;
   char **debug_dirs;
   char **external_debug_dirs;
@@ -72,7 +71,6 @@ sysprof_elf_loader_finalize (GObject *object)
   g_clear_pointer (&self->debug_dirs, g_strfreev);
   g_clear_pointer (&self->external_debug_dirs, g_strfreev);
   g_clear_pointer (&self->cache, g_hash_table_unref);
-  g_rec_mutex_clear (&self->mutex);
 
   G_OBJECT_CLASS (sysprof_elf_loader_parent_class)->finalize (object);
 }
@@ -88,11 +86,11 @@ sysprof_elf_loader_get_property (GObject    *object,
   switch (prop_id)
     {
     case PROP_DEBUG_DIRS:
-      g_value_take_boxed (value, sysprof_elf_loader_dup_debug_dirs (self));
+      g_value_set_boxed (value, sysprof_elf_loader_get_debug_dirs (self));
       break;
 
     case PROP_EXTERNAL_DEBUG_DIRS:
-      g_value_take_boxed (value, sysprof_elf_loader_dup_external_debug_dirs (self));
+      g_value_set_boxed (value, sysprof_elf_loader_get_external_debug_dirs (self));
       break;
 
     default:
@@ -151,13 +149,12 @@ sysprof_elf_loader_class_init (SysprofElfLoaderClass *klass)
 static void
 sysprof_elf_loader_init (SysprofElfLoader *self)
 {
-  g_rec_mutex_init (&self->mutex);
   self->debug_dirs = g_strdupv ((char **)DEFAULT_DEBUG_DIRS);
   self->cache = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, _g_object_xunref);
 }
 
 /**
- * sysprof_elf_loader_dup_debug_dirs:
+ * sysprof_elf_loader_get_debug_dirs:
  * @self: a #SysprofElfLoader
  *
  * Gets the #SysprofElfLoader:debug-dirs property.
@@ -167,18 +164,12 @@ sysprof_elf_loader_init (SysprofElfLoader *self)
  *
  * Returns: (nullable): an array of debug directories, or %NULL
  */
-char **
-sysprof_elf_loader_dup_debug_dirs (SysprofElfLoader *self)
+const char * const *
+sysprof_elf_loader_get_debug_dirs (SysprofElfLoader *self)
 {
-  char **ret;
-
   g_return_val_if_fail (SYSPROF_IS_ELF_LOADER (self), NULL);
 
-  g_rec_mutex_lock (&self->mutex);
-  ret = g_strdupv (self->debug_dirs);
-  g_rec_mutex_unlock (&self->mutex);
-
-  return ret;
+  return (const char * const *)self->debug_dirs;
 }
 
 /**
@@ -206,14 +197,12 @@ sysprof_elf_loader_set_debug_dirs (SysprofElfLoader   *self,
   g_return_if_fail (SYSPROF_IS_ELF_LOADER (self));
   g_return_if_fail (self->debug_dirs != NULL);
 
-  g_rec_mutex_lock (&self->mutex);
   if (sysprof_set_strv (&self->debug_dirs, debug_dirs))
     g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_DEBUG_DIRS]);
-  g_rec_mutex_unlock (&self->mutex);
 }
 
 /**
- * sysprof_elf_loader_dup_external_debug_dirs:
+ * sysprof_elf_loader_get_external_debug_dirs:
  * @self: a #SysprofElfLoader
  *
  * Gets the #SysprofElfLoader:external-debug-dirs property.
@@ -221,20 +210,14 @@ sysprof_elf_loader_set_debug_dirs (SysprofElfLoader   *self,
  * See sysprof_elf_loader_set_external_debug_dirs() for how this
  * property is used to locate ELF files.
  *
- * Returns: (transfer full) (nullable): an array of external debug directories, or %NULL
+ * Returns: (nullable): an array of external debug directories, or %NULL
  */
-char **
-sysprof_elf_loader_dup_external_debug_dirs (SysprofElfLoader *self)
+const char * const *
+sysprof_elf_loader_get_external_debug_dirs (SysprofElfLoader *self)
 {
-  char **ret;
-
   g_return_val_if_fail (SYSPROF_IS_ELF_LOADER (self), NULL);
 
-  g_rec_mutex_lock (&self->mutex);
-  ret = g_strdupv (self->external_debug_dirs);
-  g_rec_mutex_lock (&self->mutex);
-
-  return ret;
+  return (const char * const *)self->external_debug_dirs;
 }
 
 /**
@@ -260,10 +243,8 @@ sysprof_elf_loader_set_external_debug_dirs (SysprofElfLoader   *self,
 {
   g_return_if_fail (SYSPROF_IS_ELF_LOADER (self));
 
-  g_rec_mutex_lock (&self->mutex);
   if (sysprof_set_strv (&self->external_debug_dirs, external_debug_dirs))
     g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_EXTERNAL_DEBUG_DIRS]);
-  g_rec_mutex_unlock (&self->mutex);
 }
 
 static char *
@@ -433,8 +414,6 @@ sysprof_elf_loader_load (SysprofElfLoader       *self,
   g_return_val_if_fail (SYSPROF_IS_ELF_LOADER (self), NULL);
   g_return_val_if_fail (!mount_namespace || SYSPROF_IS_MOUNT_NAMESPACE (mount_namespace), NULL);
 
-  g_rec_mutex_lock (&self->mutex);
-
   /* We must translate the file into a number of paths that may possibly
    * locate the file in the case that there are overlays in the mount
    * namespace. Each of the paths could be in a lower overlay layer.
@@ -474,10 +453,7 @@ sysprof_elf_loader_load (SysprofElfLoader       *self,
           if (cached_elf != NULL)
             {
               if (sysprof_elf_matches (cached_elf, file_inode, build_id))
-                {
-                  g_rec_mutex_unlock (&self->mutex);
-                  return g_object_ref (cached_elf);
-                }
+                return g_object_ref (cached_elf);
             }
 
           continue;
@@ -510,15 +486,10 @@ sysprof_elf_loader_load (SysprofElfLoader       *self,
         }
 
       if (elf != NULL)
-        {
-          g_rec_mutex_unlock (&self->mutex);
-          return g_steal_pointer (&elf);
-        }
+        return g_steal_pointer (&elf);
     }
 
 failure:
-  g_rec_mutex_unlock (&self->mutex);
-
   g_set_error_literal (error,
                        G_FILE_ERROR,
                        G_FILE_ERROR_NOENT,

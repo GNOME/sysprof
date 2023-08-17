@@ -27,8 +27,10 @@
 struct _SysprofElf
 {
   GObject parent_instance;
+  GMutex mutex;
   const char *nick;
   char *build_id;
+  char *debug_link;
   char *file;
   SysprofElf *debug_link_elf;
   ElfParser *parser;
@@ -213,8 +215,12 @@ sysprof_elf_finalize (GObject *object)
   SysprofElf *self = (SysprofElf *)object;
 
   g_clear_pointer (&self->file, g_free);
+  g_clear_pointer (&self->build_id, g_free);
+  g_clear_pointer (&self->debug_link, g_free);
   g_clear_pointer (&self->parser, elf_parser_free);
   g_clear_object (&self->debug_link_elf);
+
+  g_mutex_clear (&self->mutex);
 
   G_OBJECT_CLASS (sysprof_elf_parent_class)->finalize (object);
 }
@@ -313,6 +319,7 @@ sysprof_elf_class_init (SysprofElfClass *klass)
 static void
 sysprof_elf_init (SysprofElf *self)
 {
+  g_mutex_init (&self->mutex);
 }
 
 static void
@@ -342,6 +349,7 @@ sysprof_elf_new (const char   *filename,
 {
   SysprofElf *self;
   ElfParser *parser;
+  guint crc32;
 
   g_return_val_if_fail (mapped_file != NULL, NULL);
 
@@ -353,6 +361,8 @@ sysprof_elf_new (const char   *filename,
   self->parser = g_steal_pointer (&parser);
   self->file_inode = file_inode;
   self->text_offset = elf_parser_get_text_offset (self->parser);
+  self->build_id = g_strdup (elf_parser_get_build_id (self->parser));
+  self->debug_link = g_strdup (elf_parser_get_debug_link (self->parser, &crc32));
 
   if (filename != NULL)
     {
@@ -384,17 +394,54 @@ sysprof_elf_get_build_id (SysprofElf *self)
 {
   g_return_val_if_fail (SYSPROF_IS_ELF (self), NULL);
 
-  return elf_parser_get_build_id (self->parser);
+  return self->build_id;
 }
 
 const char *
 sysprof_elf_get_debug_link (SysprofElf *self)
 {
-  guint crc32;
-
   g_return_val_if_fail (SYSPROF_IS_ELF (self), NULL);
 
-  return elf_parser_get_debug_link (self->parser, &crc32);
+  return self->debug_link;
+}
+
+static char *
+lookup_symbol_name (SysprofElf *self,
+                    gulong      text_offset,
+                    gulong      address,
+                    guint64    *begin_address,
+                    guint64    *end_address)
+{
+  const ElfSym *sym;
+  char *ret = NULL;
+
+  g_mutex_lock (&self->mutex);
+
+  sym = elf_parser_lookup_symbol (self->parser, address - text_offset);
+
+  if (sym != NULL)
+    {
+      const char *name;
+
+      if (begin_address || end_address)
+        {
+          elf_parser_get_sym_address_range (self->parser, sym, begin_address, end_address);
+
+          (*begin_address) += text_offset;
+          (*end_address) += text_offset;
+        }
+
+      name = elf_parser_get_sym_name (self->parser, sym);
+
+      if (name != NULL && name[0] == '_' && name[1] == 'Z')
+        ret = elf_demangle (name);
+      else
+        ret = g_strdup (name);
+    }
+
+  g_mutex_unlock (&self->mutex);
+
+  return ret;
 }
 
 static char *
@@ -406,12 +453,10 @@ sysprof_elf_get_symbol_at_address_internal (SysprofElf *self,
                                             guint64     text_offset,
                                             gboolean   *is_fallback)
 {
-  const ElfSym *symbol;
   char *ret = NULL;
-  gulong begin = 0;
-  gulong end = 0;
 
-  g_return_val_if_fail (SYSPROF_IS_ELF (self), NULL);
+  *begin_address = 0;
+  *end_address = 0;
 
   if (self->debug_link_elf != NULL)
     {
@@ -421,38 +466,14 @@ sysprof_elf_get_symbol_at_address_internal (SysprofElf *self,
         return ret;
     }
 
-  if ((symbol = elf_parser_lookup_symbol (self->parser, address - text_offset)))
+  if (!(ret = lookup_symbol_name (self, text_offset, address, begin_address, end_address)))
     {
-      const char *name;
-
-      if (begin_address || end_address)
-        {
-          elf_parser_get_sym_address_range (self->parser, symbol, &begin, &end);
-          begin += text_offset;
-          end += text_offset;
-        }
-
-      name = elf_parser_get_sym_name (self->parser, symbol);
-
-      if (name != NULL && name[0] == '_' && name[1] == 'Z')
-        ret = elf_demangle (name);
-      else
-        ret = g_strdup (name);
-    }
-  else
-    {
-      begin = address;
-      end = address + 1;
+      *begin_address = address;
+      *end_address = address + 1;
       ret = g_strdup_printf ("In File %s+0x%"G_GINT64_MODIFIER"x", filename, address);
       if (is_fallback)
         *is_fallback = TRUE;
     }
-
-  if (begin_address)
-    *begin_address = begin;
-
-  if (end_address)
-    *end_address = end;
 
   return ret;
 }
@@ -464,6 +485,15 @@ sysprof_elf_get_symbol_at_address (SysprofElf *self,
                                    guint64    *end_address,
                                    gboolean   *is_fallback)
 {
+  guint64 dummy1;
+  guint64 dummy2;
+
+  if (begin_address == NULL)
+    begin_address = &dummy1;
+
+  if (end_address == NULL)
+    end_address = &dummy2;
+
   return sysprof_elf_get_symbol_at_address_internal (self,
                                                      self->file,
                                                      address,
@@ -497,8 +527,18 @@ sysprof_elf_set_debug_link_elf (SysprofElf *self,
   g_return_if_fail (SYSPROF_IS_ELF (self));
   g_return_if_fail (!debug_link_elf || SYSPROF_IS_ELF (debug_link_elf));
 
-  if (g_set_object (&self->debug_link_elf, debug_link_elf))
-    g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_DEBUG_LINK_ELF]);
+  g_mutex_lock (&self->mutex);
+
+  /* We might race to set this, so only let the original debuglink work
+   * and discard anything after that.
+   */
+  if (self->debug_link_elf == NULL)
+    {
+      g_set_object (&self->debug_link_elf, debug_link_elf);
+      /* No need to notify, nothing public can watch this property */
+    }
+
+  g_mutex_unlock (&self->mutex);
 }
 
 gboolean
@@ -508,14 +548,8 @@ sysprof_elf_matches (SysprofElf *self,
 {
   g_return_val_if_fail (SYSPROF_IS_ELF (self), FALSE);
 
-  if (build_id != NULL)
-    {
-      const char *elf_build_id = elf_parser_get_build_id (self->parser);
-
-      /* Not matching build-id, you definitely don't want this ELF */
-      if (elf_build_id != NULL && !g_str_equal (build_id, elf_build_id))
-        return FALSE;
-    }
+  if (build_id && g_strcmp0 (build_id, self->build_id) != 0)
+    return FALSE;
 
   if (file_inode && self->file_inode && file_inode != self->file_inode)
     return FALSE;

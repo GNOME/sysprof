@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2021-11-05 04:10+0000\n"
-"PO-Revision-Date: 2022-03-14 21:39+0200\n"
+"POT-Creation-Date: 2023-08-14 23:44+0000\n"
+"PO-Revision-Date: 2023-08-17 18:30+0300\n"
 "Last-Translator: Jiri Grönroos <jiri.gronroos+l10n@iki.fi>\n"
 "Language-Team: suomi <lokalisointi-lista@googlegroups.com>\n"
 "Language: fi\n"
@@ -16,23 +16,24 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.3.2\n"
 
-#: data/org.gnome.Sysprof3.appdata.xml.in:5
-#: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/sysprof-application.c:202
-#: src/sysprof/sysprof-application.c:329 src/sysprof/ui/sysprof-window.ui:11
+#: data/org.gnome.Sysprof.appdata.xml.in.in:5
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
+#: src/sysprof/sysprof-application.c:208
+#: src/sysprof/sysprof-recording-pad.ui:18
 msgid "Sysprof"
 msgstr "Sysprof"
 
-#: data/org.gnome.Sysprof3.appdata.xml.in:6
+#: data/org.gnome.Sysprof.appdata.xml.in.in:6
 msgid "Profile an application or entire system"
 msgstr "Profiloi sovellus tai koko järjestelmä"
 
-#: data/org.gnome.Sysprof3.appdata.xml.in:9
+#: data/org.gnome.Sysprof.appdata.xml.in.in:9
 msgid "The GNOME Foundation"
 msgstr "Gnome-säätiö"
 
-#: data/org.gnome.Sysprof3.appdata.xml.in:12
+#: data/org.gnome.Sysprof.appdata.xml.in.in:12
 msgid ""
 "Sysprof allows you to profile applications to aid in debugging and "
 "optimization."
@@ -40,923 +41,361 @@ msgstr ""
 "Sysprof mahdollistaa sovellusten profiloinnin esimerkiksi vianetsinnän tai "
 "optimoinnin vuoksi."
 
-#: data/org.gnome.Sysprof3.desktop.in:5
+#: data/org.gnome.Sysprof.desktop.in.in:5 src/sysprof/sysprof-greeter.ui:64
 msgid "Profiler"
 msgstr "Profiilinmuodostaja"
 
-#: data/org.gnome.Sysprof3.desktop.in:6
+#: data/org.gnome.Sysprof.desktop.in.in:6
 msgid "Profile an application or entire system."
 msgstr "Profiloi sovellus tai koko järjestelmä."
 
-#: data/org.gnome.sysprof3.gschema.xml:5
-msgid "Window size"
-msgstr "Ikkunan koko"
-
-#: data/org.gnome.sysprof3.gschema.xml:6
-msgid "Window size (width and height)."
-msgstr "Ikkunan koko (leveys ja korkeus)."
-
-#: data/org.gnome.sysprof3.gschema.xml:10
-msgid "Window position"
-msgstr "Ikkunan sijainti"
-
-#: data/org.gnome.sysprof3.gschema.xml:11
-msgid "Window position (x and y)."
-msgstr "Ikkunan sijainti (x ja y)."
-
-#: data/org.gnome.sysprof3.gschema.xml:15
-msgid "Window maximized"
-msgstr "Ikkuna suurennettu"
-
-#: data/org.gnome.sysprof3.gschema.xml:16
-msgid "Window maximized state"
+#: src/libsysprof/sysprof-category-summary.c:138
+msgid "Uncategorized"
 msgstr ""
 
-#: data/org.gnome.sysprof3.gschema.xml:20
-msgid "Last Spawn Program"
+#: src/libsysprof/sysprof-category-summary.c:141
+msgid "Accessibility"
 msgstr ""
 
-#: data/org.gnome.sysprof3.gschema.xml:21
-msgid ""
-"The last spawned program, which will be set in the UI upon restart of the "
-"application."
-msgstr ""
-
-#: data/org.gnome.sysprof3.gschema.xml:25
-msgid "Last Spawn Inherit Environment"
-msgstr ""
-
-#: data/org.gnome.sysprof3.gschema.xml:26
-msgid "If the last spawned environment inherits the parent environment."
-msgstr ""
-
-#: data/org.gnome.sysprof3.gschema.xml:30
-msgid "Last Spawn Environment"
-msgstr ""
-
-#: data/org.gnome.sysprof3.gschema.xml:31
-msgid ""
-"The last spawned environment, which will be set in the UI upon restart of "
-"the application."
-msgstr ""
-
-#: src/libsysprof/sysprof-callgraph-profile.c:447
-msgid "Sysprof was unable to generate a callgraph from the system capture."
-msgstr "Sysprof ei kyennyt luomaan kutsukuvaajaa järjestelmän kaappauksesta."
-
-#: src/libsysprof/sysprof-perf-source.c:472
-#, c-format
-msgid "Sysprof failed to find field “%s”."
-msgstr "Sysprof ei onnistunut löytämään kenttää “%s”."
-
-#: src/libsysprof/sysprof-perf-source.c:485
-#, c-format
-msgid "Sysprof failed to parse offset for “%s”."
-msgstr ""
-
-#: src/libsysprof/sysprof-perf-source.c:549
-#, c-format
-msgid "Sysprof failed to get perf_event ID."
-msgstr ""
-
-#: src/libsysprof/sysprof-perf-source.c:655
-#, fuzzy, c-format
-#| msgid ""
-#| "An error occurred while attempting to access performance counters: %s"
-msgid "An error occurred while attempting to access performance counters"
-msgstr "Suorituskykymittareiden käyttöä yrittäessä tapahtui virhe: %s"
-
-#: src/libsysprof-ui/sysprof-battery-aid.c:182
-msgid "Battery Charge"
-msgstr "Akun lataus"
-
-#: src/libsysprof-ui/sysprof-battery-aid.c:198
-msgid "Battery Charge (All)"
-msgstr "Akun lataus (kaikki)"
-
-#: src/libsysprof-ui/sysprof-battery-aid.c:240
-#: src/libsysprof-ui/sysprof-counters-aid.c:282
-msgid "Battery"
-msgstr "Akku"
-
-#: src/libsysprof-ui/sysprof-callgraph-aid.c:212
-#: src/libsysprof-ui/sysprof-callgraph-aid.c:218
-msgid "Stack Traces"
-msgstr "Pinojäljet"
-
-#: src/libsysprof-ui/sysprof-callgraph-aid.c:226
-msgid "Stack Traces (In Kernel)"
-msgstr "Pinojäljet (ytimessä)"
-
-#: src/libsysprof-ui/sysprof-callgraph-aid.c:234
-msgid "Stack Traces (In User)"
-msgstr "Pinojäljet (käyttäjätilassa)"
-
-#: src/libsysprof-ui/sysprof-callgraph-aid.c:243
-#: src/libsysprof-ui/sysprof-callgraph-aid.c:273
-msgid "Callgraph"
-msgstr "Kutsukuvaaja"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:27
-#: src/libsysprof-ui/sysprof-memprof-page.ui:245
-msgid "Functions"
+#: src/libsysprof/sysprof-category-summary.c:144
+#, fuzzy
+#| msgid "Functions"
+msgid "Actions"
 msgstr "Funktiot"
 
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:43
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:104
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:159
-#: src/libsysprof-ui/sysprof-memprof-page.ui:262
-#: src/libsysprof-ui/sysprof-memprof-page.ui:324
-#: src/libsysprof-ui/sysprof-memprof-page.ui:380
-msgid "Self"
-msgstr "Self"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:59
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:120
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:175
-#: src/libsysprof-ui/sysprof-memprof-page.ui:278
-#: src/libsysprof-ui/sysprof-memprof-page.ui:340
-#: src/libsysprof-ui/sysprof-memprof-page.ui:396
-msgid "Total"
-msgstr "Yhteensä"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:88
-#: src/libsysprof-ui/sysprof-memprof-page.ui:307
-msgid "Callers"
-msgstr "Kutsujat"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:151
-#: src/libsysprof-ui/sysprof-memprof-page.ui:371
-msgid "Descendants"
-msgstr "Jälkeläiset"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:190
-#: src/libsysprof-ui/sysprof-details-page.ui:322
-msgid "Hits"
-msgstr "Osumia"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:213
-msgid "Generating Callgraph"
-msgstr "Muodostetaan kutsukuvaajaa"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:214
-msgid "Sysprof is busy creating the selected callgraph."
-msgstr "Sysprof luo valittua kutsukuvaajaa."
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:224
-#: src/libsysprof-ui/sysprof-memprof-page.ui:442
-msgid "Not Enough Samples"
-msgstr "Ei tarpeeksi näytteitä"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:225
-#: src/libsysprof-ui/sysprof-memprof-page.ui:443
-msgid "More samples are necessary to display a callgraph."
-msgstr "Kutsukuvaajan näyttämiseksi tarvitaan enemmän näytteitä."
-
-#: src/libsysprof-ui/sysprof-counters-aid.c:221
-#: src/libsysprof-ui/sysprof-counters-aid.c:226
-msgid "Counters"
-msgstr "Laskurit"
-
-#: src/libsysprof-ui/sysprof-cpu-aid.c:207
-#: src/libsysprof-ui/sysprof-cpu-aid.c:355
-msgid "CPU Usage"
-msgstr "Suorittimen käyttö"
-
-#: src/libsysprof-ui/sysprof-cpu-aid.c:214
-msgid "CPU Frequency"
-msgstr "Suorittimen taajuus"
-
-#: src/libsysprof-ui/sysprof-cpu-aid.c:218
-msgid "CPU Frequency (All)"
-msgstr "Suorittimen taajuus (kaikki)"
-
-#. Translators: CPU is the processor.
-#: src/libsysprof-ui/sysprof-cpu-aid.c:227
-#: src/libsysprof-ui/sysprof-cpu-aid.c:250
-msgid "CPU Usage (All)"
-msgstr "Suorittimen käyttö (kaikki)"
-
-#: src/libsysprof-ui/sysprof-cpu-aid.c:316
-msgid "Processes"
-msgstr "Prosessit"
-
-#: src/libsysprof-ui/sysprof-details-page.c:220
-msgid "Memory Capture"
-msgstr "Muistitaltiointi"
-
-#: src/libsysprof-ui/sysprof-details-page.c:234
-#, c-format
-msgid "%0.4lf seconds"
-msgstr "%0.4lf sekuntia"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:21
-msgid "Filename"
-msgstr "Tiedostonimi"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:35
-msgid "Captured at"
-msgstr "Kaapattu"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:50
-#: src/libsysprof-ui/sysprof-marks-page.ui:95
-#: src/libsysprof-ui/sysprof-marks-page.ui:215
-msgid "Duration"
-msgstr "Kesto"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:65
-msgid "CPU Model"
-msgstr "Suorittimen malli"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:80
-msgid "Samples Captured"
-msgstr "Näytteitä kaapattu"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:94
-msgid "Marks Captured"
-msgstr "Merkkejä kaapattu"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:108
-msgid "Processes Captured"
-msgstr "Prosesseja kaapattu"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:122
-msgid "Forks Captured"
-msgstr "Haarautuksia kaapattu"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:136
-msgid "Counters Captured"
-msgstr "Laskureita kaapattu"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:151
-msgid "Allocations Captured"
-msgstr "Allokaatioita kaapattu"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:309
-#: src/libsysprof-ui/sysprof-marks-page.ui:52
-msgid "Mark"
+#: src/libsysprof/sysprof-category-summary.c:147
+msgid "Crash Handler"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-details-page.ui:335
-msgid "Min"
+#: src/libsysprof/sysprof-category-summary.c:150
+msgid "Context Switches"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-details-page.ui:348
-msgid "Max"
+#: src/libsysprof/sysprof-category-summary.c:153
+msgid "CSS"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-details-page.ui:361
-msgid "Avg"
+#: src/libsysprof/sysprof-category-summary.c:156
+#: src/sysprof/sysprof-greeter.ui:385 src/sysprof/sysprof-window.ui:260
+msgid "Graphics"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-diskstat-aid.c:205
-#: src/libsysprof-ui/sysprof-diskstat-aid.c:267
-msgid "Disk"
-msgstr "Levy"
-
-#: src/libsysprof-ui/sysprof-diskstat-aid.c:239
-msgid "Reads"
-msgstr "Lukemiset"
-
-#: src/libsysprof-ui/sysprof-diskstat-aid.c:239
-msgid "Writes"
-msgstr "Kirjoitukset"
-
-#: src/libsysprof-ui/sysprof-display.c:229
-msgid "Recording Failed"
-msgstr "Taltiointi epäonistui"
-
-#: src/libsysprof-ui/sysprof-display.c:234
-msgid "Recording…"
-msgstr "Taltioidaan…"
-
-#. translators: %s is replaced with locale specific time of recording
-#: src/libsysprof-ui/sysprof-display.c:265
-#, c-format
-#| msgctxt "shortcut window"
-#| msgid "Recording"
-msgid "Recording at %s"
-msgstr "Taltiointi %s"
-
-#: src/libsysprof-ui/sysprof-display.c:269
-msgid "New Recording"
-msgstr "Uusi taltiointi"
-
-#: src/libsysprof-ui/sysprof-display.c:1094
-msgid "The recording could not be opened"
-msgstr "Taltiointia ei voitu avata"
-
-#: src/libsysprof-ui/sysprof-display.c:1217
-msgid "Save Recording"
-msgstr "Tallenna taltiointi"
-
-#: src/libsysprof-ui/sysprof-display.c:1220
-msgid "Save"
-msgstr "Tallenna"
-
-#. Translators: This is a button.
-#: src/libsysprof-ui/sysprof-display.c:1221 src/sysprof/sysprof-window.c:279
-msgid "Cancel"
-msgstr "Peru"
-
-#: src/libsysprof-ui/sysprof-display.c:1247
-#, c-format
-msgid "Failed to save recording: %s"
-msgstr "Taltioinnin tallentaminen epäonnistui: %s"
-
-#: src/libsysprof-ui/sysprof-display.ui:49
-#: src/libsysprof-ui/sysprof-marks-page.ui:19
-msgid "Details"
-msgstr "Tiedot"
-
-#: src/libsysprof-ui/sysprof-environ-editor-row.ui:58
-msgid "Remove environment variable"
-msgstr "Poista ympäristömuuttuja"
-
-#: src/libsysprof-ui/sysprof-environ-editor.c:71
-msgid "New variable…"
-msgstr "Uusi muuttuja…"
-
-#: src/libsysprof-ui/sysprof-failed-state-view.ui:22
-msgid "Ouch, that hurt!"
-msgstr "Auts, se sattui!"
-
-#: src/libsysprof-ui/sysprof-failed-state-view.ui:39
-msgid "Something unexpectedly went wrong while trying to profile your system."
-msgstr ""
-"Jotain meni odottamattomasti pieleen järjestelmän profilointia yrittäessä."
-
-#: src/libsysprof-ui/sysprof-log-model.c:210
-#: src/libsysprof-ui/sysprof-logs-page.ui:58
-#: src/libsysprof-ui/sysprof-marks-page.ui:109
-msgid "Message"
-msgstr "Viesti"
-
-#: src/libsysprof-ui/sysprof-log-model.c:213
-msgid "Info"
-msgstr "Info"
-
-#: src/libsysprof-ui/sysprof-log-model.c:216
-msgid "Critical"
-msgstr "Kriittinen"
-
-#: src/libsysprof-ui/sysprof-log-model.c:219
-msgid "Error"
-msgstr "Virhe"
-
-#: src/libsysprof-ui/sysprof-log-model.c:222
-msgid "Debug"
-msgstr "Vianjäljitys"
-
-#: src/libsysprof-ui/sysprof-log-model.c:225
-msgid "Warning"
-msgstr "Varoitus"
-
-#: src/libsysprof-ui/sysprof-logs-aid.c:195
-#: src/libsysprof-ui/sysprof-logs-aid.c:199
-#: src/libsysprof-ui/sysprof-logs-aid.c:204
-#: src/libsysprof-ui/sysprof-logs-aid.c:210
-msgid "Logs"
-msgstr "Lokit"
-
-#: src/libsysprof-ui/sysprof-logs-page.ui:15
-#: src/libsysprof-ui/sysprof-marks-page.ui:67
-msgid "Time"
-msgstr "Aika"
-
-#: src/libsysprof-ui/sysprof-logs-page.ui:29
-msgid "Severity"
-msgstr "Vakavuus"
-
-#: src/libsysprof-ui/sysprof-logs-page.ui:44
-msgid "Domain"
+#: src/libsysprof/sysprof-category-summary.c:159
+msgid "Icons"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-marks-aid.c:237
-#: src/libsysprof-ui/sysprof-marks-aid.c:242
-msgid "Timings"
-msgstr "Ajoitukset"
-
-#: src/libsysprof-ui/sysprof-marks-page.ui:38
-msgid "Group"
-msgstr "Ryhmä"
-
-#: src/libsysprof-ui/sysprof-marks-page.ui:81
-msgid "End"
+#: src/libsysprof/sysprof-category-summary.c:162
+msgid "Input"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-marks-page.ui:245
-msgid "No Timings Available"
-msgstr "Ajoituksia ei ole saatavilla"
+#: src/libsysprof/sysprof-category-summary.c:165
+msgid "IO"
+msgstr ""
 
-#: src/libsysprof-ui/sysprof-marks-page.ui:246
-msgid "No timing data was found for the current selection"
-msgstr "Ajoitusdataa ei löytynyt nykyiselle valinnalle"
+#: src/libsysprof/sysprof-category-summary.c:168
+msgid "IPC"
+msgstr ""
 
-#: src/libsysprof-ui/sysprof-memory-aid.c:68
-msgid "Memory Usage"
-msgstr "Muistinkäyttö"
+#: src/libsysprof/sysprof-category-summary.c:171
+msgid "JavaScript"
+msgstr ""
 
-#: src/libsysprof-ui/sysprof-memprof-aid.c:182
+#: src/libsysprof/sysprof-category-summary.c:174
+msgid "Kernel"
+msgstr ""
+
+#: src/libsysprof/sysprof-category-summary.c:177
+msgid "Layout"
+msgstr ""
+
+#: src/libsysprof/sysprof-category-summary.c:180
+msgid "Locking"
+msgstr ""
+
+#: src/libsysprof/sysprof-category-summary.c:183
+msgid "Main Loop"
+msgstr ""
+
+#: src/libsysprof/sysprof-category-summary.c:186
 msgid "Memory"
 msgstr "Muisti"
 
-#: src/libsysprof-ui/sysprof-memprof-aid.c:193
-#: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
-msgid "Memory Allocations"
-msgstr "Muistiallokaatiot"
-
-#: src/libsysprof-ui/sysprof-memprof-aid.c:224
-msgid "Track Allocations"
+#: src/libsysprof/sysprof-category-summary.c:189
+msgid "Paint"
 msgstr ""
 
-#. translators: %s is replaced with the the lower and upper bound memory sizes in bytes
-#: src/libsysprof-ui/sysprof-memprof-page.c:235
-#, c-format
-msgid "> %s to %s"
+#: src/libsysprof/sysprof-category-summary.c:192
+msgid "Type System"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:23
-msgid "Summary"
-msgstr "Yhteenveto"
+#: src/libsysprof/sysprof-category-summary.c:195
+msgid "Unwindable"
+msgstr ""
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:31
-msgid "All Allocations"
+#: src/libsysprof/sysprof-category-summary.c:198
+#, fuzzy
+#| msgid "Window size"
+msgid "Windowing"
+msgstr "Ikkunan koko"
+
+#: src/libsysprof/sysprof-document-allocation.c:151
+#, fuzzy
+#| msgid "All Allocations"
+msgid "Allocation"
 msgstr "Kaikki allokaatiot"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:40
-msgid "Temporary Allocations"
-msgstr "Väliaikaiset allokaatiot"
-
-#: src/libsysprof-ui/sysprof-memprof-page.ui:49
-msgid "Leaked Allocations"
-msgstr "Vuodetut allokaatiot"
-
-#: src/libsysprof-ui/sysprof-memprof-page.ui:411
-msgid "Size"
-msgstr "Koko"
-
-#: src/libsysprof-ui/sysprof-memprof-page.ui:431
-msgid "Analyzing Memory Allocations"
-msgstr "Analysoidaan muistiallokaatioita"
-
-#: src/libsysprof-ui/sysprof-memprof-page.ui:432
-msgid "Sysprof is busy analyzing memory allocations."
-msgstr "Sysprof analysoi muistiallokaatioita."
-
-#: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
-msgid "Memory Used"
-msgstr "Muistia käytetty"
-
-#: src/libsysprof-ui/sysprof-netdev-aid.c:204
-#: src/libsysprof-ui/sysprof-netdev-aid.c:264
-msgid "Network"
-msgstr "Verkko"
-
-#. translators: "Compositor" means desktop compositor, gnome-shell/mutter in particular
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:27
-msgid "GNOME Shell"
-msgstr "GNOME Shell"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:90
-msgid "Profilers"
-msgstr "Profiilinmuodostajat"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:186
-msgid ""
-"Track application memory allocations (Sysprof must launch target application)"
+#: src/libsysprof/sysprof-document.c:1164
+#: src/libsysprof/sysprof-document.c:1200
+msgid "Indexing capture data frames"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:194
-msgid "Track slow operations on your applications main loop"
+#: src/libsysprof/sysprof-document.c:1378
+msgid "Discovering file system mounts"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:210
-msgid "All Processes"
-msgstr "Kaikki prosessit"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:240
-msgid ""
-"Include all applications and operating system kernel in callgraph. This may "
-"not be possible on some system configurations."
+#: src/libsysprof/sysprof-document.c:1381
+msgid "Discovering process mount namespaces"
 msgstr ""
-"Sisällytä kaikki sovellukset ja käyttöjärjestelmän ydin kutsukuvaajaan. Tämä "
-"ei välttämättä ole mahdollista kaikissa kokoonpanoissa."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:268
-#| msgid "All Processes"
-msgid "Search Processes…"
-msgstr "Etsi prosesseja…"
+#: src/libsysprof/sysprof-document.c:1384
+msgid "Analyzing process address layouts"
+msgstr ""
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:287
-#| msgid "Existing Process"
-msgid "Loading Processes…"
+#: src/libsysprof/sysprof-document.c:1387
+msgid "Analyzing process command line"
+msgstr ""
+
+#: src/libsysprof/sysprof-document.c:1390
+msgid "Analyzing file system overlays"
+msgstr ""
+
+#: src/libsysprof/sysprof-document.c:1393
+#, fuzzy
+#| msgid "Processes"
+msgid "Processing counters"
+msgstr "Prosessit"
+
+#: src/libsysprof/sysprof-document.c:2373
+#: src/libsysprof/sysprof-document.c:2389
+#, fuzzy, c-format
+#| msgid "Recording at %s"
+msgid "Recording at %X %x"
+msgstr "Taltiointi %s"
+
+#: src/libsysprof/sysprof-document.c:2375
+#: src/libsysprof/sysprof-document.c:2391
+#, c-format
+msgid "Recording at %s"
+msgstr "Taltiointi %s"
+
+#: src/libsysprof/sysprof-document-dbus-message.c:152
+#| msgid "Message"
+msgid "D-Bus Message"
+msgstr "D-Bus-viesti"
+
+#: src/libsysprof/sysprof-document-frame.c:139
+msgid "Frame"
+msgstr ""
+
+#: src/libsysprof/sysprof-document-loader.c:435
+msgid "Document loaded"
+msgstr ""
+
+#: src/libsysprof/sysprof-document-loader.c:466
+#, fuzzy
+#| msgid "Recording Failed"
+msgid "Loading failed"
+msgstr "Taltiointi epäonistui"
+
+#: src/libsysprof/sysprof-document-loader.c:478
+#: src/libsysprof/sysprof-document-symbols.c:217
+#, fuzzy
+#| msgid "Stack Traces"
+msgid "Symbolizing stack traces"
+msgstr "Pinojäljet"
+
+#: src/libsysprof/sysprof-document-loader.c:547
+#, fuzzy
+#| msgid "Loading Processes…"
+msgid "Loading document"
 msgstr "Ladataan prosesseja…"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:311
-msgid "Launch Application"
-msgstr "Käynnistä sovellus"
+#: src/libsysprof/sysprof-document-log.c:85
+#, fuzzy
+#| msgid "Logs"
+msgid "Log"
+msgstr "Lokit"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:340
-msgid "Enable to launch a program of your choosing before profiling."
-msgstr "Käytä käynnistääksesi haluamasi ohjelman ennen profiilinmuodostusta."
+#: src/libsysprof/sysprof-document-mark.c:113
+msgid "Mark"
+msgstr ""
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:368
-msgid "Command Line"
-msgstr "Komentorivi"
+#: src/libsysprof/sysprof-document-process.c:277
+#, fuzzy, c-format
+#| msgid "%u Process"
+#| msgid_plural "%u Processes"
+msgid "%s [Process %d]"
+msgstr "%u prosessi"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:387
-msgid "Environment"
-msgstr "Ympäristö"
+#: src/libsysprof/sysprof-document-process.c:279
+#, fuzzy, c-format
+#| msgid "Processes"
+msgid "Process %d"
+msgstr "Prosessit"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:413
-msgid "Inherit Environment"
-msgstr "Peri ympäristö"
+#: src/libsysprof/sysprof-document-sample.c:136
+#, fuzzy
+#| msgid "Samples: %u"
+msgid "Sample"
+msgstr "Näytteet: %u"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:437
+#: src/libsysprof/sysprof-system-logs.c:171
+msgid "System Logs"
+msgstr ""
+
+#: src/libsysprof/sysprof-system-logs.c:172
+msgid "Recording system logs is not supported on your platform."
+msgstr ""
+
+#: src/libsysprof/sysprof-tracer.c:65
+msgid "Tracer"
+msgstr ""
+
+#: src/libsysprof/sysprof-tracer.c:66
 msgid ""
-"Enable to ensure your application shares the display, message-bus, and other "
-"desktop environment settings."
-msgstr ""
-"Ota käyttöön varmistaaksesi, että sovellus jakaa näytön, viestiväylän ja "
-"muut työpöytäympäristön asetukset."
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:463
-msgid "Allow CPU Throttling"
-msgstr "Salli suorittimen suorityskyvyn rajoittaminen"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:491
-msgid ""
-"If disabled, your CPU will be placed in performance mode. It will be "
-"restored after profiling."
-msgstr ""
-"Jos pois käytöstä, suoritin asetetaan suorituskykytilaan. Tila palautetaan "
-"profiilinmuodostuksen jälkeen."
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:512
-msgid "_Record"
-msgstr "_Taltioi"
-
-#: src/libsysprof-ui/sysprof-rapl-aid.c:175
-#: src/libsysprof-ui/sysprof-rapl-aid.c:248
-msgid "Energy Usage"
-msgstr "Energiankulutus"
-
-#: src/libsysprof-ui/sysprof-rapl-aid.c:180
-msgid "Energy Usage (All)"
-msgstr "Energiankulutus (kaikki)"
-
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:32
-msgid ""
-"Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
-msgstr ""
-"Voit käyttää myös komentoa <a href=\"help:sysprof\">sysprof-cli</a> "
-"taltiointiin."
-
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:47
-msgid "Events"
-msgstr "Tapahtumat"
-
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:73
-msgid "_Stop Recording"
-msgstr "_Pysäytä taltiointi"
-
-#: src/libsysprof-ui/sysprof-visualizer-group-header.c:119
-#: src/libsysprof-ui/sysprof-visualizers-frame.ui:54
-msgid "Select for more details"
-msgstr "Valitse saadaksesi lisätietoja"
-
-#: src/libsysprof-ui/sysprof-visualizer-group-header.c:141
-msgid "Display supplemental graphs"
+"Tracing requires spawning a program compiled with ‘-finstrument-functions’. "
+"Tracing will not be available."
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
-msgid "Instruments"
-msgstr "Instrumentit"
-
-#: src/sysprofd/org.gnome.sysprof3.policy.in:13
-msgid "Profile the system"
-msgstr "Profiloi järjestelmä"
-
-#: src/sysprofd/org.gnome.sysprof3.policy.in:14
-msgid "Authentication is required to profile the system."
-msgstr "Tunnistautuminen vaaditaan järjestelmän profilointia varten."
-
-#: src/sysprofd/org.gnome.sysprof3.policy.in:26
-msgid "Open a perf event stream"
-msgstr ""
-
-#: src/sysprofd/org.gnome.sysprof3.policy.in:27
-msgid "Authentication is required to access system performance counters."
-msgstr ""
-"Tunnistautuminen vaaditaan tietokoneen suorituskykymittareiden käyttämiseksi."
-
-#: src/sysprofd/org.gnome.sysprof3.policy.in:37
-msgid "Get a list of kernel symbols and their address"
-msgstr "Hanki lista ytimen symboleista ja niiden osoitteista"
-
-#: src/sysprofd/org.gnome.sysprof3.policy.in:38
-msgid "Authentication is required to access Linux kernel information."
-msgstr "Tunnistautuminen vaaditaan Linux-ytimen tietoihin pääsemiseksi."
-
-#: src/sysprof/gtk/help-overlay.ui:8
-msgctxt "shortcut window"
-msgid "Sysprof Shortcuts"
-msgstr "Sysprof-pikanäppäimet"
-
-#: src/sysprof/gtk/help-overlay.ui:12
-msgctxt "shortcut window"
-msgid "Files"
-msgstr "Tiedostot"
-
-#: src/sysprof/gtk/help-overlay.ui:16
-msgctxt "shortcut window"
-msgid "Save Recording"
-msgstr "Tallenna taltiointi"
-
-#: src/sysprof/gtk/help-overlay.ui:17
-msgctxt "shortcut window"
-msgid "Saves the current recording"
-msgstr "Tallentaa nykyisen taltioinnin"
-
-#: src/sysprof/gtk/help-overlay.ui:24
-msgctxt "shortcut window"
-msgid "Open recording"
-msgstr "Avaa taltiointi"
-
-#: src/sysprof/gtk/help-overlay.ui:25
-msgctxt "shortcut window"
-msgid "Opens a previously saved recording"
-msgstr "Avaa aiemmin tallennetun taltioinnin"
-
-#: src/sysprof/gtk/help-overlay.ui:34
-msgctxt "shortcut window"
-msgid "Recording"
-msgstr "Taltioidaan"
-
-#: src/sysprof/gtk/help-overlay.ui:38
-msgctxt "shortcut window"
-msgid "Record again"
-msgstr "Taltioi uudelleen"
-
-#: src/sysprof/gtk/help-overlay.ui:39
-msgctxt "shortcut window"
-msgid "Starts a new recording"
-msgstr "Käynnistää uuden taltioinnin"
-
-#: src/sysprof/gtk/help-overlay.ui:46
-msgctxt "shortcut window"
-msgid "Stop recording"
-msgstr "Pysäytä taltiointi"
-
-#: src/sysprof/gtk/help-overlay.ui:55
-msgctxt "shortcut window"
-msgid "Callgraph"
-msgstr "Kutsukuvaaja"
-
-#: src/sysprof/gtk/help-overlay.ui:59
-msgctxt "shortcut window"
-msgid "Expand function"
-msgstr "Laajenna funktiota"
-
-#: src/sysprof/gtk/help-overlay.ui:60
-msgctxt "shortcut window"
-msgid "Shows the direct descendants of the callgraph function"
-msgstr "Näyttää kutsukuvaajafunktion suorat jälkeläiset"
-
-#: src/sysprof/gtk/help-overlay.ui:67
-msgctxt "shortcut window"
-msgid "Collapse function"
-msgstr "Supista funktio"
-
-#: src/sysprof/gtk/help-overlay.ui:68
-msgctxt "shortcut window"
-msgid "Hides all callgraph descendants below the selected function"
-msgstr "Piilottaa kaikki kutsukuvaajan jälkeläiset valitun funktion alla"
-
-#: src/sysprof/gtk/help-overlay.ui:75
-msgctxt "shortcut window"
-msgid "Jump into function"
-msgstr "Siirry funktioon"
-
-#: src/sysprof/gtk/help-overlay.ui:76
-msgctxt "shortcut window"
-msgid "Selects the function or file as the top of the callgraph"
-msgstr "Valitsee funktion tai tiedoston kutsukuvaajan ylimmäiseksi"
-
-#: src/sysprof/gtk/help-overlay.ui:85
-msgctxt "shortcut window"
-msgid "Visualizers"
-msgstr "Visualisoinnit"
-
-#: src/sysprof/gtk/help-overlay.ui:89
-msgctxt "shortcut window"
-msgid "Zoom in"
-msgstr "Lähennä"
-
-#: src/sysprof/gtk/help-overlay.ui:96
-msgctxt "shortcut window"
-msgid "Zoom out"
-msgstr "Loitonna"
-
-#: src/sysprof/gtk/help-overlay.ui:103
-msgctxt "shortcut window"
-msgid "Reset zoom"
-msgstr "Palauta mittakaava"
-
-#: src/sysprof/gtk/menus.ui:6
-msgid "New Tab"
-msgstr "Uusi välilehti"
-
-#: src/sysprof/gtk/menus.ui:11
-msgid "New Window"
-msgstr "Uusi ikkuna"
-
-#: src/sysprof/gtk/menus.ui:18
-msgid "Open Recording…"
-msgstr "Avaa taltiointi…"
-
-#: src/sysprof/gtk/menus.ui:23
-msgid "Save Recording…"
-msgstr "Tallenna taltiointi…"
-
-#: src/sysprof/gtk/menus.ui:30
-msgid "Record Again"
-msgstr "Taltioi uudelleen"
-
-#: src/sysprof/gtk/menus.ui:37
-msgid "Close"
-msgstr "Sulje"
-
-#: src/sysprof/gtk/menus.ui:44
-msgid "Keyboard Shortcuts"
-msgstr "Pikanäppäimet"
-
-#: src/sysprof/gtk/menus.ui:49
-msgid "Help"
-msgstr "Ohje"
-
-#: src/sysprof/gtk/menus.ui:54
-msgid "About Sysprof"
-msgstr "Tietoja - Sysprof"
-
-#: src/sysprof/sysprof-application.c:194
-msgid "A system profiler"
-msgstr "Järjestelmän profiloija"
-
-#: src/sysprof/sysprof-application.c:199
-msgid "translator-credits"
-msgstr "Jiri Grönroos"
-
-#: src/sysprof/sysprof-application.c:205
-msgid "Learn more about Sysprof"
-msgstr "Lisätietoja Sysprofista"
-
-#. Translators: This is a window title.
-#: src/sysprof/sysprof-window.c:273
-#| msgid "Open Capture"
-msgid "Open Capture…"
-msgstr "Avaa kaappaus…"
-
-#. Translators: This is a button.
-#: src/sysprof/sysprof-window.c:277
-msgid "Open"
-msgstr "Avaa"
-
-#: src/sysprof/sysprof-window.c:284
-msgid "Sysprof Captures"
-msgstr "Sysprof-taltioinnit"
-
-#: src/sysprof/sysprof-window.c:289
-msgid "All Files"
-msgstr "Kaikki tiedostot"
-
-#: src/sysprof/ui/sysprof-window.ui:28
-msgid "_Open"
-msgstr "_Avaa"
-
-#: src/sysprof/ui/sysprof-window.ui:31
-#| msgid "Recording…"
-msgid "Open Recording… (Ctrl+O)"
-msgstr "Avaa taltiointi… (Ctrl+O)"
-
-#: src/tools/sysprof-cli.c:62
-msgid "Stopping profiler. Press twice more ^C to force exit."
-msgstr ""
-"Pysäytetään profiilinmuodostaja. Paina kahdesti ^C pakottaaksesi lopetuksen."
-
-#: src/tools/sysprof-cli.c:75
-msgid "Profiler stopped."
-msgstr "Profiilinmuodostaja pysäytetty."
-
-#: src/tools/sysprof-cli.c:108
+#: src/sysprof-cli/sysprof-cli.c:112
 msgid "--merge requires at least 2 filename arguments"
 msgstr "--merge vaatii vähintään 2 tiedostonimeä argumentiksi"
 
-#: src/tools/sysprof-cli.c:226
-msgid "Disable CPU throttling while profiling"
+#: src/sysprof-cli/sysprof-cli.c:305
+#, fuzzy
+#| msgid "Disable CPU throttling while profiling"
+msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
 msgstr ""
 "Poista käytöstä suorittimen suorituskyvyn rajoittaminen "
 "profiilinmuodostuksen aikana"
 
-#: src/tools/sysprof-cli.c:227
-msgid "Make sysprof specific to a task"
+#: src/sysprof-cli/sysprof-cli.c:306
+msgid "Make sysprof specific to a task [Deprecated]"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:227
+#: src/sysprof-cli/sysprof-cli.c:306 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof/sysprof-logs-section.ui:179
+#: src/sysprof/sysprof-processes-section.ui:282
+#: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:228
+#: src/sysprof-cli/sysprof-cli.c:307
 msgid "Run a command and profile the process"
 msgstr "Suorita komento ja profiloi prosessi"
 
-#: src/tools/sysprof-cli.c:228
+#: src/sysprof-cli/sysprof-cli.c:307
 msgid "COMMAND"
 msgstr "KOMENTO"
 
-#: src/tools/sysprof-cli.c:229
+#: src/sysprof-cli/sysprof-cli.c:308
 msgid ""
 "Set environment variable for spawned process. Can be used multiple times."
 msgstr ""
 
-#: src/tools/sysprof-cli.c:229
+#: src/sysprof-cli/sysprof-cli.c:308
 msgid "VAR=VALUE"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:230
+#: src/sysprof-cli/sysprof-cli.c:309
 msgid "Force overwrite the capture file"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:231
+#: src/sysprof-cli/sysprof-cli.c:310
 msgid "Disable recording of battery statistics"
 msgstr "Poista käytöstä akkutilastojen taltiointi"
 
-#: src/tools/sysprof-cli.c:232
+#: src/sysprof-cli/sysprof-cli.c:311
 msgid "Disable recording of CPU statistics"
 msgstr "Poista käytöstä suoritintilastojen taltiointi"
 
-#: src/tools/sysprof-cli.c:233
+#: src/sysprof-cli/sysprof-cli.c:312
 msgid "Disable recording of Disk statistics"
 msgstr "Poista käytöstä levytilastojen taltiointi"
 
-#: src/tools/sysprof-cli.c:234
+#: src/sysprof-cli/sysprof-cli.c:313
 msgid "Do not record stacktraces using Linux perf"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:235
+#: src/sysprof-cli/sysprof-cli.c:314
 msgid "Do not append symbol name information from local machine"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:236
+#: src/sysprof-cli/sysprof-cli.c:315
 msgid "Disable recording of memory statistics"
 msgstr "Poista käytöstä muistitilastojen taltiointi"
 
-#: src/tools/sysprof-cli.c:237
+#: src/sysprof-cli/sysprof-cli.c:316
 msgid "Disable recording of network statistics"
 msgstr "Poista käytöstä verkkotilastojen taltiointi"
 
-#: src/tools/sysprof-cli.c:238
+#: src/sysprof-cli/sysprof-cli.c:317
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:239
+#: src/sysprof-cli/sysprof-cli.c:318
+#, fuzzy
+#| msgid "Connect to the session bus"
+msgid "Profile the D-Bus session bus"
+msgstr "Yhdistä istuntoväylään"
+
+#: src/sysprof-cli/sysprof-cli.c:319
+#, fuzzy
+#| msgid "Profile the system"
+msgid "Profile the D-Bus system bus"
+msgstr "Profiloi järjestelmä"
+
+#: src/sysprof-cli/sysprof-cli.c:320
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr "Aseta GJS_TRACE_FD-ympäristö jäljittääksesi GJS-prosesseja"
 
-#: src/tools/sysprof-cli.c:240
+#: src/sysprof-cli/sysprof-cli.c:321
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr "Aseta GTK_TRACE_FD-ympäristö jäljittääksesi GTK-sovellusta"
 
-#: src/tools/sysprof-cli.c:241
+#: src/sysprof-cli/sysprof-cli.c:322
 msgid "Include RAPL energy statistics"
 msgstr "Sisällytä RAPL-energiatilastot"
 
-#: src/tools/sysprof-cli.c:242
+#: src/sysprof-cli/sysprof-cli.c:323
 msgid "Profile memory allocations and frees"
 msgstr "Profiloi muistiallokaatiot ja vapaat"
 
-#: src/tools/sysprof-cli.c:243
+#: src/sysprof-cli/sysprof-cli.c:324
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:244
+#: src/sysprof-cli/sysprof-cli.c:325
 msgid "Track performance of the applications main loop"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:245
+#: src/sysprof-cli/sysprof-cli.c:327
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr "Yhdistä kaikki *.syscap-tiedostot ja kirjoita stdoutiin"
 
-#: src/tools/sysprof-cli.c:246
+#: src/sysprof-cli/sysprof-cli.c:328
 msgid "Print the sysprof-cli version and exit"
 msgstr "Tulosta sysprof-cli:n versio ja poistu"
 
-#: src/tools/sysprof-cli.c:279
+#: src/sysprof-cli/sysprof-cli.c:329
+msgid "The size of the buffer in pages (1 = 1 page)"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:362
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:282
+#: src/sysprof-cli/sysprof-cli.c:365
 msgid ""
 "\n"
 "Examples:\n"
@@ -969,51 +408,1253 @@ msgid ""
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:315
+#: src/sysprof-cli/sysprof-cli.c:401
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr ""
 
 #. Translators: %s is a file name.
-#: src/tools/sysprof-cli.c:374
+#: src/sysprof-cli/sysprof-cli.c:448
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s on olemassa. Käytä valitsinta --force korvataksesi\n"
 
-#: src/tools/sysprof-profiler-ctl.c:45
-msgid "Connect to the system bus"
-msgstr "Yhdistä järjestelmäväylään"
+#: src/sysprofd/org.gnome.sysprof3.policy.in:13
+msgid "Profile the system"
+msgstr "Profiloi järjestelmä"
 
-#: src/tools/sysprof-profiler-ctl.c:46
-msgid "Connect to the session bus"
-msgstr "Yhdistä istuntoväylään"
+#: src/sysprofd/org.gnome.sysprof3.policy.in:14
+msgid "Authentication is required to profile the system."
+msgstr "Tunnistautuminen vaaditaan järjestelmän profilointia varten."
 
-#: src/tools/sysprof-profiler-ctl.c:47
-msgid "Connect to the given D-Bus address"
-msgstr "Yhdistä annettuun D-Bus-osoitteeseen"
+#: src/sysprof/gtk/help-overlay.ui:10
+msgctxt "shortcut window"
+msgid "General"
+msgstr "Yleiset"
 
-#: src/tools/sysprof-profiler-ctl.c:48
-msgid "Destination D-Bus name to invoke method on"
+#: src/sysprof/gtk/help-overlay.ui:13
+msgctxt "shortcut window"
+msgid "Show Help"
+msgstr "Näytä ohje"
+
+#: src/sysprof/gtk/help-overlay.ui:19
+msgctxt "shortcut window"
+msgid "Keyboard Shortcuts"
+msgstr "Pikanäppäimet"
+
+#: src/sysprof/gtk/help-overlay.ui:25
+msgctxt "shortcut window"
+msgid "Close Window"
+msgstr "Sulje ikkuna"
+
+#: src/sysprof/gtk/help-overlay.ui:31
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "Lopeta"
+
+#: src/sysprof/gtk/menus.ui:6
+msgid "_Preferences"
+msgstr "_Asetukset"
+
+#: src/sysprof/gtk/menus.ui:10
+msgid "_Keyboard Shortcuts"
+msgstr "_Pikanäppäimet"
+
+#: src/sysprof/gtk/menus.ui:14
+msgid "_Help"
+msgstr "_Ohje"
+
+#: src/sysprof/gtk/menus.ui:18
+msgid "_About Sysprof"
+msgstr "_Tietoja - Sysprof"
+
+#: src/sysprof/sysprof-application.c:37
+msgid "Show Sysprof version and exit"
+msgstr "Näytä Sysprofin versio ja poistu"
+
+#: src/sysprof/sysprof-application.c:170
+msgid "A system profiler"
+msgstr "Järjestelmän profiloija"
+
+#: src/sysprof/sysprof-application.c:171
+msgid "translator-credits"
+msgstr "Jiri Grönroos"
+
+#: src/sysprof/sysprof-callgraph-view.ui:22
+msgid "Functions"
+msgstr "Funktiot"
+
+#: src/sysprof/sysprof-callgraph-view.ui:71
+#, fuzzy
+#| msgid "Functions"
+msgid "Filter Functions"
+msgstr "Funktiot"
+
+#: src/sysprof/sysprof-callgraph-view.ui:94
+msgid "Callers"
+msgstr "Kutsujat"
+
+#: src/sysprof/sysprof-callgraph-view.ui:146
+msgid "Descendants"
+msgstr "Jälkeläiset"
+
+#: src/sysprof/sysprof-counters-section.ui:26
+#: src/sysprof/sysprof-cpu-section.ui:169
+#: src/sysprof/sysprof-energy-section.ui:177
+#: src/sysprof/sysprof-graphics-section.ui:88
+#: src/sysprof/sysprof-network-section.ui:86
+#: src/sysprof/sysprof-storage-section.ui:86
+#, fuzzy
+#| msgid "Counters Captured"
+msgid "Counters Chart"
+msgstr "Laskureita kaapattu"
+
+#: src/sysprof/sysprof-counters-section.ui:40
+#: src/sysprof/sysprof-cpu-section.ui:323
+#: src/sysprof/sysprof-energy-section.ui:312
+#: src/sysprof/sysprof-graphics-section.ui:223
+#: src/sysprof/sysprof-network-section.ui:291
+#: src/sysprof/sysprof-storage-section.ui:291
+#, fuzzy
+#| msgid "Counters"
+msgid "Counters Table"
+msgstr "Laskurit"
+
+#: src/sysprof/sysprof-cpu-section.ui:378
+#: src/sysprof/sysprof-dbus-section.ui:105
+#: src/sysprof/sysprof-energy-section.ui:348
+#: src/sysprof/sysprof-frame-utility.ui:49
+#: src/sysprof/sysprof-graphics-section.ui:259
+#: src/sysprof/sysprof-logs-section.ui:110
+#: src/sysprof/sysprof-metadata-section.ui:38
+#: src/sysprof/sysprof-network-section.ui:346
+#: src/sysprof/sysprof-process-dialog.ui:64
+#: src/sysprof/sysprof-processes-section.ui:214
+#: src/sysprof/sysprof-storage-section.ui:346
+#: src/sysprof/sysprof-traceables-utility.ui:23
+msgid "Time"
+msgstr "Aika"
+
+#: src/sysprof/sysprof-cpu-section.ui:412
+#: src/sysprof/sysprof-energy-section.ui:382
+#: src/sysprof/sysprof-graphics-section.ui:293
+#: src/sysprof/sysprof-marks-section.ui:237
+#: src/sysprof/sysprof-network-section.ui:380
+#: src/sysprof/sysprof-storage-section.ui:380
+msgid "Category"
+msgstr "Luokka"
+
+#: src/sysprof/sysprof-cpu-section.ui:450
+#: src/sysprof/sysprof-energy-section.ui:420
+#: src/sysprof/sysprof-graphics-section.ui:331
+#: src/sysprof/sysprof-marks-section.ui:271
+#: src/sysprof/sysprof-network-section.ui:418
+#: src/sysprof/sysprof-storage-section.ui:418
+msgid "Name"
+msgstr "Nimi"
+
+#: src/sysprof/sysprof-cpu-section.ui:488
+#: src/sysprof/sysprof-energy-section.ui:458
+#: src/sysprof/sysprof-graphics-section.ui:369
+#: src/sysprof/sysprof-metadata-section.ui:105
+#: src/sysprof/sysprof-network-section.ui:456
+#: src/sysprof/sysprof-storage-section.ui:456
+msgid "Value"
+msgstr "Arvo"
+
+#: src/sysprof/sysprof-cpu-section.ui:529
+#, fuzzy
+#| msgid "Info"
+msgid "CPU Info"
+msgstr "Info"
+
+#: src/sysprof/sysprof-cpu-section.ui:560
+#: src/sysprof/sysprof-process-dialog.ui:248
+msgid "ID"
 msgstr ""
 
-#: src/tools/sysprof-profiler-ctl.c:49
-msgid "Object path to invoke method on"
+#: src/sysprof/sysprof-cpu-section.ui:595
+msgid "Core"
 msgstr ""
 
-#: src/tools/sysprof-profiler-ctl.c:49
-msgid "/org/gnome/Sysprof3/Profiler"
-msgstr "/org/gnome/Sysprof3/Profiler"
+#: src/sysprof/sysprof-cpu-section.ui:630
+msgid "Model Name"
+msgstr "Mallinimi"
 
-#: src/tools/sysprof-profiler-ctl.c:50
-msgid "Timeout in seconds"
-msgstr "Aikakatkaisu sekunneissa"
+#: src/sysprof/sysprof-dbus-section.ui:139
+msgid "Bus"
+msgstr "Väylä"
 
-#: src/tools/sysprof-profiler-ctl.c:51
-msgid "Overwrite FILENAME if it exists"
+#: src/sysprof/sysprof-dbus-section.ui:178
+msgid "Serial"
 msgstr ""
 
-#: src/tools/sysprof-profiler-ctl.c:79
-msgid "--dest=BUS_NAME [FILENAME] - connect to an embedded sysprof profiler"
+#: src/sysprof/sysprof-dbus-section.ui:215
+msgid "Reply"
 msgstr ""
+
+#: src/sysprof/sysprof-dbus-section.ui:252
+msgid "Flags"
+msgstr ""
+
+#: src/sysprof/sysprof-dbus-section.ui:281
+#: src/sysprof/sysprof-files-section.ui:107
+#: src/sysprof/sysprof-memory-callgraph-view.ui:68
+msgid "Size"
+msgstr "Koko"
+
+#: src/sysprof/sysprof-dbus-section.ui:317
+#: src/sysprof/sysprof-frame-utility.ui:20
+#: src/sysprof/sysprof-mark-table.ui:221
+msgid "Type"
+msgstr "Tyyppi"
+
+#: src/sysprof/sysprof-dbus-section.ui:346
+msgid "Sender"
+msgstr ""
+
+#: src/sysprof/sysprof-dbus-section.ui:380
+#, fuzzy
+#| msgid "Duration"
+msgid "Destination"
+msgstr "Kesto"
+
+#: src/sysprof/sysprof-dbus-section.ui:414
+#: src/sysprof/sysprof-files-section.ui:38
+msgid "Path"
+msgstr ""
+
+#: src/sysprof/sysprof-dbus-section.ui:448
+msgid "Interface"
+msgstr ""
+
+#: src/sysprof/sysprof-dbus-section.ui:482
+msgid "Member"
+msgstr ""
+
+#: src/sysprof/sysprof-dbus-section.ui:516
+msgid "Signature"
+msgstr ""
+
+#: src/sysprof/sysprof-dbus-utility.ui:13
+#: src/sysprof/sysprof-logs-section.c:104
+#: src/sysprof/sysprof-logs-section.ui:286
+msgid "Message"
+msgstr "Viesti"
+
+#: src/sysprof/sysprof-files-section.ui:4
+msgid "Files"
+msgstr "Tiedostot"
+
+#: src/sysprof/sysprof-files-section.ui:73
+msgid "Compressed"
+msgstr ""
+
+#: src/sysprof/sysprof-frame-utility.ui:80
+#: src/sysprof/sysprof-logs-section.ui:143
+#: src/sysprof/sysprof-mark-table.ui:116
+#: src/sysprof/sysprof-traceables-utility.ui:81
+#: src/sysprof/sysprof-window.ui:240
+msgid "CPU"
+msgstr "Suoritin"
+
+#: src/sysprof/sysprof-greeter.c:102
+#, fuzzy
+#| msgid "Remove environment variable"
+msgid "Use KEY=VALUE to set an environment variable"
+msgstr "Poista ympäristömuuttuja"
+
+#: src/sysprof/sysprof-greeter.c:108
+msgid "Keys may not start with a number"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:118
+msgid "Keys may only contain alpha-numerics or underline."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:265 src/sysprof/sysprof-window.c:155
+msgid "Must Capture to Local File"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:266 src/sysprof/sysprof-window.c:156
+msgid "You must choose a local file to capture using Sysprof"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:267 src/sysprof/sysprof-recording-pad.c:115
+#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:709
+msgid "Close"
+msgstr "Sulje"
+
+#: src/sysprof/sysprof-greeter.c:288
+#, c-format
+msgid "System Capture from %s.syscap"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:292
+#, fuzzy
+#| msgid "Recording Failed"
+msgid "Record to File"
+msgstr "Taltiointi epäonistui"
+
+#: src/sysprof/sysprof-greeter.c:293
+msgid "Record"
+msgstr "Taltioi"
+
+#: src/sysprof/sysprof-greeter.c:440
+msgid "No Change"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:443
+msgid "Balanced"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:446
+msgid "Power Saver"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:449
+msgid "Performance"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:70
+msgid "Sampling"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:74
+msgid "Sample Native Stacks"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:75
+msgid "Record native stack traces using a sampling profiler"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:91
+msgid "Sample JavaScript Stacks"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:92
+msgid "Record JavaScript stack traces using a sampling profiler"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:103
+msgid ""
+"Sysprof must launch your application to record JavaScript stacks using GJS."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:116
+msgid "Tracing"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:120
+#, fuzzy
+#| msgid "Memory Allocations"
+msgid "Trace Memory Allocations"
+msgstr "Muistiallokaatiot"
+
+#: src/sysprof/sysprof-greeter.ui:121
+msgid ""
+"Record a strack trace when <tt>malloc</tt> or similar functions are used"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:132
+#, fuzzy
+#| msgid "Sysprof is busy analyzing memory allocations."
+msgid "Sysprof must launch your application to record memory allocations."
+msgstr "Sysprof analysoi muistiallokaatioita."
+
+#: src/sysprof/sysprof-greeter.ui:150 src/sysprof/sysprof-greeter.ui:155
+msgid "Application"
+msgstr "Sovellus"
+
+#: src/sysprof/sysprof-greeter.ui:158
+#: src/sysprof/sysprof-processes-section.ui:316
+msgid "Command Line"
+msgstr "Komentorivi"
+
+#: src/sysprof/sysprof-greeter.ui:164
+msgid "The application will be run as a subprocess of Sysprof."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:177
+msgid "Environment"
+msgstr "Ympäristö"
+
+#: src/sysprof/sysprof-greeter.ui:181
+msgid "Clear Environment"
+msgstr "Tyhjennä ympäristö"
+
+#: src/sysprof/sysprof-greeter.ui:182
+#, fuzzy
+#| msgid "Set GTK_TRACE_FD environment to trace a GTK application"
+msgid "Clear the environment before launching application"
+msgstr "Aseta GTK_TRACE_FD-ympäristö jäljittääksesi GTK-sovellusta"
+
+#: src/sysprof/sysprof-greeter.ui:208
+msgid "Add _Variable"
+msgstr "Lisää _muuttuja"
+
+#: src/sysprof/sysprof-greeter.ui:214
+msgid "Add Variable"
+msgstr "Lisää muuttuja"
+
+#: src/sysprof/sysprof-greeter.ui:215
+msgid "_Add"
+msgstr "_Lisää"
+
+#: src/sysprof/sysprof-greeter.ui:232 src/sysprof/sysprof-greeter.ui:237
+msgid "Counters"
+msgstr "Laskurit"
+
+#: src/sysprof/sysprof-greeter.ui:241
+msgid "CPU Usage"
+msgstr "Suorittimen käyttö"
+
+#: src/sysprof/sysprof-greeter.ui:242
+msgid "Record coarse-grained counters about CPU usage and frequency"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:254
+msgid "Memory Usage"
+msgstr "Muistinkäyttö"
+
+#: src/sysprof/sysprof-greeter.ui:255
+msgid "Record coarse-grained counters about system memory usage"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:267
+msgid "Disk Usage"
+msgstr "Levyn käyttö"
+
+#: src/sysprof/sysprof-greeter.ui:268
+msgid "Record coarse-grained counters about storage throughput"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:280
+msgid "Network Usage"
+msgstr "Verkon käyttö"
+
+#: src/sysprof/sysprof-greeter.ui:281
+msgid "Record coarse-grained counters about network traffic"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:297
+msgid "Energy Usage"
+msgstr "Energiankulutus"
+
+#: src/sysprof/sysprof-greeter.ui:298
+msgid "Record coarse-grained counters about energy usage in Watts"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:310
+msgid "Battery Charge"
+msgstr "Akun lataus"
+
+#: src/sysprof/sysprof-greeter.ui:311
+msgid "Record coarse-grained counters about battery charge or discharge rates"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:329 src/sysprof/sysprof-greeter.ui:334
+#: src/sysprof/sysprof-window.ui:230
+msgid "D-Bus"
+msgstr "D-Bus"
+
+#: src/sysprof/sysprof-greeter.ui:338
+#, fuzzy
+#| msgid "Recording at %s"
+msgid "Record System Bus"
+msgstr "Taltiointi %s"
+
+#: src/sysprof/sysprof-greeter.ui:339
+msgid "Record messages on the D-Bus system bus"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:355
+#, fuzzy
+#| msgid "Recording at %s"
+msgid "Record Session Bus"
+msgstr "Taltiointi %s"
+
+#: src/sysprof/sysprof-greeter.ui:356
+msgid "Record messages on the D-Bus user session bus"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:367
+msgid ""
+"The session bus may contain sensitive information such as keyboard usage and "
+"passwords."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:390
+msgid "Timings"
+msgstr "Ajoitukset"
+
+#: src/sysprof/sysprof-greeter.ui:394
+msgid "Compositor Frame Timings"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:395
+msgid "Record frame-timing information from the GNOME Shell compositor"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:406
+msgid ""
+"Applications launched by Sysprof will automatically collect GTK frame timing "
+"information."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:446
+msgid "Devices"
+msgstr "Laitteet"
+
+#: src/sysprof/sysprof-greeter.ui:450
+msgid "Include GPU Information"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:451
+msgid "Records information about graphics hardware and drivers"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:469
+msgid "System"
+msgstr "Järjestelmä"
+
+#: src/sysprof/sysprof-greeter.ui:474
+#, fuzzy
+#| msgid "Profiler"
+msgid "Power Profile"
+msgstr "Profiilinmuodostaja"
+
+#: src/sysprof/sysprof-greeter.ui:477
+msgid "Record with Power Profile"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:478
+msgid "Switch to power profile while recording"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:488
+msgid "Details"
+msgstr "Tiedot"
+
+#: src/sysprof/sysprof-greeter.ui:492
+msgid "Record System Log"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:493
+msgid "Watch the system log for new messages and record them"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:509
+msgid "Include Hardware Information"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:510
+msgid "Records information about PCI and USB devices"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:523
+msgid "Symbols"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:527
+msgid "Bundle Symbols"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:528
+msgid "Make recording shareable by symbolizing stack traces after recording"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:561
+#| msgid "Open Capture…"
+msgid "_Open File…"
+msgstr "_Avaa tiedosto…"
+
+#: src/sysprof/sysprof-greeter.ui:568
+msgid "Record to _File…"
+msgstr "Taltioi _tiedostoon…"
+
+#: src/sysprof/sysprof-greeter.ui:575
+msgid "Record to _Memory"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:590 src/sysprof/sysprof-window.ui:341
+msgid "Help"
+msgstr "Ohje"
+
+#: src/sysprof/sysprof-greeter.ui:595 src/sysprof/sysprof-window.ui:346
+msgid "About Sysprof"
+msgstr "Tietoja - Sysprof"
+
+#: src/sysprof/sysprof-logs-section.c:95
+msgid "Critical"
+msgstr "Kriittinen"
+
+#: src/sysprof/sysprof-logs-section.c:98
+msgid "Warning"
+msgstr "Varoitus"
+
+#: src/sysprof/sysprof-logs-section.c:101
+msgid "Debug"
+msgstr "Vianjäljitys"
+
+#: src/sysprof/sysprof-logs-section.c:107
+msgid "Info"
+msgstr "Info"
+
+#: src/sysprof/sysprof-logs-section.c:110
+msgid "Error"
+msgstr "Virhe"
+
+#: src/sysprof/sysprof-logs-section.ui:4 src/sysprof/sysprof-logs-section.ui:30
+msgid "Logs"
+msgstr "Lokit"
+
+#: src/sysprof/sysprof-logs-section.ui:215
+msgid "Severity"
+msgstr "Vakavuus"
+
+#: src/sysprof/sysprof-logs-section.ui:251
+msgid "Domain"
+msgstr ""
+
+#: src/sysprof/sysprof-marks-section.ui:4
+msgid "Marks"
+msgstr ""
+
+#: src/sysprof/sysprof-marks-section.ui:73
+#, fuzzy
+#| msgid "Marks Captured"
+msgid "Mark Chart"
+msgstr "Merkkejä kaapattu"
+
+#: src/sysprof/sysprof-marks-section.ui:86
+msgid "Mark Table"
+msgstr ""
+
+#: src/sysprof/sysprof-marks-section.ui:99
+msgid "Mark Waterfall"
+msgstr ""
+
+#: src/sysprof/sysprof-marks-section.ui:201
+msgid "Summary"
+msgstr "Yhteenveto"
+
+#: src/sysprof/sysprof-marks-section.ui:306
+msgid "Minimum"
+msgstr ""
+
+#: src/sysprof/sysprof-marks-section.ui:340
+msgid "Maximum"
+msgstr ""
+
+#: src/sysprof/sysprof-marks-section.ui:374
+msgid "Average"
+msgstr ""
+
+#: src/sysprof/sysprof-marks-section.ui:408
+msgid "Median"
+msgstr ""
+
+#: src/sysprof/sysprof-mark-table.ui:47
+msgid "Start"
+msgstr ""
+
+#: src/sysprof/sysprof-mark-table.ui:81
+#: src/sysprof/sysprof-processes-section.ui:248
+msgid "Duration"
+msgstr "Kesto"
+
+#: src/sysprof/sysprof-mark-table.ui:151
+#, fuzzy
+#| msgid "Processes"
+msgid "Process"
+msgstr "Prosessit"
+
+#: src/sysprof/sysprof-mark-table.ui:186
+msgid "Group"
+msgstr "Ryhmä"
+
+#: src/sysprof/sysprof-mark-table.ui:256
+msgid "Description"
+msgstr "Kuvaus"
+
+#: src/sysprof/sysprof-memory-callgraph-view.ui:8
+#: src/sysprof/sysprof-memory-callgraph-view.ui:105
+#: src/sysprof/sysprof-memory-callgraph-view.ui:172
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:8
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:105
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:172
+msgid "Self"
+msgstr "Self"
+
+#: src/sysprof/sysprof-memory-callgraph-view.ui:38
+#: src/sysprof/sysprof-memory-callgraph-view.ui:135
+#: src/sysprof/sysprof-memory-callgraph-view.ui:202
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:38
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:135
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:202
+msgid "Total"
+msgstr "Yhteensä"
+
+#: src/sysprof/sysprof-memory-section.ui:4
+msgid "Memory Allocations"
+msgstr "Muistiallokaatiot"
+
+#: src/sysprof/sysprof-memory-section.ui:29
+#: src/sysprof/sysprof-samples-section.ui:29
+msgid "Stack Traces"
+msgstr "Pinojäljet"
+
+#: src/sysprof/sysprof-memory-section.ui:83
+#, fuzzy
+#| msgid "All Allocations"
+msgid "Allocations"
+msgstr "Kaikki allokaatiot"
+
+#: src/sysprof/sysprof-memory-section.ui:127
+msgid "Leaks"
+msgstr ""
+
+#: src/sysprof/sysprof-memory-section.ui:182
+#: src/sysprof/sysprof-samples-section.ui:148
+#: src/sysprof/sysprof-traceables-utility.ui:162
+#, fuzzy
+#| msgid "Stack Traces"
+msgid "Stack Trace"
+msgstr "Pinojäljet"
+
+#: src/sysprof/sysprof-metadata-section.ui:4
+msgid "Metadata"
+msgstr ""
+
+#: src/sysprof/sysprof-metadata-section.ui:71
+msgid "Key"
+msgstr "Avain"
+
+#: src/sysprof/sysprof-process-dialog.ui:35
+msgid "Address Layout"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:97
+msgid "Start Address"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:137
+msgid "End Address"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:177
+msgid "File"
+msgstr "Tiedosto"
+
+#: src/sysprof/sysprof-process-dialog.ui:219
+#, fuzzy
+#| msgid "Counters"
+msgid "Mounts"
+msgstr "Laskurit"
+
+#: src/sysprof/sysprof-process-dialog.ui:282
+msgid "Parent"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:316
+msgid "Major"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:350
+msgid "Minor"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:384
+msgid "Mount Point"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:418
+msgid "Mount Source"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:452
+msgid "Root"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:486
+msgid "Filesystem"
+msgstr "Tiedostojärjestelmä"
+
+#: src/sysprof/sysprof-process-dialog.ui:520
+#, fuzzy
+#| msgid "Functions"
+msgid "Options"
+msgstr "Funktiot"
+
+#: src/sysprof/sysprof-process-dialog.ui:562
+#, fuzzy
+#| msgid "Reads"
+msgid "Threads"
+msgstr "Lukemiset"
+
+#: src/sysprof/sysprof-process-dialog.ui:591
+msgid "Thread ID"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:625
+msgid "Main Thread"
+msgstr ""
+
+#: src/sysprof/sysprof-processes-section.ui:4
+msgid "Processes"
+msgstr "Prosessit"
+
+#: src/sysprof/sysprof-processes-section.ui:73
+#, fuzzy
+#| msgid "Processes Captured"
+msgid "Process Chart"
+msgstr "Prosesseja kaapattu"
+
+#: src/sysprof/sysprof-processes-section.ui:173
+#, fuzzy
+#| msgid "Processes"
+msgid "Process Table"
+msgstr "Prosessit"
+
+#. translators: this expands to the number of events recorded by the profiler as an indicator of progress
+#: src/sysprof/sysprof-recording-pad.c:56
+msgid "%"
+msgstr ""
+
+#: src/sysprof/sysprof-recording-pad.c:111
+msgid "Recording Failed"
+msgstr "Taltiointi epäonistui"
+
+#: src/sysprof/sysprof-recording-pad.c:113
+#, fuzzy, c-format
+#| msgid "Sysprof failed to find field “%s”."
+msgid ""
+"Sysprof failed to record.\n"
+"\n"
+"%s"
+msgstr "Sysprof ei onnistunut löytämään kenttää “%s”."
+
+#: src/sysprof/sysprof-recording-pad.ui:69
+#, fuzzy
+#| msgid "_Stop Recording"
+msgid "Stop Recording"
+msgstr "_Pysäytä taltiointi"
+
+#: src/sysprof/sysprof-samples-section.ui:4
+#, fuzzy
+#| msgid "Profiler"
+msgid "Time Profiler"
+msgstr "Profiilinmuodostaja"
+
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:107
+msgid "Seek Backward"
+msgstr ""
+
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:117
+msgid "Zoom Out"
+msgstr "Loitonna"
+
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:127
+msgid "Reset Zoom"
+msgstr "Palauta mittakaava"
+
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:137
+msgid "Zoom In"
+msgstr "Lähennä"
+
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:147
+msgid "Seek Forward"
+msgstr ""
+
+#: src/sysprof/sysprof-traceables-utility.ui:109
+msgid "Depth"
+msgstr ""
+
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:68
+msgid "Hits"
+msgstr "Osumia"
+
+#: src/sysprof/sysprof-window.c:171
+#, fuzzy
+#| msgctxt "shortcut window"
+#| msgid "Open recording"
+msgid "Open Recording"
+msgstr "Avaa taltiointi"
+
+#: src/sysprof/sysprof-window.c:172
+msgid "Open"
+msgstr "Avaa"
+
+#: src/sysprof/sysprof-window.c:176
+#, fuzzy
+#| msgid "Sysprof Captures"
+msgid "Sysprof Capture (*.syscap)"
+msgstr "Sysprof-taltioinnit"
+
+#: src/sysprof/sysprof-window.c:459
+msgid "Save to File"
+msgstr "Tallenna tiedostoon"
+
+#: src/sysprof/sysprof-window.c:460
+msgid "Save"
+msgstr "Tallenna"
+
+#: src/sysprof/sysprof-window.c:629
+msgid "Loading..."
+msgstr "Ladataan..."
+
+#: src/sysprof/sysprof-window.c:705
+msgid "Invalid Document"
+msgstr ""
+
+#: src/sysprof/sysprof-window.c:707
+#, c-format
+msgid ""
+"The document could not be loaded. Please check that you have the correct "
+"capture file.\n"
+"\n"
+"%s"
+msgstr ""
+
+#: src/sysprof/sysprof-window.ui:250
+#, fuzzy
+#| msgid "Energy Usage"
+msgid "Energy"
+msgstr "Energiankulutus"
+
+#: src/sysprof/sysprof-window.ui:270
+msgid "Network"
+msgstr "Verkko"
+
+#: src/sysprof/sysprof-window.ui:280
+msgid "Storage"
+msgstr ""
+
+#: src/sysprof/sysprof-window.ui:327
+msgid "_Record Again…"
+msgstr "Taltioi _uudelleen…"
+
+#: src/sysprof/sysprof-window.ui:331
+msgid "Open Recording…"
+msgstr "Avaa taltiointi…"
+
+#: src/sysprof/sysprof-window.ui:335
+msgid "Save As…"
+msgstr "Tallenna nimellä…"
+
+#~ msgid "Window size (width and height)."
+#~ msgstr "Ikkunan koko (leveys ja korkeus)."
+
+#~ msgid "Window position"
+#~ msgstr "Ikkunan sijainti"
+
+#~ msgid "Window position (x and y)."
+#~ msgstr "Ikkunan sijainti (x ja y)."
+
+#~ msgid "Window maximized"
+#~ msgstr "Ikkuna suurennettu"
+
+#~ msgid "Sysprof was unable to generate a callgraph from the system capture."
+#~ msgstr ""
+#~ "Sysprof ei kyennyt luomaan kutsukuvaajaa järjestelmän kaappauksesta."
+
+#, fuzzy, c-format
+#~| msgid ""
+#~| "An error occurred while attempting to access performance counters: %s"
+#~ msgid "An error occurred while attempting to access performance counters"
+#~ msgstr "Suorituskykymittareiden käyttöä yrittäessä tapahtui virhe: %s"
+
+#~ msgid "Battery Charge (All)"
+#~ msgstr "Akun lataus (kaikki)"
+
+#~ msgid "Battery"
+#~ msgstr "Akku"
+
+#~ msgid "Stack Traces (In Kernel)"
+#~ msgstr "Pinojäljet (ytimessä)"
+
+#~ msgid "Stack Traces (In User)"
+#~ msgstr "Pinojäljet (käyttäjätilassa)"
+
+#~ msgid "Callgraph"
+#~ msgstr "Kutsukuvaaja"
+
+#~ msgid "Generating Callgraph"
+#~ msgstr "Muodostetaan kutsukuvaajaa"
+
+#~ msgid "Sysprof is busy creating the selected callgraph."
+#~ msgstr "Sysprof luo valittua kutsukuvaajaa."
+
+#~ msgid "Not Enough Samples"
+#~ msgstr "Ei tarpeeksi näytteitä"
+
+#~ msgid "More samples are necessary to display a callgraph."
+#~ msgstr "Kutsukuvaajan näyttämiseksi tarvitaan enemmän näytteitä."
+
+#~ msgid "CPU Frequency"
+#~ msgstr "Suorittimen taajuus"
+
+#~ msgid "CPU Frequency (All)"
+#~ msgstr "Suorittimen taajuus (kaikki)"
+
+#~ msgid "CPU Usage (All)"
+#~ msgstr "Suorittimen käyttö (kaikki)"
+
+#~ msgid "Memory Capture"
+#~ msgstr "Muistitaltiointi"
+
+#, c-format
+#~ msgid "%0.4lf seconds"
+#~ msgstr "%0.4lf sekuntia"
+
+#~ msgid "Filename"
+#~ msgstr "Tiedostonimi"
+
+#~ msgid "Captured at"
+#~ msgstr "Kaapattu"
+
+#~ msgid "CPU Model"
+#~ msgstr "Suorittimen malli"
+
+#~ msgid "Samples Captured"
+#~ msgstr "Näytteitä kaapattu"
+
+#~ msgid "Forks Captured"
+#~ msgstr "Haarautuksia kaapattu"
+
+#~ msgid "Allocations Captured"
+#~ msgstr "Allokaatioita kaapattu"
+
+#~ msgid "Disk"
+#~ msgstr "Levy"
+
+#~ msgid "Writes"
+#~ msgstr "Kirjoitukset"
+
+#~ msgid "New Recording"
+#~ msgstr "Uusi taltiointi"
+
+#~ msgid "The recording could not be opened"
+#~ msgstr "Taltiointia ei voitu avata"
+
+#~ msgid "Save Recording"
+#~ msgstr "Tallenna taltiointi"
+
+#~ msgid "Cancel"
+#~ msgstr "Peru"
+
+#, c-format
+#~ msgid "Failed to save recording: %s"
+#~ msgstr "Taltioinnin tallentaminen epäonnistui: %s"
+
+#~ msgid "New variable…"
+#~ msgstr "Uusi muuttuja…"
+
+#~ msgid "Ouch, that hurt!"
+#~ msgstr "Auts, se sattui!"
+
+#~ msgid ""
+#~ "Something unexpectedly went wrong while trying to profile your system."
+#~ msgstr ""
+#~ "Jotain meni odottamattomasti pieleen järjestelmän profilointia yrittäessä."
+
+#~ msgid "No Timings Available"
+#~ msgstr "Ajoituksia ei ole saatavilla"
+
+#~ msgid "No timing data was found for the current selection"
+#~ msgstr "Ajoitusdataa ei löytynyt nykyiselle valinnalle"
+
+#~ msgid "Temporary Allocations"
+#~ msgstr "Väliaikaiset allokaatiot"
+
+#~ msgid "Leaked Allocations"
+#~ msgstr "Vuodetut allokaatiot"
+
+#~ msgid "Analyzing Memory Allocations"
+#~ msgstr "Analysoidaan muistiallokaatioita"
+
+#~ msgid "Memory Used"
+#~ msgstr "Muistia käytetty"
+
+#~ msgid "GNOME Shell"
+#~ msgstr "GNOME Shell"
+
+#~ msgid "Profilers"
+#~ msgstr "Profiilinmuodostajat"
+
+#~ msgid "All Processes"
+#~ msgstr "Kaikki prosessit"
+
+#~ msgid ""
+#~ "Include all applications and operating system kernel in callgraph. This "
+#~ "may not be possible on some system configurations."
+#~ msgstr ""
+#~ "Sisällytä kaikki sovellukset ja käyttöjärjestelmän ydin kutsukuvaajaan. "
+#~ "Tämä ei välttämättä ole mahdollista kaikissa kokoonpanoissa."
+
+#~| msgid "All Processes"
+#~ msgid "Search Processes…"
+#~ msgstr "Etsi prosesseja…"
+
+#~ msgid "Enable to launch a program of your choosing before profiling."
+#~ msgstr ""
+#~ "Käytä käynnistääksesi haluamasi ohjelman ennen profiilinmuodostusta."
+
+#~ msgid "Inherit Environment"
+#~ msgstr "Peri ympäristö"
+
+#~ msgid ""
+#~ "Enable to ensure your application shares the display, message-bus, and "
+#~ "other desktop environment settings."
+#~ msgstr ""
+#~ "Ota käyttöön varmistaaksesi, että sovellus jakaa näytön, viestiväylän ja "
+#~ "muut työpöytäympäristön asetukset."
+
+#~ msgid "Allow CPU Throttling"
+#~ msgstr "Salli suorittimen suorityskyvyn rajoittaminen"
+
+#~ msgid ""
+#~ "If disabled, your CPU will be placed in performance mode. It will be "
+#~ "restored after profiling."
+#~ msgstr ""
+#~ "Jos pois käytöstä, suoritin asetetaan suorituskykytilaan. Tila "
+#~ "palautetaan profiilinmuodostuksen jälkeen."
+
+#~ msgid "_Record"
+#~ msgstr "_Taltioi"
+
+#~ msgid "Energy Usage (All)"
+#~ msgstr "Energiankulutus (kaikki)"
+
+#~ msgid ""
+#~ "Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to "
+#~ "record?"
+#~ msgstr ""
+#~ "Voit käyttää myös komentoa <a href=\"help:sysprof\">sysprof-cli</a> "
+#~ "taltiointiin."
+
+#~ msgid "Events"
+#~ msgstr "Tapahtumat"
+
+#~ msgid "Select for more details"
+#~ msgstr "Valitse saadaksesi lisätietoja"
+
+#~ msgid "Instruments"
+#~ msgstr "Instrumentit"
+
+#~ msgid "Authentication is required to access system performance counters."
+#~ msgstr ""
+#~ "Tunnistautuminen vaaditaan tietokoneen suorituskykymittareiden "
+#~ "käyttämiseksi."
+
+#~ msgid "Get a list of kernel symbols and their address"
+#~ msgstr "Hanki lista ytimen symboleista ja niiden osoitteista"
+
+#~ msgid "Authentication is required to access Linux kernel information."
+#~ msgstr "Tunnistautuminen vaaditaan Linux-ytimen tietoihin pääsemiseksi."
+
+#~ msgctxt "shortcut window"
+#~ msgid "Sysprof Shortcuts"
+#~ msgstr "Sysprof-pikanäppäimet"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Save Recording"
+#~ msgstr "Tallenna taltiointi"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Saves the current recording"
+#~ msgstr "Tallentaa nykyisen taltioinnin"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Opens a previously saved recording"
+#~ msgstr "Avaa aiemmin tallennetun taltioinnin"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Recording"
+#~ msgstr "Taltioidaan"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Record again"
+#~ msgstr "Taltioi uudelleen"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Starts a new recording"
+#~ msgstr "Käynnistää uuden taltioinnin"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Stop recording"
+#~ msgstr "Pysäytä taltiointi"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Callgraph"
+#~ msgstr "Kutsukuvaaja"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Expand function"
+#~ msgstr "Laajenna funktiota"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Shows the direct descendants of the callgraph function"
+#~ msgstr "Näyttää kutsukuvaajafunktion suorat jälkeläiset"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Collapse function"
+#~ msgstr "Supista funktio"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Hides all callgraph descendants below the selected function"
+#~ msgstr "Piilottaa kaikki kutsukuvaajan jälkeläiset valitun funktion alla"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Jump into function"
+#~ msgstr "Siirry funktioon"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Selects the function or file as the top of the callgraph"
+#~ msgstr "Valitsee funktion tai tiedoston kutsukuvaajan ylimmäiseksi"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Visualizers"
+#~ msgstr "Visualisoinnit"
+
+#~ msgid "New Tab"
+#~ msgstr "Uusi välilehti"
+
+#~ msgid "Save Recording…"
+#~ msgstr "Tallenna taltiointi…"
+
+#~ msgid "Learn more about Sysprof"
+#~ msgstr "Lisätietoja Sysprofista"
+
+#~ msgid "All Files"
+#~ msgstr "Kaikki tiedostot"
+
+#~ msgid "_Open"
+#~ msgstr "_Avaa"
+
+#~| msgid "Recording…"
+#~ msgid "Open Recording… (Ctrl+O)"
+#~ msgstr "Avaa taltiointi… (Ctrl+O)"
+
+#~ msgid "Stopping profiler. Press twice more ^C to force exit."
+#~ msgstr ""
+#~ "Pysäytetään profiilinmuodostaja. Paina kahdesti ^C pakottaaksesi "
+#~ "lopetuksen."
+
+#~ msgid "Profiler stopped."
+#~ msgstr "Profiilinmuodostaja pysäytetty."
+
+#~ msgid "Connect to the system bus"
+#~ msgstr "Yhdistä järjestelmäväylään"
+
+#~ msgid "Connect to the given D-Bus address"
+#~ msgstr "Yhdistä annettuun D-Bus-osoitteeseen"
+
+#~ msgid "/org/gnome/Sysprof3/Profiler"
+#~ msgstr "/org/gnome/Sysprof3/Profiler"
+
+#~ msgid "Timeout in seconds"
+#~ msgstr "Aikakatkaisu sekunneissa"
 
 #~ msgid "sysprof"
 #~ msgstr "sysprof"
@@ -1029,12 +1670,6 @@ msgstr ""
 #~ msgid "Search"
 #~ msgstr "Etsi"
 
-#~ msgid "Key"
-#~ msgstr "Avain"
-
-#~ msgid "Value"
-#~ msgstr "Arvo"
-
 #~ msgid "New Process"
 #~ msgstr "Uusi prosessi"
 
@@ -1048,11 +1683,6 @@ msgstr ""
 #~ "Sysprof vaatii tunnistautumisen päästäkseen käsiksi tietokoneen "
 #~ "suorituskykymittareihin."
 
-#~ msgid "%u Process"
-#~ msgid_plural "%u Processes"
-#~ msgstr[0] "%u prosessi"
-#~ msgstr[1] "%u prosessia"
-
 #~ msgid "The command line arguments provided are invalid"
 #~ msgstr "Annetut komentoriviargumentit ovat virheelliset"
 
@@ -1062,17 +1692,11 @@ msgstr ""
 #~ msgid "About"
 #~ msgstr "Tietoja"
 
-#~ msgid "_Quit"
-#~ msgstr "_Lopeta"
-
 #~ msgid "Not running"
 #~ msgstr "Ei käynnissä"
 
 #~ msgid "_Close"
 #~ msgstr "_Sulje"
-
-#~ msgid "CPU"
-#~ msgstr "Suoritin"
 
 #~ msgid "Zoom out (Ctrl+-)"
 #~ msgstr "Loitonna (Ctrl+-)"
@@ -1083,20 +1707,11 @@ msgstr ""
 #~ msgid "Zoom in (Ctrl++)"
 #~ msgstr "Lähennä (Ctrl++)"
 
-#~ msgid "Save As"
-#~ msgstr "Tallenna nimellä"
-
 #~ msgid "Screenshot"
 #~ msgstr "Kuvakaappaus"
 
-#~ msgid "Samples: %u"
-#~ msgstr "Näytteet: %u"
-
 #~ msgid "%s - %s"
 #~ msgstr "%s - %s"
-
-#~ msgid "Record"
-#~ msgstr "Taltioi"
 
 #~ msgid "Stop"
 #~ msgstr "Pysäytä"

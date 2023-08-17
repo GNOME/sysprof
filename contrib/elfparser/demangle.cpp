@@ -21,12 +21,15 @@
 
 #include "demangle.h"
 
-gchar *
-sysprof_cplus_demangle (const gchar *name)
+char *
+sysprof_cplus_demangle (const char *name)
 {
   char *real_name;
-  gchar *ret;
+  char *ret;
   int status;
+
+  if (name == NULL)
+    return NULL;
 
   real_name = abi::__cxa_demangle (name, 0, 0, &status);
 

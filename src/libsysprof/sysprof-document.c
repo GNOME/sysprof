@@ -27,6 +27,8 @@
 
 #include <libdex.h>
 
+#include "timsort/gtktimsortprivate.h"
+
 #include "sysprof-document-private.h"
 
 #include "sysprof-bundled-symbolizer-private.h"
@@ -1207,9 +1209,17 @@ sysprof_document_load_worker (GTask        *task,
    * have state which belongs earlier in the capture.
    */
   if G_UNLIKELY (self->needs_swap)
-    g_array_sort_with_data (self->frames, sort_by_time_swapped, (gpointer)self->base);
+    gtk_tim_sort (self->frames->data,
+                  self->frames->len,
+                  sizeof (SysprofDocumentFramePointer),
+                  sort_by_time_swapped,
+                  (gpointer)self->base);
   else
-    g_array_sort_with_data (self->frames, sort_by_time, (gpointer)self->base);
+    gtk_tim_sort (self->frames->data,
+                  self->frames->len,
+                  sizeof (SysprofDocumentFramePointer),
+                  sort_by_time,
+                  (gpointer)self->base);
 
   for (guint f = 0; f < self->frames->len; f++)
     {

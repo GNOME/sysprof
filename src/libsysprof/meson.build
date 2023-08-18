@@ -145,6 +145,7 @@ libsysprof_private_sources = [
   'sysprof-process-info.c',
   'sysprof-strings.c',
   'sysprof-symbol-cache.c',
+  'timsort/gtktimsort.c',
 ]
 
 if polkit_dep.found()

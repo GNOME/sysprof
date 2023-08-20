@@ -59,6 +59,7 @@ libsysprof_public_sources = [
   'sysprof-thread-info.c',
   'sysprof-time-span.c',
   'sysprof-tracefd-consumer.c',
+  'sysprof-tracepoints.c',
   'sysprof-tracer.c',
 ]
 
@@ -123,6 +124,7 @@ libsysprof_public_headers = [
   'sysprof-thread-info.h',
   'sysprof-time-span.h',
   'sysprof-tracefd-consumer.h',
+  'sysprof-tracepoints.h',
   'sysprof-tracer.h',
 ]
 

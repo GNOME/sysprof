@@ -35,6 +35,7 @@ static gboolean bundle_symbols;
 static gboolean session_bus;
 static gboolean system_bus;
 static gboolean gjs;
+static gboolean i915;
 static char *power_profile;
 static const GOptionEntry entries[] = {
   { "capture", 'c', 0, G_OPTION_ARG_FILENAME, &capture_file, "The file to capture into", "CAPTURE" },
@@ -46,6 +47,7 @@ static const GOptionEntry entries[] = {
   { "session-bus", 0, 0, G_OPTION_ARG_NONE, &session_bus, "Record D-Bus messages on the session bus" },
   { "system-bus", 0, 0, G_OPTION_ARG_NONE, &system_bus, "Record D-Bus messages on the system bus" },
   { "bundle-symbols", 'b', 0, G_OPTION_ARG_STRING, &bundle_symbols, "Bundle synbols with the capture" },
+  { "i915", '9', 0, G_OPTION_ARG_NONE, &i915, "Record some i915 tracepoints" },
   { 0 }
 };
 
@@ -213,6 +215,16 @@ main (int   argc,
 
   if (system_bus)
     sysprof_profiler_add_instrument (profiler, sysprof_dbus_monitor_new (G_BUS_TYPE_SYSTEM));
+
+  if (i915)
+    {
+      SysprofInstrument *instrument = sysprof_tracepoints_new ();
+
+      sysprof_tracepoints_add (SYSPROF_TRACEPOINTS (instrument),
+                               "drm/drm_vblank_event",
+                               (const char * const[]) { "crtc", "seq", NULL });
+      sysprof_profiler_add_instrument (profiler, instrument);
+    }
 
   for (int i = 1; i < argc; i++)
     {

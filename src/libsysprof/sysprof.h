@@ -85,6 +85,7 @@ G_BEGIN_DECLS
 # include "sysprof-thread-info.h"
 # include "sysprof-time-span.h"
 # include "sysprof-tracefd-consumer.h"
+# include "sysprof-tracepoints.h"
 # include "sysprof-tracer.h"
 #undef SYSPROF_INSIDE
 

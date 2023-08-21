@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-08-14 23:44+0000\n"
-"PO-Revision-Date: 2023-08-16 02:44+0200\n"
+"POT-Creation-Date: 2023-08-16 00:45+0000\n"
+"PO-Revision-Date: 2023-08-21 11:52+0200\n"
 "Last-Translator: Fran Dieguez <frandieguez@gnome.org>\n"
 "Language-Team: Galician <proxecto@trasno.gal>\n"
 "Language: gl\n"
@@ -27,7 +27,7 @@ msgstr ""
 #: data/org.gnome.Sysprof.appdata.xml.in.in:5
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
 #: src/sysprof/sysprof-application.c:208
-#: src/sysprof/sysprof-recording-pad.ui:18
+#: src/sysprof/sysprof-recording-pad.ui:18 src/sysprof/sysprof-window.c:240
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -144,43 +144,43 @@ msgstr ""
 msgid "Allocation"
 msgstr "Reserva"
 
-#: src/libsysprof/sysprof-document.c:1164
-#: src/libsysprof/sysprof-document.c:1200
+#: src/libsysprof/sysprof-document.c:1166
+#: src/libsysprof/sysprof-document.c:1202
 msgid "Indexing capture data frames"
 msgstr "Indexación de marcos de datos de captura"
 
-#: src/libsysprof/sysprof-document.c:1378
+#: src/libsysprof/sysprof-document.c:1380
 msgid "Discovering file system mounts"
 msgstr "Descubrindo as montaxes do sistema de ficheiros"
 
-#: src/libsysprof/sysprof-document.c:1381
+#: src/libsysprof/sysprof-document.c:1383
 msgid "Discovering process mount namespaces"
-msgstr ""
+msgstr "Descubrindo os espazos de nomes de montaxe do proceso"
 
-#: src/libsysprof/sysprof-document.c:1384
+#: src/libsysprof/sysprof-document.c:1386
 msgid "Analyzing process address layouts"
-msgstr ""
+msgstr "Analizando a disposición dos enderezos do proceso"
 
-#: src/libsysprof/sysprof-document.c:1387
+#: src/libsysprof/sysprof-document.c:1389
 msgid "Analyzing process command line"
 msgstr "Analizar a liña de comandos do proceso"
 
-#: src/libsysprof/sysprof-document.c:1390
+#: src/libsysprof/sysprof-document.c:1392
 msgid "Analyzing file system overlays"
 msgstr "Analizar as superposicións do sistema de ficheiros"
 
-#: src/libsysprof/sysprof-document.c:1393
+#: src/libsysprof/sysprof-document.c:1395
 msgid "Processing counters"
 msgstr "Contía de procesos"
 
-#: src/libsysprof/sysprof-document.c:2373
-#: src/libsysprof/sysprof-document.c:2389
+#: src/libsysprof/sysprof-document.c:2375
+#: src/libsysprof/sysprof-document.c:2391
 #, c-format
 msgid "Recording at %X %x"
 msgstr "Gravando ás %X %x"
 
-#: src/libsysprof/sysprof-document.c:2375
-#: src/libsysprof/sysprof-document.c:2391
+#: src/libsysprof/sysprof-document.c:2377
+#: src/libsysprof/sysprof-document.c:2393
 #, c-format
 msgid "Recording at %s"
 msgstr "Gravando en %s"
@@ -237,22 +237,21 @@ msgid "System Logs"
 msgstr "Rexistros do sistema"
 
 #: src/libsysprof/sysprof-system-logs.c:172
-#, fuzzy
 msgid "Recording system logs is not supported on your platform."
-msgstr "Os rexistros do sistema de gravación non se admiten na súa plataforma."
+msgstr ""
+"Os rexistros do sistema de gravación non son compatíbeis coa súa plataforma."
 
 #: src/libsysprof/sysprof-tracer.c:65
 msgid "Tracer"
 msgstr "Rastrexador"
 
 #: src/libsysprof/sysprof-tracer.c:66
-#, fuzzy
 msgid ""
 "Tracing requires spawning a program compiled with ‘-finstrument-functions’. "
 "Tracing will not be available."
 msgstr ""
-"O rastrexo require desovar un programa compilado con \"-Finstrument-"
-"Functions\".O rastrexo non estará dispoñible."
+"O rastrexo require lanzar un programa compilado con «-finstrument-"
+"functions». O rastrexo non estará dispoñible."
 
 #: src/sysprof-cli/sysprof-cli.c:112
 msgid "--merge requires at least 2 filename arguments"
@@ -284,11 +283,10 @@ msgid "COMMAND"
 msgstr "ORDE"
 
 #: src/sysprof-cli/sysprof-cli.c:308
-#, fuzzy
 msgid ""
 "Set environment variable for spawned process. Can be used multiple times."
 msgstr ""
-"Estableza a variable de ambiente para o proceso creado.Pódese usar varias "
+"Estableza a variable de ambiente para o proceso creado. Pode usarse varias "
 "veces."
 
 #: src/sysprof-cli/sysprof-cli.c:308
@@ -300,7 +298,6 @@ msgid "Force overwrite the capture file"
 msgstr "Forza sobrescritura do ficheiro de captura"
 
 #: src/sysprof-cli/sysprof-cli.c:310
-#, fuzzy
 msgid "Disable recording of battery statistics"
 msgstr "Desactivar a gravación de estatísticas da batería"
 
@@ -313,14 +310,12 @@ msgid "Disable recording of Disk statistics"
 msgstr "Desactivar a gravación de estatísticas do disco"
 
 #: src/sysprof-cli/sysprof-cli.c:313
-#, fuzzy
 msgid "Do not record stacktraces using Linux perf"
-msgstr "Non grave stacktraces usando Linux Perf"
+msgstr "Non gravar as trazas de pila usando Linux Perf"
 
 #: src/sysprof-cli/sysprof-cli.c:314
-#, fuzzy
 msgid "Do not append symbol name information from local machine"
-msgstr "Non engade o nome do símbolo información da máquina local"
+msgstr "Non engadir a información dos nomes de símbolo desde a máquina local"
 
 #: src/sysprof-cli/sysprof-cli.c:315
 msgid "Disable recording of memory statistics"
@@ -347,9 +342,8 @@ msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr "Estableza o ambiente GJS_TRACE_FD para rastrexar os procesos GJS"
 
 #: src/sysprof-cli/sysprof-cli.c:321
-#, fuzzy
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
-msgstr "Estableza o ambiente GTK_Trace_FD para rastrexar unha aplicación GTK"
+msgstr "Estableza o ambiente GTK_TRACE_FD para rastrexar unha aplicación GTK"
 
 #: src/sysprof-cli/sysprof-cli.c:322
 msgid "Include RAPL energy statistics"
@@ -364,14 +358,12 @@ msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr "Conectarse a org.gnome.Shell para obter"
 
 #: src/sysprof-cli/sysprof-cli.c:325
-#, fuzzy
 msgid "Track performance of the applications main loop"
-msgstr "Rastrexo do rendemento das aplicacións Loop principal"
+msgstr "Rastrexar o rendemento do bucle principal das aplicacións"
 
 #: src/sysprof-cli/sysprof-cli.c:327
-#, fuzzy
 msgid "Merge all provided *.syscap files and write to stdout"
-msgstr "Fusione todos os ficheiros *.syscap e escriba a stdout"
+msgstr "Fusiona todos os ficheiros *.syscap fornecidos e escríbeos a stdout"
 
 #: src/sysprof-cli/sysprof-cli.c:328
 msgid "Print the sysprof-cli version and exit"
@@ -386,7 +378,6 @@ msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[FICHEIRO_CAPTURA] [-- ORDE ARGUMENTOS] -- sysprof"
 
 #: src/sysprof-cli/sysprof-cli.c:365
-#, fuzzy
 msgid ""
 "\n"
 "Examples:\n"
@@ -398,15 +389,18 @@ msgid ""
 "  # Merge multiple syscap files into one\n"
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 msgstr ""
+"\n"
 "Exemplos:\n"
 "\n"
-"  # Rexistro GTK4-Widget-Faction usando Trace-FD para obter a aplicación "
-"proporcionada\n"
-"  # datos, así como provedores de datos GTK e Gnome\n"
-"  sysprof-cli --gtk--gnome-shell --Use-trace-fd-gtk4-widget-fábrica\n"
+"  # Gravar gtk4-widget-factory usando trace-fd para obter os datos "
+"fornecidos \n"
+"  # pola aplicación, así como fornecedores de datos GTK e GNOME Shell\n"
+"\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
 "\n"
 "  # Combinar varios ficheiros syscap nun só\n"
-"  sysprof-cli--Merge a.syscap b.syscap> c.syscap"
+"\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 
 #: src/sysprof-cli/sysprof-cli.c:401
 msgid "Too many arguments were passed to sysprof-cli:"
@@ -668,7 +662,7 @@ msgid "You must choose a local file to capture using Sysprof"
 msgstr "Debe escoller un ficheiro local para capturar usando Sysprof"
 
 #: src/sysprof/sysprof-greeter.c:267 src/sysprof/sysprof-recording-pad.c:115
-#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:709
+#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:715
 msgid "Close"
 msgstr "Pechar"
 
@@ -710,25 +704,23 @@ msgid "Sample Native Stacks"
 msgstr "Mostra as pilas nativas"
 
 #: src/sysprof/sysprof-greeter.ui:75
-#, fuzzy
 msgid "Record native stack traces using a sampling profiler"
-msgstr "Grava os trazos de pilas nativas usando un perfilador de mostraxe"
+msgstr "Gravar as trazas de pilas nativas usando un perfilador de mostraxe"
 
 #: src/sysprof/sysprof-greeter.ui:91
 msgid "Sample JavaScript Stacks"
 msgstr "Mostra as pilas JavaScript"
 
 #: src/sysprof/sysprof-greeter.ui:92
-#, fuzzy
 msgid "Record JavaScript stack traces using a sampling profiler"
-msgstr "Grava os trazos de pila de JavaScript usando un perfilador de mostraxe"
+msgstr ""
+"Gravar os trazos de pila de JavaScript usando un perfilador de mostraxe"
 
 #: src/sysprof/sysprof-greeter.ui:103
-#, fuzzy
 msgid ""
 "Sysprof must launch your application to record JavaScript stacks using GJS."
 msgstr ""
-"SYSPROF debe lanzar a túa aplicación para rexistrar pilas JavaScript usando "
+"Sysprof debe lanzar a súa aplicación para rexistrar pilas JavaScript usando "
 "GJS."
 
 #: src/sysprof/sysprof-greeter.ui:116
@@ -740,17 +732,15 @@ msgid "Trace Memory Allocations"
 msgstr "Perfilar as reservas de memoria"
 
 #: src/sysprof/sysprof-greeter.ui:121
-#, fuzzy
 msgid ""
 "Record a strack trace when <tt>malloc</tt> or similar functions are used"
 msgstr ""
-"Grava un rastro de pila cando se usan <tt> malloc </tt> ou funcións similares"
+"Gravar un rastro de pila cando se usan <tt>malloc</tt> ou funcións similares"
 
 #: src/sysprof/sysprof-greeter.ui:132
-#, fuzzy
 msgid "Sysprof must launch your application to record memory allocations."
 msgstr ""
-"SYSPROF debe lanzar a súa aplicación para rexistrar asignacións de memoria."
+"Sysprof debe lanzar a súa aplicación para rexistrar asignacións de memoria."
 
 #: src/sysprof/sysprof-greeter.ui:150 src/sysprof/sysprof-greeter.ui:155
 msgid "Application"
@@ -762,7 +752,6 @@ msgid "Command Line"
 msgstr "Liña de ordes"
 
 #: src/sysprof/sysprof-greeter.ui:164
-#, fuzzy
 msgid "The application will be run as a subprocess of Sysprof."
 msgstr "A aplicación executarase como un subproceso de Sysprof."
 
@@ -775,7 +764,6 @@ msgid "Clear Environment"
 msgstr "Limpar ambiente"
 
 #: src/sysprof/sysprof-greeter.ui:182
-#, fuzzy
 msgid "Clear the environment before launching application"
 msgstr "Limpar o ambiente antes de lanzar a aplicación"
 
@@ -800,56 +788,49 @@ msgid "CPU Usage"
 msgstr "Uso da CPU"
 
 #: src/sysprof/sysprof-greeter.ui:242
-#, fuzzy
 msgid "Record coarse-grained counters about CPU usage and frequency"
-msgstr "Rexistrar contadores de grana grosa sobre o uso e frecuencia da CPU"
+msgstr "Gravar os contadores de gran groso sobre o uso e frecuencia da CPU"
 
 #: src/sysprof/sysprof-greeter.ui:254
 msgid "Memory Usage"
 msgstr "Uso da memoria"
 
 #: src/sysprof/sysprof-greeter.ui:255
-#, fuzzy
 msgid "Record coarse-grained counters about system memory usage"
-msgstr "Grava os contadores de grana grosa sobre o uso da memoria do sistema"
+msgstr "Gravar os contadores de gran groso sobre o uso da memoria do sistema"
 
 #: src/sysprof/sysprof-greeter.ui:267
 msgid "Disk Usage"
 msgstr "Uso do disco"
 
 #: src/sysprof/sysprof-greeter.ui:268
-#, fuzzy
 msgid "Record coarse-grained counters about storage throughput"
-msgstr "Grava os contadores de grana grosa sobre o rendemento de almacenamento"
+msgstr "Gravar os contadores de gran groso sobre o rendemento de almacenamento"
 
 #: src/sysprof/sysprof-greeter.ui:280
 msgid "Network Usage"
 msgstr "Uso da rede"
 
 #: src/sysprof/sysprof-greeter.ui:281
-#, fuzzy
 msgid "Record coarse-grained counters about network traffic"
-msgstr "Grava os contadores de grana grosa sobre o tráfico de rede"
+msgstr "Gravar os contadores de gran groso sobre o tráfico de rede"
 
 #: src/sysprof/sysprof-greeter.ui:297
 msgid "Energy Usage"
 msgstr "Uso de enerxía"
 
 #: src/sysprof/sysprof-greeter.ui:298
-#, fuzzy
 msgid "Record coarse-grained counters about energy usage in Watts"
-msgstr ""
-"Rexistrar contadores de grana grosa sobre o consumo de enerxía en Watts"
+msgstr "Gravar os contadores de gran groso sobre o consumo de enerxía en Watts"
 
 #: src/sysprof/sysprof-greeter.ui:310
 msgid "Battery Charge"
 msgstr "Carga da batería"
 
 #: src/sysprof/sysprof-greeter.ui:311
-#, fuzzy
 msgid "Record coarse-grained counters about battery charge or discharge rates"
 msgstr ""
-"Gravar os contadores de grana grosa sobre a carga da batería ou as taxas de "
+"Gravar os contadores de gran groso sobre a carga da batería ou as taxas de "
 "descarga"
 
 #: src/sysprof/sysprof-greeter.ui:329 src/sysprof/sysprof-greeter.ui:334
@@ -1098,16 +1079,16 @@ msgstr "Reservas de memoria"
 msgid "Stack Traces"
 msgstr "Rastros de pila"
 
-#: src/sysprof/sysprof-memory-section.ui:83
+#: src/sysprof/sysprof-memory-section.ui:88
 msgid "Allocations"
 msgstr "Reservas"
 
-#: src/sysprof/sysprof-memory-section.ui:127
+#: src/sysprof/sysprof-memory-section.ui:143
 msgid "Leaks"
 msgstr "Fugas"
 
-#: src/sysprof/sysprof-memory-section.ui:182
-#: src/sysprof/sysprof-samples-section.ui:148
+#: src/sysprof/sysprof-memory-section.ui:210
+#: src/sysprof/sysprof-samples-section.ui:153
 #: src/sysprof/sysprof-traceables-utility.ui:162
 msgid "Stack Trace"
 msgstr "Rastro de pila"
@@ -1264,23 +1245,23 @@ msgstr "Abrir"
 msgid "Sysprof Capture (*.syscap)"
 msgstr "Capturas de Sysprof (*.syscap)"
 
-#: src/sysprof/sysprof-window.c:459
+#: src/sysprof/sysprof-window.c:465
 msgid "Save to File"
 msgstr "Gravar a ficheiro"
 
-#: src/sysprof/sysprof-window.c:460
+#: src/sysprof/sysprof-window.c:466
 msgid "Save"
 msgstr "Gardar"
 
-#: src/sysprof/sysprof-window.c:629
+#: src/sysprof/sysprof-window.c:635
 msgid "Loading..."
 msgstr "Cargando…"
 
-#: src/sysprof/sysprof-window.c:705
+#: src/sysprof/sysprof-window.c:711
 msgid "Invalid Document"
 msgstr "Documento non válido"
 
-#: src/sysprof/sysprof-window.c:707
+#: src/sysprof/sysprof-window.c:713
 #, c-format
 msgid ""
 "The document could not be loaded. Please check that you have the correct "

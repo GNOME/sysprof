@@ -62,7 +62,7 @@ sysprof_tracepoints_list_required_policy (SysprofInstrument *instrument)
   return g_strdupv ((char **)policy);
 }
 
-static DexFuture *
+static gint64
 find_tracepoint_config (const char *path)
 {
   g_autoptr(GDBusConnection) bus = NULL;
@@ -73,7 +73,7 @@ find_tracepoint_config (const char *path)
   g_assert (path != NULL);
 
   if (!(bus = dex_await_object (dex_bus_get (G_BUS_TYPE_SYSTEM), &error)))
-    return dex_future_new_for_error (g_steal_pointer (&error));
+    return 0;
 
   if (!(proc_reply = dex_await_variant (dex_dbus_connection_call (bus,
                                                                   "org.gnome.Sysprof3",
@@ -85,19 +85,14 @@ find_tracepoint_config (const char *path)
                                                                   G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION,
                                                                   G_MAXINT),
                                         &error)))
-    return dex_future_new_for_error (g_steal_pointer (&error));
+    return 0;
 
   g_variant_get (proc_reply, "(^&ay)", &contents, NULL);
 
   if (contents != NULL)
-    {
-      gint64 id = g_ascii_strtoll (contents, NULL, 10);
-      return dex_future_new_for_int64 (id);
-    }
+    return g_ascii_strtoll (contents, NULL, 10);
 
-  return dex_future_new_reject (G_IO_ERROR,
-                                G_IO_ERROR_NOT_FOUND,
-                                "Tracepoint not available");
+  return 0;
 }
 
 typedef struct _Prepare
@@ -126,18 +121,9 @@ sysprof_tracepoints_prepare_fiber (gpointer user_data)
   for (guint i = 0; i < prepare->tracepoints->infos->len; i++)
     {
       TracepointInfo *info = &g_array_index (prepare->tracepoints->infos, TracepointInfo, i);
-      g_autoptr(GError) error = NULL;
 
-      info->config = dex_await_int64 (find_tracepoint_config (info->path), &error);
-
-      if (error != NULL)
-        {
-          _sysprof_recording_diagnostic (prepare->recording,
-                                         "Tracepoints",
-                                         "Failed to load tracepoint: %s",
-                                         error->message);
-          continue;
-        }
+      if (!(info->config = find_tracepoint_config (info->path)))
+        continue;
     }
 
   return dex_future_new_for_boolean (TRUE);

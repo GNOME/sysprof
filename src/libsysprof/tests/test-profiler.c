@@ -203,6 +203,8 @@ main (int   argc,
   if (memprof)
     sysprof_profiler_add_instrument (profiler, sysprof_malloc_tracing_new ());
 
+  sysprof_profiler_add_instrument (profiler, sysprof_scheduler_details_new ());
+
   if (tracer)
     sysprof_profiler_add_instrument (profiler, sysprof_tracer_new ());
   else

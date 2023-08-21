@@ -295,6 +295,7 @@ main (int   argc,
   gboolean memprof = FALSE;
   gboolean merge = FALSE;
   gboolean speedtrack = FALSE;
+  gboolean scheduler_details = FALSE;
   gboolean system_bus = FALSE;
   gboolean session_bus = FALSE;
   int pid = -1;
@@ -315,6 +316,7 @@ main (int   argc,
     { "no-memory", 0, 0, G_OPTION_ARG_NONE, &no_memory, N_("Disable recording of memory statistics") },
     { "no-network", 0, 0, G_OPTION_ARG_NONE, &no_network, N_("Disable recording of network statistics") },
     { "use-trace-fd", 0, 0, G_OPTION_ARG_NONE, &use_trace_fd, N_("Set SYSPROF_TRACE_FD environment for subprocess") },
+    { "scheduler", 0, 0, G_OPTION_ARG_NONE, &scheduler_details, N_("Track when processes are scheduled") },
     { "session-bus", 0, 0, G_OPTION_ARG_NONE, &session_bus, N_("Profile the D-Bus session bus") },
     { "system-bus", 0, 0, G_OPTION_ARG_NONE, &system_bus, N_("Profile the D-Bus system bus") },
     { "gjs", 0, 0, G_OPTION_ARG_NONE, &gjs, N_("Set GJS_TRACE_FD environment to trace GJS processes") },
@@ -552,6 +554,9 @@ Examples:\n\
 
   if (system_bus)
     sysprof_profiler_add_instrument (profiler, sysprof_dbus_monitor_new (G_BUS_TYPE_SYSTEM));
+
+  if (scheduler_details)
+    sysprof_profiler_add_instrument (profiler, sysprof_scheduler_details_new ());
 
   sysprof_profiler_add_instrument (profiler,
                                    g_object_new (SYSPROF_TYPE_SUBPROCESS_OUTPUT,

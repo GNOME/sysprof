@@ -30,15 +30,19 @@ struct _SysprofTimeFilterModel
   GtkExpression     *expression;
   GtkSliceListModel *slice;
   SysprofTimeSpan    time_span;
+  guint              inclusive : 1;
 };
 
 enum {
   PROP_0,
   PROP_EXPRESSION,
+  PROP_INCLUSIVE,
   PROP_MODEL,
   PROP_TIME_SPAN,
   N_PROPS
 };
+
+static void sysprof_time_filter_model_update (SysprofTimeFilterModel *self);
 
 static GType
 sysprof_time_filter_model_get_item_type (GListModel *model)
@@ -108,6 +112,10 @@ sysprof_time_filter_model_get_property (GObject    *object,
       gtk_value_set_expression (value, sysprof_time_filter_model_get_expression (self));
       break;
 
+    case PROP_INCLUSIVE:
+      g_value_set_boolean (value, self->inclusive);
+      break;
+
     case PROP_MODEL:
       g_value_set_object (value, sysprof_time_filter_model_get_model (self));
       break;
@@ -133,6 +141,11 @@ sysprof_time_filter_model_set_property (GObject      *object,
     {
     case PROP_EXPRESSION:
       sysprof_time_filter_model_set_expression (self, gtk_value_get_expression (value));
+      break;
+
+    case PROP_INCLUSIVE:
+      self->inclusive = g_value_get_boolean (value);
+      sysprof_time_filter_model_update (self);
       break;
 
     case PROP_MODEL:
@@ -161,6 +174,17 @@ sysprof_time_filter_model_class_init (SysprofTimeFilterModelClass *klass)
     gtk_param_spec_expression ("expression", NULL, NULL,
                                (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
+  /**
+   * SysprofTimeFilterModel:inclusive:
+   *
+   * If we're inclusive of items that are off the edge of the
+   * boundaries.
+   */
+  properties[PROP_INCLUSIVE] =
+    g_param_spec_boolean ("inclusive", NULL, NULL,
+                          TRUE,
+                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
   properties[PROP_MODEL] =
     g_param_spec_object ("model", NULL, NULL,
                          G_TYPE_LIST_MODEL,
@@ -178,6 +202,7 @@ static void
 sysprof_time_filter_model_init (SysprofTimeFilterModel *self)
 {
   self->expression = gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_FRAME, NULL, "time");
+  self->inclusive = TRUE;
 
   self->time_span.begin_nsec = G_MININT64;
   self->time_span.end_nsec = G_MAXINT64;
@@ -367,6 +392,19 @@ sysprof_time_filter_model_update (SysprofTimeFilterModel *self)
   model = sysprof_time_filter_model_get_model (self);
 
   calculate_bounds (self, model, &self->time_span, &offset, &size);
+
+  /* We want to extend our selection to adjacent values so that we
+   * are more likely to include enough data to overlap the boundaries
+   * when drawing graphs.
+   *
+   * This can sort of muck up callgraphs, so it's disabled in those.
+   */
+  if (self->inclusive)
+    {
+      if (offset > 0)
+        offset--;
+      size++;
+    }
 
   gtk_slice_list_model_set_offset (self->slice, offset);
   gtk_slice_list_model_set_size (self->slice, size);

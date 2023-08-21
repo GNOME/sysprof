@@ -45,6 +45,7 @@ struct _SysprofRecordingTemplate
   guint memory_usage : 1;
   guint native_stacks : 1;
   guint network_usage : 1;
+  guint scheduler_details : 1;
   guint session_bus : 1;
   guint system_bus : 1;
   guint system_log : 1;
@@ -70,6 +71,7 @@ enum {
   PROP_NATIVE_STACKS,
   PROP_NETWORK_USAGE,
   PROP_POWER_PROFILE,
+  PROP_SCHEDULER_DETAILS,
   PROP_SESSION_BUS,
   PROP_SYSTEM_BUS,
   PROP_SYSTEM_LOG,
@@ -175,6 +177,10 @@ sysprof_recording_template_get_property (GObject    *object,
       g_value_set_string (value, self->power_profile);
       break;
 
+    case PROP_SCHEDULER_DETAILS:
+      g_value_set_boolean (value, self->scheduler_details);
+      break;
+
     case PROP_SESSION_BUS:
       g_value_set_boolean (value, self->session_bus);
       break;
@@ -273,6 +279,10 @@ sysprof_recording_template_set_property (GObject      *object,
 
     case PROP_POWER_PROFILE:
       g_set_str (&self->power_profile, g_value_get_string (value));
+      break;
+
+    case PROP_SCHEDULER_DETAILS:
+      self->scheduler_details = g_value_get_boolean (value);
       break;
 
     case PROP_SESSION_BUS:
@@ -391,6 +401,11 @@ sysprof_recording_template_class_init (SysprofRecordingTemplateClass *klass)
                          NULL,
                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
+  properties[PROP_SCHEDULER_DETAILS] =
+    g_param_spec_boolean ("scheduler-details", NULL, NULL,
+                          FALSE,
+                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
   properties[PROP_SESSION_BUS] =
     g_param_spec_boolean ("session-bus", NULL, NULL,
                           FALSE,
@@ -420,6 +435,7 @@ sysprof_recording_template_init (SysprofRecordingTemplate *self)
   self->memory_usage = TRUE;
   self->native_stacks = TRUE;
   self->network_usage = TRUE;
+  self->scheduler_details = FALSE;
   self->system_log = TRUE;
   self->command_line = g_strdup ("");
 }
@@ -594,6 +610,9 @@ sysprof_recording_template_apply (SysprofRecordingTemplate  *self,
 
   if (self->network_usage)
     sysprof_profiler_add_instrument (profiler, sysprof_network_usage_new ());
+
+  if (self->scheduler_details)
+    sysprof_profiler_add_instrument (profiler, sysprof_scheduler_details_new ());
 
   if (self->session_bus)
     sysprof_profiler_add_instrument (profiler, sysprof_dbus_monitor_new (G_BUS_TYPE_SESSION));

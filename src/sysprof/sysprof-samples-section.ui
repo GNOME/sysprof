@@ -121,6 +121,7 @@
                 </binding>
                 <property name="model">
                   <object class="SysprofTimeFilterModel">
+                    <property name="inclusive">false</property>
                     <binding name="time-span">
                       <lookup name="selected-time" type="SysprofSession">
                         <lookup name="session">SysprofSamplesSection</lookup>

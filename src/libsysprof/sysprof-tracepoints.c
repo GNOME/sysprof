@@ -21,12 +21,15 @@
 #include "config.h"
 
 #include "sysprof-instrument-private.h"
+#include "sysprof-recording-private.h"
 #include "sysprof-tracepoints.h"
 
 typedef struct _TracepointInfo
 {
   char *path;
   char **fields;
+  gint64 config;
+  int perf_fd;
 } TracepointInfo;
 
 struct _SysprofTracepoints
@@ -59,6 +62,44 @@ sysprof_tracepoints_list_required_policy (SysprofInstrument *instrument)
   return g_strdupv ((char **)policy);
 }
 
+static DexFuture *
+find_tracepoint_config (const char *path)
+{
+  g_autoptr(GDBusConnection) bus = NULL;
+  g_autoptr(GVariant) proc_reply = NULL;
+  g_autoptr(GError) error = NULL;
+  const char *contents = NULL;
+
+  g_assert (path != NULL);
+
+  if (!(bus = dex_await_object (dex_bus_get (G_BUS_TYPE_SYSTEM), &error)))
+    return dex_future_new_for_error (g_steal_pointer (&error));
+
+  if (!(proc_reply = dex_await_variant (dex_dbus_connection_call (bus,
+                                                                  "org.gnome.Sysprof3",
+                                                                  "/org/gnome/Sysprof3",
+                                                                  "org.gnome.Sysprof3.Service",
+                                                                  "GetProcFile",
+                                                                  g_variant_new ("(^ay)", path),
+                                                                  G_VARIANT_TYPE ("(ay)"),
+                                                                  G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION,
+                                                                  G_MAXINT),
+                                        &error)))
+    return dex_future_new_for_error (g_steal_pointer (&error));
+
+  g_variant_get (proc_reply, "(^&ay)", &contents, NULL);
+
+  if (contents != NULL)
+    {
+      gint64 id = g_ascii_strtoll (contents, NULL, 10);
+      return dex_future_new_for_int64 (id);
+    }
+
+  return dex_future_new_reject (G_IO_ERROR,
+                                G_IO_ERROR_NOT_FOUND,
+                                "Tracepoint not available");
+}
+
 typedef struct _Prepare
 {
   SysprofRecording *recording;
@@ -81,6 +122,23 @@ sysprof_tracepoints_prepare_fiber (gpointer user_data)
   g_assert (prepare != NULL);
   g_assert (SYSPROF_IS_RECORDING (prepare->recording));
   g_assert (SYSPROF_IS_TRACEPOINTS (prepare->tracepoints));
+
+  for (guint i = 0; i < prepare->tracepoints->infos->len; i++)
+    {
+      TracepointInfo *info = &g_array_index (prepare->tracepoints->infos, TracepointInfo, i);
+      g_autoptr(GError) error = NULL;
+
+      info->config = dex_await_int64 (find_tracepoint_config (info->path), &error);
+
+      if (error != NULL)
+        {
+          _sysprof_recording_diagnostic (prepare->recording,
+                                         "Tracepoints",
+                                         "Failed to load tracepoint: %s",
+                                         error->message);
+          continue;
+        }
+    }
 
   return dex_future_new_for_boolean (TRUE);
 }
@@ -151,8 +209,9 @@ sysprof_tracepoints_add (SysprofTracepoints *self,
   g_return_if_fail (tracepoint != NULL);
   g_return_if_fail (fields != NULL);
 
-  info.path = g_strdup (tracepoint);
+  info.path = g_strdup_printf ("/sys/kernel/debug/tracing/events/%s/id", tracepoint);
   info.fields = g_strdupv ((char **)fields);
+  info.perf_fd = -1;
 
   g_array_append_val (self->infos, info);
 }

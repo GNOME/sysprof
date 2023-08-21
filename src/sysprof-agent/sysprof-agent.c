@@ -68,6 +68,7 @@ static gboolean no_throttle;
 static gboolean decode;
 static gboolean do_system_bus;
 static gboolean do_session_bus;
+static gboolean scheduler_details;
 static const GOptionEntry options[] = {
   { "read-fd", 0, 0, G_OPTION_ARG_INT, &read_fd, "The read side of the FD to use for D-Bus" },
   { "write-fd", 0, 0, G_OPTION_ARG_INT, &write_fd, "The write side of the FD to use for D-Bus" },
@@ -90,6 +91,7 @@ static const GOptionEntry options[] = {
   { "no-throttle", 0, 0, G_OPTION_ARG_NONE, &no_throttle, "Disable CPU throttling [Deprecated for --power-profile]" },
   { "tracefd", 0, 0, G_OPTION_ARG_NONE, &aid_tracefd, "Provide TRACEFD to subprocess" },
   { "power-profile", 0, 0, G_OPTION_ARG_STRING, &power_profile, "Use POWER_PROFILE for duration of recording", "power-saver|balanced|performance" },
+  { "scheduler", 0, 0, G_OPTION_ARG_NONE, &scheduler_details, "Track when processes are scheduled per CPU" },
   { "session-bus", 0, 0, G_OPTION_ARG_NONE, &do_session_bus, "Profile the D-Bus session bus" },
   { "system-bus", 0, 0, G_OPTION_ARG_NONE, &do_system_bus, "Profile the D-Bus system bus" },
   { NULL }
@@ -528,6 +530,9 @@ main (int   argc,
 
   if (do_system_bus)
     sysprof_profiler_add_instrument (profiler, sysprof_dbus_monitor_new (G_BUS_TYPE_SYSTEM));
+
+  if (scheduler_details)
+    sysprof_profiler_add_instrument (profiler, sysprof_scheduler_details_new ());
 
   if (decode)
     sysprof_profiler_add_instrument (profiler, sysprof_symbols_bundle_new ());

@@ -21,6 +21,7 @@
 #include "config.h"
 
 #include "sysprof-instrument-private.h"
+#include "sysprof-perf-event-stream-private.h"
 #include "sysprof-recording-private.h"
 #include "sysprof-tracepoints.h"
 
@@ -28,6 +29,7 @@ typedef struct _TracepointInfo
 {
   char *path;
   char **fields;
+  GPtrArray *streams;
   gint64 config;
   int perf_fd;
 } TracepointInfo;
@@ -52,6 +54,7 @@ tracepoint_info_clear (gpointer data)
 
   g_clear_pointer (&info->path, g_free);
   g_clear_pointer (&info->fields, g_strfreev);
+  g_clear_pointer (&info->streams, g_ptr_array_free);
 }
 
 static char **
@@ -124,6 +127,7 @@ sysprof_tracepoints_prepare_fiber (gpointer user_data)
 
       if (!(info->config = find_tracepoint_config (info->path)))
         continue;
+
     }
 
   return dex_future_new_for_boolean (TRUE);
@@ -189,7 +193,7 @@ sysprof_tracepoints_add (SysprofTracepoints *self,
                          const char         *tracepoint,
                          const char * const *fields)
 {
-  TracepointInfo info;
+  TracepointInfo info = {0};
 
   g_return_if_fail (SYSPROF_IS_TRACEPOINTS (self));
   g_return_if_fail (tracepoint != NULL);
@@ -198,6 +202,8 @@ sysprof_tracepoints_add (SysprofTracepoints *self,
   info.path = g_strdup_printf ("/sys/kernel/debug/tracing/events/%s/id", tracepoint);
   info.fields = g_strdupv ((char **)fields);
   info.perf_fd = -1;
+  info.streams = g_ptr_array_new_with_free_func (g_object_unref);
+  info.config = 0;
 
   g_array_append_val (self->infos, info);
 }

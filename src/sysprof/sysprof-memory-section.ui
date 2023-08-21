@@ -116,6 +116,7 @@
                     </binding>
                     <property name="traceables">
                       <object class="SysprofTimeFilterModel">
+                        <property name="inclusive">false</property>
                         <property name="expression">
                           <lookup name="time" type="SysprofDocumentFrame"/>
                         </property>
@@ -171,6 +172,7 @@
                     </binding>
                     <property name="traceables">
                       <object class="SysprofTimeFilterModel">
+                        <property name="inclusive">false</property>
                         <property name="expression">
                           <lookup name="time" type="SysprofDocumentFrame"/>
                         </property>

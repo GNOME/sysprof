@@ -322,6 +322,16 @@ sysprof_scheduler_details_record_fiber (gpointer user_data)
   dex_await (dex_ref (self->cancellable), NULL);
   self->ended_at = SYSPROF_CAPTURE_CURRENT_TIME;
 
+  for (guint i = 0; i < self->streams->len; i++)
+    {
+      SysprofPerfEventStream *stream = g_ptr_array_index (self->streams, i);
+
+      sysprof_perf_event_stream_disable (stream, NULL);
+    }
+
+  if (self->streams->len)
+    g_ptr_array_remove_range (self->streams, 0, self->streams->len);
+
   return dex_future_new_for_boolean (TRUE);
 }
 

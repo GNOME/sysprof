@@ -22,6 +22,7 @@
 #include "config.h"
 
 #include "sysprof-chart-layer-private.h"
+#include "sysprof-color-iter-private.h"
 #include "sysprof-normalized-series.h"
 #include "sysprof-time-series-item.h"
 #include "sysprof-time-span-layer.h"
@@ -38,9 +39,14 @@ struct _SysprofTimeSpanLayer
 
   GBindingGroup *series_bindings;
 
+  GHashTable *colors_hash;
+
+  SysprofColorIter colors;
+
   GdkRGBA color;
   GdkRGBA event_color;
 
+  guint auto_color : 1;
   guint color_set : 1;
   guint event_color_set : 1;
 };
@@ -49,6 +55,7 @@ G_DEFINE_FINAL_TYPE (SysprofTimeSpanLayer, sysprof_time_span_layer, SYSPROF_TYPE
 
 enum {
   PROP_0,
+  PROP_AUTO_COLOR,
   PROP_AXIS,
   PROP_COLOR,
   PROP_EVENT_COLOR,
@@ -170,6 +177,7 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
 
           if (begin != end)
             {
+              g_autofree char *label = sysprof_time_series_dup_label (self->series, i);
               graphene_rect_t rect;
 
               rect = GRAPHENE_RECT_INIT (floor (begin * width),
@@ -190,11 +198,26 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
               if (rect.origin.x + rect.size.width > width)
                 rect.size.width = width - rect.origin.x;
 
-              gtk_snapshot_append_color (snapshot, color, &rect);
+              if (self->auto_color && label)
+                {
+                  const GdkRGBA *this_color = g_hash_table_lookup (self->colors_hash, label);
+
+                  if (this_color == NULL)
+                    {
+                      const GdkRGBA *next_color = sysprof_color_iter_next (&self->colors);
+                      g_hash_table_insert (self->colors_hash, g_strdup (label), (GdkRGBA *)next_color);
+                      this_color = next_color;
+                    }
+
+                  gtk_snapshot_append_color (snapshot, this_color, &rect);
+                }
+              else
+                {
+                  gtk_snapshot_append_color (snapshot, color, &rect);
+                }
 
               if (rect.size.width > 20)
                 {
-                  g_autofree char *label = sysprof_time_series_dup_label (self->series, i);
 
                   if (label != NULL)
                     {
@@ -315,6 +338,7 @@ sysprof_time_span_layer_finalize (GObject *object)
   g_clear_object (&self->series);
   g_clear_object (&self->normal_x);
   g_clear_object (&self->normal_x2);
+  g_clear_pointer (&self->colors_hash, g_hash_table_unref);
 
   G_OBJECT_CLASS (sysprof_time_span_layer_parent_class)->finalize (object);
 }
@@ -329,6 +353,10 @@ sysprof_time_span_layer_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_AUTO_COLOR:
+      g_value_set_boolean (value, self->auto_color);
+      break;
+
     case PROP_AXIS:
       g_value_set_object (value, sysprof_time_span_layer_get_axis (self));
       break;
@@ -368,6 +396,10 @@ sysprof_time_span_layer_set_property (GObject      *object,
 
   switch (prop_id)
     {
+    case PROP_AUTO_COLOR:
+      self->auto_color = g_value_get_boolean (value);
+      break;
+
     case PROP_AXIS:
       sysprof_time_span_layer_set_axis (self, g_value_get_object (value));
       break;
@@ -403,6 +435,11 @@ sysprof_time_span_layer_class_init (SysprofTimeSpanLayerClass *klass)
   widget_class->snapshot = sysprof_time_span_layer_snapshot;
 
   chart_layer_class->lookup_item = sysprof_time_span_layer_lookup_item;
+
+  properties[PROP_AUTO_COLOR] =
+    g_param_spec_boolean ("auto-color", NULL, NULL,
+                          TRUE,
+                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   properties[PROP_AXIS] =
     g_param_spec_object ("axis", NULL, NULL,
@@ -442,6 +479,10 @@ sysprof_time_span_layer_init (SysprofTimeSpanLayer *self)
 {
   self->normal_x = g_object_new (SYSPROF_TYPE_NORMALIZED_SERIES, NULL);
   self->normal_x2 = g_object_new (SYSPROF_TYPE_NORMALIZED_SERIES, NULL);
+
+  self->colors_hash = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+  sysprof_color_iter_init (&self->colors);
+  self->auto_color = TRUE;
 
   g_signal_connect_object (self->normal_x,
                            "items-changed",

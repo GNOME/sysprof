@@ -34,4 +34,6 @@ SysprofCallgraphCategory sysprof_category_icon_get_category (SysprofCategoryIcon
 void                     sysprof_category_icon_set_category (SysprofCategoryIcon      *self,
                                                              SysprofCallgraphCategory  category);
 
+const GdkRGBA *sysprof_callgraph_category_get_color (SysprofCallgraphCategory category);
+
 G_END_DECLS

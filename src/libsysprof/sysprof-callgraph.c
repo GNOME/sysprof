@@ -421,6 +421,9 @@ sysprof_callgraph_add_traceable (SysprofCallgraph         *self,
   symbols[n_symbols++] = _sysprof_document_process_symbol (self->document, pid);
   symbols[n_symbols++] = everything;
 
+  if (n_symbols > self->height)
+    self->height = n_symbols;
+
   node = sysprof_callgraph_add_trace (self,
                                       symbols,
                                       n_symbols,

@@ -46,13 +46,13 @@ static GParamSpec *properties [N_PROPS];
 static void
 sysprof_flame_graph_snapshot_node (GtkSnapshot           *snapshot,
                                    SysprofCallgraphNode  *node,
-                                   guint64                weight,
                                    const graphene_rect_t *area,
                                    double                 row_height,
                                    double                 min_width,
                                    const GdkRGBA         *default_color,
                                    int                    depth)
 {
+  SysprofCallgraphCategory category;
   const GdkRGBA *color;
   GdkRGBA fallback;
 
@@ -60,7 +60,9 @@ sysprof_flame_graph_snapshot_node (GtkSnapshot           *snapshot,
   g_assert (node != NULL);
   g_assert (area != NULL);
 
-  if (!(color = sysprof_callgraph_category_get_color (node->category)) || color->alpha == 0)
+  category = SYSPROF_CALLGRAPH_CATEGORY_UNMASK (node->category);
+
+  if (!(color = sysprof_callgraph_category_get_color (category)) || color->alpha == 0)
     {
       fallback = *default_color;
       fallback.alpha -= depth * .005,
@@ -77,10 +79,14 @@ sysprof_flame_graph_snapshot_node (GtkSnapshot           *snapshot,
   if (node->children != NULL)
     {
       graphene_rect_t child_area;
+      guint64 weight = 0;
 
       child_area.origin.x = area->origin.x;
       child_area.origin.y = area->origin.y;
       child_area.size.height = area->size.height - row_height;
+
+      for (SysprofCallgraphNode *child = node->children; child; child = child->next)
+        weight += child->count;
 
       for (SysprofCallgraphNode *child = node->children; child; child = child->next)
         {
@@ -94,11 +100,8 @@ sysprof_flame_graph_snapshot_node (GtkSnapshot           *snapshot,
           else
             child_area.size.width = width;
 
-          child_area.size.width = area->origin.x + area->size.width - child_area.origin.x;
-
           sysprof_flame_graph_snapshot_node (snapshot,
                                              child,
-                                             weight,
                                              &child_area,
                                              row_height,
                                              min_width,
@@ -116,7 +119,6 @@ sysprof_flame_graph_snapshot (GtkWidget   *widget,
 {
   SysprofFlameGraph *self = (SysprofFlameGraph *)widget;
   SysprofColorIter iter;
-  guint64 weight = 0;
   double row_height;
 
   g_assert (SYSPROF_IS_FLAME_GRAPH (self));
@@ -128,12 +130,8 @@ sysprof_flame_graph_snapshot (GtkWidget   *widget,
   sysprof_color_iter_init (&iter);
   row_height = gtk_widget_get_height (widget) / (double)self->callgraph->height;
 
-  for (SysprofCallgraphNode *child = self->callgraph->root.children; child; child = child->next)
-    weight += child->count;
-
   sysprof_flame_graph_snapshot_node (snapshot,
                                      &self->callgraph->root,
-                                     weight,
                                      &GRAPHENE_RECT_INIT (0, 0,
                                                           gtk_widget_get_width (widget),
                                                           gtk_widget_get_height (widget)),

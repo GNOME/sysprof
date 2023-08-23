@@ -172,13 +172,8 @@ sysprof_category_icon_set_category (SysprofCategoryIcon      *self,
 const GdkRGBA *
 sysprof_callgraph_category_get_color (SysprofCallgraphCategory category)
 {
-  static GdkRGBA gray;
-
   if (category < G_N_ELEMENTS (category_colors) && category_colors[category].alpha > 0)
     return &category_colors[category];
 
-  if (gray.alpha == 0)
-    gdk_rgba_parse (&gray, "#77767b");
-
-  return &gray;
+  return NULL;
 }

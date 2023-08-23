@@ -247,6 +247,7 @@ sysprof_callgraph_add_trace (SysprofCallgraph  *self,
           if (_sysprof_symbol_equal (iter->summary->symbol, symbol))
             {
               node = iter;
+              node->count++;
               goto next_symbol;
             }
         }
@@ -256,6 +257,7 @@ sysprof_callgraph_add_trace (SysprofCallgraph  *self,
       node->summary = sysprof_callgraph_get_summary (self, symbol);
       node->parent = parent;
       node->next = parent->children;
+      node->count = 1;
       if (parent->children)
         parent->children->prev = node;
       parent->children = node;
@@ -431,7 +433,6 @@ sysprof_callgraph_add_traceable (SysprofCallgraph         *self,
                                       !!(self->flags & SYSPROF_CALLGRAPH_FLAGS_HIDE_SYSTEM_LIBRARIES));
 
   node->is_toplevel = TRUE;
-  node->count++;
 
   if (node && self->augment_func)
     self->augment_func (self,

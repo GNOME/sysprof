@@ -152,7 +152,7 @@
             <child>
               <object class="AdwViewStackPage">
                 <property name="icon-name">flamegraph-symbolic</property>
-                <property name="title" translatable="yes">Flame Graph</property>
+                <property name="title" translatable="yes">Flamegraph</property>
                 <property name="child">
                   <object class="SysprofFlameGraph">
                     <binding name="callgraph">

@@ -155,6 +155,9 @@
                 <property name="title" translatable="yes">Flame Graph</property>
                 <property name="child">
                   <object class="SysprofFlameGraph">
+                    <binding name="callgraph">
+                      <lookup name="callgraph">callgraph_view</lookup>
+                    </binding>
                   </object>
                 </property>
               </object>

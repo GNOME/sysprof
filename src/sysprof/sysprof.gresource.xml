@@ -7,6 +7,7 @@
     <file preprocess="xml-stripblanks">icons/scalable/actions/dbus-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/empty-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/energy-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/actions/flamegraph-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/graphics-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/mark-chart-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/mark-table-symbolic.svg</file>

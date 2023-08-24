@@ -28,6 +28,8 @@
 
 #include "sysprof-flame-graph.h"
 
+#define ROW_HEIGHT 14
+
 struct _SysprofFlameGraph
 {
   GtkWidget         parent_instance;
@@ -59,9 +61,9 @@ static void
 sysprof_flame_graph_snapshot_node (GtkSnapshot           *snapshot,
                                    SysprofCallgraphNode  *node,
                                    const graphene_rect_t *area,
-                                   double                 row_height,
                                    double                 min_width,
                                    const GdkRGBA         *default_color,
+                                   PangoLayout           *layout,
                                    int                    depth)
 {
   SysprofCallgraphCategory category;
@@ -84,9 +86,20 @@ sysprof_flame_graph_snapshot_node (GtkSnapshot           *snapshot,
   gtk_snapshot_append_color (snapshot,
                              color,
                              &GRAPHENE_RECT_INIT (area->origin.x,
-                                                  area->origin.y + area->size.height - row_height,
+                                                  area->origin.y + area->size.height - ROW_HEIGHT - 1,
                                                   area->size.width,
-                                                  row_height));
+                                                  ROW_HEIGHT));
+
+  if (area->size.width > ROW_HEIGHT)
+    {
+      pango_layout_set_text (layout, node->summary->symbol->name, -1);
+      pango_layout_set_width (layout, PANGO_SCALE * area->size.width);
+
+      gtk_snapshot_save (snapshot);
+      gtk_snapshot_translate (snapshot, &GRAPHENE_POINT_INIT (round (area->origin.x), round (area->origin.y) + area->size.height - ROW_HEIGHT));
+      gtk_snapshot_append_layout (snapshot, layout, &(GdkRGBA) {1,1,1,1});
+      gtk_snapshot_restore (snapshot);
+    }
 
   if (node->children != NULL)
     {
@@ -98,7 +111,7 @@ sysprof_flame_graph_snapshot_node (GtkSnapshot           *snapshot,
 
       child_area.origin.x = area->origin.x;
       child_area.origin.y = area->origin.y;
-      child_area.size.height = area->size.height - row_height;
+      child_area.size.height = area->size.height - ROW_HEIGHT - 1;
 
       for (SysprofCallgraphNode *child = node->children; child; child = child->next)
         {
@@ -128,9 +141,9 @@ sysprof_flame_graph_snapshot_node (GtkSnapshot           *snapshot,
           sysprof_flame_graph_snapshot_node (snapshot,
                                              child,
                                              &child_area,
-                                             row_height,
                                              min_width,
                                              default_color,
+                                             layout,
                                              depth + 1);
 
           child_area.origin.x += width;
@@ -144,7 +157,7 @@ sysprof_flame_graph_snapshot (GtkWidget   *widget,
 {
   SysprofFlameGraph *self = (SysprofFlameGraph *)widget;
   SysprofColorIter iter;
-  double row_height;
+  PangoLayout *layout;
 
   g_assert (SYSPROF_IS_FLAME_GRAPH (self));
   g_assert (GTK_IS_SNAPSHOT (snapshot));
@@ -153,17 +166,48 @@ sysprof_flame_graph_snapshot (GtkWidget   *widget,
     return;
 
   sysprof_color_iter_init (&iter);
-  row_height = gtk_widget_get_height (widget) / (double)self->callgraph->height;
-
+  layout = gtk_widget_create_pango_layout (widget, NULL);
+  pango_layout_set_ellipsize (layout, PANGO_ELLIPSIZE_END);
   sysprof_flame_graph_snapshot_node (snapshot,
                                      &self->callgraph->root,
                                      &GRAPHENE_RECT_INIT (0, 0,
                                                           gtk_widget_get_width (widget),
                                                           gtk_widget_get_height (widget)),
-                                     row_height,
                                      1. / (double)gtk_widget_get_scale_factor (widget),
                                      sysprof_color_iter_next (&iter),
+                                     layout,
                                      0);
+  g_object_unref (layout);
+}
+
+static void
+sysprof_flame_graph_measure (GtkWidget      *widget,
+                             GtkOrientation  orientation,
+                             int             for_size,
+                             int            *minimum,
+                             int            *natural,
+                             int            *minimum_baseline,
+                             int            *natural_baseline)
+{
+  SysprofFlameGraph *self = (SysprofFlameGraph *)widget;
+
+  g_assert (SYSPROF_IS_FLAME_GRAPH (self));
+
+  *minimum_baseline = -1;
+  *natural_baseline = -1;
+
+  if (orientation == GTK_ORIENTATION_VERTICAL)
+    {
+      if (self->callgraph != NULL)
+        *minimum = ROW_HEIGHT * self->callgraph->height + self->callgraph->height + 1;
+
+      *natural = *minimum;
+    }
+  else
+    {
+      *minimum = 1;
+      *natural = 500;
+    }
 }
 
 static void
@@ -225,6 +269,7 @@ sysprof_flame_graph_class_init (SysprofFlameGraphClass *klass)
   object_class->set_property = sysprof_flame_graph_set_property;
 
   widget_class->snapshot = sysprof_flame_graph_snapshot;
+  widget_class->measure = sysprof_flame_graph_measure;
 
   properties[PROP_CALLGRAPH] =
     g_param_spec_object ("callgraph", NULL, NULL,
@@ -232,11 +277,14 @@ sysprof_flame_graph_class_init (SysprofFlameGraphClass *klass)
                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
+
+  gtk_widget_class_set_css_name (widget_class, "flamegraph");
 }
 
 static void
 sysprof_flame_graph_init (SysprofFlameGraph *self)
 {
+  gtk_widget_add_css_class (GTK_WIDGET (self), "view");
 }
 
 GtkWidget *
@@ -263,6 +311,6 @@ sysprof_flame_graph_set_callgraph (SysprofFlameGraph *self,
   if (g_set_object (&self->callgraph, callgraph))
     {
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_CALLGRAPH]);
-      gtk_widget_queue_draw (GTK_WIDGET (self));
+      gtk_widget_queue_resize (GTK_WIDGET (self));
     }
 }

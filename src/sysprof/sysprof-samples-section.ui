@@ -154,10 +154,15 @@
                 <property name="icon-name">flamegraph-symbolic</property>
                 <property name="title" translatable="yes">Flamegraph</property>
                 <property name="child">
-                  <object class="SysprofFlameGraph">
-                    <binding name="callgraph">
-                      <lookup name="callgraph">callgraph_view</lookup>
-                    </binding>
+                  <object class="GtkScrolledWindow">
+                    <property name="hscrollbar-policy">never</property>
+                    <property name="child">
+                      <object class="SysprofFlameGraph">
+                        <binding name="callgraph">
+                          <lookup name="callgraph">callgraph_view</lookup>
+                        </binding>
+                      </object>
+                    </property>
                   </object>
                 </property>
               </object>

@@ -24,6 +24,8 @@
 #include "sysprof-category-icon.h"
 #include "sysprof-color-iter-private.h"
 
+#include "sysprof-symbol-private.h"
+
 #include "sysprof-flame-graph.h"
 
 struct _SysprofFlameGraph
@@ -42,6 +44,16 @@ enum {
 G_DEFINE_FINAL_TYPE (SysprofFlameGraph, sysprof_flame_graph, GTK_TYPE_WIDGET)
 
 static GParamSpec *properties [N_PROPS];
+
+static int
+compare_node (gconstpointer a,
+              gconstpointer b)
+{
+  const SysprofCallgraphNode *node_a = *(const SysprofCallgraphNode * const *)a;
+  const SysprofCallgraphNode *node_b = *(const SysprofCallgraphNode * const *)b;
+
+  return strcmp (node_a->summary->symbol->name, node_b->summary->symbol->name);
+}
 
 static void
 sysprof_flame_graph_snapshot_node (GtkSnapshot           *snapshot,
@@ -78,18 +90,31 @@ sysprof_flame_graph_snapshot_node (GtkSnapshot           *snapshot,
 
   if (node->children != NULL)
     {
+      SysprofCallgraphNode **children;
       graphene_rect_t child_area;
       guint64 weight = 0;
+      guint n_children = 0;
+      guint i = 0;
 
       child_area.origin.x = area->origin.x;
       child_area.origin.y = area->origin.y;
       child_area.size.height = area->size.height - row_height;
 
       for (SysprofCallgraphNode *child = node->children; child; child = child->next)
-        weight += child->count;
-
-      for (SysprofCallgraphNode *child = node->children; child; child = child->next)
         {
+          weight += child->count;
+          n_children++;
+        }
+
+      children = g_alloca (sizeof (SysprofCallgraphNode *) * n_children);
+      for (SysprofCallgraphNode *child = node->children; child; child = child->next)
+        children[i++] = child;
+
+      qsort (children, n_children, sizeof (SysprofCallgraphNode *), compare_node);
+
+      for (i = 0; i < n_children; i++)
+        {
+          SysprofCallgraphNode *child = children[i];
           double ratio = child->count / (double)weight;
           double width;
 

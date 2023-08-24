@@ -445,6 +445,50 @@ sysprof_callgraph_add_traceable (SysprofCallgraph         *self,
     _sysprof_callgraph_categorize (self, node);
 }
 
+static int
+sort_by_symbol_name (gconstpointer a,
+                     gconstpointer b)
+{
+  const SysprofCallgraphNode *node_a = *(const SysprofCallgraphNode * const *)a;
+  const SysprofCallgraphNode *node_b = *(const SysprofCallgraphNode * const *)b;
+
+  return g_utf8_collate (node_a->summary->symbol->name, node_b->summary->symbol->name);
+}
+
+static void
+sort_children (SysprofCallgraphNode *node)
+{
+  SysprofCallgraphNode **children;
+  guint n_children = 0;
+  guint i = 0;
+
+  if (node->children == NULL)
+    return;
+
+  for (SysprofCallgraphNode *child = node->children; child; child = child->next)
+    {
+      sort_children (child);
+      n_children++;
+    }
+
+  children = g_alloca (sizeof (SysprofCallgraphNode *) * (n_children + 1));
+  for (SysprofCallgraphNode *child = node->children; child; child = child->next)
+    children[i++] = child;
+  children[i] = NULL;
+
+  qsort (children, n_children, sizeof (SysprofCallgraphNode *), sort_by_symbol_name);
+
+  node->children = children[0];
+  node->children->prev = NULL;
+  node->children->next = children[1];
+
+  for (i = 1; i < n_children; i++)
+    {
+      children[i]->next = children[i+1];
+      children[i]->prev = children[i-1];
+    }
+}
+
 static void
 sysprof_callgraph_new_worker (GTask        *task,
                               gpointer      source_object,
@@ -474,6 +518,11 @@ sysprof_callgraph_new_worker (GTask        *task,
 
       sysprof_callgraph_add_traceable (self, traceable, i);
     }
+
+  /* Sort callgraph nodes alphabetically so that we can use them in the
+   * flamegraph without any further processing.
+   */
+  sort_children (&self->root);
 
   g_task_return_pointer (task, g_object_ref (self), g_object_unref);
 }

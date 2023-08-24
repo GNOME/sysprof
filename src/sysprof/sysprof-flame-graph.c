@@ -93,10 +93,12 @@ sysprof_flame_graph_snapshot_node (GtkSnapshot           *snapshot,
   if (area->size.width > ROW_HEIGHT)
     {
       pango_layout_set_text (layout, node->summary->symbol->name, -1);
-      pango_layout_set_width (layout, PANGO_SCALE * area->size.width);
+      pango_layout_set_width (layout, PANGO_SCALE * area->size.width - 4);
 
       gtk_snapshot_save (snapshot);
-      gtk_snapshot_translate (snapshot, &GRAPHENE_POINT_INIT (round (area->origin.x), round (area->origin.y) + area->size.height - ROW_HEIGHT));
+      gtk_snapshot_translate (snapshot,
+                              &GRAPHENE_POINT_INIT (round (area->origin.x) + 2,
+                                                    area->origin.y + area->size.height - ROW_HEIGHT));
       gtk_snapshot_append_layout (snapshot, layout, &(GdkRGBA) {1,1,1,1});
       gtk_snapshot_restore (snapshot);
     }

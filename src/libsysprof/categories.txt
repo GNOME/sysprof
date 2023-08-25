@@ -214,7 +214,7 @@ JS:
 *                                   javascript   inherit
 
 
-Kernel:
+Linux:
 do_coredump                         coredump     inherit
 *                                   kernel       inherit
 

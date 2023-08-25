@@ -41,8 +41,7 @@ _sysprof_callgraph_node_categorize (SysprofCallgraphNode *node)
    * that you can do valgrind style function matches like:
    */
 
-  if (symbol->kind != SYSPROF_SYMBOL_KIND_USER ||
-      symbol->binary_nick == NULL)
+  if (symbol->binary_nick == NULL)
     return SYSPROF_CALLGRAPH_CATEGORY_UNCATEGORIZED;
 
   category = sysprof_categories_lookup (NULL, symbol->binary_nick, symbol->name);

@@ -552,5 +552,25 @@ _sysprof_session_describe (SysprofSession *self,
       return g_string_free (str, FALSE);
     }
 
+  if (SYSPROF_IS_DOCUMENT_PROCESS (item))
+    {
+      SysprofDocumentProcess *process = item;
+      const SysprofTimeSpan *begin = sysprof_document_get_time_span (self->document);
+      g_autofree char *title = sysprof_document_process_dup_title (process);
+      GString *str = g_string_new (NULL);
+      gint64 t = sysprof_document_frame_get_time (item);
+      SysprofTimeSpan span = { t, sysprof_document_process_get_exit_time (process) };
+
+      span = sysprof_time_span_relative_to (span, begin->begin_nsec);
+
+      if (span.begin_nsec < 0)
+        span.begin_nsec = 0;
+
+      append_time_string (str, &span);
+      g_string_append_printf (str, ": %s", title);
+
+      return g_string_free (str, FALSE);
+    }
+
   return NULL;
 }

@@ -47,6 +47,7 @@ struct _SysprofFlameGraph
   GskRenderNode        *rendered;
   GArray               *nodes;
   SysprofCallgraphNode *root;
+  FlameRectangle       *under_pointer;
 
   double                motion_x;
   double                motion_y;
@@ -240,6 +241,30 @@ sysprof_flame_graph_measure (GtkWidget      *widget,
 }
 
 static void
+sysprof_flame_graph_set_motion (SysprofFlameGraph *self,
+                                double             x,
+                                double             y)
+{
+  FlameRectangle *rect;
+
+  g_assert (SYSPROF_IS_FLAME_GRAPH (self));
+
+  self->motion_x = x;
+  self->motion_y = y;
+
+  rect = find_node_at_coord (self, x, y);
+
+  if (rect != self->under_pointer)
+    {
+      self->under_pointer = rect;
+
+      gtk_widget_set_cursor_from_name (GTK_WIDGET (self), rect ? "hand" : NULL);
+    }
+
+  gtk_widget_queue_draw (GTK_WIDGET (self));
+}
+
+static void
 sysprof_flame_graph_motion_enter_cb (SysprofFlameGraph        *self,
                                      double                    x,
                                      double                    y,
@@ -248,10 +273,7 @@ sysprof_flame_graph_motion_enter_cb (SysprofFlameGraph        *self,
   g_assert (SYSPROF_IS_FLAME_GRAPH (self));
   g_assert (GTK_IS_EVENT_CONTROLLER_MOTION (motion));
 
-  self->motion_x = x;
-  self->motion_y = y;
-
-  gtk_widget_queue_draw (GTK_WIDGET (self));
+  sysprof_flame_graph_set_motion (self, x, y);
 }
 
 static void
@@ -263,10 +285,7 @@ sysprof_flame_graph_motion_motion_cb (SysprofFlameGraph        *self,
   g_assert (SYSPROF_IS_FLAME_GRAPH (self));
   g_assert (GTK_IS_EVENT_CONTROLLER_MOTION (motion));
 
-  self->motion_x = x;
-  self->motion_y = y;
-
-  gtk_widget_queue_draw (GTK_WIDGET (self));
+  sysprof_flame_graph_set_motion (self, x, y);
 }
 
 static void
@@ -276,10 +295,7 @@ sysprof_flame_graph_motion_leave_cb (SysprofFlameGraph        *self,
   g_assert (SYSPROF_IS_FLAME_GRAPH (self));
   g_assert (GTK_IS_EVENT_CONTROLLER_MOTION (motion));
 
-  self->motion_x = 0;
-  self->motion_y = 0;
-
-  gtk_widget_queue_draw (GTK_WIDGET (self));
+  sysprof_flame_graph_set_motion (self, 0, 0);
 }
 
 static void
@@ -619,6 +635,9 @@ sysprof_flame_graph_set_callgraph (SysprofFlameGraph *self,
       g_clear_pointer (&self->nodes, g_array_unref);
 
       self->root = NULL;
+      self->under_pointer = NULL;
+
+      gtk_widget_set_cursor_from_name (GTK_WIDGET (self), NULL);
 
       if (callgraph != NULL)
         {

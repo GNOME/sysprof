@@ -41,14 +41,15 @@ typedef struct
 
 struct _SysprofFlameGraph
 {
-  GtkWidget         parent_instance;
+  GtkWidget             parent_instance;
 
-  SysprofCallgraph *callgraph;
-  GskRenderNode    *rendered;
-  GArray           *nodes;
+  SysprofCallgraph     *callgraph;
+  GskRenderNode        *rendered;
+  GArray               *nodes;
+  SysprofCallgraphNode *root;
 
-  double            motion_x;
-  double            motion_y;
+  double                motion_x;
+  double                motion_y;
 };
 
 enum {
@@ -321,6 +322,32 @@ sysprof_flame_graph_query_tooltip (GtkWidget  *widget,
 }
 
 static void
+sysprof_flame_graph_click_pressed_cb (SysprofFlameGraph *self,
+                                      int                n_press,
+                                      double             x,
+                                      double             y,
+                                      GtkGestureClick   *click)
+{
+  SysprofCallgraphNode *root = NULL;
+  FlameRectangle *rect;
+
+  if (n_press != 1)
+    return;
+
+  if ((rect = find_node_at_coord (self, x, y)))
+    root = rect->node;
+  else if (self->callgraph)
+    root = &self->callgraph->root;
+
+  if (root != self->root)
+    {
+      self->root = root;
+
+      g_print ("Regenerate graph\n");
+    }
+}
+
+static void
 sysprof_flame_graph_dispose (GObject *object)
 {
   SysprofFlameGraph *self = (SysprofFlameGraph *)object;
@@ -399,6 +426,7 @@ static void
 sysprof_flame_graph_init (SysprofFlameGraph *self)
 {
   GtkEventController *motion;
+  GtkGesture *click;
 
   gtk_widget_add_css_class (GTK_WIDGET (self), "view");
   gtk_widget_set_has_tooltip (GTK_WIDGET (self), TRUE);
@@ -420,6 +448,14 @@ sysprof_flame_graph_init (SysprofFlameGraph *self)
                            self,
                            G_CONNECT_SWAPPED);
   gtk_widget_add_controller (GTK_WIDGET (self), motion);
+
+  click = gtk_gesture_click_new ();
+  g_signal_connect_object (click,
+                           "pressed",
+                           G_CALLBACK (sysprof_flame_graph_click_pressed_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+  gtk_widget_add_controller (GTK_WIDGET (self), GTK_EVENT_CONTROLLER (click));
 }
 
 GtkWidget *
@@ -561,9 +597,13 @@ sysprof_flame_graph_set_callgraph (SysprofFlameGraph *self,
       g_clear_pointer (&self->rendered, gsk_render_node_unref);
       g_clear_pointer (&self->nodes, g_array_unref);
 
+      self->root = NULL;
+
       if (callgraph != NULL)
         {
           g_autoptr(GTask) task = NULL;
+
+          self->root = &callgraph->root;
 
           task = g_task_new (NULL, NULL, sysprof_flame_graph_generate_cb, g_object_ref (self));
           g_task_set_task_data (task, g_object_ref (callgraph), g_object_unref);

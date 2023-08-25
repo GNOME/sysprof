@@ -529,7 +529,8 @@ sysprof_flame_graph_generate_cb (GObject      *object,
 static void
 generate (GArray                *array,
           SysprofCallgraphNode  *node,
-          const graphene_rect_t *area)
+          const graphene_rect_t *area,
+          gboolean               recurse)
 {
   FlameRectangle rect;
 
@@ -545,7 +546,7 @@ generate (GArray                *array,
 
   g_array_append_val (array, rect);
 
-  if (node->children != NULL)
+  if (recurse && node->children != NULL)
     {
       graphene_rect_t child_area;
 
@@ -562,7 +563,7 @@ generate (GArray                *array,
 
           child_area.size.width = width;
 
-          generate (array, child, &child_area);
+          generate (array, child, &child_area, TRUE);
 
           child_area.origin.x += width;
         }
@@ -591,24 +592,73 @@ sort_by_coord (gconstpointer a,
   return 0;
 }
 
+typedef struct
+{
+  SysprofCallgraph     *callgraph;
+  SysprofCallgraphNode *root;
+} Generate;
+
+static void
+generate_free (Generate *g)
+{
+  g_object_unref (g->callgraph);
+  g->root = NULL;
+  g_free (g);
+}
+
 static void
 sysprof_flame_graph_generate_worker (GTask        *task,
                                      gpointer      source_object,
                                      gpointer      task_data,
                                      GCancellable *cancellable)
 {
-  SysprofCallgraph *callgraph = task_data;
+  Generate *g = task_data;
+  SysprofCallgraphNode **ancestors;
   g_autoptr(GArray) array = NULL;
+  graphene_rect_t area;
+  guint size;
   int height;
 
-  g_assert (SYSPROF_IS_CALLGRAPH (callgraph));
+  g_assert (g!= NULL);
+  g_assert (SYSPROF_IS_CALLGRAPH (g->callgraph));
+  g_assert (g->root != NULL);
 
-  array = g_array_sized_new (FALSE, FALSE, sizeof (FlameRectangle), callgraph->root.count);
-  height = callgraph->height * ROW_HEIGHT + callgraph->height + 1;
+  size = g->root->count + g->callgraph->height;
+  array = g_array_sized_new (FALSE, FALSE, sizeof (FlameRectangle), size);
+  height = g->callgraph->height * ROW_HEIGHT + g->callgraph->height + 1;
+  area = GRAPHENE_RECT_INIT (0, 0, G_MAXUINT16, height);
 
-  generate (array,
-            &callgraph->root,
-            &GRAPHENE_RECT_INIT (0, 0, G_MAXUINT16, height));
+  if (g->root->parent != NULL)
+    {
+      guint n_ancestors = 0;
+      int i;
+
+      /* Synthesize parents so we can draw recursively but have the
+       * important data copied from the parents.
+       */
+
+      for (SysprofCallgraphNode *iter = g->root->parent; iter; iter = iter->parent)
+        n_ancestors++;
+
+      ancestors = g_alloca0 (sizeof (SysprofCallgraphNode *) * n_ancestors);
+
+      g_assert (n_ancestors > 0);
+      g_assert (ancestors != NULL);
+
+      i = n_ancestors-1;
+      for (SysprofCallgraphNode *iter = g->root->parent; iter; iter = iter->parent, i--)
+        ancestors[i] = iter;
+
+      for (i = 0; i < n_ancestors; i++)
+        {
+          generate (array, ancestors[i], &area, FALSE);
+
+          area.size.height -= ROW_HEIGHT;
+          area.size.height -= 1;
+        }
+    }
+
+  generate (array, g->root, &area, TRUE);
 
   g_array_sort (array, sort_by_coord);
 
@@ -635,11 +685,16 @@ sysprof_flame_graph_set_callgraph (SysprofFlameGraph *self,
       if (callgraph != NULL)
         {
           g_autoptr(GTask) task = NULL;
+          Generate *g;
 
           self->root = &callgraph->root;
 
+          g = g_new0 (Generate, 1);
+          g->callgraph = g_object_ref (callgraph);
+          g->root = self->root;
+
           task = g_task_new (NULL, NULL, sysprof_flame_graph_generate_cb, g_object_ref (self));
-          g_task_set_task_data (task, g_object_ref (callgraph), g_object_unref);
+          g_task_set_task_data (task, g, (GDestroyNotify)generate_free);
           g_task_run_in_thread (task, sysprof_flame_graph_generate_worker);
         }
 

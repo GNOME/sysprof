@@ -309,6 +309,13 @@ sysprof_flame_graph_query_tooltip (GtkWidget  *widget,
     {
       g_autoptr(GString) string = g_string_new (NULL);
       SysprofSymbol *symbol = rect->node->summary->symbol;
+      SysprofCallgraphNode *root = rect->node;
+      guint64 weight = 0;
+
+      while (root->parent)
+        root = root->parent;
+      for (SysprofCallgraphNode *child = root->children; child; child = child->next)
+        weight += child->count;
 
       g_string_append (string, symbol->name);
 
@@ -317,6 +324,15 @@ sysprof_flame_graph_query_tooltip (GtkWidget  *widget,
 
       if (symbol->binary_path && symbol->binary_path[0])
         g_string_append_printf (string, "\n%s", symbol->binary_path);
+
+      g_string_append_c (string, '\n');
+
+      if (rect->node != root)
+        g_string_append_printf (string, "%'u samples, %6.2lf%%",
+                                rect->node->count,
+                                rect->node->count / (double)weight * 100.);
+      else
+        g_string_append_printf (string, "%'u samples", (guint)weight);
 
       gtk_tooltip_set_text (tooltip, string->str);
 

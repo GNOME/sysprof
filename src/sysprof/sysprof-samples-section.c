@@ -22,6 +22,7 @@
 
 #include "sysprof-chart.h"
 #include "sysprof-column-layer.h"
+#include "sysprof-flame-graph.h"
 #include "sysprof-sampled-model.h"
 #include "sysprof-samples-section.h"
 #include "sysprof-session-model-item.h"
@@ -80,6 +81,7 @@ sysprof_samples_section_class_init (SysprofSamplesSectionClass *klass)
   g_type_ensure (SYSPROF_TYPE_COLUMN_LAYER);
   g_type_ensure (SYSPROF_TYPE_DOCUMENT_SAMPLE);
   g_type_ensure (SYSPROF_TYPE_DOCUMENT_TRACEABLE);
+  g_type_ensure (SYSPROF_TYPE_FLAME_GRAPH);
   g_type_ensure (SYSPROF_TYPE_SAMPLED_MODEL);
   g_type_ensure (SYSPROF_TYPE_TIME_FILTER_MODEL);
   g_type_ensure (SYSPROF_TYPE_TIME_SCRUBBER);

@@ -20,6 +20,7 @@ sysprof_sources = [
   'sysprof-energy-section.c',
   'sysprof-entry-popover.c',
   'sysprof-files-section.c',
+  'sysprof-flame-graph.c',
   'sysprof-frame-utility.c',
   'sysprof-graphics-section.c',
   'sysprof-greeter.c',

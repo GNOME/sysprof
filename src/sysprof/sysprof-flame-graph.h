@@ -1,4 +1,4 @@
-/* sysprof-category-icon.h
+/* sysprof-flame-graph.h
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -26,14 +26,13 @@
 
 G_BEGIN_DECLS
 
-#define SYSPROF_TYPE_CATEGORY_ICON (sysprof_category_icon_get_type())
+#define SYSPROF_TYPE_FLAME_GRAPH (sysprof_flame_graph_get_type())
 
-G_DECLARE_FINAL_TYPE (SysprofCategoryIcon, sysprof_category_icon, SYSPROF, CATEGORY_ICON, GtkWidget)
+G_DECLARE_FINAL_TYPE (SysprofFlameGraph, sysprof_flame_graph, SYSPROF, FLAME_GRAPH, GtkWidget)
 
-SysprofCallgraphCategory sysprof_category_icon_get_category (SysprofCategoryIcon      *self);
-void                     sysprof_category_icon_set_category (SysprofCategoryIcon      *self,
-                                                             SysprofCallgraphCategory  category);
-
-const GdkRGBA *sysprof_callgraph_category_get_color (SysprofCallgraphCategory category);
+GtkWidget        *sysprof_flame_graph_new           (void);
+SysprofCallgraph *sysprof_flame_graph_get_callgraph (SysprofFlameGraph *self);
+void              sysprof_flame_graph_set_callgraph (SysprofFlameGraph *self,
+                                                     SysprofCallgraph  *callgraph);
 
 G_END_DECLS

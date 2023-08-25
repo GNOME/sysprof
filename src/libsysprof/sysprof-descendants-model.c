@@ -129,6 +129,7 @@ sysprof_descendants_model_add_trace (SysprofDescendantsModel  *self,
           if (_sysprof_symbol_equal (iter->summary->symbol, symbol))
             {
               node = iter;
+              node->count++;
               goto next_symbol;
             }
         }
@@ -144,6 +145,7 @@ sysprof_descendants_model_add_trace (SysprofDescendantsModel  *self,
       node->summary = summary;
       node->parent = parent;
       node->next = parent->children;
+      node->count = 1;
       if (parent->children)
         parent->children->prev = node;
       parent->children = node;
@@ -211,7 +213,6 @@ sysprof_descendants_model_add_traceable (SysprofDescendantsModel  *self,
       node = sysprof_descendants_model_add_trace (self, symbols, n_symbols);
 
       node->is_toplevel = TRUE;
-      node->count++;
 
       if (node && self->callgraph->augment_func)
         self->callgraph->augment_func (self->callgraph,

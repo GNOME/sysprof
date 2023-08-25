@@ -71,6 +71,8 @@ struct _SysprofCallgraph
   GDestroyNotify           augment_func_data_destroy;
 
   SysprofCallgraphNode     root;
+
+  guint                    height;
 };
 
 void                      _sysprof_callgraph_new_async          (SysprofDocument          *document,

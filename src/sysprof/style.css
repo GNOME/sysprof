@@ -91,3 +91,7 @@ timescrubber timecode {
   font-feature-settings: 'tnum';
   font-size: .8em;
 }
+
+flamegraph {
+  font-size: 10px;
+}

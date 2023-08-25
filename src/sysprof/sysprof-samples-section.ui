@@ -80,64 +80,99 @@
           </object>
         </child>
         <child>
-          <object class="SysprofWeightedCallgraphView" id="callgraph_view">
+          <object class="AdwViewStack" id="stack">
             <property name="vexpand">true</property>
-            <binding name="include-threads">
-              <lookup name="include-threads" type="SysprofSession">
-                <lookup name="session">SysprofSamplesSection</lookup>
-              </lookup>
-            </binding>
-            <binding name="hide-system-libraries">
-              <lookup name="hide-system-libraries" type="SysprofSession">
-                <lookup name="session">SysprofSamplesSection</lookup>
-              </lookup>
-            </binding>
-            <binding name="bottom-up">
-              <lookup name="bottom-up" type="SysprofSession">
-                <lookup name="session">SysprofSamplesSection</lookup>
-              </lookup>
-            </binding>
-            <binding name="categorize-frames">
-              <lookup name="categorize-frames" type="SysprofSession">
-                <lookup name="session">SysprofSamplesSection</lookup>
-              </lookup>
-            </binding>
-            <binding name="ignore-process-0">
-              <lookup name="ignore-process-0" type="SysprofSession">
-                <lookup name="session">SysprofSamplesSection</lookup>
-              </lookup>
-            </binding>
-            <binding name="document">
-              <lookup name="document" type="SysprofSession">
-                <lookup name="session">SysprofSamplesSection</lookup>
-              </lookup>
-            </binding>
-            <property name="traceables">
-              <object class="GtkFilterListModel">
-                <binding name="filter">
-                  <lookup name="filter">
-                    <lookup name="session">SysprofSamplesSection</lookup>
-                  </lookup>
-                </binding>
-                <property name="model">
-                  <object class="SysprofTimeFilterModel">
-                    <property name="inclusive">false</property>
-                    <binding name="time-span">
-                      <lookup name="selected-time" type="SysprofSession">
+            <child>
+              <object class="AdwViewStackPage">
+                <property name="icon-name">threads-symbolic</property>
+                <property name="title" translatable="yes">Callgraph</property>
+                <property name="child">
+                  <object class="SysprofWeightedCallgraphView" id="callgraph_view">
+                    <property name="vexpand">true</property>
+                    <binding name="include-threads">
+                      <lookup name="include-threads" type="SysprofSession">
                         <lookup name="session">SysprofSamplesSection</lookup>
                       </lookup>
                     </binding>
-                    <binding name="model">
-                      <lookup name="samples" type="SysprofDocument">
-                        <lookup name="document" type="SysprofSession">
-                          <lookup name="session">SysprofSamplesSection</lookup>
-                        </lookup>
+                    <binding name="hide-system-libraries">
+                      <lookup name="hide-system-libraries" type="SysprofSession">
+                        <lookup name="session">SysprofSamplesSection</lookup>
                       </lookup>
                     </binding>
+                    <binding name="bottom-up">
+                      <lookup name="bottom-up" type="SysprofSession">
+                        <lookup name="session">SysprofSamplesSection</lookup>
+                      </lookup>
+                    </binding>
+                    <binding name="categorize-frames">
+                      <lookup name="categorize-frames" type="SysprofSession">
+                        <lookup name="session">SysprofSamplesSection</lookup>
+                      </lookup>
+                    </binding>
+                    <binding name="ignore-process-0">
+                      <lookup name="ignore-process-0" type="SysprofSession">
+                        <lookup name="session">SysprofSamplesSection</lookup>
+                      </lookup>
+                    </binding>
+                    <binding name="document">
+                      <lookup name="document" type="SysprofSession">
+                        <lookup name="session">SysprofSamplesSection</lookup>
+                      </lookup>
+                    </binding>
+                    <property name="traceables">
+                      <object class="GtkFilterListModel">
+                        <binding name="filter">
+                          <lookup name="filter">
+                            <lookup name="session">SysprofSamplesSection</lookup>
+                          </lookup>
+                        </binding>
+                        <property name="model">
+                          <object class="SysprofTimeFilterModel">
+                            <property name="inclusive">false</property>
+                            <binding name="time-span">
+                              <lookup name="selected-time" type="SysprofSession">
+                                <lookup name="session">SysprofSamplesSection</lookup>
+                              </lookup>
+                            </binding>
+                            <binding name="model">
+                              <lookup name="samples" type="SysprofDocument">
+                                <lookup name="document" type="SysprofSession">
+                                  <lookup name="session">SysprofSamplesSection</lookup>
+                                </lookup>
+                              </lookup>
+                            </binding>
+                          </object>
+                        </property>
+                      </object>
+                    </property>
                   </object>
                 </property>
               </object>
-            </property>
+            </child>
+            <child>
+              <object class="AdwViewStackPage">
+                <property name="icon-name">flamegraph-symbolic</property>
+                <property name="title" translatable="yes">Flamegraph</property>
+                <property name="child">
+                  <object class="GtkScrolledWindow">
+                    <property name="hscrollbar-policy">never</property>
+                    <property name="child">
+                      <object class="SysprofFlameGraph">
+                        <binding name="callgraph">
+                          <lookup name="callgraph">callgraph_view</lookup>
+                        </binding>
+                      </object>
+                    </property>
+                  </object>
+                </property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="AdwViewSwitcherBar" id="switcher">
+            <property name="reveal">true</property>
+            <property name="stack">stack</property>
           </object>
         </child>
       </object>

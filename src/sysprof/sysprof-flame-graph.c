@@ -61,6 +61,8 @@ enum {
 
 G_DEFINE_FINAL_TYPE (SysprofFlameGraph, sysprof_flame_graph, GTK_TYPE_WIDGET)
 
+static void sysprof_flame_graph_invalidate (SysprofFlameGraph *self);
+
 static GParamSpec *properties [N_PROPS];
 
 typedef struct
@@ -377,7 +379,7 @@ sysprof_flame_graph_click_pressed_cb (SysprofFlameGraph *self,
     {
       self->root = root;
 
-      g_print ("Regenerate graph\n");
+      sysprof_flame_graph_invalidate (self);
     }
 }
 
@@ -665,6 +667,31 @@ sysprof_flame_graph_generate_worker (GTask        *task,
   g_task_return_pointer (task, g_steal_pointer (&array), (GDestroyNotify)g_array_unref);
 }
 
+static void
+sysprof_flame_graph_invalidate (SysprofFlameGraph *self)
+{
+  g_assert (SYSPROF_IS_FLAME_GRAPH (self));
+
+  g_clear_pointer (&self->rendered, gsk_render_node_unref);
+  g_clear_pointer (&self->nodes, g_array_unref);
+
+  gtk_widget_set_cursor_from_name (GTK_WIDGET (self), NULL);
+
+  if (self->callgraph != NULL)
+    {
+      g_autoptr(GTask) task = NULL;
+      Generate *g;
+
+      g = g_new0 (Generate, 1);
+      g->callgraph = g_object_ref (self->callgraph);
+      g->root = self->root;
+
+      task = g_task_new (NULL, NULL, sysprof_flame_graph_generate_cb, g_object_ref (self));
+      g_task_set_task_data (task, g, (GDestroyNotify)generate_free);
+      g_task_run_in_thread (task, sysprof_flame_graph_generate_worker);
+    }
+}
+
 void
 sysprof_flame_graph_set_callgraph (SysprofFlameGraph *self,
                                    SysprofCallgraph  *callgraph)
@@ -674,32 +701,15 @@ sysprof_flame_graph_set_callgraph (SysprofFlameGraph *self,
 
   if (g_set_object (&self->callgraph, callgraph))
     {
-      g_clear_pointer (&self->rendered, gsk_render_node_unref);
-      g_clear_pointer (&self->nodes, g_array_unref);
-
       self->root = NULL;
       self->under_pointer = NULL;
 
-      gtk_widget_set_cursor_from_name (GTK_WIDGET (self), NULL);
-
       if (callgraph != NULL)
-        {
-          g_autoptr(GTask) task = NULL;
-          Generate *g;
-
-          self->root = &callgraph->root;
-
-          g = g_new0 (Generate, 1);
-          g->callgraph = g_object_ref (callgraph);
-          g->root = self->root;
-
-          task = g_task_new (NULL, NULL, sysprof_flame_graph_generate_cb, g_object_ref (self));
-          g_task_set_task_data (task, g, (GDestroyNotify)generate_free);
-          g_task_run_in_thread (task, sysprof_flame_graph_generate_worker);
-        }
+        self->root = &callgraph->root;
 
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_CALLGRAPH]);
-
       gtk_widget_queue_resize (GTK_WIDGET (self));
+
+      sysprof_flame_graph_invalidate (self);
     }
 }

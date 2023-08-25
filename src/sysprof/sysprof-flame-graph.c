@@ -289,6 +289,37 @@ sysprof_flame_graph_size_allocate (GtkWidget *widget,
   g_clear_pointer (&self->rendered, gsk_render_node_unref);
 }
 
+static gboolean
+sysprof_flame_graph_query_tooltip (GtkWidget  *widget,
+                                   int         x,
+                                   int         y,
+                                   gboolean    keyboard_tooltip,
+                                   GtkTooltip *tooltip)
+{
+  SysprofFlameGraph *self = SYSPROF_FLAME_GRAPH (widget);
+  FlameRectangle *rect;
+
+  if ((rect = find_node_at_coord (self, x, y)))
+    {
+      g_autoptr(GString) string = g_string_new (NULL);
+      SysprofSymbol *symbol = rect->node->summary->symbol;
+
+      g_string_append (string, symbol->name);
+
+      if (symbol->binary_nick && symbol->binary_nick[0])
+        g_string_append_printf (string, " [%s]", symbol->binary_nick);
+
+      if (symbol->binary_path && symbol->binary_path[0])
+        g_string_append_printf (string, "\n%s", symbol->binary_path);
+
+      gtk_tooltip_set_text (tooltip, string->str);
+
+      return TRUE;
+    }
+
+  return FALSE;
+}
+
 static void
 sysprof_flame_graph_dispose (GObject *object)
 {
@@ -352,6 +383,7 @@ sysprof_flame_graph_class_init (SysprofFlameGraphClass *klass)
   widget_class->snapshot = sysprof_flame_graph_snapshot;
   widget_class->measure = sysprof_flame_graph_measure;
   widget_class->size_allocate = sysprof_flame_graph_size_allocate;
+  widget_class->query_tooltip = sysprof_flame_graph_query_tooltip;
 
   properties[PROP_CALLGRAPH] =
     g_param_spec_object ("callgraph", NULL, NULL,
@@ -369,6 +401,7 @@ sysprof_flame_graph_init (SysprofFlameGraph *self)
   GtkEventController *motion;
 
   gtk_widget_add_css_class (GTK_WIDGET (self), "view");
+  gtk_widget_set_has_tooltip (GTK_WIDGET (self), TRUE);
 
   motion = gtk_event_controller_motion_new ();
   g_signal_connect_object (motion,

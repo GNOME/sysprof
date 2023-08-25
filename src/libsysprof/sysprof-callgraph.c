@@ -433,14 +433,17 @@ sysprof_callgraph_add_traceable (SysprofCallgraph         *self,
                                       list_model_index,
                                       !!(self->flags & SYSPROF_CALLGRAPH_FLAGS_HIDE_SYSTEM_LIBRARIES));
 
-  node->is_toplevel = TRUE;
+  if (node != NULL)
+    {
+      node->is_toplevel = TRUE;
 
-  if (node && self->augment_func)
-    self->augment_func (self,
-                        node,
-                        SYSPROF_DOCUMENT_FRAME (traceable),
-                        TRUE,
-                        self->augment_func_data);
+      if (self->augment_func)
+        self->augment_func (self,
+                            node,
+                            SYSPROF_DOCUMENT_FRAME (traceable),
+                            TRUE,
+                            self->augment_func_data);
+    }
 
   if ((self->flags & SYSPROF_CALLGRAPH_FLAGS_CATEGORIZE_FRAMES) != 0)
     _sysprof_callgraph_categorize (self, node);

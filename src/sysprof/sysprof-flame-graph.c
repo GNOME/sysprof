@@ -148,11 +148,16 @@ sysprof_flame_graph_snapshot (GtkWidget   *widget,
         {
           FlameRectangle *rect = &g_array_index (self->nodes, FlameRectangle, i);
           SysprofCallgraphCategory category = SYSPROF_CALLGRAPH_CATEGORY_UNMASK (rect->node->category);
-          const GdkRGBA *color = sysprof_callgraph_category_get_color (category);
+          const GdkRGBA *category_color = sysprof_callgraph_category_get_color (category);
           graphene_rect_t area;
+          GdkRGBA color;
 
-          if (color == NULL)
-            color = default_color;
+          if (category_color == NULL)
+            color = *default_color;
+          else
+            color = *category_color;
+
+          color.alpha = .6 + (g_str_hash (rect->node->summary->symbol->name) % 1000) / 2500.;
 
           area = GRAPHENE_RECT_INIT (rect->x / (double)G_MAXUINT16 * width,
                                      rect->y,
@@ -162,7 +167,7 @@ sysprof_flame_graph_snapshot (GtkWidget   *widget,
           if (!highlight && graphene_rect_contains_point (&area, &point))
             highlight = rect;
 
-          gtk_snapshot_append_color (child_snapshot, color, &area);
+          gtk_snapshot_append_color (child_snapshot, &color, &area);
 
           if (area.size.width > ROW_HEIGHT)
             {

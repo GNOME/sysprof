@@ -225,6 +225,7 @@ sysprof_callgraph_add_trace (SysprofCallgraph  *self,
   g_assert (symbols[n_symbols-1] == everything);
 
   parent = &self->root;
+  parent->count++;
 
   for (guint i = n_symbols - 1; i > 0; i--)
     {

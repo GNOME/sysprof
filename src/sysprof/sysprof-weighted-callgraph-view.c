@@ -24,6 +24,8 @@
 #include "sysprof-weighted-callgraph-view.h"
 #include "sysprof-progress-cell-private.h"
 
+#include "sysprof-callgraph-private.h"
+
 struct _SysprofWeightedCallgraphView
 {
   SysprofCallgraphView parent_instance;
@@ -57,6 +59,21 @@ typedef struct _AugmentWeight
 
 G_DEFINE_FINAL_TYPE (SysprofWeightedCallgraphView, sysprof_weighted_callgraph_view, SYSPROF_TYPE_CALLGRAPH_VIEW)
 
+static gboolean
+seen_symbol (const SysprofCallgraphNode *node,
+             const SysprofCallgraphNode *toplevel)
+{
+  for (const SysprofCallgraphNode *iter = toplevel;
+       iter != node;
+       iter = iter->parent)
+    {
+      if (iter->summary == node->summary)
+        return TRUE;
+    }
+
+  return FALSE;
+}
+
 static void
 augment_weight (SysprofCallgraph     *callgraph,
                 SysprofCallgraphNode *node,
@@ -64,6 +81,7 @@ augment_weight (SysprofCallgraph     *callgraph,
                 gboolean              summarize,
                 gpointer              user_data)
 {
+  SysprofCallgraphNode *iter;
   AugmentWeight *cur;
   AugmentWeight *sum;
 
@@ -83,16 +101,14 @@ augment_weight (SysprofCallgraph     *callgraph,
       sum->total += 1;
     }
 
-  for (node = sysprof_callgraph_node_parent (node);
-       node != NULL;
-       node = sysprof_callgraph_node_parent (node))
+  for (iter = node->parent; iter; iter = iter->parent)
     {
-      cur = sysprof_callgraph_get_augment (callgraph, node);
+      cur = sysprof_callgraph_get_augment (callgraph, iter);
       cur->total += 1;
 
-      if (summarize)
+      if (summarize && !seen_symbol (iter, node))
         {
-          sum = sysprof_callgraph_get_summary_augment (callgraph, node);
+          sum = sysprof_callgraph_get_summary_augment (callgraph, iter);
           sum->total += 1;
         }
     }
@@ -170,7 +186,7 @@ functions_get_total_fraction (GObject *item)
     {
       SysprofCallgraph *callgraph = sysprof_callgraph_symbol_get_callgraph (sym);
       AugmentWeight *sum = sysprof_callgraph_symbol_get_summary_augment (sym);
-      AugmentWeight *root = sysprof_callgraph_get_augment (callgraph, NULL);
+      AugmentWeight *root = sysprof_callgraph_get_summary_augment (callgraph, NULL);
 
       return sum->total / (double)root->total;
     }
@@ -189,7 +205,7 @@ functions_get_self_fraction (GObject *item)
     {
       SysprofCallgraph *callgraph = sysprof_callgraph_symbol_get_callgraph (sym);
       AugmentWeight *sum = sysprof_callgraph_symbol_get_summary_augment (sym);
-      AugmentWeight *root = sysprof_callgraph_get_augment (callgraph, NULL);
+      AugmentWeight *root = sysprof_callgraph_get_summary_augment (callgraph, NULL);
 
       return sum->size / (double)root->total;
     }

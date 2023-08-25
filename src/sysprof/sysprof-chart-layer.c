@@ -23,6 +23,9 @@
 #include "sysprof-chart.h"
 #include "sysprof-chart-layer-private.h"
 
+#include "sysprof-session-private.h"
+#include "sysprof-window.h"
+
 typedef struct
 {
   char *title;
@@ -55,6 +58,55 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   gtk_style_context_lookup_color (style_context, "accent_fg_color", &accent_fg_color);
   gtk_style_context_lookup_color (style_context, "accent_bg_color", &accent_bg_color);
 G_GNUC_END_IGNORE_DEPRECATIONS
+}
+
+static SysprofSession *
+find_session (SysprofChartLayer *self)
+{
+  GtkWidget *toplevel = gtk_widget_get_ancestor (GTK_WIDGET (self), GTK_TYPE_WINDOW);
+
+  if (SYSPROF_IS_WINDOW (toplevel))
+    return sysprof_window_get_session (SYSPROF_WINDOW (toplevel));
+
+  return NULL;
+}
+
+static gboolean
+sysprof_chart_layer_query_tooltip (GtkWidget  *widget,
+                                   int         x,
+                                   int         y,
+                                   gboolean    keyboard_tooltip,
+                                   GtkTooltip *tooltip)
+{
+  SysprofChartLayer *self = (SysprofChartLayer *)widget;
+  g_autoptr(GObject) item = NULL;
+
+  g_assert (SYSPROF_IS_CHART_LAYER (self));
+  g_assert (GTK_IS_TOOLTIP (tooltip));
+
+  /* This function is definitely a layering violation, but helpful
+   * nonetheless so we don't have to plumb things everywhere. If
+   * you were abstracting this into a library, you'd definitely
+   * do this differently.
+   */
+
+  if ((item = sysprof_chart_layer_lookup_item (self, x, y)))
+    {
+      SysprofSession *session;
+
+      if ((session = find_session (self)))
+        {
+          g_autofree char *text = _sysprof_session_describe (session, item);
+
+          if (text != NULL)
+            {
+              gtk_tooltip_set_text (tooltip, text);
+              return TRUE;
+            }
+        }
+    }
+
+  return FALSE;
 }
 
 static void
@@ -130,6 +182,7 @@ sysprof_chart_layer_class_init (SysprofChartLayerClass *klass)
 
   widget_class->css_changed = sysprof_chart_layer_css_changed;
   widget_class->root = sysprof_chart_layer_root;
+  widget_class->query_tooltip = sysprof_chart_layer_query_tooltip;
 
   properties[PROP_CHART] =
     g_param_spec_object ("chart", NULL, NULL,
@@ -149,6 +202,7 @@ sysprof_chart_layer_class_init (SysprofChartLayerClass *klass)
 static void
 sysprof_chart_layer_init (SysprofChartLayer *self)
 {
+  gtk_widget_set_has_tooltip (GTK_WIDGET (self), TRUE);
 }
 
 const char *

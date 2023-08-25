@@ -104,6 +104,7 @@ sysprof_callgraph_view_set_descendants (SysprofCallgraphView *self,
   descendants_sorter = gtk_tree_list_row_sorter_new (g_object_ref (column_sorter));
   descendants_sort_model = gtk_sort_list_model_new (g_object_ref (G_LIST_MODEL (descendants_tree)),
                                                     g_object_ref (GTK_SORTER (descendants_sorter)));
+  gtk_sort_list_model_set_incremental (descendants_sort_model, TRUE);
   descendants_selection = gtk_single_selection_new (g_object_ref (G_LIST_MODEL (descendants_sort_model)));
   gtk_single_selection_set_autoselect (descendants_selection, FALSE);
   g_signal_connect_object (descendants_selection,
@@ -631,6 +632,7 @@ sysprof_callgraph_view_reload_cb (GObject      *object,
   gtk_filter_list_model_set_incremental (filter_model, TRUE);
   functions_sort_model = gtk_sort_list_model_new (g_object_ref (G_LIST_MODEL (filter_model)),
                                                   g_object_ref (column_sorter));
+  gtk_sort_list_model_set_incremental (functions_sort_model, TRUE);
   functions_selection = gtk_single_selection_new (g_object_ref (G_LIST_MODEL (functions_sort_model)));
   gtk_single_selection_set_autoselect (functions_selection, FALSE);
   gtk_single_selection_set_can_unselect (functions_selection, TRUE);

@@ -326,12 +326,9 @@ sysprof_flame_graph_query_tooltip (GtkWidget  *widget,
       g_autoptr(GString) string = g_string_new (NULL);
       SysprofSymbol *symbol = rect->node->summary->symbol;
       SysprofCallgraphNode *root = rect->node;
-      guint64 weight = 0;
 
       while (root->parent)
         root = root->parent;
-      for (SysprofCallgraphNode *child = root->children; child; child = child->next)
-        weight += child->count;
 
       g_string_append (string, symbol->name);
 
@@ -346,9 +343,9 @@ sysprof_flame_graph_query_tooltip (GtkWidget  *widget,
       if (rect->node != root)
         g_string_append_printf (string, "%'u samples, %6.2lf%%",
                                 rect->node->count,
-                                rect->node->count / (double)weight * 100.);
+                                rect->node->count / (double)root->count * 100.);
       else
-        g_string_append_printf (string, "%'u samples", (guint)weight);
+        g_string_append_printf (string, "%'u samples", (guint)root->count);
 
       gtk_tooltip_set_text (tooltip, string->str);
 
@@ -551,18 +548,14 @@ generate (GArray                *array,
   if (node->children != NULL)
     {
       graphene_rect_t child_area;
-      guint64 weight = 0;
 
       child_area.origin.x = area->origin.x;
       child_area.origin.y = area->origin.y;
       child_area.size.height = area->size.height - ROW_HEIGHT - 1;
 
       for (SysprofCallgraphNode *child = node->children; child; child = child->next)
-        weight += child->count;
-
-      for (SysprofCallgraphNode *child = node->children; child; child = child->next)
         {
-          double ratio = child->count / (double)weight;
+          double ratio = child->count / (double)node->count;
           double width;
 
           width = ratio * area->size.width;

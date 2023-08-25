@@ -95,6 +95,7 @@
                           <object class="GtkToggleButton" id="show_left_sidebar">
                             <property name="icon-name">sidebar-show-symbolic</property>
                             <property name="active">true</property>
+                            <property name="tooltip-text" translatable="yes">Toggle Left Panel</property>
                           </object>
                         </child>
                         <child type="start">
@@ -158,11 +159,20 @@
                           <object class="GtkMenuButton">
                             <property name="icon-name">open-menu-symbolic</property>
                             <property name="menu-model">primary_menu</property>
+                            <property name="tooltip-text" translatable="yes">Main Menu</property>
+                          </object>
+                        </child>
+                        <child type="end">
+                          <object class="GtkMenuButton">
+                            <property name="icon-name">document-properties-symbolic</property>
+                            <property name="menu-model">view_menu</property>
+                            <property name="tooltip-text" translatable="yes">View Options</property>
                           </object>
                         </child>
                         <child type="end">
                           <object class="GtkToggleButton" id="show_right_sidebar">
                             <property name="icon-name">sidebar-show-right-symbolic</property>
+                            <property name="tooltip-text" translatable="yes">Toggle Right Panel</property>
                           </object>
                         </child>
                       </object>
@@ -345,6 +355,31 @@
       <item>
         <attribute name="label" translatable="yes">About Sysprof</attribute>
         <attribute name="action">app.about</attribute>
+      </item>
+    </section>
+  </menu>
+  <menu id="view_menu">
+    <section>
+      <attribute name="label" translatable="yes">Callgraph</attribute>
+      <item>
+        <attribute name="label" translatable="yes">Categorize Frames</attribute>
+        <attribute name="action">win.callgraph.categorize-frames</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Hide System Libraries</attribute>
+        <attribute name="action">win.callgraph.hide-system-libraries</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Include Threads</attribute>
+        <attribute name="action">win.callgraph.include-threads</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Bottom Up</attribute>
+        <attribute name="action">win.callgraph.bottom-up</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Ignore Process 0</attribute>
+        <attribute name="action">win.callgraph.ignore-process-0</attribute>
       </item>
     </section>
   </menu>

@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-08-22 16:31+0000\n"
-"PO-Revision-Date: 2023-08-22 22:17+0300\n"
+"POT-Creation-Date: 2023-08-26 03:32+0000\n"
+"PO-Revision-Date: 2023-08-26 09:46+0300\n"
 "Last-Translator: Sabri Ünal <libreajans@gmail.com>\n"
 "Language-Team: Turkish <takim@gnome.org.tr>\n"
 "Language: tr\n"
@@ -51,88 +51,88 @@ msgstr "Profilleyici"
 msgid "Profile an application or entire system."
 msgstr "Bir uygulamayı ya da tüm sistemi profille."
 
-#: src/libsysprof/sysprof-category-summary.c:138
+#: src/libsysprof/sysprof-category-summary.c:136
 msgid "Uncategorized"
 msgstr "Kategorisiz"
 
-#: src/libsysprof/sysprof-category-summary.c:141
+#: src/libsysprof/sysprof-category-summary.c:139
 msgid "Accessibility"
 msgstr "Erişilebilirlik"
 
-#: src/libsysprof/sysprof-category-summary.c:144
+#: src/libsysprof/sysprof-category-summary.c:142
 msgid "Actions"
 msgstr "Eylemler"
 
-#: src/libsysprof/sysprof-category-summary.c:147
+#: src/libsysprof/sysprof-category-summary.c:145
 msgid "Crash Handler"
 msgstr "Çökme İşleyici"
 
-#: src/libsysprof/sysprof-category-summary.c:150
+#: src/libsysprof/sysprof-category-summary.c:148
 msgid "Context Switches"
 msgstr "Bağlam Geçişleri"
 
-#: src/libsysprof/sysprof-category-summary.c:153
+#: src/libsysprof/sysprof-category-summary.c:151
 msgid "CSS"
 msgstr "CSS"
 
-#: src/libsysprof/sysprof-category-summary.c:156
-#: src/sysprof/sysprof-greeter.ui:402 src/sysprof/sysprof-window.ui:260
+#: src/libsysprof/sysprof-category-summary.c:154
+#: src/sysprof/sysprof-greeter.ui:402 src/sysprof/sysprof-window.ui:270
 msgid "Graphics"
 msgstr "Grafikler"
 
-#: src/libsysprof/sysprof-category-summary.c:159
+#: src/libsysprof/sysprof-category-summary.c:157
 msgid "Icons"
 msgstr "Simgeler"
 
-#: src/libsysprof/sysprof-category-summary.c:162
+#: src/libsysprof/sysprof-category-summary.c:160
 msgid "Input"
 msgstr "Girdi"
 
-#: src/libsysprof/sysprof-category-summary.c:165
+#: src/libsysprof/sysprof-category-summary.c:163
 msgid "IO"
 msgstr "GÇ"
 
-#: src/libsysprof/sysprof-category-summary.c:168
+#: src/libsysprof/sysprof-category-summary.c:166
 msgid "IPC"
 msgstr "IPC"
 
-#: src/libsysprof/sysprof-category-summary.c:171
+#: src/libsysprof/sysprof-category-summary.c:169
 msgid "JavaScript"
 msgstr "JavaScript"
 
-#: src/libsysprof/sysprof-category-summary.c:174
+#: src/libsysprof/sysprof-category-summary.c:172
 msgid "Kernel"
 msgstr "Çekirdek"
 
-#: src/libsysprof/sysprof-category-summary.c:177
+#: src/libsysprof/sysprof-category-summary.c:175
 msgid "Layout"
 msgstr "Düzen"
 
-#: src/libsysprof/sysprof-category-summary.c:180
+#: src/libsysprof/sysprof-category-summary.c:178
 msgid "Locking"
 msgstr "Kilitleme"
 
-#: src/libsysprof/sysprof-category-summary.c:183
+#: src/libsysprof/sysprof-category-summary.c:181
 msgid "Main Loop"
 msgstr "Ana Döngü"
 
-#: src/libsysprof/sysprof-category-summary.c:186
+#: src/libsysprof/sysprof-category-summary.c:184
 msgid "Memory"
 msgstr "Bellek"
 
-#: src/libsysprof/sysprof-category-summary.c:189
+#: src/libsysprof/sysprof-category-summary.c:187
 msgid "Paint"
 msgstr "Boyama"
 
-#: src/libsysprof/sysprof-category-summary.c:192
+#: src/libsysprof/sysprof-category-summary.c:190
 msgid "Type System"
 msgstr "Tür Sistemi"
 
-#: src/libsysprof/sysprof-category-summary.c:195
+#: src/libsysprof/sysprof-category-summary.c:193
 msgid "Unwindable"
 msgstr "Sarılamaz"
 
-#: src/libsysprof/sysprof-category-summary.c:198
+#: src/libsysprof/sysprof-category-summary.c:196
 msgid "Windowing"
 msgstr "Pencereleme"
 
@@ -523,6 +523,7 @@ msgstr "Saat"
 
 #: src/sysprof/sysprof-cpu-section.ui:412
 #: src/sysprof/sysprof-energy-section.ui:382
+#: src/sysprof/sysprof-flame-graph.c:348
 #: src/sysprof/sysprof-graphics-section.ui:293
 #: src/sysprof/sysprof-marks-section.ui:242
 #: src/sysprof/sysprof-network-section.ui:380
@@ -632,11 +633,16 @@ msgstr "Dosyalar"
 msgid "Compressed"
 msgstr "Sıkıştırılmış"
 
+#: src/sysprof/sysprof-flame-graph.c:352
+#: src/sysprof/sysprof-process-dialog.ui:177
+msgid "File"
+msgstr "Dosya"
+
 #: src/sysprof/sysprof-frame-utility.ui:80
 #: src/sysprof/sysprof-logs-section.ui:143
 #: src/sysprof/sysprof-mark-table.ui:116
 #: src/sysprof/sysprof-traceables-utility.ui:81
-#: src/sysprof/sysprof-window.ui:240
+#: src/sysprof/sysprof-window.ui:250
 msgid "CPU"
 msgstr "İşlemci"
 
@@ -837,7 +843,7 @@ msgid "Record coarse-grained counters about battery charge or discharge rates"
 msgstr "Şarjın dolup boşalmasıyla ilgili kaba taneli sayaçlar kaydet"
 
 #: src/sysprof/sysprof-greeter.ui:346 src/sysprof/sysprof-greeter.ui:351
-#: src/sysprof/sysprof-window.ui:230
+#: src/sysprof/sysprof-window.ui:240
 msgid "D-Bus"
 msgstr "D-Bus"
 
@@ -957,11 +963,11 @@ msgstr "_Dosyaya Kaydet…"
 msgid "Record to _Memory"
 msgstr "_Belleğe Kaydet"
 
-#: src/sysprof/sysprof-greeter.ui:607 src/sysprof/sysprof-window.ui:341
+#: src/sysprof/sysprof-greeter.ui:607 src/sysprof/sysprof-window.ui:351
 msgid "Help"
 msgstr "Yardım"
 
-#: src/sysprof/sysprof-greeter.ui:612 src/sysprof/sysprof-window.ui:346
+#: src/sysprof/sysprof-greeter.ui:612 src/sysprof/sysprof-window.ui:356
 msgid "About Sysprof"
 msgstr "Sysprof Hakkında"
 
@@ -1090,7 +1096,7 @@ msgid "Leaks"
 msgstr "Sızıntılar"
 
 #: src/sysprof/sysprof-memory-section.ui:212
-#: src/sysprof/sysprof-samples-section.ui:154
+#: src/sysprof/sysprof-samples-section.ui:189
 #: src/sysprof/sysprof-traceables-utility.ui:162
 msgid "Stack Trace"
 msgstr "Yığın İzle"
@@ -1114,10 +1120,6 @@ msgstr "Başlangıç Adresi"
 #: src/sysprof/sysprof-process-dialog.ui:137
 msgid "End Address"
 msgstr "Bitiş Adresi"
-
-#: src/sysprof/sysprof-process-dialog.ui:177
-msgid "File"
-msgstr "Dosya"
 
 #: src/sysprof/sysprof-process-dialog.ui:219
 msgid "Mounts"
@@ -1207,23 +1209,31 @@ msgstr "Kaydı Durdur"
 msgid "Time Profiler"
 msgstr "Zaman Profilleyici"
 
-#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:107
+#: src/sysprof/sysprof-samples-section.ui:88 src/sysprof/sysprof-window.ui:363
+msgid "Callgraph"
+msgstr "Çağrı Grafiği"
+
+#: src/sysprof/sysprof-samples-section.ui:155
+msgid "Flamegraph"
+msgstr "Alev Grafiği"
+
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:108
 msgid "Seek Backward"
 msgstr "Geri Sar"
 
-#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:117
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:118
 msgid "Zoom Out"
 msgstr "Uzaklaştır"
 
-#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:127
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:128
 msgid "Reset Zoom"
 msgstr "Yakınlaştırmayı Sıfırla"
 
-#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:137
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:138
 msgid "Zoom In"
 msgstr "Yakınlaştır"
 
-#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:147
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:148
 msgid "Seek Forward"
 msgstr "İleri Sar"
 
@@ -1275,26 +1285,62 @@ msgstr ""
 "\n"
 "%s"
 
-#: src/sysprof/sysprof-window.ui:250
+#: src/sysprof/sysprof-window.ui:98
+msgid "Toggle Left Panel"
+msgstr "Sol Paneli Aç/Kapat"
+
+#: src/sysprof/sysprof-window.ui:162
+msgid "Main Menu"
+msgstr "Ana Menü"
+
+#: src/sysprof/sysprof-window.ui:169
+msgid "View Options"
+msgstr "Görünüm Seçenekleri"
+
+#: src/sysprof/sysprof-window.ui:175
+msgid "Toggle Right Panel"
+msgstr "Sağ Paneli Aç/Kapat"
+
+#: src/sysprof/sysprof-window.ui:260
 msgid "Energy"
 msgstr "Enerji"
 
-#: src/sysprof/sysprof-window.ui:270
+#: src/sysprof/sysprof-window.ui:280
 msgid "Network"
 msgstr "Ağ"
 
-#: src/sysprof/sysprof-window.ui:280
+#: src/sysprof/sysprof-window.ui:290
 msgid "Storage"
 msgstr "Depolama"
 
-#: src/sysprof/sysprof-window.ui:327
+#: src/sysprof/sysprof-window.ui:337
 msgid "_Record Again…"
 msgstr "_Yeniden Kaydet…"
 
-#: src/sysprof/sysprof-window.ui:331
+#: src/sysprof/sysprof-window.ui:341
 msgid "Open Recording…"
 msgstr "Kayıt Aç…"
 
-#: src/sysprof/sysprof-window.ui:335
+#: src/sysprof/sysprof-window.ui:345
 msgid "Save As…"
 msgstr "Farklı Kaydet…"
+
+#: src/sysprof/sysprof-window.ui:365
+msgid "Categorize Frames"
+msgstr "Kareleri Kategorilere Ayır"
+
+#: src/sysprof/sysprof-window.ui:369
+msgid "Hide System Libraries"
+msgstr "Sistem Kütüphanelerini Gizle"
+
+#: src/sysprof/sysprof-window.ui:373
+msgid "Include Threads"
+msgstr "İş Parçacıklarını İçer"
+
+#: src/sysprof/sysprof-window.ui:377
+msgid "Bottom Up"
+msgstr "Alttan Yukarı"
+
+#: src/sysprof/sysprof-window.ui:381
+msgid "Ignore Process 0"
+msgstr "Süreç 0ʼı Yoksay"

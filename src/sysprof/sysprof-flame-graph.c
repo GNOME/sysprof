@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#include <glib/gi18n.h>
+
 #include "sysprof-callgraph-private.h"
 #include "sysprof-category-icon.h"
 #include "sysprof-color-iter-private.h"
@@ -328,6 +330,7 @@ sysprof_flame_graph_query_tooltip (GtkWidget  *widget,
       g_autoptr(GString) string = g_string_new (NULL);
       SysprofSymbol *symbol = rect->node->summary->symbol;
       SysprofCallgraphNode *root = rect->node;
+      SysprofCallgraphCategory category = SYSPROF_CALLGRAPH_CATEGORY_UNMASK (rect->node->category);
 
       while (root->parent)
         root = root->parent;
@@ -337,8 +340,16 @@ sysprof_flame_graph_query_tooltip (GtkWidget  *widget,
       if (symbol->binary_nick && symbol->binary_nick[0])
         g_string_append_printf (string, " [%s]", symbol->binary_nick);
 
+      if (category && category != SYSPROF_CALLGRAPH_CATEGORY_UNCATEGORIZED)
+        {
+          const char *name = _sysprof_callgraph_category_get_name (category);
+
+          if (name)
+            g_string_append_printf (string, "\n%s: %s", _("Category"), name);
+        }
+
       if (symbol->binary_path && symbol->binary_path[0])
-        g_string_append_printf (string, "\n%s", symbol->binary_path);
+        g_string_append_printf (string, "\n%s: %s", _("File"), symbol->binary_path);
 
       g_string_append_c (string, '\n');
 

@@ -27,6 +27,7 @@ src/sysprof/sysprof-dbus-section.ui
 src/sysprof/sysprof-dbus-utility.ui
 src/sysprof/sysprof-energy-section.ui
 src/sysprof/sysprof-files-section.ui
+src/sysprof/sysprof-flame-graph.c
 src/sysprof/sysprof-frame-utility.ui
 src/sysprof/sysprof-graphics-section.ui
 src/sysprof/sysprof-greeter.c

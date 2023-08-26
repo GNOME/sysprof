@@ -94,5 +94,6 @@ void                      _sysprof_callgraph_node_free          (SysprofCallgrap
 SysprofCallgraphCategory  _sysprof_callgraph_node_categorize    (SysprofCallgraphNode     *node);
 void                      _sysprof_callgraph_categorize         (SysprofCallgraph         *self,
                                                                  SysprofCallgraphNode     *node);
+const char               *_sysprof_callgraph_category_get_name  (SysprofCallgraphCategory  category);
 
 G_END_DECLS

@@ -128,11 +128,9 @@ sysprof_category_summary_get_fraction (SysprofCategorySummary *self)
 }
 
 const char *
-sysprof_category_summary_get_category_name (SysprofCategorySummary *self)
+_sysprof_callgraph_category_get_name (SysprofCallgraphCategory category)
 {
-  g_return_val_if_fail (SYSPROF_IS_CATEGORY_SUMMARY (self), NULL);
-
-  switch (self->category)
+  switch (category)
     {
     case SYSPROF_CALLGRAPH_CATEGORY_UNCATEGORIZED:
       return _("Uncategorized");
@@ -202,4 +200,12 @@ sysprof_category_summary_get_category_name (SysprofCategorySummary *self)
     default:
       return NULL;
     }
+}
+
+const char *
+sysprof_category_summary_get_category_name (SysprofCategorySummary *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_CATEGORY_SUMMARY (self), NULL);
+
+  return _sysprof_callgraph_category_get_name (self->category);
 }

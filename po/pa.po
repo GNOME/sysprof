@@ -1,0 +1,1317 @@
+# Punjabi translation for sysprof.
+# Copyright (C) 2023 sysprof's COPYRIGHT HOLDER
+# This file is distributed under the same license as the sysprof package.
+#
+# Amn Alam <amanpreet.alam@gmail.com>, 2023.
+# A S Alam <aalam@satluj.org>, 2023.
+msgid ""
+msgstr ""
+"Project-Id-Version: sysprof master\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
+"POT-Creation-Date: 2023-08-26 03:32+0000\n"
+"PO-Revision-Date: 2023-08-26 07:35-0700\n"
+"Last-Translator: A S Alam <aalam@satluj.org>\n"
+"Language-Team: Punjabi <punjab-translation@googlegroups.com>\n"
+"Language: pa\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Lokalize 23.04.3\n"
+
+#: data/org.gnome.Sysprof.appdata.xml.in.in:5
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
+#: src/sysprof/sysprof-application.c:208
+#: src/sysprof/sysprof-recording-pad.ui:18 src/sysprof/sysprof-window.c:240
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#: data/org.gnome.Sysprof.appdata.xml.in.in:6
+msgid "Profile an application or entire system"
+msgstr "ਐਪਲੀਕੇਸ਼ਨ ਜਾਂ ਪੂਰੇ ਸਿਸਟਮ ਲਈ ਪਰੋਫ਼ਾਇਲ"
+
+#: data/org.gnome.Sysprof.appdata.xml.in.in:9
+msgid "The GNOME Foundation"
+msgstr "ਗਨੋਮ ਫਾਊਂਡੇਸ਼ਨ"
+
+#: data/org.gnome.Sysprof.appdata.xml.in.in:12
+msgid ""
+"Sysprof allows you to profile applications to aid in debugging and "
+"optimization."
+msgstr ""
+
+#: data/org.gnome.Sysprof.desktop.in.in:5 src/sysprof/sysprof-greeter.ui:64
+msgid "Profiler"
+msgstr "ਪਰੋਫਾਇਲਰ"
+
+#: data/org.gnome.Sysprof.desktop.in.in:6
+msgid "Profile an application or entire system."
+msgstr "ਐਪਲੀਕੇਸ਼ਨ ਜਾਂ ਪੂਰੇ ਸਿਸਟਮ ਲਈ ਪਰੋਫ਼ਾਇਲ ਬਣਾਓ।"
+
+#: src/libsysprof/sysprof-category-summary.c:136
+msgid "Uncategorized"
+msgstr "ਬਿਨਾਂ-ਕੈਟਾਗਰੀ"
+
+#: src/libsysprof/sysprof-category-summary.c:139
+msgid "Accessibility"
+msgstr "ਸਹੂਲਤਾਂ"
+
+#: src/libsysprof/sysprof-category-summary.c:142
+msgid "Actions"
+msgstr "ਕਾਰਵਾਈਆਂ"
+
+#: src/libsysprof/sysprof-category-summary.c:145
+msgid "Crash Handler"
+msgstr "ਕਰੈਸ਼ ਹੈਂਡਲਰ"
+
+#: src/libsysprof/sysprof-category-summary.c:148
+msgid "Context Switches"
+msgstr ""
+
+#: src/libsysprof/sysprof-category-summary.c:151
+msgid "CSS"
+msgstr "CSS"
+
+#: src/libsysprof/sysprof-category-summary.c:154
+#: src/sysprof/sysprof-greeter.ui:402 src/sysprof/sysprof-window.ui:270
+msgid "Graphics"
+msgstr "ਗਰਾਫਿਕਸ"
+
+#: src/libsysprof/sysprof-category-summary.c:157
+msgid "Icons"
+msgstr "ਆਈਕਾਨ"
+
+#: src/libsysprof/sysprof-category-summary.c:160
+msgid "Input"
+msgstr "ਇਨਪੁੱਟ"
+
+#: src/libsysprof/sysprof-category-summary.c:163
+msgid "IO"
+msgstr "IO"
+
+#: src/libsysprof/sysprof-category-summary.c:166
+msgid "IPC"
+msgstr "IPC"
+
+#: src/libsysprof/sysprof-category-summary.c:169
+msgid "JavaScript"
+msgstr "ਜਾਵਾਸਕ੍ਰਿਪਟ"
+
+#: src/libsysprof/sysprof-category-summary.c:172
+msgid "Kernel"
+msgstr "ਕਰਨਲ"
+
+#: src/libsysprof/sysprof-category-summary.c:175
+msgid "Layout"
+msgstr "ਲੇਆਉਟ"
+
+#: src/libsysprof/sysprof-category-summary.c:178
+msgid "Locking"
+msgstr "ਲਾਕਿੰਗ"
+
+#: src/libsysprof/sysprof-category-summary.c:181
+msgid "Main Loop"
+msgstr "ਮੁੱਖ ਲੂਪ"
+
+#: src/libsysprof/sysprof-category-summary.c:184
+msgid "Memory"
+msgstr "ਮੈਮੋਰੀ"
+
+#: src/libsysprof/sysprof-category-summary.c:187
+msgid "Paint"
+msgstr "ਪੇਂਟ"
+
+#: src/libsysprof/sysprof-category-summary.c:190
+msgid "Type System"
+msgstr "ਟਾਈਪ ਸਿਸਟਮ"
+
+#: src/libsysprof/sysprof-category-summary.c:193
+msgid "Unwindable"
+msgstr ""
+
+#: src/libsysprof/sysprof-category-summary.c:196
+msgid "Windowing"
+msgstr "ਵਿੰਡੋਇੰਗ"
+
+#: src/libsysprof/sysprof-document-allocation.c:151
+msgid "Allocation"
+msgstr "ਜਾਰੀ"
+
+#: src/libsysprof/sysprof-document.c:1168
+#: src/libsysprof/sysprof-document.c:1204
+msgid "Indexing capture data frames"
+msgstr ""
+
+#: src/libsysprof/sysprof-document.c:1390
+msgid "Discovering file system mounts"
+msgstr ""
+
+#: src/libsysprof/sysprof-document.c:1393
+msgid "Discovering process mount namespaces"
+msgstr ""
+
+#: src/libsysprof/sysprof-document.c:1396
+msgid "Analyzing process address layouts"
+msgstr ""
+
+#: src/libsysprof/sysprof-document.c:1399
+msgid "Analyzing process command line"
+msgstr ""
+
+#: src/libsysprof/sysprof-document.c:1402
+msgid "Analyzing file system overlays"
+msgstr ""
+
+#: src/libsysprof/sysprof-document.c:1405
+msgid "Processing counters"
+msgstr "ਪ੍ਰੋਸੈਸਿੰਗ ਕਾਊਂਟਰ"
+
+#: src/libsysprof/sysprof-document.c:2385
+#: src/libsysprof/sysprof-document.c:2401
+#, c-format
+msgid "Recording at %X %x"
+msgstr "%X %x ਉੱਤੇ ਰਿਕਾਰਡਿੰਗ"
+
+#: src/libsysprof/sysprof-document.c:2387
+#: src/libsysprof/sysprof-document.c:2403
+#, c-format
+msgid "Recording at %s"
+msgstr "%s ਉੱਤੇ ਰਿਕਾਰਡਿੰਗ"
+
+#: src/libsysprof/sysprof-document-dbus-message.c:152
+msgid "D-Bus Message"
+msgstr "D-ਬੱਸ ਸੁਨੇਹਾ"
+
+#: src/libsysprof/sysprof-document-frame.c:139
+msgid "Frame"
+msgstr "ਫਰੇਮ"
+
+#: src/libsysprof/sysprof-document-loader.c:435
+msgid "Document loaded"
+msgstr "ਲੋਡ ਕੀਤਾ ਦਸਤਾਵੇਜ਼"
+
+#: src/libsysprof/sysprof-document-loader.c:466
+msgid "Loading failed"
+msgstr "ਲੋਡ ਕਰਨਾ ਅਸਫ਼ਲ"
+
+#: src/libsysprof/sysprof-document-loader.c:478
+#: src/libsysprof/sysprof-document-symbols.c:217
+msgid "Symbolizing stack traces"
+msgstr ""
+
+#: src/libsysprof/sysprof-document-loader.c:547
+msgid "Loading document"
+msgstr "ਦਸਤਾਵੇਜ਼ ਲੋਡ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ"
+
+#: src/libsysprof/sysprof-document-log.c:85
+msgid "Log"
+msgstr "ਲਾਗ"
+
+#: src/libsysprof/sysprof-document-mark.c:113
+msgid "Mark"
+msgstr "ਨਿਸ਼ਾਨ"
+
+#: src/libsysprof/sysprof-document-process.c:277
+#, c-format
+msgid "%s [Process %d]"
+msgstr "%s [ਪਰੋਸੈਸ %d]"
+
+#: src/libsysprof/sysprof-document-process.c:279
+#, c-format
+msgid "Process %d"
+msgstr "ਪਰੋਸੈਸ %d"
+
+#: src/libsysprof/sysprof-document-sample.c:136
+msgid "Sample"
+msgstr "ਸੈਂਪਲ"
+
+#: src/libsysprof/sysprof-system-logs.c:171
+msgid "System Logs"
+msgstr "ਸਿਸਟਮ ਲਾਗ"
+
+#: src/libsysprof/sysprof-system-logs.c:172
+msgid "Recording system logs is not supported on your platform."
+msgstr "ਸਿਸਟਮ ਲਾਗ ਰਿਕਾਰਡ ਕਰਨਾ ਤੁਹਾਡੇ ਪਲੇਟਫ਼ਾਰਮ ਵਲੋਂ ਸਹਾਇਕ ਨਹੀਂ ਹੈ।"
+
+#: src/libsysprof/sysprof-tracer.c:65
+msgid "Tracer"
+msgstr "ਟਰੈਕਰ"
+
+#: src/libsysprof/sysprof-tracer.c:66
+msgid ""
+"Tracing requires spawning a program compiled with ‘-finstrument-functions’. "
+"Tracing will not be available."
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:112
+msgid "--merge requires at least 2 filename arguments"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:306
+msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:307
+msgid "Make sysprof specific to a task [Deprecated]"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:307 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof/sysprof-logs-section.ui:179
+#: src/sysprof/sysprof-processes-section.ui:282
+#: src/sysprof/sysprof-traceables-utility.ui:52
+msgid "PID"
+msgstr "PID"
+
+#: src/sysprof-cli/sysprof-cli.c:308
+msgid "Run a command and profile the process"
+msgstr "ਕਮਾਂਡ ਚਲਾਓ ਅਤੇ ਪਰੋਸੈਸ ਪਰੋਫ਼ਾਇਲ ਬਣਾਓ"
+
+#: src/sysprof-cli/sysprof-cli.c:308
+msgid "COMMAND"
+msgstr "ਕਮਾਂਡ"
+
+#: src/sysprof-cli/sysprof-cli.c:309
+msgid ""
+"Set environment variable for spawned process. Can be used multiple times."
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:309
+msgid "VAR=VALUE"
+msgstr "VAR=VALUE"
+
+#: src/sysprof-cli/sysprof-cli.c:310
+msgid "Force overwrite the capture file"
+msgstr "ਬਣਾਈ ਫ਼ਾਇਲ ਉੱਤੇ ਲਿਖਣ ਲਈ ਮਜ਼ਬੂਰ ਕਰੋ"
+
+#: src/sysprof-cli/sysprof-cli.c:311
+msgid "Disable recording of battery statistics"
+msgstr "ਬੈਟਰੀ ਅੰਕੜਿਆਂ ਦੀ ਰਿਕਾਰਡਿੰਗ ਅਸਮਰੱਥ ਕਰੋ"
+
+#: src/sysprof-cli/sysprof-cli.c:312
+msgid "Disable recording of CPU statistics"
+msgstr "CPU ਅੰਕੜਿਆਂ ਦੀ ਰਿਕਾਰਡਿੰਗ ਅਸਮਰੱਥ ਕਰੋ"
+
+#: src/sysprof-cli/sysprof-cli.c:313
+msgid "Disable recording of Disk statistics"
+msgstr "ਡਿਸਕ ਅੰਕੜਿਆਂ ਦੀ ਰਿਕਾਰਡਿੰਗ ਅਸਮਰੱਥ ਕਰੋ"
+
+#: src/sysprof-cli/sysprof-cli.c:314
+msgid "Do not record stacktraces using Linux perf"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:315
+msgid "Do not append symbol name information from local machine"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:316
+msgid "Disable recording of memory statistics"
+msgstr "ਮੈਮੋਰੀ ਅੰਕੜਿਆਂ ਦੀ ਰਿਕਾਰਡਿੰਗ ਅਸਮਰੱਥ ਕਰੋ"
+
+#: src/sysprof-cli/sysprof-cli.c:317
+msgid "Disable recording of network statistics"
+msgstr "ਨੈੱਟਵਰਕ ਅੰਕੜਿਆਂ ਦੀ ਰਿਕਾਰਡਿੰਗ ਅਸਮਰੱਥ ਕਰੋ"
+
+#: src/sysprof-cli/sysprof-cli.c:318
+msgid "Set SYSPROF_TRACE_FD environment for subprocess"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:319
+msgid "Track when processes are scheduled"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:320
+msgid "Profile the D-Bus session bus"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:321
+msgid "Profile the D-Bus system bus"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:322
+msgid "Set GJS_TRACE_FD environment to trace GJS processes"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:323
+msgid "Set GTK_TRACE_FD environment to trace a GTK application"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:324
+msgid "Include RAPL energy statistics"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:325
+msgid "Profile memory allocations and frees"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:326
+msgid "Connect to org.gnome.Shell for profiler statistics"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:327
+msgid "Track performance of the applications main loop"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:329
+msgid "Merge all provided *.syscap files and write to stdout"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:330
+msgid "Print the sysprof-cli version and exit"
+msgstr "sysprof-cli ਵਰਜ਼ਨ ਛਾਪ ਕੇ ਬੰਦ ਕਰੋ"
+
+#: src/sysprof-cli/sysprof-cli.c:331
+msgid "The size of the buffer in pages (1 = 1 page)"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:364
+msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:367
+msgid ""
+"\n"
+"Examples:\n"
+"\n"
+"  # Record gtk4-widget-factory using trace-fd to get application provided\n"
+"  # data as well as GTK and GNOME Shell data providers\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"  # Merge multiple syscap files into one\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:403
+msgid "Too many arguments were passed to sysprof-cli:"
+msgstr ""
+
+#. Translators: %s is a file name.
+#: src/sysprof-cli/sysprof-cli.c:450
+#, c-format
+msgid "%s exists. Use --force to overwrite\n"
+msgstr ""
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:13
+msgid "Profile the system"
+msgstr "ਸਿਸਟਮ ਨੂੰ ਪਰੋਫ਼ਾਇਲ ਕਰੋ"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:14
+msgid "Authentication is required to profile the system."
+msgstr ""
+
+#: src/sysprof/gtk/help-overlay.ui:10
+msgctxt "shortcut window"
+msgid "General"
+msgstr "ਆਮ"
+
+#: src/sysprof/gtk/help-overlay.ui:13
+msgctxt "shortcut window"
+msgid "Show Help"
+msgstr "ਮਦਦ ਵੇਖੋ"
+
+#: src/sysprof/gtk/help-overlay.ui:19
+msgctxt "shortcut window"
+msgid "Keyboard Shortcuts"
+msgstr "ਕੀ-ਬੋਰਡ ਸ਼ਾਰਟਕੱਟ"
+
+#: src/sysprof/gtk/help-overlay.ui:25
+msgctxt "shortcut window"
+msgid "Close Window"
+msgstr "ਵਿੰਡੋ ਬੰਦ ਕਰੋ"
+
+#: src/sysprof/gtk/help-overlay.ui:31
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "ਬਾਹਰ"
+
+#: src/sysprof/gtk/menus.ui:6
+msgid "_Preferences"
+msgstr "ਪਸੰਦਾਂ(_P)"
+
+#: src/sysprof/gtk/menus.ui:10
+msgid "_Keyboard Shortcuts"
+msgstr "ਕੀ-ਬੋਰਡ ਸ਼ਾਰਟਕੱਟ(_K)"
+
+#: src/sysprof/gtk/menus.ui:14
+msgid "_Help"
+msgstr "ਮਦਦ(_H)"
+
+#: src/sysprof/gtk/menus.ui:18
+msgid "_About Sysprof"
+msgstr "Sysprof ਬਾਰੇ(_A)"
+
+#: src/sysprof/sysprof-application.c:37
+msgid "Show Sysprof version and exit"
+msgstr "Sysprof ਵਰਜ਼ਨ ਛਾਪ ਕੇ ਬੰਦ ਕਰੋ"
+
+#: src/sysprof/sysprof-application.c:170
+msgid "A system profiler"
+msgstr "ਸਿਸਟਮ ਪਰੋਫ਼ਾਇਲਰ"
+
+#: src/sysprof/sysprof-application.c:171
+msgid "translator-credits"
+msgstr ""
+"ਅ ਸ ਆਲਮ (A S Alam) ੨੦੨੩\n"
+"Punjabi Linux www.punlinux.org"
+
+#: src/sysprof/sysprof-callgraph-view.ui:22
+msgid "Functions"
+msgstr "ਫੰਕਸ਼ਨ"
+
+#: src/sysprof/sysprof-callgraph-view.ui:71
+msgid "Filter Functions"
+msgstr ""
+
+#: src/sysprof/sysprof-callgraph-view.ui:94
+msgid "Callers"
+msgstr "ਕਾਲਰ"
+
+#: src/sysprof/sysprof-callgraph-view.ui:146
+msgid "Descendants"
+msgstr ""
+
+#: src/sysprof/sysprof-counters-section.ui:26
+#: src/sysprof/sysprof-cpu-section.ui:169
+#: src/sysprof/sysprof-energy-section.ui:177
+#: src/sysprof/sysprof-graphics-section.ui:88
+#: src/sysprof/sysprof-network-section.ui:86
+#: src/sysprof/sysprof-storage-section.ui:86
+msgid "Counters Chart"
+msgstr "ਗਿਣਤੀ ਚਾਰਟ"
+
+#: src/sysprof/sysprof-counters-section.ui:40
+#: src/sysprof/sysprof-cpu-section.ui:323
+#: src/sysprof/sysprof-energy-section.ui:312
+#: src/sysprof/sysprof-graphics-section.ui:223
+#: src/sysprof/sysprof-network-section.ui:291
+#: src/sysprof/sysprof-storage-section.ui:291
+msgid "Counters Table"
+msgstr "ਗਿਣਤੀ ਸਾਰਣੀ"
+
+#: src/sysprof/sysprof-cpu-section.ui:378
+#: src/sysprof/sysprof-dbus-section.ui:105
+#: src/sysprof/sysprof-energy-section.ui:348
+#: src/sysprof/sysprof-frame-utility.ui:49
+#: src/sysprof/sysprof-graphics-section.ui:259
+#: src/sysprof/sysprof-logs-section.ui:110
+#: src/sysprof/sysprof-metadata-section.ui:38
+#: src/sysprof/sysprof-network-section.ui:346
+#: src/sysprof/sysprof-process-dialog.ui:64
+#: src/sysprof/sysprof-processes-section.ui:214
+#: src/sysprof/sysprof-storage-section.ui:346
+#: src/sysprof/sysprof-traceables-utility.ui:23
+msgid "Time"
+msgstr "ਸਮਾਂ"
+
+#: src/sysprof/sysprof-cpu-section.ui:412
+#: src/sysprof/sysprof-energy-section.ui:382
+#: src/sysprof/sysprof-flame-graph.c:348
+#: src/sysprof/sysprof-graphics-section.ui:293
+#: src/sysprof/sysprof-marks-section.ui:242
+#: src/sysprof/sysprof-network-section.ui:380
+#: src/sysprof/sysprof-storage-section.ui:380
+msgid "Category"
+msgstr "ਕੈਟਾਗਰੀ"
+
+#: src/sysprof/sysprof-cpu-section.ui:450
+#: src/sysprof/sysprof-energy-section.ui:420
+#: src/sysprof/sysprof-graphics-section.ui:331
+#: src/sysprof/sysprof-marks-section.ui:276
+#: src/sysprof/sysprof-network-section.ui:418
+#: src/sysprof/sysprof-storage-section.ui:418
+msgid "Name"
+msgstr "ਨਾਂ"
+
+#: src/sysprof/sysprof-cpu-section.ui:488
+#: src/sysprof/sysprof-energy-section.ui:458
+#: src/sysprof/sysprof-graphics-section.ui:369
+#: src/sysprof/sysprof-metadata-section.ui:105
+#: src/sysprof/sysprof-network-section.ui:456
+#: src/sysprof/sysprof-storage-section.ui:456
+msgid "Value"
+msgstr "ਮੁੱਲ"
+
+#: src/sysprof/sysprof-cpu-section.ui:529
+msgid "CPU Info"
+msgstr "CPU ਜਾਣਕਾਰੀ"
+
+#: src/sysprof/sysprof-cpu-section.ui:560
+#: src/sysprof/sysprof-process-dialog.ui:248
+msgid "ID"
+msgstr "ID"
+
+#: src/sysprof/sysprof-cpu-section.ui:595
+msgid "Core"
+msgstr "ਕੋਰ"
+
+#: src/sysprof/sysprof-cpu-section.ui:630
+msgid "Model Name"
+msgstr "ਮਾਡਲ ਨਾਂ"
+
+#: src/sysprof/sysprof-dbus-section.ui:139
+msgid "Bus"
+msgstr "ਬਸ"
+
+#: src/sysprof/sysprof-dbus-section.ui:178
+msgid "Serial"
+msgstr "ਸੀਰੀਅਲ"
+
+#: src/sysprof/sysprof-dbus-section.ui:215
+msgid "Reply"
+msgstr "ਜਵਾਬ"
+
+#: src/sysprof/sysprof-dbus-section.ui:252
+msgid "Flags"
+msgstr "ਫਲੈਗ"
+
+#: src/sysprof/sysprof-dbus-section.ui:281
+#: src/sysprof/sysprof-files-section.ui:107
+#: src/sysprof/sysprof-memory-callgraph-view.ui:68
+msgid "Size"
+msgstr "ਆਕਾਰ"
+
+#: src/sysprof/sysprof-dbus-section.ui:317
+#: src/sysprof/sysprof-frame-utility.ui:20
+#: src/sysprof/sysprof-mark-table.ui:221
+msgid "Type"
+msgstr "ਕਿਸਮ"
+
+#: src/sysprof/sysprof-dbus-section.ui:346
+msgid "Sender"
+msgstr "ਭੇਜਣ ਵਾਲਾ"
+
+#: src/sysprof/sysprof-dbus-section.ui:380
+msgid "Destination"
+msgstr "ਟਿਕਾਣਾ"
+
+#: src/sysprof/sysprof-dbus-section.ui:414
+#: src/sysprof/sysprof-files-section.ui:38
+msgid "Path"
+msgstr "ਮਾਰਗ"
+
+#: src/sysprof/sysprof-dbus-section.ui:448
+msgid "Interface"
+msgstr "ਇੰਟਰਫੇਸ"
+
+#: src/sysprof/sysprof-dbus-section.ui:482
+msgid "Member"
+msgstr "ਮੈਂਬਰ"
+
+#: src/sysprof/sysprof-dbus-section.ui:516
+msgid "Signature"
+msgstr "ਦਸਤਖ਼ਤ"
+
+#: src/sysprof/sysprof-dbus-utility.ui:13
+#: src/sysprof/sysprof-logs-section.c:104
+#: src/sysprof/sysprof-logs-section.ui:286
+msgid "Message"
+msgstr "ਸੁਨੇਹਾ"
+
+#: src/sysprof/sysprof-files-section.ui:4
+msgid "Files"
+msgstr "ਫਾਇਲਾਂ"
+
+#: src/sysprof/sysprof-files-section.ui:73
+msgid "Compressed"
+msgstr "ਕੰਪਰੈਸਡ"
+
+#: src/sysprof/sysprof-flame-graph.c:352
+#: src/sysprof/sysprof-process-dialog.ui:177
+msgid "File"
+msgstr "ਫਾਇਲ"
+
+#: src/sysprof/sysprof-frame-utility.ui:80
+#: src/sysprof/sysprof-logs-section.ui:143
+#: src/sysprof/sysprof-mark-table.ui:116
+#: src/sysprof/sysprof-traceables-utility.ui:81
+#: src/sysprof/sysprof-window.ui:250
+msgid "CPU"
+msgstr "CPU"
+
+#: src/sysprof/sysprof-greeter.c:102
+msgid "Use KEY=VALUE to set an environment variable"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:108
+msgid "Keys may not start with a number"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:118
+msgid "Keys may only contain alpha-numerics or underline."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:265 src/sysprof/sysprof-window.c:155
+msgid "Must Capture to Local File"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:266 src/sysprof/sysprof-window.c:156
+msgid "You must choose a local file to capture using Sysprof"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:267 src/sysprof/sysprof-recording-pad.c:115
+#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:715
+msgid "Close"
+msgstr "ਬੰਦ ਕਰੋ"
+
+#: src/sysprof/sysprof-greeter.c:288
+#, c-format
+msgid "System Capture from %s.syscap"
+msgstr "%s.syscap ਤੋਂ ਸਿਸਟਮ ਕੈਪਚਰ"
+
+#: src/sysprof/sysprof-greeter.c:292
+msgid "Record to File"
+msgstr "ਫ਼ਾਇਲ ਉੱਤੇ ਰਿਕਾਰਡ ਕਰੋ"
+
+#: src/sysprof/sysprof-greeter.c:293
+msgid "Record"
+msgstr "ਰਿਕਾਰਡ"
+
+#: src/sysprof/sysprof-greeter.c:440
+msgid "No Change"
+msgstr "ਕੋਈ ਤਬਦੀਲੀ ਨਹੀਂ"
+
+#: src/sysprof/sysprof-greeter.c:443
+msgid "Balanced"
+msgstr "ਸੰਤੁਲਤ"
+
+#: src/sysprof/sysprof-greeter.c:446
+msgid "Power Saver"
+msgstr "ਪਾਵਰ ਬੱਚਤ"
+
+#: src/sysprof/sysprof-greeter.c:449
+msgid "Performance"
+msgstr "ਕਾਰਗੁਜ਼ਾਰੀ"
+
+#: src/sysprof/sysprof-greeter.ui:70
+msgid "Sampling"
+msgstr "ਸੈਂਪਲਿੰਗ"
+
+#: src/sysprof/sysprof-greeter.ui:74
+msgid "Sample Native Stacks"
+msgstr "ਸੈਂਪਲ ਨੇਟਿਵ ਸਟਾਕ"
+
+#: src/sysprof/sysprof-greeter.ui:75
+msgid "Record native stack traces using a sampling profiler"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:91
+msgid "Sample JavaScript Stacks"
+msgstr "ਸੈਂਪਲ ਜਾਵਾਸਕ੍ਰਿਪਟ ਸਟਾਕ"
+
+#: src/sysprof/sysprof-greeter.ui:92
+msgid "Record JavaScript stack traces using a sampling profiler"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:103
+msgid ""
+"Sysprof must launch your application to record JavaScript stacks using GJS."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:119
+msgid "Record Scheduler Details"
+msgstr "ਸੈਡਿਊਲਰ ਵੇਰਵੇ ਰਿਕਾਰਡ ਕਰੋ"
+
+#: src/sysprof/sysprof-greeter.ui:120
+msgid "Track when processes are scheduled per CPU"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:133
+msgid "Tracing"
+msgstr "ਟਰੇਸਿੰਗ"
+
+#: src/sysprof/sysprof-greeter.ui:137
+msgid "Trace Memory Allocations"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:138
+msgid ""
+"Record a strack trace when <tt>malloc</tt> or similar functions are used"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:149
+msgid "Sysprof must launch your application to record memory allocations."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:167 src/sysprof/sysprof-greeter.ui:172
+msgid "Application"
+msgstr "ਐਪਲੀਕੇਸ਼ਨ"
+
+#: src/sysprof/sysprof-greeter.ui:175
+#: src/sysprof/sysprof-processes-section.ui:316
+msgid "Command Line"
+msgstr "ਕਮਾਂਡ ਲਾਈਨ"
+
+#: src/sysprof/sysprof-greeter.ui:181
+msgid "The application will be run as a subprocess of Sysprof."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:194
+msgid "Environment"
+msgstr "ਇਨਵਾਇਰਮੈਂਟ"
+
+#: src/sysprof/sysprof-greeter.ui:198
+msgid "Clear Environment"
+msgstr "ਇਨਵਾਇਰਮੈਂਟ ਸਾਫ਼ ਕਰੋ"
+
+#: src/sysprof/sysprof-greeter.ui:199
+msgid "Clear the environment before launching application"
+msgstr "ਐਪਲੀਕੇਸ਼ਨ ਚਲਾਉਣ ਤੋਂ ਪਹਿਲਾਂ ਇਨਵਾਇਰਮੈਂਟ ਸਾਫ਼ ਕਰੋ"
+
+#: src/sysprof/sysprof-greeter.ui:225
+msgid "Add _Variable"
+msgstr "ਵੇਰੀਬਲ ਜੋੜੋ(_V)"
+
+#: src/sysprof/sysprof-greeter.ui:231
+msgid "Add Variable"
+msgstr "ਵੇਰੀਬਲ ਜੋੜੋ"
+
+#: src/sysprof/sysprof-greeter.ui:232
+msgid "_Add"
+msgstr "ਜੋੜੋ(_A)"
+
+#: src/sysprof/sysprof-greeter.ui:249 src/sysprof/sysprof-greeter.ui:254
+msgid "Counters"
+msgstr "ਗਿਣਤੀ"
+
+#: src/sysprof/sysprof-greeter.ui:258
+msgid "CPU Usage"
+msgstr "CPU ਵਰਤੋਂ"
+
+#: src/sysprof/sysprof-greeter.ui:259
+msgid "Record coarse-grained counters about CPU usage and frequency"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:271
+msgid "Memory Usage"
+msgstr "ਮੈਮੋਰੀ ਦੀ ਵਰਤੋਂ"
+
+#: src/sysprof/sysprof-greeter.ui:272
+msgid "Record coarse-grained counters about system memory usage"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:284
+msgid "Disk Usage"
+msgstr "ਡਿਸਕ ਥਾਂ ਦੀ ਵਰਤੋਂ"
+
+#: src/sysprof/sysprof-greeter.ui:285
+msgid "Record coarse-grained counters about storage throughput"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:297
+msgid "Network Usage"
+msgstr "ਨੈ਼ੱਟਵਰਕ ਵਰਤੋਂ"
+
+#: src/sysprof/sysprof-greeter.ui:298
+msgid "Record coarse-grained counters about network traffic"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:314
+msgid "Energy Usage"
+msgstr "ਊਰਜਾ ਦੀ ਵਰਤੋਂ"
+
+#: src/sysprof/sysprof-greeter.ui:315
+msgid "Record coarse-grained counters about energy usage in Watts"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:327
+msgid "Battery Charge"
+msgstr "ਬੈਟਰੀ ਚਾਰਜ"
+
+#: src/sysprof/sysprof-greeter.ui:328
+msgid "Record coarse-grained counters about battery charge or discharge rates"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:346 src/sysprof/sysprof-greeter.ui:351
+#: src/sysprof/sysprof-window.ui:240
+msgid "D-Bus"
+msgstr "ਡੀ-ਬੱਸ"
+
+#: src/sysprof/sysprof-greeter.ui:355
+msgid "Record System Bus"
+msgstr "ਸਿਸਟਮ ਬਸ ਰਿਕਾਰਡ ਕਰੋ"
+
+#: src/sysprof/sysprof-greeter.ui:356
+msgid "Record messages on the D-Bus system bus"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:372
+msgid "Record Session Bus"
+msgstr "ਸ਼ੈਸ਼ਨ ਬੱਸ ਰਿਕਾਰਡ ਕਰੋ"
+
+#: src/sysprof/sysprof-greeter.ui:373
+msgid "Record messages on the D-Bus user session bus"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:384
+msgid ""
+"The session bus may contain sensitive information such as keyboard usage and "
+"passwords."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:407
+msgid "Timings"
+msgstr "ਟਾਈਮਿੰਗ"
+
+#: src/sysprof/sysprof-greeter.ui:411
+msgid "Compositor Frame Timings"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:412
+msgid "Record frame-timing information from the GNOME Shell compositor"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:423
+msgid ""
+"Applications launched by Sysprof will automatically collect GTK frame timing "
+"information."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:463
+msgid "Devices"
+msgstr "ਡਿਵਾਈਸ"
+
+#: src/sysprof/sysprof-greeter.ui:467
+msgid "Include GPU Information"
+msgstr "GPU ਜਾਣਕਾਰੀ ਸਮੇਤ"
+
+#: src/sysprof/sysprof-greeter.ui:468
+msgid "Records information about graphics hardware and drivers"
+msgstr "ਗਰਾਫ਼ਿਕਸ ਹਾਰਡਵੇਅਰ ਅਤੇ ਡਰਾਇਵਰਾਂ ਬਾਰੇ ਜਾਣਕਾਰੀ ਰਿਕਾਰਡ ਕਰੋ"
+
+#: src/sysprof/sysprof-greeter.ui:486
+msgid "System"
+msgstr "ਸਿਸਟਮ"
+
+#: src/sysprof/sysprof-greeter.ui:491
+msgid "Power Profile"
+msgstr "ਪਾਵਰ ਪਰੋਫਾਈਲ"
+
+#: src/sysprof/sysprof-greeter.ui:494
+msgid "Record with Power Profile"
+msgstr "ਪਾਵਰ ਪਰੋਫਾਈਲ ਨਾਲ ਰਿਕਾਰਡ ਕਰੋ"
+
+#: src/sysprof/sysprof-greeter.ui:495
+msgid "Switch to power profile while recording"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:505
+msgid "Details"
+msgstr "ਵੇਰਵੇ"
+
+#: src/sysprof/sysprof-greeter.ui:509
+msgid "Record System Log"
+msgstr "ਸਿਸਟਮ ਲਾਗ ਰਿਕਾਰਡ ਕਰੋ"
+
+#: src/sysprof/sysprof-greeter.ui:510
+msgid "Watch the system log for new messages and record them"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:526
+msgid "Include Hardware Information"
+msgstr "ਹਾਰਡਵੇਅਰ ਜਾਣਕਾਰੀ ਸਮੇਤ"
+
+#: src/sysprof/sysprof-greeter.ui:527
+msgid "Records information about PCI and USB devices"
+msgstr "PCI ਅਤੇ USB ਡਿਵਾਈਸਾਂ ਬਾਰੇ ਜਾਣਕਾਰੀ ਰਿਕਾਰਡ ਕਰੋ"
+
+#: src/sysprof/sysprof-greeter.ui:540
+msgid "Symbols"
+msgstr "ਚਿੰਨ੍ਹ"
+
+#: src/sysprof/sysprof-greeter.ui:544
+msgid "Bundle Symbols"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:545
+msgid "Make recording shareable by symbolizing stack traces after recording"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:578
+msgid "_Open File…"
+msgstr "…ਫ਼ਾਇਲ ਖੋਲ੍ਹੋ(_O)"
+
+#: src/sysprof/sysprof-greeter.ui:585
+msgid "Record to _File…"
+msgstr "…ਫ਼ਾਇਲ ਉੱਤੇ ਰਿਕਾਰਡ ਕਰੋ(_F)"
+
+#: src/sysprof/sysprof-greeter.ui:592
+msgid "Record to _Memory"
+msgstr "ਮੈਮੋਰੀ ਉੱਤੇ ਰਿਕਾਰਡ ਕਰੋ(_M)"
+
+#: src/sysprof/sysprof-greeter.ui:607 src/sysprof/sysprof-window.ui:351
+msgid "Help"
+msgstr "ਮਦਦ"
+
+#: src/sysprof/sysprof-greeter.ui:612 src/sysprof/sysprof-window.ui:356
+msgid "About Sysprof"
+msgstr "Sysprof ਬਾਰੇ"
+
+#: src/sysprof/sysprof-logs-section.c:95
+msgid "Critical"
+msgstr "ਨਾਜ਼ੁਕ"
+
+#: src/sysprof/sysprof-logs-section.c:98
+msgid "Warning"
+msgstr "ਚੇਤਾਵਨੀ"
+
+#: src/sysprof/sysprof-logs-section.c:101
+msgid "Debug"
+msgstr "ਡੀਬੱਗ"
+
+#: src/sysprof/sysprof-logs-section.c:107
+msgid "Info"
+msgstr "ਜਾਣਕਾਰੀ"
+
+#: src/sysprof/sysprof-logs-section.c:110
+msgid "Error"
+msgstr "ਗਲਤੀ"
+
+#: src/sysprof/sysprof-logs-section.ui:4 src/sysprof/sysprof-logs-section.ui:30
+msgid "Logs"
+msgstr "ਲਾਗ"
+
+#: src/sysprof/sysprof-logs-section.ui:215
+msgid "Severity"
+msgstr "ਤੀਬਰਤਾ"
+
+#: src/sysprof/sysprof-logs-section.ui:251
+msgid "Domain"
+msgstr ""
+
+#: src/sysprof/sysprof-marks-section.ui:4
+msgid "Marks"
+msgstr ""
+
+#: src/sysprof/sysprof-marks-section.ui:78
+msgid "Mark Chart"
+msgstr ""
+
+#: src/sysprof/sysprof-marks-section.ui:91
+msgid "Mark Table"
+msgstr ""
+
+#: src/sysprof/sysprof-marks-section.ui:104
+msgid "Mark Waterfall"
+msgstr ""
+
+#: src/sysprof/sysprof-marks-section.ui:206
+msgid "Summary"
+msgstr "ਸੰਖੇਪ"
+
+#: src/sysprof/sysprof-marks-section.ui:311
+msgid "Minimum"
+msgstr "ਘੱਟੋ-ਘੱਟ"
+
+#: src/sysprof/sysprof-marks-section.ui:345
+msgid "Maximum"
+msgstr "ਵੱਧੋ-ਵੱਧ"
+
+#: src/sysprof/sysprof-marks-section.ui:379
+msgid "Average"
+msgstr "ਔਸਤ"
+
+#: src/sysprof/sysprof-marks-section.ui:413
+msgid "Median"
+msgstr "ਮੱਧਮਾਨ"
+
+#: src/sysprof/sysprof-mark-table.ui:47
+msgid "Start"
+msgstr "ਸ਼ੁਰੂ"
+
+#: src/sysprof/sysprof-mark-table.ui:81
+#: src/sysprof/sysprof-processes-section.ui:248
+msgid "Duration"
+msgstr "ਅੰਤਰਾਲ"
+
+#: src/sysprof/sysprof-mark-table.ui:151
+msgid "Process"
+msgstr "ਪਰੋਸੈੱਸ"
+
+#: src/sysprof/sysprof-mark-table.ui:186
+msgid "Group"
+msgstr "ਗਰੁੱਪ"
+
+#: src/sysprof/sysprof-mark-table.ui:256
+msgid "Description"
+msgstr "ਵਰਣਨ"
+
+#: src/sysprof/sysprof-memory-callgraph-view.ui:8
+#: src/sysprof/sysprof-memory-callgraph-view.ui:105
+#: src/sysprof/sysprof-memory-callgraph-view.ui:172
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:8
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:105
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:172
+msgid "Self"
+msgstr "ਖੁਦ"
+
+#: src/sysprof/sysprof-memory-callgraph-view.ui:38
+#: src/sysprof/sysprof-memory-callgraph-view.ui:135
+#: src/sysprof/sysprof-memory-callgraph-view.ui:202
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:38
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:135
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:202
+msgid "Total"
+msgstr "ਕੁੱਲ"
+
+#: src/sysprof/sysprof-memory-section.ui:4
+msgid "Memory Allocations"
+msgstr "ਜਾਰੀ ਮੈਮੋਰੀ"
+
+#: src/sysprof/sysprof-memory-section.ui:29
+#: src/sysprof/sysprof-samples-section.ui:29
+msgid "Stack Traces"
+msgstr ""
+
+#: src/sysprof/sysprof-memory-section.ui:88
+msgid "Allocations"
+msgstr ""
+
+#: src/sysprof/sysprof-memory-section.ui:144
+msgid "Leaks"
+msgstr "ਲੀਕ"
+
+#: src/sysprof/sysprof-memory-section.ui:212
+#: src/sysprof/sysprof-samples-section.ui:189
+#: src/sysprof/sysprof-traceables-utility.ui:162
+msgid "Stack Trace"
+msgstr ""
+
+#: src/sysprof/sysprof-metadata-section.ui:4
+msgid "Metadata"
+msgstr "ਮੇਟਾਡਾਟਾ"
+
+#: src/sysprof/sysprof-metadata-section.ui:71
+msgid "Key"
+msgstr "ਕੀ"
+
+#: src/sysprof/sysprof-process-dialog.ui:35
+msgid "Address Layout"
+msgstr "ਐਡਰੈਸ ਖਾਕਾ"
+
+#: src/sysprof/sysprof-process-dialog.ui:97
+msgid "Start Address"
+msgstr "ਸ਼ੁਰੂ ਐਡਰੈਸ"
+
+#: src/sysprof/sysprof-process-dialog.ui:137
+msgid "End Address"
+msgstr "ਅੰਤ ਐਡਰੈਸ"
+
+#: src/sysprof/sysprof-process-dialog.ui:219
+msgid "Mounts"
+msgstr "ਮਾਊਂਟ"
+
+#: src/sysprof/sysprof-process-dialog.ui:282
+msgid "Parent"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:316
+msgid "Major"
+msgstr "ਮੇਜ਼ਰ"
+
+#: src/sysprof/sysprof-process-dialog.ui:350
+msgid "Minor"
+msgstr "ਮਾਈਨਰ"
+
+#: src/sysprof/sysprof-process-dialog.ui:384
+msgid "Mount Point"
+msgstr "ਮਾਊਂਟ ਪੁਆਇੰਟ"
+
+#: src/sysprof/sysprof-process-dialog.ui:418
+msgid "Mount Source"
+msgstr "ਮਾਊਂਟ ਸਰੋਤ"
+
+#: src/sysprof/sysprof-process-dialog.ui:452
+msgid "Root"
+msgstr "ਰੂਟ"
+
+#: src/sysprof/sysprof-process-dialog.ui:486
+msgid "Filesystem"
+msgstr "ਫਾਇਲ-ਸਿਸਟਮ"
+
+#: src/sysprof/sysprof-process-dialog.ui:520
+msgid "Options"
+msgstr "ਚੋਣਾਂ"
+
+#: src/sysprof/sysprof-process-dialog.ui:562
+msgid "Threads"
+msgstr "ਥਰਿੱਡ"
+
+#: src/sysprof/sysprof-process-dialog.ui:591
+msgid "Thread ID"
+msgstr "ਥਰਿੱਡ ID"
+
+#: src/sysprof/sysprof-process-dialog.ui:625
+msgid "Main Thread"
+msgstr "ਮੁੱਖ ਥਰਿੱਡ"
+
+#: src/sysprof/sysprof-processes-section.ui:4
+msgid "Processes"
+msgstr "ਪਰੋਸੈੱਸ"
+
+#: src/sysprof/sysprof-processes-section.ui:73
+msgid "Process Chart"
+msgstr "ਪਰੋਸੈੱਸ ਚਾਰਟ"
+
+#: src/sysprof/sysprof-processes-section.ui:173
+msgid "Process Table"
+msgstr "ਪਰੋਸੈਸ ਸਾਰਣੀ"
+
+#. translators: this expands to the number of events recorded by the profiler as an indicator of progress
+#: src/sysprof/sysprof-recording-pad.c:56
+msgid "%"
+msgstr "%"
+
+#: src/sysprof/sysprof-recording-pad.c:111
+msgid "Recording Failed"
+msgstr "ਰਿਕਾਰਡ ਕਰਨਾ ਅਸਫ਼ਲ"
+
+#: src/sysprof/sysprof-recording-pad.c:113
+#, c-format
+msgid ""
+"Sysprof failed to record.\n"
+"\n"
+"%s"
+msgstr ""
+"Sysprof ਰਿਕਾਰਡ ਕਰਨ ਲਈ ਅਸਫ਼ਲ।\n"
+"\n"
+"%s"
+
+#: src/sysprof/sysprof-recording-pad.ui:69
+msgid "Stop Recording"
+msgstr "ਰਿਕਾਰਡਿੰਗ ਨੂੰ ਰੋਕੋ"
+
+#: src/sysprof/sysprof-samples-section.ui:4
+msgid "Time Profiler"
+msgstr "ਸਮਾਂ ਪਰੋਫ਼ਾਇਲਰ"
+
+#: src/sysprof/sysprof-samples-section.ui:88 src/sysprof/sysprof-window.ui:363
+msgid "Callgraph"
+msgstr "ਕਾਲਗਰਾਫ਼"
+
+#: src/sysprof/sysprof-samples-section.ui:155
+msgid "Flamegraph"
+msgstr "ਫ਼ਲੇਮ-ਗਰਾਫ਼"
+
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:108
+msgid "Seek Backward"
+msgstr ""
+
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:118
+msgid "Zoom Out"
+msgstr "ਜ਼ੂਮ ਆਉਟ"
+
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:128
+msgid "Reset Zoom"
+msgstr "ਜ਼ੂਮ ਮੁੜ-ਸੈੱਟ ਕਰੋ"
+
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:138
+msgid "Zoom In"
+msgstr "ਜ਼ੂਮ ਇਨ"
+
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:148
+msgid "Seek Forward"
+msgstr ""
+
+#: src/sysprof/sysprof-traceables-utility.ui:109
+msgid "Depth"
+msgstr "ਡੂੰਘਾਈ"
+
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:68
+msgid "Hits"
+msgstr "ਹਿੱਟ"
+
+#: src/sysprof/sysprof-window.c:171
+msgid "Open Recording"
+msgstr "ਰਿਕਾਰਡਿੰਗ ਨੂੰ ਖੋਲ੍ਹੋ"
+
+#: src/sysprof/sysprof-window.c:172
+msgid "Open"
+msgstr "ਖੋਲ੍ਹੋ"
+
+#: src/sysprof/sysprof-window.c:176
+msgid "Sysprof Capture (*.syscap)"
+msgstr "Sysprof ਕੈਪਚਰ (*.syscap)"
+
+#: src/sysprof/sysprof-window.c:465
+msgid "Save to File"
+msgstr "ਫਾਇਲ ਵਿੱਚ ਸੰਭਾਲੋ"
+
+#: src/sysprof/sysprof-window.c:466
+msgid "Save"
+msgstr "ਸੰਭਾਲੋ"
+
+#: src/sysprof/sysprof-window.c:635
+msgid "Loading..."
+msgstr "ਲੋਡ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ..."
+
+#: src/sysprof/sysprof-window.c:711
+msgid "Invalid Document"
+msgstr "ਗਲਤ ਦਸਤਾਵੇਜ਼"
+
+#: src/sysprof/sysprof-window.c:713
+#, c-format
+msgid ""
+"The document could not be loaded. Please check that you have the correct "
+"capture file.\n"
+"\n"
+"%s"
+msgstr ""
+
+#: src/sysprof/sysprof-window.ui:98
+msgid "Toggle Left Panel"
+msgstr "ਖੱਬੀ ਬਾਹੀ ਬਦਲੋ"
+
+#: src/sysprof/sysprof-window.ui:162
+msgid "Main Menu"
+msgstr "ਮੁੱਖ ਮੇਨੂ"
+
+#: src/sysprof/sysprof-window.ui:169
+msgid "View Options"
+msgstr "ਵੇਖਣ ਚੋਣਾਂ"
+
+#: src/sysprof/sysprof-window.ui:175
+msgid "Toggle Right Panel"
+msgstr "ਸੱਜੀ ਬਾਹੀ ਬਦਲੋ"
+
+#: src/sysprof/sysprof-window.ui:260
+msgid "Energy"
+msgstr "ਊਰਜਾ"
+
+#: src/sysprof/sysprof-window.ui:280
+msgid "Network"
+msgstr "ਨੈੱਟਵਰਕ"
+
+#: src/sysprof/sysprof-window.ui:290
+msgid "Storage"
+msgstr "ਸਟੋਰੇਜ਼"
+
+#: src/sysprof/sysprof-window.ui:337
+msgid "_Record Again…"
+msgstr "…ਮੁੜ ਰਿਕਾਰਡ ਕਰੋ(_R)"
+
+#: src/sysprof/sysprof-window.ui:341
+msgid "Open Recording…"
+msgstr "…ਰਿਕਾਰਡਿੰਗ ਨੂੰ ਖੋਲ੍ਹੋ"
+
+#: src/sysprof/sysprof-window.ui:345
+msgid "Save As…"
+msgstr "…ਵਜੋਂ ਸੰਭਾਲੋ"
+
+#: src/sysprof/sysprof-window.ui:365
+msgid "Categorize Frames"
+msgstr ""
+
+#: src/sysprof/sysprof-window.ui:369
+msgid "Hide System Libraries"
+msgstr "ਸਿਸਟਮ ਲਾਇਬਰੇਰੀਆਂ ਲੁਕਾਓ"
+
+#: src/sysprof/sysprof-window.ui:373
+msgid "Include Threads"
+msgstr "ਥਰਿੱਡਾਂ ਸਮੇਤ"
+
+#: src/sysprof/sysprof-window.ui:377
+msgid "Bottom Up"
+msgstr "ਹੇਠੋਂ ਓਤੇ"
+
+#: src/sysprof/sysprof-window.ui:381
+msgid "Ignore Process 0"
+msgstr ""

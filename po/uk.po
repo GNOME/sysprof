@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-36\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-08-25 00:20+0000\n"
-"PO-Revision-Date: 2023-08-25 15:53+0300\n"
+"POT-Creation-Date: 2023-08-25 23:49+0000\n"
+"PO-Revision-Date: 2023-08-26 20:54+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -75,7 +75,7 @@ msgid "CSS"
 msgstr "CSS"
 
 #: src/libsysprof/sysprof-category-summary.c:156
-#: src/sysprof/sysprof-greeter.ui:402 src/sysprof/sysprof-window.ui:260
+#: src/sysprof/sysprof-greeter.ui:402 src/sysprof/sysprof-window.ui:270
 msgid "Graphics"
 msgstr "Графіка"
 
@@ -637,7 +637,7 @@ msgstr "Стиснений"
 #: src/sysprof/sysprof-logs-section.ui:143
 #: src/sysprof/sysprof-mark-table.ui:116
 #: src/sysprof/sysprof-traceables-utility.ui:81
-#: src/sysprof/sysprof-window.ui:240
+#: src/sysprof/sysprof-window.ui:250
 msgid "CPU"
 msgstr "Процесор"
 
@@ -846,7 +846,7 @@ msgid "Record coarse-grained counters about battery charge or discharge rates"
 msgstr "Записати грубий облік щодо швидкості заряджання і розряджання батареї"
 
 #: src/sysprof/sysprof-greeter.ui:346 src/sysprof/sysprof-greeter.ui:351
-#: src/sysprof/sysprof-window.ui:230
+#: src/sysprof/sysprof-window.ui:240
 msgid "D-Bus"
 msgstr "D-Bus"
 
@@ -968,11 +968,11 @@ msgstr "Записати до _файла…"
 msgid "Record to _Memory"
 msgstr "_Записати до пам'яті"
 
-#: src/sysprof/sysprof-greeter.ui:607 src/sysprof/sysprof-window.ui:341
+#: src/sysprof/sysprof-greeter.ui:607 src/sysprof/sysprof-window.ui:351
 msgid "Help"
 msgstr "Довідка"
 
-#: src/sysprof/sysprof-greeter.ui:612 src/sysprof/sysprof-window.ui:346
+#: src/sysprof/sysprof-greeter.ui:612 src/sysprof/sysprof-window.ui:356
 msgid "About Sysprof"
 msgstr "Про Sysprof"
 
@@ -1218,32 +1218,31 @@ msgstr "Припинити запис"
 msgid "Time Profiler"
 msgstr "Профілювання за часом"
 
-#: src/sysprof/sysprof-samples-section.ui:88
+#: src/sysprof/sysprof-samples-section.ui:88 src/sysprof/sysprof-window.ui:363
 msgid "Callgraph"
 msgstr "Граф викликів"
 
 #: src/sysprof/sysprof-samples-section.ui:155
-#| msgid "Callgraph"
 msgid "Flamegraph"
 msgstr "Флеймграфік"
 
-#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:107
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:108
 msgid "Seek Backward"
 msgstr "Перемотати назад"
 
-#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:117
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:118
 msgid "Zoom Out"
 msgstr "Зменшити"
 
-#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:127
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:128
 msgid "Reset Zoom"
 msgstr "Відновити масштаб"
 
-#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:137
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:138
 msgid "Zoom In"
 msgstr "Збільшити"
 
-#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:147
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:148
 msgid "Seek Forward"
 msgstr "Перемотати вперед"
 
@@ -1296,29 +1295,70 @@ msgstr ""
 "\n"
 "%s"
 
-#: src/sysprof/sysprof-window.ui:250
+#: src/sysprof/sysprof-window.ui:98
+msgid "Toggle Left Panel"
+msgstr "Перемкнути ліву панель"
+
+#: src/sysprof/sysprof-window.ui:162
+#| msgid "Main Thread"
+msgid "Main Menu"
+msgstr "Головне меню"
+
+#: src/sysprof/sysprof-window.ui:169
+#| msgid "Options"
+msgid "View Options"
+msgstr "Параметри перегляду"
+
+#: src/sysprof/sysprof-window.ui:175
+msgid "Toggle Right Panel"
+msgstr "Перемкнути праву панель"
+
+#: src/sysprof/sysprof-window.ui:260
 msgid "Energy"
 msgstr "Енергія"
 
-#: src/sysprof/sysprof-window.ui:270
+#: src/sysprof/sysprof-window.ui:280
 msgid "Network"
 msgstr "Мережа"
 
-#: src/sysprof/sysprof-window.ui:280
+#: src/sysprof/sysprof-window.ui:290
 msgid "Storage"
 msgstr "Сховище даних"
 
-#: src/sysprof/sysprof-window.ui:327
+#: src/sysprof/sysprof-window.ui:337
 msgid "_Record Again…"
 msgstr "З_аписати ще раз…"
 
-#: src/sysprof/sysprof-window.ui:331
+#: src/sysprof/sysprof-window.ui:341
 msgid "Open Recording…"
 msgstr "Відкрити записане…"
 
-#: src/sysprof/sysprof-window.ui:335
+#: src/sysprof/sysprof-window.ui:345
 msgid "Save As…"
 msgstr "Зберегти як…"
+
+#: src/sysprof/sysprof-window.ui:365
+#| msgid "Uncategorized"
+msgid "Categorize Frames"
+msgstr "Категоризувати кадри"
+
+#: src/sysprof/sysprof-window.ui:369
+msgid "Hide System Libraries"
+msgstr "Приховати системні бібліотеки"
+
+#: src/sysprof/sysprof-window.ui:373
+#| msgid "Threads"
+msgid "Include Threads"
+msgstr "Включити потоки обробки"
+
+#: src/sysprof/sysprof-window.ui:377
+msgid "Bottom Up"
+msgstr "Знизу-вгору"
+
+#: src/sysprof/sysprof-window.ui:381
+#| msgid "Process %d"
+msgid "Ignore Process 0"
+msgstr "Ігнорувати процес 0"
 
 #~| msgid "Hold the performance profile for the duration of the recording"
 #~ msgid ""

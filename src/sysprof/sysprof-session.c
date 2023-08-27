@@ -43,6 +43,7 @@ struct _SysprofSession
   guint            categorize_frames : 1;
   guint            ignore_process_0 : 1;
   guint            include_threads : 1;
+  guint            left_heavy : 1;
   guint            hide_system_libraries : 1;
 };
 
@@ -52,6 +53,7 @@ enum {
   PROP_DOCUMENT,
   PROP_DOCUMENT_TIME,
   PROP_FILTER,
+  PROP_LEFT_HEAVY,
   PROP_HIDE_SYSTEM_LIBRARIES,
   PROP_IGNORE_PROCESS_0,
   PROP_INCLUDE_THREADS,
@@ -156,6 +158,10 @@ sysprof_session_get_property (GObject    *object,
       g_value_set_boolean (value, self->include_threads);
       break;
 
+    case PROP_LEFT_HEAVY:
+      g_value_set_boolean (value, self->left_heavy);
+      break;
+
     case PROP_SELECTED_TIME:
       g_value_set_boxed (value, sysprof_session_get_selected_time (self));
       break;
@@ -211,6 +217,10 @@ sysprof_session_set_property (GObject      *object,
       self->include_threads = g_value_get_boolean (value);
       break;
 
+    case PROP_LEFT_HEAVY:
+      self->left_heavy = g_value_get_boolean (value);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -262,6 +272,11 @@ sysprof_session_class_init (SysprofSessionClass *klass)
 
   properties [PROP_INCLUDE_THREADS] =
     g_param_spec_boolean ("include-threads", NULL, NULL,
+                          FALSE,
+                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_LEFT_HEAVY] =
+    g_param_spec_boolean ("left-heavy", NULL, NULL,
                           FALSE,
                           (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 

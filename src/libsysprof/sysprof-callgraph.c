@@ -459,8 +459,25 @@ sort_by_symbol_name (gconstpointer a,
   return g_utf8_collate (node_a->summary->symbol->name, node_b->summary->symbol->name);
 }
 
+static int
+sort_by_count (gconstpointer a,
+               gconstpointer b)
+{
+  const SysprofCallgraphNode *node_a = *(const SysprofCallgraphNode * const *)a;
+  const SysprofCallgraphNode *node_b = *(const SysprofCallgraphNode * const *)b;
+
+  if (node_a->count > node_b->count)
+    return -1;
+
+  if (node_a->count < node_b->count)
+    return 1;
+
+  return 0;
+}
+
 static void
-sort_children (SysprofCallgraphNode *node)
+sort_children (SysprofCallgraphNode  *node,
+               SysprofCallgraphFlags  flags)
 {
   SysprofCallgraphNode **children;
   guint n_children = 0;
@@ -471,7 +488,7 @@ sort_children (SysprofCallgraphNode *node)
 
   for (SysprofCallgraphNode *child = node->children; child; child = child->next)
     {
-      sort_children (child);
+      sort_children (child, flags);
       n_children++;
     }
 
@@ -480,7 +497,10 @@ sort_children (SysprofCallgraphNode *node)
     children[i++] = child;
   children[i] = NULL;
 
-  qsort (children, n_children, sizeof (SysprofCallgraphNode *), sort_by_symbol_name);
+  if (flags & SYSPROF_CALLGRAPH_FLAGS_LEFT_HEAVY)
+    qsort (children, n_children, sizeof (SysprofCallgraphNode *), sort_by_count);
+  else
+    qsort (children, n_children, sizeof (SysprofCallgraphNode *), sort_by_symbol_name);
 
   node->children = children[0];
   node->children->prev = NULL;
@@ -526,7 +546,7 @@ sysprof_callgraph_new_worker (GTask        *task,
   /* Sort callgraph nodes alphabetically so that we can use them in the
    * flamegraph without any further processing.
    */
-  sort_children (&self->root);
+  sort_children (&self->root, self->flags);
 
   g_task_return_pointer (task, g_object_ref (self), g_object_unref);
 }

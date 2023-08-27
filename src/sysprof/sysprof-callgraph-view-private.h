@@ -57,6 +57,7 @@ struct _SysprofCallgraphView
   guint hide_system_libraries : 1;
   guint ignore_process_0 : 1;
   guint include_threads : 1;
+  guint left_heavy : 1;
 };
 
 struct _SysprofCallgraphViewClass

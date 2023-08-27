@@ -38,6 +38,7 @@ enum {
   PROP_HIDE_SYSTEM_LIBRARIES,
   PROP_IGNORE_PROCESS_0,
   PROP_INCLUDE_THREADS,
+  PROP_LEFT_HEAVY,
   PROP_TRACEABLES,
   PROP_UTILITY_SUMMARY,
   PROP_UTILITY_TRACEABLES,
@@ -394,6 +395,10 @@ sysprof_callgraph_view_get_property (GObject    *object,
       g_value_set_boolean (value, sysprof_callgraph_view_get_include_threads (self));
       break;
 
+    case PROP_LEFT_HEAVY:
+      g_value_set_boolean (value, sysprof_callgraph_view_get_left_heavy (self));
+      break;
+
     case PROP_TRACEABLES:
       g_value_set_object (value, sysprof_callgraph_view_get_traceables (self));
       break;
@@ -443,6 +448,10 @@ sysprof_callgraph_view_set_property (GObject      *object,
 
     case PROP_INCLUDE_THREADS:
       sysprof_callgraph_view_set_include_threads (self, g_value_get_boolean (value));
+      break;
+
+    case PROP_LEFT_HEAVY:
+      sysprof_callgraph_view_set_left_heavy (self, g_value_get_boolean (value));
       break;
 
     case PROP_TRACEABLES:
@@ -496,6 +505,11 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
 
   properties[PROP_IGNORE_PROCESS_0] =
     g_param_spec_boolean ("ignore-process-0", NULL, NULL,
+                          FALSE,
+                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_LEFT_HEAVY] =
+    g_param_spec_boolean ("left-heavy", NULL, NULL,
                           FALSE,
                           (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
@@ -679,6 +693,9 @@ sysprof_callgraph_view_reload (SysprofCallgraphView *self)
 
   if (self->categorize_frames)
     flags |= SYSPROF_CALLGRAPH_FLAGS_CATEGORIZE_FRAMES;
+
+  if (self->left_heavy)
+    flags |= SYSPROF_CALLGRAPH_FLAGS_LEFT_HEAVY;
 
   sysprof_document_callgraph_async (self->document,
                                     flags,
@@ -930,6 +947,30 @@ sysprof_callgraph_view_set_ignore_process_0 (SysprofCallgraphView *self,
     {
       self->ignore_process_0 = ignore_process_0;
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_IGNORE_PROCESS_0]);
+      sysprof_callgraph_view_queue_reload (self);
+    }
+}
+
+gboolean
+sysprof_callgraph_view_get_left_heavy (SysprofCallgraphView *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_VIEW (self), FALSE);
+
+  return self->left_heavy;
+}
+
+void
+sysprof_callgraph_view_set_left_heavy (SysprofCallgraphView *self,
+                                       gboolean              left_heavy)
+{
+  g_return_if_fail (SYSPROF_IS_CALLGRAPH_VIEW (self));
+
+  left_heavy = !!left_heavy;
+
+  if (self->left_heavy != left_heavy)
+    {
+      self->left_heavy = left_heavy;
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_LEFT_HEAVY]);
       sysprof_callgraph_view_queue_reload (self);
     }
 }

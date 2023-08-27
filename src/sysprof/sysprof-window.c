@@ -224,6 +224,7 @@ sysprof_window_set_document (SysprofWindow   *self,
     "hide-system-libraries",
     "ignore-process-0",
     "include-threads",
+    "left-heavy",
   };
   g_autofree char *title = NULL;
   g_autofree char *full_title = NULL;

@@ -99,6 +99,7 @@ typedef enum _SysprofCallgraphFlags
   SYSPROF_CALLGRAPH_FLAGS_BOTTOM_UP             = 1 << 3,
   SYSPROF_CALLGRAPH_FLAGS_CATEGORIZE_FRAMES     = 1 << 4,
   SYSPROF_CALLGRAPH_FLAGS_IGNORE_PROCESS_0      = 1 << 5,
+  SYSPROF_CALLGRAPH_FLAGS_LEFT_HEAVY            = 1 << 6,
 } SysprofCallgraphFlags;
 
 SYSPROF_AVAILABLE_IN_ALL

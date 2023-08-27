@@ -58,6 +58,9 @@ void              sysprof_callgraph_view_set_include_threads       (SysprofCallg
 gboolean          sysprof_callgraph_view_get_hide_system_libraries (SysprofCallgraphView *self);
 void              sysprof_callgraph_view_set_hide_system_libraries (SysprofCallgraphView *self,
                                                                     gboolean              hide_system_libraries);
+gboolean          sysprof_callgraph_view_get_left_heavy            (SysprofCallgraphView *self);
+void              sysprof_callgraph_view_set_left_heavy            (SysprofCallgraphView *self,
+                                                                    gboolean              left_heavy);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCallgraphView, g_object_unref)
 

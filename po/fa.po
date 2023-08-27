@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-08-25 00:20+0000\n"
-"PO-Revision-Date: 2023-08-25 15:18+0330\n"
+"POT-Creation-Date: 2023-08-25 23:49+0000\n"
+"PO-Revision-Date: 2023-08-27 13:33+0330\n"
 "Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
 "Language-Team: Persian <fa@li.org>\n"
 "Language: fa\n"
@@ -71,7 +71,7 @@ msgid "CSS"
 msgstr "CSS"
 
 #: src/libsysprof/sysprof-category-summary.c:156
-#: src/sysprof/sysprof-greeter.ui:402 src/sysprof/sysprof-window.ui:260
+#: src/sysprof/sysprof-greeter.ui:402 src/sysprof/sysprof-window.ui:270
 msgid "Graphics"
 msgstr "نگاشتار"
 
@@ -617,7 +617,7 @@ msgstr "فشرده"
 
 #: src/sysprof/sysprof-frame-utility.ui:80 src/sysprof/sysprof-logs-section.ui:143
 #: src/sysprof/sysprof-mark-table.ui:116
-#: src/sysprof/sysprof-traceables-utility.ui:81 src/sysprof/sysprof-window.ui:240
+#: src/sysprof/sysprof-traceables-utility.ui:81 src/sysprof/sysprof-window.ui:250
 msgid "CPU"
 msgstr "پردازنده"
 
@@ -813,7 +813,7 @@ msgid "Record coarse-grained counters about battery charge or discharge rates"
 msgstr "ضبط شمارشگرهای درشت‌دانه دربارهٔ میزان پر یا خالی شدن باتری"
 
 #: src/sysprof/sysprof-greeter.ui:346 src/sysprof/sysprof-greeter.ui:351
-#: src/sysprof/sysprof-window.ui:230
+#: src/sysprof/sysprof-window.ui:240
 msgid "D-Bus"
 msgstr "D-Bus"
 
@@ -932,11 +932,11 @@ msgstr "ضبط در _پرونده…"
 msgid "Record to _Memory"
 msgstr "ضبط در _حافظه"
 
-#: src/sysprof/sysprof-greeter.ui:607 src/sysprof/sysprof-window.ui:341
+#: src/sysprof/sysprof-greeter.ui:607 src/sysprof/sysprof-window.ui:351
 msgid "Help"
 msgstr "راهنما"
 
-#: src/sysprof/sysprof-greeter.ui:612 src/sysprof/sysprof-window.ui:346
+#: src/sysprof/sysprof-greeter.ui:612 src/sysprof/sysprof-window.ui:356
 msgid "About Sysprof"
 msgstr "دربارهٔ سامانما"
 
@@ -1182,7 +1182,7 @@ msgstr "پایان ضبط"
 msgid "Time Profiler"
 msgstr "نمایه‌گر زمان"
 
-#: src/sysprof/sysprof-samples-section.ui:88
+#: src/sysprof/sysprof-samples-section.ui:88 src/sysprof/sysprof-window.ui:363
 msgid "Callgraph"
 msgstr "نمودار فراخوانی"
 
@@ -1190,23 +1190,23 @@ msgstr "نمودار فراخوانی"
 msgid "Flamegraph"
 msgstr "نمودار شعله‌ای"
 
-#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:107
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:108
 msgid "Seek Backward"
 msgstr "جویش به پس"
 
-#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:117
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:118
 msgid "Zoom Out"
 msgstr "کوچک‌نمایی"
 
-#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:127
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:128
 msgid "Reset Zoom"
 msgstr "بازنشانی بزرگ‌نمایی"
 
-#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:137
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:138
 msgid "Zoom In"
 msgstr "بزرگ‌نمایی"
 
-#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:147
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:148
 msgid "Seek Forward"
 msgstr "جویش به پیش"
 
@@ -1258,29 +1258,65 @@ msgstr ""
 "\n"
 "%s"
 
-#: src/sysprof/sysprof-window.ui:250
+#: src/sysprof/sysprof-window.ui:98
+msgid "Toggle Left Panel"
+msgstr "تغییر وضعیت تابلوی چپ"
+
+#: src/sysprof/sysprof-window.ui:162
+msgid "Main Menu"
+msgstr "فهرست اصلی"
+
+#: src/sysprof/sysprof-window.ui:169
+msgid "View Options"
+msgstr "گزینه‌های نما"
+
+#: src/sysprof/sysprof-window.ui:175
+msgid "Toggle Right Panel"
+msgstr "تغییر وضعیت تابلوی راست"
+
+#: src/sysprof/sysprof-window.ui:260
 msgid "Energy"
 msgstr "انرژی"
 
-#: src/sysprof/sysprof-window.ui:270
+#: src/sysprof/sysprof-window.ui:280
 msgid "Network"
 msgstr "شبکه"
 
-#: src/sysprof/sysprof-window.ui:280
+#: src/sysprof/sysprof-window.ui:290
 msgid "Storage"
 msgstr "ذخیره‌سازی"
 
-#: src/sysprof/sysprof-window.ui:327
+#: src/sysprof/sysprof-window.ui:337
 msgid "_Record Again…"
 msgstr "_ضبط دوباره…"
 
-#: src/sysprof/sysprof-window.ui:331
+#: src/sysprof/sysprof-window.ui:341
 msgid "Open Recording…"
 msgstr "گشودن ضبط…"
 
-#: src/sysprof/sysprof-window.ui:335
+#: src/sysprof/sysprof-window.ui:345
 msgid "Save As…"
 msgstr "ذخیره به شکل…"
+
+#: src/sysprof/sysprof-window.ui:365
+msgid "Categorize Frames"
+msgstr "قاب‌های دسته‌بندی"
+
+#: src/sysprof/sysprof-window.ui:369
+msgid "Hide System Libraries"
+msgstr "نهفتن کتابخانه‌های سامانه‌ای"
+
+#: src/sysprof/sysprof-window.ui:373
+msgid "Include Threads"
+msgstr "شامل رشته‌ها"
+
+#: src/sysprof/sysprof-window.ui:377
+msgid "Bottom Up"
+msgstr "پایین به بالا"
+
+#: src/sysprof/sysprof-window.ui:381
+msgid "Ignore Process 0"
+msgstr "چشم‌پوشی از فرایند ۰"
 
 #~ msgid "Hold the performance profile for the duration of the recording"
 #~ msgstr "نگه داشتن نمایه‌گر کارایی در طول ضبط"

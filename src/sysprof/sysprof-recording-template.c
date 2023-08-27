@@ -521,6 +521,15 @@ sysprof_recording_template_apply (SysprofRecordingTemplate  *self,
         }
 
       spawnable = sysprof_spawnable_new ();
+
+      if (g_file_test ("/.flatpak-info", G_FILE_TEST_EXISTS) &&
+          !g_strv_contains ((const char * const *)argv, "flatpak-spawn"))
+        {
+          sysprof_spawnable_append_argv (spawnable, "flatpak-spawn");
+          sysprof_spawnable_append_argv (spawnable, "--host");
+          sysprof_spawnable_append_argv (spawnable, "--watch-bus");
+        }
+
       sysprof_spawnable_append_args (spawnable, (const char * const *)argv);
 
       if (self->cwd && self->cwd[0])

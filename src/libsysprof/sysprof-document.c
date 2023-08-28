@@ -79,6 +79,7 @@ struct _SysprofDocument
   GHashTable               *counter_id_to_values;
 
   SysprofStrings           *strings;
+  SysprofSymbol            *missing_process;
 
   EggBitset                *allocations;
   EggBitset                *ctrdefs;
@@ -519,6 +520,9 @@ sysprof_document_init (SysprofDocument *self)
 
   self->cpu_info = g_list_store_new (SYSPROF_TYPE_CPU_INFO);
 
+  self->missing_process = _sysprof_symbol_new (g_ref_string_new (_("Unknown Process")),
+                                               NULL, NULL, 0, 0, SYSPROF_SYMBOL_KIND_UNWINDABLE);
+
   self->counters = g_list_store_new (SYSPROF_TYPE_DOCUMENT_COUNTER);
   self->counter_id_to_values = g_hash_table_new_full (NULL, NULL, NULL,
                                                       (GDestroyNotify)g_array_unref);
@@ -767,6 +771,12 @@ sysprof_document_load_processes (SysprofDocument *self)
                   process_info->symbol =
                     _sysprof_symbol_new (sysprof_strings_get (self->strings, parts[0]),
                                          NULL, g_steal_pointer (&nick), 0, 0,
+                                         SYSPROF_SYMBOL_KIND_PROCESS);
+
+                  g_clear_object (&process_info->shared_symbol);
+                  process_info->shared_symbol =
+                    _sysprof_symbol_new (sysprof_strings_get (self->strings, parts[0]),
+                                         NULL, NULL, 0, 0,
                                          SYSPROF_SYMBOL_KIND_PROCESS);
                 }
             }
@@ -2108,7 +2118,7 @@ _sysprof_document_process_symbol (SysprofDocument *self,
   info = _sysprof_document_process_info (self, pid, FALSE);
 
   if (info == NULL)
-    g_error ("Failed to find info for PID %d", pid);
+    return self->missing_process;
 
   if (info->symbol)
     return info->symbol;

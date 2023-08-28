@@ -114,6 +114,7 @@ find_node_at_coord (SysprofFlameGraph *self,
                     double             y)
 {
   FlameSearch search;
+  FlameRectangle *ret;
 
   if (self->nodes == NULL)
     return NULL;
@@ -122,7 +123,17 @@ find_node_at_coord (SysprofFlameGraph *self,
   search.point.y = y;
   search.width = gtk_widget_get_width (GTK_WIDGET (self));
 
-  return bsearch (&search, self->nodes->data, self->nodes->len, sizeof (FlameRectangle), search_compare);
+  ret = bsearch (&search, self->nodes->data, self->nodes->len, sizeof (FlameRectangle), search_compare);
+
+  if (ret == NULL)
+    {
+      /* Try to recover from pointer inbetween rows */
+      search.point.y -= 1;
+
+      ret = bsearch (&search, self->nodes->data, self->nodes->len, sizeof (FlameRectangle), search_compare);
+    }
+
+  return ret;
 }
 
 static void
@@ -266,24 +277,29 @@ sysprof_flame_graph_snapshot (GtkWidget   *widget,
       g_object_unref (layout);
     }
 
-  if (self->motion_x || self->motion_y)
-    {
-      if (highlight == NULL)
-        highlight = find_node_at_coord (self, self->motion_x, self->motion_y);
-    }
-
   gtk_snapshot_append_node (snapshot, self->rendered);
 
-  if (highlight)
+  if (self->motion_x || self->motion_y)
     {
-      graphene_rect_t area;
+      double y = self->motion_y;
 
-      area = GRAPHENE_RECT_INIT (highlight->x / (double)G_MAXUINT16 * width,
-                                 highlight->y,
-                                 highlight->w / (double)G_MAXUINT16 * width,
-                                 highlight->h);
+      if (highlight == NULL)
+        highlight = find_node_at_coord (self, self->motion_x, y);
 
-      gtk_snapshot_append_color (snapshot, &(GdkRGBA) {1,1,1,.25}, &area);
+      while (highlight)
+        {
+          graphene_rect_t area;
+
+          area = GRAPHENE_RECT_INIT (highlight->x / (double)G_MAXUINT16 * width,
+                                     highlight->y,
+                                     highlight->w / (double)G_MAXUINT16 * width,
+                                     highlight->h);
+
+          gtk_snapshot_append_color (snapshot, &(GdkRGBA) {1,1,1,.25}, &area);
+
+          y += ROW_HEIGHT + 1;
+          highlight = find_node_at_coord (self, self->motion_x, y);
+        }
     }
 }
 

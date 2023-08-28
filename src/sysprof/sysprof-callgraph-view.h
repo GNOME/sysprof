@@ -35,32 +35,35 @@ G_BEGIN_DECLS
 typedef struct _SysprofCallgraphView      SysprofCallgraphView;
 typedef struct _SysprofCallgraphViewClass SysprofCallgraphViewClass;
 
-GType             sysprof_callgraph_view_get_type                  (void) G_GNUC_CONST;
-SysprofCallgraph *sysprof_callgraph_view_get_callgraph             (SysprofCallgraphView *self);
-SysprofDocument  *sysprof_callgraph_view_get_document              (SysprofCallgraphView *self);
-void              sysprof_callgraph_view_set_document              (SysprofCallgraphView *self,
-                                                                    SysprofDocument      *document);
-GListModel       *sysprof_callgraph_view_get_traceables            (SysprofCallgraphView *self);
-void              sysprof_callgraph_view_set_traceables            (SysprofCallgraphView *self,
-                                                                    GListModel           *model);
-gboolean          sysprof_callgraph_view_get_bottom_up             (SysprofCallgraphView *self);
-void              sysprof_callgraph_view_set_bottom_up             (SysprofCallgraphView *self,
-                                                                    gboolean              bottom_up);
-gboolean          sysprof_callgraph_view_get_categorize_frames     (SysprofCallgraphView *self);
-void              sysprof_callgraph_view_set_categorize_frames     (SysprofCallgraphView *self,
-                                                                    gboolean              categorize_frames);
-gboolean          sysprof_callgraph_view_get_ignore_process_0      (SysprofCallgraphView *self);
-void              sysprof_callgraph_view_set_ignore_process_0      (SysprofCallgraphView *self,
-                                                                    gboolean              ignore_process_0);
-gboolean          sysprof_callgraph_view_get_include_threads       (SysprofCallgraphView *self);
-void              sysprof_callgraph_view_set_include_threads       (SysprofCallgraphView *self,
-                                                                    gboolean              include_threads);
-gboolean          sysprof_callgraph_view_get_hide_system_libraries (SysprofCallgraphView *self);
-void              sysprof_callgraph_view_set_hide_system_libraries (SysprofCallgraphView *self,
-                                                                    gboolean              hide_system_libraries);
-gboolean          sysprof_callgraph_view_get_left_heavy            (SysprofCallgraphView *self);
-void              sysprof_callgraph_view_set_left_heavy            (SysprofCallgraphView *self,
-                                                                    gboolean              left_heavy);
+GType             sysprof_callgraph_view_get_type                    (void) G_GNUC_CONST;
+SysprofCallgraph *sysprof_callgraph_view_get_callgraph               (SysprofCallgraphView *self);
+SysprofDocument  *sysprof_callgraph_view_get_document                (SysprofCallgraphView *self);
+void              sysprof_callgraph_view_set_document                (SysprofCallgraphView *self,
+                                                                      SysprofDocument      *document);
+GListModel       *sysprof_callgraph_view_get_traceables              (SysprofCallgraphView *self);
+void              sysprof_callgraph_view_set_traceables              (SysprofCallgraphView *self,
+                                                                      GListModel           *model);
+gboolean          sysprof_callgraph_view_get_bottom_up               (SysprofCallgraphView *self);
+void              sysprof_callgraph_view_set_bottom_up               (SysprofCallgraphView *self,
+                                                                      gboolean              bottom_up);
+gboolean          sysprof_callgraph_view_get_categorize_frames       (SysprofCallgraphView *self);
+void              sysprof_callgraph_view_set_categorize_frames       (SysprofCallgraphView *self,
+                                                                      gboolean              categorize_frames);
+gboolean          sysprof_callgraph_view_get_ignore_process_0        (SysprofCallgraphView *self);
+void              sysprof_callgraph_view_set_ignore_process_0        (SysprofCallgraphView *self,
+                                                                      gboolean              ignore_process_0);
+gboolean          sysprof_callgraph_view_get_include_threads         (SysprofCallgraphView *self);
+void              sysprof_callgraph_view_set_include_threads         (SysprofCallgraphView *self,
+                                                                      gboolean              include_threads);
+gboolean          sysprof_callgraph_view_get_hide_system_libraries   (SysprofCallgraphView *self);
+void              sysprof_callgraph_view_set_hide_system_libraries   (SysprofCallgraphView *self,
+                                                                      gboolean              hide_system_libraries);
+gboolean          sysprof_callgraph_view_get_left_heavy              (SysprofCallgraphView *self);
+void              sysprof_callgraph_view_set_left_heavy              (SysprofCallgraphView *self,
+                                                                      gboolean              left_heavy);
+gboolean          sysprof_callgraph_view_get_merge_similar_processes (SysprofCallgraphView *self);
+void              sysprof_callgraph_view_set_merge_similar_processes (SysprofCallgraphView *self,
+                                                                      gboolean              merge_similar_processes);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCallgraphView, g_object_unref)
 

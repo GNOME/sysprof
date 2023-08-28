@@ -109,6 +109,11 @@
                         <lookup name="session">SysprofSamplesSection</lookup>
                       </lookup>
                     </binding>
+                    <binding name="merge-similar-processes">
+                      <lookup name="merge-similar-processes" type="SysprofSession">
+                        <lookup name="session">SysprofSamplesSection</lookup>
+                      </lookup>
+                    </binding>
                     <binding name="categorize-frames">
                       <lookup name="categorize-frames" type="SysprofSession">
                         <lookup name="session">SysprofSamplesSection</lookup>

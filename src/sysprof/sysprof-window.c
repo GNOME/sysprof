@@ -225,6 +225,7 @@ sysprof_window_set_document (SysprofWindow   *self,
     "ignore-process-0",
     "include-threads",
     "left-heavy",
+    "merge-similar-processes",
   };
   g_autofree char *title = NULL;
   g_autofree char *full_title = NULL;

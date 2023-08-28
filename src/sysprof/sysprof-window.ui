@@ -381,6 +381,10 @@
         <attribute name="label" translatable="yes">Ignore Process 0</attribute>
         <attribute name="action">win.callgraph.ignore-process-0</attribute>
       </item>
+      <item>
+        <attribute name="label" translatable="yes">Merge Similar Processes</attribute>
+        <attribute name="action">win.callgraph.merge-similar-processes</attribute>
+      </item>
     </section>
     <section>
       <attribute name="label" translatable="yes">Flamegraph</attribute>

@@ -41,23 +41,25 @@ struct _SysprofSession
 
   guint            bottom_up : 1;
   guint            categorize_frames : 1;
+  guint            hide_system_libraries : 1;
   guint            ignore_process_0 : 1;
   guint            include_threads : 1;
   guint            left_heavy : 1;
-  guint            hide_system_libraries : 1;
+  guint            merge_similar_processes : 1;
 };
 
 enum {
   PROP_0,
   PROP_BOTTOM_UP,
+  PROP_CATEGORIZE_FRAMES,
   PROP_DOCUMENT,
   PROP_DOCUMENT_TIME,
   PROP_FILTER,
-  PROP_LEFT_HEAVY,
   PROP_HIDE_SYSTEM_LIBRARIES,
   PROP_IGNORE_PROCESS_0,
   PROP_INCLUDE_THREADS,
-  PROP_CATEGORIZE_FRAMES,
+  PROP_LEFT_HEAVY,
+  PROP_MERGE_SIMILAR_PROCESSES,
   PROP_SELECTED_TIME,
   PROP_SELECTED_TIME_AXIS,
   PROP_VISIBLE_TIME,
@@ -162,6 +164,10 @@ sysprof_session_get_property (GObject    *object,
       g_value_set_boolean (value, self->left_heavy);
       break;
 
+    case PROP_MERGE_SIMILAR_PROCESSES:
+      g_value_set_boolean (value, self->merge_similar_processes);
+      break;
+
     case PROP_SELECTED_TIME:
       g_value_set_boxed (value, sysprof_session_get_selected_time (self));
       break;
@@ -221,6 +227,10 @@ sysprof_session_set_property (GObject      *object,
       self->left_heavy = g_value_get_boolean (value);
       break;
 
+    case PROP_MERGE_SIMILAR_PROCESSES:
+      self->merge_similar_processes = g_value_get_boolean (value);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -277,6 +287,11 @@ sysprof_session_class_init (SysprofSessionClass *klass)
 
   properties [PROP_LEFT_HEAVY] =
     g_param_spec_boolean ("left-heavy", NULL, NULL,
+                          FALSE,
+                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_MERGE_SIMILAR_PROCESSES] =
+    g_param_spec_boolean ("merge-similar-processes", NULL, NULL,
                           FALSE,
                           (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 

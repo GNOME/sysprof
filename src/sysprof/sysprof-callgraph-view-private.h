@@ -58,6 +58,7 @@ struct _SysprofCallgraphView
   guint ignore_process_0 : 1;
   guint include_threads : 1;
   guint left_heavy : 1;
+  guint merge_similar_processes : 1;
 };
 
 struct _SysprofCallgraphViewClass

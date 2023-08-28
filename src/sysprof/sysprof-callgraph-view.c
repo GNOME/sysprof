@@ -39,6 +39,7 @@ enum {
   PROP_IGNORE_PROCESS_0,
   PROP_INCLUDE_THREADS,
   PROP_LEFT_HEAVY,
+  PROP_MERGE_SIMILAR_PROCESSES,
   PROP_TRACEABLES,
   PROP_UTILITY_SUMMARY,
   PROP_UTILITY_TRACEABLES,
@@ -399,6 +400,10 @@ sysprof_callgraph_view_get_property (GObject    *object,
       g_value_set_boolean (value, sysprof_callgraph_view_get_left_heavy (self));
       break;
 
+    case PROP_MERGE_SIMILAR_PROCESSES:
+      g_value_set_boolean (value, sysprof_callgraph_view_get_merge_similar_processes (self));
+      break;
+
     case PROP_TRACEABLES:
       g_value_set_object (value, sysprof_callgraph_view_get_traceables (self));
       break;
@@ -452,6 +457,10 @@ sysprof_callgraph_view_set_property (GObject      *object,
 
     case PROP_LEFT_HEAVY:
       sysprof_callgraph_view_set_left_heavy (self, g_value_get_boolean (value));
+      break;
+
+    case PROP_MERGE_SIMILAR_PROCESSES:
+      sysprof_callgraph_view_set_merge_similar_processes (self, g_value_get_boolean (value));
       break;
 
     case PROP_TRACEABLES:
@@ -510,6 +519,11 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
 
   properties[PROP_LEFT_HEAVY] =
     g_param_spec_boolean ("left-heavy", NULL, NULL,
+                          FALSE,
+                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_MERGE_SIMILAR_PROCESSES] =
+    g_param_spec_boolean ("merge-similar-processes", NULL, NULL,
                           FALSE,
                           (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
@@ -696,6 +710,9 @@ sysprof_callgraph_view_reload (SysprofCallgraphView *self)
 
   if (self->left_heavy)
     flags |= SYSPROF_CALLGRAPH_FLAGS_LEFT_HEAVY;
+
+  if (self->merge_similar_processes)
+    flags |= SYSPROF_CALLGRAPH_FLAGS_MERGE_SIMILAR_PROCESSES;
 
   sysprof_document_callgraph_async (self->document,
                                     flags,
@@ -971,6 +988,30 @@ sysprof_callgraph_view_set_left_heavy (SysprofCallgraphView *self,
     {
       self->left_heavy = left_heavy;
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_LEFT_HEAVY]);
+      sysprof_callgraph_view_queue_reload (self);
+    }
+}
+
+gboolean
+sysprof_callgraph_view_get_merge_similar_processes (SysprofCallgraphView *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_VIEW (self), FALSE);
+
+  return self->merge_similar_processes;
+}
+
+void
+sysprof_callgraph_view_set_merge_similar_processes (SysprofCallgraphView *self,
+                                                    gboolean              merge_similar_processes)
+{
+  g_return_if_fail (SYSPROF_IS_CALLGRAPH_VIEW (self));
+
+  merge_similar_processes = !!merge_similar_processes;
+
+  if (self->merge_similar_processes != merge_similar_processes)
+    {
+      self->merge_similar_processes = merge_similar_processes;
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_MERGE_SIMILAR_PROCESSES]);
       sysprof_callgraph_view_queue_reload (self);
     }
 }

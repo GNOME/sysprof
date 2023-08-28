@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-08-27 17:13+0000\n"
-"PO-Revision-Date: 2023-08-27 21:35+0200\n"
+"POT-Creation-Date: 2023-08-28 16:33+0000\n"
+"PO-Revision-Date: 2023-08-28 18:50+0200\n"
 "Last-Translator: Fran Dieguez <frandieguez@gnome.org>\n"
 "Language-Team: Galician <proxecto@trasno.gal>\n"
 "Language: gl\n"
@@ -27,7 +27,7 @@ msgstr ""
 #: data/org.gnome.Sysprof.appdata.xml.in.in:5
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
 #: src/sysprof/sysprof-application.c:208
-#: src/sysprof/sysprof-recording-pad.ui:18 src/sysprof/sysprof-window.c:240
+#: src/sysprof/sysprof-recording-pad.ui:18 src/sysprof/sysprof-window.c:241
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -672,7 +672,7 @@ msgid "You must choose a local file to capture using Sysprof"
 msgstr "Debe escoller un ficheiro local para capturar usando Sysprof"
 
 #: src/sysprof/sysprof-greeter.c:267 src/sysprof/sysprof-recording-pad.c:115
-#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:715
+#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:716
 msgid "Close"
 msgstr "Pechar"
 
@@ -750,10 +750,10 @@ msgid "Trace Memory Allocations"
 msgstr "Perfilar as reservas de memoria"
 
 #: src/sysprof/sysprof-greeter.ui:138
-msgid ""
-"Record a strack trace when <tt>malloc</tt> or similar functions are used"
+msgid "Record a stack trace when <tt>malloc</tt> or similar functions are used"
 msgstr ""
-"Gravar un rastro de pila cando se usan <tt>malloc</tt> ou funcións similares"
+"Gravar un rastro de pila cando se usan <tt>malloc</tt> ou as funcións "
+"similares"
 
 #: src/sysprof/sysprof-greeter.ui:149
 msgid "Sysprof must launch your application to record memory allocations."
@@ -1106,7 +1106,7 @@ msgid "Leaks"
 msgstr "Fugas"
 
 #: src/sysprof/sysprof-memory-section.ui:212
-#: src/sysprof/sysprof-samples-section.ui:189
+#: src/sysprof/sysprof-samples-section.ui:194
 #: src/sysprof/sysprof-traceables-utility.ui:162
 msgid "Stack Trace"
 msgstr "Rastro de pila"
@@ -1223,7 +1223,7 @@ msgstr "Perfil de tempo"
 msgid "Callgraph"
 msgstr "Gráfica de chamadores"
 
-#: src/sysprof/sysprof-samples-section.ui:155
+#: src/sysprof/sysprof-samples-section.ui:160 src/sysprof/sysprof-window.ui:386
 msgid "Flamegraph"
 msgstr "Gráfica de lapas"
 
@@ -1267,23 +1267,23 @@ msgstr "Abrir"
 msgid "Sysprof Capture (*.syscap)"
 msgstr "Capturas de Sysprof (*.syscap)"
 
-#: src/sysprof/sysprof-window.c:465
+#: src/sysprof/sysprof-window.c:466
 msgid "Save to File"
 msgstr "Gravar a ficheiro"
 
-#: src/sysprof/sysprof-window.c:466
+#: src/sysprof/sysprof-window.c:467
 msgid "Save"
 msgstr "Gardar"
 
-#: src/sysprof/sysprof-window.c:635
+#: src/sysprof/sysprof-window.c:636
 msgid "Loading..."
 msgstr "Cargando…"
 
-#: src/sysprof/sysprof-window.c:711
+#: src/sysprof/sysprof-window.c:712
 msgid "Invalid Document"
 msgstr "Documento non válido"
 
-#: src/sysprof/sysprof-window.c:713
+#: src/sysprof/sysprof-window.c:714
 #, c-format
 msgid ""
 "The document could not be loaded. Please check that you have the correct "
@@ -1355,6 +1355,10 @@ msgstr "De abaixo cara arriba"
 #: src/sysprof/sysprof-window.ui:381
 msgid "Ignore Process 0"
 msgstr "Ignorar proceso 0"
+
+#: src/sysprof/sysprof-window.ui:388
+msgid "Left Heavy"
+msgstr "Esquerda pesada"
 
 #, fuzzy
 #~ msgid ""

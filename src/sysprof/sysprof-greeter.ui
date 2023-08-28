@@ -135,7 +135,7 @@
                               <object class="AdwActionRow">
                                 <property name="activatable-widget">trace_malloc</property>
                                 <property name="title" translatable="yes">Trace Memory Allocations</property>
-                                <property name="subtitle" translatable="yes">Record a strack trace when &lt;tt&gt;malloc&lt;/tt&gt; or similar functions are used</property>
+                                <property name="subtitle" translatable="yes">Record a stack trace when &lt;tt&gt;malloc&lt;/tt&gt; or similar functions are used</property>
                                 <child type="suffix">
                                   <object class="GtkSwitch" id="trace_malloc">
                                     <property name="valign">center</property>

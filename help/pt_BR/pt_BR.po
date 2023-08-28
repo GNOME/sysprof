@@ -1,20 +1,21 @@
 # Brazilian Portuguese translation for sysprof.
 # Copyright (C) 2018 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
-# Rafael Fontenelle <rafaelff@gnome.org>, 2016-2018.
+# Rafael Fontenelle <rafaelff@gnome.org>, 2016-2023.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
-"POT-Creation-Date: 2018-03-14 17:02+0000\n"
-"PO-Revision-Date: 2018-09-15 04:19-0200\n"
+"POT-Creation-Date: 2023-05-07 22:06+0000\n"
+"PO-Revision-Date: 2023-08-28 10:33-0300\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
-"Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
+"Language-Team: Brazilian Portuguese <https://br.gnome.org/traducao>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Virtaal 1.0.0-beta1\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"X-Generator: Gtranslator 45.alpha0\n"
 "X-Project-Style: gnome\n"
 
 #. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
@@ -22,18 +23,37 @@ msgctxt "_"
 msgid "translator-credits"
 msgstr "Rafael Fontenelle <rafaelff@gnome.org>, 2016-2018"
 
-#. (itstool) path: page/title
-#: C/index.page:12
+#. (itstool) path: info/title
+#: C/index.page:7
+msgctxt "link:trail"
 msgid "Sysprof"
 msgstr "Sysprof"
 
-#. (itstool) path: section/title
+#. (itstool) path: info/title
+#: C/index.page:8
+msgctxt "link"
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#. (itstool) path: info/title
+#: C/index.page:9
+msgctxt "text"
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#. (itstool) path: page/title
 #: C/index.page:15
+msgid "<_:media-1/> Sysprof"
+msgstr "<_:media-1/> Sysprof"
+
+#. (itstool) path: section/title
+#. (itstool) path: page/title
+#: C/index.page:21 C/profiling.page:8
 msgid "Profiling"
 msgstr "Perfilamento"
 
 #. (itstool) path: section/title
-#: C/index.page:19
+#: C/index.page:25
 msgid "Frequently Asked Questions"
 msgstr "Perguntas frequentes"
 
@@ -129,13 +149,6 @@ msgstr "Como perfilar seus sistema"
 
 #. (itstool) path: section/p
 #: C/profiling.page:11
-#| msgid ""
-#| "When <app>Sysprof</app> profiles your system, it records stack "
-#| "information for all applications executing, including the Linux kernel. "
-#| "This can sometimes be confusing if you only want to look at a single "
-#| "process. If your application does not interact much with the host system, "
-#| "you may have more success with <link href=\"profiling#new-process-"
-#| "profiling\">profiling an existing process</link>."
 msgid ""
 "When <app>Sysprof</app> profiles your system, it records stack information "
 "for all applications executing, including the Linux kernel. This can "
@@ -148,8 +161,8 @@ msgstr ""
 "pilha de todos os aplicativos em execução, incluindo o kernel Linux. Isso "
 "pode, em alguns casos, ser confuso, se você deseja apenas olhar um único "
 "processo. Se o aplicativo não interage muito com o sistema hospedeiro, você "
-"pode obter mais sucesso usando o <app>Sysprof</app> para <link href="
-"\"profiling#new-process-profiling\">criar um novo processo</link>."
+"pode obter mais sucesso usando o <app>Sysprof</app> para <link "
+"href=\"profiling#new-process-profiling\">criar um novo processo</link>."
 
 #. (itstool) path: section/p
 #: C/profiling.page:18
@@ -388,7 +401,6 @@ msgstr ""
 
 #. (itstool) path: page/title
 #: C/faq.page:9
-#| msgid "What does \"In file [heap]\" mean?"
 msgid "What does heap mean?"
 msgstr "O que heap significa?"
 

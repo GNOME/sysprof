@@ -51,6 +51,9 @@ sysprof_process_info_new (SysprofMountNamespace *mount_namespace,
                                                0, 0,
                                                SYSPROF_SYMBOL_KIND_PROCESS);
 
+  if (pid == 0)
+    self->fallback_symbol->is_kernel_process = TRUE;
+
   if (pid > 0)
     egg_bitset_add (self->thread_ids, pid);
 

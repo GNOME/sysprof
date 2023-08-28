@@ -151,6 +151,20 @@ sysprof_symbol_get_binary_path (SysprofSymbol *self)
   return self->binary_path;
 }
 
+static gboolean
+sniff_maybe_kernel_process (const char *str)
+{
+  if (g_str_has_prefix (str, "kworker/") ||
+      g_str_equal (str, "rcu_preempt") ||
+      g_str_has_prefix (str, "migration/") ||
+      g_str_has_prefix (str, "dmcrypt_write/") ||
+      g_str_has_prefix (str, "hwrng") ||
+      g_str_has_prefix (str, "ksoftirqd/"))
+    return TRUE;
+
+  return FALSE;
+}
+
 SysprofSymbol *
 _sysprof_symbol_new (GRefString        *name,
                      GRefString        *binary_path,
@@ -175,6 +189,9 @@ _sysprof_symbol_new (GRefString        *name,
   self->end_address = end_address;
   self->simple_hash = g_str_hash (name);
   self->kind = kind;
+
+  if (self->kind == SYSPROF_SYMBOL_KIND_PROCESS)
+    self->is_kernel_process = sniff_maybe_kernel_process (name);
 
   if (binary_nick != NULL)
     self->simple_hash ^= g_str_hash (binary_nick);

@@ -5,6 +5,7 @@
     <file preprocess="xml-stripblanks">gtk/menus.ui</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/address-layout-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/dbus-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/actions/document-properties-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/empty-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/energy-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/flamegraph-symbolic.svg</file>
@@ -16,6 +17,8 @@
     <file preprocess="xml-stripblanks">icons/scalable/actions/memory-leaks-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/metadata-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/process-mounts-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/actions/sidebar-show-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/actions/sidebar-show-right-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/storage-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/symbol-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/system-log-symbolic.svg</file>

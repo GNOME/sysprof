@@ -75,7 +75,8 @@ GRefString      *_sysprof_document_ref_string       (SysprofDocument      *self,
                                                      const char           *name);
 EggBitset       *_sysprof_document_traceables       (SysprofDocument      *self);
 SysprofSymbol   *_sysprof_document_process_symbol   (SysprofDocument      *self,
-                                                     int                   pid);
+                                                     int                   pid,
+                                                     gboolean              want_shared);
 SysprofSymbol   *_sysprof_document_thread_symbol    (SysprofDocument      *self,
                                                      int                   pid,
                                                      int                   tid);

@@ -164,7 +164,8 @@ sysprof_descendants_model_add_traceable (SysprofDescendantsModel  *self,
                                          SysprofDocument          *document,
                                          SysprofDocumentTraceable *traceable,
                                          SysprofSymbol            *from_symbol,
-                                         gboolean                  include_threads)
+                                         gboolean                  include_threads,
+                                         gboolean                  merge_similar_processes)
 {
   SysprofAddressContext final_context;
   SysprofSymbol **symbols;
@@ -193,7 +194,7 @@ sysprof_descendants_model_add_traceable (SysprofDescendantsModel  *self,
           symbols[n_symbols++] = _sysprof_document_thread_symbol (document, pid, thread_id);
         }
 
-      symbols[n_symbols++] = _sysprof_document_process_symbol (document, pid);
+      symbols[n_symbols++] = _sysprof_document_process_symbol (document, pid, merge_similar_processes);
     }
 
   for (guint i = n_symbols; i > 0; i--)
@@ -234,6 +235,7 @@ _sysprof_descendants_model_new (SysprofCallgraph *callgraph,
   g_autoptr(SysprofDocument) document = NULL;
   g_autoptr(GListModel) model = NULL;
   gboolean include_threads;
+  gboolean merge_similar_processes;
   guint n_items;
 
   g_return_val_if_fail (SYSPROF_IS_CALLGRAPH (callgraph), NULL);
@@ -251,13 +253,20 @@ _sysprof_descendants_model_new (SysprofCallgraph *callgraph,
   g_assert (_sysprof_symbol_equal (self->root.summary->symbol, symbol));
 
   include_threads = (callgraph->flags & SYSPROF_CALLGRAPH_FLAGS_INCLUDE_THREADS) != 0;
+  merge_similar_processes = (callgraph->flags & SYSPROF_CALLGRAPH_FLAGS_MERGE_SIMILAR_PROCESSES) != 0;
+
   n_items = g_list_model_get_n_items (model);
 
   for (guint i = 0; i < n_items; i++)
     {
       g_autoptr(SysprofDocumentTraceable) traceable = g_list_model_get_item (model, i);
 
-      sysprof_descendants_model_add_traceable (self, document, traceable, symbol, include_threads);
+      sysprof_descendants_model_add_traceable (self,
+                                               document,
+                                               traceable,
+                                               symbol,
+                                               include_threads,
+                                               merge_similar_processes);
     }
 
   return G_LIST_MODEL (self);

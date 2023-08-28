@@ -345,7 +345,8 @@ _sysprof_callgraph_categorize (SysprofCallgraph     *self,
 static void
 sysprof_callgraph_add_traceable (SysprofCallgraph         *self,
                                  SysprofDocumentTraceable *traceable,
-                                 guint                     list_model_index)
+                                 guint                     list_model_index,
+                                 gboolean                  merge_similar_processes)
 {
   SysprofAddressContext final_context;
   SysprofCallgraphNode *node;
@@ -421,7 +422,7 @@ sysprof_callgraph_add_traceable (SysprofCallgraph         *self,
   if ((self->flags & SYSPROF_CALLGRAPH_FLAGS_INCLUDE_THREADS) != 0)
     symbols[n_symbols++] = _sysprof_document_thread_symbol (self->document, pid, tid);
 
-  symbols[n_symbols++] = _sysprof_document_process_symbol (self->document, pid);
+  symbols[n_symbols++] = _sysprof_document_process_symbol (self->document, pid, merge_similar_processes);
   symbols[n_symbols++] = everything;
 
   if (n_symbols > self->height)
@@ -520,6 +521,7 @@ sysprof_callgraph_new_worker (GTask        *task,
                               GCancellable *cancellable)
 {
   SysprofCallgraph *self = task_data;
+  gboolean merge_similar_processes;
   guint n_items;
 
   g_assert (G_IS_TASK (task));
@@ -528,6 +530,8 @@ sysprof_callgraph_new_worker (GTask        *task,
   g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
 
   n_items = g_list_model_get_n_items (self->traceables);
+
+  merge_similar_processes = (self->flags & SYSPROF_CALLGRAPH_FLAGS_MERGE_SIMILAR_PROCESSES) != 0;
 
   for (guint i = 0; i < n_items; i++)
     {
@@ -540,7 +544,7 @@ sysprof_callgraph_new_worker (GTask        *task,
       if (traceable == NULL)
         break;
 
-      sysprof_callgraph_add_traceable (self, traceable, i);
+      sysprof_callgraph_add_traceable (self, traceable, i, merge_similar_processes);
     }
 
   /* Sort callgraph nodes alphabetically so that we can use them in the

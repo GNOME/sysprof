@@ -2106,7 +2106,8 @@ sysprof_document_callgraph_finish (SysprofDocument  *self,
 
 SysprofSymbol *
 _sysprof_document_process_symbol (SysprofDocument *self,
-                                  int              pid)
+                                  int              pid,
+                                  gboolean         want_shared)
 {
   SysprofProcessInfo *info;
 
@@ -2119,6 +2120,9 @@ _sysprof_document_process_symbol (SysprofDocument *self,
 
   if (info == NULL)
     return self->missing_process;
+
+  if (want_shared && info->shared_symbol)
+    return info->shared_symbol;
 
   if (info->symbol)
     return info->symbol;

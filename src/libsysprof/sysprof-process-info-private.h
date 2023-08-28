@@ -34,6 +34,7 @@ typedef struct _SysprofProcessInfo
   SysprofMountNamespace *mount_namespace;
   SysprofSymbolCache    *symbol_cache;
   SysprofSymbol         *fallback_symbol;
+  SysprofSymbol         *shared_symbol;
   SysprofSymbol         *symbol;
   EggBitset             *thread_ids;
   int                    pid;

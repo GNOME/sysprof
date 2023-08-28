@@ -72,6 +72,7 @@ sysprof_process_info_finalize (gpointer data)
   g_clear_object (&self->symbol_cache);
   g_clear_object (&self->mount_namespace);
   g_clear_object (&self->fallback_symbol);
+  g_clear_object (&self->shared_symbol);
   g_clear_object (&self->symbol);
   g_clear_pointer (&self->thread_ids, egg_bitset_unref);
 

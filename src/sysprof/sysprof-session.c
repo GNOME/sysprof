@@ -340,7 +340,6 @@ sysprof_session_init (SysprofSession *self)
   self->selected_time_axis = sysprof_value_axis_new (0, 0);
   self->visible_time_axis = sysprof_value_axis_new (0, 0);
 
-  self->ignore_process_0 = TRUE;
   self->categorize_frames = TRUE;
 }
 

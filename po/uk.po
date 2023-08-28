@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-36\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-08-25 23:49+0000\n"
-"PO-Revision-Date: 2023-08-26 20:54+0300\n"
+"POT-Creation-Date: 2023-08-28 16:33+0000\n"
+"PO-Revision-Date: 2023-08-28 20:31+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -22,7 +22,7 @@ msgstr ""
 #: data/org.gnome.Sysprof.appdata.xml.in.in:5
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
 #: src/sysprof/sysprof-application.c:208
-#: src/sysprof/sysprof-recording-pad.ui:18 src/sysprof/sysprof-window.c:240
+#: src/sysprof/sysprof-recording-pad.ui:18 src/sysprof/sysprof-window.c:241
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -50,88 +50,88 @@ msgstr "Profiler"
 msgid "Profile an application or entire system."
 msgstr "Профілювання програми або усієї системи."
 
-#: src/libsysprof/sysprof-category-summary.c:138
+#: src/libsysprof/sysprof-category-summary.c:136
 msgid "Uncategorized"
 msgstr "Поза категоріями"
 
-#: src/libsysprof/sysprof-category-summary.c:141
+#: src/libsysprof/sysprof-category-summary.c:139
 msgid "Accessibility"
 msgstr "Доступність"
 
-#: src/libsysprof/sysprof-category-summary.c:144
+#: src/libsysprof/sysprof-category-summary.c:142
 msgid "Actions"
 msgstr "Дії"
 
-#: src/libsysprof/sysprof-category-summary.c:147
+#: src/libsysprof/sysprof-category-summary.c:145
 msgid "Crash Handler"
 msgstr "Обробник аварій"
 
-#: src/libsysprof/sysprof-category-summary.c:150
+#: src/libsysprof/sysprof-category-summary.c:148
 msgid "Context Switches"
 msgstr "Перемикань контекстів"
 
-#: src/libsysprof/sysprof-category-summary.c:153
+#: src/libsysprof/sysprof-category-summary.c:151
 msgid "CSS"
 msgstr "CSS"
 
-#: src/libsysprof/sysprof-category-summary.c:156
+#: src/libsysprof/sysprof-category-summary.c:154
 #: src/sysprof/sysprof-greeter.ui:402 src/sysprof/sysprof-window.ui:270
 msgid "Graphics"
 msgstr "Графіка"
 
-#: src/libsysprof/sysprof-category-summary.c:159
+#: src/libsysprof/sysprof-category-summary.c:157
 msgid "Icons"
 msgstr "Піктограми"
 
-#: src/libsysprof/sysprof-category-summary.c:162
+#: src/libsysprof/sysprof-category-summary.c:160
 msgid "Input"
 msgstr "Введення"
 
-#: src/libsysprof/sysprof-category-summary.c:165
+#: src/libsysprof/sysprof-category-summary.c:163
 msgid "IO"
 msgstr "Введення-виведення"
 
-#: src/libsysprof/sysprof-category-summary.c:168
+#: src/libsysprof/sysprof-category-summary.c:166
 msgid "IPC"
 msgstr "IPC"
 
-#: src/libsysprof/sysprof-category-summary.c:171
+#: src/libsysprof/sysprof-category-summary.c:169
 msgid "JavaScript"
 msgstr "JavaScript"
 
-#: src/libsysprof/sysprof-category-summary.c:174
+#: src/libsysprof/sysprof-category-summary.c:172
 msgid "Kernel"
 msgstr "Ядро"
 
-#: src/libsysprof/sysprof-category-summary.c:177
+#: src/libsysprof/sysprof-category-summary.c:175
 msgid "Layout"
 msgstr "Компонування"
 
-#: src/libsysprof/sysprof-category-summary.c:180
+#: src/libsysprof/sysprof-category-summary.c:178
 msgid "Locking"
 msgstr "Блокування"
 
-#: src/libsysprof/sysprof-category-summary.c:183
+#: src/libsysprof/sysprof-category-summary.c:181
 msgid "Main Loop"
 msgstr "Основний цикл"
 
-#: src/libsysprof/sysprof-category-summary.c:186
+#: src/libsysprof/sysprof-category-summary.c:184
 msgid "Memory"
 msgstr "Пам'ять"
 
-#: src/libsysprof/sysprof-category-summary.c:189
+#: src/libsysprof/sysprof-category-summary.c:187
 msgid "Paint"
 msgstr "Малювання"
 
-#: src/libsysprof/sysprof-category-summary.c:192
+#: src/libsysprof/sysprof-category-summary.c:190
 msgid "Type System"
 msgstr "Система введення"
 
-#: src/libsysprof/sysprof-category-summary.c:195
+#: src/libsysprof/sysprof-category-summary.c:193
 msgid "Unwindable"
 msgstr "Непридатні для розплутування"
 
-#: src/libsysprof/sysprof-category-summary.c:198
+#: src/libsysprof/sysprof-category-summary.c:196
 msgid "Windowing"
 msgstr "Керування вікнами"
 
@@ -524,6 +524,7 @@ msgstr "Час"
 
 #: src/sysprof/sysprof-cpu-section.ui:412
 #: src/sysprof/sysprof-energy-section.ui:382
+#: src/sysprof/sysprof-flame-graph.c:348
 #: src/sysprof/sysprof-graphics-section.ui:293
 #: src/sysprof/sysprof-marks-section.ui:242
 #: src/sysprof/sysprof-network-section.ui:380
@@ -633,6 +634,11 @@ msgstr "Файли"
 msgid "Compressed"
 msgstr "Стиснений"
 
+#: src/sysprof/sysprof-flame-graph.c:352
+#: src/sysprof/sysprof-process-dialog.ui:177
+msgid "File"
+msgstr "Файл"
+
 #: src/sysprof/sysprof-frame-utility.ui:80
 #: src/sysprof/sysprof-logs-section.ui:143
 #: src/sysprof/sysprof-mark-table.ui:116
@@ -666,7 +672,7 @@ msgstr ""
 "Для захоплення даних за допомогою Sysprof вам слід вибрати локальний файл"
 
 #: src/sysprof/sysprof-greeter.c:267 src/sysprof/sysprof-recording-pad.c:115
-#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:715
+#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:716
 msgid "Close"
 msgstr "Закрити"
 
@@ -745,8 +751,10 @@ msgid "Trace Memory Allocations"
 msgstr "Трасувати розміщення у пам'яті"
 
 #: src/sysprof/sysprof-greeter.ui:138
+#| msgid ""
+#| "Record a strack trace when <tt>malloc</tt> or similar functions are used"
 msgid ""
-"Record a strack trace when <tt>malloc</tt> or similar functions are used"
+"Record a stack trace when <tt>malloc</tt> or similar functions are used"
 msgstr ""
 "Записати трасування стека, якщо використано <tt>malloc</tt> або подібні "
 "функції"
@@ -1101,7 +1109,7 @@ msgid "Leaks"
 msgstr "Витоки"
 
 #: src/sysprof/sysprof-memory-section.ui:212
-#: src/sysprof/sysprof-samples-section.ui:189
+#: src/sysprof/sysprof-samples-section.ui:194
 #: src/sysprof/sysprof-traceables-utility.ui:162
 msgid "Stack Trace"
 msgstr "Трасування стека"
@@ -1125,10 +1133,6 @@ msgstr "Початкова адреса"
 #: src/sysprof/sysprof-process-dialog.ui:137
 msgid "End Address"
 msgstr "Кінцева адреса"
-
-#: src/sysprof/sysprof-process-dialog.ui:177
-msgid "File"
-msgstr "Файл"
 
 #: src/sysprof/sysprof-process-dialog.ui:219
 msgid "Mounts"
@@ -1222,7 +1226,7 @@ msgstr "Профілювання за часом"
 msgid "Callgraph"
 msgstr "Граф викликів"
 
-#: src/sysprof/sysprof-samples-section.ui:155
+#: src/sysprof/sysprof-samples-section.ui:160 src/sysprof/sysprof-window.ui:386
 msgid "Flamegraph"
 msgstr "Флеймграфік"
 
@@ -1266,23 +1270,23 @@ msgstr "Відкрити"
 msgid "Sysprof Capture (*.syscap)"
 msgstr "захоплені дані Sysprof (*.syscap)"
 
-#: src/sysprof/sysprof-window.c:465
+#: src/sysprof/sysprof-window.c:466
 msgid "Save to File"
 msgstr "Зберегти у файл"
 
-#: src/sysprof/sysprof-window.c:466
+#: src/sysprof/sysprof-window.c:467
 msgid "Save"
 msgstr "Зберегти"
 
-#: src/sysprof/sysprof-window.c:635
+#: src/sysprof/sysprof-window.c:636
 msgid "Loading..."
 msgstr "Завантаження…"
 
-#: src/sysprof/sysprof-window.c:711
+#: src/sysprof/sysprof-window.c:712
 msgid "Invalid Document"
 msgstr "Некоректний документ"
 
-#: src/sysprof/sysprof-window.c:713
+#: src/sysprof/sysprof-window.c:714
 #, c-format
 msgid ""
 "The document could not be loaded. Please check that you have the correct "
@@ -1300,12 +1304,10 @@ msgid "Toggle Left Panel"
 msgstr "Перемкнути ліву панель"
 
 #: src/sysprof/sysprof-window.ui:162
-#| msgid "Main Thread"
 msgid "Main Menu"
 msgstr "Головне меню"
 
 #: src/sysprof/sysprof-window.ui:169
-#| msgid "Options"
 msgid "View Options"
 msgstr "Параметри перегляду"
 
@@ -1338,7 +1340,6 @@ msgid "Save As…"
 msgstr "Зберегти як…"
 
 #: src/sysprof/sysprof-window.ui:365
-#| msgid "Uncategorized"
 msgid "Categorize Frames"
 msgstr "Категоризувати кадри"
 
@@ -1347,7 +1348,6 @@ msgid "Hide System Libraries"
 msgstr "Приховати системні бібліотеки"
 
 #: src/sysprof/sysprof-window.ui:373
-#| msgid "Threads"
 msgid "Include Threads"
 msgstr "Включити потоки обробки"
 
@@ -1356,9 +1356,12 @@ msgid "Bottom Up"
 msgstr "Знизу-вгору"
 
 #: src/sysprof/sysprof-window.ui:381
-#| msgid "Process %d"
 msgid "Ignore Process 0"
 msgstr "Ігнорувати процес 0"
+
+#: src/sysprof/sysprof-window.ui:388
+msgid "Left Heavy"
+msgstr "Вага ліворуч"
 
 #~| msgid "Hold the performance profile for the duration of the recording"
 #~ msgid ""

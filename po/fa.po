@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-08-25 23:49+0000\n"
-"PO-Revision-Date: 2023-08-27 13:33+0330\n"
+"POT-Creation-Date: 2023-08-27 20:48+0000\n"
+"PO-Revision-Date: 2023-08-28 11:26+0330\n"
 "Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
 "Language-Team: Persian <fa@li.org>\n"
 "Language: fa\n"
@@ -20,7 +20,7 @@ msgstr ""
 #: data/org.gnome.Sysprof.appdata.xml.in.in:5
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
 #: src/sysprof/sysprof-application.c:208 src/sysprof/sysprof-recording-pad.ui:18
-#: src/sysprof/sysprof-window.c:240
+#: src/sysprof/sysprof-window.c:241
 msgid "Sysprof"
 msgstr "سامانما"
 
@@ -46,88 +46,88 @@ msgstr "نمایه‌گر"
 msgid "Profile an application or entire system."
 msgstr "نمایه سازی از یک برنامه یا کل سامانه."
 
-#: src/libsysprof/sysprof-category-summary.c:138
+#: src/libsysprof/sysprof-category-summary.c:136
 msgid "Uncategorized"
 msgstr "دسته‌بندی نشده"
 
-#: src/libsysprof/sysprof-category-summary.c:141
+#: src/libsysprof/sysprof-category-summary.c:139
 msgid "Accessibility"
 msgstr "دسترسی‌پذیری"
 
-#: src/libsysprof/sysprof-category-summary.c:144
+#: src/libsysprof/sysprof-category-summary.c:142
 msgid "Actions"
 msgstr "کنش‌ها"
 
-#: src/libsysprof/sysprof-category-summary.c:147
+#: src/libsysprof/sysprof-category-summary.c:145
 msgid "Crash Handler"
 msgstr "مدیر فروپاشی"
 
-#: src/libsysprof/sysprof-category-summary.c:150
+#: src/libsysprof/sysprof-category-summary.c:148
 msgid "Context Switches"
 msgstr "تعویض بافتارها"
 
-#: src/libsysprof/sysprof-category-summary.c:153
+#: src/libsysprof/sysprof-category-summary.c:151
 msgid "CSS"
 msgstr "CSS"
 
-#: src/libsysprof/sysprof-category-summary.c:156
+#: src/libsysprof/sysprof-category-summary.c:154
 #: src/sysprof/sysprof-greeter.ui:402 src/sysprof/sysprof-window.ui:270
 msgid "Graphics"
 msgstr "نگاشتار"
 
-#: src/libsysprof/sysprof-category-summary.c:159
+#: src/libsysprof/sysprof-category-summary.c:157
 msgid "Icons"
 msgstr "نقشک‌ها"
 
-#: src/libsysprof/sysprof-category-summary.c:162
+#: src/libsysprof/sysprof-category-summary.c:160
 msgid "Input"
 msgstr "ورودی"
 
-#: src/libsysprof/sysprof-category-summary.c:165
+#: src/libsysprof/sysprof-category-summary.c:163
 msgid "IO"
 msgstr "IO"
 
-#: src/libsysprof/sysprof-category-summary.c:168
+#: src/libsysprof/sysprof-category-summary.c:166
 msgid "IPC"
 msgstr "IPC"
 
-#: src/libsysprof/sysprof-category-summary.c:171
+#: src/libsysprof/sysprof-category-summary.c:169
 msgid "JavaScript"
 msgstr "جاوااسکریپت"
 
-#: src/libsysprof/sysprof-category-summary.c:174
+#: src/libsysprof/sysprof-category-summary.c:172
 msgid "Kernel"
 msgstr "کرنل"
 
-#: src/libsysprof/sysprof-category-summary.c:177
+#: src/libsysprof/sysprof-category-summary.c:175
 msgid "Layout"
 msgstr "چینش"
 
-#: src/libsysprof/sysprof-category-summary.c:180
+#: src/libsysprof/sysprof-category-summary.c:178
 msgid "Locking"
 msgstr "قفل کردن"
 
-#: src/libsysprof/sysprof-category-summary.c:183
+#: src/libsysprof/sysprof-category-summary.c:181
 msgid "Main Loop"
 msgstr "حلقهٔ اصلی"
 
-#: src/libsysprof/sysprof-category-summary.c:186
+#: src/libsysprof/sysprof-category-summary.c:184
 msgid "Memory"
 msgstr "حافظه"
 
-#: src/libsysprof/sysprof-category-summary.c:189
+#: src/libsysprof/sysprof-category-summary.c:187
 msgid "Paint"
 msgstr "رنگ‌آمیزی"
 
-#: src/libsysprof/sysprof-category-summary.c:192
+#: src/libsysprof/sysprof-category-summary.c:190
 msgid "Type System"
 msgstr "سامانهٔ نوشتن"
 
-#: src/libsysprof/sysprof-category-summary.c:195
+#: src/libsysprof/sysprof-category-summary.c:193
 msgid "Unwindable"
 msgstr "بازنشدنی"
 
-#: src/libsysprof/sysprof-category-summary.c:198
+#: src/libsysprof/sysprof-category-summary.c:196
 msgid "Windowing"
 msgstr "پنجره سازی"
 
@@ -508,7 +508,7 @@ msgid "Time"
 msgstr "زمان"
 
 #: src/sysprof/sysprof-cpu-section.ui:412
-#: src/sysprof/sysprof-energy-section.ui:382
+#: src/sysprof/sysprof-energy-section.ui:382 src/sysprof/sysprof-flame-graph.c:348
 #: src/sysprof/sysprof-graphics-section.ui:293
 #: src/sysprof/sysprof-marks-section.ui:242
 #: src/sysprof/sysprof-network-section.ui:380
@@ -615,6 +615,10 @@ msgstr "پرونده‌ها"
 msgid "Compressed"
 msgstr "فشرده"
 
+#: src/sysprof/sysprof-flame-graph.c:352 src/sysprof/sysprof-process-dialog.ui:177
+msgid "File"
+msgstr "پرونده"
+
 #: src/sysprof/sysprof-frame-utility.ui:80 src/sysprof/sysprof-logs-section.ui:143
 #: src/sysprof/sysprof-mark-table.ui:116
 #: src/sysprof/sysprof-traceables-utility.ui:81 src/sysprof/sysprof-window.ui:250
@@ -642,7 +646,7 @@ msgid "You must choose a local file to capture using Sysprof"
 msgstr "باید پرونده‌ای محلی برای ضبط با سامانما برگزینید"
 
 #: src/sysprof/sysprof-greeter.c:267 src/sysprof/sysprof-recording-pad.c:115
-#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:715
+#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:716
 msgid "Close"
 msgstr "بستن"
 
@@ -1065,7 +1069,7 @@ msgid "Leaks"
 msgstr "نشت‌ها"
 
 #: src/sysprof/sysprof-memory-section.ui:212
-#: src/sysprof/sysprof-samples-section.ui:189
+#: src/sysprof/sysprof-samples-section.ui:194
 #: src/sysprof/sysprof-traceables-utility.ui:162
 msgid "Stack Trace"
 msgstr "ردگیری پشته"
@@ -1089,10 +1093,6 @@ msgstr "نشانی آغاز"
 #: src/sysprof/sysprof-process-dialog.ui:137
 msgid "End Address"
 msgstr "نشانی پایان"
-
-#: src/sysprof/sysprof-process-dialog.ui:177
-msgid "File"
-msgstr "پرونده"
 
 #: src/sysprof/sysprof-process-dialog.ui:219
 msgid "Mounts"
@@ -1186,7 +1186,7 @@ msgstr "نمایه‌گر زمان"
 msgid "Callgraph"
 msgstr "نمودار فراخوانی"
 
-#: src/sysprof/sysprof-samples-section.ui:155
+#: src/sysprof/sysprof-samples-section.ui:160 src/sysprof/sysprof-window.ui:386
 msgid "Flamegraph"
 msgstr "نمودار شعله‌ای"
 
@@ -1230,23 +1230,23 @@ msgstr "گشودن"
 msgid "Sysprof Capture (*.syscap)"
 msgstr "ضبط سامانما (‪*.syscap‬)"
 
-#: src/sysprof/sysprof-window.c:465
+#: src/sysprof/sysprof-window.c:466
 msgid "Save to File"
 msgstr "ذخیره در پرونده"
 
-#: src/sysprof/sysprof-window.c:466
+#: src/sysprof/sysprof-window.c:467
 msgid "Save"
 msgstr "ذخیره"
 
-#: src/sysprof/sysprof-window.c:635
+#: src/sysprof/sysprof-window.c:636
 msgid "Loading..."
 msgstr "در حال بار کردن..."
 
-#: src/sysprof/sysprof-window.c:711
+#: src/sysprof/sysprof-window.c:712
 msgid "Invalid Document"
 msgstr "سند نامعتبر"
 
-#: src/sysprof/sysprof-window.c:713
+#: src/sysprof/sysprof-window.c:714
 #, c-format
 msgid ""
 "The document could not be loaded. Please check that you have the correct "
@@ -1317,6 +1317,10 @@ msgstr "پایین به بالا"
 #: src/sysprof/sysprof-window.ui:381
 msgid "Ignore Process 0"
 msgstr "چشم‌پوشی از فرایند ۰"
+
+#: src/sysprof/sysprof-window.ui:388
+msgid "Left Heavy"
+msgstr "سنگین رها شده"
 
 #~ msgid "Hold the performance profile for the duration of the recording"
 #~ msgstr "نگه داشتن نمایه‌گر کارایی در طول ضبط"

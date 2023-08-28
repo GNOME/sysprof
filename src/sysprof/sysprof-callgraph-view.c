@@ -303,8 +303,8 @@ make_descendant_root_action (GtkWidget  *widget,
 {
   SysprofCallgraphView *self = (SysprofCallgraphView *)widget;
   g_autoptr(SysprofCallgraphFrame) frame = NULL;
-  g_autoptr(GtkTreeListRow) row = NULL;
   GtkSelectionModel *model;
+  GtkTreeListRow *row;
 
   g_assert (SYSPROF_IS_CALLGRAPH_VIEW (self));
 

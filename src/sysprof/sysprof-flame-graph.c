@@ -22,6 +22,7 @@
 
 #include <glib/gi18n.h>
 
+#include "sysprof-animation.h"
 #include "sysprof-callgraph-private.h"
 #include "sysprof-category-icon.h"
 #include "sysprof-color-iter-private.h"
@@ -51,8 +52,14 @@ struct _SysprofFlameGraph
   SysprofCallgraphNode *root;
   FlameRectangle       *under_pointer;
 
+  SysprofAnimation     *animation;
+
   double                motion_x;
   double                motion_y;
+
+  guint                 queued_scroll;
+
+  guint                 did_animation : 1;
 };
 
 enum {
@@ -116,6 +123,72 @@ find_node_at_coord (SysprofFlameGraph *self,
   search.width = gtk_widget_get_width (GTK_WIDGET (self));
 
   return bsearch (&search, self->nodes->data, self->nodes->len, sizeof (FlameRectangle), search_compare);
+}
+
+static void
+sysprof_flame_graph_animation_done (gpointer data)
+{
+  g_autoptr(SysprofFlameGraph) self = data;
+
+  g_assert (SYSPROF_IS_FLAME_GRAPH (self));
+
+  self->did_animation = TRUE;
+}
+
+static gboolean
+sysprof_flame_graph_do_scroll (gpointer data)
+{
+  SysprofFlameGraph *self = data;
+  SysprofAnimation *animation;
+  GtkAdjustment *adj;
+  GtkWidget *scroller;
+  double upper;
+  double page_size;
+
+  g_assert (SYSPROF_IS_FLAME_GRAPH (self));
+
+  self->queued_scroll = 0;
+
+  if (self->animation)
+    {
+      sysprof_animation_stop (self->animation);
+      g_clear_weak_pointer (&self->animation);
+    }
+
+  if (!(scroller = gtk_widget_get_ancestor (GTK_WIDGET (self), GTK_TYPE_SCROLLED_WINDOW)) ||
+      !(adj = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (scroller))))
+    return G_SOURCE_REMOVE;
+
+  upper = gtk_adjustment_get_upper (adj);
+  page_size = gtk_adjustment_get_page_size (adj);
+
+  if (page_size > upper)
+    return G_SOURCE_REMOVE;
+
+  animation = sysprof_object_animate_full (adj,
+                                           SYSPROF_ANIMATION_EASE_IN_OUT_CUBIC,
+                                           250,
+                                           gtk_widget_get_frame_clock (GTK_WIDGET (self)),
+                                           sysprof_flame_graph_animation_done,
+                                           g_object_ref (self),
+                                           "value", upper - page_size,
+                                           NULL);
+
+  g_set_weak_pointer (&self->animation, animation);
+
+  return G_SOURCE_REMOVE;
+}
+
+static void
+sysprof_flame_graph_queue_scroll (SysprofFlameGraph *self)
+{
+  g_assert (SYSPROF_IS_FLAME_GRAPH (self));
+
+  if (self->did_animation)
+    return;
+
+  if (self->queued_scroll == 0)
+    self->queued_scroll = g_timeout_add (150, sysprof_flame_graph_do_scroll, self);
 }
 
 static void
@@ -313,6 +386,8 @@ sysprof_flame_graph_size_allocate (GtkWidget *widget,
   g_assert (SYSPROF_IS_FLAME_GRAPH (self));
 
   g_clear_pointer (&self->rendered, gsk_render_node_unref);
+
+  sysprof_flame_graph_queue_scroll (self);
 }
 
 static gboolean
@@ -398,6 +473,9 @@ static void
 sysprof_flame_graph_dispose (GObject *object)
 {
   SysprofFlameGraph *self = (SysprofFlameGraph *)object;
+
+  g_clear_handle_id (&self->queued_scroll, g_source_remove);
+  g_clear_weak_pointer (&self->animation);
 
   g_clear_pointer (&self->rendered, gsk_render_node_unref);
   g_clear_pointer (&self->nodes, g_array_unref);

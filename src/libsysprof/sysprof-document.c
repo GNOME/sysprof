@@ -2105,7 +2105,10 @@ _sysprof_document_process_symbol (SysprofDocument *self,
   if (pid < 0)
     pid = 0;
 
-  info = _sysprof_document_process_info (self, pid, TRUE);
+  info = _sysprof_document_process_info (self, pid, FALSE);
+
+  if (info == NULL)
+    g_error ("Failed to find info for PID %d", pid);
 
   if (info->symbol)
     return info->symbol;

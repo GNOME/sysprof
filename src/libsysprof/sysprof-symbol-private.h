@@ -30,6 +30,7 @@ struct _SysprofSymbol
   GObject parent_instance;
 
   guint hash;
+  guint simple_hash;
 
   GRefString *name;
   GRefString *binary_path;
@@ -71,14 +72,22 @@ _sysprof_symbol_equal (const SysprofSymbol *a,
   if (a == b)
     return TRUE;
 
-  if (a->hash != b->hash)
+  if (a->simple_hash != b->simple_hash)
     return FALSE;
 
   if (a->kind != b->kind)
     return FALSE;
 
-  if (a->name == NULL || b->name == NULL)
-    return FALSE;
+  if (a->hash != b->hash)
+    {
+      /* Special case symbols w/o binary_path which can happen
+       * when we have symbols decoded from a bundled symbols.
+       */
+      if (a->binary_path == NULL || b->binary_path == NULL)
+        return TRUE;
+
+      return FALSE;
+    }
 
   return strcmp (a->name, b->name) == 0;
 }

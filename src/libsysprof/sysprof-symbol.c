@@ -161,14 +161,25 @@ _sysprof_symbol_new (GRefString        *name,
 {
   SysprofSymbol *self;
 
+  if (binary_nick != NULL && binary_nick[0] == 0)
+    binary_nick = NULL;
+
+  if (binary_path != NULL && binary_path[0] == 0)
+    binary_path = NULL;
+
   self = g_object_new (SYSPROF_TYPE_SYMBOL, NULL);
   self->name = name;
   self->binary_path = binary_path;
   self->binary_nick = binary_nick;
   self->begin_address = begin_address;
   self->end_address = end_address;
-  self->hash = g_str_hash (name);
+  self->simple_hash = g_str_hash (name);
   self->kind = kind;
+
+  if (binary_nick != NULL)
+    self->simple_hash ^= g_str_hash (binary_nick);
+
+  self->hash = self->simple_hash;
 
   /* If we got a path for the symbol, add that to the hash so that we
    * can be sure that we're working with a symbol in the same file when
@@ -184,9 +195,6 @@ _sysprof_symbol_new (GRefString        *name,
       if (base != NULL)
         self->hash ^= g_str_hash (base);
     }
-
-  if (binary_nick != NULL)
-    self->hash ^= g_str_hash (binary_nick);
 
   return self;
 }

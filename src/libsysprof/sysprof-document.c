@@ -745,10 +745,14 @@ sysprof_document_load_overlays (SysprofDocument *self)
 static void
 sysprof_document_load_processes (SysprofDocument *self)
 {
+  G_GNUC_UNUSED SysprofProcessInfo *pid0;
   EggBitsetIter iter;
   guint i;
 
   g_assert (SYSPROF_IS_DOCUMENT (self));
+
+  /* Always create PID 0 info */
+  pid0 = _sysprof_document_process_info (self, 0, TRUE);
 
   if (egg_bitset_iter_init_first (&iter, self->processes, &i))
     {

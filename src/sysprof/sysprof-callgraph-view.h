@@ -52,6 +52,9 @@ void              sysprof_callgraph_view_set_categorize_frames       (SysprofCal
 gboolean          sysprof_callgraph_view_get_ignore_process_0        (SysprofCallgraphView *self);
 void              sysprof_callgraph_view_set_ignore_process_0        (SysprofCallgraphView *self,
                                                                       gboolean              ignore_process_0);
+gboolean          sysprof_callgraph_view_get_ignore_kernel_processes (SysprofCallgraphView *self);
+void              sysprof_callgraph_view_set_ignore_kernel_processes (SysprofCallgraphView *self,
+                                                                      gboolean              ignore_kernel_processes);
 gboolean          sysprof_callgraph_view_get_include_threads         (SysprofCallgraphView *self);
 void              sysprof_callgraph_view_set_include_threads         (SysprofCallgraphView *self,
                                                                       gboolean              include_threads);

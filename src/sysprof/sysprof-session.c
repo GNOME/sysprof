@@ -43,6 +43,7 @@ struct _SysprofSession
   guint            categorize_frames : 1;
   guint            hide_system_libraries : 1;
   guint            ignore_process_0 : 1;
+  guint            ignore_kernel_processes : 1;
   guint            include_threads : 1;
   guint            left_heavy : 1;
   guint            merge_similar_processes : 1;
@@ -56,6 +57,7 @@ enum {
   PROP_DOCUMENT_TIME,
   PROP_FILTER,
   PROP_HIDE_SYSTEM_LIBRARIES,
+  PROP_IGNORE_KERNEL_PROCESSES,
   PROP_IGNORE_PROCESS_0,
   PROP_INCLUDE_THREADS,
   PROP_LEFT_HEAVY,
@@ -156,6 +158,10 @@ sysprof_session_get_property (GObject    *object,
       g_value_set_boolean (value, self->ignore_process_0);
       break;
 
+    case PROP_IGNORE_KERNEL_PROCESSES:
+      g_value_set_boolean (value, self->ignore_kernel_processes);
+      break;
+
     case PROP_INCLUDE_THREADS:
       g_value_set_boolean (value, self->include_threads);
       break;
@@ -219,6 +225,10 @@ sysprof_session_set_property (GObject      *object,
       self->ignore_process_0 = g_value_get_boolean (value);
       break;
 
+    case PROP_IGNORE_KERNEL_PROCESSES:
+      self->ignore_kernel_processes = g_value_get_boolean (value);
+      break;
+
     case PROP_INCLUDE_THREADS:
       self->include_threads = g_value_get_boolean (value);
       break;
@@ -277,6 +287,11 @@ sysprof_session_class_init (SysprofSessionClass *klass)
 
   properties [PROP_IGNORE_PROCESS_0] =
     g_param_spec_boolean ("ignore-process-0", NULL, NULL,
+                          FALSE,
+                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_IGNORE_KERNEL_PROCESSES] =
+    g_param_spec_boolean ("ignore-kernel-processes", NULL, NULL,
                           FALSE,
                           (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 

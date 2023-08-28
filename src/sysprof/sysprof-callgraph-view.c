@@ -36,6 +36,7 @@ enum {
   PROP_CALLGRAPH,
   PROP_DOCUMENT,
   PROP_HIDE_SYSTEM_LIBRARIES,
+  PROP_IGNORE_KERNEL_PROCESSES,
   PROP_IGNORE_PROCESS_0,
   PROP_INCLUDE_THREADS,
   PROP_LEFT_HEAVY,
@@ -451,6 +452,10 @@ sysprof_callgraph_view_set_property (GObject      *object,
       sysprof_callgraph_view_set_ignore_process_0 (self, g_value_get_boolean (value));
       break;
 
+    case PROP_IGNORE_KERNEL_PROCESSES:
+      sysprof_callgraph_view_set_ignore_kernel_processes (self, g_value_get_boolean (value));
+      break;
+
     case PROP_INCLUDE_THREADS:
       sysprof_callgraph_view_set_include_threads (self, g_value_get_boolean (value));
       break;
@@ -514,6 +519,11 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
 
   properties[PROP_IGNORE_PROCESS_0] =
     g_param_spec_boolean ("ignore-process-0", NULL, NULL,
+                          FALSE,
+                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_IGNORE_KERNEL_PROCESSES] =
+    g_param_spec_boolean ("ignore-kernel-processes", NULL, NULL,
                           FALSE,
                           (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
@@ -713,6 +723,9 @@ sysprof_callgraph_view_reload (SysprofCallgraphView *self)
 
   if (self->merge_similar_processes)
     flags |= SYSPROF_CALLGRAPH_FLAGS_MERGE_SIMILAR_PROCESSES;
+
+  if (self->ignore_kernel_processes)
+    flags |= SYSPROF_CALLGRAPH_FLAGS_IGNORE_KERNEL_PROCESSES;
 
   sysprof_document_callgraph_async (self->document,
                                     flags,
@@ -940,6 +953,30 @@ sysprof_callgraph_view_set_include_threads (SysprofCallgraphView *self,
     {
       self->include_threads = include_threads;
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_INCLUDE_THREADS]);
+      sysprof_callgraph_view_queue_reload (self);
+    }
+}
+
+gboolean
+sysprof_callgraph_view_get_ignore_kernel_processes (SysprofCallgraphView *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_VIEW (self), FALSE);
+
+  return self->ignore_kernel_processes;
+}
+
+void
+sysprof_callgraph_view_set_ignore_kernel_processes (SysprofCallgraphView *self,
+                                                    gboolean              ignore_kernel_processes)
+{
+  g_return_if_fail (SYSPROF_IS_CALLGRAPH_VIEW (self));
+
+  ignore_kernel_processes = !!ignore_kernel_processes;
+
+  if (self->ignore_kernel_processes != ignore_kernel_processes)
+    {
+      self->ignore_kernel_processes = ignore_kernel_processes;
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_IGNORE_KERNEL_PROCESSES]);
       sysprof_callgraph_view_queue_reload (self);
     }
 }

@@ -27,7 +27,7 @@
 #include "sysprof-elf-loader-private.h"
 #include "sysprof-strings-private.h"
 
-#define DEFAULT_DEBUG_DIRS SYSPROF_STRV_INIT("/usr/lib/debug")
+#define DEFAULT_DEBUG_DIRS SYSPROF_STRV_INIT("/usr/lib/debug", "/app/lib/debug")
 
 struct _SysprofElfLoader
 {

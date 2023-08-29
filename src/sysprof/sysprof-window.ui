@@ -83,12 +83,34 @@
                     <child type="top">
                       <object class="AdwHeaderBar">
                         <property name="title-widget">
-                          <object class="AdwWindowTitle" id="stack_title">
-                            <binding name="title">
-                              <lookup name="title" type="SysprofDocument">
-                                <lookup name="document">SysprofWindow</lookup>
-                              </lookup>
-                            </binding>
+                          <object class="GtkCenterBox">
+                            <child type="start">
+                              <object class="GtkSpinner">
+                                <binding name="visible">
+                                  <lookup name="busy" type="SysprofDocument">
+                                    <lookup name="document" type="SysprofSession">
+                                      <lookup name="session">SysprofWindow</lookup>
+                                    </lookup>
+                                  </lookup>
+                                </binding>
+                                <binding name="spinning">
+                                  <lookup name="busy" type="SysprofDocument">
+                                    <lookup name="document" type="SysprofSession">
+                                      <lookup name="session">SysprofWindow</lookup>
+                                    </lookup>
+                                  </lookup>
+                                </binding>
+                              </object>
+                            </child>
+                            <child type="center">
+                              <object class="AdwWindowTitle" id="stack_title">
+                                <binding name="title">
+                                  <lookup name="title" type="SysprofDocument">
+                                    <lookup name="document">SysprofWindow</lookup>
+                                  </lookup>
+                                </binding>
+                              </object>
+                            </child>
                           </object>
                         </property>
                         <child type="start">

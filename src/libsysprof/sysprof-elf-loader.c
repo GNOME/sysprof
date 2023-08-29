@@ -289,6 +289,31 @@ try_load_build_id (SysprofElfLoader      *self,
   return FALSE;
 }
 
+static const char *
+skip_common_prefix (const char *path,
+                    const char *other)
+{
+  const char *committed = path;
+
+  /* If @path is "/app/bin/foo" and @other is "/app/lib/debug", we want
+   * to return "bin/foo", otherwise "/app/bin/foo".
+   */
+
+  while (*path && *other)
+    {
+      if (*path != *other)
+        break;
+
+      if (*path == '/')
+        committed = path;
+
+      path++;
+      other++;
+    }
+
+  return committed;
+}
+
 static void
 sysprof_elf_loader_annotate (SysprofElfLoader      *self,
                              SysprofMountNamespace *mount_namespace,
@@ -309,11 +334,13 @@ sysprof_elf_loader_annotate (SysprofElfLoader      *self,
           g_autofree char *directory_name = NULL;
           g_autofree char *debug_path = NULL;
           g_autofree char *container_path = NULL;
+          const char *short_directory_name;
           const char *debug_dir = self->debug_dirs[i];
           const char *build_id;
 
           directory_name = g_path_get_dirname (orig_file);
-          debug_path = g_build_filename (debug_dir, directory_name, debug_link, NULL);
+          short_directory_name = skip_common_prefix (directory_name, debug_dir);
+          debug_path = g_build_filename (debug_dir, short_directory_name, debug_link, NULL);
           build_id = sysprof_elf_get_build_id (elf);
 
           if (try_load_build_id (self, mount_namespace, elf, build_id, debug_dir))

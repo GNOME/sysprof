@@ -1,5 +1,5 @@
 # Georgian translation for sysprof.
-# Copyright (C) 2023 sysprof's COPYRIGHT HOLDER
+# Copyright (C) 2023 sysprof's authors
 # This file is distributed under the same license as the sysprof package.
 # NorwayFun <temuri.doghonadze@gmail.com>, 2022.
 # Ekaterine Papava <papava.e@gtu.ge>, 2023
@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-08-25 23:49+0000\n"
-"PO-Revision-Date: 2023-08-26 05:29+0200\n"
+"POT-Creation-Date: 2023-08-28 22:19+0000\n"
+"PO-Revision-Date: 2023-08-29 05:14+0200\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language-Team: Georgian <ka@li.org>\n"
 "Language: ka\n"
@@ -21,7 +21,7 @@ msgstr ""
 #: data/org.gnome.Sysprof.appdata.xml.in.in:5
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
 #: src/sysprof/sysprof-application.c:208
-#: src/sysprof/sysprof-recording-pad.ui:18 src/sysprof/sysprof-window.c:240
+#: src/sysprof/sysprof-recording-pad.ui:18 src/sysprof/sysprof-window.c:243
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -49,88 +49,88 @@ msgstr "პროფაილერი"
 msgid "Profile an application or entire system."
 msgstr "აპლიკაციის ან მთელი სისტემის პროფილირება."
 
-#: src/libsysprof/sysprof-category-summary.c:138
+#: src/libsysprof/sysprof-category-summary.c:136
 msgid "Uncategorized"
 msgstr "დაულაგებელი"
 
-#: src/libsysprof/sysprof-category-summary.c:141
+#: src/libsysprof/sysprof-category-summary.c:139
 msgid "Accessibility"
 msgstr "წვდომადობა"
 
-#: src/libsysprof/sysprof-category-summary.c:144
+#: src/libsysprof/sysprof-category-summary.c:142
 msgid "Actions"
 msgstr "ქმედებები"
 
-#: src/libsysprof/sysprof-category-summary.c:147
+#: src/libsysprof/sysprof-category-summary.c:145
 msgid "Crash Handler"
 msgstr "ავარიის დამმუშავებელი"
 
-#: src/libsysprof/sysprof-category-summary.c:150
+#: src/libsysprof/sysprof-category-summary.c:148
 msgid "Context Switches"
 msgstr "კონტექსტის გადართვები"
 
-#: src/libsysprof/sysprof-category-summary.c:153
+#: src/libsysprof/sysprof-category-summary.c:151
 msgid "CSS"
 msgstr "CSS"
 
-#: src/libsysprof/sysprof-category-summary.c:156
+#: src/libsysprof/sysprof-category-summary.c:154
 #: src/sysprof/sysprof-greeter.ui:402 src/sysprof/sysprof-window.ui:270
 msgid "Graphics"
 msgstr "გრაფიკა"
 
-#: src/libsysprof/sysprof-category-summary.c:159
+#: src/libsysprof/sysprof-category-summary.c:157
 msgid "Icons"
 msgstr "ხატულები"
 
-#: src/libsysprof/sysprof-category-summary.c:162
+#: src/libsysprof/sysprof-category-summary.c:160
 msgid "Input"
 msgstr "შეყვანა"
 
-#: src/libsysprof/sysprof-category-summary.c:165
+#: src/libsysprof/sysprof-category-summary.c:163
 msgid "IO"
 msgstr "IO"
 
-#: src/libsysprof/sysprof-category-summary.c:168
+#: src/libsysprof/sysprof-category-summary.c:166
 msgid "IPC"
 msgstr "IPC"
 
-#: src/libsysprof/sysprof-category-summary.c:171
+#: src/libsysprof/sysprof-category-summary.c:169
 msgid "JavaScript"
 msgstr "JavaScript"
 
-#: src/libsysprof/sysprof-category-summary.c:174
+#: src/libsysprof/sysprof-category-summary.c:172
 msgid "Kernel"
 msgstr "ბირთვი"
 
-#: src/libsysprof/sysprof-category-summary.c:177
+#: src/libsysprof/sysprof-category-summary.c:175
 msgid "Layout"
 msgstr "განლაგება"
 
-#: src/libsysprof/sysprof-category-summary.c:180
+#: src/libsysprof/sysprof-category-summary.c:178
 msgid "Locking"
 msgstr "დაბლოკვა"
 
-#: src/libsysprof/sysprof-category-summary.c:183
+#: src/libsysprof/sysprof-category-summary.c:181
 msgid "Main Loop"
 msgstr "მთავარი მარყუჟი"
 
-#: src/libsysprof/sysprof-category-summary.c:186
+#: src/libsysprof/sysprof-category-summary.c:184
 msgid "Memory"
 msgstr "მეხსიერება"
 
-#: src/libsysprof/sysprof-category-summary.c:189
+#: src/libsysprof/sysprof-category-summary.c:187
 msgid "Paint"
 msgstr "დახატვა"
 
-#: src/libsysprof/sysprof-category-summary.c:192
+#: src/libsysprof/sysprof-category-summary.c:190
 msgid "Type System"
 msgstr "ტიპის სისტემა"
 
-#: src/libsysprof/sysprof-category-summary.c:195
+#: src/libsysprof/sysprof-category-summary.c:193
 msgid "Unwindable"
 msgstr "გადაუხვევადი"
 
-#: src/libsysprof/sysprof-category-summary.c:198
+#: src/libsysprof/sysprof-category-summary.c:196
 msgid "Windowing"
 msgstr "ფანჯრული სისტემა"
 
@@ -138,43 +138,47 @@ msgstr "ფანჯრული სისტემა"
 msgid "Allocation"
 msgstr "გამოყოფა"
 
-#: src/libsysprof/sysprof-document.c:1168
-#: src/libsysprof/sysprof-document.c:1204
+#: src/libsysprof/sysprof-document.c:523
+msgid "Unknown Process"
+msgstr "უცნობი პროცესი"
+
+#: src/libsysprof/sysprof-document.c:1182
+#: src/libsysprof/sysprof-document.c:1218
 msgid "Indexing capture data frames"
 msgstr "ჩაწერილი მონაცემის კადრების ინდექსირება"
 
-#: src/libsysprof/sysprof-document.c:1390
+#: src/libsysprof/sysprof-document.c:1404
 msgid "Discovering file system mounts"
 msgstr "ფაილური სისტემის მიმაგრებების აღმოჩენა"
 
-#: src/libsysprof/sysprof-document.c:1393
+#: src/libsysprof/sysprof-document.c:1407
 msgid "Discovering process mount namespaces"
 msgstr "პროცესის მიმაგრების სახელის სივრცეების აღმოჩენა"
 
-#: src/libsysprof/sysprof-document.c:1396
+#: src/libsysprof/sysprof-document.c:1410
 msgid "Analyzing process address layouts"
 msgstr "პროცესის მისამართის განლაგებების ანალიზი"
 
-#: src/libsysprof/sysprof-document.c:1399
+#: src/libsysprof/sysprof-document.c:1413
 msgid "Analyzing process command line"
 msgstr "პროცესის ბრძანების სტრიქონის ანალიზი"
 
-#: src/libsysprof/sysprof-document.c:1402
+#: src/libsysprof/sysprof-document.c:1416
 msgid "Analyzing file system overlays"
 msgstr "ფაილური სისტემების განლაგების ანალიზი"
 
-#: src/libsysprof/sysprof-document.c:1405
+#: src/libsysprof/sysprof-document.c:1419
 msgid "Processing counters"
 msgstr "მთვლელების დამუშავება"
 
-#: src/libsysprof/sysprof-document.c:2385
-#: src/libsysprof/sysprof-document.c:2401
+#: src/libsysprof/sysprof-document.c:2406
+#: src/libsysprof/sysprof-document.c:2422
 #, c-format
 msgid "Recording at %X %x"
 msgstr "ჩანაწერი %X %x"
 
-#: src/libsysprof/sysprof-document.c:2387
-#: src/libsysprof/sysprof-document.c:2403
+#: src/libsysprof/sysprof-document.c:2408
+#: src/libsysprof/sysprof-document.c:2424
 #, c-format
 msgid "Recording at %s"
 msgstr "ჩაწერა მისამართზე %s"
@@ -503,6 +507,7 @@ msgstr "დრო"
 
 #: src/sysprof/sysprof-cpu-section.ui:412
 #: src/sysprof/sysprof-energy-section.ui:382
+#: src/sysprof/sysprof-flame-graph.c:423
 #: src/sysprof/sysprof-graphics-section.ui:293
 #: src/sysprof/sysprof-marks-section.ui:242
 #: src/sysprof/sysprof-network-section.ui:380
@@ -612,6 +617,11 @@ msgstr "ფაილები"
 msgid "Compressed"
 msgstr "შეკუმშული"
 
+#: src/sysprof/sysprof-flame-graph.c:427
+#: src/sysprof/sysprof-process-dialog.ui:177
+msgid "File"
+msgstr "ფაილი"
+
 #: src/sysprof/sysprof-frame-utility.ui:80
 #: src/sysprof/sysprof-logs-section.ui:143
 #: src/sysprof/sysprof-mark-table.ui:116
@@ -641,7 +651,7 @@ msgid "You must choose a local file to capture using Sysprof"
 msgstr ""
 
 #: src/sysprof/sysprof-greeter.c:267 src/sysprof/sysprof-recording-pad.c:115
-#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:715
+#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:718
 msgid "Close"
 msgstr "დახურვა"
 
@@ -716,8 +726,7 @@ msgid "Trace Memory Allocations"
 msgstr "მეხსიერების გამოყოფების ტრეისი"
 
 #: src/sysprof/sysprof-greeter.ui:138
-msgid ""
-"Record a strack trace when <tt>malloc</tt> or similar functions are used"
+msgid "Record a stack trace when <tt>malloc</tt> or similar functions are used"
 msgstr ""
 
 #: src/sysprof/sysprof-greeter.ui:149
@@ -1063,7 +1072,7 @@ msgid "Leaks"
 msgstr "გაჟონვები"
 
 #: src/sysprof/sysprof-memory-section.ui:212
-#: src/sysprof/sysprof-samples-section.ui:189
+#: src/sysprof/sysprof-samples-section.ui:204
 #: src/sysprof/sysprof-traceables-utility.ui:162
 msgid "Stack Trace"
 msgstr "სტეკის ტრეისი"
@@ -1087,10 +1096,6 @@ msgstr "საწყისი მისამართი"
 #: src/sysprof/sysprof-process-dialog.ui:137
 msgid "End Address"
 msgstr "ბოლო მისამართი"
-
-#: src/sysprof/sysprof-process-dialog.ui:177
-msgid "File"
-msgstr "ფაილი"
 
 #: src/sysprof/sysprof-process-dialog.ui:219
 msgid "Mounts"
@@ -1184,7 +1189,7 @@ msgstr "დროის პროფაილერი"
 msgid "Callgraph"
 msgstr "Callgraph"
 
-#: src/sysprof/sysprof-samples-section.ui:155
+#: src/sysprof/sysprof-samples-section.ui:170 src/sysprof/sysprof-window.ui:394
 msgid "Flamegraph"
 msgstr "Flamegraph"
 
@@ -1228,23 +1233,23 @@ msgstr "გახსნა"
 msgid "Sysprof Capture (*.syscap)"
 msgstr "Sysprof -ის ჩანაწერები (*.syscap)"
 
-#: src/sysprof/sysprof-window.c:465
+#: src/sysprof/sysprof-window.c:468
 msgid "Save to File"
 msgstr "ფაილში შენახვა"
 
-#: src/sysprof/sysprof-window.c:466
+#: src/sysprof/sysprof-window.c:469
 msgid "Save"
 msgstr "შენახვა"
 
-#: src/sysprof/sysprof-window.c:635
+#: src/sysprof/sysprof-window.c:638
 msgid "Loading..."
 msgstr "იტვირთება..."
 
-#: src/sysprof/sysprof-window.c:711
+#: src/sysprof/sysprof-window.c:714
 msgid "Invalid Document"
 msgstr "არასწორი დოკუმენტი"
 
-#: src/sysprof/sysprof-window.c:713
+#: src/sysprof/sysprof-window.c:716
 #, c-format
 msgid ""
 "The document could not be loaded. Please check that you have the correct "
@@ -1310,8 +1315,20 @@ msgid "Bottom Up"
 msgstr ""
 
 #: src/sysprof/sysprof-window.ui:381
+msgid "Ignore Kernel Processes"
+msgstr "ბირთვის პროცესების გამოტოვება"
+
+#: src/sysprof/sysprof-window.ui:385
 msgid "Ignore Process 0"
 msgstr "0 პროცესის გამოტოვება"
+
+#: src/sysprof/sysprof-window.ui:389
+msgid "Merge Similar Processes"
+msgstr "მსგავსი პროცესების შერწყმა"
+
+#: src/sysprof/sysprof-window.ui:396
+msgid "Left Heavy"
+msgstr ""
 
 #~ msgid "Logging"
 #~ msgstr "ჩაწერა"
@@ -1457,9 +1474,6 @@ msgstr "0 პროცესის გამოტოვება"
 
 #~ msgid "Profile Entire System"
 #~ msgstr "მთელი სისტემის პროფილირება"
-
-#~ msgid "Search Processes"
-#~ msgstr "პროცესების ძებნა"
 
 #~ msgid "Launch Application"
 #~ msgstr "აპლიკაციის გაშვება"

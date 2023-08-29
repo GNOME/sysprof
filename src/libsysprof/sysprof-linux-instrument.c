@@ -32,6 +32,8 @@
 struct _SysprofLinuxInstrument
 {
   SysprofInstrument parent_instance;
+  SysprofRecording *recording;
+  GHashTable *seen;
 };
 
 G_DEFINE_FINAL_TYPE (SysprofLinuxInstrument, sysprof_linux_instrument, SYSPROF_TYPE_INSTRUMENT)
@@ -147,9 +149,10 @@ populate_overlays (SysprofRecording *recording,
 }
 
 static DexFuture *
-add_process_info (SysprofRecording *recording,
-                  GVariant         *process_info,
-                  gint64            at_time)
+add_process_info (SysprofLinuxInstrument *self,
+                  SysprofRecording       *recording,
+                  GVariant               *process_info,
+                  gint64                  at_time)
 {
   g_autoptr(SysprofPodman) podman = NULL;
   g_autoptr(GPtrArray) futures = NULL;
@@ -157,6 +160,8 @@ add_process_info (SysprofRecording *recording,
   GVariantIter iter;
   GVariant *pidinfo;
 
+  g_assert (SYSPROF_IS_LINUX_INSTRUMENT (self));
+  g_assert (SYSPROF_IS_RECORDING (recording));
   g_assert (process_info != NULL);
   g_assert (g_variant_is_of_type (process_info, G_VARIANT_TYPE ("aa{sv}")));
 
@@ -182,6 +187,8 @@ add_process_info (SysprofRecording *recording,
 
       if (!g_variant_dict_lookup (&dict, "pid", "i", &pid))
         goto skip;
+
+      g_hash_table_add (self->seen, GINT_TO_POINTER (pid));
 
       if (!g_variant_dict_lookup (&dict, "cmdline", "&s", &cmdline))
         cmdline = "";
@@ -233,20 +240,21 @@ add_process_info (SysprofRecording *recording,
 static DexFuture *
 sysprof_linux_instrument_prepare_fiber (gpointer user_data)
 {
-  SysprofRecording *recording = user_data;
+  SysprofLinuxInstrument *self = user_data;
   g_autoptr(GDBusConnection) bus = NULL;
   g_autoptr(GVariant) process_info_reply = NULL;
   g_autoptr(GVariant) process_info = NULL;
   g_autoptr(GError) error = NULL;
   gint64 at_time;
 
-  g_assert (SYSPROF_IS_RECORDING (recording));
+  g_assert (SYSPROF_IS_LINUX_INSTRUMENT (self));
+  g_assert (SYSPROF_IS_RECORDING (self->recording));
 
   /* First get some basic information about the system into the capture. We can
    * get the contents for all of these concurrently.
    */
-  if (!dex_await (dex_future_all (_sysprof_recording_add_file (recording, "/proc/cpuinfo", TRUE),
-                                  _sysprof_recording_add_file (recording, "/proc/mounts", TRUE),
+  if (!dex_await (dex_future_all (_sysprof_recording_add_file (self->recording, "/proc/cpuinfo", TRUE),
+                                  _sysprof_recording_add_file (self->recording, "/proc/mounts", TRUE),
                                   NULL),
                   &error))
     return dex_future_new_for_error (g_steal_pointer (&error));
@@ -273,7 +281,7 @@ sysprof_linux_instrument_prepare_fiber (gpointer user_data)
 
   /* Add process records for each of the processes discovered */
   process_info = g_variant_get_child_value (process_info_reply, 0);
-  dex_await (add_process_info (recording, process_info, at_time), NULL);
+  dex_await (add_process_info (self, self->recording, process_info, at_time), NULL);
 
   return dex_future_new_for_boolean (TRUE);
 }
@@ -282,13 +290,76 @@ static DexFuture *
 sysprof_linux_instrument_prepare (SysprofInstrument *instrument,
                                   SysprofRecording  *recording)
 {
-  g_assert (SYSPROF_IS_INSTRUMENT (instrument));
+  SysprofLinuxInstrument *self = (SysprofLinuxInstrument *)instrument;
+
+  g_assert (SYSPROF_IS_INSTRUMENT (self));
   g_assert (SYSPROF_IS_RECORDING (recording));
+
+  g_set_object (&self->recording, recording);
 
   return dex_scheduler_spawn (NULL, 0,
                               sysprof_linux_instrument_prepare_fiber,
-                              g_object_ref (recording),
+                              g_object_ref (self),
                               g_object_unref);
+}
+
+typedef struct
+{
+  SysprofRecording *recording;
+  GPtrArray *paths;
+  int pid;
+} ProcessStarted;
+
+static void
+process_started_free (gpointer data)
+{
+  ProcessStarted *state = data;
+
+  g_clear_object (&state->recording);
+  g_clear_pointer (&state->paths, g_ptr_array_unref);
+  g_free (state);
+}
+
+static DexFuture *
+process_started_cb (DexFuture *completed,
+                    gpointer   user_data)
+{
+  ProcessStarted *state = user_data;
+  guint size;
+
+  g_assert (DEX_IS_FUTURE_SET (completed));
+  g_assert (state != NULL);
+  g_assert (SYSPROF_IS_RECORDING (state->recording));
+  g_assert (state->pid > 0);
+  g_assert (state->paths != NULL);
+
+  size = dex_future_set_get_size (DEX_FUTURE_SET (completed));
+
+  g_assert (state->paths->len == size);
+
+  for (guint i = 0; i < size; i++)
+    {
+      DexFuture *future = dex_future_set_get_future_at (DEX_FUTURE_SET (completed), i);
+      g_autoptr(GError) error = NULL;
+      g_autoptr(GVariant) variant = dex_await_variant (dex_ref (future), &error);
+      const char *path = g_ptr_array_index (state->paths, i);
+      const char *bytestring = NULL;
+
+      if (error != NULL)
+        continue;
+
+      if (variant == NULL || !g_variant_is_of_type (variant, G_VARIANT_TYPE ("(ay)")))
+        g_return_val_if_reached (NULL);
+
+      g_variant_get (variant, "(^&ay)", &bytestring);
+
+      if (bytestring == NULL)
+        g_return_val_if_reached (NULL);
+
+      _sysprof_recording_add_file_data (state->recording, path, bytestring, -1, TRUE);
+    }
+
+  return dex_future_new_for_boolean (TRUE);
 }
 
 static DexFuture *
@@ -297,23 +368,115 @@ sysprof_linux_instrument_process_started (SysprofInstrument *instrument,
                                           int                pid,
                                           const char        *comm)
 {
-  g_assert (SYSPROF_IS_INSTRUMENT (instrument));
+  SysprofLinuxInstrument *self = (SysprofLinuxInstrument *)instrument;
+  g_autoptr(GDBusConnection) bus = NULL;
+  g_autoptr(GError) error = NULL;
+  g_autofree char *mountinfo_path = NULL;
+  g_autofree char *flatpak_info_path = NULL;
+  DexFuture *mountinfo;
+  DexFuture *flatpak_info;
+  ProcessStarted *state;
+
+  g_assert (SYSPROF_IS_LINUX_INSTRUMENT (self));
   g_assert (SYSPROF_IS_RECORDING (recording));
 
-  /* We can't actually make a request of sysprofd to get
-   * information on the process right now because that would
-   * create a new process to verify our authentication.
-   *
-   * And that would just amplify this request further.
+  /* Most information for new processes we'll get inline, like the address
+   * layout for memory mappings. But we still want to get information about
+   * flatpak and mountinfo.
    */
 
-  return dex_future_new_for_boolean (TRUE);
+  /* Avoid spawn amplification by monitoring processes which are spawned in
+   * reaction to the requests we make of sysprofd. This in particular sucks
+   * because it means we are not very good at profiling these processes (at
+   * least the ones spawned while recording). However, if we did try to get
+   * information on them, we'd end up just chaising our tail.
+   */
+  if (comm != NULL)
+    {
+      /* Only check up to 15 chars because that is what we can get from Perf
+       * via PERF_RECORD_COMM messages.
+       */
+      if (g_str_has_prefix (comm, "systemd-userwor") ||
+          g_str_has_prefix (comm, "pkla-check-auth"))
+        return dex_future_new_for_boolean (TRUE);
+    }
+
+  /* Shortcut if we've already seen this */
+  if (g_hash_table_contains (self->seen, GINT_TO_POINTER (pid)))
+    return dex_future_new_for_boolean (TRUE);
+  g_hash_table_add (self->seen, GINT_TO_POINTER (pid));
+
+  /* Get the bus synchronously so we don't have to suspend the fiber. This
+   * will always return immediately anyway.
+   */
+  if (!(bus = g_bus_get_sync (G_BUS_TYPE_SYSTEM, NULL, &error)))
+    return dex_future_new_for_error (g_steal_pointer (&error));
+
+  mountinfo_path = g_strdup_printf ("/proc/%d/mountinfo", pid);
+  mountinfo = dex_dbus_connection_call (bus,
+                                        "org.gnome.Sysprof3",
+                                        "/org/gnome/Sysprof3",
+                                        "org.gnome.Sysprof3.Service",
+                                        "GetProcFile",
+                                        g_variant_new ("(^ay)", mountinfo_path),
+                                        G_VARIANT_TYPE ("(ay)"),
+                                        G_DBUS_CALL_FLAGS_NONE,
+                                        -1);
+
+  flatpak_info_path = g_strdup_printf ("/proc/%d/root/.flatpak-info", pid);
+  flatpak_info = dex_dbus_connection_call (bus,
+                                           "org.gnome.Sysprof3",
+                                           "/org/gnome/Sysprof3",
+                                           "org.gnome.Sysprof3.Service",
+                                           "GetProcFile",
+                                           g_variant_new ("(^ay)", flatpak_info_path),
+                                           G_VARIANT_TYPE ("(ay)"),
+                                           G_DBUS_CALL_FLAGS_NONE,
+                                           -1);
+
+  state = g_new0 (ProcessStarted, 1);
+  state->pid = pid;
+  state->recording = g_object_ref (recording);
+  state->paths = g_ptr_array_new_with_free_func (g_free);
+
+  g_ptr_array_add (state->paths, g_steal_pointer (&mountinfo_path));
+  g_ptr_array_add (state->paths, g_steal_pointer (&flatpak_info_path));
+
+  return dex_future_then (dex_future_any (mountinfo, flatpak_info, NULL),
+                          process_started_cb,
+                          state,
+                          process_started_free);
+}
+
+static void
+sysprof_linux_instrument_dispose (GObject *object)
+{
+  SysprofLinuxInstrument *self = (SysprofLinuxInstrument *)object;
+
+  g_clear_object (&self->recording);
+  g_hash_table_remove_all (self->seen);
+
+  G_OBJECT_CLASS (sysprof_linux_instrument_parent_class)->dispose (object);
+}
+
+static void
+sysprof_linux_instrument_finalize (GObject *object)
+{
+  SysprofLinuxInstrument *self = (SysprofLinuxInstrument *)object;
+
+  g_clear_pointer (&self->seen, g_hash_table_unref);
+
+  G_OBJECT_CLASS (sysprof_linux_instrument_parent_class)->finalize (object);
 }
 
 static void
 sysprof_linux_instrument_class_init (SysprofLinuxInstrumentClass *klass)
 {
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
   SysprofInstrumentClass *instrument_class = SYSPROF_INSTRUMENT_CLASS (klass);
+
+  object_class->dispose = sysprof_linux_instrument_dispose;
+  object_class->finalize = sysprof_linux_instrument_finalize;
 
   instrument_class->list_required_policy = sysprof_linux_instrument_list_required_policy;
   instrument_class->prepare = sysprof_linux_instrument_prepare;
@@ -323,6 +486,7 @@ sysprof_linux_instrument_class_init (SysprofLinuxInstrumentClass *klass)
 static void
 sysprof_linux_instrument_init (SysprofLinuxInstrument *self)
 {
+  self->seen = g_hash_table_new (NULL, NULL);
 }
 
 SysprofInstrument *

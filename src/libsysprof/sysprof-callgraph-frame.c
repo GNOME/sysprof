@@ -277,132 +277,24 @@ sysprof_callgraph_frame_get_callgraph (SysprofCallgraphFrame *self)
   return self->callgraph;
 }
 
-static gboolean
-traceable_has_prefix (SysprofDocument          *document,
-                      SysprofDocumentTraceable *traceable,
-                      GPtrArray                *prefix)
-{
-  SysprofAddressContext final_context;
-  SysprofSymbol **symbols;
-  SysprofAddress *addresses;
-  guint s = 0;
-  guint stack_depth;
-  guint n_symbols;
-
-  stack_depth = sysprof_document_traceable_get_stack_depth (traceable);
-  if (stack_depth > MAX_STACK_DEPTH)
-    return FALSE;
-
-  addresses = g_alloca (sizeof (SysprofAddress) * stack_depth);
-  sysprof_document_traceable_get_stack_addresses (traceable, addresses, stack_depth);
-
-  symbols = g_alloca (sizeof (SysprofSymbol *) * stack_depth);
-  n_symbols = sysprof_document_symbolize_traceable (document, traceable, symbols, stack_depth, &final_context);
-
-  if (n_symbols < prefix->len)
-    return FALSE;
-
-  for (guint p = 0; p < prefix->len; p++)
-    {
-      SysprofSymbol *prefix_symbol = g_ptr_array_index (prefix, p);
-      gboolean found = FALSE;
-
-      for (; !found && s < n_symbols; s++)
-        found = sysprof_symbol_equal (prefix_symbol, symbols[s]);
-
-      if (!found)
-        return FALSE;
-    }
-
-  return TRUE;
-}
-
-typedef struct _FilterByPrefix
-{
-  SysprofDocument *document;
-  GListModel *traceables;
-  GPtrArray *prefix;
-  EggBitset *bitset;
-  guint max_results;
-} FilterByPrefix;
-
 static void
-filter_by_prefix_free (FilterByPrefix *state)
+sysprof_callgraph_frame_list_traceables_cb (GObject      *object,
+                                            GAsyncResult *result,
+                                            gpointer      user_data)
 {
-  g_clear_object (&state->document);
-  g_clear_object (&state->traceables);
-  g_clear_pointer (&state->prefix, g_ptr_array_unref);
-  g_clear_pointer (&state->bitset, egg_bitset_unref);
-  g_free (state);
-}
+  SysprofCallgraph *callgraph = (SysprofCallgraph *)object;
+  g_autoptr(GListModel) model = NULL;
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GTask) task = user_data;
 
-static void
-filter_by_prefix_worker (GTask        *task,
-                         gpointer      source_object,
-                         gpointer      task_data,
-                         GCancellable *cancellable)
-{
-  FilterByPrefix *state = task_data;
-  g_autoptr(EggBitset) bitset = NULL;
-  SysprofDocument *document;
-  GListModel *model;
-  GPtrArray *prefix;
-  EggBitsetIter iter;
-  guint n_results = 0;
-  guint i;
-
+  g_assert (SYSPROF_IS_CALLGRAPH (callgraph));
+  g_assert (G_IS_ASYNC_RESULT (result));
   g_assert (G_IS_TASK (task));
-  g_assert (SYSPROF_IS_CALLGRAPH_FRAME (source_object));
-  g_assert (state != NULL);
-  g_assert (G_IS_LIST_MODEL (state->traceables));
-  g_assert (state->prefix != NULL);
-  g_assert (state->prefix->len > 0);
-  g_assert (state->bitset != NULL);
-  g_assert (!egg_bitset_is_empty (state->bitset));
 
-  bitset = egg_bitset_new_empty ();
-
-  model = state->traceables;
-  document = state->document;
-  prefix = state->prefix;
-
-  if (egg_bitset_iter_init_first (&iter, state->bitset, &i))
-    {
-      do
-        {
-          g_autoptr(SysprofDocumentTraceable) traceable = g_list_model_get_item (model, i);
-
-          if (traceable_has_prefix (document, traceable, prefix))
-            {
-              egg_bitset_add (bitset, i);
-              n_results++;
-            }
-        }
-      while (n_results < state->max_results &&
-             egg_bitset_iter_next (&iter, &i));
-    }
-
-  g_task_return_pointer (task,
-                         _sysprof_document_bitset_index_new (model, bitset),
-                         g_object_unref);
-}
-
-static int
-sort_by_size_asc (gconstpointer a,
-                  gconstpointer b)
-{
-  const EggBitset *bitset_a = *(const EggBitset * const *)a;
-  const EggBitset *bitset_b = *(const EggBitset * const *)a;
-  gsize size_a = egg_bitset_get_size (bitset_a);
-  gsize size_b = egg_bitset_get_size (bitset_b);
-
-  if (size_a < size_b)
-    return -1;
-
-  if (size_a > size_b)
-    return 1;
-
-  return 0;
+  if (!(model = sysprof_callgraph_list_traceables_for_node_finish (callgraph, result, &error)))
+    g_task_return_error (task, g_steal_pointer (&error));
+  else
+    g_task_return_pointer (task, g_steal_pointer (&model), g_object_unref);
 }
 
 /**
@@ -421,10 +313,6 @@ sysprof_callgraph_frame_list_traceables_async (SysprofCallgraphFrame *self,
                                                gpointer               user_data)
 {
   g_autoptr(GTask) task = NULL;
-  g_autoptr(GPtrArray) prefix = NULL;
-  g_autoptr(GPtrArray) bitsets = NULL;
-  g_autoptr(EggBitset) bitset = NULL;
-  FilterByPrefix *state;
 
   g_return_if_fail (SYSPROF_IS_CALLGRAPH_FRAME (self));
   g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
@@ -433,66 +321,16 @@ sysprof_callgraph_frame_list_traceables_async (SysprofCallgraphFrame *self,
   g_task_set_source_tag (task, sysprof_callgraph_frame_list_traceables_async);
 
   if (self->callgraph == NULL)
-    {
-      g_task_return_new_error (task,
-                               G_IO_ERROR,
-                               G_IO_ERROR_FAILED,
-                               "Callgraph already disposed");
-      return;
-    }
-
-  prefix = g_ptr_array_new ();
-  bitsets = g_ptr_array_new ();
-
-  for (SysprofCallgraphNode *node = self->node;
-       node != NULL;
-       node = node->parent)
-      {
-        SysprofCallgraphSummary *summary = node->summary;
-        SysprofSymbol *symbol = summary->symbol;
-
-        if (symbol->kind != SYSPROF_SYMBOL_KIND_USER &&
-            symbol->kind != SYSPROF_SYMBOL_KIND_KERNEL)
-          continue;
-
-        g_ptr_array_add (bitsets, summary->traceables);
-        g_ptr_array_add (prefix, symbol);
-      }
-
-  if (prefix->len == 0)
-    {
-      g_task_return_pointer (task,
-                             g_list_store_new (SYSPROF_TYPE_DOCUMENT_TRACEABLE),
-                             g_object_unref);
-      return;
-    }
-
-  /* Sort the bitsets by size to shrink potential interscetions */
-  g_ptr_array_sort (bitsets, sort_by_size_asc);
-  bitset = egg_bitset_copy (g_ptr_array_index (bitsets, 0));
-  for (guint i = 1; i < bitsets->len; i++)
-    {
-      const EggBitset *other = g_ptr_array_index (bitsets, i);
-      egg_bitset_intersect (bitset, other);
-    }
-
-  if (egg_bitset_is_empty (bitset))
-    {
-      g_task_return_pointer (task,
-                             g_list_store_new (SYSPROF_TYPE_DOCUMENT_TRACEABLE),
-                             g_object_unref);
-      return;
-    }
-
-  state = g_new0 (FilterByPrefix, 1);
-  state->document = g_object_ref (self->callgraph->document);
-  state->traceables = g_object_ref (self->callgraph->traceables);
-  state->prefix = g_steal_pointer (&prefix);
-  state->bitset = g_steal_pointer (&bitset);
-  state->max_results = 1000;
-
-  g_task_set_task_data (task, state, (GDestroyNotify)filter_by_prefix_free);
-  g_task_run_in_thread (task, filter_by_prefix_worker);
+    g_task_return_new_error (task,
+                             G_IO_ERROR,
+                             G_IO_ERROR_FAILED,
+                             "Callgraph already disposed");
+  else
+    sysprof_callgraph_list_traceables_for_node_async (self->callgraph,
+                                                      self->node,
+                                                      cancellable,
+                                                      sysprof_callgraph_frame_list_traceables_cb,
+                                                      g_steal_pointer (&task));
 }
 
 /**

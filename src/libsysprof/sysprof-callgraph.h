@@ -139,5 +139,15 @@ SYSPROF_AVAILABLE_IN_ALL
 SysprofCallgraphCategory  sysprof_callgraph_frame_get_category                   (SysprofCallgraphFrame   *self);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofCallgraph         *sysprof_callgraph_symbol_get_callgraph                 (SysprofCallgraphSymbol  *self);
+SYSPROF_AVAILABLE_IN_ALL
+void                      sysprof_callgraph_list_traceables_for_node_async       (SysprofCallgraph        *self,
+                                                                                  SysprofCallgraphNode    *node,
+                                                                                  GCancellable            *cancellable,
+                                                                                  GAsyncReadyCallback      callback,
+                                                                                  gpointer                 user_data);
+SYSPROF_AVAILABLE_IN_ALL
+GListModel               *sysprof_callgraph_list_traceables_for_node_finish      (SysprofCallgraph        *self,
+                                                                                  GAsyncResult            *result,
+                                                                                  GError                 **error);
 
 G_END_DECLS

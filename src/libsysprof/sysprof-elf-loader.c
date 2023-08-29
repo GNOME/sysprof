@@ -490,10 +490,11 @@ sysprof_elf_loader_load (SysprofElfLoader       *self,
     }
 
 failure:
-  g_set_error_literal (error,
-                       G_FILE_ERROR,
-                       G_FILE_ERROR_NOENT,
-                       "Failed to locate file");
+  if (error != NULL)
+    g_set_error_literal (error,
+                         G_FILE_ERROR,
+                         G_FILE_ERROR_NOENT,
+                         "Failed to locate file");
 
   return NULL;
 }

@@ -106,7 +106,7 @@ config_h.set10('HAVE_POLKIT_AGENT', polkit_agent_dep.found())
 polkit_dep = dependency('polkit-gobject-1', version: polkit_req_version, required: false)
 config_h.set10('HAVE_POLKIT', polkit_dep.found())
 
-if get_option('libsysprof')
+if need_libsysprof
   libunwind_dep = dependency('libunwind-generic', required: true)
   config_h.set('ENABLE_LIBUNWIND', libunwind_dep.found())
   config_h.set('HAVE_UNW_SET_CACHE_SIZE',

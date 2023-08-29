@@ -438,6 +438,7 @@ sysprof_recording_template_init (SysprofRecordingTemplate *self)
   self->scheduler_details = FALSE;
   self->system_log = TRUE;
   self->command_line = g_strdup ("");
+  self->cwd = g_strdup("");
 }
 
 SysprofRecordingTemplate *

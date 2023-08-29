@@ -52,6 +52,8 @@ struct _SysprofFlameGraph
   SysprofCallgraphNode *root;
   FlameRectangle       *under_pointer;
 
+  GListModel           *utility_traceables;
+
   SysprofAnimation     *animation;
 
   double                motion_x;
@@ -65,6 +67,7 @@ struct _SysprofFlameGraph
 enum {
   PROP_0,
   PROP_CALLGRAPH,
+  PROP_UTILITY_TRACEABLES,
   N_PROPS
 };
 
@@ -73,6 +76,17 @@ G_DEFINE_FINAL_TYPE (SysprofFlameGraph, sysprof_flame_graph, GTK_TYPE_WIDGET)
 static void sysprof_flame_graph_invalidate (SysprofFlameGraph *self);
 
 static GParamSpec *properties [N_PROPS];
+
+static void
+sysprof_flame_graph_set_utility_traceables (SysprofFlameGraph *self,
+                                            GListModel        *model)
+{
+  g_assert (SYSPROF_IS_FLAME_GRAPH (self));
+  g_assert (!model || G_IS_LIST_MODEL (model));
+
+  if (g_set_object (&self->utility_traceables, model))
+    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_UTILITY_TRACEABLES]);
+}
 
 typedef struct
 {
@@ -496,6 +510,7 @@ sysprof_flame_graph_dispose (GObject *object)
   g_clear_pointer (&self->rendered, gsk_render_node_unref);
   g_clear_pointer (&self->nodes, g_array_unref);
   g_clear_object (&self->callgraph);
+  g_clear_object (&self->utility_traceables);
 
   G_OBJECT_CLASS (sysprof_flame_graph_parent_class)->dispose (object);
 }
@@ -512,6 +527,10 @@ sysprof_flame_graph_get_property (GObject    *object,
     {
     case PROP_CALLGRAPH:
       g_value_set_object (value, sysprof_flame_graph_get_callgraph (self));
+      break;
+
+    case PROP_UTILITY_TRACEABLES:
+      g_value_set_object (value, self->utility_traceables);
       break;
 
     default:
@@ -557,6 +576,11 @@ sysprof_flame_graph_class_init (SysprofFlameGraphClass *klass)
     g_param_spec_object ("callgraph", NULL, NULL,
                          SYSPROF_TYPE_CALLGRAPH,
                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_UTILITY_TRACEABLES] =
+    g_param_spec_object ("utility-traceables", NULL, NULL,
+                         G_TYPE_LIST_MODEL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
@@ -773,6 +797,24 @@ sysprof_flame_graph_generate_worker (GTask        *task,
 }
 
 static void
+sysprof_flame_graph_list_traceables_cb (GObject      *object,
+                                        GAsyncResult *result,
+                                        gpointer      user_data)
+{
+  SysprofCallgraph *callgraph = (SysprofCallgraph *)object;
+  g_autoptr(SysprofFlameGraph) self = user_data;
+  g_autoptr(GListModel) model = NULL;
+
+  g_assert (SYSPROF_IS_CALLGRAPH (callgraph));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (SYSPROF_IS_FLAME_GRAPH (self));
+
+  model = sysprof_callgraph_list_traceables_for_node_finish (callgraph, result, NULL);
+
+  sysprof_flame_graph_set_utility_traceables (self, model);
+}
+
+static void
 sysprof_flame_graph_invalidate (SysprofFlameGraph *self)
 {
   g_assert (SYSPROF_IS_FLAME_GRAPH (self));
@@ -794,6 +836,15 @@ sysprof_flame_graph_invalidate (SysprofFlameGraph *self)
       task = g_task_new (NULL, NULL, sysprof_flame_graph_generate_cb, g_object_ref (self));
       g_task_set_task_data (task, g, (GDestroyNotify)generate_free);
       g_task_run_in_thread (task, sysprof_flame_graph_generate_worker);
+
+      if (self->root == NULL)
+        sysprof_flame_graph_set_utility_traceables (self, NULL);
+      else
+        sysprof_callgraph_list_traceables_for_node_async (self->callgraph,
+                                                          self->root,
+                                                          NULL,
+                                                          sysprof_flame_graph_list_traceables_cb,
+                                                          g_object_ref (self));
     }
 }
 

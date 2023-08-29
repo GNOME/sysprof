@@ -82,12 +82,14 @@
         <child>
           <object class="AdwViewStack" id="stack">
             <property name="vexpand">true</property>
+            <signal name="notify::visible-child" handler="notify_utility_traceables_cb" swapped="true"/>
             <child>
               <object class="AdwViewStackPage">
                 <property name="icon-name">threads-symbolic</property>
                 <property name="title" translatable="yes">Callgraph</property>
                 <property name="child">
                   <object class="SysprofWeightedCallgraphView" id="callgraph_view">
+                    <signal name="notify::utility-traceables" handler="notify_utility_traceables_cb" swapped="true"/>
                     <property name="vexpand">true</property>
                     <binding name="include-threads">
                       <lookup name="include-threads" type="SysprofSession">
@@ -172,7 +174,8 @@
                   <object class="GtkScrolledWindow">
                     <property name="hscrollbar-policy">never</property>
                     <property name="child">
-                      <object class="SysprofFlameGraph">
+                      <object class="SysprofFlameGraph" id="flamegraph">
+                        <signal name="notify::utility-traceables" handler="notify_utility_traceables_cb" swapped="true"/>
                         <binding name="callgraph">
                           <lookup name="callgraph">callgraph_view</lookup>
                         </binding>
@@ -216,7 +219,7 @@
                   <lookup name="session">SysprofSamplesSection</lookup>
                 </binding>
                 <binding name="traceables">
-                  <lookup name="utility-traceables">callgraph_view</lookup>
+                  <lookup name="utility-traceables">SysprofSamplesSection</lookup>
                 </binding>
               </object>
             </child>
@@ -232,7 +235,7 @@
                     <property name="model">
                       <object class="GtkNoSelection">
                         <binding name="model">
-                          <lookup name="utility-summary">callgraph_view</lookup>
+                          <lookup name="utility-summary">SysprofSamplesSection</lookup>
                         </binding>
                       </object>
                     </property>

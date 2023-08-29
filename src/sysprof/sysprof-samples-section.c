@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#include <adwaita.h>
+
 #include "sysprof-chart.h"
 #include "sysprof-column-layer.h"
 #include "sysprof-flame-graph.h"
@@ -41,9 +43,20 @@ struct _SysprofSamplesSection
   SysprofSection parent_instance;
 
   SysprofWeightedCallgraphView *callgraph_view;
+  SysprofFlameGraph *flamegraph;
+  AdwViewStack *stack;
 };
 
 G_DEFINE_FINAL_TYPE (SysprofSamplesSection, sysprof_samples_section, SYSPROF_TYPE_SECTION)
+
+enum {
+  PROP_0,
+  PROP_UTILITY_TRACEABLES,
+  PROP_UTILITY_SUMMARY,
+  N_PROPS
+};
+
+static GParamSpec *properties[N_PROPS];
 
 static char *
 format_number (gpointer unused,
@@ -52,6 +65,15 @@ format_number (gpointer unused,
   if (number == 0)
     return NULL;
   return g_strdup_printf ("%'u", number);
+}
+
+static void
+notify_utility_traceables_cb (SysprofSamplesSection *self,
+                              GParamSpec            *pspec,
+                              GObject               *instance)
+{
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_UTILITY_TRACEABLES]);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_UTILITY_SUMMARY]);
 }
 
 static void
@@ -65,16 +87,71 @@ sysprof_samples_section_dispose (GObject *object)
 }
 
 static void
+sysprof_samples_section_get_property (GObject    *object,
+                                      guint       prop_id,
+                                      GValue     *value,
+                                      GParamSpec *pspec)
+{
+  SysprofSamplesSection *self = SYSPROF_SAMPLES_SECTION (object);
+
+  switch (prop_id)
+    {
+    case PROP_UTILITY_SUMMARY:
+      if (self->stack != NULL)
+        {
+          GtkWidget *visible_child = adw_view_stack_get_visible_child (self->stack);
+
+          if (gtk_widget_is_ancestor (GTK_WIDGET (self->flamegraph), visible_child))
+            return;
+
+          g_object_get_property (G_OBJECT (self->callgraph_view), "utility-summary", value);
+        }
+      break;
+
+    case PROP_UTILITY_TRACEABLES:
+      if (self->stack != NULL)
+        {
+          GtkWidget *visible_child = adw_view_stack_get_visible_child (self->stack);
+
+          if (gtk_widget_is_ancestor (GTK_WIDGET (self->flamegraph), visible_child))
+            g_object_get_property (G_OBJECT (self->flamegraph), "utility-traceables", value);
+          else
+            g_object_get_property (G_OBJECT (self->callgraph_view), "utility-traceables", value);
+        }
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
+}
+
+static void
 sysprof_samples_section_class_init (SysprofSamplesSectionClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
   object_class->dispose = sysprof_samples_section_dispose;
+  object_class->get_property = sysprof_samples_section_get_property;
+
+  properties [PROP_UTILITY_SUMMARY] =
+    g_param_spec_object ("utility-summary", NULL, NULL,
+                         G_TYPE_LIST_MODEL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_UTILITY_TRACEABLES] =
+    g_param_spec_object ("utility-traceables", NULL, NULL,
+                         G_TYPE_LIST_MODEL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  g_object_class_install_properties (object_class, N_PROPS, properties);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-samples-section.ui");
   gtk_widget_class_bind_template_child (widget_class, SysprofSamplesSection, callgraph_view);
+  gtk_widget_class_bind_template_child (widget_class, SysprofSamplesSection, flamegraph);
+  gtk_widget_class_bind_template_child (widget_class, SysprofSamplesSection, stack);
   gtk_widget_class_bind_template_callback (widget_class, format_number);
+  gtk_widget_class_bind_template_callback (widget_class, notify_utility_traceables_cb);
 
   g_type_ensure (SYSPROF_TYPE_CATEGORY_SUMMARY);
   g_type_ensure (SYSPROF_TYPE_CHART);
@@ -95,4 +172,7 @@ static void
 sysprof_samples_section_init (SysprofSamplesSection *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  g_assert (self->flamegraph);
+  g_assert (self->callgraph_view);
 }

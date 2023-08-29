@@ -132,5 +132,7 @@ SYSPROF_AVAILABLE_IN_ALL
 gboolean                sysprof_document_save_finish                         (SysprofDocument           *self,
                                                                               GAsyncResult              *result,
                                                                               GError                   **error);
+SYSPROF_AVAILABLE_IN_ALL
+gboolean                sysprof_document_get_busy                            (SysprofDocument           *self);
 
 G_END_DECLS

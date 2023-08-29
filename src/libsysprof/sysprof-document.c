@@ -107,6 +107,8 @@ struct _SysprofDocument
 
   SysprofDocumentSymbols   *symbols;
 
+  guint                     busy_count;
+
   SysprofCaptureFileHeader  header;
   guint                     needs_swap : 1;
 };
@@ -114,6 +116,7 @@ struct _SysprofDocument
 enum {
   PROP_0,
   PROP_ALLOCATIONS,
+  PROP_BUSY,
   PROP_COUNTERS,
   PROP_CPU_INFO,
   PROP_DBUS_MESSAGES,
@@ -257,6 +260,41 @@ list_model_iface_init (GListModelInterface *iface)
 G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofDocument, sysprof_document, G_TYPE_OBJECT,
                                G_IMPLEMENT_INTERFACE (G_TYPE_LIST_MODEL, list_model_iface_init))
 
+static void
+sysprof_document_mark_busy (SysprofDocument *self)
+{
+  g_assert (SYSPROF_IS_DOCUMENT (self));
+
+  if (++self->busy_count == 1)
+    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_BUSY]);
+}
+
+static void
+sysprof_document_unmark_busy (SysprofDocument *self)
+{
+  g_assert (SYSPROF_IS_DOCUMENT (self));
+
+  if (--self->busy_count == 0)
+    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_BUSY]);
+}
+
+static void
+sysprof_document_mark_busy_for_task (SysprofDocument *self,
+                                     GTask           *task)
+{
+  g_assert (SYSPROF_IS_DOCUMENT (self));
+  g_assert (G_IS_TASK (task));
+
+  g_signal_connect_object (task,
+                           "notify::completed",
+                           G_CALLBACK (sysprof_document_unmark_busy),
+                           self,
+                           G_CONNECT_SWAPPED);
+
+  sysprof_document_mark_busy (self);
+}
+
+
 EggBitset *
 _sysprof_document_traceables (SysprofDocument *self)
 {
@@ -373,6 +411,10 @@ sysprof_document_get_property (GObject    *object,
       g_value_take_object (value, sysprof_document_list_allocations (self));
       break;
 
+    case PROP_BUSY:
+      g_value_set_boolean (value, sysprof_document_get_busy (self));
+      break;
+
     case PROP_COUNTERS:
       g_value_take_object (value, sysprof_document_list_counters (self));
       break;
@@ -441,6 +483,11 @@ sysprof_document_class_init (SysprofDocumentClass *klass)
   properties [PROP_ALLOCATIONS] =
     g_param_spec_object ("allocations", NULL, NULL,
                          G_TYPE_LIST_MODEL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_BUSY] =
+    g_param_spec_boolean ("busy", NULL, NULL,
+                         FALSE,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_COUNTERS] =
@@ -2083,6 +2130,7 @@ sysprof_document_callgraph_async (SysprofDocument         *self,
 
   task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_source_tag (task, sysprof_document_callgraph_async);
+  sysprof_document_mark_busy_for_task (self, task);
 
   _sysprof_callgraph_new_async (self,
                                 flags,
@@ -2690,6 +2738,7 @@ sysprof_document_save_async (SysprofDocument     *self,
 
   task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_source_tag (task, sysprof_document_save_async);
+  sysprof_document_mark_busy_for_task (self, task);
 
   bytes = g_mapped_file_get_bytes (self->mapped_file);
 
@@ -2728,4 +2777,12 @@ _sysprof_document_get_allocations (SysprofDocument *self)
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
   return egg_bitset_ref (self->allocations);
+}
+
+gboolean
+sysprof_document_get_busy (SysprofDocument *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), FALSE);
+
+  return self->busy_count > 0;
 }

@@ -580,6 +580,7 @@ sysprof_document_load_mounts (SysprofDocument *self)
   g_autoptr(SysprofDocumentFile) file = NULL;
   g_autoptr(GBytes) bytes = NULL;
   LineReader reader;
+  GHashTableIter iter;
   const char *contents;
   gsize contents_len;
   gsize line_len;
@@ -599,6 +600,8 @@ sysprof_document_load_mounts (SysprofDocument *self)
   line_reader_init (&reader, (char *)contents, contents_len);
   while ((line = line_reader_next (&reader, &line_len)))
     {
+      g_autoptr(SysprofMountDevice) mount_device = NULL;
+      SysprofProcessInfo *process_info = NULL;
       g_autofree char *subvol = NULL;
       g_auto(GStrv) parts = NULL;
       const char *filesystem;
@@ -641,10 +644,17 @@ sysprof_document_load_mounts (SysprofDocument *self)
             }
         }
 
-      sysprof_mount_namespace_add_device (self->mount_namespace,
-                                          sysprof_mount_device_new (sysprof_strings_get (self->strings, device),
-                                                                    sysprof_strings_get (self->strings, mountpoint),
-                                                                    sysprof_strings_get (self->strings, subvol)));
+      mount_device =
+        sysprof_mount_device_new (sysprof_strings_get (self->strings, device),
+                                  sysprof_strings_get (self->strings, mountpoint),
+                                  sysprof_strings_get (self->strings, subvol));
+
+      g_hash_table_iter_init (&iter, self->pid_to_process_info);
+      while (g_hash_table_iter_next (&iter, NULL, (gpointer *)&process_info))
+        sysprof_mount_namespace_add_device (process_info->mount_namespace,
+                                            g_object_ref (mount_device));
+
+      sysprof_mount_namespace_add_device (self->mount_namespace, g_object_ref (mount_device));
     }
 }
 

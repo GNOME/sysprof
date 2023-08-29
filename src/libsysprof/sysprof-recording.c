@@ -904,11 +904,12 @@ sysprof_recording_get_subprocess (SysprofRecording *self)
 }
 
 void
-_sysprof_recording_follow_fork (SysprofRecording *self,
-                                int               pid)
+_sysprof_recording_follow_process (SysprofRecording *self,
+                                   int               pid,
+                                   const char       *comm)
 {
   g_return_if_fail (SYSPROF_IS_RECORDING (self));
   g_return_if_fail (pid > 0);
 
-  dex_future_disown (_sysprof_instruments_process_started (self->instruments, self, pid));
+  dex_future_disown (_sysprof_instruments_process_started (self->instruments, self, pid, comm));
 }

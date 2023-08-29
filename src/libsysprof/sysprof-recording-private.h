@@ -95,8 +95,9 @@ void                  _sysprof_recording_add_file_data (SysprofRecording      *s
                                                         const char            *contents,
                                                         gssize                 length,
                                                         gboolean               compress);
-void                  _sysprof_recording_follow_fork   (SysprofRecording      *self,
-                                                        int                    pid);
+void                  _sysprof_recording_follow_process(SysprofRecording      *self,
+                                                        int                    pid,
+                                                        const char            *comm);
 void                  _sysprof_recording_diagnostic    (SysprofRecording      *self,
                                                         const char            *domain,
                                                         const char            *format,

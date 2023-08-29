@@ -122,11 +122,17 @@ sysprof_sampler_perf_event_stream_cb (const SysprofPerfEvent *event,
       memcpy (&time, event->comm.comm + offset, sizeof time);
 
       if (event->comm.pid == event->comm.tid)
-        sysprof_capture_writer_add_process (writer,
-                                            time,
-                                            cpu,
-                                            event->comm.pid,
-                                            event->comm.comm);
+        {
+          sysprof_capture_writer_add_process (writer,
+                                              time,
+                                              cpu,
+                                              event->comm.pid,
+                                              event->comm.comm);
+
+          _sysprof_recording_follow_process (recording,
+                                             event->comm.pid,
+                                             event->comm.comm);
+        }
 
       break;
 
@@ -148,9 +154,6 @@ sysprof_sampler_perf_event_stream_cb (const SysprofPerfEvent *event,
                                        cpu,
                                        event->fork.ptid,
                                        event->fork.tid);
-
-      _sysprof_recording_follow_fork (recording, event->fork.tid);
-
       break;
 
     case PERF_RECORD_LOST:

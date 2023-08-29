@@ -294,7 +294,8 @@ sysprof_linux_instrument_prepare (SysprofInstrument *instrument,
 static DexFuture *
 sysprof_linux_instrument_process_started (SysprofInstrument *instrument,
                                           SysprofRecording  *recording,
-                                          int                pid)
+                                          int                pid,
+                                          const char        *comm)
 {
   g_assert (SYSPROF_IS_INSTRUMENT (instrument));
   g_assert (SYSPROF_IS_RECORDING (recording));

@@ -48,7 +48,8 @@ struct _SysprofInstrumentClass
                                        SysprofRecording  *recording);
   DexFuture  *(*process_started)      (SysprofInstrument *self,
                                        SysprofRecording  *recording,
-                                       int                pid);
+                                       int                pid,
+                                       const char        *comm);
 };
 
 DexFuture *_sysprof_instruments_acquire_policy  (GPtrArray        *instruments,
@@ -62,6 +63,7 @@ DexFuture *_sysprof_instruments_augment         (GPtrArray        *instruments,
                                                  SysprofRecording *recording);
 DexFuture *_sysprof_instruments_process_started (GPtrArray        *instruments,
                                                  SysprofRecording *recording,
-                                                 int               pid);
+                                                 int               pid,
+                                                 const char       *comm);
 
 G_END_DECLS

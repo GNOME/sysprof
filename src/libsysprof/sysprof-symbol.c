@@ -159,6 +159,7 @@ sniff_maybe_kernel_process (const char *str)
       g_str_has_prefix (str, "migration/") ||
       g_str_has_prefix (str, "dmcrypt_write/") ||
       g_str_has_prefix (str, "hwrng") ||
+      g_str_has_prefix (str, "irq/") ||
       g_str_has_prefix (str, "ksoftirqd/"))
     return TRUE;
 

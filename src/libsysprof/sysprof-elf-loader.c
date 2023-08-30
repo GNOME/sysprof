@@ -333,20 +333,28 @@ sysprof_elf_loader_annotate (SysprofElfLoader      *self,
           g_autoptr(SysprofElf) debug_link_elf = NULL;
           g_autofree char *directory_name = NULL;
           g_autofree char *debug_path = NULL;
+          g_autofree char *short_debug_path = NULL;
           g_autofree char *container_path = NULL;
           const char *short_directory_name;
           const char *debug_dir = self->debug_dirs[i];
           const char *build_id;
 
           directory_name = g_path_get_dirname (orig_file);
-          short_directory_name = skip_common_prefix (directory_name, debug_dir);
-          debug_path = g_build_filename (debug_dir, short_directory_name, debug_link, NULL);
           build_id = sysprof_elf_get_build_id (elf);
 
           if (try_load_build_id (self, mount_namespace, elf, build_id, debug_dir))
             return;
 
+          debug_path = g_build_filename (debug_dir, directory_name, debug_link, NULL);
           if ((debug_link_elf = sysprof_elf_loader_load (self, mount_namespace, debug_path, build_id, 0, NULL)))
+            {
+              sysprof_elf_set_debug_link_elf (elf, get_deepest_debuglink (debug_link_elf));
+              return;
+            }
+
+          short_directory_name = skip_common_prefix (directory_name, debug_dir);
+          short_debug_path = g_build_filename (debug_dir, short_directory_name, debug_link, NULL);
+          if ((debug_link_elf = sysprof_elf_loader_load (self, mount_namespace, short_debug_path, build_id, 0, NULL)))
             {
               sysprof_elf_set_debug_link_elf (elf, get_deepest_debuglink (debug_link_elf));
               return;

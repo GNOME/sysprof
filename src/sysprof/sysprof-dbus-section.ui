@@ -57,6 +57,20 @@
           </object>
         </child>
         <child>
+          <object class="GtkBox">
+            <child>
+              <object class="GtkSearchEntry" id="filter_search_entry">
+                <property name="placeholder-text" translatable="yes">Filter Events</property>
+                <property name="margin-top">3</property>
+                <property name="margin-bottom">3</property>
+                <property name="margin-start">3</property>
+                <property name="margin-end">3</property>
+                <property name="hexpand">true</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
           <object class="GtkSeparator"/>
         </child>
         <child>
@@ -81,19 +95,83 @@
                                   <lookup name="sorter">column_view</lookup>
                                 </binding>
                                 <property name="model">
-                                  <object class="SysprofTimeFilterModel">
-                                    <binding name="time-span">
-                                      <lookup name="selected-time" type="SysprofSession">
-                                        <lookup name="session">SysprofDBusSection</lookup>
-                                      </lookup>
-                                    </binding>
-                                    <binding name="model">
-                                      <lookup name="dbus-messages" type="SysprofDocument">
-                                        <lookup name="document" type="SysprofSession">
-                                          <lookup name="session">SysprofDBusSection</lookup>
-                                        </lookup>
-                                      </lookup>
-                                    </binding>
+                                  <object class="GtkFilterListModel">
+                                    <property name="model">
+                                      <object class="SysprofTimeFilterModel">
+                                        <binding name="time-span">
+                                          <lookup name="selected-time" type="SysprofSession">
+                                            <lookup name="session">SysprofDBusSection</lookup>
+                                          </lookup>
+                                        </binding>
+                                        <binding name="model">
+                                          <lookup name="dbus-messages" type="SysprofDocument">
+                                            <lookup name="document" type="SysprofSession">
+                                              <lookup name="session">SysprofDBusSection</lookup>
+                                            </lookup>
+                                          </lookup>
+                                        </binding>
+                                      </object>
+                                    </property>
+                                    <property name="filter">
+                                      <object class="GtkAnyFilter">
+                                        <!-- support searching in all fields -->
+                                        <child>
+                                          <object class="GtkStringFilter">
+                                            <property name="match-mode">substring</property>
+                                            <property name="expression">
+                                              <lookup name="sender" type="SysprofDocumentDBusMessage" />
+                                            </property>
+                                            <binding name="search">
+                                              <lookup name="text">filter_search_entry</lookup>
+                                            </binding>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkStringFilter">
+                                            <property name="match-mode">substring</property>
+                                            <property name="expression">
+                                              <lookup name="destination" type="SysprofDocumentDBusMessage" />
+                                            </property>
+                                            <binding name="search">
+                                              <lookup name="text">filter_search_entry</lookup>
+                                            </binding>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkStringFilter">
+                                            <property name="match-mode">substring</property>
+                                            <property name="expression">
+                                              <lookup name="path" type="SysprofDocumentDBusMessage" />
+                                            </property>
+                                            <binding name="search">
+                                              <lookup name="text">filter_search_entry</lookup>
+                                            </binding>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkStringFilter">
+                                            <property name="match-mode">substring</property>
+                                            <property name="expression">
+                                              <lookup name="interface" type="SysprofDocumentDBusMessage" />
+                                            </property>
+                                            <binding name="search">
+                                              <lookup name="text">filter_search_entry</lookup>
+                                            </binding>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkStringFilter">
+                                            <property name="match-mode">substring</property>
+                                            <property name="expression">
+                                              <lookup name="member" type="SysprofDocumentDBusMessage" />
+                                            </property>
+                                            <binding name="search">
+                                              <lookup name="text">filter_search_entry</lookup>
+                                            </binding>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </property>
                                   </object>
                                 </property>
                               </object>

@@ -644,6 +644,9 @@ sysprof_time_scrubber_init (SysprofTimeScrubber *self)
                                  G_CONNECT_SWAPPED);
 
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  gtk_widget_set_cursor_from_name (GTK_WIDGET (self), "text");
+  gtk_widget_set_cursor_from_name (GTK_WIDGET (self->zoom), "pointer");
 }
 
 SysprofSession *

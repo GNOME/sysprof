@@ -288,6 +288,8 @@ sysprof_time_ruler_init (SysprofTimeRuler *self)
                            G_CALLBACK (gtk_widget_queue_draw),
                            self,
                            G_CONNECT_SWAPPED);
+
+  gtk_widget_set_cursor_from_name (GTK_WIDGET (self), "text");
 }
 
 GtkWidget *

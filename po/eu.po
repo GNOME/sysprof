@@ -6,8 +6,8 @@
 msgid ""
 msgstr "Project-Id-Version: sysprof sysprof-3-30\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-08-25 23:49+0000\n"
-"PO-Revision-Date: 2023-08-27 10:00+0100\n"
+"POT-Creation-Date: 2023-08-29 19:01+0000\n"
+"PO-Revision-Date: 2023-08-30 10:00+0100\n"
 "Last-Translator: Asier Sarasua Garmendia <asiersarasua@ni.eus>\n"
 "Language-Team: Basque <librezale@librezale.eus>\n"
 "Language: eu\n"
@@ -19,7 +19,7 @@ msgstr "Project-Id-Version: sysprof sysprof-3-30\n"
 #: data/org.gnome.Sysprof.appdata.xml.in.in:5
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
 #: src/sysprof/sysprof-application.c:208
-#: src/sysprof/sysprof-recording-pad.ui:18 src/sysprof/sysprof-window.c:240
+#: src/sysprof/sysprof-recording-pad.ui:18 src/sysprof/sysprof-window.c:243
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -45,88 +45,88 @@ msgstr "Profilatzailea"
 msgid "Profile an application or entire system."
 msgstr "Profilatu aplikazio bat edo sistema oso bat."
 
-#: src/libsysprof/sysprof-category-summary.c:138
+#: src/libsysprof/sysprof-category-summary.c:136
 msgid "Uncategorized"
 msgstr "Kategoriarik gabe"
 
-#: src/libsysprof/sysprof-category-summary.c:141
+#: src/libsysprof/sysprof-category-summary.c:139
 msgid "Accessibility"
 msgstr "Erabilerraztasuna"
 
-#: src/libsysprof/sysprof-category-summary.c:144
+#: src/libsysprof/sysprof-category-summary.c:142
 msgid "Actions"
 msgstr "Ekintzak"
 
-#: src/libsysprof/sysprof-category-summary.c:147
+#: src/libsysprof/sysprof-category-summary.c:145
 msgid "Crash Handler"
 msgstr "Kraskadura-maneiatzailea"
 
-#: src/libsysprof/sysprof-category-summary.c:150
+#: src/libsysprof/sysprof-category-summary.c:148
 msgid "Context Switches"
 msgstr "Testuinguruaren araberako aldatzaileak"
 
-#: src/libsysprof/sysprof-category-summary.c:153
+#: src/libsysprof/sysprof-category-summary.c:151
 msgid "CSS"
 msgstr "CSS"
 
-#: src/libsysprof/sysprof-category-summary.c:156
-#: src/sysprof/sysprof-greeter.ui:402 src/sysprof/sysprof-window.ui:270
+#: src/libsysprof/sysprof-category-summary.c:154
+#: src/sysprof/sysprof-greeter.ui:408 src/sysprof/sysprof-window.ui:292
 msgid "Graphics"
 msgstr "Grafikoak"
 
-#: src/libsysprof/sysprof-category-summary.c:159
+#: src/libsysprof/sysprof-category-summary.c:157
 msgid "Icons"
 msgstr "Ikonoak"
 
-#: src/libsysprof/sysprof-category-summary.c:162
+#: src/libsysprof/sysprof-category-summary.c:160
 msgid "Input"
 msgstr "Sarrera"
 
-#: src/libsysprof/sysprof-category-summary.c:165
+#: src/libsysprof/sysprof-category-summary.c:163
 msgid "IO"
 msgstr "IO"
 
-#: src/libsysprof/sysprof-category-summary.c:168
+#: src/libsysprof/sysprof-category-summary.c:166
 msgid "IPC"
 msgstr "IPC"
 
-#: src/libsysprof/sysprof-category-summary.c:171
+#: src/libsysprof/sysprof-category-summary.c:169
 msgid "JavaScript"
 msgstr "JavaScript"
 
-#: src/libsysprof/sysprof-category-summary.c:174
+#: src/libsysprof/sysprof-category-summary.c:172
 msgid "Kernel"
 msgstr "Kernela"
 
-#: src/libsysprof/sysprof-category-summary.c:177
+#: src/libsysprof/sysprof-category-summary.c:175
 msgid "Layout"
 msgstr "Diseinua"
 
-#: src/libsysprof/sysprof-category-summary.c:180
+#: src/libsysprof/sysprof-category-summary.c:178
 msgid "Locking"
 msgstr "Blokeoa"
 
-#: src/libsysprof/sysprof-category-summary.c:183
+#: src/libsysprof/sysprof-category-summary.c:181
 msgid "Main Loop"
 msgstr "Begizta nagusia"
 
-#: src/libsysprof/sysprof-category-summary.c:186
+#: src/libsysprof/sysprof-category-summary.c:184
 msgid "Memory"
 msgstr "Memoria"
 
-#: src/libsysprof/sysprof-category-summary.c:189
+#: src/libsysprof/sysprof-category-summary.c:187
 msgid "Paint"
 msgstr "Margoa"
 
-#: src/libsysprof/sysprof-category-summary.c:192
+#: src/libsysprof/sysprof-category-summary.c:190
 msgid "Type System"
 msgstr "Mota-sistema"
 
-#: src/libsysprof/sysprof-category-summary.c:195
+#: src/libsysprof/sysprof-category-summary.c:193
 msgid "Unwindable"
 msgstr "Desbiribilkagarria"
 
-#: src/libsysprof/sysprof-category-summary.c:198
+#: src/libsysprof/sysprof-category-summary.c:196
 msgid "Windowing"
 msgstr "Leihoak"
 
@@ -134,43 +134,47 @@ msgstr "Leihoak"
 msgid "Allocation"
 msgstr "Esleipena"
 
-#: src/libsysprof/sysprof-document.c:1168
-#: src/libsysprof/sysprof-document.c:1204
+#: src/libsysprof/sysprof-document.c:570
+msgid "Unknown Process"
+msgstr "Prozesu ezezaguna"
+
+#: src/libsysprof/sysprof-document.c:1239
+#: src/libsysprof/sysprof-document.c:1275
 msgid "Indexing capture data frames"
 msgstr "Kapturako datu-markoak indexatzen"
 
-#: src/libsysprof/sysprof-document.c:1390
+#: src/libsysprof/sysprof-document.c:1461
 msgid "Discovering file system mounts"
 msgstr "Fitxategi-sistemaren muntaketak aurkitzen"
 
-#: src/libsysprof/sysprof-document.c:1393
+#: src/libsysprof/sysprof-document.c:1464
 msgid "Discovering process mount namespaces"
 msgstr "Prozesuen muntaketako izen-espazioak aurkitzen"
 
-#: src/libsysprof/sysprof-document.c:1396
+#: src/libsysprof/sysprof-document.c:1467
 msgid "Analyzing process address layouts"
 msgstr "Prozesuaren helbide-diseinuak analizatzen"
 
-#: src/libsysprof/sysprof-document.c:1399
+#: src/libsysprof/sysprof-document.c:1470
 msgid "Analyzing process command line"
 msgstr "Prozesuaren komando-lerroa analizatzen"
 
-#: src/libsysprof/sysprof-document.c:1402
+#: src/libsysprof/sysprof-document.c:1473
 msgid "Analyzing file system overlays"
 msgstr "Fitxategi-sistemaren gainjartzeak analizatzen"
 
-#: src/libsysprof/sysprof-document.c:1405
+#: src/libsysprof/sysprof-document.c:1476
 msgid "Processing counters"
 msgstr "Kontagailuak prozesatzen"
 
-#: src/libsysprof/sysprof-document.c:2385
-#: src/libsysprof/sysprof-document.c:2401
+#: src/libsysprof/sysprof-document.c:2464
+#: src/libsysprof/sysprof-document.c:2480
 #, c-format
 msgid "Recording at %X %x"
 msgstr "Grabatzen hemen: %X %x"
 
-#: src/libsysprof/sysprof-document.c:2387
-#: src/libsysprof/sysprof-document.c:2403
+#: src/libsysprof/sysprof-document.c:2466
+#: src/libsysprof/sysprof-document.c:2482
 #, c-format
 msgid "Recording at %s"
 msgstr "Grabazioa %s orduan"
@@ -508,6 +512,7 @@ msgstr "Ordua"
 
 #: src/sysprof/sysprof-cpu-section.ui:412
 #: src/sysprof/sysprof-energy-section.ui:382
+#: src/sysprof/sysprof-flame-graph.c:453
 #: src/sysprof/sysprof-graphics-section.ui:293
 #: src/sysprof/sysprof-marks-section.ui:242
 #: src/sysprof/sysprof-network-section.ui:380
@@ -617,11 +622,16 @@ msgstr "Fitxategiak"
 msgid "Compressed"
 msgstr "Konprimatua"
 
+#: src/sysprof/sysprof-flame-graph.c:457
+#: src/sysprof/sysprof-process-dialog.ui:177
+msgid "File"
+msgstr "Fitxategia"
+
 #: src/sysprof/sysprof-frame-utility.ui:80
 #: src/sysprof/sysprof-logs-section.ui:143
 #: src/sysprof/sysprof-mark-table.ui:116
 #: src/sysprof/sysprof-traceables-utility.ui:81
-#: src/sysprof/sysprof-window.ui:250
+#: src/sysprof/sysprof-window.ui:272
 msgid "CPU"
 msgstr "PUZa"
 
@@ -646,7 +656,7 @@ msgid "You must choose a local file to capture using Sysprof"
 msgstr "Fitxategi lokal bat aukeratu behar da Sysprof bidez kapturatua izan dadin"
 
 #: src/sysprof/sysprof-greeter.c:267 src/sysprof/sysprof-recording-pad.c:115
-#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:715
+#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:718
 msgid "Close"
 msgstr "Itxi"
 
@@ -721,8 +731,7 @@ msgid "Trace Memory Allocations"
 msgstr "Jarraitu memoria-esleipenen aztarna"
 
 #: src/sysprof/sysprof-greeter.ui:138
-msgid ""
-"Record a strack trace when <tt>malloc</tt> or similar functions are used"
+msgid "Record a stack trace when <tt>malloc</tt> or similar functions are used"
 msgstr "Grabatu pila-aztarna bat <tt>malloc</tt> edo antzeko funtzioak erabiltzen direnean"
 
 #: src/sysprof/sysprof-greeter.ui:149
@@ -739,207 +748,211 @@ msgid "Command Line"
 msgstr "Komando-lerroa"
 
 #: src/sysprof/sysprof-greeter.ui:181
+msgid "Working directory"
+msgstr "Laneko direktorioa"
+
+#: src/sysprof/sysprof-greeter.ui:187
 msgid "The application will be run as a subprocess of Sysprof."
 msgstr "Aplikazioa Sysprof-en azpiprozesu gisa exekutatuko da."
 
-#: src/sysprof/sysprof-greeter.ui:194
+#: src/sysprof/sysprof-greeter.ui:200
 msgid "Environment"
 msgstr "Ingurunea"
 
-#: src/sysprof/sysprof-greeter.ui:198
+#: src/sysprof/sysprof-greeter.ui:204
 msgid "Clear Environment"
 msgstr "Garbitu ingurunea"
 
-#: src/sysprof/sysprof-greeter.ui:199
+#: src/sysprof/sysprof-greeter.ui:205
 msgid "Clear the environment before launching application"
 msgstr "Garbitu ingurunea aplikazioa abiarazi baino lehen"
 
-#: src/sysprof/sysprof-greeter.ui:225
+#: src/sysprof/sysprof-greeter.ui:231
 msgid "Add _Variable"
 msgstr "Gehitu a_ldagaia"
 
-#: src/sysprof/sysprof-greeter.ui:231
+#: src/sysprof/sysprof-greeter.ui:237
 msgid "Add Variable"
 msgstr "Gehitu aldagaia"
 
-#: src/sysprof/sysprof-greeter.ui:232
+#: src/sysprof/sysprof-greeter.ui:238
 msgid "_Add"
 msgstr "_Gehitu"
 
-#: src/sysprof/sysprof-greeter.ui:249 src/sysprof/sysprof-greeter.ui:254
+#: src/sysprof/sysprof-greeter.ui:255 src/sysprof/sysprof-greeter.ui:260
 msgid "Counters"
 msgstr "Zenbatzaileak"
 
-#: src/sysprof/sysprof-greeter.ui:258
+#: src/sysprof/sysprof-greeter.ui:264
 msgid "CPU Usage"
 msgstr "PUZ erabilera"
 
-#: src/sysprof/sysprof-greeter.ui:259
+#: src/sysprof/sysprof-greeter.ui:265
 msgid "Record coarse-grained counters about CPU usage and frequency"
 msgstr "Grabatu PUZaren erabilerari eta maiztasunari buzuko kontagailu orokorrak"
 
-#: src/sysprof/sysprof-greeter.ui:271
+#: src/sysprof/sysprof-greeter.ui:277
 msgid "Memory Usage"
 msgstr "Memoria-erabilera"
 
-#: src/sysprof/sysprof-greeter.ui:272
+#: src/sysprof/sysprof-greeter.ui:278
 msgid "Record coarse-grained counters about system memory usage"
 msgstr "Grabatu sistemaren memoria-erabilerari buzuko kontagailu orokorrak"
 
-#: src/sysprof/sysprof-greeter.ui:284
+#: src/sysprof/sysprof-greeter.ui:290
 msgid "Disk Usage"
 msgstr "Diskoaren erabilera"
 
-#: src/sysprof/sysprof-greeter.ui:285
+#: src/sysprof/sysprof-greeter.ui:291
 msgid "Record coarse-grained counters about storage throughput"
 msgstr "Grabatu biltegiratzearen transferentzia-tasari buzuko kontagailu orokorrak"
 
-#: src/sysprof/sysprof-greeter.ui:297
+#: src/sysprof/sysprof-greeter.ui:303
 msgid "Network Usage"
 msgstr "Sarearen erabilera"
 
-#: src/sysprof/sysprof-greeter.ui:298
+#: src/sysprof/sysprof-greeter.ui:304
 msgid "Record coarse-grained counters about network traffic"
 msgstr "Grabatu sareko trafikoari buzuko kontagailu orokorrak"
 
-#: src/sysprof/sysprof-greeter.ui:314
+#: src/sysprof/sysprof-greeter.ui:320
 msgid "Energy Usage"
 msgstr "Energia-erabilera"
 
-#: src/sysprof/sysprof-greeter.ui:315
+#: src/sysprof/sysprof-greeter.ui:321
 msgid "Record coarse-grained counters about energy usage in Watts"
 msgstr "Grabatu sistemaren energia-erabilerari (watt-ak) buzuko kontagailu orokorrak"
 
-#: src/sysprof/sysprof-greeter.ui:327
+#: src/sysprof/sysprof-greeter.ui:333
 msgid "Battery Charge"
 msgstr "Bateria-karga"
 
-#: src/sysprof/sysprof-greeter.ui:328
+#: src/sysprof/sysprof-greeter.ui:334
 msgid "Record coarse-grained counters about battery charge or discharge rates"
 msgstr "Grabatu bateriaren karga- eta deskarga-tasei buruzko kontagailu orokorrak"
 
-#: src/sysprof/sysprof-greeter.ui:346 src/sysprof/sysprof-greeter.ui:351
-#: src/sysprof/sysprof-window.ui:240
+#: src/sysprof/sysprof-greeter.ui:352 src/sysprof/sysprof-greeter.ui:357
+#: src/sysprof/sysprof-window.ui:262
 msgid "D-Bus"
 msgstr "D-Bus"
 
-#: src/sysprof/sysprof-greeter.ui:355
+#: src/sysprof/sysprof-greeter.ui:361
 msgid "Record System Bus"
 msgstr "Grabatu sistemaren bus-a"
 
-#: src/sysprof/sysprof-greeter.ui:356
+#: src/sysprof/sysprof-greeter.ui:362
 msgid "Record messages on the D-Bus system bus"
 msgstr "Grabatu D-Bus sistemaren bus-aren mezuak"
 
-#: src/sysprof/sysprof-greeter.ui:372
+#: src/sysprof/sysprof-greeter.ui:378
 msgid "Record Session Bus"
 msgstr "Grabatu saioaren bus-a"
 
-#: src/sysprof/sysprof-greeter.ui:373
+#: src/sysprof/sysprof-greeter.ui:379
 msgid "Record messages on the D-Bus user session bus"
 msgstr "Grabatu D-Bus erabiltzaile-saioaren bus-aren mezuak"
 
-#: src/sysprof/sysprof-greeter.ui:384
+#: src/sysprof/sysprof-greeter.ui:390
 msgid ""
 "The session bus may contain sensitive information such as keyboard usage and "
 "passwords."
 msgstr "Saioaren bus-ak informazio sentikorra eduki dezake, abididez teklatuaren erabilera eta pasahitzak."
 
-#: src/sysprof/sysprof-greeter.ui:407
+#: src/sysprof/sysprof-greeter.ui:413
 msgid "Timings"
 msgstr "Tenporizazioak"
 
-#: src/sysprof/sysprof-greeter.ui:411
+#: src/sysprof/sysprof-greeter.ui:417
 msgid "Compositor Frame Timings"
 msgstr "Konposatzailearen markoen tenporizazioa"
 
-#: src/sysprof/sysprof-greeter.ui:412
+#: src/sysprof/sysprof-greeter.ui:418
 msgid "Record frame-timing information from the GNOME Shell compositor"
 msgstr "Grabatu GNOME Shell konposatzailearen markoen tenporizazioaren informazioa"
 
-#: src/sysprof/sysprof-greeter.ui:423
+#: src/sysprof/sysprof-greeter.ui:429
 msgid ""
 "Applications launched by Sysprof will automatically collect GTK frame timing "
 "information."
 msgstr "Sysprof bidez abiarazitako aplikazioek GTK markoen denbora-informazioa automatikoki bilduko dute."
 
-#: src/sysprof/sysprof-greeter.ui:463
+#: src/sysprof/sysprof-greeter.ui:469
 msgid "Devices"
 msgstr "Gailuak"
 
-#: src/sysprof/sysprof-greeter.ui:467
+#: src/sysprof/sysprof-greeter.ui:473
 msgid "Include GPU Information"
 msgstr "Sartu PUZaren informazioa"
 
-#: src/sysprof/sysprof-greeter.ui:468
+#: src/sysprof/sysprof-greeter.ui:474
 msgid "Records information about graphics hardware and drivers"
 msgstr "Hardware grafikoen eta kontrolagailuen informazioa grabatzen du"
 
-#: src/sysprof/sysprof-greeter.ui:486
+#: src/sysprof/sysprof-greeter.ui:492
 msgid "System"
 msgstr "Sistema"
 
-#: src/sysprof/sysprof-greeter.ui:491
+#: src/sysprof/sysprof-greeter.ui:497
 msgid "Power Profile"
 msgstr "Energia-profila"
 
-#: src/sysprof/sysprof-greeter.ui:494
+#: src/sysprof/sysprof-greeter.ui:500
 msgid "Record with Power Profile"
 msgstr "Grabatu energia-profilarekin"
 
-#: src/sysprof/sysprof-greeter.ui:495
+#: src/sysprof/sysprof-greeter.ui:501
 msgid "Switch to power profile while recording"
 msgstr "Aldatu energia-profilera grabatzean"
 
-#: src/sysprof/sysprof-greeter.ui:505
+#: src/sysprof/sysprof-greeter.ui:511
 msgid "Details"
 msgstr "Xehetasunak"
 
-#: src/sysprof/sysprof-greeter.ui:509
+#: src/sysprof/sysprof-greeter.ui:515
 msgid "Record System Log"
 msgstr "Grabatu sistemaren egunkaria"
 
-#: src/sysprof/sysprof-greeter.ui:510
+#: src/sysprof/sysprof-greeter.ui:516
 msgid "Watch the system log for new messages and record them"
 msgstr "Behatu sistemaren egunkaria mezu berriak dauden jakiteko eta grabatu haiek"
 
-#: src/sysprof/sysprof-greeter.ui:526
+#: src/sysprof/sysprof-greeter.ui:532
 msgid "Include Hardware Information"
 msgstr "Sartu hardwarearen informazioa"
 
-#: src/sysprof/sysprof-greeter.ui:527
+#: src/sysprof/sysprof-greeter.ui:533
 msgid "Records information about PCI and USB devices"
 msgstr "PCI eta USB gailuen informazioa grabatzen du"
 
-#: src/sysprof/sysprof-greeter.ui:540
+#: src/sysprof/sysprof-greeter.ui:546
 msgid "Symbols"
 msgstr "Ikurrak"
 
-#: src/sysprof/sysprof-greeter.ui:544
+#: src/sysprof/sysprof-greeter.ui:550
 msgid "Bundle Symbols"
 msgstr "Bildu ikurrak"
 
-#: src/sysprof/sysprof-greeter.ui:545
+#: src/sysprof/sysprof-greeter.ui:551
 msgid "Make recording shareable by symbolizing stack traces after recording"
 msgstr "Ahalbidetu grabazioa partekatzea grabazioaren ondoren pila-aztarnak sinbolizatuz"
 
-#: src/sysprof/sysprof-greeter.ui:578
+#: src/sysprof/sysprof-greeter.ui:584
 msgid "_Open File…"
 msgstr "Ireki _fitxategia…"
 
-#: src/sysprof/sysprof-greeter.ui:585
+#: src/sysprof/sysprof-greeter.ui:591
 msgid "Record to _File…"
 msgstr "Grabatu _fitxategian…"
 
-#: src/sysprof/sysprof-greeter.ui:592
+#: src/sysprof/sysprof-greeter.ui:598
 msgid "Record to _Memory"
 msgstr "Grabatu _memorian"
 
-#: src/sysprof/sysprof-greeter.ui:607 src/sysprof/sysprof-window.ui:351
+#: src/sysprof/sysprof-greeter.ui:613 src/sysprof/sysprof-window.ui:373
 msgid "Help"
 msgstr "Laguntza"
 
-#: src/sysprof/sysprof-greeter.ui:612 src/sysprof/sysprof-window.ui:356
+#: src/sysprof/sysprof-greeter.ui:618 src/sysprof/sysprof-window.ui:378
 msgid "About Sysprof"
 msgstr "Sysprof aplikazioari buruz"
 
@@ -1068,7 +1081,7 @@ msgid "Leaks"
 msgstr "Galerak"
 
 #: src/sysprof/sysprof-memory-section.ui:212
-#: src/sysprof/sysprof-samples-section.ui:189
+#: src/sysprof/sysprof-samples-section.ui:207
 #: src/sysprof/sysprof-traceables-utility.ui:162
 msgid "Stack Trace"
 msgstr "Pila-aztarna"
@@ -1092,10 +1105,6 @@ msgstr "Hasierako helbidea"
 #: src/sysprof/sysprof-process-dialog.ui:137
 msgid "End Address"
 msgstr "Amaierako helbidea"
-
-#: src/sysprof/sysprof-process-dialog.ui:177
-msgid "File"
-msgstr "Fitxategia"
 
 #: src/sysprof/sysprof-process-dialog.ui:219
 msgid "Mounts"
@@ -1184,31 +1193,31 @@ msgstr "Gelditu grabatzea"
 msgid "Time Profiler"
 msgstr "Denbora-profilatzailea"
 
-#: src/sysprof/sysprof-samples-section.ui:88 src/sysprof/sysprof-window.ui:363
+#: src/sysprof/sysprof-samples-section.ui:89 src/sysprof/sysprof-window.ui:385
 msgid "Callgraph"
 msgstr "Dei-grafoa"
 
-#: src/sysprof/sysprof-samples-section.ui:155
+#: src/sysprof/sysprof-samples-section.ui:172 src/sysprof/sysprof-window.ui:416
 msgid "Flamegraph"
 msgstr "Sugar-grafoa"
 
-#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:108
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:130
 msgid "Seek Backward"
 msgstr "Bilatu atzerantz"
 
-#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:118
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:140
 msgid "Zoom Out"
 msgstr "Txikiagotu"
 
-#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:128
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:150
 msgid "Reset Zoom"
 msgstr "Berrezarri zooma"
 
-#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:138
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:160
 msgid "Zoom In"
 msgstr "Handiagotu"
 
-#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:148
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:170
 msgid "Seek Forward"
 msgstr "Bilatu aurrerantz"
 
@@ -1232,23 +1241,23 @@ msgstr "Ireki"
 msgid "Sysprof Capture (*.syscap)"
 msgstr "Sysprof kaptura (*.syscap)"
 
-#: src/sysprof/sysprof-window.c:465
+#: src/sysprof/sysprof-window.c:468
 msgid "Save to File"
 msgstr "Gorde fitxategian"
 
-#: src/sysprof/sysprof-window.c:466
+#: src/sysprof/sysprof-window.c:469
 msgid "Save"
 msgstr "Gorde"
 
-#: src/sysprof/sysprof-window.c:635
+#: src/sysprof/sysprof-window.c:638
 msgid "Loading..."
 msgstr "Kargatzen…"
 
-#: src/sysprof/sysprof-window.c:711
+#: src/sysprof/sysprof-window.c:714
 msgid "Invalid Document"
 msgstr "Dokumentu baliogabea"
 
-#: src/sysprof/sysprof-window.c:713
+#: src/sysprof/sysprof-window.c:716
 #, c-format
 msgid ""
 "The document could not be loaded. Please check that you have the correct "
@@ -1259,65 +1268,77 @@ msgstr "Dokumentua ezin da kargatu. Egiaztatu kaptura-fitxategi zuzena duzula.\n
 "\n"
 "%s"
 
-#: src/sysprof/sysprof-window.ui:98
+#: src/sysprof/sysprof-window.ui:120
 msgid "Toggle Left Panel"
 msgstr "Txandakatu ezkerreko panela"
 
-#: src/sysprof/sysprof-window.ui:162
+#: src/sysprof/sysprof-window.ui:184
 msgid "Main Menu"
 msgstr "Menu nagusia"
 
-#: src/sysprof/sysprof-window.ui:169
+#: src/sysprof/sysprof-window.ui:191
 msgid "View Options"
 msgstr "Ikusi aukerak"
 
-#: src/sysprof/sysprof-window.ui:175
+#: src/sysprof/sysprof-window.ui:197
 msgid "Toggle Right Panel"
 msgstr "Txandakatu eskuineko panela"
 
-#: src/sysprof/sysprof-window.ui:260
+#: src/sysprof/sysprof-window.ui:282
 msgid "Energy"
 msgstr "Energia"
 
-#: src/sysprof/sysprof-window.ui:280
+#: src/sysprof/sysprof-window.ui:302
 msgid "Network"
 msgstr "Sarea"
 
-#: src/sysprof/sysprof-window.ui:290
+#: src/sysprof/sysprof-window.ui:312
 msgid "Storage"
 msgstr "Biltegiratzea"
 
-#: src/sysprof/sysprof-window.ui:337
+#: src/sysprof/sysprof-window.ui:359
 msgid "_Record Again…"
 msgstr "_Grabatu berriro…"
 
-#: src/sysprof/sysprof-window.ui:341
+#: src/sysprof/sysprof-window.ui:363
 msgid "Open Recording…"
 msgstr "Ireki grabazioa…"
 
-#: src/sysprof/sysprof-window.ui:345
+#: src/sysprof/sysprof-window.ui:367
 msgid "Save As…"
 msgstr "Gorde honela…"
 
-#: src/sysprof/sysprof-window.ui:365
+#: src/sysprof/sysprof-window.ui:387
 msgid "Categorize Frames"
 msgstr "Kategorizatu markoak"
 
-#: src/sysprof/sysprof-window.ui:369
+#: src/sysprof/sysprof-window.ui:391
 msgid "Hide System Libraries"
 msgstr "Ezkutatu sistema-liburutegiak"
 
-#: src/sysprof/sysprof-window.ui:373
+#: src/sysprof/sysprof-window.ui:395
 msgid "Include Threads"
 msgstr "Sartu hariak"
 
-#: src/sysprof/sysprof-window.ui:377
+#: src/sysprof/sysprof-window.ui:399
 msgid "Bottom Up"
 msgstr "Behetik gora"
 
-#: src/sysprof/sysprof-window.ui:381
+#: src/sysprof/sysprof-window.ui:403
+msgid "Ignore Kernel Processes"
+msgstr "Ez ikusiarena egin kernel-prozesuei"
+
+#: src/sysprof/sysprof-window.ui:407
 msgid "Ignore Process 0"
 msgstr "Ez ikusiarena egin 0 prozesuari"
+
+#: src/sysprof/sysprof-window.ui:411
+msgid "Merge Similar Processes"
+msgstr "Batu antzeko prozesuak"
+
+#: src/sysprof/sysprof-window.ui:418
+msgid "Left Heavy"
+msgstr "Astuna ezkerrean"
 
 #~ msgid "Hold the performance profile for the duration of the recording"
 #~ msgstr "Eutsi errendimendu-profilari grabazioaren iraupenean zehar"
@@ -1581,9 +1602,6 @@ msgstr "Ez ikusiarena egin 0 prozesuari"
 #~ msgstr ""
 #~ "Sysprof aplikazioak sistemako prozesu baten edo gehiagoren dei-grafoak "
 #~ "sortu ditzake."
-
-#~ msgid "Search Processes"
-#~ msgstr "Bilatu prozesuak"
 
 #~ msgid "Launch Application"
 #~ msgstr "Abiarazi aplikazioa"

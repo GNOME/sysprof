@@ -334,7 +334,6 @@ sysprof_elf_loader_annotate (SysprofElfLoader      *self,
           g_autofree char *directory_name = NULL;
           g_autofree char *debug_path = NULL;
           g_autofree char *short_debug_path = NULL;
-          g_autofree char *container_path = NULL;
           const char *short_directory_name;
           const char *debug_dir = self->debug_dirs[i];
           const char *build_id;
@@ -369,7 +368,6 @@ sysprof_elf_loader_annotate (SysprofElfLoader      *self,
           g_autoptr(SysprofElf) debug_link_elf = NULL;
           g_autofree char *directory_name = NULL;
           g_autofree char *debug_path = NULL;
-          g_autofree char *container_path = NULL;
           const char *debug_dir = self->external_debug_dirs[i];
           const char *build_id;
 

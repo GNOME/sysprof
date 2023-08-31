@@ -252,7 +252,8 @@ access_path_from_container (const char *path)
 {
   if ((in_flatpak && !g_str_has_prefix (path, "/home/")) || in_podman)
     return g_build_filename ("/var/run/host", path, NULL);
-  return g_strdup (path);
+
+  return NULL;
 }
 
 static SysprofElf *
@@ -478,7 +479,10 @@ sysprof_elf_loader_load (SysprofElfLoader       *self,
         continue;
 
       if (in_flatpak || in_podman)
-        path = container_path = access_path_from_container (path);
+        {
+          if ((container_path = access_path_from_container (path)))
+            path = container_path;
+        }
 
       /* Lookup to see if we've already parsed this ELF and handle cases where
        * we've failed to load it too. In the case we failed to load a key is

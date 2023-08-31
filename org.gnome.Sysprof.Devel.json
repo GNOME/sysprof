@@ -26,8 +26,8 @@
         "--system-talk-name=org.gnome.Sysprof3",
         "--system-talk-name=org.freedesktop.Avahi",
         "--filesystem=xdg-run/gvfsd",
-        "--filesystem=/var/lib/flatpak",
-        "--filesystem=~/.local/share/flatpak"
+        "--filesystem=/var/lib/flatpak:ro",
+        "--filesystem=~/.local/share/flatpak:ro"
     ],
     "build-options" : {
         "cflags" : "-O2 -g -fno-omit-frame-pointer",

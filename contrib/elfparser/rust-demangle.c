@@ -1251,6 +1251,7 @@ str_buf_demangle_callback(const char *data, size_t len, void *opaque) {
 
 char *sysprof_rust_demangle(const char *mangled, int flags) {
     struct str_buf out;
+    char *ret;
 
     out.ptr = NULL;
     out.len = 0;
@@ -1267,7 +1268,11 @@ char *sysprof_rust_demangle(const char *mangled, int flags) {
     }
 
     str_buf_append(&out, "\0", 1);
-    return out.ptr;
+
+    ret = g_strdup(out.ptr);
+    free(out.ptr);
+
+    return ret;
 }
 
 #pragma GCC diagnostic pop

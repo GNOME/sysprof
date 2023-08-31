@@ -155,7 +155,9 @@ fallback:
   end_address = address + 1;
 
   ret = _sysprof_symbol_new (sysprof_strings_get (strings, name),
-                             NULL, NULL, begin_address, end_address,
+                             sysprof_strings_get (strings, path),
+                             NULL,
+                             begin_address, end_address,
                              SYSPROF_SYMBOL_KIND_USER);
   ret->is_fallback = TRUE;
 

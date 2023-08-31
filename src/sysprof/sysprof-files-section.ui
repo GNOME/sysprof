@@ -18,17 +18,32 @@
                 <property name="model">
                   <object class="GtkSingleSelection">
                     <property name="model">
-                      <object class="GtkSortListModel">
-                        <binding name="sorter">
-                          <lookup name="sorter">column_view</lookup>
-                        </binding>
-                        <binding name="model">
-                          <lookup name="files" type="SysprofDocument">
-                            <lookup name="document" type="SysprofSession">
-                              <lookup name="session">SysprofFilesSection</lookup>
-                            </lookup>
-                          </lookup>
-                        </binding>
+                      <object class="GtkFilterListModel">
+                        <property name="model">
+                          <object class="GtkSortListModel">
+                            <binding name="sorter">
+                              <lookup name="sorter">column_view</lookup>
+                            </binding>
+                            <binding name="model">
+                              <lookup name="files" type="SysprofDocument">
+                                <lookup name="document" type="SysprofSession">
+                                  <lookup name="session">SysprofFilesSection</lookup>
+                                </lookup>
+                              </lookup>
+                            </binding>
+                          </object>
+                        </property>
+                        <property name="filter">
+                          <object class="GtkStringFilter">
+                            <property name="match-mode">substring</property>
+                            <property name="expression">
+                              <lookup name="path" type="SysprofDocumentFile"/>
+                            </property>
+                            <binding name="search">
+                              <lookup name="text">filter_search_entry</lookup>
+                            </binding>
+                          </object>
+                        </property>
                       </object>
                     </property>
                   </object>
@@ -139,6 +154,20 @@
                     </property>
                   </object>
                 </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <child>
+              <object class="GtkSearchEntry" id="filter_search_entry">
+                <property name="placeholder-text" translatable="yes">Filter Files</property>
+                <property name="margin-top">3</property>
+                <property name="margin-bottom">3</property>
+                <property name="margin-start">3</property>
+                <property name="margin-end">3</property>
+                <property name="hexpand">true</property>
               </object>
             </child>
           </object>

@@ -57,20 +57,6 @@
           </object>
         </child>
         <child>
-          <object class="GtkBox">
-            <child>
-              <object class="GtkSearchEntry" id="filter_search_entry">
-                <property name="placeholder-text" translatable="yes">Filter Events</property>
-                <property name="margin-top">3</property>
-                <property name="margin-bottom">3</property>
-                <property name="margin-start">3</property>
-                <property name="margin-end">3</property>
-                <property name="hexpand">true</property>
-              </object>
-            </child>
-          </object>
-        </child>
-        <child>
           <object class="GtkSeparator"/>
         </child>
         <child>
@@ -627,6 +613,20 @@
                     </child>
                   </object>
                 </property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <child>
+              <object class="GtkSearchEntry" id="filter_search_entry">
+                <property name="placeholder-text" translatable="yes">Filter Events</property>
+                <property name="margin-top">3</property>
+                <property name="margin-bottom">3</property>
+                <property name="margin-start">3</property>
+                <property name="margin-end">3</property>
+                <property name="hexpand">true</property>
               </object>
             </child>
           </object>

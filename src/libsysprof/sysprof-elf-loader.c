@@ -474,6 +474,9 @@ sysprof_elf_loader_load (SysprofElfLoader       *self,
       const char *debug_link;
       guint64 mapped_file_inode;
 
+      if (path[0] == 0)
+        continue;
+
       if (in_flatpak || in_podman)
         path = container_path = access_path_from_container (path);
 

@@ -27,6 +27,7 @@
 
 #include "demangle.h"
 #include "elfparser.h"
+#include "rust-demangle.h"
 
 typedef struct Section Section;
 
@@ -484,7 +485,15 @@ elf_parser_free (ElfParser *parser)
 gchar *
 elf_demangle (const char *name)
 {
-    gchar *demangled = sysprof_cplus_demangle (name);
+    /* Try demangling as rust symbol first as legacy rust symbols can demangle as C++ symbols too
+     * but will only get partially demangled in that case.
+     */
+    gchar *demangled = sysprof_rust_demangle (name, 0);
+
+    if (demangled)
+        return demangled;
+
+    demangled = sysprof_cplus_demangle (name);
 
     if (demangled)
         return demangled;

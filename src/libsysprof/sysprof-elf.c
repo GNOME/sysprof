@@ -434,7 +434,7 @@ sysprof_elf_get_symbol_at_address_internal (SysprofElf *self,
 
       name = elf_parser_get_sym_name (self->parser, symbol);
 
-      if (name != NULL && name[0] == '_' && name[1] == 'Z')
+      if (name != NULL && name[0] == '_' && ((name[1] == 'Z') || (name[1] == 'R')))
         ret = elf_demangle (name);
       else
         ret = g_strdup (name);

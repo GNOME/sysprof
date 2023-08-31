@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-36\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-08-30 16:53+0000\n"
-"PO-Revision-Date: 2023-08-31 22:16+0300\n"
+"POT-Creation-Date: 2023-08-31 19:24+0000\n"
+"PO-Revision-Date: 2023-08-31 22:29+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -140,7 +140,6 @@ msgid "Allocation"
 msgstr "Розміщення"
 
 #: src/libsysprof/sysprof-document.c:570
-#| msgid "Ignore Process 0"
 msgid "Unknown Process"
 msgstr "Невідомий процес"
 
@@ -468,7 +467,6 @@ msgstr "_Про Sysprof"
 
 #: src/sysprof/sysprof-animation.c:1038
 #, c-format
-#| msgid "Failed to save recording: %s"
 msgid "Failed to find property %s in %s"
 msgstr "Не вдалося знайти властивість %s у %s"
 
@@ -524,7 +522,7 @@ msgid "Counters Table"
 msgstr "Таблиця лічильників"
 
 #: src/sysprof/sysprof-cpu-section.ui:378
-#: src/sysprof/sysprof-dbus-section.ui:105
+#: src/sysprof/sysprof-dbus-section.ui:171
 #: src/sysprof/sysprof-energy-section.ui:348
 #: src/sysprof/sysprof-frame-utility.ui:49
 #: src/sysprof/sysprof-graphics-section.ui:259
@@ -583,58 +581,63 @@ msgstr "Ядро"
 msgid "Model Name"
 msgstr "Назва моделі"
 
-#: src/sysprof/sysprof-dbus-section.ui:139
+#: src/sysprof/sysprof-dbus-section.ui:205
 msgid "Bus"
 msgstr "Шина"
 
-#: src/sysprof/sysprof-dbus-section.ui:178
+#: src/sysprof/sysprof-dbus-section.ui:244
 msgid "Serial"
 msgstr "Послідовний"
 
-#: src/sysprof/sysprof-dbus-section.ui:215
+#: src/sysprof/sysprof-dbus-section.ui:281
 msgid "Reply"
 msgstr "Відповідь"
 
-#: src/sysprof/sysprof-dbus-section.ui:252
+#: src/sysprof/sysprof-dbus-section.ui:318
 msgid "Flags"
 msgstr "Прапорці"
 
-#: src/sysprof/sysprof-dbus-section.ui:281
+#: src/sysprof/sysprof-dbus-section.ui:347
 #: src/sysprof/sysprof-files-section.ui:107
 #: src/sysprof/sysprof-memory-callgraph-view.ui:68
 msgid "Size"
 msgstr "Розмір"
 
-#: src/sysprof/sysprof-dbus-section.ui:317
+#: src/sysprof/sysprof-dbus-section.ui:383
 #: src/sysprof/sysprof-frame-utility.ui:20
 #: src/sysprof/sysprof-mark-table.ui:221
 msgid "Type"
 msgstr "Тип"
 
-#: src/sysprof/sysprof-dbus-section.ui:346
+#: src/sysprof/sysprof-dbus-section.ui:412
 msgid "Sender"
 msgstr "Відправник"
 
-#: src/sysprof/sysprof-dbus-section.ui:380
+#: src/sysprof/sysprof-dbus-section.ui:446
 msgid "Destination"
 msgstr "Призначення"
 
-#: src/sysprof/sysprof-dbus-section.ui:414
+#: src/sysprof/sysprof-dbus-section.ui:480
 #: src/sysprof/sysprof-files-section.ui:38
 msgid "Path"
 msgstr "Шлях"
 
-#: src/sysprof/sysprof-dbus-section.ui:448
+#: src/sysprof/sysprof-dbus-section.ui:514
 msgid "Interface"
 msgstr "Інтерфейс"
 
-#: src/sysprof/sysprof-dbus-section.ui:482
+#: src/sysprof/sysprof-dbus-section.ui:548
 msgid "Member"
 msgstr "Учасник"
 
-#: src/sysprof/sysprof-dbus-section.ui:516
+#: src/sysprof/sysprof-dbus-section.ui:582
 msgid "Signature"
 msgstr "Підпис"
+
+#: src/sysprof/sysprof-dbus-section.ui:626
+#| msgid "Message"
+msgid "Filter Messages"
+msgstr "Фільтрувати повідомлення"
 
 #: src/sysprof/sysprof-dbus-utility.ui:13
 #: src/sysprof/sysprof-logs-section.c:104
@@ -1374,7 +1377,6 @@ msgid "Bottom Up"
 msgstr "Знизу-вгору"
 
 #: src/sysprof/sysprof-window.ui:403
-#| msgid "Ignore Process 0"
 msgid "Ignore Kernel Processes"
 msgstr "Ігнорувати процеси ядра"
 
@@ -1383,7 +1385,6 @@ msgid "Ignore Process 0"
 msgstr "Ігнорувати процес 0"
 
 #: src/sysprof/sysprof-window.ui:411
-#| msgid "Search Processes"
 msgid "Merge Similar Processes"
 msgstr "Об'єднувати подібні процеси"
 

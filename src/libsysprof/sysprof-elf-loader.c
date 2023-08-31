@@ -513,7 +513,7 @@ sysprof_elf_loader_load (SysprofElfLoader       *self,
 
           /* If we loaded the ELF, but it doesn't match what this request is looking
            * for in terms of inode/build-id, then we need to bail and not return it.
-           * We can, however, leave it in the cache incase another process/sample
+           * We can, however, leave it in the cache in-case another process/sample
            * will need the ELF.
            */
           if (!sysprof_elf_matches (elf, file_inode, build_id))

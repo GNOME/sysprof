@@ -339,16 +339,17 @@ process_started_cb (DexFuture *completed,
 
   for (guint i = 0; i < size; i++)
     {
-      DexFuture *future = dex_future_set_get_future_at (DEX_FUTURE_SET (completed), i);
       g_autoptr(GError) error = NULL;
-      g_autoptr(GVariant) variant = dex_await_variant (dex_ref (future), &error);
+      const GValue *value = NULL;
+      GVariant *variant = NULL;
       const char *path = g_ptr_array_index (state->paths, i);
       const char *bytestring = NULL;
 
-      if (error != NULL)
+      if (!(value = dex_future_set_get_value_at (DEX_FUTURE_SET (completed), i, &error)))
         continue;
 
-      if (variant == NULL || !g_variant_is_of_type (variant, G_VARIANT_TYPE ("(ay)")))
+      if (!(variant = g_value_get_variant (value)) ||
+          !g_variant_is_of_type (variant, G_VARIANT_TYPE ("(ay)")))
         g_return_val_if_reached (NULL);
 
       g_variant_get (variant, "(^&ay)", &bytestring);
@@ -442,10 +443,10 @@ sysprof_linux_instrument_process_started (SysprofInstrument *instrument,
   g_ptr_array_add (state->paths, g_steal_pointer (&mountinfo_path));
   g_ptr_array_add (state->paths, g_steal_pointer (&flatpak_info_path));
 
-  return dex_future_then (dex_future_any (mountinfo, flatpak_info, NULL),
-                          process_started_cb,
-                          state,
-                          process_started_free);
+  return dex_future_finally (dex_future_all (mountinfo, flatpak_info, NULL),
+                             process_started_cb,
+                             state,
+                             process_started_free);
 }
 
 static void

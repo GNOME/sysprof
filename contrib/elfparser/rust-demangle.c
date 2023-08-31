@@ -4,6 +4,9 @@ Modifications from upstream:
 * Add sysprof_ prefix to exported symbols
 */
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeclaration-after-statement"
+
 // FIXME(eddyb) should this use `<rust-demangle.h>`?
 #include "rust-demangle.h"
 
@@ -1266,3 +1269,5 @@ char *sysprof_rust_demangle(const char *mangled, int flags) {
     str_buf_append(&out, "\0", 1);
     return out.ptr;
 }
+
+#pragma GCC diagnostic pop

@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-08-26 03:32+0000\n"
-"PO-Revision-Date: 2023-08-26 09:46+0300\n"
+"POT-Creation-Date: 2023-08-30 23:28+0000\n"
+"PO-Revision-Date: 2023-08-31 10:53+0300\n"
 "Last-Translator: Sabri Ünal <libreajans@gmail.com>\n"
 "Language-Team: Turkish <takim@gnome.org.tr>\n"
 "Language: tr\n"
@@ -23,7 +23,7 @@ msgstr ""
 #: data/org.gnome.Sysprof.appdata.xml.in.in:5
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
 #: src/sysprof/sysprof-application.c:208
-#: src/sysprof/sysprof-recording-pad.ui:18 src/sysprof/sysprof-window.c:240
+#: src/sysprof/sysprof-recording-pad.ui:18 src/sysprof/sysprof-window.c:243
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -76,7 +76,7 @@ msgid "CSS"
 msgstr "CSS"
 
 #: src/libsysprof/sysprof-category-summary.c:154
-#: src/sysprof/sysprof-greeter.ui:402 src/sysprof/sysprof-window.ui:270
+#: src/sysprof/sysprof-greeter.ui:408 src/sysprof/sysprof-window.ui:292
 msgid "Graphics"
 msgstr "Grafikler"
 
@@ -140,43 +140,47 @@ msgstr "Pencereleme"
 msgid "Allocation"
 msgstr "Ayırma"
 
-#: src/libsysprof/sysprof-document.c:1168
-#: src/libsysprof/sysprof-document.c:1204
+#: src/libsysprof/sysprof-document.c:570
+msgid "Unknown Process"
+msgstr "Bilinmeyen Süreç"
+
+#: src/libsysprof/sysprof-document.c:1239
+#: src/libsysprof/sysprof-document.c:1275
 msgid "Indexing capture data frames"
 msgstr "Yakalama veri kareleri indeksleniyor"
 
-#: src/libsysprof/sysprof-document.c:1390
+#: src/libsysprof/sysprof-document.c:1461
 msgid "Discovering file system mounts"
 msgstr "Dosya sistemi bağları keşfediliyor"
 
-#: src/libsysprof/sysprof-document.c:1393
+#: src/libsysprof/sysprof-document.c:1464
 msgid "Discovering process mount namespaces"
 msgstr "Süreç bağlama ad alanları keşfediliyor"
 
-#: src/libsysprof/sysprof-document.c:1396
+#: src/libsysprof/sysprof-document.c:1467
 msgid "Analyzing process address layouts"
 msgstr "Süreç adres düzenleri inceleniyor"
 
-#: src/libsysprof/sysprof-document.c:1399
+#: src/libsysprof/sysprof-document.c:1470
 msgid "Analyzing process command line"
 msgstr "Süreç komut satırı inceleniyor"
 
-#: src/libsysprof/sysprof-document.c:1402
+#: src/libsysprof/sysprof-document.c:1473
 msgid "Analyzing file system overlays"
 msgstr "Dosya sistemi kaplamaları inceleniyor"
 
-#: src/libsysprof/sysprof-document.c:1405
+#: src/libsysprof/sysprof-document.c:1476
 msgid "Processing counters"
 msgstr "Sayaçlar işleniyor"
 
-#: src/libsysprof/sysprof-document.c:2385
-#: src/libsysprof/sysprof-document.c:2401
+#: src/libsysprof/sysprof-document.c:2464
+#: src/libsysprof/sysprof-document.c:2480
 #, c-format
 msgid "Recording at %X %x"
 msgstr "Kayıt tarihi %X %x"
 
-#: src/libsysprof/sysprof-document.c:2387
-#: src/libsysprof/sysprof-document.c:2403
+#: src/libsysprof/sysprof-document.c:2466
+#: src/libsysprof/sysprof-document.c:2482
 #, c-format
 msgid "Recording at %s"
 msgstr "Kayıt tarihi %s"
@@ -458,6 +462,16 @@ msgstr "_Yardım"
 msgid "_About Sysprof"
 msgstr "Sysprof _Hakkında"
 
+#: src/sysprof/sysprof-animation.c:1038
+#, c-format
+msgid "Failed to find property %s in %s"
+msgstr "%s özelliği %s içinde bulunamadı"
+
+#: src/sysprof/sysprof-animation.c:1047
+#, c-format
+msgid "Failed to retrieve va_list value: %s"
+msgstr "va_list değeri alınamadı: %s"
+
 #: src/sysprof/sysprof-application.c:37
 msgid "Show Sysprof version and exit"
 msgstr "Sysprof sürümünü göster ve çık"
@@ -523,7 +537,7 @@ msgstr "Saat"
 
 #: src/sysprof/sysprof-cpu-section.ui:412
 #: src/sysprof/sysprof-energy-section.ui:382
-#: src/sysprof/sysprof-flame-graph.c:348
+#: src/sysprof/sysprof-flame-graph.c:453
 #: src/sysprof/sysprof-graphics-section.ui:293
 #: src/sysprof/sysprof-marks-section.ui:242
 #: src/sysprof/sysprof-network-section.ui:380
@@ -633,7 +647,7 @@ msgstr "Dosyalar"
 msgid "Compressed"
 msgstr "Sıkıştırılmış"
 
-#: src/sysprof/sysprof-flame-graph.c:352
+#: src/sysprof/sysprof-flame-graph.c:457
 #: src/sysprof/sysprof-process-dialog.ui:177
 msgid "File"
 msgstr "Dosya"
@@ -642,7 +656,7 @@ msgstr "Dosya"
 #: src/sysprof/sysprof-logs-section.ui:143
 #: src/sysprof/sysprof-mark-table.ui:116
 #: src/sysprof/sysprof-traceables-utility.ui:81
-#: src/sysprof/sysprof-window.ui:250
+#: src/sysprof/sysprof-window.ui:272
 msgid "CPU"
 msgstr "İşlemci"
 
@@ -667,7 +681,7 @@ msgid "You must choose a local file to capture using Sysprof"
 msgstr "Sysprof ile yakalamak için yerel dosya seçmelisiniz"
 
 #: src/sysprof/sysprof-greeter.c:267 src/sysprof/sysprof-recording-pad.c:115
-#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:715
+#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:718
 msgid "Close"
 msgstr "Kapat"
 
@@ -744,8 +758,7 @@ msgid "Trace Memory Allocations"
 msgstr "Bellek Ayırmalarını İzle"
 
 #: src/sysprof/sysprof-greeter.ui:138
-msgid ""
-"Record a strack trace when <tt>malloc</tt> or similar functions are used"
+msgid "Record a stack trace when <tt>malloc</tt> or similar functions are used"
 msgstr ""
 "<tt>malloc</tt> ya da benzeri işlevler kullanıldığında yığın izlemesi kaydet"
 
@@ -763,107 +776,111 @@ msgid "Command Line"
 msgstr "Komut Satırı"
 
 #: src/sysprof/sysprof-greeter.ui:181
+msgid "Working directory"
+msgstr "Çalışma dizini"
+
+#: src/sysprof/sysprof-greeter.ui:187
 msgid "The application will be run as a subprocess of Sysprof."
 msgstr "Uygulama, Sysprofʼun alt süreci olarak çalıştırılacak."
 
-#: src/sysprof/sysprof-greeter.ui:194
+#: src/sysprof/sysprof-greeter.ui:200
 msgid "Environment"
 msgstr "Ortam"
 
-#: src/sysprof/sysprof-greeter.ui:198
+#: src/sysprof/sysprof-greeter.ui:204
 msgid "Clear Environment"
 msgstr "Ortamı Temizle"
 
-#: src/sysprof/sysprof-greeter.ui:199
+#: src/sysprof/sysprof-greeter.ui:205
 msgid "Clear the environment before launching application"
 msgstr "Uygulamayı başlatmadan önce ortamı temizle"
 
-#: src/sysprof/sysprof-greeter.ui:225
+#: src/sysprof/sysprof-greeter.ui:231
 msgid "Add _Variable"
 msgstr "Değişken Ekle"
 
-#: src/sysprof/sysprof-greeter.ui:231
+#: src/sysprof/sysprof-greeter.ui:237
 msgid "Add Variable"
 msgstr "Değişken Ekle"
 
-#: src/sysprof/sysprof-greeter.ui:232
+#: src/sysprof/sysprof-greeter.ui:238
 msgid "_Add"
 msgstr "_Ekle"
 
-#: src/sysprof/sysprof-greeter.ui:249 src/sysprof/sysprof-greeter.ui:254
+#: src/sysprof/sysprof-greeter.ui:255 src/sysprof/sysprof-greeter.ui:260
 msgid "Counters"
 msgstr "Sayaçlar"
 
-#: src/sysprof/sysprof-greeter.ui:258
+#: src/sysprof/sysprof-greeter.ui:264
 msgid "CPU Usage"
 msgstr "İşlemci Kullanımı"
 
-#: src/sysprof/sysprof-greeter.ui:259
+#: src/sysprof/sysprof-greeter.ui:265
 msgid "Record coarse-grained counters about CPU usage and frequency"
 msgstr "İşlemci kullanımı ve sıklığıyla ilgili kaba taneli sayaçlar kaydet"
 
-#: src/sysprof/sysprof-greeter.ui:271
+#: src/sysprof/sysprof-greeter.ui:277
 msgid "Memory Usage"
 msgstr "Bellek Kullanımı"
 
-#: src/sysprof/sysprof-greeter.ui:272
+#: src/sysprof/sysprof-greeter.ui:278
 msgid "Record coarse-grained counters about system memory usage"
 msgstr "Sistem bellek kullanımıyla ilgili kaba taneli sayaçlar kaydet"
 
-#: src/sysprof/sysprof-greeter.ui:284
+#: src/sysprof/sysprof-greeter.ui:290
 msgid "Disk Usage"
 msgstr "Disk Kullanımı"
 
-#: src/sysprof/sysprof-greeter.ui:285
+#: src/sysprof/sysprof-greeter.ui:291
 msgid "Record coarse-grained counters about storage throughput"
 msgstr "Depolama verimiyle ilgili kaba taneli sayaçlar kaydet"
 
-#: src/sysprof/sysprof-greeter.ui:297
+#: src/sysprof/sysprof-greeter.ui:303
 msgid "Network Usage"
 msgstr "Ağ Kullanımı"
 
-#: src/sysprof/sysprof-greeter.ui:298
+#: src/sysprof/sysprof-greeter.ui:304
 msgid "Record coarse-grained counters about network traffic"
 msgstr "Ağ trafiğiyle ilgili kaba taneli sayaçlar kaydet"
 
-#: src/sysprof/sysprof-greeter.ui:314
+#: src/sysprof/sysprof-greeter.ui:320
 msgid "Energy Usage"
 msgstr "Enerji Kullanımı"
 
-#: src/sysprof/sysprof-greeter.ui:315
+#: src/sysprof/sysprof-greeter.ui:321
 msgid "Record coarse-grained counters about energy usage in Watts"
 msgstr "Enerji kullanımıyla ilgili kaba taneli sayaçlar kaydet (Watt olarak)"
 
-#: src/sysprof/sysprof-greeter.ui:327
+#: src/sysprof/sysprof-greeter.ui:333
 msgid "Battery Charge"
 msgstr "Pil Doluluğu"
 
-#: src/sysprof/sysprof-greeter.ui:328
+#: src/sysprof/sysprof-greeter.ui:334
 msgid "Record coarse-grained counters about battery charge or discharge rates"
 msgstr "Şarjın dolup boşalmasıyla ilgili kaba taneli sayaçlar kaydet"
 
-#: src/sysprof/sysprof-greeter.ui:346 src/sysprof/sysprof-greeter.ui:351
-#: src/sysprof/sysprof-window.ui:240
+#: src/sysprof/sysprof-greeter.ui:352 src/sysprof/sysprof-greeter.ui:357
+#: src/sysprof/sysprof-window.ui:262
 msgid "D-Bus"
 msgstr "D-Bus"
 
-#: src/sysprof/sysprof-greeter.ui:355
+#: src/sysprof/sysprof-greeter.ui:361
 msgid "Record System Bus"
 msgstr "Sistem Veri Yolunu Kaydet"
 
-#: src/sysprof/sysprof-greeter.ui:356
+#: src/sysprof/sysprof-greeter.ui:362
 msgid "Record messages on the D-Bus system bus"
 msgstr "D-Bus sistem veri yolundaki iletileri kaydet"
 
-#: src/sysprof/sysprof-greeter.ui:372
+#: src/sysprof/sysprof-greeter.ui:378
 msgid "Record Session Bus"
 msgstr "Oturum Veri Yolunu Kaydet"
 
-#: src/sysprof/sysprof-greeter.ui:373
+#: src/sysprof/sysprof-greeter.ui:379
 msgid "Record messages on the D-Bus user session bus"
 msgstr "D-Bus kullanıcı oturumu veri yolundaki iletileri kaydet"
 
-#: src/sysprof/sysprof-greeter.ui:384
+#: src/sysprof/sysprof-greeter.ui:390
 msgid ""
 "The session bus may contain sensitive information such as keyboard usage and "
 "passwords."
@@ -871,19 +888,19 @@ msgstr ""
 "Oturum veri yolu, klavye kullanımı ve parolalar gibi hassas bilgiler "
 "içerebilir."
 
-#: src/sysprof/sysprof-greeter.ui:407
+#: src/sysprof/sysprof-greeter.ui:413
 msgid "Timings"
 msgstr "Zamanlamalar"
 
-#: src/sysprof/sysprof-greeter.ui:411
+#: src/sysprof/sysprof-greeter.ui:417
 msgid "Compositor Frame Timings"
 msgstr "Dizgileyici Kare Zamanlaması"
 
-#: src/sysprof/sysprof-greeter.ui:412
+#: src/sysprof/sysprof-greeter.ui:418
 msgid "Record frame-timing information from the GNOME Shell compositor"
 msgstr "GNOME Shell dizgeleyicisinden kare zamanlama bilgilerini kaydet"
 
-#: src/sysprof/sysprof-greeter.ui:423
+#: src/sysprof/sysprof-greeter.ui:429
 msgid ""
 "Applications launched by Sysprof will automatically collect GTK frame timing "
 "information."
@@ -891,83 +908,83 @@ msgstr ""
 "Sysprof tarafından başlatılan uygulamalar, GTK kare zamanlama bilgilerini "
 "kendiliğinden toplar."
 
-#: src/sysprof/sysprof-greeter.ui:463
+#: src/sysprof/sysprof-greeter.ui:469
 msgid "Devices"
 msgstr "Aygıtlar"
 
-#: src/sysprof/sysprof-greeter.ui:467
+#: src/sysprof/sysprof-greeter.ui:473
 msgid "Include GPU Information"
 msgstr "İşlemci Bilgisini İçer"
 
-#: src/sysprof/sysprof-greeter.ui:468
+#: src/sysprof/sysprof-greeter.ui:474
 msgid "Records information about graphics hardware and drivers"
 msgstr "Grafik donanımı ve sürücüleriyle ilgili bilgileri kaydeder"
 
-#: src/sysprof/sysprof-greeter.ui:486
+#: src/sysprof/sysprof-greeter.ui:492
 msgid "System"
 msgstr "Sistem"
 
-#: src/sysprof/sysprof-greeter.ui:491
+#: src/sysprof/sysprof-greeter.ui:497
 msgid "Power Profile"
 msgstr "Gü Profili"
 
-#: src/sysprof/sysprof-greeter.ui:494
+#: src/sysprof/sysprof-greeter.ui:500
 msgid "Record with Power Profile"
 msgstr "Güç Profiliyle Kaydet"
 
-#: src/sysprof/sysprof-greeter.ui:495
+#: src/sysprof/sysprof-greeter.ui:501
 msgid "Switch to power profile while recording"
 msgstr "Kaydederken güç profilini değiştir"
 
-#: src/sysprof/sysprof-greeter.ui:505
+#: src/sysprof/sysprof-greeter.ui:511
 msgid "Details"
 msgstr "Ayrıntılar"
 
-#: src/sysprof/sysprof-greeter.ui:509
+#: src/sysprof/sysprof-greeter.ui:515
 msgid "Record System Log"
 msgstr "Sistem Günlüğünü Kaydet"
 
-#: src/sysprof/sysprof-greeter.ui:510
+#: src/sysprof/sysprof-greeter.ui:516
 msgid "Watch the system log for new messages and record them"
 msgstr "Yeni iletiler için sistem günlüğünü izle ve bunları kaydet"
 
-#: src/sysprof/sysprof-greeter.ui:526
+#: src/sysprof/sysprof-greeter.ui:532
 msgid "Include Hardware Information"
 msgstr "Donanım Bilgisini İçer"
 
-#: src/sysprof/sysprof-greeter.ui:527
+#: src/sysprof/sysprof-greeter.ui:533
 msgid "Records information about PCI and USB devices"
 msgstr "PCI ve USB aygıtlarla ilgili bilgileri kaydeder"
 
-#: src/sysprof/sysprof-greeter.ui:540
+#: src/sysprof/sysprof-greeter.ui:546
 msgid "Symbols"
 msgstr "Simgeler"
 
-#: src/sysprof/sysprof-greeter.ui:544
+#: src/sysprof/sysprof-greeter.ui:550
 msgid "Bundle Symbols"
 msgstr "Simgeleri Bağla"
 
-#: src/sysprof/sysprof-greeter.ui:545
+#: src/sysprof/sysprof-greeter.ui:551
 msgid "Make recording shareable by symbolizing stack traces after recording"
 msgstr "Kayıttan sonra yığın izlerini simgeleştirerek kaydı paylaşılabilir yap"
 
-#: src/sysprof/sysprof-greeter.ui:578
+#: src/sysprof/sysprof-greeter.ui:584
 msgid "_Open File…"
 msgstr "Dosya _Aç…"
 
-#: src/sysprof/sysprof-greeter.ui:585
+#: src/sysprof/sysprof-greeter.ui:591
 msgid "Record to _File…"
 msgstr "_Dosyaya Kaydet…"
 
-#: src/sysprof/sysprof-greeter.ui:592
+#: src/sysprof/sysprof-greeter.ui:598
 msgid "Record to _Memory"
 msgstr "_Belleğe Kaydet"
 
-#: src/sysprof/sysprof-greeter.ui:607 src/sysprof/sysprof-window.ui:351
+#: src/sysprof/sysprof-greeter.ui:613 src/sysprof/sysprof-window.ui:373
 msgid "Help"
 msgstr "Yardım"
 
-#: src/sysprof/sysprof-greeter.ui:612 src/sysprof/sysprof-window.ui:356
+#: src/sysprof/sysprof-greeter.ui:618 src/sysprof/sysprof-window.ui:378
 msgid "About Sysprof"
 msgstr "Sysprof Hakkında"
 
@@ -1096,7 +1113,7 @@ msgid "Leaks"
 msgstr "Sızıntılar"
 
 #: src/sysprof/sysprof-memory-section.ui:212
-#: src/sysprof/sysprof-samples-section.ui:189
+#: src/sysprof/sysprof-samples-section.ui:207
 #: src/sysprof/sysprof-traceables-utility.ui:162
 msgid "Stack Trace"
 msgstr "Yığın İzle"
@@ -1209,31 +1226,31 @@ msgstr "Kaydı Durdur"
 msgid "Time Profiler"
 msgstr "Zaman Profilleyici"
 
-#: src/sysprof/sysprof-samples-section.ui:88 src/sysprof/sysprof-window.ui:363
+#: src/sysprof/sysprof-samples-section.ui:89 src/sysprof/sysprof-window.ui:385
 msgid "Callgraph"
 msgstr "Çağrı Grafiği"
 
-#: src/sysprof/sysprof-samples-section.ui:155
+#: src/sysprof/sysprof-samples-section.ui:172 src/sysprof/sysprof-window.ui:416
 msgid "Flamegraph"
 msgstr "Alev Grafiği"
 
-#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:108
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:130
 msgid "Seek Backward"
 msgstr "Geri Sar"
 
-#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:118
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:140
 msgid "Zoom Out"
 msgstr "Uzaklaştır"
 
-#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:128
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:150
 msgid "Reset Zoom"
 msgstr "Yakınlaştırmayı Sıfırla"
 
-#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:138
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:160
 msgid "Zoom In"
 msgstr "Yakınlaştır"
 
-#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:148
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:170
 msgid "Seek Forward"
 msgstr "İleri Sar"
 
@@ -1257,23 +1274,23 @@ msgstr "Aç"
 msgid "Sysprof Capture (*.syscap)"
 msgstr "Sysprof Yakalama (*.syscap)"
 
-#: src/sysprof/sysprof-window.c:465
+#: src/sysprof/sysprof-window.c:468
 msgid "Save to File"
 msgstr "Dosyaya Kaydet"
 
-#: src/sysprof/sysprof-window.c:466
+#: src/sysprof/sysprof-window.c:469
 msgid "Save"
 msgstr "Kaydet"
 
-#: src/sysprof/sysprof-window.c:635
+#: src/sysprof/sysprof-window.c:638
 msgid "Loading..."
 msgstr "Yükleniyor..."
 
-#: src/sysprof/sysprof-window.c:711
+#: src/sysprof/sysprof-window.c:714
 msgid "Invalid Document"
 msgstr "Geçersiz Belge"
 
-#: src/sysprof/sysprof-window.c:713
+#: src/sysprof/sysprof-window.c:716
 #, c-format
 msgid ""
 "The document could not be loaded. Please check that you have the correct "
@@ -1285,62 +1302,74 @@ msgstr ""
 "\n"
 "%s"
 
-#: src/sysprof/sysprof-window.ui:98
+#: src/sysprof/sysprof-window.ui:120
 msgid "Toggle Left Panel"
 msgstr "Sol Paneli Aç/Kapat"
 
-#: src/sysprof/sysprof-window.ui:162
+#: src/sysprof/sysprof-window.ui:184
 msgid "Main Menu"
 msgstr "Ana Menü"
 
-#: src/sysprof/sysprof-window.ui:169
+#: src/sysprof/sysprof-window.ui:191
 msgid "View Options"
 msgstr "Görünüm Seçenekleri"
 
-#: src/sysprof/sysprof-window.ui:175
+#: src/sysprof/sysprof-window.ui:197
 msgid "Toggle Right Panel"
 msgstr "Sağ Paneli Aç/Kapat"
 
-#: src/sysprof/sysprof-window.ui:260
+#: src/sysprof/sysprof-window.ui:282
 msgid "Energy"
 msgstr "Enerji"
 
-#: src/sysprof/sysprof-window.ui:280
+#: src/sysprof/sysprof-window.ui:302
 msgid "Network"
 msgstr "Ağ"
 
-#: src/sysprof/sysprof-window.ui:290
+#: src/sysprof/sysprof-window.ui:312
 msgid "Storage"
 msgstr "Depolama"
 
-#: src/sysprof/sysprof-window.ui:337
+#: src/sysprof/sysprof-window.ui:359
 msgid "_Record Again…"
 msgstr "_Yeniden Kaydet…"
 
-#: src/sysprof/sysprof-window.ui:341
+#: src/sysprof/sysprof-window.ui:363
 msgid "Open Recording…"
 msgstr "Kayıt Aç…"
 
-#: src/sysprof/sysprof-window.ui:345
+#: src/sysprof/sysprof-window.ui:367
 msgid "Save As…"
 msgstr "Farklı Kaydet…"
 
-#: src/sysprof/sysprof-window.ui:365
+#: src/sysprof/sysprof-window.ui:387
 msgid "Categorize Frames"
 msgstr "Kareleri Kategorilere Ayır"
 
-#: src/sysprof/sysprof-window.ui:369
+#: src/sysprof/sysprof-window.ui:391
 msgid "Hide System Libraries"
 msgstr "Sistem Kütüphanelerini Gizle"
 
-#: src/sysprof/sysprof-window.ui:373
+#: src/sysprof/sysprof-window.ui:395
 msgid "Include Threads"
 msgstr "İş Parçacıklarını İçer"
 
-#: src/sysprof/sysprof-window.ui:377
+#: src/sysprof/sysprof-window.ui:399
 msgid "Bottom Up"
 msgstr "Alttan Yukarı"
 
-#: src/sysprof/sysprof-window.ui:381
+#: src/sysprof/sysprof-window.ui:403
+msgid "Ignore Kernel Processes"
+msgstr "Çekirdek Süreçlerini Yok Say"
+
+#: src/sysprof/sysprof-window.ui:407
 msgid "Ignore Process 0"
-msgstr "Süreç 0ʼı Yoksay"
+msgstr "Süreç 0ʼı Yok Say"
+
+#: src/sysprof/sysprof-window.ui:411
+msgid "Merge Similar Processes"
+msgstr "Benzer Süreçleri Birleştir"
+
+#: src/sysprof/sysprof-window.ui:418
+msgid "Left Heavy"
+msgstr "Sol Ağır"

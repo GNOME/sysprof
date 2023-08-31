@@ -1,5 +1,6 @@
 libelfparser_sources = [
   'demangle.cpp',
+  'rust-demangle.c',
   'elfparser.c',
 ]
 

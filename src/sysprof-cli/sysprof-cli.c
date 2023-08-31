@@ -433,6 +433,13 @@ Examples:\n\
         }
     }
 
+  /* Warn about access if we're in a container */
+  if (g_file_test ("/.flatpak-info", G_FILE_TEST_EXISTS))
+    {
+      if (!g_file_test ("/var/run/host/usr", G_FILE_TEST_EXISTS))
+        g_printerr ("Warning: Flatpak detected but cannot access host, set --filesystem=host\n");
+    }
+
   profiler = sysprof_profiler_new ();
 
   if (argc == 2)

@@ -54,6 +54,11 @@ sysprof_cplus_demangle (const char *name)
           else if (real_name[i+1] == 'G' && real_name[i+2] == 'T' && real_name[i+3] == '$')
             ret[j++] = '>', i += 3;
         }
+      else if (real_name[i] == '.' && real_name[i+1] == '.')
+        {
+          ret[j++] = ':', i++;
+          ret[j++] = ':';
+        }
       else
         {
           ret[j++] = real_name[i];

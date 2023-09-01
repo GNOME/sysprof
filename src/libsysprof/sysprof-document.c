@@ -828,6 +828,8 @@ sysprof_document_load_processes (SysprofDocument *self)
           if (cmdline != NULL)
             {
               GRefString *nick = g_ref_string_acquire (process_info->fallback_symbol->binary_nick);
+              g_auto(GStrv) split = g_strsplit (cmdline, " ", 2);
+              const char *shared_name = split[0] ? split[0] : cmdline;
 
               g_clear_object (&process_info->symbol);
               process_info->symbol =
@@ -837,7 +839,7 @@ sysprof_document_load_processes (SysprofDocument *self)
 
               g_clear_object (&process_info->shared_symbol);
               process_info->shared_symbol =
-                _sysprof_symbol_new (sysprof_strings_get (self->strings, cmdline),
+                _sysprof_symbol_new (sysprof_strings_get (self->strings, shared_name),
                                      NULL, NULL, 0, 0,
                                      SYSPROF_SYMBOL_KIND_PROCESS);
             }

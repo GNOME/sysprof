@@ -822,24 +822,19 @@ sysprof_document_load_processes (SysprofDocument *self)
 
           if (cmdline != NULL)
             {
-              g_auto(GStrv) parts = NULL;
+              GRefString *nick = g_ref_string_acquire (process_info->fallback_symbol->binary_nick);
 
-              if ((parts = g_strsplit (cmdline , " ", 2)) && parts[0])
-                {
-                  GRefString *nick = g_ref_string_acquire (process_info->fallback_symbol->binary_nick);
+              g_clear_object (&process_info->symbol);
+              process_info->symbol =
+                _sysprof_symbol_new (sysprof_strings_get (self->strings, cmdline),
+                                     NULL, g_steal_pointer (&nick), 0, 0,
+                                     SYSPROF_SYMBOL_KIND_PROCESS);
 
-                  g_clear_object (&process_info->symbol);
-                  process_info->symbol =
-                    _sysprof_symbol_new (sysprof_strings_get (self->strings, parts[0]),
-                                         NULL, g_steal_pointer (&nick), 0, 0,
-                                         SYSPROF_SYMBOL_KIND_PROCESS);
-
-                  g_clear_object (&process_info->shared_symbol);
-                  process_info->shared_symbol =
-                    _sysprof_symbol_new (sysprof_strings_get (self->strings, parts[0]),
-                                         NULL, NULL, 0, 0,
-                                         SYSPROF_SYMBOL_KIND_PROCESS);
-                }
+              g_clear_object (&process_info->shared_symbol);
+              process_info->shared_symbol =
+                _sysprof_symbol_new (sysprof_strings_get (self->strings, cmdline),
+                                     NULL, NULL, 0, 0,
+                                     SYSPROF_SYMBOL_KIND_PROCESS);
             }
         }
       while (egg_bitset_iter_next (&iter, &i));

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-36\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-08-31 19:24+0000\n"
-"PO-Revision-Date: 2023-08-31 22:29+0300\n"
+"POT-Creation-Date: 2023-08-31 22:05+0000\n"
+"PO-Revision-Date: 2023-09-01 09:58+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -410,7 +410,7 @@ msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "sysprof-cli передано забагато аргументів:"
 
 #. Translators: %s is a file name.
-#: src/sysprof-cli/sysprof-cli.c:450
+#: src/sysprof-cli/sysprof-cli.c:457
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s вже існує. Скорисайтеся --force, щоб його перезаписати.\n"
@@ -598,7 +598,7 @@ msgid "Flags"
 msgstr "Прапорці"
 
 #: src/sysprof/sysprof-dbus-section.ui:347
-#: src/sysprof/sysprof-files-section.ui:107
+#: src/sysprof/sysprof-files-section.ui:122
 #: src/sysprof/sysprof-memory-callgraph-view.ui:68
 msgid "Size"
 msgstr "Розмір"
@@ -618,7 +618,7 @@ msgid "Destination"
 msgstr "Призначення"
 
 #: src/sysprof/sysprof-dbus-section.ui:480
-#: src/sysprof/sysprof-files-section.ui:38
+#: src/sysprof/sysprof-files-section.ui:53
 msgid "Path"
 msgstr "Шлях"
 
@@ -635,7 +635,6 @@ msgid "Signature"
 msgstr "Підпис"
 
 #: src/sysprof/sysprof-dbus-section.ui:626
-#| msgid "Message"
 msgid "Filter Messages"
 msgstr "Фільтрувати повідомлення"
 
@@ -649,9 +648,14 @@ msgstr "Повідомлення"
 msgid "Files"
 msgstr "Файли"
 
-#: src/sysprof/sysprof-files-section.ui:73
+#: src/sysprof/sysprof-files-section.ui:88
 msgid "Compressed"
 msgstr "Стиснений"
+
+#: src/sysprof/sysprof-files-section.ui:165
+#| msgid "Filter Functions"
+msgid "Filter Files"
+msgstr "Фільтрувати файли"
 
 #: src/sysprof/sysprof-flame-graph.c:457
 #: src/sysprof/sysprof-process-dialog.ui:177

@@ -25,6 +25,7 @@
 #include "sysprof-document-frame-private.h"
 #include "sysprof-document-process-private.h"
 #include "sysprof-mount.h"
+#include "sysprof-symbol-private.h"
 #include "sysprof-thread-info.h"
 
 struct _SysprofDocumentProcess
@@ -159,7 +160,7 @@ sysprof_document_process_init (SysprofDocumentProcess *self)
 }
 
 const char *
-sysprof_document_process_get_command_line (SysprofDocumentProcess *self)
+_sysprof_document_process_get_comm (SysprofDocumentProcess *self)
 {
   const SysprofCaptureProcess *proc;
 
@@ -168,6 +169,21 @@ sysprof_document_process_get_command_line (SysprofDocumentProcess *self)
   proc = SYSPROF_DOCUMENT_FRAME_GET (self, SysprofCaptureProcess);
 
   return SYSPROF_DOCUMENT_FRAME_CSTRING (self, proc->cmdline);
+}
+
+const char *
+sysprof_document_process_get_command_line (SysprofDocumentProcess *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_PROCESS (self), 0);
+
+  /* Prefer ProcessInfo symbol name which gets updated from
+   * subsequent comm[] updates for process records.
+   */
+  if (self->process_info != NULL &&
+      self->process_info->symbol != NULL)
+    return self->process_info->symbol->name;
+
+  return _sysprof_document_process_get_comm (self);
 }
 
 /**

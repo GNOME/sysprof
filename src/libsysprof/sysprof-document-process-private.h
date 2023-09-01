@@ -28,5 +28,6 @@ G_BEGIN_DECLS
 SysprofProcessInfo *_sysprof_document_process_get_info (SysprofDocumentProcess *self);
 void                _sysprof_document_process_set_info (SysprofDocumentProcess *self,
                                                         SysprofProcessInfo     *process_info);
+const char         *_sysprof_document_process_get_comm (SysprofDocumentProcess *self);
 
 G_END_DECLS

@@ -803,10 +803,15 @@ static void
 sysprof_document_load_processes (SysprofDocument *self)
 {
   G_GNUC_UNUSED SysprofProcessInfo *pid0;
+  g_autoptr(GHashTable) seen = NULL;
+  g_autoptr(EggBitset) duplicate = NULL;
   EggBitsetIter iter;
   guint i;
 
   g_assert (SYSPROF_IS_DOCUMENT (self));
+
+  seen = g_hash_table_new (NULL, NULL);
+  duplicate = egg_bitset_new_empty ();
 
   /* Always create PID 0 info */
   pid0 = _sysprof_document_process_info (self, 0, TRUE);
@@ -818,7 +823,7 @@ sysprof_document_load_processes (SysprofDocument *self)
           g_autoptr(SysprofDocumentProcess) process = g_list_model_get_item (G_LIST_MODEL (self), i);
           int pid = sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (process));
           SysprofProcessInfo *process_info = _sysprof_document_process_info (self, pid, TRUE);
-          const char *cmdline = sysprof_document_process_get_command_line (process);
+          const char *cmdline = _sysprof_document_process_get_comm (process);
 
           if (cmdline != NULL)
             {
@@ -836,9 +841,19 @@ sysprof_document_load_processes (SysprofDocument *self)
                                      NULL, NULL, 0, 0,
                                      SYSPROF_SYMBOL_KIND_PROCESS);
             }
+
+          /* Only include the first process discover for this process,
+           * ignore all secondary notations which are just comm[] updates.
+           */
+          if (g_hash_table_contains (seen, GINT_TO_POINTER (pid)))
+            egg_bitset_add (duplicate, i);
+          else
+            g_hash_table_add (seen, GINT_TO_POINTER (pid));
         }
       while (egg_bitset_iter_next (&iter, &i));
     }
+
+  egg_bitset_subtract (self->processes, duplicate);
 }
 
 static void

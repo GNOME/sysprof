@@ -47,7 +47,7 @@ results</link> for more guidance.</p>
 
     <p>Often times, you may need to spawn a new process to profile.
 First, select the <em>Application</em> button next at the top of the
-reocrding window. Fill in your command and working directory, and optionally
+recording window. Fill in your command and working directory, and optionally
 specify any environment variables you need. Your process will be started
 when recording begins.</p>
 

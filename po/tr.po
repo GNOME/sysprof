@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-08-30 23:28+0000\n"
-"PO-Revision-Date: 2023-08-31 10:53+0300\n"
+"POT-Creation-Date: 2023-08-31 22:05+0000\n"
+"PO-Revision-Date: 2023-09-01 11:00+0300\n"
 "Last-Translator: Sabri Ünal <libreajans@gmail.com>\n"
 "Language-Team: Turkish <takim@gnome.org.tr>\n"
 "Language: tr\n"
@@ -408,7 +408,7 @@ msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "sysprof-cli’ye çok fazla argüman iletildi:"
 
 #. Translators: %s is a file name.
-#: src/sysprof-cli/sysprof-cli.c:450
+#: src/sysprof-cli/sysprof-cli.c:457
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s var. Üzerine yazmak için --force kullan\n"
@@ -521,7 +521,7 @@ msgid "Counters Table"
 msgstr "Sayaçlar Tablosu"
 
 #: src/sysprof/sysprof-cpu-section.ui:378
-#: src/sysprof/sysprof-dbus-section.ui:105
+#: src/sysprof/sysprof-dbus-section.ui:171
 #: src/sysprof/sysprof-energy-section.ui:348
 #: src/sysprof/sysprof-frame-utility.ui:49
 #: src/sysprof/sysprof-graphics-section.ui:259
@@ -580,58 +580,62 @@ msgstr "Çekirdek"
 msgid "Model Name"
 msgstr "Model Adı"
 
-#: src/sysprof/sysprof-dbus-section.ui:139
+#: src/sysprof/sysprof-dbus-section.ui:205
 msgid "Bus"
 msgstr "Veri Yolu"
 
-#: src/sysprof/sysprof-dbus-section.ui:178
+#: src/sysprof/sysprof-dbus-section.ui:244
 msgid "Serial"
 msgstr "Seri"
 
-#: src/sysprof/sysprof-dbus-section.ui:215
+#: src/sysprof/sysprof-dbus-section.ui:281
 msgid "Reply"
 msgstr "Yanıtla"
 
-#: src/sysprof/sysprof-dbus-section.ui:252
+#: src/sysprof/sysprof-dbus-section.ui:318
 msgid "Flags"
 msgstr "Bayraklar"
 
-#: src/sysprof/sysprof-dbus-section.ui:281
-#: src/sysprof/sysprof-files-section.ui:107
+#: src/sysprof/sysprof-dbus-section.ui:347
+#: src/sysprof/sysprof-files-section.ui:122
 #: src/sysprof/sysprof-memory-callgraph-view.ui:68
 msgid "Size"
 msgstr "Boyut"
 
-#: src/sysprof/sysprof-dbus-section.ui:317
+#: src/sysprof/sysprof-dbus-section.ui:383
 #: src/sysprof/sysprof-frame-utility.ui:20
 #: src/sysprof/sysprof-mark-table.ui:221
 msgid "Type"
 msgstr "Tür"
 
-#: src/sysprof/sysprof-dbus-section.ui:346
+#: src/sysprof/sysprof-dbus-section.ui:412
 msgid "Sender"
 msgstr "Gönderen"
 
-#: src/sysprof/sysprof-dbus-section.ui:380
+#: src/sysprof/sysprof-dbus-section.ui:446
 msgid "Destination"
 msgstr "Hedef"
 
-#: src/sysprof/sysprof-dbus-section.ui:414
-#: src/sysprof/sysprof-files-section.ui:38
+#: src/sysprof/sysprof-dbus-section.ui:480
+#: src/sysprof/sysprof-files-section.ui:53
 msgid "Path"
 msgstr "Yol"
 
-#: src/sysprof/sysprof-dbus-section.ui:448
+#: src/sysprof/sysprof-dbus-section.ui:514
 msgid "Interface"
 msgstr "Arayüz"
 
-#: src/sysprof/sysprof-dbus-section.ui:482
+#: src/sysprof/sysprof-dbus-section.ui:548
 msgid "Member"
 msgstr "Üye"
 
-#: src/sysprof/sysprof-dbus-section.ui:516
+#: src/sysprof/sysprof-dbus-section.ui:582
 msgid "Signature"
 msgstr "İmza"
+
+#: src/sysprof/sysprof-dbus-section.ui:626
+msgid "Filter Messages"
+msgstr "İletileri Süz"
 
 #: src/sysprof/sysprof-dbus-utility.ui:13
 #: src/sysprof/sysprof-logs-section.c:104
@@ -643,9 +647,13 @@ msgstr "İleti"
 msgid "Files"
 msgstr "Dosyalar"
 
-#: src/sysprof/sysprof-files-section.ui:73
+#: src/sysprof/sysprof-files-section.ui:88
 msgid "Compressed"
 msgstr "Sıkıştırılmış"
+
+#: src/sysprof/sysprof-files-section.ui:165
+msgid "Filter Files"
+msgstr "Dosyaları Süz"
 
 #: src/sysprof/sysprof-flame-graph.c:457
 #: src/sysprof/sysprof-process-dialog.ui:177

@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-08-31 22:05+0000\n"
-"PO-Revision-Date: 2023-09-01 01:52+0200\n"
+"POT-Creation-Date: 2023-09-02 18:41+0000\n"
+"PO-Revision-Date: 2023-09-04 17:46+0200\n"
 "Last-Translator: Philipp Kiemle <philipp.kiemle@gmail.com>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "Language: de\n"
@@ -112,7 +112,7 @@ msgstr "Anordnung"
 
 #: src/libsysprof/sysprof-category-summary.c:178
 msgid "Locking"
-msgstr ""
+msgstr "Wird gesperrt"
 
 #: src/libsysprof/sysprof-category-summary.c:181
 msgid "Main Loop"
@@ -148,45 +148,45 @@ msgstr "Zuweisung"
 msgid "Unknown Process"
 msgstr "Unbekannter Prozess"
 
-#: src/libsysprof/sysprof-document.c:1239
-#: src/libsysprof/sysprof-document.c:1275
+#: src/libsysprof/sysprof-document.c:1251
+#: src/libsysprof/sysprof-document.c:1287
 msgid "Indexing capture data frames"
 msgstr ""
 
-#: src/libsysprof/sysprof-document.c:1461
+#: src/libsysprof/sysprof-document.c:1473
 msgid "Discovering file system mounts"
 msgstr "Einhängepunkte von Dateisystemen erkunden"
 
-#: src/libsysprof/sysprof-document.c:1464
+#: src/libsysprof/sysprof-document.c:1476
 msgid "Discovering process mount namespaces"
 msgstr ""
 
-#: src/libsysprof/sysprof-document.c:1467
+#: src/libsysprof/sysprof-document.c:1479
 msgid "Analyzing process address layouts"
 msgstr "Die Adressraumanordnungen eines Prozesses analysieren"
 
-#: src/libsysprof/sysprof-document.c:1470
+#: src/libsysprof/sysprof-document.c:1482
 msgid "Analyzing process command line"
 msgstr "Die Befehlszeile eines Prozesses analysieren"
 
-#: src/libsysprof/sysprof-document.c:1473
+#: src/libsysprof/sysprof-document.c:1485
 msgid "Analyzing file system overlays"
 msgstr ""
 
-#: src/libsysprof/sysprof-document.c:1476
+#: src/libsysprof/sysprof-document.c:1488
 #, fuzzy
 #| msgid "Processes"
 msgid "Processing counters"
 msgstr "Prozesse"
 
-#: src/libsysprof/sysprof-document.c:2464
-#: src/libsysprof/sysprof-document.c:2480
+#: src/libsysprof/sysprof-document.c:2476
+#: src/libsysprof/sysprof-document.c:2492
 #, c-format
 msgid "Recording at %X %x"
 msgstr "Aufnahme vom %X %x"
 
-#: src/libsysprof/sysprof-document.c:2466
-#: src/libsysprof/sysprof-document.c:2482
+#: src/libsysprof/sysprof-document.c:2478
+#: src/libsysprof/sysprof-document.c:2494
 #, c-format
 msgid "Recording at %s"
 msgstr "Aufnahme vom %s"
@@ -226,12 +226,12 @@ msgstr "Protokoll"
 msgid "Mark"
 msgstr "Markieren"
 
-#: src/libsysprof/sysprof-document-process.c:277
+#: src/libsysprof/sysprof-document-process.c:293
 #, c-format
 msgid "%s [Process %d]"
 msgstr "%s [Prozess %d]"
 
-#: src/libsysprof/sysprof-document-process.c:279
+#: src/libsysprof/sysprof-document-process.c:295
 #, c-format
 msgid "Process %d"
 msgstr "Prozess %d"
@@ -516,10 +516,8 @@ msgid "Functions"
 msgstr "Funktionen"
 
 #: src/sysprof/sysprof-callgraph-view.ui:71
-#, fuzzy
-#| msgid "Functions"
 msgid "Filter Functions"
-msgstr "Funktionen"
+msgstr "Funktionen filtern"
 
 #: src/sysprof/sysprof-callgraph-view.ui:94
 msgid "Callers"
@@ -665,10 +663,8 @@ msgid "Signature"
 msgstr "Signatur"
 
 #: src/sysprof/sysprof-dbus-section.ui:626
-#, fuzzy
-#| msgid "Message"
 msgid "Filter Messages"
-msgstr "Nachricht"
+msgstr "Nachrichten filtern"
 
 #: src/sysprof/sysprof-dbus-utility.ui:13
 #: src/sysprof/sysprof-logs-section.c:104
@@ -685,10 +681,8 @@ msgid "Compressed"
 msgstr "Komprimiert"
 
 #: src/sysprof/sysprof-files-section.ui:165
-#, fuzzy
-#| msgid "Functions"
 msgid "Filter Files"
-msgstr "Funktionen"
+msgstr "Dateien filtern"
 
 #: src/sysprof/sysprof-flame-graph.c:457
 #: src/sysprof/sysprof-process-dialog.ui:177
@@ -735,16 +729,12 @@ msgid "System Capture from %s.syscap"
 msgstr "System-Aufzeichnung aus %s.syscap"
 
 #: src/sysprof/sysprof-greeter.c:292
-#, fuzzy
-#| msgid "Recording Failed"
 msgid "Record to File"
-msgstr "Aufnahme fehlgeschlagen"
+msgstr "In Datei aufzeichnen"
 
 #: src/sysprof/sysprof-greeter.c:293
-#, fuzzy
-#| msgid "_Record"
 msgid "Record"
-msgstr "_Aufnehmen"
+msgstr "Aufzeichnen"
 
 #: src/sysprof/sysprof-greeter.c:440
 msgid "No Change"
@@ -841,10 +831,8 @@ msgid "Environment"
 msgstr "Umgebung"
 
 #: src/sysprof/sysprof-greeter.ui:204
-#, fuzzy
-#| msgid "Environment"
 msgid "Clear Environment"
-msgstr "Umgebung"
+msgstr "Umgebung bereinigen"
 
 #: src/sysprof/sysprof-greeter.ui:205
 #, fuzzy
@@ -1029,10 +1017,8 @@ msgid "_Open File…"
 msgstr "Datei ö_ffnen …"
 
 #: src/sysprof/sysprof-greeter.ui:591
-#, fuzzy
-#| msgid "Recording…"
 msgid "Record to _File…"
-msgstr "Aufnahme läuft …"
+msgstr "In Datei au_fzeichnen …"
 
 #: src/sysprof/sysprof-greeter.ui:598
 msgid "Record to _Memory"
@@ -1204,7 +1190,7 @@ msgstr "Einhängepunkte"
 
 #: src/sysprof/sysprof-process-dialog.ui:282
 msgid "Parent"
-msgstr ""
+msgstr "Übergeordnetes Element"
 
 #: src/sysprof/sysprof-process-dialog.ui:316
 msgid "Major"
@@ -1287,10 +1273,8 @@ msgid "Stop Recording"
 msgstr "Aufnahme anhalten"
 
 #: src/sysprof/sysprof-samples-section.ui:4
-#, fuzzy
-#| msgid "Profiler"
 msgid "Time Profiler"
-msgstr "Profiler"
+msgstr "Zeit-Profiler"
 
 #: src/sysprof/sysprof-samples-section.ui:89 src/sysprof/sysprof-window.ui:385
 msgid "Callgraph"
@@ -1399,10 +1383,8 @@ msgid "Storage"
 msgstr "Datenspeicher"
 
 #: src/sysprof/sysprof-window.ui:359
-#, fuzzy
-#| msgid "Record Again"
 msgid "_Record Again…"
-msgstr "Erneut aufnehmen"
+msgstr "E_rneut aufnehmen …"
 
 #: src/sysprof/sysprof-window.ui:363
 msgid "Open Recording…"

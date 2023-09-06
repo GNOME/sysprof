@@ -1,0 +1,1071 @@
+# Lithuanian translation for sysprof.
+# Copyright (C) 2023 sysprof's COPYRIGHT HOLDER
+# This file is distributed under the same license as the sysprof package.
+# Aurimas Černius <aurisc4@gmail.com>, 2023.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sysprof sysprof-3-48\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
+"POT-Creation-Date: 2023-09-02 17:43+0000\n"
+"PO-Revision-Date: 2023-09-06 12:42+0300\n"
+"Last-Translator: \n"
+"Language-Team: Lithuanian <gnome-lt@lists.akl.lt>\n"
+"Language: lt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"(n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Poedit 3.3.2\n"
+
+#: data/org.gnome.Sysprof.appdata.xml.in.in:5
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:197
+#: src/sysprof/sysprof-application.c:287 src/sysprof/sysprof-window.ui:10
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#: data/org.gnome.Sysprof.appdata.xml.in.in:6
+msgid "Profile an application or entire system"
+msgstr "Profiliuokite programą ar visą sistemą"
+
+#: data/org.gnome.Sysprof.appdata.xml.in.in:9
+msgid "The GNOME Foundation"
+msgstr "GNOME fondas"
+
+#: data/org.gnome.Sysprof.appdata.xml.in.in:12
+msgid ""
+"Sysprof allows you to profile applications to aid in debugging and "
+"optimization."
+msgstr ""
+"Sysprof leidžia profiliuoti programas ir padeda jas derinti bei optimizuoti."
+
+#: data/org.gnome.Sysprof.desktop.in.in:5
+msgid "Profiler"
+msgstr "Profiliatorius"
+
+#: data/org.gnome.Sysprof.desktop.in.in:6
+msgid "Profile an application or entire system."
+msgstr "Profiliuokite programą ar visą sistemą."
+
+#: src/libsysprof/sysprof-callgraph-profile.c:447
+msgid "Sysprof was unable to generate a callgraph from the system capture."
+msgstr "Sysprof nepavyko sugeneruoti kvietimų grafo iš sistemos surinkimo."
+
+#: src/libsysprof/sysprof-perf-source.c:472
+#, c-format
+msgid "Sysprof failed to find field “%s”."
+msgstr "Sysprof nepavyko rasti lauko „%s“."
+
+#: src/libsysprof/sysprof-perf-source.c:485
+#, c-format
+msgid "Sysprof failed to parse offset for “%s”."
+msgstr "Sysprof nepavyko perskaityti „%s“ poslinkio."
+
+#: src/libsysprof/sysprof-perf-source.c:549
+#, c-format
+msgid "Sysprof failed to get perf_event ID."
+msgstr "Sysprof nepavyko gauti perf_event ID."
+
+#: src/libsysprof/sysprof-perf-source.c:655
+#, c-format
+msgid "An error occurred while attempting to access performance counters"
+msgstr "Kilo klaida bandant pasiekti našumo skaitiklius"
+
+#: src/libsysprof-ui/sysprof-battery-aid.c:182
+msgid "Battery Charge"
+msgstr "Baterijos įkrova"
+
+#: src/libsysprof-ui/sysprof-battery-aid.c:198
+msgid "Battery Charge (All)"
+msgstr "Baterijos įkrova (visa)"
+
+#: src/libsysprof-ui/sysprof-battery-aid.c:240
+msgid "Battery"
+msgstr "Baterija"
+
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:212
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:218
+#: src/libsysprof-ui/sysprof-details-page.ui:73
+msgid "Stack Traces"
+msgstr "Steko pėdsakai"
+
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:226
+msgid "Stack Traces (In Kernel)"
+msgstr "Steko pėdsakai (branduolyje)"
+
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:234
+msgid "Stack Traces (In User)"
+msgstr "Steko pėdsakai (naudotojo)"
+
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:243
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:273
+msgid "Callgraph"
+msgstr "Kvietimo grafas"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:23
+#: src/libsysprof-ui/sysprof-memprof-page.ui:90
+msgid "Functions"
+msgstr "Funkcijos"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:39
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:96
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:147
+#: src/libsysprof-ui/sysprof-memprof-page.ui:107
+#: src/libsysprof-ui/sysprof-memprof-page.ui:165
+#: src/libsysprof-ui/sysprof-memprof-page.ui:216
+msgid "Self"
+msgstr "Pati"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:55
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:112
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:163
+#: src/libsysprof-ui/sysprof-memprof-page.ui:123
+#: src/libsysprof-ui/sysprof-memprof-page.ui:181
+#: src/libsysprof-ui/sysprof-memprof-page.ui:232
+msgid "Total"
+msgstr "Iš viso"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:80
+#: src/libsysprof-ui/sysprof-memprof-page.ui:148
+msgid "Callers"
+msgstr "Kvietėjos"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:139
+#: src/libsysprof-ui/sysprof-memprof-page.ui:207
+msgid "Descendants"
+msgstr "Kviečiamos"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:178
+#: src/libsysprof-ui/sysprof-details-page.ui:215
+msgid "Hits"
+msgstr "Patekimai"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:198
+msgid "Generating Callgraph"
+msgstr "Generuojamas kvietimų grafas"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:199
+msgid "Sysprof is busy creating the selected callgraph."
+msgstr "Sysprof užimpa kurdama pažymėtą grafą."
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:205
+#: src/libsysprof-ui/sysprof-memprof-page.ui:271
+msgid "Not Enough Samples"
+msgstr "Nepakanka mėginių"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:206
+#: src/libsysprof-ui/sysprof-memprof-page.ui:272
+msgid "More samples are necessary to display a callgraph."
+msgstr "Kvietimų grafui parodyti reikia daugiau mėginių."
+
+#: src/libsysprof-ui/sysprof-cell-renderer-progress.c:102
+#: src/libsysprof-ui/sysprof-cell-renderer-progress.c:292
+#: src/libsysprof-ui/sysprof-cell-renderer-progress.c:322
+#, c-format
+msgctxt "progress bar label"
+msgid "%d %%"
+msgstr "%d%%"
+
+#: src/libsysprof-ui/sysprof-counters-aid.c:221
+#: src/libsysprof-ui/sysprof-counters-aid.c:226
+#: src/libsysprof-ui/sysprof-counters-aid.c:282
+#: src/libsysprof-ui/sysprof-details-page.ui:148
+msgid "Counters"
+msgstr "Skaitikliai"
+
+#: src/libsysprof-ui/sysprof-cpu-aid.c:207
+#: src/libsysprof-ui/sysprof-cpu-aid.c:355
+msgid "CPU Usage"
+msgstr "CPU naudojimas"
+
+#: src/libsysprof-ui/sysprof-cpu-aid.c:214
+msgid "CPU Frequency"
+msgstr "CPU dažnis"
+
+#: src/libsysprof-ui/sysprof-cpu-aid.c:218
+msgid "CPU Frequency (All)"
+msgstr "CPU dažnis (visas)"
+
+#. Translators: CPU is the processor.
+#: src/libsysprof-ui/sysprof-cpu-aid.c:227
+#: src/libsysprof-ui/sysprof-cpu-aid.c:250
+msgid "CPU Usage (All)"
+msgstr "CPU naudojimas (visas)"
+
+#: src/libsysprof-ui/sysprof-cpu-aid.c:316
+#: src/libsysprof-ui/sysprof-details-page.ui:103
+msgid "Processes"
+msgstr "Procesai"
+
+#: src/libsysprof-ui/sysprof-details-page.c:239
+msgid "Memory Capture"
+msgstr "Atminties surinkimas"
+
+#: src/libsysprof-ui/sysprof-details-page.c:253
+#, c-format
+msgid "%0.4lf seconds"
+msgstr "%0.4lf sekundžių"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:8
+msgid "Capture"
+msgstr "Surinkti"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:12
+msgid "Location"
+msgstr "Vieta"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:26
+msgid "Recorded At"
+msgstr "Įrašyta"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:40
+#: src/libsysprof-ui/sysprof-marks-page.ui:90
+#: src/libsysprof-ui/sysprof-marks-page.ui:196
+msgid "Duration"
+msgstr "Trukmė"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:54
+msgid "CPU Model"
+msgstr "CPU modelis"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:69
+#: src/libsysprof-ui/sysprof-details-page.ui:164
+msgid "Statistics"
+msgstr "Statistika"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:74
+msgid "Number of stack traces sampled for performance callgraphs"
+msgstr ""
+"Steko pėdsakų skaičius, kuriems buvo imti mėginiai našumo kvietimų grafams"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:88
+msgid "Marks"
+msgstr "Žymos"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:89
+msgid "Number of marks seen"
+msgstr "Matytų žymų skaičius"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:104
+msgid "Number of processes seen"
+msgstr "Matytų procesų skaičius"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:118
+msgid "Forks"
+msgstr "Atsišakojimai"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:119
+msgid "Number of times a process forked"
+msgstr "Kiek kartų procesas atsišakojo"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:133
+#: src/libsysprof-ui/sysprof-memprof-aid.c:193
+#: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
+msgid "Memory Allocations"
+msgstr "Atminties išskyrimai"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:134
+msgid "Number of stack traces recorded for tracing memory allocations"
+msgstr "Kiek steko pėdsakų buvo įrašyti atminties išskyrimams"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:149
+msgid "Number of recorded counter values"
+msgstr "Įrašytų skaitiklių reikšmių skaičius"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:180
+#: src/libsysprof-ui/sysprof-marks-page.ui:50
+msgid "Mark"
+msgstr "Žyma"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:248
+msgid "Min"
+msgstr "Min"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:281
+msgid "Max"
+msgstr "Max"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:314
+msgid "Avg"
+msgstr "Vid"
+
+#: src/libsysprof-ui/sysprof-diskstat-aid.c:205
+#: src/libsysprof-ui/sysprof-diskstat-aid.c:267
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:58
+msgid "Disk"
+msgstr "Diskas"
+
+#: src/libsysprof-ui/sysprof-diskstat-aid.c:239
+msgid "Reads"
+msgstr "Skaitymai"
+
+#: src/libsysprof-ui/sysprof-diskstat-aid.c:239
+msgid "Writes"
+msgstr "Rašymai"
+
+#: src/libsysprof-ui/sysprof-display.c:228
+msgid "Recording Failed"
+msgstr "Įrašymas nepavyko"
+
+#: src/libsysprof-ui/sysprof-display.c:233
+msgid "Recording…"
+msgstr "Įrašoma…"
+
+#. translators: %s is replaced with locale specific time of recording
+#: src/libsysprof-ui/sysprof-display.c:264
+#, c-format
+msgid "Recording at %s"
+msgstr "Įrašoma %s"
+
+#: src/libsysprof-ui/sysprof-display.c:268
+msgid "New Recording"
+msgstr "Naujas įrašas"
+
+#: src/libsysprof-ui/sysprof-display.c:1099
+msgid "The recording could not be opened"
+msgstr "Įrašo nepavyko atverti"
+
+#: src/libsysprof-ui/sysprof-display.c:1246
+#, c-format
+msgid "Failed to save recording: %s"
+msgstr "Nepavyko įrašyti įrašo: %s"
+
+#: src/libsysprof-ui/sysprof-display.c:1279
+msgid "Save Recording"
+msgstr "Įrašyti įrašą"
+
+#: src/libsysprof-ui/sysprof-display.c:1282
+msgid "Save"
+msgstr "Įrašyti"
+
+#. Translators: This is a button.
+#: src/libsysprof-ui/sysprof-display.c:1283 src/sysprof/sysprof-window.c:285
+msgid "Cancel"
+msgstr "Atsisakyti"
+
+#: src/libsysprof-ui/sysprof-display.ui:36
+#: src/libsysprof-ui/sysprof-marks-page.ui:16
+msgid "Details"
+msgstr "Detalės"
+
+#: src/libsysprof-ui/sysprof-environ-editor-row.ui:29
+msgid "Remove environment variable"
+msgstr "Pašalinti aplinkos kintamąjį"
+
+#: src/libsysprof-ui/sysprof-environ-editor.c:72
+msgid "New environment variable…"
+msgstr "Naujas aplinkos kintamasis…"
+
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:25
+msgid "Ouch, that hurt!"
+msgstr "Oi, skaudėjo!"
+
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:37
+msgid "Something unexpectedly went wrong while trying to profile your system."
+msgstr "Netikėtai atsitiko kažkas negero bandant profiliuoti jūsų sistemą."
+
+#: src/libsysprof-ui/sysprof-log-model.c:210
+#: src/libsysprof-ui/sysprof-logs-page.ui:56
+#: src/libsysprof-ui/sysprof-marks-page.ui:103
+msgid "Message"
+msgstr "Pranešimas"
+
+#: src/libsysprof-ui/sysprof-log-model.c:213
+msgid "Info"
+msgstr "Informacija"
+
+#: src/libsysprof-ui/sysprof-log-model.c:216
+msgid "Critical"
+msgstr "Kritinis"
+
+#: src/libsysprof-ui/sysprof-log-model.c:219
+msgid "Error"
+msgstr "Klaida"
+
+#: src/libsysprof-ui/sysprof-log-model.c:222
+msgid "Debug"
+msgstr "Derinimo"
+
+#: src/libsysprof-ui/sysprof-log-model.c:225
+msgid "Warning"
+msgstr "Įspėjimas"
+
+#: src/libsysprof-ui/sysprof-logs-aid.c:195
+#: src/libsysprof-ui/sysprof-logs-aid.c:199
+#: src/libsysprof-ui/sysprof-logs-aid.c:204
+#: src/libsysprof-ui/sysprof-logs-aid.c:210
+msgid "Logs"
+msgstr "Žurnalas"
+
+#: src/libsysprof-ui/sysprof-logs-page.ui:13
+#: src/libsysprof-ui/sysprof-marks-page.ui:64
+msgid "Time"
+msgstr "Laikas"
+
+#: src/libsysprof-ui/sysprof-logs-page.ui:27
+msgid "Severity"
+msgstr "Svarba"
+
+#: src/libsysprof-ui/sysprof-logs-page.ui:42
+msgid "Domain"
+msgstr "Domenas"
+
+#: src/libsysprof-ui/sysprof-marks-aid.c:408
+#: src/libsysprof-ui/sysprof-marks-aid.c:413
+msgid "Timings"
+msgstr "Laikai"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:37
+msgid "Group"
+msgstr "Grupė"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:77
+msgid "End"
+msgstr "Pabaiga"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:234
+msgid "No Timings Available"
+msgstr "Nėra laikų"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:246
+msgid "No timing data was found for the current selection"
+msgstr "Pasirinktam žymėjimui nerasta laiko duomenų"
+
+#: src/libsysprof-ui/sysprof-memory-aid.c:68
+msgid "Memory Usage"
+msgstr "Atminties naudojimas"
+
+#: src/libsysprof-ui/sysprof-memprof-aid.c:182
+msgid "Memory"
+msgstr "Atmintis"
+
+#: src/libsysprof-ui/sysprof-memprof-aid.c:224
+msgid "Track Allocations"
+msgstr "Sekti išskyrimus"
+
+#. translators: %s is replaced with the the lower and upper bound memory sizes in bytes
+#: src/libsysprof-ui/sysprof-memprof-page.c:246
+#, c-format
+msgid "> %s to %s"
+msgstr "> %s į %s"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:16
+msgid "Number of Allocations"
+msgstr "Išskyrimų skaičius"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:17
+msgid "Total number of allocation and free records"
+msgstr "Bendras išskyrimų ir atlaisvinimų skaičius"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:30
+#: src/libsysprof-ui/sysprof-memprof-page.ui:318
+msgid "Leaked Allocations"
+msgstr "Pamesti išskyrimai"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:31
+msgid "Number of allocations without a free record"
+msgstr "Išskyrimų be atlaisvinimų skaičius"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:44
+#: src/libsysprof-ui/sysprof-memprof-page.ui:311
+msgid "Temporary Allocations"
+msgstr "Laikini išskyrimai"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:45
+msgid "Number of allocations freed from similar stack trace"
+msgstr "Išskyrimų, atlaisvintų iš panašaus steko pėdsako, skaičius"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:59
+msgid "Allocations by Size"
+msgstr "Išskyrimai pagal dydį"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:247
+msgid "Size"
+msgstr "Dydis"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:264
+msgid "Analyzing Memory Allocations"
+msgstr "Analizuojami atminties išskyrimai"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:265
+msgid "Sysprof is busy analyzing memory allocations."
+msgstr "Sysprof užsiėmusi analizuodama atminties išskyrimus."
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:298
+msgid "Summary"
+msgstr "Suvestinė"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:304
+msgid "All Allocations"
+msgstr "Visi išskyrimai"
+
+#: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
+msgid "Memory Used"
+msgstr "Atminties naudojimas"
+
+#: src/libsysprof-ui/sysprof-netdev-aid.c:204
+#: src/libsysprof-ui/sysprof-netdev-aid.c:264
+msgid "Network"
+msgstr "Tinklas"
+
+#. translators: "Compositor" means desktop compositor, gnome-shell/mutter in particular
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:26
+msgid "GNOME Shell"
+msgstr "GNOME Apvalkalas"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:30
+msgid "Speedtrack"
+msgstr "Greičio takelis"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:39
+msgid "GJS"
+msgstr "GJS"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:46
+msgid "Application"
+msgstr "Programa"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:69
+msgid "Profiling Target"
+msgstr "Profiliavimo tikslas"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:72
+msgid "Profile Entire System"
+msgstr "Profiliuoti visą sistemą"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:73
+msgid ""
+"Sysprof can generate callgraphs for one or more processes on your system."
+msgstr ""
+"Sysprof gali generuoti kvietimų grafus vienam ar daugiau jūsų sistemos "
+"procesų."
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:84
+msgid "Search Processes"
+msgstr "Ieškoti procesų"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:99
+msgid "Loading Processes…"
+msgstr "Įkeliami procesai…"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:114
+msgid "Launch Application"
+msgstr "Paleisti programą"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:115
+msgid ""
+"Sysprof can launch an application to be profiled. The profiler will "
+"automatically stop when it exits."
+msgstr ""
+"Sysprof gali paleisti profiliuojamą programą. Profiliavimas automatiškai "
+"baigsis, kai ji baigs darbą."
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:126
+msgid "Command Line"
+msgstr "Komandų eilutė"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:135
+msgid "Inherit Environment"
+msgstr "Paveldėti aplinką"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:136
+msgid ""
+"Enable to ensure your application shares the display, message-bus, and other "
+"desktop environment settings."
+msgstr ""
+"Įjunkite ir užtikrinkite, kad programa naudoja tą patį vaizduoklį, pranešimų "
+"magistralę ir kitas darbalaukio aplinkos nuostatas."
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:153
+msgid "Performance"
+msgstr "Našumas"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:156
+msgid "Allow CPU Throttling"
+msgstr "Leisti CPU ribojimą"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:157
+msgid ""
+"When enabled, your system is allowed to scale CPU frequency as necessary."
+msgstr "Kai įjungta, jūsų sistemai leidžiama keisti CPU dažnį pagal poreikį."
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:172
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:26
+msgid "Instruments"
+msgstr "Instrumentai"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:245
+msgid ""
+"Track application memory allocations (Sysprof must launch target application)"
+msgstr ""
+"Sekti programos atminties išskyrimus (Sysprof turi paleisti paskirties "
+"programą)"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:252
+msgid "Track slow operations on your applications main loop"
+msgstr "Sekti lėtus veiksmus jūsų programos pagrindiniame cikle"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:265
+msgid "_Record"
+msgstr "Į_rašyti"
+
+#: src/libsysprof-ui/sysprof-rapl-aid.c:175
+#: src/libsysprof-ui/sysprof-rapl-aid.c:248
+msgid "Energy Usage"
+msgstr "Energijos sąnaudos"
+
+#: src/libsysprof-ui/sysprof-rapl-aid.c:180
+msgid "Energy Usage (All)"
+msgstr "Energijos sąnaudos (visos)"
+
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:32
+msgid ""
+"Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
+msgstr ""
+"Ar žinote, kad galite naudoti <a href=\"help:sysprof\">sysprof-cli</a> "
+"įrašymui?"
+
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:45
+msgid "Events"
+msgstr "Įvykiai"
+
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:68
+msgid "_Stop Recording"
+msgstr "_Stabdyti įrašymą"
+
+#: src/libsysprof-ui/sysprof-visualizer-group-header.c:192
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:40
+msgid "Select for more details"
+msgstr "Pažymėkite detalesnei informacijai"
+
+#: src/libsysprof-ui/sysprof-visualizer-group-header.c:214
+msgid "Display supplemental graphs"
+msgstr "Rodyti papildomus grafus"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:13
+msgid "Profile the system"
+msgstr "Profiliuoti sistemą"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:14
+msgid "Authentication is required to profile the system."
+msgstr "Sistemai profiliuoti reikia patvirtinti tapatybę."
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:26
+msgid "Open a perf event stream"
+msgstr "Atverti našumo įvykių srautą"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:27
+msgid "Authentication is required to access system performance counters."
+msgstr "Sistemos našumo skaitikliams pasiekti reikia patvirtinti tapatybę."
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:37
+msgid "Get a list of kernel symbols and their address"
+msgstr "Gauti branduolio simbolių sąrašą bei jų adresus"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:38
+msgid "Authentication is required to access Linux kernel information."
+msgstr ""
+"Norint gauti Linux branduolio informaciją, reikia patvirtinti tapatybę."
+
+#: src/sysprof/gtk/help-overlay.ui:10
+msgctxt "shortcut window"
+msgid "Files"
+msgstr "Failai"
+
+#: src/sysprof/gtk/help-overlay.ui:13
+msgctxt "shortcut window"
+msgid "Save Recording"
+msgstr "Įrašyti įrašą"
+
+#: src/sysprof/gtk/help-overlay.ui:14
+msgctxt "shortcut window"
+msgid "Saves the current recording"
+msgstr "Įrašo dabartinį įrašą"
+
+#: src/sysprof/gtk/help-overlay.ui:20
+msgctxt "shortcut window"
+msgid "Open recording"
+msgstr "Atverti įrašą"
+
+#: src/sysprof/gtk/help-overlay.ui:21
+msgctxt "shortcut window"
+msgid "Opens a previously saved recording"
+msgstr "Atveria anksčiau įrašytą įrašą"
+
+#: src/sysprof/gtk/help-overlay.ui:29
+msgctxt "shortcut window"
+msgid "Recording"
+msgstr "Įrašoma"
+
+#: src/sysprof/gtk/help-overlay.ui:32
+msgctxt "shortcut window"
+msgid "Record again"
+msgstr "Įrašyti dar kartą"
+
+#: src/sysprof/gtk/help-overlay.ui:33
+msgctxt "shortcut window"
+msgid "Starts a new recording"
+msgstr "Pradeda naują įrašymą"
+
+#: src/sysprof/gtk/help-overlay.ui:39
+msgctxt "shortcut window"
+msgid "Stop recording"
+msgstr "Stabdyti įrašymą"
+
+#: src/sysprof/gtk/help-overlay.ui:47
+msgctxt "shortcut window"
+msgid "Callgraph"
+msgstr "Kvietimų grafas"
+
+#: src/sysprof/gtk/help-overlay.ui:50
+msgctxt "shortcut window"
+msgid "Expand function"
+msgstr "Išskleisti funkciją"
+
+#: src/sysprof/gtk/help-overlay.ui:51
+msgctxt "shortcut window"
+msgid "Shows the direct descendants of the callgraph function"
+msgstr "Parodo tiesioginius funkcijos kvietinius kvietimų grafe"
+
+#: src/sysprof/gtk/help-overlay.ui:57
+msgctxt "shortcut window"
+msgid "Collapse function"
+msgstr "Suskleisti funkciją"
+
+#: src/sysprof/gtk/help-overlay.ui:58
+msgctxt "shortcut window"
+msgid "Hides all callgraph descendants below the selected function"
+msgstr "Paslepia kvietimų grafo kvietinius iš pažymėtos funkcijos"
+
+#: src/sysprof/gtk/help-overlay.ui:64
+msgctxt "shortcut window"
+msgid "Jump into function"
+msgstr "Šokti į funkciją"
+
+#: src/sysprof/gtk/help-overlay.ui:65
+msgctxt "shortcut window"
+msgid "Selects the function or file as the top of the callgraph"
+msgstr "Pažymį funkciją kaip kvietimų grafo viršų"
+
+#: src/sysprof/gtk/help-overlay.ui:73
+msgctxt "shortcut window"
+msgid "Visualizers"
+msgstr "Vizualizacijos"
+
+#: src/sysprof/gtk/help-overlay.ui:76
+msgctxt "shortcut window"
+msgid "Zoom in"
+msgstr "Priartinti"
+
+#: src/sysprof/gtk/help-overlay.ui:82
+msgctxt "shortcut window"
+msgid "Zoom out"
+msgstr "Atitolinti"
+
+#: src/sysprof/gtk/help-overlay.ui:88
+msgctxt "shortcut window"
+msgid "Reset zoom"
+msgstr "Atstatyti mastelį"
+
+#: src/sysprof/gtk/help-overlay.ui:96
+msgctxt "shortcut window"
+msgid "General"
+msgstr "Esmė"
+
+#: src/sysprof/gtk/help-overlay.ui:99
+msgctxt "shortcut window"
+msgid "Show Help"
+msgstr "Rodyti žinyną"
+
+#: src/sysprof/gtk/help-overlay.ui:105
+msgctxt "shortcut window"
+msgid "Keyboard Shortcuts"
+msgstr "Klaviatūros trumpiniai"
+
+#: src/sysprof/gtk/help-overlay.ui:111
+msgctxt "shortcut window"
+msgid "New Tab"
+msgstr "Nauja kortelė"
+
+#: src/sysprof/gtk/help-overlay.ui:117
+msgctxt "shortcut window"
+msgid "Switch Tab"
+msgstr "Keisti kortelę"
+
+#: src/sysprof/gtk/help-overlay.ui:123
+msgctxt "shortcut window"
+msgid "New Window"
+msgstr "Naujas langas"
+
+#: src/sysprof/gtk/help-overlay.ui:129
+msgctxt "shortcut window"
+msgid "Close Window"
+msgstr "Užverti langą"
+
+#: src/sysprof/gtk/help-overlay.ui:135
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "Išeiti"
+
+#: src/sysprof/gtk/menus.ui:6
+msgid "New Tab"
+msgstr "Nauja kortelė"
+
+#: src/sysprof/gtk/menus.ui:10
+msgid "New Window"
+msgstr "Naujas langas"
+
+#: src/sysprof/gtk/menus.ui:16
+msgid "Open Recording…"
+msgstr "Atverti įrašą…"
+
+#: src/sysprof/gtk/menus.ui:20
+msgid "Save Recording…"
+msgstr "Įrašyti įrašą…"
+
+#: src/sysprof/gtk/menus.ui:26
+msgid "Record Again"
+msgstr "Įrašyti dar kartą"
+
+#: src/sysprof/gtk/menus.ui:32
+msgid "Close"
+msgstr "Užverti"
+
+#: src/sysprof/gtk/menus.ui:38
+msgid "Keyboard Shortcuts"
+msgstr "Klaviatūros trumpiniai"
+
+#: src/sysprof/gtk/menus.ui:42
+msgid "Help"
+msgstr "Žinynas"
+
+#: src/sysprof/gtk/menus.ui:46
+msgid "About Sysprof"
+msgstr "Apie Sysprof"
+
+#: src/sysprof/sysprof-application.c:206
+msgid "A system profiler"
+msgstr "Sistemos profiliatorius"
+
+#: src/sysprof/sysprof-application.c:207
+msgid "translator-credits"
+msgstr ""
+"Išvertė:\n"
+"Aurimas Černius <aurisc4@gmail.com>"
+
+#. Translators: This is a window title.
+#: src/sysprof/sysprof-window.c:279
+msgid "Open Capture…"
+msgstr "Atverti surinkimus…"
+
+#. Translators: This is a button.
+#: src/sysprof/sysprof-window.c:283
+msgid "Open"
+msgstr "Atverti"
+
+#: src/sysprof/sysprof-window.c:288
+msgid "Sysprof Captures"
+msgstr "Sysprof surinkimai"
+
+#: src/sysprof/sysprof-window.c:293
+msgid "All Files"
+msgstr "Visi failai"
+
+#: src/sysprof/sysprof-window.ui:19
+msgid "Main Menu"
+msgstr "Pagrindinis meniu"
+
+#: src/sysprof/sysprof-window.ui:29
+msgid "_Open"
+msgstr "_Atverti"
+
+#: src/sysprof/sysprof-window.ui:32
+msgid "Open Recording… (Ctrl+O)"
+msgstr "Atverti įrašą… (Vald+O)"
+
+#: src/tools/sysprof-cli.c:63
+msgid "Stopping profiler. Press twice more ^C to force exit."
+msgstr ""
+"Stabdyti profiliatorių. Dar du kartus paspauskite ^C priverstiniam išėjimui."
+
+#: src/tools/sysprof-cli.c:76
+msgid "Profiler stopped."
+msgstr "Profiliatorius sustabdytas."
+
+#: src/tools/sysprof-cli.c:109
+msgid "--merge requires at least 2 filename arguments"
+msgstr "--merge reikalauja bent 2 failų pavadinimų"
+
+#: src/tools/sysprof-cli.c:227
+msgid "Disable CPU throttling while profiling"
+msgstr "Išjungti CPU ribotuvą profiliuojant"
+
+#: src/tools/sysprof-cli.c:228
+msgid "Make sysprof specific to a task"
+msgstr "Padaryti sysprof specifiniu užduočiai"
+
+#: src/tools/sysprof-cli.c:228
+msgid "PID"
+msgstr "PID"
+
+#: src/tools/sysprof-cli.c:229
+msgid "Run a command and profile the process"
+msgstr "Vykdyti komandą ir profiliuoti procesą"
+
+#: src/tools/sysprof-cli.c:229
+msgid "COMMAND"
+msgstr "KOMANDA"
+
+#: src/tools/sysprof-cli.c:230
+msgid ""
+"Set environment variable for spawned process. Can be used multiple times."
+msgstr ""
+"Nustatyti aplinkos kintamąjį paleistam procesui. Galima naudoti kelis kartus."
+
+#: src/tools/sysprof-cli.c:230
+msgid "VAR=VALUE"
+msgstr "KINT=VERTĖ"
+
+#: src/tools/sysprof-cli.c:231
+msgid "Force overwrite the capture file"
+msgstr "Priverstinai perrašyti surinkimų failą"
+
+#: src/tools/sysprof-cli.c:232
+msgid "Disable recording of battery statistics"
+msgstr "Išjungti baterijos statistikos įrašymą"
+
+#: src/tools/sysprof-cli.c:233
+msgid "Disable recording of CPU statistics"
+msgstr "Išjungti CPU statistikos įrašymą"
+
+#: src/tools/sysprof-cli.c:234
+msgid "Disable recording of Disk statistics"
+msgstr "Išjungti disko statistikos įrašymą"
+
+#: src/tools/sysprof-cli.c:235
+msgid "Do not record stacktraces using Linux perf"
+msgstr "Neįrašyti steko pėdsakų naudojant linux perf"
+
+#: src/tools/sysprof-cli.c:236
+msgid "Do not append symbol name information from local machine"
+msgstr "Nepridėti simbolių informacijos iš vietinio kompiuterio"
+
+#: src/tools/sysprof-cli.c:237
+msgid "Disable recording of memory statistics"
+msgstr "Išjungti atminties statistikos įrašymą"
+
+#: src/tools/sysprof-cli.c:238
+msgid "Disable recording of network statistics"
+msgstr "Išjungti tinklo statistikos įrašymą"
+
+#: src/tools/sysprof-cli.c:239
+msgid "Set SYSPROF_TRACE_FD environment for subprocess"
+msgstr "Nustatyti SYSPROF_TRACE_FD aplinką vaikiniam procesui"
+
+#: src/tools/sysprof-cli.c:240
+msgid "Set GJS_TRACE_FD environment to trace GJS processes"
+msgstr "Nustatyti GJS_TRACE_FD aplinką vaikiniam GJS procesui profiliuoti"
+
+#: src/tools/sysprof-cli.c:241
+msgid "Set GTK_TRACE_FD environment to trace a GTK application"
+msgstr "Nustatyti GTK_TRACE_FD aplinką GTK programai profiliuoti"
+
+#: src/tools/sysprof-cli.c:242
+msgid "Include RAPL energy statistics"
+msgstr "Įtraukti RAPL energijos statistiką"
+
+#: src/tools/sysprof-cli.c:243
+msgid "Profile memory allocations and frees"
+msgstr "Profiliuoti atminties išskyrimus bei atlaisvinimus"
+
+#: src/tools/sysprof-cli.c:244
+msgid "Connect to org.gnome.Shell for profiler statistics"
+msgstr "Prisijungti prie org.gnome.Shell profiliatoriaus statistikai"
+
+#: src/tools/sysprof-cli.c:245
+msgid "Track performance of the applications main loop"
+msgstr "Sekti programų pagrindinio ciklo našumą"
+
+#: src/tools/sysprof-cli.c:246
+msgid "Merge all provided *.syscap files and write to stdout"
+msgstr ""
+"Sulieti visus pateiktus *.syscap failus ir išvesti į standartinę išvestį"
+
+#: src/tools/sysprof-cli.c:247
+msgid "Print the sysprof-cli version and exit"
+msgstr "Parašyti sysprof-cli versiją ir išeiti"
+
+#: src/tools/sysprof-cli.c:280
+msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
+msgstr "[SURINKIMO_FAILAS] [--KOMANDA ARG] — Sysprof"
+
+#: src/tools/sysprof-cli.c:283
+msgid ""
+"\n"
+"Examples:\n"
+"\n"
+"  # Record gtk4-widget-factory using trace-fd to get application provided\n"
+"  # data as well as GTK and GNOME Shell data providers\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"  # Merge multiple syscap files into one\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+msgstr ""
+"\n"
+"Pavyzdžiai:\n"
+"\n"
+" # Įrašyti gtk4-widget-factory naudojant trace-fd ir gauti programos\n"
+" # pateiktus duomenis bei GTK ir GNOME Apvalkalos duomenų tiekėjus\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+" # Sulieti kelis syscap failus į vieną\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+
+#: src/tools/sysprof-cli.c:316
+msgid "Too many arguments were passed to sysprof-cli:"
+msgstr "Perduota per daug argumentų sysprof-cli:"
+
+#. Translators: %s is a file name.
+#: src/tools/sysprof-cli.c:377
+#, c-format
+msgid "%s exists. Use --force to overwrite\n"
+msgstr "%s nau yra. Naudokite --foce perrašymui\n"
+
+#: src/tools/sysprof-profiler-ctl.c:45
+msgid "Connect to the system bus"
+msgstr "Prisijungti prie sisteminės magistralės"
+
+#: src/tools/sysprof-profiler-ctl.c:46
+msgid "Connect to the session bus"
+msgstr "Prisijungti prie seanso magistralės"
+
+#: src/tools/sysprof-profiler-ctl.c:47
+msgid "Connect to the given D-Bus address"
+msgstr "Prisijungti prie pateikto D-Bus adreso"
+
+#: src/tools/sysprof-profiler-ctl.c:48
+msgid "Destination D-Bus name to invoke method on"
+msgstr "Paskirties, kuriai iškviesti metodą, D-Bus pavadinimas"
+
+#: src/tools/sysprof-profiler-ctl.c:49
+msgid "Object path to invoke method on"
+msgstr "Objekto, kuriam iškviesti metodą, kelias"
+
+#: src/tools/sysprof-profiler-ctl.c:49
+msgid "/org/gnome/Sysprof3/Profiler"
+msgstr "/org/gnome/Sysprof3/Profiler"
+
+#: src/tools/sysprof-profiler-ctl.c:50
+msgid "Timeout in seconds"
+msgstr "Laiko limitas sekundėmis"
+
+#: src/tools/sysprof-profiler-ctl.c:51
+msgid "Overwrite FILENAME if it exists"
+msgstr "Perrašyti FAILĄ, jei jau yra"
+
+#: src/tools/sysprof-profiler-ctl.c:79
+msgid "--dest=BUS_NAME [FILENAME] - connect to an embedded sysprof profiler"
+msgstr ""
+"--dest=MAGISTRALĖS_PAVADINIMAS [FAILAS] - prisijungti prie integruoto "
+"sysprof profiliatoriaus"

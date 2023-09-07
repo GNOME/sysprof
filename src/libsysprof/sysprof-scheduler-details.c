@@ -77,10 +77,10 @@ sysprof_scheduler_details_event_cb (const SysprofPerfEvent *event,
     goto finish;
 
   if (self->started_at == 0 || end < self->started_at)
-    return;
+    goto finish;
 
   if (self->ended_at != 0 && begin > self->ended_at)
-    return;
+    goto finish;
 
   raw = event->tracepoint.raw;
 
@@ -89,6 +89,12 @@ sysprof_scheduler_details_event_cb (const SysprofPerfEvent *event,
   memcpy (&prev_comm[0], raw + self->prev_comm_offset, sizeof prev_comm);
 
   prev_comm[sizeof prev_comm-1] = 0;
+
+  /* Ignore the kswapper events because they just clutter up the
+   * timeline from things that would otherwise stand out.
+   */
+  if (memcmp (prev_comm, "swapper/", strlen ("swapper/")) == 0)
+    goto finish;
 
   g_snprintf (name, sizeof name, "CPU %u", cpu);
 

@@ -150,9 +150,13 @@ static const struct {
   { "libclutter-glx-1.0.so", "Clutter" },
   { "libinput.so", "libinput" },
   { "libmutter-12.so", "Mutter" },
+  { "libmutter-13.so", "Mutter" },
   { "libmutter-cogl-12.so", "Mutter" },
+  { "libmutter-cogl-13.so", "Mutter" },
   { "libmutter-clutter-12.so", "Mutter" },
+  { "libmutter-clutter-13.so", "Mutter" },
   { "libst-12.so", "GNOME Shell" },
+  { "libst-13.so", "GNOME Shell" },
 
   /* GtkSourceView */
   { "libgtksourceview-3.0.so", "GtkSourceView" },

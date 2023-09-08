@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2020-06-20 16:50+0000\n"
+"POT-Creation-Date: 2023-08-31 22:05+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Efstathios Iosifidis <eiosifidis@gnome.org>\n"
 "Language-Team: \n"
@@ -11,948 +11,376 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 3.3.2\n"
 
 # Greek translation for sysprof.
 # Copyright (C) 2019 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#: data/org.gnome.Sysprof3.appdata.xml.in:5
-#: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/sysprof-application.c:199
-#: src/sysprof/sysprof-application.c:326 src/sysprof/ui/sysprof-window.ui:12
+#: data/org.gnome.Sysprof.appdata.xml.in.in:5
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
+#: src/sysprof/sysprof-application.c:208
+#: src/sysprof/sysprof-recording-pad.ui:18 src/sysprof/sysprof-window.c:243
 msgid "Sysprof"
 msgstr "Sysprof"
 
-#: data/org.gnome.Sysprof3.appdata.xml.in:6
+#: data/org.gnome.Sysprof.appdata.xml.in.in:6
 msgid "Profile an application or entire system"
 msgstr ""
 
-#: data/org.gnome.Sysprof3.appdata.xml.in:9
+#: data/org.gnome.Sysprof.appdata.xml.in.in:9
 msgid "The GNOME Foundation"
 msgstr "Το ίδρυμα GNOME"
 
-#: data/org.gnome.Sysprof3.appdata.xml.in:12
+#: data/org.gnome.Sysprof.appdata.xml.in.in:12
 msgid ""
 "Sysprof allows you to profile applications to aid in debugging and "
 "optimization."
 msgstr ""
 
-#: data/org.gnome.Sysprof3.desktop.in:5
+#: data/org.gnome.Sysprof.desktop.in.in:5 src/sysprof/sysprof-greeter.ui:64
 msgid "Profiler"
 msgstr ""
 
-#: data/org.gnome.Sysprof3.desktop.in:6
+#: data/org.gnome.Sysprof.desktop.in.in:6
 msgid "Profile an application or entire system."
 msgstr ""
 
-#: data/org.gnome.sysprof3.gschema.xml:5
-msgid "Window size"
-msgstr "Μεγέθος παραθύρου"
+#: src/libsysprof/sysprof-category-summary.c:136
+msgid "Uncategorized"
+msgstr "Μη κατηγοριοποιημένα"
 
-#: data/org.gnome.sysprof3.gschema.xml:6
-msgid "Window size (width and height)."
-msgstr "Μέγεθος παραθύρου (πλάτος και ύψος)."
+#: src/libsysprof/sysprof-category-summary.c:139
+msgid "Accessibility"
+msgstr "Προσβασιμότητα"
 
-#: data/org.gnome.sysprof3.gschema.xml:10
-msgid "Window position"
-msgstr "Θέση παραθύρου"
+#: src/libsysprof/sysprof-category-summary.c:142
+msgid "Actions"
+msgstr "Ενέργειες"
 
-#: data/org.gnome.sysprof3.gschema.xml:11
-msgid "Window position (x and y)."
-msgstr "Θέση παραθύρου (x και y)."
-
-#: data/org.gnome.sysprof3.gschema.xml:15
-msgid "Window maximized"
-msgstr "Μεγιστοποιημένο παράθυρο"
-
-#: data/org.gnome.sysprof3.gschema.xml:16
-msgid "Window maximized state"
-msgstr "Κατάσταση μεγιστοποιημένου παραθύρου"
-
-#: data/org.gnome.sysprof3.gschema.xml:20
-msgid "Last Spawn Program"
+#: src/libsysprof/sysprof-category-summary.c:145
+msgid "Crash Handler"
 msgstr ""
 
-#: data/org.gnome.sysprof3.gschema.xml:21
-msgid ""
-"The last spawned program, which will be set in the UI upon restart of the "
-"application."
+#: src/libsysprof/sysprof-category-summary.c:148
+msgid "Context Switches"
 msgstr ""
 
-#: data/org.gnome.sysprof3.gschema.xml:25
-msgid "Last Spawn Inherit Environment"
+#: src/libsysprof/sysprof-category-summary.c:151
+msgid "CSS"
+msgstr "CSS"
+
+#: src/libsysprof/sysprof-category-summary.c:154
+#: src/sysprof/sysprof-greeter.ui:408 src/sysprof/sysprof-window.ui:292
+msgid "Graphics"
+msgstr "Γραφικά"
+
+#: src/libsysprof/sysprof-category-summary.c:157
+msgid "Icons"
+msgstr "Εικονίδια"
+
+#: src/libsysprof/sysprof-category-summary.c:160
+msgid "Input"
+msgstr "Είσοδος"
+
+#: src/libsysprof/sysprof-category-summary.c:163
+msgid "IO"
 msgstr ""
 
-#: data/org.gnome.sysprof3.gschema.xml:26
-msgid "If the last spawned environment inherits the parent environment."
+#: src/libsysprof/sysprof-category-summary.c:166
+msgid "IPC"
 msgstr ""
 
-#: data/org.gnome.sysprof3.gschema.xml:30
-msgid "Last Spawn Environment"
+#: src/libsysprof/sysprof-category-summary.c:169
+msgid "JavaScript"
+msgstr "JavaScript"
+
+#: src/libsysprof/sysprof-category-summary.c:172
+msgid "Kernel"
+msgstr "Πυρήνας"
+
+#: src/libsysprof/sysprof-category-summary.c:175
+msgid "Layout"
+msgstr "Διάταξη"
+
+#: src/libsysprof/sysprof-category-summary.c:178
+msgid "Locking"
+msgstr "Κλείδωμα"
+
+#: src/libsysprof/sysprof-category-summary.c:181
+msgid "Main Loop"
+msgstr "Κύριος βρόχος"
+
+#: src/libsysprof/sysprof-category-summary.c:184
+msgid "Memory"
+msgstr "Μνήμη"
+
+#: src/libsysprof/sysprof-category-summary.c:187
+msgid "Paint"
 msgstr ""
 
-#: data/org.gnome.sysprof3.gschema.xml:31
-msgid ""
-"The last spawned environment, which will be set in the UI upon restart of "
-"the application."
+#: src/libsysprof/sysprof-category-summary.c:190
+msgid "Type System"
 msgstr ""
 
-#: src/libsysprof/sysprof-callgraph-profile.c:445
-msgid "Sysprof was unable to generate a callgraph from the system capture."
+#: src/libsysprof/sysprof-category-summary.c:193
+msgid "Unwindable"
 msgstr ""
 
-#: src/libsysprof/sysprof-perf-source.c:476
-#, c-format
-msgid "Sysprof failed to find field “%s”."
+#: src/libsysprof/sysprof-category-summary.c:196
+msgid "Windowing"
+msgstr "Παραθύρωση"
+
+#: src/libsysprof/sysprof-document-allocation.c:151
+msgid "Allocation"
+msgstr "Κατανομή"
+
+#: src/libsysprof/sysprof-document.c:570
+msgid "Unknown Process"
+msgstr "Άγνωστη διαδικασία"
+
+#: src/libsysprof/sysprof-document.c:1239
+#: src/libsysprof/sysprof-document.c:1275
+msgid "Indexing capture data frames"
 msgstr ""
 
-#: src/libsysprof/sysprof-perf-source.c:489
-#, c-format
-msgid "Sysprof failed to parse offset for “%s”."
+#: src/libsysprof/sysprof-document.c:1461
+msgid "Discovering file system mounts"
 msgstr ""
 
-#: src/libsysprof/sysprof-perf-source.c:553
-#, c-format
-msgid "Sysprof failed to get perf_event ID."
+#: src/libsysprof/sysprof-document.c:1464
+msgid "Discovering process mount namespaces"
 msgstr ""
 
-#: src/libsysprof/sysprof-perf-source.c:659
-#, c-format
-msgid "An error occurred while attempting to access performance counters"
+#: src/libsysprof/sysprof-document.c:1467
+msgid "Analyzing process address layouts"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-battery-aid.c:182
-msgid "Battery Charge"
-msgstr "Φόρτιση μπαταρίας"
-
-#: src/libsysprof-ui/sysprof-battery-aid.c:198
-msgid "Battery Charge (All)"
+#: src/libsysprof/sysprof-document.c:1470
+msgid "Analyzing process command line"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-battery-aid.c:240
-#: src/libsysprof-ui/sysprof-counters-aid.c:282
-msgid "Battery"
-msgstr "Μπαταρία"
-
-#: src/libsysprof-ui/sysprof-callgraph-aid.c:212
-#: src/libsysprof-ui/sysprof-callgraph-aid.c:218
-msgid "Stack Traces"
+#: src/libsysprof/sysprof-document.c:1473
+msgid "Analyzing file system overlays"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-callgraph-aid.c:226
-msgid "Stack Traces (In Kernel)"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-callgraph-aid.c:234
-msgid "Stack Traces (In User)"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-callgraph-aid.c:243
-#: src/libsysprof-ui/sysprof-callgraph-aid.c:273
-msgid "Callgraph"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:27
-#: src/libsysprof-ui/sysprof-memprof-page.ui:236
-msgid "Functions"
-msgstr "Συναρτήσεις"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:43
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:104
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:159
-#: src/libsysprof-ui/sysprof-memprof-page.ui:253
-#: src/libsysprof-ui/sysprof-memprof-page.ui:315
-#: src/libsysprof-ui/sysprof-memprof-page.ui:371
-msgid "Self"
-msgstr "Ατομικό"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:59
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:120
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:175
-#: src/libsysprof-ui/sysprof-memprof-page.ui:269
-#: src/libsysprof-ui/sysprof-memprof-page.ui:331
-#: src/libsysprof-ui/sysprof-memprof-page.ui:387
-msgid "Total"
-msgstr "Σύνολο"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:88
-#: src/libsysprof-ui/sysprof-memprof-page.ui:298
-msgid "Callers"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:151
-#: src/libsysprof-ui/sysprof-memprof-page.ui:362
-msgid "Descendants"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:190
-#: src/libsysprof-ui/sysprof-details-page.ui:322
-msgid "Hits"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:213
-msgid "Generating Callgraph"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:214
-msgid "Sysprof is busy creating the selected callgraph."
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:224
-#: src/libsysprof-ui/sysprof-memprof-page.ui:433
-msgid "Not Enough Samples"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:225
-#: src/libsysprof-ui/sysprof-memprof-page.ui:434
-msgid "More samples are necessary to display a callgraph."
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-counters-aid.c:221
-#: src/libsysprof-ui/sysprof-counters-aid.c:226
-msgid "Counters"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-cpu-aid.c:207
-#: src/libsysprof-ui/sysprof-cpu-aid.c:355
-msgid "CPU Usage"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-cpu-aid.c:214
-msgid "CPU Frequency"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-cpu-aid.c:218
-msgid "CPU Frequency (All)"
-msgstr ""
-
-#. Translators: CPU is the processor.
-#: src/libsysprof-ui/sysprof-cpu-aid.c:227
-#: src/libsysprof-ui/sysprof-cpu-aid.c:250
-msgid "CPU Usage (All)"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-cpu-aid.c:316
+#: src/libsysprof/sysprof-document.c:1476
 #, fuzzy
 #| msgid "All Processes"
-msgid "Processes"
+msgid "Processing counters"
 msgstr "Όλες οι διαδικασίες"
 
-#: src/libsysprof-ui/sysprof-details-page.c:224
-msgid "Memory Capture"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-details-page.c:238
-#, c-format
-msgid "%0.4lf seconds"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-details-page.ui:21
-msgid "Filename"
-msgstr "Όνομα αρχείου"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:35
-msgid "Captured at"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-details-page.ui:50
-#: src/libsysprof-ui/sysprof-marks-page.ui:95
-#: src/libsysprof-ui/sysprof-marks-page.ui:215
-msgid "Duration"
-msgstr "Διάρκεια"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:65
-msgid "CPU Model"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-details-page.ui:80
-#, fuzzy
-#| msgid "Samples: %u"
-msgid "Samples Captured"
-msgstr "Δείγματα: %u"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:94
-msgid "Marks Captured"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-details-page.ui:108
-#, fuzzy
-#| msgid "Process %d"
-msgid "Processes Captured"
-msgstr "Διαδικασία %d"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:122
-msgid "Forks Captured"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-details-page.ui:136
-msgid "Counters Captured"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-details-page.ui:151
-msgid "Allocations Captured"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-details-page.ui:309
-#: src/libsysprof-ui/sysprof-marks-page.ui:52
-msgid "Mark"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-details-page.ui:335
-msgid "Min"
-msgstr "Ελάχιστο"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:348
-msgid "Max"
-msgstr "Μέγιστο"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:361
-msgid "Avg"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-diskstat-aid.c:205
-#: src/libsysprof-ui/sysprof-diskstat-aid.c:267
-msgid "Disk"
-msgstr "Δίσκος"
-
-#: src/libsysprof-ui/sysprof-diskstat-aid.c:239
-msgid "Reads"
-msgstr "Αναγνώσεις"
-
-#: src/libsysprof-ui/sysprof-diskstat-aid.c:239
-msgid "Writes"
-msgstr "Εγγραφές"
-
-#: src/libsysprof-ui/sysprof-display.c:229
-#, fuzzy
+#: src/libsysprof/sysprof-document.c:2464
+#: src/libsysprof/sysprof-document.c:2480
+#, fuzzy, c-format
 #| msgid "Recording…"
-msgid "Recording Failed"
+msgid "Recording at %X %x"
 msgstr "Γίνεται εγγραφή…"
 
-#: src/libsysprof-ui/sysprof-display.c:234
-msgid "Recording…"
-msgstr "Γίνεται εγγραφή…"
-
-#. translators: %s is replaced with locale specific time of recording
-#: src/libsysprof-ui/sysprof-display.c:258
+#: src/libsysprof/sysprof-document.c:2466
+#: src/libsysprof/sysprof-document.c:2482
 #, fuzzy, c-format
 #| msgid "Recording…"
 msgid "Recording at %s"
 msgstr "Γίνεται εγγραφή…"
 
-#: src/libsysprof-ui/sysprof-display.c:262
+#: src/libsysprof/sysprof-document-dbus-message.c:152
 #, fuzzy
-#| msgid "Recording…"
-msgid "New Recording"
-msgstr "Γίνεται εγγραφή…"
-
-#: src/libsysprof-ui/sysprof-display.c:1185
-#, fuzzy
-#| msgid "Recording…"
-msgid "Save Recording"
-msgstr "Γίνεται εγγραφή…"
-
-#: src/libsysprof-ui/sysprof-display.c:1188
-msgid "Save"
-msgstr "Αποθήκευση"
-
-#. Translators: This is a button.
-#: src/libsysprof-ui/sysprof-display.c:1189 src/sysprof/sysprof-window.c:277
-msgid "Cancel"
-msgstr "Aκύρωση"
-
-#: src/libsysprof-ui/sysprof-display.c:1215
-#, c-format
-msgid "Failed to save recording: %s"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-display.ui:49
-#: src/libsysprof-ui/sysprof-marks-page.ui:19
-msgid "Details"
-msgstr "Λεπτομέρειες"
-
-#: src/libsysprof-ui/sysprof-environ-editor-row.ui:58
-msgid "Remove environment variable"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-environ-editor.c:71
-msgid "New variable…"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-failed-state-view.ui:22
-msgid "Ouch, that hurt!"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-failed-state-view.ui:39
-msgid "Something unexpectedly went wrong while trying to profile your system."
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-log-model.c:210
-#: src/libsysprof-ui/sysprof-logs-page.ui:58
-#: src/libsysprof-ui/sysprof-marks-page.ui:109
-msgid "Message"
+#| msgid "Message"
+msgid "D-Bus Message"
 msgstr "Μήνυμα"
 
-#: src/libsysprof-ui/sysprof-log-model.c:213
-msgid "Info"
+#: src/libsysprof/sysprof-document-frame.c:139
+msgid "Frame"
+msgstr "Πλαίσιο"
+
+#: src/libsysprof/sysprof-document-loader.c:435
+msgid "Document loaded"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-log-model.c:216
-msgid "Critical"
+#: src/libsysprof/sysprof-document-loader.c:466
+msgid "Loading failed"
+msgstr "Αποτυχία φόρτωσης"
+
+#: src/libsysprof/sysprof-document-loader.c:478
+#: src/libsysprof/sysprof-document-symbols.c:217
+msgid "Symbolizing stack traces"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-log-model.c:219
-msgid "Error"
-msgstr "Σφάλμα"
+#: src/libsysprof/sysprof-document-loader.c:547
+msgid "Loading document"
+msgstr "Φόρτωση εγγράφου"
 
-#: src/libsysprof-ui/sysprof-log-model.c:222
-msgid "Debug"
-msgstr ""
+#: src/libsysprof/sysprof-document-log.c:85
+msgid "Log"
+msgstr "Καταγραφή"
 
-#: src/libsysprof-ui/sysprof-log-model.c:225
-msgid "Warning"
-msgstr "Προειδοποίηση"
+#: src/libsysprof/sysprof-document-mark.c:113
+msgid "Mark"
+msgstr "Σημάδι"
 
-#: src/libsysprof-ui/sysprof-logs-aid.c:195
-#: src/libsysprof-ui/sysprof-logs-aid.c:199
-#: src/libsysprof-ui/sysprof-logs-aid.c:204
-#: src/libsysprof-ui/sysprof-logs-aid.c:210
-msgid "Logs"
-msgstr "Καταγραφές"
-
-#: src/libsysprof-ui/sysprof-logs-page.ui:15
-#: src/libsysprof-ui/sysprof-marks-page.ui:67
-msgid "Time"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-logs-page.ui:29
-msgid "Severity"
-msgstr "Σοβαρότητα"
-
-#: src/libsysprof-ui/sysprof-logs-page.ui:44
-msgid "Domain"
-msgstr "Τομέας"
-
-#: src/libsysprof-ui/sysprof-marks-aid.c:237
-#: src/libsysprof-ui/sysprof-marks-aid.c:242
-msgid "Timings"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-marks-page.ui:38
-msgid "Group"
-msgstr "Ομάδα"
-
-#: src/libsysprof-ui/sysprof-marks-page.ui:81
-msgid "End"
-msgstr "Τέλος"
-
-#: src/libsysprof-ui/sysprof-marks-page.ui:245
-msgid "No Timings Available"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-marks-page.ui:246
-msgid "No timing data was found for the current selection"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-memory-aid.c:68
-msgid "Memory Usage"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-memprof-aid.c:182
-msgid "Memory"
-msgstr "Μνήμη"
-
-#: src/libsysprof-ui/sysprof-memprof-aid.c:193
-#: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
-msgid "Memory Allocations"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-memprof-aid.c:224
-msgid "Track Allocations"
-msgstr ""
-
-#. translators: %s is replaced with the the lower and upper bound memory sizes in bytes
-#: src/libsysprof-ui/sysprof-memprof-page.c:235
+#: src/libsysprof/sysprof-document-process.c:277
 #, c-format
-msgid "> %s to %s"
-msgstr ""
+#| msgid "%u Process"
+#| msgid_plural "%u Processes"
+msgid "%s [Process %d]"
+msgstr "%s [Διαδικασία %d]"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:23
-msgid "Summary"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-memprof-page.ui:31
-msgid "All Allocations"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-memprof-page.ui:40
-msgid "Temporary Allocations"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-memprof-page.ui:402
-msgid "Size"
-msgstr "Μέγεθος"
-
-#: src/libsysprof-ui/sysprof-memprof-page.ui:422
-msgid "Analyzing Memory Allocations"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-memprof-page.ui:423
-msgid "Sysprof is busy analyzing memory allocations."
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
-msgid "Memory Used"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-netdev-aid.c:204
-#: src/libsysprof-ui/sysprof-netdev-aid.c:264
-msgid "Network"
-msgstr "Δίκτυο"
-
-#. translators: "Compositor" means desktop compositor, gnome-shell/mutter in particular
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:27
-msgid "GNOME Shell"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:95
-msgid "Profilers"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:198
-msgid ""
-"Track application memory allocations (Sysprof must launch target application)"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:214
-msgid "All Processes"
-msgstr "Όλες οι διαδικασίες"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:244
-msgid ""
-"Include all applications and operating system kernel in callgraph. This may "
-"not be possible on some system system configurations."
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:272
-#, fuzzy
+#: src/libsysprof/sysprof-document-process.c:279
+#, c-format
 #| msgid "All Processes"
-msgid "Search Processes…"
-msgstr "Όλες οι διαδικασίες"
+msgid "Process %d"
+msgstr "Διαδικασία %d"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:291
-#, fuzzy
-#| msgid "All Processes"
-msgid "Loading Processes…"
-msgstr "Όλες οι διαδικασίες"
+#: src/libsysprof/sysprof-document-sample.c:136
+msgid "Sample"
+msgstr "Δείγμα"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:315
-msgid "Launch Application"
+#: src/libsysprof/sysprof-system-logs.c:171
+msgid "System Logs"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:344
-msgid "Enable to launch a program of your choosing before profiling."
+#: src/libsysprof/sysprof-system-logs.c:172
+msgid "Recording system logs is not supported on your platform."
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:372
-msgid "Command Line"
-msgstr "Γραμμή εντολών"
+#: src/libsysprof/sysprof-tracer.c:65
+msgid "Tracer"
+msgstr "Ιχνηλάτης"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:391
-msgid "Environment"
-msgstr "Περιβάλλον"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:417
-#, fuzzy
-#| msgid "Environment"
-msgid "Inherit Environment"
-msgstr "Περιβάλλον"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:441
+#: src/libsysprof/sysprof-tracer.c:66
 msgid ""
-"Enable to ensure your application shares the display, message-bus, and other "
-"desktop environment settings."
+"Tracing requires spawning a program compiled with ‘-finstrument-functions’. "
+"Tracing will not be available."
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:467
-msgid "Allow CPU Throttling"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:495
-msgid ""
-"If disabled, your CPU will be placed in performance mode. It will be "
-"restored after profiling."
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:516
-msgid "_Record"
-msgstr "Ε_γγραφή"
-
-#: src/libsysprof-ui/sysprof-rapl-aid.c:175
-#: src/libsysprof-ui/sysprof-rapl-aid.c:248
-msgid "Energy Usage"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-rapl-aid.c:180
-msgid "Energy Usage (All)"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:32
-msgid ""
-"Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:47
-msgid "Events"
-msgstr "Γεγονότα"
-
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:73
-#, fuzzy
-#| msgid "Recording…"
-msgid "_Stop Recording"
-msgstr "Γίνεται εγγραφή…"
-
-#: src/libsysprof-ui/sysprof-visualizer-group-header.c:119
-#: src/libsysprof-ui/sysprof-visualizers-frame.ui:54
-msgid "Select for more details"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-visualizer-group-header.c:141
-msgid "Display supplemental graphs"
-msgstr ""
-
-#: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
-msgid "Instruments"
-msgstr ""
-
-#: src/sysprofd/org.gnome.sysprof3.policy.in:13
-msgid "Profile the system"
-msgstr ""
-
-#: src/sysprofd/org.gnome.sysprof3.policy.in:14
-msgid "Authentication is required to profile the system."
-msgstr ""
-
-#: src/sysprofd/org.gnome.sysprof3.policy.in:26
-msgid "Open a perf event stream"
-msgstr ""
-
-#: src/sysprofd/org.gnome.sysprof3.policy.in:27
-msgid "Authentication is required to access system performance counters."
-msgstr ""
-
-#: src/sysprofd/org.gnome.sysprof3.policy.in:37
-msgid "Get a list of kernel symbols and their address"
-msgstr ""
-
-#: src/sysprofd/org.gnome.sysprof3.policy.in:38
-msgid "Authentication is required to access Linux kernel information."
-msgstr ""
-
-#: src/sysprof/gtk/help-overlay.ui:8
-msgctxt "shortcut window"
-msgid "Sysprof Shortcuts"
-msgstr ""
-
-#: src/sysprof/gtk/help-overlay.ui:12
-msgctxt "shortcut window"
-msgid "Files"
-msgstr "Αρχεία"
-
-#: src/sysprof/gtk/help-overlay.ui:16
-#, fuzzy
-#| msgid "Recording…"
-msgctxt "shortcut window"
-msgid "Save Recording"
-msgstr "Γίνεται εγγραφή…"
-
-#: src/sysprof/gtk/help-overlay.ui:17
-msgctxt "shortcut window"
-msgid "Saves the current recording"
-msgstr ""
-
-#: src/sysprof/gtk/help-overlay.ui:24
-#, fuzzy
-#| msgid "Recording…"
-msgctxt "shortcut window"
-msgid "Open recording"
-msgstr "Γίνεται εγγραφή…"
-
-#: src/sysprof/gtk/help-overlay.ui:25
-msgctxt "shortcut window"
-msgid "Opens a previously saved recording"
-msgstr ""
-
-#: src/sysprof/gtk/help-overlay.ui:34
-msgctxt "shortcut window"
-msgid "Recording"
-msgstr ""
-
-#: src/sysprof/gtk/help-overlay.ui:38
-#, fuzzy
-#| msgid "Record"
-msgctxt "shortcut window"
-msgid "Record again"
-msgstr "Εγγραφή"
-
-#: src/sysprof/gtk/help-overlay.ui:39
-msgctxt "shortcut window"
-msgid "Starts a new recording"
-msgstr ""
-
-#: src/sysprof/gtk/help-overlay.ui:46
-msgctxt "shortcut window"
-msgid "Stop recording"
-msgstr ""
-
-#: src/sysprof/gtk/help-overlay.ui:55
-msgctxt "shortcut window"
-msgid "Callgraph"
-msgstr ""
-
-#: src/sysprof/gtk/help-overlay.ui:59
-msgctxt "shortcut window"
-msgid "Expand function"
-msgstr ""
-
-#: src/sysprof/gtk/help-overlay.ui:60
-msgctxt "shortcut window"
-msgid "Shows the direct descendants of the callgraph function"
-msgstr ""
-
-#: src/sysprof/gtk/help-overlay.ui:67
-msgctxt "shortcut window"
-msgid "Collapse function"
-msgstr ""
-
-#: src/sysprof/gtk/help-overlay.ui:68
-msgctxt "shortcut window"
-msgid "Hides all callgraph descendants below the selected function"
-msgstr ""
-
-#: src/sysprof/gtk/help-overlay.ui:75
-msgctxt "shortcut window"
-msgid "Jump into function"
-msgstr ""
-
-#: src/sysprof/gtk/help-overlay.ui:76
-msgctxt "shortcut window"
-msgid "Selects the function or file as the top of the callgraph"
-msgstr ""
-
-#: src/sysprof/gtk/help-overlay.ui:85
-msgctxt "shortcut window"
-msgid "Visualizers"
-msgstr ""
-
-#: src/sysprof/gtk/help-overlay.ui:89
-msgctxt "shortcut window"
-msgid "Zoom in"
-msgstr "Μεγέθυνση"
-
-#: src/sysprof/gtk/help-overlay.ui:96
-msgctxt "shortcut window"
-msgid "Zoom out"
-msgstr "Σμίκρυνση"
-
-#: src/sysprof/gtk/help-overlay.ui:103
-msgctxt "shortcut window"
-msgid "Reset zoom"
-msgstr "Επαναφορά εστίασης"
-
-#: src/sysprof/gtk/menus.ui:6
-msgid "New Tab"
-msgstr "Νέα καρτέλα"
-
-#: src/sysprof/gtk/menus.ui:11
-msgid "New Window"
-msgstr "Νέο παράθυρο"
-
-#: src/sysprof/gtk/menus.ui:18
-#, fuzzy
-#| msgid "Recording…"
-msgid "Open Recording…"
-msgstr "Γίνεται εγγραφή…"
-
-#: src/sysprof/gtk/menus.ui:23
-#, fuzzy
-#| msgid "Recording…"
-msgid "Save Recording…"
-msgstr "Γίνεται εγγραφή…"
-
-#: src/sysprof/gtk/menus.ui:30
-#, fuzzy
-#| msgid "Record"
-msgid "Record Again"
-msgstr "Εγγραφή"
-
-#: src/sysprof/gtk/menus.ui:37
-msgid "Close"
-msgstr "Κλείσιμο"
-
-#: src/sysprof/gtk/menus.ui:44
-msgid "Keyboard Shortcuts"
-msgstr "Συντομεύσεις πληκτρολογίου"
-
-#: src/sysprof/gtk/menus.ui:49
-msgid "Help"
-msgstr "Βοήθεια"
-
-# Greek translation for sysprof.
-# Copyright (C) 2019 sysprof's COPYRIGHT HOLDER
-# This file is distributed under the same license as the sysprof package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#: src/sysprof/gtk/menus.ui:54
-#, fuzzy
-#| msgid "Sysprof"
-msgid "About Sysprof"
-msgstr "Sysprof"
-
-#: src/sysprof/sysprof-application.c:191
-msgid "A system profiler"
-msgstr ""
-
-#: src/sysprof/sysprof-application.c:196
-msgid "translator-credits"
-msgstr ""
-"Ελληνική μεταφραστική ομάδα GNOME\n"
-" Ευστάθιος Ιωσηφίδης <eiosifidis@gnome.org>\n"
-"\n"
-"Για περισσότερες πληροφορίες, επισκεφθείτε τη σελίδα\n"
-"http://gnome.gr/"
-
-#: src/sysprof/sysprof-application.c:202
-msgid "Learn more about Sysprof"
-msgstr ""
-
-#. Translators: This is a window title.
-#: src/sysprof/sysprof-window.c:271
-msgid "Open Capture…"
-msgstr ""
-
-#. Translators: This is a button.
-#: src/sysprof/sysprof-window.c:275
-msgid "Open"
-msgstr "Άνοιγμα"
-
-#: src/sysprof/sysprof-window.c:282
-msgid "Sysprof Captures"
-msgstr ""
-
-#: src/sysprof/sysprof-window.c:287
-msgid "All Files"
-msgstr "Όλα τα αρχεία"
-
-#: src/tools/sysprof-cli.c:59
-msgid "Stopping profiler. Press twice more ^C to force exit."
-msgstr ""
-
-#: src/tools/sysprof-cli.c:72
-msgid "Profiler stopped."
-msgstr ""
-
-#: src/tools/sysprof-cli.c:105
+#: src/sysprof-cli/sysprof-cli.c:112
 msgid "--merge requires at least 2 filename arguments"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:217
-msgid "Make sysprof specific to a task"
+#: src/sysprof-cli/sysprof-cli.c:306
+msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:217
+#: src/sysprof-cli/sysprof-cli.c:307
+msgid "Make sysprof specific to a task [Deprecated]"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:307 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof/sysprof-logs-section.ui:179
+#: src/sysprof/sysprof-processes-section.ui:282
+#: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "PID"
 
-#: src/tools/sysprof-cli.c:218
+#: src/sysprof-cli/sysprof-cli.c:308
 msgid "Run a command and profile the process"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:218
+#: src/sysprof-cli/sysprof-cli.c:308
 msgid "COMMAND"
 msgstr "ΕΝΤΟΛΗ"
 
-#: src/tools/sysprof-cli.c:219
+#: src/sysprof-cli/sysprof-cli.c:309
 msgid ""
 "Set environment variable for spawned process. Can be used multiple times."
 msgstr ""
 
-#: src/tools/sysprof-cli.c:219
+#: src/sysprof-cli/sysprof-cli.c:309
 msgid "VAR=VALUE"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:220
+#: src/sysprof-cli/sysprof-cli.c:310
 msgid "Force overwrite the capture file"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:221
+#: src/sysprof-cli/sysprof-cli.c:311
 msgid "Disable recording of battery statistics"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:222
+#: src/sysprof-cli/sysprof-cli.c:312
 msgid "Disable recording of CPU statistics"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:223
+#: src/sysprof-cli/sysprof-cli.c:313
 msgid "Disable recording of Disk statistics"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:224
+#: src/sysprof-cli/sysprof-cli.c:314
 msgid "Do not record stacktraces using Linux perf"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:225
+#: src/sysprof-cli/sysprof-cli.c:315
 msgid "Do not append symbol name information from local machine"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:226
+#: src/sysprof-cli/sysprof-cli.c:316
 msgid "Disable recording of memory statistics"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:227
+#: src/sysprof-cli/sysprof-cli.c:317
 msgid "Disable recording of network statistics"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:228
+#: src/sysprof-cli/sysprof-cli.c:318
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:229
+#: src/sysprof-cli/sysprof-cli.c:319
+msgid "Track when processes are scheduled"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:320
+msgid "Profile the D-Bus session bus"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:321
+msgid "Profile the D-Bus system bus"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:322
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:230
+#: src/sysprof-cli/sysprof-cli.c:323
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:231
+#: src/sysprof-cli/sysprof-cli.c:324
 msgid "Include RAPL energy statistics"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:232
+#: src/sysprof-cli/sysprof-cli.c:325
 msgid "Profile memory allocations and frees"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:233
+#: src/sysprof-cli/sysprof-cli.c:326
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:234
+#: src/sysprof-cli/sysprof-cli.c:327
+msgid "Track performance of the applications main loop"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:329
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:235
+#: src/sysprof-cli/sysprof-cli.c:330
 msgid "Print the sysprof-cli version and exit"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:268
-#, fuzzy
+#: src/sysprof-cli/sysprof-cli.c:331
+msgid "The size of the buffer in pages (1 = 1 page)"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:364
 #| msgid "[CAPTURE_FILE] — Sysprof"
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
-msgstr "[CAPTURE_FILE] — Sysprof"
+msgstr "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 
-#: src/tools/sysprof-cli.c:271
+#: src/sysprof-cli/sysprof-cli.c:367
 msgid ""
 "\n"
 "Examples:\n"
@@ -965,51 +393,1101 @@ msgid ""
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:304
+#: src/sysprof-cli/sysprof-cli.c:403
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr ""
 
 #. Translators: %s is a file name.
-#: src/tools/sysprof-cli.c:361
+#: src/sysprof-cli/sysprof-cli.c:457
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr ""
 
-#: src/tools/sysprof-profiler-ctl.c:45
-msgid "Connect to the system bus"
+#: src/sysprofd/org.gnome.sysprof3.policy.in:13
+msgid "Profile the system"
 msgstr ""
 
-#: src/tools/sysprof-profiler-ctl.c:46
-msgid "Connect to the session bus"
+#: src/sysprofd/org.gnome.sysprof3.policy.in:14
+msgid "Authentication is required to profile the system."
 msgstr ""
 
-#: src/tools/sysprof-profiler-ctl.c:47
-msgid "Connect to the given D-Bus address"
+#: src/sysprof/gtk/help-overlay.ui:10
+msgctxt "shortcut window"
+msgid "General"
 msgstr ""
 
-#: src/tools/sysprof-profiler-ctl.c:48
-msgid "Destination D-Bus name to invoke method on"
+#: src/sysprof/gtk/help-overlay.ui:13
+msgctxt "shortcut window"
+msgid "Show Help"
+msgstr "Εμφάνιση βοήθειας"
+
+#: src/sysprof/gtk/help-overlay.ui:19
+msgctxt "shortcut window"
+msgid "Keyboard Shortcuts"
+msgstr "Συντομεύσεις πληκτρολογίου"
+
+#: src/sysprof/gtk/help-overlay.ui:25
+msgctxt "shortcut window"
+msgid "Close Window"
+msgstr "Κλείσιμο παραθύρου"
+
+#: src/sysprof/gtk/help-overlay.ui:31
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "Έξοδος"
+
+#: src/sysprof/gtk/menus.ui:6
+msgid "_Preferences"
+msgstr "_Προτιμήσεις"
+
+#: src/sysprof/gtk/menus.ui:10
+msgid "_Keyboard Shortcuts"
+msgstr "Συντομεύσεις _πληκτρολογίου"
+
+#: src/sysprof/gtk/menus.ui:14
+msgid "_Help"
+msgstr "_Βοήθεια"
+
+# Greek translation for sysprof.
+# Copyright (C) 2019 sysprof's COPYRIGHT HOLDER
+# This file is distributed under the same license as the sysprof package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#: src/sysprof/gtk/menus.ui:18
+msgid "_About Sysprof"
+msgstr "_Περί Sysprof"
+
+#: src/sysprof/sysprof-animation.c:1038
+#, c-format
+msgid "Failed to find property %s in %s"
 msgstr ""
 
-#: src/tools/sysprof-profiler-ctl.c:49
-msgid "Object path to invoke method on"
+#: src/sysprof/sysprof-animation.c:1047
+#, c-format
+msgid "Failed to retrieve va_list value: %s"
 msgstr ""
 
-#: src/tools/sysprof-profiler-ctl.c:49
-msgid "/org/gnome/Sysprof3/Profiler"
+#: src/sysprof/sysprof-application.c:37
+msgid "Show Sysprof version and exit"
 msgstr ""
 
-#: src/tools/sysprof-profiler-ctl.c:50
-msgid "Timeout in seconds"
+#: src/sysprof/sysprof-application.c:170
+msgid "A system profiler"
 msgstr ""
 
-#: src/tools/sysprof-profiler-ctl.c:51
-msgid "Overwrite FILENAME if it exists"
+#: src/sysprof/sysprof-application.c:171
+msgid "translator-credits"
+msgstr ""
+"Ελληνική μεταφραστική ομάδα GNOME\n"
+" Ευστάθιος Ιωσηφίδης <eiosifidis@gnome.org>\n"
+"\n"
+"Για περισσότερες πληροφορίες, επισκεφθείτε τη σελίδα\n"
+"http://gnome.gr/"
+
+#: src/sysprof/sysprof-callgraph-view.ui:22
+msgid "Functions"
+msgstr "Συναρτήσεις"
+
+#: src/sysprof/sysprof-callgraph-view.ui:71
+#, fuzzy
+#| msgid "Functions"
+msgid "Filter Functions"
+msgstr "Συναρτήσεις"
+
+#: src/sysprof/sysprof-callgraph-view.ui:94
+msgid "Callers"
 msgstr ""
 
-#: src/tools/sysprof-profiler-ctl.c:79
-msgid "--dest=BUS_NAME [FILENAME] - connect to an embedded sysprof profiler"
+#: src/sysprof/sysprof-callgraph-view.ui:146
+msgid "Descendants"
 msgstr ""
+
+#: src/sysprof/sysprof-counters-section.ui:26
+#: src/sysprof/sysprof-cpu-section.ui:169
+#: src/sysprof/sysprof-energy-section.ui:177
+#: src/sysprof/sysprof-graphics-section.ui:88
+#: src/sysprof/sysprof-network-section.ui:86
+#: src/sysprof/sysprof-storage-section.ui:86
+msgid "Counters Chart"
+msgstr ""
+
+#: src/sysprof/sysprof-counters-section.ui:40
+#: src/sysprof/sysprof-cpu-section.ui:323
+#: src/sysprof/sysprof-energy-section.ui:312
+#: src/sysprof/sysprof-graphics-section.ui:223
+#: src/sysprof/sysprof-network-section.ui:291
+#: src/sysprof/sysprof-storage-section.ui:291
+msgid "Counters Table"
+msgstr ""
+
+#: src/sysprof/sysprof-cpu-section.ui:378
+#: src/sysprof/sysprof-dbus-section.ui:171
+#: src/sysprof/sysprof-energy-section.ui:348
+#: src/sysprof/sysprof-frame-utility.ui:49
+#: src/sysprof/sysprof-graphics-section.ui:259
+#: src/sysprof/sysprof-logs-section.ui:110
+#: src/sysprof/sysprof-metadata-section.ui:38
+#: src/sysprof/sysprof-network-section.ui:346
+#: src/sysprof/sysprof-process-dialog.ui:64
+#: src/sysprof/sysprof-processes-section.ui:214
+#: src/sysprof/sysprof-storage-section.ui:346
+#: src/sysprof/sysprof-traceables-utility.ui:23
+msgid "Time"
+msgstr "Χρόνος"
+
+#: src/sysprof/sysprof-cpu-section.ui:412
+#: src/sysprof/sysprof-energy-section.ui:382
+#: src/sysprof/sysprof-flame-graph.c:453
+#: src/sysprof/sysprof-graphics-section.ui:293
+#: src/sysprof/sysprof-marks-section.ui:242
+#: src/sysprof/sysprof-network-section.ui:380
+#: src/sysprof/sysprof-storage-section.ui:380
+msgid "Category"
+msgstr "Κατηγορία"
+
+#: src/sysprof/sysprof-cpu-section.ui:450
+#: src/sysprof/sysprof-energy-section.ui:420
+#: src/sysprof/sysprof-graphics-section.ui:331
+#: src/sysprof/sysprof-marks-section.ui:276
+#: src/sysprof/sysprof-network-section.ui:418
+#: src/sysprof/sysprof-storage-section.ui:418
+msgid "Name"
+msgstr "Όνομα"
+
+#: src/sysprof/sysprof-cpu-section.ui:488
+#: src/sysprof/sysprof-energy-section.ui:458
+#: src/sysprof/sysprof-graphics-section.ui:369
+#: src/sysprof/sysprof-metadata-section.ui:105
+#: src/sysprof/sysprof-network-section.ui:456
+#: src/sysprof/sysprof-storage-section.ui:456
+msgid "Value"
+msgstr "Τιμή"
+
+#: src/sysprof/sysprof-cpu-section.ui:529
+msgid "CPU Info"
+msgstr ""
+
+#: src/sysprof/sysprof-cpu-section.ui:560
+#: src/sysprof/sysprof-process-dialog.ui:248
+#| msgid "PID"
+msgid "ID"
+msgstr "ID"
+
+#: src/sysprof/sysprof-cpu-section.ui:595
+msgid "Core"
+msgstr "Πυρήνας"
+
+#: src/sysprof/sysprof-cpu-section.ui:630
+msgid "Model Name"
+msgstr "Όνομα μοντέλου"
+
+#: src/sysprof/sysprof-dbus-section.ui:205
+msgid "Bus"
+msgstr "Δίαυλος"
+
+#: src/sysprof/sysprof-dbus-section.ui:244
+msgid "Serial"
+msgstr "Σειριακός"
+
+#: src/sysprof/sysprof-dbus-section.ui:281
+msgid "Reply"
+msgstr "Απάντηση"
+
+#: src/sysprof/sysprof-dbus-section.ui:318
+msgid "Flags"
+msgstr "Σημαίες"
+
+#: src/sysprof/sysprof-dbus-section.ui:347
+#: src/sysprof/sysprof-files-section.ui:122
+#: src/sysprof/sysprof-memory-callgraph-view.ui:68
+msgid "Size"
+msgstr "Μέγεθος"
+
+#: src/sysprof/sysprof-dbus-section.ui:383
+#: src/sysprof/sysprof-frame-utility.ui:20
+#: src/sysprof/sysprof-mark-table.ui:221
+msgid "Type"
+msgstr "Είδος"
+
+#: src/sysprof/sysprof-dbus-section.ui:412
+msgid "Sender"
+msgstr "Αποστολέας"
+
+#: src/sysprof/sysprof-dbus-section.ui:446
+msgid "Destination"
+msgstr "Προορισμός"
+
+#: src/sysprof/sysprof-dbus-section.ui:480
+#: src/sysprof/sysprof-files-section.ui:53
+msgid "Path"
+msgstr "Διαδρομή"
+
+#: src/sysprof/sysprof-dbus-section.ui:514
+msgid "Interface"
+msgstr "Διεπαφή"
+
+#: src/sysprof/sysprof-dbus-section.ui:548
+msgid "Member"
+msgstr "Μέλος"
+
+#: src/sysprof/sysprof-dbus-section.ui:582
+msgid "Signature"
+msgstr "Υπογραφή"
+
+#: src/sysprof/sysprof-dbus-section.ui:626
+#, fuzzy
+#| msgid "Message"
+msgid "Filter Messages"
+msgstr "Μήνυμα"
+
+#: src/sysprof/sysprof-dbus-utility.ui:13
+#: src/sysprof/sysprof-logs-section.c:104
+#: src/sysprof/sysprof-logs-section.ui:286
+msgid "Message"
+msgstr "Μήνυμα"
+
+#: src/sysprof/sysprof-files-section.ui:4
+msgid "Files"
+msgstr "Αρχεία"
+
+#: src/sysprof/sysprof-files-section.ui:88
+msgid "Compressed"
+msgstr ""
+
+#: src/sysprof/sysprof-files-section.ui:165
+msgid "Filter Files"
+msgstr "Φιλτράρισμα αρχείων"
+
+#: src/sysprof/sysprof-flame-graph.c:457
+#: src/sysprof/sysprof-process-dialog.ui:177
+msgid "File"
+msgstr "Αρχείο"
+
+#: src/sysprof/sysprof-frame-utility.ui:80
+#: src/sysprof/sysprof-logs-section.ui:143
+#: src/sysprof/sysprof-mark-table.ui:116
+#: src/sysprof/sysprof-traceables-utility.ui:81
+#: src/sysprof/sysprof-window.ui:272
+msgid "CPU"
+msgstr "CPU"
+
+#: src/sysprof/sysprof-greeter.c:102
+msgid "Use KEY=VALUE to set an environment variable"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:108
+msgid "Keys may not start with a number"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:118
+msgid "Keys may only contain alpha-numerics or underline."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:265 src/sysprof/sysprof-window.c:155
+msgid "Must Capture to Local File"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:266 src/sysprof/sysprof-window.c:156
+msgid "You must choose a local file to capture using Sysprof"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:267 src/sysprof/sysprof-recording-pad.c:115
+#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:718
+msgid "Close"
+msgstr "Κλείσιμο"
+
+#: src/sysprof/sysprof-greeter.c:288
+#, c-format
+msgid "System Capture from %s.syscap"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:292
+#, fuzzy
+#| msgid "Recording…"
+msgid "Record to File"
+msgstr "Γίνεται εγγραφή…"
+
+#: src/sysprof/sysprof-greeter.c:293
+msgid "Record"
+msgstr "Εγγραφή"
+
+#: src/sysprof/sysprof-greeter.c:440
+msgid "No Change"
+msgstr "Καμία αλλαγή"
+
+#: src/sysprof/sysprof-greeter.c:443
+msgid "Balanced"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:446
+msgid "Power Saver"
+msgstr "Εξοικονόμηση ενέργειας"
+
+#: src/sysprof/sysprof-greeter.c:449
+msgid "Performance"
+msgstr "Απόδοση"
+
+#: src/sysprof/sysprof-greeter.ui:70
+msgid "Sampling"
+msgstr "Δειγματοληψία"
+
+#: src/sysprof/sysprof-greeter.ui:74
+msgid "Sample Native Stacks"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:75
+msgid "Record native stack traces using a sampling profiler"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:91
+msgid "Sample JavaScript Stacks"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:92
+msgid "Record JavaScript stack traces using a sampling profiler"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:103
+msgid ""
+"Sysprof must launch your application to record JavaScript stacks using GJS."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:119
+msgid "Record Scheduler Details"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:120
+msgid "Track when processes are scheduled per CPU"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:133
+msgid "Tracing"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:137
+msgid "Trace Memory Allocations"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:138
+msgid "Record a stack trace when <tt>malloc</tt> or similar functions are used"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:149
+msgid "Sysprof must launch your application to record memory allocations."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:167 src/sysprof/sysprof-greeter.ui:172
+msgid "Application"
+msgstr "Εφαρμογή"
+
+#: src/sysprof/sysprof-greeter.ui:175
+#: src/sysprof/sysprof-processes-section.ui:316
+msgid "Command Line"
+msgstr "Γραμμή εντολών"
+
+#: src/sysprof/sysprof-greeter.ui:181
+msgid "Working directory"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:187
+msgid "The application will be run as a subprocess of Sysprof."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:200
+msgid "Environment"
+msgstr "Περιβάλλον"
+
+#: src/sysprof/sysprof-greeter.ui:204
+#, fuzzy
+#| msgid "Environment"
+msgid "Clear Environment"
+msgstr "Περιβάλλον"
+
+#: src/sysprof/sysprof-greeter.ui:205
+msgid "Clear the environment before launching application"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:231
+msgid "Add _Variable"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:237
+msgid "Add Variable"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:238
+msgid "_Add"
+msgstr "Προ_σθήκη"
+
+#: src/sysprof/sysprof-greeter.ui:255 src/sysprof/sysprof-greeter.ui:260
+msgid "Counters"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:264
+msgid "CPU Usage"
+msgstr "Χρήση CPU"
+
+#: src/sysprof/sysprof-greeter.ui:265
+msgid "Record coarse-grained counters about CPU usage and frequency"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:277
+msgid "Memory Usage"
+msgstr "Χρήση μνήμης"
+
+#: src/sysprof/sysprof-greeter.ui:278
+msgid "Record coarse-grained counters about system memory usage"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:290
+msgid "Disk Usage"
+msgstr "Χρήση δίσκου"
+
+#: src/sysprof/sysprof-greeter.ui:291
+msgid "Record coarse-grained counters about storage throughput"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:303
+msgid "Network Usage"
+msgstr "Χρήση δικτύου"
+
+#: src/sysprof/sysprof-greeter.ui:304
+msgid "Record coarse-grained counters about network traffic"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:320
+msgid "Energy Usage"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:321
+msgid "Record coarse-grained counters about energy usage in Watts"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:333
+msgid "Battery Charge"
+msgstr "Φόρτιση μπαταρίας"
+
+#: src/sysprof/sysprof-greeter.ui:334
+msgid "Record coarse-grained counters about battery charge or discharge rates"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:352 src/sysprof/sysprof-greeter.ui:357
+#: src/sysprof/sysprof-window.ui:262
+msgid "D-Bus"
+msgstr "D-Bus"
+
+#: src/sysprof/sysprof-greeter.ui:361
+msgid "Record System Bus"
+msgstr "Εγγραφή διαύλου συστήματος"
+
+#: src/sysprof/sysprof-greeter.ui:362
+msgid "Record messages on the D-Bus system bus"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:378
+msgid "Record Session Bus"
+msgstr "Εγγραφή διαύλου συνεδρίας"
+
+#: src/sysprof/sysprof-greeter.ui:379
+msgid "Record messages on the D-Bus user session bus"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:390
+msgid ""
+"The session bus may contain sensitive information such as keyboard usage and "
+"passwords."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:413
+msgid "Timings"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:417
+msgid "Compositor Frame Timings"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:418
+msgid "Record frame-timing information from the GNOME Shell compositor"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:429
+msgid ""
+"Applications launched by Sysprof will automatically collect GTK frame timing "
+"information."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:469
+msgid "Devices"
+msgstr "Συσκευές"
+
+#: src/sysprof/sysprof-greeter.ui:473
+msgid "Include GPU Information"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:474
+msgid "Records information about graphics hardware and drivers"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:492
+msgid "System"
+msgstr "Σύστημα"
+
+#: src/sysprof/sysprof-greeter.ui:497
+msgid "Power Profile"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:500
+msgid "Record with Power Profile"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:501
+msgid "Switch to power profile while recording"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:511
+msgid "Details"
+msgstr "Λεπτομέρειες"
+
+#: src/sysprof/sysprof-greeter.ui:515
+msgid "Record System Log"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:516
+msgid "Watch the system log for new messages and record them"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:532
+msgid "Include Hardware Information"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:533
+msgid "Records information about PCI and USB devices"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:546
+msgid "Symbols"
+msgstr "Σύμβολα"
+
+#: src/sysprof/sysprof-greeter.ui:550
+msgid "Bundle Symbols"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:551
+msgid "Make recording shareable by symbolizing stack traces after recording"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:584
+#, fuzzy
+#| msgid "Recording…"
+msgid "_Open File…"
+msgstr "Γίνεται εγγραφή…"
+
+#: src/sysprof/sysprof-greeter.ui:591
+#, fuzzy
+#| msgid "Recording…"
+msgid "Record to _File…"
+msgstr "Γίνεται εγγραφή…"
+
+#: src/sysprof/sysprof-greeter.ui:598
+msgid "Record to _Memory"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:613 src/sysprof/sysprof-window.ui:373
+msgid "Help"
+msgstr "Βοήθεια"
+
+# Greek translation for sysprof.
+# Copyright (C) 2019 sysprof's COPYRIGHT HOLDER
+# This file is distributed under the same license as the sysprof package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#: src/sysprof/sysprof-greeter.ui:618 src/sysprof/sysprof-window.ui:378
+msgid "About Sysprof"
+msgstr "Περί Sysprof"
+
+#: src/sysprof/sysprof-logs-section.c:95
+msgid "Critical"
+msgstr "Κρίσιμο"
+
+#: src/sysprof/sysprof-logs-section.c:98
+msgid "Warning"
+msgstr "Προειδοποίηση"
+
+#: src/sysprof/sysprof-logs-section.c:101
+msgid "Debug"
+msgstr "Αποσφαλμάτωση"
+
+#: src/sysprof/sysprof-logs-section.c:107
+msgid "Info"
+msgstr "Πληροφορίες"
+
+#: src/sysprof/sysprof-logs-section.c:110
+msgid "Error"
+msgstr "Σφάλμα"
+
+#: src/sysprof/sysprof-logs-section.ui:4 src/sysprof/sysprof-logs-section.ui:30
+msgid "Logs"
+msgstr "Καταγραφές"
+
+#: src/sysprof/sysprof-logs-section.ui:215
+msgid "Severity"
+msgstr "Σοβαρότητα"
+
+#: src/sysprof/sysprof-logs-section.ui:251
+msgid "Domain"
+msgstr "Τομέας"
+
+#: src/sysprof/sysprof-marks-section.ui:4
+msgid "Marks"
+msgstr ""
+
+#: src/sysprof/sysprof-marks-section.ui:78
+msgid "Mark Chart"
+msgstr ""
+
+#: src/sysprof/sysprof-marks-section.ui:91
+msgid "Mark Table"
+msgstr ""
+
+#: src/sysprof/sysprof-marks-section.ui:104
+msgid "Mark Waterfall"
+msgstr ""
+
+#: src/sysprof/sysprof-marks-section.ui:206
+msgid "Summary"
+msgstr "Περίληψη"
+
+#: src/sysprof/sysprof-marks-section.ui:311
+msgid "Minimum"
+msgstr "Ελάχιστο"
+
+#: src/sysprof/sysprof-marks-section.ui:345
+msgid "Maximum"
+msgstr "Μέγιστο"
+
+#: src/sysprof/sysprof-marks-section.ui:379
+msgid "Average"
+msgstr "Μέσος όρος"
+
+#: src/sysprof/sysprof-marks-section.ui:413
+msgid "Median"
+msgstr ""
+
+#: src/sysprof/sysprof-mark-table.ui:47
+msgid "Start"
+msgstr "Εκκίνηση"
+
+#: src/sysprof/sysprof-mark-table.ui:81
+#: src/sysprof/sysprof-processes-section.ui:248
+msgid "Duration"
+msgstr "Διάρκεια"
+
+#: src/sysprof/sysprof-mark-table.ui:151
+msgid "Process"
+msgstr "Διεργασία"
+
+#: src/sysprof/sysprof-mark-table.ui:186
+msgid "Group"
+msgstr "Ομάδα"
+
+#: src/sysprof/sysprof-mark-table.ui:256
+msgid "Description"
+msgstr "Περιγραφή"
+
+#: src/sysprof/sysprof-memory-callgraph-view.ui:8
+#: src/sysprof/sysprof-memory-callgraph-view.ui:105
+#: src/sysprof/sysprof-memory-callgraph-view.ui:172
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:8
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:105
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:172
+msgid "Self"
+msgstr "Ατομικό"
+
+#: src/sysprof/sysprof-memory-callgraph-view.ui:38
+#: src/sysprof/sysprof-memory-callgraph-view.ui:135
+#: src/sysprof/sysprof-memory-callgraph-view.ui:202
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:38
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:135
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:202
+msgid "Total"
+msgstr "Σύνολο"
+
+#: src/sysprof/sysprof-memory-section.ui:4
+msgid "Memory Allocations"
+msgstr ""
+
+#: src/sysprof/sysprof-memory-section.ui:29
+#: src/sysprof/sysprof-samples-section.ui:29
+msgid "Stack Traces"
+msgstr ""
+
+#: src/sysprof/sysprof-memory-section.ui:88
+#, fuzzy
+#| msgid "Functions"
+msgid "Allocations"
+msgstr "Συναρτήσεις"
+
+#: src/sysprof/sysprof-memory-section.ui:144
+msgid "Leaks"
+msgstr ""
+
+#: src/sysprof/sysprof-memory-section.ui:212
+#: src/sysprof/sysprof-samples-section.ui:207
+#: src/sysprof/sysprof-traceables-utility.ui:162
+msgid "Stack Trace"
+msgstr ""
+
+#: src/sysprof/sysprof-metadata-section.ui:4
+msgid "Metadata"
+msgstr ""
+
+#: src/sysprof/sysprof-metadata-section.ui:71
+msgid "Key"
+msgstr "Κλειδί"
+
+#: src/sysprof/sysprof-process-dialog.ui:35
+msgid "Address Layout"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:97
+msgid "Start Address"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:137
+msgid "End Address"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:219
+msgid "Mounts"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:282
+msgid "Parent"
+msgstr "Γονικό"
+
+#: src/sysprof/sysprof-process-dialog.ui:316
+msgid "Major"
+msgstr "Πρωτεύων"
+
+#: src/sysprof/sysprof-process-dialog.ui:350
+msgid "Minor"
+msgstr "Δευτερεύων"
+
+#: src/sysprof/sysprof-process-dialog.ui:384
+msgid "Mount Point"
+msgstr "Σημείο προσάρτησης"
+
+#: src/sysprof/sysprof-process-dialog.ui:418
+msgid "Mount Source"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:452
+msgid "Root"
+msgstr "Root"
+
+#: src/sysprof/sysprof-process-dialog.ui:486
+msgid "Filesystem"
+msgstr "Σύστημα αρχείων"
+
+#: src/sysprof/sysprof-process-dialog.ui:520
+msgid "Options"
+msgstr "Επιλογές"
+
+#: src/sysprof/sysprof-process-dialog.ui:562
+msgid "Threads"
+msgstr "Νήματα"
+
+#: src/sysprof/sysprof-process-dialog.ui:591
+msgid "Thread ID"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:625
+msgid "Main Thread"
+msgstr ""
+
+#: src/sysprof/sysprof-processes-section.ui:4
+msgid "Processes"
+msgstr "Διεργασίες"
+
+#: src/sysprof/sysprof-processes-section.ui:73
+#, fuzzy
+#| msgid "Process %d"
+msgid "Process Chart"
+msgstr "Διαδικασία %d"
+
+#: src/sysprof/sysprof-processes-section.ui:173
+#, fuzzy
+#| msgid "All Processes"
+msgid "Process Table"
+msgstr "Όλες οι διαδικασίες"
+
+#. translators: this expands to the number of events recorded by the profiler as an indicator of progress
+#: src/sysprof/sysprof-recording-pad.c:56
+msgid "%"
+msgstr "%"
+
+#: src/sysprof/sysprof-recording-pad.c:111
+#, fuzzy
+#| msgid "Recording…"
+msgid "Recording Failed"
+msgstr "Γίνεται εγγραφή…"
+
+#: src/sysprof/sysprof-recording-pad.c:113
+#, c-format
+msgid ""
+"Sysprof failed to record.\n"
+"\n"
+"%s"
+msgstr ""
+
+#: src/sysprof/sysprof-recording-pad.ui:69
+#, fuzzy
+#| msgid "Recording…"
+msgid "Stop Recording"
+msgstr "Γίνεται εγγραφή…"
+
+#: src/sysprof/sysprof-samples-section.ui:4
+msgid "Time Profiler"
+msgstr ""
+
+#: src/sysprof/sysprof-samples-section.ui:89 src/sysprof/sysprof-window.ui:385
+msgid "Callgraph"
+msgstr ""
+
+#: src/sysprof/sysprof-samples-section.ui:172 src/sysprof/sysprof-window.ui:416
+msgid "Flamegraph"
+msgstr ""
+
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:130
+msgid "Seek Backward"
+msgstr ""
+
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:140
+msgid "Zoom Out"
+msgstr "Σμίκρυνση"
+
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:150
+msgid "Reset Zoom"
+msgstr "Επαναφορά εστίασης"
+
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:160
+msgid "Zoom In"
+msgstr "Μεγέθυνση"
+
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:170
+msgid "Seek Forward"
+msgstr ""
+
+#: src/sysprof/sysprof-traceables-utility.ui:109
+msgid "Depth"
+msgstr "Βάθος"
+
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:68
+msgid "Hits"
+msgstr "Χτύποι"
+
+#: src/sysprof/sysprof-window.c:171
+#, fuzzy
+#| msgid "Recording…"
+msgid "Open Recording"
+msgstr "Γίνεται εγγραφή…"
+
+#: src/sysprof/sysprof-window.c:172
+msgid "Open"
+msgstr "Άνοιγμα"
+
+#: src/sysprof/sysprof-window.c:176
+msgid "Sysprof Capture (*.syscap)"
+msgstr ""
+
+#: src/sysprof/sysprof-window.c:468
+msgid "Save to File"
+msgstr ""
+
+#: src/sysprof/sysprof-window.c:469
+msgid "Save"
+msgstr "Αποθήκευση"
+
+#: src/sysprof/sysprof-window.c:638
+msgid "Loading..."
+msgstr "Φόρτωση..."
+
+#: src/sysprof/sysprof-window.c:714
+msgid "Invalid Document"
+msgstr "Μη έγκυρο έγγραφο"
+
+#: src/sysprof/sysprof-window.c:716
+#, c-format
+msgid ""
+"The document could not be loaded. Please check that you have the correct "
+"capture file.\n"
+"\n"
+"%s"
+msgstr ""
+
+#: src/sysprof/sysprof-window.ui:120
+msgid "Toggle Left Panel"
+msgstr "Εναλλαγή αριστερού πίνακα"
+
+#: src/sysprof/sysprof-window.ui:184
+msgid "Main Menu"
+msgstr "Κυρίως μενού"
+
+#: src/sysprof/sysprof-window.ui:191
+msgid "View Options"
+msgstr "Εμφάνιση επιλογών"
+
+#: src/sysprof/sysprof-window.ui:197
+msgid "Toggle Right Panel"
+msgstr "Εναλλαγή δεξιού πίνακα"
+
+#: src/sysprof/sysprof-window.ui:282
+msgid "Energy"
+msgstr "Ενέργεια"
+
+#: src/sysprof/sysprof-window.ui:302
+msgid "Network"
+msgstr "Δίκτυο"
+
+#: src/sysprof/sysprof-window.ui:312
+msgid "Storage"
+msgstr "Αποθήκευση"
+
+#: src/sysprof/sysprof-window.ui:359
+#, fuzzy
+#| msgid "Record"
+msgid "_Record Again…"
+msgstr "Εγγραφή"
+
+#: src/sysprof/sysprof-window.ui:363
+#, fuzzy
+#| msgid "Recording…"
+msgid "Open Recording…"
+msgstr "Γίνεται εγγραφή…"
+
+#: src/sysprof/sysprof-window.ui:367
+msgid "Save As…"
+msgstr "Αποθήκευση ως…"
+
+#: src/sysprof/sysprof-window.ui:387
+msgid "Categorize Frames"
+msgstr ""
+
+#: src/sysprof/sysprof-window.ui:391
+msgid "Hide System Libraries"
+msgstr ""
+
+#: src/sysprof/sysprof-window.ui:395
+msgid "Include Threads"
+msgstr ""
+
+#: src/sysprof/sysprof-window.ui:399
+msgid "Bottom Up"
+msgstr ""
+
+#: src/sysprof/sysprof-window.ui:403
+#, fuzzy
+#| msgid "All Processes"
+msgid "Ignore Kernel Processes"
+msgstr "Όλες οι διαδικασίες"
+
+#: src/sysprof/sysprof-window.ui:407
+#, fuzzy
+#| msgid "New Process"
+msgid "Ignore Process 0"
+msgstr "Νέα διαδικασία"
+
+#: src/sysprof/sysprof-window.ui:411
+#, fuzzy
+#| msgid "All Processes"
+msgid "Merge Similar Processes"
+msgstr "Όλες οι διαδικασίες"
+
+#: src/sysprof/sysprof-window.ui:418
+msgid "Left Heavy"
+msgstr ""
+
+#~ msgid "Window size (width and height)."
+#~ msgstr "Μέγεθος παραθύρου (πλάτος και ύψος)."
+
+#~ msgid "Window position"
+#~ msgstr "Θέση παραθύρου"
+
+#~ msgid "Window position (x and y)."
+#~ msgstr "Θέση παραθύρου (x και y)."
+
+#~ msgid "Window maximized"
+#~ msgstr "Μεγιστοποιημένο παράθυρο"
+
+#~ msgid "Window maximized state"
+#~ msgstr "Κατάσταση μεγιστοποιημένου παραθύρου"
+
+#~ msgid "Battery"
+#~ msgstr "Μπαταρία"
+
+#~ msgid "Filename"
+#~ msgstr "Όνομα αρχείου"
+
+#, fuzzy
+#~| msgid "Samples: %u"
+#~ msgid "Samples Captured"
+#~ msgstr "Δείγματα: %u"
+
+#~ msgid "Min"
+#~ msgstr "Ελάχιστο"
+
+#~ msgid "Max"
+#~ msgstr "Μέγιστο"
+
+#~ msgid "Disk"
+#~ msgstr "Δίσκος"
+
+#~ msgid "Writes"
+#~ msgstr "Εγγραφές"
+
+#, fuzzy
+#~| msgid "Recording…"
+#~ msgid "New Recording"
+#~ msgstr "Γίνεται εγγραφή…"
+
+#, fuzzy
+#~| msgid "Recording…"
+#~ msgid "Save Recording"
+#~ msgstr "Γίνεται εγγραφή…"
+
+#~ msgid "Cancel"
+#~ msgstr "Aκύρωση"
+
+#~ msgid "End"
+#~ msgstr "Τέλος"
+
+#, fuzzy
+#~| msgid "Environment"
+#~ msgid "Inherit Environment"
+#~ msgstr "Περιβάλλον"
+
+#~ msgid "Events"
+#~ msgstr "Γεγονότα"
+
+#, fuzzy
+#~| msgid "Recording…"
+#~ msgctxt "shortcut window"
+#~ msgid "Save Recording"
+#~ msgstr "Γίνεται εγγραφή…"
+
+#, fuzzy
+#~| msgid "Record"
+#~ msgctxt "shortcut window"
+#~ msgid "Record again"
+#~ msgstr "Εγγραφή"
+
+#~ msgid "New Tab"
+#~ msgstr "Νέα καρτέλα"
+
+#, fuzzy
+#~| msgid "Recording…"
+#~ msgid "Save Recording…"
+#~ msgstr "Γίνεται εγγραφή…"
 
 #~ msgid "Cumulative"
 #~ msgstr "Άθροισμα"
@@ -1017,34 +1495,14 @@ msgstr ""
 #~ msgid "Search"
 #~ msgstr "Αναζήτηση"
 
-#~ msgid "Key"
-#~ msgstr "Κλειδί"
-
-#~ msgid "Value"
-#~ msgstr "Τιμή"
-
-#~ msgid "New Process"
-#~ msgstr "Νέα διαδικασία"
-
 #~ msgid "00:00"
 #~ msgstr "00:00"
-
-#~ msgid "CPU"
-#~ msgstr "CPU"
 
 #~ msgid "FPS"
 #~ msgstr "FPS"
 
-#~ msgid "%u Process"
-#~ msgid_plural "%u Processes"
-#~ msgstr[0] "%u διαδικασία"
-#~ msgstr[1] "%u διαδικασίες"
-
 #~ msgid "About"
 #~ msgstr "Περί"
-
-#~ msgid "_Quit"
-#~ msgstr "Έ_ξοδος"
 
 #~ msgid "Not running"
 #~ msgstr "Δεν εκτελείται"
@@ -1057,9 +1515,6 @@ msgstr ""
 
 #~ msgid "Zoom in (Ctrl++)"
 #~ msgstr "Μεγέθυνση (Ctrl++)"
-
-#~ msgid "Save As"
-#~ msgstr "Αποθήκευση ως"
 
 #~ msgid "Screenshot"
 #~ msgstr "Στιγμιότυπο οθόνης"

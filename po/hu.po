@@ -9,20 +9,21 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-03-04 16:24+0000\n"
-"PO-Revision-Date: 2023-03-07 02:37+0100\n"
+"POT-Creation-Date: 2023-09-02 18:41+0000\n"
+"PO-Revision-Date: 2023-09-09 18:42+0200\n"
 "Last-Translator: Balázs Úr <ur.balazs at fsf dot hu>\n"
-"Language-Team: Hungarian <gnome-hu-list at gnome dot org>\n"
+"Language-Team: Hungarian <openscope at fsf dot hu>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 22.08.2\n"
+"X-Generator: Lokalize 23.04.3\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:5
-#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:197
-#: src/sysprof/sysprof-application.c:287 src/sysprof/sysprof-window.ui:10
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
+#: src/sysprof/sysprof-application.c:208
+#: src/sysprof/sysprof-recording-pad.ui:18 src/sysprof/sysprof-window.c:243
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -42,7 +43,7 @@ msgstr ""
 "A Sysprof lehetővé teszi az alkalmazások profilozását a hibakeresés és az "
 "optimalizáció támogatáshoz."
 
-#: data/org.gnome.Sysprof.desktop.in.in:5
+#: data/org.gnome.Sysprof.desktop.in.in:5 src/sysprof/sysprof-greeter.ui:64
 msgid "Profiler"
 msgstr "Profilozó"
 
@@ -50,966 +51,353 @@ msgstr "Profilozó"
 msgid "Profile an application or entire system."
 msgstr "Alkalmazás vagy egész rendszer profilozása."
 
-#: src/libsysprof/sysprof-callgraph-profile.c:447
-msgid "Sysprof was unable to generate a callgraph from the system capture."
-msgstr ""
-"A Sysprof képtelen volt hívási gráfot előállítani a rendszerrögzítésből."
-
-#: src/libsysprof/sysprof-perf-source.c:472
-#, c-format
-msgid "Sysprof failed to find field “%s”."
-msgstr "A Sysprof nem találta a(z) „%s” mezőt."
-
-#: src/libsysprof/sysprof-perf-source.c:485
-#, c-format
-msgid "Sysprof failed to parse offset for “%s”."
-msgstr "A Sysprof nem tudta feldolgozni a(z) „%s” eltolását."
-
-#: src/libsysprof/sysprof-perf-source.c:549
-#, c-format
-msgid "Sysprof failed to get perf_event ID."
-msgstr "A Sysprof nem tudta lekérni a perf_event azonosítót."
-
-#: src/libsysprof/sysprof-perf-source.c:655
-#, c-format
-msgid "An error occurred while attempting to access performance counters"
-msgstr "Hiba történt a teljesítményszámlálók elérésének kísérletekor."
-
-#: src/libsysprof-ui/sysprof-battery-aid.c:182
-msgid "Battery Charge"
-msgstr "Akkumulátortöltöttség"
-
-#: src/libsysprof-ui/sysprof-battery-aid.c:198
-msgid "Battery Charge (All)"
-msgstr "Akkumulátortöltöttség (összes)"
-
-#: src/libsysprof-ui/sysprof-battery-aid.c:240
-msgid "Battery"
-msgstr "Akkumulátor"
-
-#: src/libsysprof-ui/sysprof-callgraph-aid.c:212
-#: src/libsysprof-ui/sysprof-callgraph-aid.c:218
-#: src/libsysprof-ui/sysprof-details-page.ui:73
-msgid "Stack Traces"
-msgstr "Veremkiíratások"
-
-#: src/libsysprof-ui/sysprof-callgraph-aid.c:226
-msgid "Stack Traces (In Kernel)"
-msgstr "Veremkiíratások (kerneltérben)"
-
-#: src/libsysprof-ui/sysprof-callgraph-aid.c:234
-msgid "Stack Traces (In User)"
-msgstr "Veremkiíratások (felhasználói térben)"
-
-#: src/libsysprof-ui/sysprof-callgraph-aid.c:243
-#: src/libsysprof-ui/sysprof-callgraph-aid.c:273
-msgid "Callgraph"
-msgstr "Hívási gráf"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:23
-#: src/libsysprof-ui/sysprof-memprof-page.ui:90
-msgid "Functions"
-msgstr "Függvények"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:39
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:96
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:147
-#: src/libsysprof-ui/sysprof-memprof-page.ui:107
-#: src/libsysprof-ui/sysprof-memprof-page.ui:165
-#: src/libsysprof-ui/sysprof-memprof-page.ui:216
-msgid "Self"
-msgstr "Önmaga"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:55
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:112
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:163
-#: src/libsysprof-ui/sysprof-memprof-page.ui:123
-#: src/libsysprof-ui/sysprof-memprof-page.ui:181
-#: src/libsysprof-ui/sysprof-memprof-page.ui:232
-msgid "Total"
-msgstr "Összesen"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:80
-#: src/libsysprof-ui/sysprof-memprof-page.ui:148
-msgid "Callers"
-msgstr "Hívók"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:139
-#: src/libsysprof-ui/sysprof-memprof-page.ui:207
-msgid "Descendants"
-msgstr "Leszármazottak"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:178
-#: src/libsysprof-ui/sysprof-details-page.ui:215
-msgid "Hits"
-msgstr "Találatok"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:198
-msgid "Generating Callgraph"
-msgstr "Hívási gráf előállítása"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:199
-msgid "Sysprof is busy creating the selected callgraph."
-msgstr "A Sysprof a kiválasztott hívási gráf létrehozásán dolgozik."
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:205
-#: src/libsysprof-ui/sysprof-memprof-page.ui:271
-msgid "Not Enough Samples"
-msgstr "Nincs elég minta"
-
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:206
-#: src/libsysprof-ui/sysprof-memprof-page.ui:272
-msgid "More samples are necessary to display a callgraph."
-msgstr "Több minta szükséges a hívási gráf megjelenítéséhez."
-
-#: src/libsysprof-ui/sysprof-cell-renderer-progress.c:102
-#: src/libsysprof-ui/sysprof-cell-renderer-progress.c:292
-#: src/libsysprof-ui/sysprof-cell-renderer-progress.c:322
-#, c-format
-msgctxt "progress bar label"
-msgid "%d %%"
-msgstr "%d%%"
-
-#: src/libsysprof-ui/sysprof-counters-aid.c:221
-#: src/libsysprof-ui/sysprof-counters-aid.c:226
-#: src/libsysprof-ui/sysprof-counters-aid.c:282
-#: src/libsysprof-ui/sysprof-details-page.ui:148
-msgid "Counters"
-msgstr "Számlálók"
-
-#: src/libsysprof-ui/sysprof-cpu-aid.c:207
-#: src/libsysprof-ui/sysprof-cpu-aid.c:355
-msgid "CPU Usage"
-msgstr "CPU-használat"
-
-#: src/libsysprof-ui/sysprof-cpu-aid.c:214
-msgid "CPU Frequency"
-msgstr "CPU frekvencia"
-
-#: src/libsysprof-ui/sysprof-cpu-aid.c:218
-msgid "CPU Frequency (All)"
-msgstr "CPU frekvencia (összes)"
-
-#. Translators: CPU is the processor.
-#: src/libsysprof-ui/sysprof-cpu-aid.c:227
-#: src/libsysprof-ui/sysprof-cpu-aid.c:250
-msgid "CPU Usage (All)"
-msgstr "CPU-használat (összes)"
-
-#: src/libsysprof-ui/sysprof-cpu-aid.c:316
-#: src/libsysprof-ui/sysprof-details-page.ui:103
-msgid "Processes"
-msgstr "Folyamatok"
-
-#: src/libsysprof-ui/sysprof-details-page.c:239
-msgid "Memory Capture"
-msgstr "Memóriarögzítés"
-
-#: src/libsysprof-ui/sysprof-details-page.c:253
-#, c-format
-msgid "%0.4lf seconds"
-msgstr "%0.4lf másodperc"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:8
-msgid "Capture"
-msgstr "Rögzítés"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:12
-msgid "Location"
-msgstr "Hely"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:26
-msgid "Recorded At"
-msgstr "Rögzítés ideje"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:40
-#: src/libsysprof-ui/sysprof-marks-page.ui:90
-#: src/libsysprof-ui/sysprof-marks-page.ui:196
-msgid "Duration"
-msgstr "Időtartam"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:54
-msgid "CPU Model"
-msgstr "CPU modell"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:69
-#: src/libsysprof-ui/sysprof-details-page.ui:164
-msgid "Statistics"
-msgstr "Statisztika"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:74
-msgid "Number of stack traces sampled for performance callgraphs"
-msgstr "A teljesítményt vizsgáló hívási gráfokhoz vett veremkiíratások száma"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:88
-msgid "Marks"
-msgstr "Jelek"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:89
-msgid "Number of marks seen"
-msgstr "Látott jelek száma"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:104
-msgid "Number of processes seen"
-msgstr "Látott folyamatok száma"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:118
-msgid "Forks"
-msgstr "Elágazások"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:119
-msgid "Number of times a process forked"
-msgstr "A folyamat elágazásainak száma"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:133
-#: src/libsysprof-ui/sysprof-memprof-aid.c:193
-#: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
-msgid "Memory Allocations"
-msgstr "Memóriafoglalások"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:134
-msgid "Number of stack traces recorded for tracing memory allocations"
-msgstr "Memóriafoglalások követéséhez rögzített veremkiíratások száma"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:149
-msgid "Number of recorded counter values"
-msgstr "Rögzített számlálóértékek száma"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:180
-#: src/libsysprof-ui/sysprof-marks-page.ui:50
-msgid "Mark"
-msgstr "Jel"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:248
-msgid "Min"
-msgstr "Min"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:281
-msgid "Max"
-msgstr "Max"
-
-#: src/libsysprof-ui/sysprof-details-page.ui:314
-msgid "Avg"
-msgstr "Átlag"
-
-#: src/libsysprof-ui/sysprof-diskstat-aid.c:205
-#: src/libsysprof-ui/sysprof-diskstat-aid.c:267
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:58
-msgid "Disk"
-msgstr "Lemez"
-
-#: src/libsysprof-ui/sysprof-diskstat-aid.c:239
-msgid "Reads"
-msgstr "Olvasások"
-
-#: src/libsysprof-ui/sysprof-diskstat-aid.c:239
-msgid "Writes"
-msgstr "Írások"
-
-#: src/libsysprof-ui/sysprof-display.c:228
-msgid "Recording Failed"
-msgstr "Felvétel sikertelen"
-
-#: src/libsysprof-ui/sysprof-display.c:233
-msgid "Recording…"
-msgstr "Felvétel…"
-
-#. translators: %s is replaced with locale specific time of recording
-#: src/libsysprof-ui/sysprof-display.c:264
-#, c-format
-msgid "Recording at %s"
-msgstr "Felvétel ekkor: %s"
-
-#: src/libsysprof-ui/sysprof-display.c:268
-msgid "New Recording"
-msgstr "Új felvétel"
-
-#: src/libsysprof-ui/sysprof-display.c:1099
-msgid "The recording could not be opened"
-msgstr "A felvételt nem sikerült megnyitni"
-
-#: src/libsysprof-ui/sysprof-display.c:1246
-#, c-format
-msgid "Failed to save recording: %s"
-msgstr "A felvétel mentése sikertelen: %s"
-
-#: src/libsysprof-ui/sysprof-display.c:1279
-msgid "Save Recording"
-msgstr "Felvétel mentése"
-
-#: src/libsysprof-ui/sysprof-display.c:1282
-msgid "Save"
-msgstr "Mentés"
-
-#. Translators: This is a button.
-#: src/libsysprof-ui/sysprof-display.c:1283 src/sysprof/sysprof-window.c:285
-msgid "Cancel"
-msgstr "Mégse"
-
-#: src/libsysprof-ui/sysprof-display.ui:36
-#: src/libsysprof-ui/sysprof-marks-page.ui:16
-msgid "Details"
-msgstr "Részletek"
-
-#: src/libsysprof-ui/sysprof-environ-editor-row.ui:29
-msgid "Remove environment variable"
-msgstr "Környezeti változó eltávolítása"
-
-#: src/libsysprof-ui/sysprof-environ-editor.c:72
-msgid "New environment variable…"
-msgstr "Új környezeti változó…"
-
-#: src/libsysprof-ui/sysprof-failed-state-view.ui:27
-msgid "Ouch, that hurt!"
-msgstr "Jaj, ez fájt!"
-
-#: src/libsysprof-ui/sysprof-failed-state-view.ui:40
-msgid "Something unexpectedly went wrong while trying to profile your system."
-msgstr "Valami váratlan hiba történt a rendszer profilozási kísérlete során."
-
-#: src/libsysprof-ui/sysprof-log-model.c:210
-#: src/libsysprof-ui/sysprof-logs-page.ui:58
-#: src/libsysprof-ui/sysprof-marks-page.ui:103
-msgid "Message"
-msgstr "Üzenet"
-
-#: src/libsysprof-ui/sysprof-log-model.c:213
-msgid "Info"
-msgstr "Információ"
-
-#: src/libsysprof-ui/sysprof-log-model.c:216
-msgid "Critical"
-msgstr "Kritikus"
-
-#: src/libsysprof-ui/sysprof-log-model.c:219
-msgid "Error"
-msgstr "Hiba"
-
-#: src/libsysprof-ui/sysprof-log-model.c:222
-msgid "Debug"
-msgstr "Hibakeresés"
-
-#: src/libsysprof-ui/sysprof-log-model.c:225
-msgid "Warning"
-msgstr "Figyelmeztetés"
-
-#: src/libsysprof-ui/sysprof-logs-aid.c:195
-#: src/libsysprof-ui/sysprof-logs-aid.c:199
-#: src/libsysprof-ui/sysprof-logs-aid.c:204
-#: src/libsysprof-ui/sysprof-logs-aid.c:210
-msgid "Logs"
-msgstr "Naplók"
-
-#: src/libsysprof-ui/sysprof-logs-page.ui:15
-#: src/libsysprof-ui/sysprof-marks-page.ui:64
-msgid "Time"
-msgstr "Idő"
-
-#: src/libsysprof-ui/sysprof-logs-page.ui:29
-msgid "Severity"
-msgstr "Súlyosság"
-
-#: src/libsysprof-ui/sysprof-logs-page.ui:44
-msgid "Domain"
-msgstr "Tartomány"
-
-#: src/libsysprof-ui/sysprof-marks-aid.c:408
-#: src/libsysprof-ui/sysprof-marks-aid.c:413
-msgid "Timings"
-msgstr "Időzítések"
-
-#: src/libsysprof-ui/sysprof-marks-page.ui:37
-msgid "Group"
-msgstr "Csoport"
-
-#: src/libsysprof-ui/sysprof-marks-page.ui:77
-msgid "End"
-msgstr "Befejezés"
-
-#: src/libsysprof-ui/sysprof-marks-page.ui:234
-msgid "No Timings Available"
-msgstr "Nincs elérhető időzítés"
-
-#: src/libsysprof-ui/sysprof-marks-page.ui:246
-msgid "No timing data was found for the current selection"
-msgstr "Nem található időzítési adat a jelenlegi kiválasztáshoz"
-
-#: src/libsysprof-ui/sysprof-memory-aid.c:68
-msgid "Memory Usage"
-msgstr "Memóriahasználat"
-
-#: src/libsysprof-ui/sysprof-memprof-aid.c:182
+#: src/libsysprof/sysprof-category-summary.c:136
+msgid "Uncategorized"
+msgstr "Kategorizálatlan"
+
+#: src/libsysprof/sysprof-category-summary.c:139
+msgid "Accessibility"
+msgstr "Akadálymentesítés"
+
+#: src/libsysprof/sysprof-category-summary.c:142
+#| msgid "Functions"
+msgid "Actions"
+msgstr "Műveletek"
+
+#: src/libsysprof/sysprof-category-summary.c:145
+msgid "Crash Handler"
+msgstr "Összeomlás-kezelő"
+
+#: src/libsysprof/sysprof-category-summary.c:148
+msgid "Context Switches"
+msgstr "Környezetváltások"
+
+#: src/libsysprof/sysprof-category-summary.c:151
+msgid "CSS"
+msgstr "CSS"
+
+#: src/libsysprof/sysprof-category-summary.c:154
+#: src/sysprof/sysprof-greeter.ui:408 src/sysprof/sysprof-window.ui:292
+msgid "Graphics"
+msgstr "Grafika"
+
+#: src/libsysprof/sysprof-category-summary.c:157
+msgid "Icons"
+msgstr "Ikonok"
+
+#: src/libsysprof/sysprof-category-summary.c:160
+msgid "Input"
+msgstr "Bemenet"
+
+#: src/libsysprof/sysprof-category-summary.c:163
+msgid "IO"
+msgstr "IO"
+
+#: src/libsysprof/sysprof-category-summary.c:166
+msgid "IPC"
+msgstr "IPC"
+
+#: src/libsysprof/sysprof-category-summary.c:169
+msgid "JavaScript"
+msgstr "JavaScript"
+
+#: src/libsysprof/sysprof-category-summary.c:172
+msgid "Kernel"
+msgstr "Rendszermag"
+
+#: src/libsysprof/sysprof-category-summary.c:175
+msgid "Layout"
+msgstr "Elrendezés"
+
+#: src/libsysprof/sysprof-category-summary.c:178
+msgid "Locking"
+msgstr "Zárolás"
+
+#: src/libsysprof/sysprof-category-summary.c:181
+msgid "Main Loop"
+msgstr "Fő hurok"
+
+#: src/libsysprof/sysprof-category-summary.c:184
 msgid "Memory"
 msgstr "Memória"
 
-#: src/libsysprof-ui/sysprof-memprof-aid.c:224
-msgid "Track Allocations"
-msgstr "Memóriafoglalások követése"
+#: src/libsysprof/sysprof-category-summary.c:187
+msgid "Paint"
+msgstr "Rajzolás"
 
-#. translators: %s is replaced with the the lower and upper bound memory sizes in bytes
-#: src/libsysprof-ui/sysprof-memprof-page.c:246
+#: src/libsysprof/sysprof-category-summary.c:190
+msgid "Type System"
+msgstr "Típusrendszer"
+
+#: src/libsysprof/sysprof-category-summary.c:193
+msgid "Unwindable"
+msgstr "Felhúzhatatlan"
+
+#: src/libsysprof/sysprof-category-summary.c:196
+#| msgid "New Window"
+msgid "Windowing"
+msgstr "Ablakozás"
+
+#: src/libsysprof/sysprof-document-allocation.c:151
+#| msgid "All Allocations"
+msgid "Allocation"
+msgstr "Lefoglalás"
+
+#: src/libsysprof/sysprof-document.c:570
+msgid "Unknown Process"
+msgstr "Ismeretlen folyamat"
+
+#: src/libsysprof/sysprof-document.c:1251
+#: src/libsysprof/sysprof-document.c:1287
+msgid "Indexing capture data frames"
+msgstr "Elfogási adatkeretek indexelése"
+
+#: src/libsysprof/sysprof-document.c:1473
+msgid "Discovering file system mounts"
+msgstr "Fájlrendszercsatolások felderítése"
+
+#: src/libsysprof/sysprof-document.c:1476
+msgid "Discovering process mount namespaces"
+msgstr "Folyamatcsatolás névtereinek felderítése"
+
+#: src/libsysprof/sysprof-document.c:1479
+msgid "Analyzing process address layouts"
+msgstr "Folyamatcím-kiosztások elemzése"
+
+#: src/libsysprof/sysprof-document.c:1482
+msgid "Analyzing process command line"
+msgstr "Folyamatparancssor elemzése"
+
+#: src/libsysprof/sysprof-document.c:1485
+msgid "Analyzing file system overlays"
+msgstr "Fájlrendszerátfedések elemzése"
+
+#: src/libsysprof/sysprof-document.c:1488
+#| msgid "Processes"
+msgid "Processing counters"
+msgstr "Számlálók feldolgozása"
+
+#: src/libsysprof/sysprof-document.c:2476
+#: src/libsysprof/sysprof-document.c:2492
 #, c-format
-msgid "> %s to %s"
-msgstr "> %s – %s"
+#| msgid "Recording at %s"
+msgid "Recording at %X %x"
+msgstr "Rögzítés ekkor: %X %x"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:16
-msgid "Number of Allocations"
-msgstr "Memóriafoglalások száma"
+#: src/libsysprof/sysprof-document.c:2478
+#: src/libsysprof/sysprof-document.c:2494
+#, c-format
+msgid "Recording at %s"
+msgstr "Rögzítés ekkor: %s"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:17
-msgid "Total number of allocation and free records"
-msgstr "Memóriafoglalások és szabad rekordok száma összesen"
+#: src/libsysprof/sysprof-document-dbus-message.c:152
+#| msgid "Message"
+msgid "D-Bus Message"
+msgstr "D-Bus üzenet"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:30
-#: src/libsysprof-ui/sysprof-memprof-page.ui:318
-msgid "Leaked Allocations"
-msgstr "Szivárgott memóriafoglalások"
+#: src/libsysprof/sysprof-document-frame.c:139
+msgid "Frame"
+msgstr "Keret"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:31
-msgid "Number of allocations without a free record"
-msgstr "Szabad rekord nélküli memóriafoglalások száma"
+#: src/libsysprof/sysprof-document-loader.c:435
+msgid "Document loaded"
+msgstr "Dokumentum betöltve"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:44
-#: src/libsysprof-ui/sysprof-memprof-page.ui:311
-msgid "Temporary Allocations"
-msgstr "Ideiglenes memóriafoglalások"
+#: src/libsysprof/sysprof-document-loader.c:466
+#| msgid "Recording Failed"
+msgid "Loading failed"
+msgstr "A betöltés sikertelen"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:45
-msgid "Number of allocations freed from similar stack trace"
-msgstr "Hasonló veremkiíratásokból felszabadított memóriafoglalások száma"
+#: src/libsysprof/sysprof-document-loader.c:478
+#: src/libsysprof/sysprof-document-symbols.c:217
+#| msgid "Stack Traces"
+msgid "Symbolizing stack traces"
+msgstr "Veremkiíratások szimbolizálása"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:59
-msgid "Allocations by Size"
-msgstr "Memóriafoglalások méret szerint"
+#: src/libsysprof/sysprof-document-loader.c:547
+#| msgid "Loading Processes…"
+msgid "Loading document"
+msgstr "Dokumentum betöltése"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:247
-msgid "Size"
-msgstr "Méret"
+#: src/libsysprof/sysprof-document-log.c:85
+#| msgid "Logs"
+msgid "Log"
+msgstr "Napló"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:264
-msgid "Analyzing Memory Allocations"
-msgstr "Memóriafoglalások elemzése"
+#: src/libsysprof/sysprof-document-mark.c:113
+msgid "Mark"
+msgstr "Jel"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:265
-msgid "Sysprof is busy analyzing memory allocations."
-msgstr "A Sysprof a memóriafoglalások elemzésén dolgozik."
+#: src/libsysprof/sysprof-document-process.c:293
+#, c-format
+msgid "%s [Process %d]"
+msgstr "%s [%d. folyamat]"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:298
-msgid "Summary"
-msgstr "Összefoglaló"
+#: src/libsysprof/sysprof-document-process.c:295
+#, c-format
+#| msgid "Processes"
+msgid "Process %d"
+msgstr "%d. folyamat"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:304
-msgid "All Allocations"
-msgstr "Összes memóriafoglalás"
+#: src/libsysprof/sysprof-document-sample.c:136
+msgid "Sample"
+msgstr "Minta"
 
-#: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
-msgid "Memory Used"
-msgstr "Használt memória"
+#: src/libsysprof/sysprof-system-logs.c:171
+msgid "System Logs"
+msgstr "Rendszernaplók"
 
-#: src/libsysprof-ui/sysprof-netdev-aid.c:204
-#: src/libsysprof-ui/sysprof-netdev-aid.c:264
-msgid "Network"
-msgstr "Hálózat"
+#: src/libsysprof/sysprof-system-logs.c:172
+msgid "Recording system logs is not supported on your platform."
+msgstr "A rendszernaplók rögzítése nem támogatott a platformján."
 
-#. translators: "Compositor" means desktop compositor, gnome-shell/mutter in particular
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:26
-msgid "GNOME Shell"
-msgstr "GNOME Shell"
+#: src/libsysprof/sysprof-tracer.c:65
+msgid "Tracer"
+msgstr "Nyomkövető"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:30
-msgid "Speedtrack"
-msgstr "Sebességkövetés"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:39
-msgid "GJS"
-msgstr "GJS"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:46
-#| msgid "Launch Application"
-msgid "Application"
-msgstr "Alkalmazás"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:69
-msgid "Profiling Target"
-msgstr "Profilozási cél"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:72
-msgid "Profile Entire System"
-msgstr "Teljes rendszer profilozása"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:73
+#: src/libsysprof/sysprof-tracer.c:66
 msgid ""
-"Sysprof can generate callgraphs for one or more processes on your system."
+"Tracing requires spawning a program compiled with ‘-finstrument-functions’. "
+"Tracing will not be available."
 msgstr ""
-"A Sysprof hívási gráfokat tud előállítani a rendszer egy vagy több "
-"folyamatához."
+"A nyomkövetéshez a „-finstrument-functions” használatával lefordított program"
+" indítása szükséges. A nyomkövetés nem lesz elérhető."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:84
-msgid "Search Processes"
-msgstr "Folyamatok keresése"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:99
-msgid "Loading Processes…"
-msgstr "Folyamatok betöltése…"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:114
-msgid "Launch Application"
-msgstr "Alkalmazás indítása"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:115
-msgid ""
-"Sysprof can launch an application to be profiled. The profiler will "
-"automatically stop when it exits."
-msgstr ""
-"A Sysprof el tudja indítani a profilozandó alkalmazást. Kilépéskor a "
-"profilozó automatikusan leáll."
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:126
-msgid "Command Line"
-msgstr "Parancssor"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:135
-msgid "Inherit Environment"
-msgstr "Környezet öröklése"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:136
-msgid ""
-"Enable to ensure your application shares the display, message-bus, and other "
-"desktop environment settings."
-msgstr ""
-"Engedélyezze annak biztosításához, hogy az alkalmazás megossza a kijelző-, "
-"üzenetbusz- és egyéb asztali környezet beállításait."
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:153
-msgid "Performance"
-msgstr "Teljesítmény"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:156
-msgid "Allow CPU Throttling"
-msgstr "CPU visszafogás engedélyezése"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:157
-msgid ""
-"When enabled, your system is allowed to scale CPU frequency as necessary."
-msgstr ""
-"Ha engedélyezve van, akkor a rendszer szükség szerint módosíthatja a CPU "
-"frekvenciáját."
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:172
-#: src/libsysprof-ui/sysprof-visualizers-frame.ui:27
-msgid "Instruments"
-msgstr "Műszerek"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:245
-msgid ""
-"Track application memory allocations (Sysprof must launch target application)"
-msgstr ""
-"Alkalmazás memóriafoglalásainak követése (a Sysprofnak kell elindítani a "
-"célalkalmazást)"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:252
-msgid "Track slow operations on your applications main loop"
-msgstr "Lassú műveletek követése az alkalmazás fő ciklusában"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:265
-msgid "_Record"
-msgstr "_Felvétel"
-
-#: src/libsysprof-ui/sysprof-rapl-aid.c:175
-#: src/libsysprof-ui/sysprof-rapl-aid.c:248
-msgid "Energy Usage"
-msgstr "Energiahasználat"
-
-#: src/libsysprof-ui/sysprof-rapl-aid.c:180
-msgid "Energy Usage (All)"
-msgstr "Energiahasználat (összes)"
-
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:35
-msgid ""
-"Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
-msgstr ""
-"Tudta, hogy használhatja a <a href=\"help:sysprof\">sysprof-cli</a> "
-"programot is a rögzítéshez?"
-
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:50
-msgid "Events"
-msgstr "Események"
-
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:76
-msgid "_Stop Recording"
-msgstr "Felvétel _leállítása"
-
-#: src/libsysprof-ui/sysprof-visualizer-group-header.c:192
-#: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
-msgid "Select for more details"
-msgstr "További részletekért válassza ki"
-
-#: src/libsysprof-ui/sysprof-visualizer-group-header.c:214
-msgid "Display supplemental graphs"
-msgstr "Kiegészítő grafikonok megjelenítése"
-
-#: src/sysprofd/org.gnome.sysprof3.policy.in:13
-msgid "Profile the system"
-msgstr "A rendszer profilozása"
-
-#: src/sysprofd/org.gnome.sysprof3.policy.in:14
-msgid "Authentication is required to profile the system."
-msgstr "Hitelesítés szükséges a rendszer profilozásához."
-
-#: src/sysprofd/org.gnome.sysprof3.policy.in:26
-msgid "Open a perf event stream"
-msgstr "Egy perf eseményfolyam megnyitása"
-
-#: src/sysprofd/org.gnome.sysprof3.policy.in:27
-msgid "Authentication is required to access system performance counters."
-msgstr "Hitelesítés szükséges a rendszerteljesítmény számlálók eléréséhez."
-
-#: src/sysprofd/org.gnome.sysprof3.policy.in:37
-msgid "Get a list of kernel symbols and their address"
-msgstr "Rendszermagszimbólumok listájának és azok címének lekérése"
-
-#: src/sysprofd/org.gnome.sysprof3.policy.in:38
-msgid "Authentication is required to access Linux kernel information."
-msgstr "Hitelesítés szükséges a Linux rendszermag információinak eléréséhez."
-
-#: src/sysprof/gtk/help-overlay.ui:10
-msgctxt "shortcut window"
-msgid "Files"
-msgstr "Fájlok"
-
-#: src/sysprof/gtk/help-overlay.ui:13
-msgctxt "shortcut window"
-msgid "Save Recording"
-msgstr "Felvétel mentése"
-
-#: src/sysprof/gtk/help-overlay.ui:14
-msgctxt "shortcut window"
-msgid "Saves the current recording"
-msgstr "Elmenti a jelenlegi felvételt"
-
-#: src/sysprof/gtk/help-overlay.ui:20
-msgctxt "shortcut window"
-msgid "Open recording"
-msgstr "Felvétel megnyitása"
-
-#: src/sysprof/gtk/help-overlay.ui:21
-msgctxt "shortcut window"
-msgid "Opens a previously saved recording"
-msgstr "Megnyitja az előzőleg mentett felvételt"
-
-#: src/sysprof/gtk/help-overlay.ui:29
-msgctxt "shortcut window"
-msgid "Recording"
-msgstr "Felvétel"
-
-#: src/sysprof/gtk/help-overlay.ui:32
-msgctxt "shortcut window"
-msgid "Record again"
-msgstr "Felvétel ismét"
-
-#: src/sysprof/gtk/help-overlay.ui:33
-msgctxt "shortcut window"
-msgid "Starts a new recording"
-msgstr "Új felvételt indít"
-
-#: src/sysprof/gtk/help-overlay.ui:39
-msgctxt "shortcut window"
-msgid "Stop recording"
-msgstr "Felvétel leállítása"
-
-#: src/sysprof/gtk/help-overlay.ui:47
-msgctxt "shortcut window"
-msgid "Callgraph"
-msgstr "Hívási gráf"
-
-#: src/sysprof/gtk/help-overlay.ui:50
-msgctxt "shortcut window"
-msgid "Expand function"
-msgstr "Függvény kibontása"
-
-#: src/sysprof/gtk/help-overlay.ui:51
-msgctxt "shortcut window"
-msgid "Shows the direct descendants of the callgraph function"
-msgstr "Megjeleníti a függvény közvetlen leszármazottait a hívási gráfban"
-
-#: src/sysprof/gtk/help-overlay.ui:57
-msgctxt "shortcut window"
-msgid "Collapse function"
-msgstr "Függvény összecsukása"
-
-#: src/sysprof/gtk/help-overlay.ui:58
-msgctxt "shortcut window"
-msgid "Hides all callgraph descendants below the selected function"
-msgstr ""
-"Elrejti a kiválasztott függyvény minden leszármazottját a hívási gráfban"
-
-#: src/sysprof/gtk/help-overlay.ui:64
-msgctxt "shortcut window"
-msgid "Jump into function"
-msgstr "Ugrás a függvénybe"
-
-#: src/sysprof/gtk/help-overlay.ui:65
-msgctxt "shortcut window"
-msgid "Selects the function or file as the top of the callgraph"
-msgstr "Kiválasztja a függvényt vagy fájlt a hívási gráf csúcsaként"
-
-#: src/sysprof/gtk/help-overlay.ui:73
-msgctxt "shortcut window"
-msgid "Visualizers"
-msgstr "Megjelenítők"
-
-#: src/sysprof/gtk/help-overlay.ui:76
-msgctxt "shortcut window"
-msgid "Zoom in"
-msgstr "Nagyítás"
-
-#: src/sysprof/gtk/help-overlay.ui:82
-msgctxt "shortcut window"
-msgid "Zoom out"
-msgstr "Kicsinyítés"
-
-#: src/sysprof/gtk/help-overlay.ui:88
-msgctxt "shortcut window"
-msgid "Reset zoom"
-msgstr "Nagyítás visszaállítása"
-
-#: src/sysprof/gtk/help-overlay.ui:96
-msgctxt "shortcut window"
-msgid "General"
-msgstr "Általános"
-
-#: src/sysprof/gtk/help-overlay.ui:99
-#| msgid "Help"
-msgctxt "shortcut window"
-msgid "Show Help"
-msgstr "Súgó megjelenítése"
-
-#: src/sysprof/gtk/help-overlay.ui:105
-#| msgid "Keyboard Shortcuts"
-msgctxt "shortcut window"
-msgid "Keyboard Shortcuts"
-msgstr "Gyorsbillentyűk"
-
-#: src/sysprof/gtk/help-overlay.ui:111
-#| msgid "New Tab"
-msgctxt "shortcut window"
-msgid "New Tab"
-msgstr "Új lap"
-
-#: src/sysprof/gtk/help-overlay.ui:117
-msgctxt "shortcut window"
-msgid "Switch Tab"
-msgstr "Lap átváltása"
-
-#: src/sysprof/gtk/help-overlay.ui:123
-#| msgid "New Window"
-msgctxt "shortcut window"
-msgid "New Window"
-msgstr "Új ablak"
-
-#: src/sysprof/gtk/help-overlay.ui:129
-#| msgid "New Window"
-msgctxt "shortcut window"
-msgid "Close Window"
-msgstr "Ablak bezárása"
-
-#: src/sysprof/gtk/help-overlay.ui:135
-msgctxt "shortcut window"
-msgid "Quit"
-msgstr "Kilépés"
-
-#: src/sysprof/gtk/menus.ui:6
-msgid "New Tab"
-msgstr "Új lap"
-
-#: src/sysprof/gtk/menus.ui:10
-msgid "New Window"
-msgstr "Új ablak"
-
-#: src/sysprof/gtk/menus.ui:16
-msgid "Open Recording…"
-msgstr "Felvétel megnyitása…"
-
-#: src/sysprof/gtk/menus.ui:20
-msgid "Save Recording…"
-msgstr "Felvétel mentése…"
-
-#: src/sysprof/gtk/menus.ui:26
-msgid "Record Again"
-msgstr "Felvétel ismét"
-
-#: src/sysprof/gtk/menus.ui:32
-msgid "Close"
-msgstr "Bezárás"
-
-#: src/sysprof/gtk/menus.ui:38
-msgid "Keyboard Shortcuts"
-msgstr "Gyorsbillentyűk"
-
-#: src/sysprof/gtk/menus.ui:42
-msgid "Help"
-msgstr "Súgó"
-
-#: src/sysprof/gtk/menus.ui:46
-msgid "About Sysprof"
-msgstr "A Sysprof névjegye"
-
-#: src/sysprof/sysprof-application.c:206
-msgid "A system profiler"
-msgstr "Rendszerprofilozó"
-
-#: src/sysprof/sysprof-application.c:207
-msgid "translator-credits"
-msgstr "Meskó Balázs <mesko dot balazs at fsf dot hu>"
-
-#. Translators: This is a window title.
-#: src/sysprof/sysprof-window.c:279
-msgid "Open Capture…"
-msgstr "Rögzítés megnyitása…"
-
-#. Translators: This is a button.
-#: src/sysprof/sysprof-window.c:283
-msgid "Open"
-msgstr "Megnyitás"
-
-#: src/sysprof/sysprof-window.c:288
-msgid "Sysprof Captures"
-msgstr "Sysprof rögzítések"
-
-#: src/sysprof/sysprof-window.c:293
-msgid "All Files"
-msgstr "Összes fájl"
-
-#: src/sysprof/sysprof-window.ui:20
-msgid "Main Menu"
-msgstr "Főmenü"
-
-#: src/sysprof/sysprof-window.ui:36
-msgid "_Open"
-msgstr "_Megnyitás"
-
-#: src/sysprof/sysprof-window.ui:39
-msgid "Open Recording… (Ctrl+O)"
-msgstr "Felvétel megnyitása… (Ctrl+O)"
-
-#: src/tools/sysprof-cli.c:63
-msgid "Stopping profiler. Press twice more ^C to force exit."
-msgstr "A profilozó leállítása. A kényszerített kilépéshez: ^C még kétszer."
-
-#: src/tools/sysprof-cli.c:76
-msgid "Profiler stopped."
-msgstr "Profilozó leállítva."
-
-#: src/tools/sysprof-cli.c:109
+#: src/sysprof-cli/sysprof-cli.c:112
 msgid "--merge requires at least 2 filename arguments"
 msgstr "A --merge kapcsolóhoz legalább két fájlnév argumentum szükséges"
 
-#: src/tools/sysprof-cli.c:227
-msgid "Disable CPU throttling while profiling"
-msgstr "Processzorlefojtás letiltása profilozás közben"
+#: src/sysprof-cli/sysprof-cli.c:306
+#| msgid "Disable CPU throttling while profiling"
+msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
+msgstr ""
+"Processzorlefojtás letiltása profilozás közben (elavult a --power-profile"
+" kapcsolónál)"
 
-#: src/tools/sysprof-cli.c:228
-msgid "Make sysprof specific to a task"
-msgstr "A Sysprof egy feladathoz kapcsolódjon"
+#: src/sysprof-cli/sysprof-cli.c:307
+#| msgid "Make sysprof specific to a task"
+msgid "Make sysprof specific to a task [Deprecated]"
+msgstr "A Sysprof egy feladathoz kapcsolódjon (elavult)"
 
-#: src/tools/sysprof-cli.c:228
+#: src/sysprof-cli/sysprof-cli.c:307 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof/sysprof-logs-section.ui:179
+#: src/sysprof/sysprof-processes-section.ui:282
+#: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "PID"
 
-#: src/tools/sysprof-cli.c:229
+#: src/sysprof-cli/sysprof-cli.c:308
 msgid "Run a command and profile the process"
 msgstr "Parancs futtatása és a folyamat profilozása"
 
-#: src/tools/sysprof-cli.c:229
+#: src/sysprof-cli/sysprof-cli.c:308
 msgid "COMMAND"
 msgstr "PARANCS"
 
-#: src/tools/sysprof-cli.c:230
+#: src/sysprof-cli/sysprof-cli.c:309
 msgid ""
 "Set environment variable for spawned process. Can be used multiple times."
 msgstr ""
 "Környezeti változó beállítása az elindított folyamathoz. Többször is "
 "megadható."
 
-#: src/tools/sysprof-cli.c:230
+#: src/sysprof-cli/sysprof-cli.c:309
 msgid "VAR=VALUE"
 msgstr "VÁLTOZÓ=ÉRTÉK"
 
-#: src/tools/sysprof-cli.c:231
+#: src/sysprof-cli/sysprof-cli.c:310
 msgid "Force overwrite the capture file"
 msgstr "A rögzítési fájl felülírása mindenképp"
 
-#: src/tools/sysprof-cli.c:232
+#: src/sysprof-cli/sysprof-cli.c:311
 msgid "Disable recording of battery statistics"
 msgstr "Az akkumulátorstatisztika rögzítésének letiltása"
 
-#: src/tools/sysprof-cli.c:233
+#: src/sysprof-cli/sysprof-cli.c:312
 msgid "Disable recording of CPU statistics"
-msgstr "A CPU statisztikák rögzítésének letiltása"
+msgstr "A processzorstatisztikák rögzítésének letiltása"
 
-#: src/tools/sysprof-cli.c:234
+#: src/sysprof-cli/sysprof-cli.c:313
 msgid "Disable recording of Disk statistics"
 msgstr "A Lemezstatisztikák rögzítésének letiltása"
 
-#: src/tools/sysprof-cli.c:235
+#: src/sysprof-cli/sysprof-cli.c:314
 msgid "Do not record stacktraces using Linux perf"
 msgstr "Ne rögzítse a veremkiíratásokat a Linuxos perf használatával"
 
-#: src/tools/sysprof-cli.c:236
+#: src/sysprof-cli/sysprof-cli.c:315
 msgid "Do not append symbol name information from local machine"
 msgstr "Ne fűzze hozzá a szimbólumnév-információkat a helyi gépről"
 
-#: src/tools/sysprof-cli.c:237
+#: src/sysprof-cli/sysprof-cli.c:316
 msgid "Disable recording of memory statistics"
 msgstr "A memóriastatisztikák rögzítésének letiltása"
 
-#: src/tools/sysprof-cli.c:238
+#: src/sysprof-cli/sysprof-cli.c:317
 msgid "Disable recording of network statistics"
 msgstr "A hálózati statisztikák rögzítésének letiltása"
 
-#: src/tools/sysprof-cli.c:239
+#: src/sysprof-cli/sysprof-cli.c:318
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr "A SYSPROF_TRACE_FD környezet beállítása az alfolyamatoknál"
 
-#: src/tools/sysprof-cli.c:240
+#: src/sysprof-cli/sysprof-cli.c:319
+msgid "Track when processes are scheduled"
+msgstr "Annak követése, hogy a folyamatok mikor vannak ütemezve"
+
+#: src/sysprof-cli/sysprof-cli.c:320
+#| msgid "Connect to the session bus"
+msgid "Profile the D-Bus session bus"
+msgstr "A D-Bus munkamenetbusz profilozása"
+
+#: src/sysprof-cli/sysprof-cli.c:321
+#| msgid "Profile the system"
+msgid "Profile the D-Bus system bus"
+msgstr "A D-Bus rendszerbusz profilozása"
+
+#: src/sysprof-cli/sysprof-cli.c:322
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr "A GJD_TRACE_FD környezet beállítása a GJS folyamatok nyomkövetéséhez"
 
-#: src/tools/sysprof-cli.c:241
+#: src/sysprof-cli/sysprof-cli.c:323
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr "A GTK_TRACE_FD környezet beállítása a GTK alkalmazások nyomkövetéséhez"
 
-#: src/tools/sysprof-cli.c:242
+#: src/sysprof-cli/sysprof-cli.c:324
 msgid "Include RAPL energy statistics"
 msgstr "A RAPL energiastatisztikák hozzáadása"
 
-#: src/tools/sysprof-cli.c:243
+#: src/sysprof-cli/sysprof-cli.c:325
 msgid "Profile memory allocations and frees"
 msgstr "Memóriafoglalások és -felszabadítások profilozása"
 
-#: src/tools/sysprof-cli.c:244
+#: src/sysprof-cli/sysprof-cli.c:326
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr ""
 "Kapcsolódás az org.gnome.Shell folyamathoz a profilozási statisztikákért"
 
-#: src/tools/sysprof-cli.c:245
+#: src/sysprof-cli/sysprof-cli.c:327
 msgid "Track performance of the applications main loop"
 msgstr "Az alkalmazás fő ciklusa teljesítményének követése"
 
-#: src/tools/sysprof-cli.c:246
+#: src/sysprof-cli/sysprof-cli.c:329
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr ""
 "Az összes megadott *.syscap fájl egyesítése és kiírása a szabványos kimenetre"
 
-#: src/tools/sysprof-cli.c:247
+#: src/sysprof-cli/sysprof-cli.c:330
 msgid "Print the sysprof-cli version and exit"
 msgstr "A sysprof-cli verziójának kiírása és kilépés"
 
-#: src/tools/sysprof-cli.c:280
+#: src/sysprof-cli/sysprof-cli.c:331
+msgid "The size of the buffer in pages (1 = 1 page)"
+msgstr "A puffer mérete lapokban (1 = 1 lap)"
+
+#: src/sysprof-cli/sysprof-cli.c:364
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[RÖGZÍTÉSI_FÁJL] [-- PARANCS ARGUMENTUMOK] – Sysprof"
 
-#: src/tools/sysprof-cli.c:283
+#: src/sysprof-cli/sysprof-cli.c:367
 msgid ""
 "\n"
 "Examples:\n"
@@ -1032,49 +420,1062 @@ msgstr ""
 "  # Több rögzítési fájl egyesítése egybe\n"
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 
-#: src/tools/sysprof-cli.c:316
+#: src/sysprof-cli/sysprof-cli.c:403
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Túl sok argumentum lett átadva a sysprof-cli számára:"
 
 #. Translators: %s is a file name.
-#: src/tools/sysprof-cli.c:377
+#: src/sysprof-cli/sysprof-cli.c:457
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "A(z) %s már létezik. A felülíráshoz használja a --force kapcsolót\n"
 
-#: src/tools/sysprof-profiler-ctl.c:45
-msgid "Connect to the system bus"
-msgstr "Kapcsolódás a rendszerbuszhoz"
+#: src/sysprofd/org.gnome.sysprof3.policy.in:13
+msgid "Profile the system"
+msgstr "A rendszer profilozása"
 
-#: src/tools/sysprof-profiler-ctl.c:46
-msgid "Connect to the session bus"
-msgstr "Kapcsolódás a munkamenetbuszhoz"
+#: src/sysprofd/org.gnome.sysprof3.policy.in:14
+msgid "Authentication is required to profile the system."
+msgstr "Hitelesítés szükséges a rendszer profilozásához."
 
-#: src/tools/sysprof-profiler-ctl.c:47
-msgid "Connect to the given D-Bus address"
-msgstr "Kapcsolódás a megadott D-Bus címhez"
+#: src/sysprof/gtk/help-overlay.ui:10
+msgctxt "shortcut window"
+msgid "General"
+msgstr "Általános"
 
-#: src/tools/sysprof-profiler-ctl.c:48
-msgid "Destination D-Bus name to invoke method on"
-msgstr "A D-Bus cél neve, amelyen meg kell hívni a metódust"
+#: src/sysprof/gtk/help-overlay.ui:13
+msgctxt "shortcut window"
+msgid "Show Help"
+msgstr "Súgó megjelenítése"
 
-#: src/tools/sysprof-profiler-ctl.c:49
-msgid "Object path to invoke method on"
-msgstr "Objektumútvonal, amelyen meg kell hívni a metódust"
+#: src/sysprof/gtk/help-overlay.ui:19
+msgctxt "shortcut window"
+msgid "Keyboard Shortcuts"
+msgstr "Gyorsbillentyűk"
 
-#: src/tools/sysprof-profiler-ctl.c:49
-msgid "/org/gnome/Sysprof3/Profiler"
-msgstr "/org/gnome/Sysprof3/Profiler"
+#: src/sysprof/gtk/help-overlay.ui:25
+msgctxt "shortcut window"
+msgid "Close Window"
+msgstr "Ablak bezárása"
 
-#: src/tools/sysprof-profiler-ctl.c:50
-msgid "Timeout in seconds"
-msgstr "Időtúllépés másodpercben"
+#: src/sysprof/gtk/help-overlay.ui:31
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "Kilépés"
 
-#: src/tools/sysprof-profiler-ctl.c:51
-msgid "Overwrite FILENAME if it exists"
-msgstr "A FÁJLNÉV felülírása, ha létezik"
+#: src/sysprof/gtk/menus.ui:6
+msgid "_Preferences"
+msgstr "_Beállítások"
 
-#: src/tools/sysprof-profiler-ctl.c:79
-msgid "--dest=BUS_NAME [FILENAME] - connect to an embedded sysprof profiler"
+#: src/sysprof/gtk/menus.ui:10
+#| msgid "Keyboard Shortcuts"
+msgid "_Keyboard Shortcuts"
+msgstr "_Gyorsbillentyűk"
+
+#: src/sysprof/gtk/menus.ui:14
+#| msgid "Help"
+msgid "_Help"
+msgstr "_Súgó"
+
+#: src/sysprof/gtk/menus.ui:18
+#| msgid "About Sysprof"
+msgid "_About Sysprof"
+msgstr "A Sysprof _névjegye"
+
+#: src/sysprof/sysprof-animation.c:1038
+#, c-format
+#| msgid "Failed to save recording: %s"
+msgid "Failed to find property %s in %s"
+msgstr "Nem sikerült a(z) %s tulajdonság megkeresése ebben: %s"
+
+#: src/sysprof/sysprof-animation.c:1047
+#, c-format
+msgid "Failed to retrieve va_list value: %s"
+msgstr "Nem sikerült lekérni a va_list értéket: %s"
+
+#: src/sysprof/sysprof-application.c:37
+#| msgid "Print the sysprof-cli version and exit"
+msgid "Show Sysprof version and exit"
+msgstr "A Sysprof verziószámának kiírása és kilépés"
+
+#: src/sysprof/sysprof-application.c:170
+msgid "A system profiler"
+msgstr "Rendszerprofilozó"
+
+#: src/sysprof/sysprof-application.c:171
+msgid "translator-credits"
 msgstr ""
-"--dest=BUSZNÉV [FÁJLNÉV] – kapcsolódás egy beágyazott Sysprof profilozóhoz"
+"Meskó Balázs <mesko dot balazs at fsf dot hu>\n"
+"Úr Balázs <ur dot balazs at fsf dot hu>"
+
+#: src/sysprof/sysprof-callgraph-view.ui:22
+msgid "Functions"
+msgstr "Függvények"
+
+#: src/sysprof/sysprof-callgraph-view.ui:71
+#| msgid "Functions"
+msgid "Filter Functions"
+msgstr "Szűrési függvények"
+
+#: src/sysprof/sysprof-callgraph-view.ui:94
+msgid "Callers"
+msgstr "Hívók"
+
+#: src/sysprof/sysprof-callgraph-view.ui:146
+msgid "Descendants"
+msgstr "Leszármazottak"
+
+#: src/sysprof/sysprof-counters-section.ui:26
+#: src/sysprof/sysprof-cpu-section.ui:169
+#: src/sysprof/sysprof-energy-section.ui:177
+#: src/sysprof/sysprof-graphics-section.ui:88
+#: src/sysprof/sysprof-network-section.ui:86
+#: src/sysprof/sysprof-storage-section.ui:86
+#| msgid "Counters"
+msgid "Counters Chart"
+msgstr "Számlálók grafikonja"
+
+#: src/sysprof/sysprof-counters-section.ui:40
+#: src/sysprof/sysprof-cpu-section.ui:323
+#: src/sysprof/sysprof-energy-section.ui:312
+#: src/sysprof/sysprof-graphics-section.ui:223
+#: src/sysprof/sysprof-network-section.ui:291
+#: src/sysprof/sysprof-storage-section.ui:291
+#| msgid "Counters"
+msgid "Counters Table"
+msgstr "Számlálók táblázata"
+
+#: src/sysprof/sysprof-cpu-section.ui:378
+#: src/sysprof/sysprof-dbus-section.ui:171
+#: src/sysprof/sysprof-energy-section.ui:348
+#: src/sysprof/sysprof-frame-utility.ui:49
+#: src/sysprof/sysprof-graphics-section.ui:259
+#: src/sysprof/sysprof-logs-section.ui:110
+#: src/sysprof/sysprof-metadata-section.ui:38
+#: src/sysprof/sysprof-network-section.ui:346
+#: src/sysprof/sysprof-process-dialog.ui:64
+#: src/sysprof/sysprof-processes-section.ui:214
+#: src/sysprof/sysprof-storage-section.ui:346
+#: src/sysprof/sysprof-traceables-utility.ui:23
+msgid "Time"
+msgstr "Idő"
+
+#: src/sysprof/sysprof-cpu-section.ui:412
+#: src/sysprof/sysprof-energy-section.ui:382
+#: src/sysprof/sysprof-flame-graph.c:453
+#: src/sysprof/sysprof-graphics-section.ui:293
+#: src/sysprof/sysprof-marks-section.ui:242
+#: src/sysprof/sysprof-network-section.ui:380
+#: src/sysprof/sysprof-storage-section.ui:380
+msgid "Category"
+msgstr "Kategória"
+
+#: src/sysprof/sysprof-cpu-section.ui:450
+#: src/sysprof/sysprof-energy-section.ui:420
+#: src/sysprof/sysprof-graphics-section.ui:331
+#: src/sysprof/sysprof-marks-section.ui:276
+#: src/sysprof/sysprof-network-section.ui:418
+#: src/sysprof/sysprof-storage-section.ui:418
+msgid "Name"
+msgstr "Név"
+
+#: src/sysprof/sysprof-cpu-section.ui:488
+#: src/sysprof/sysprof-energy-section.ui:458
+#: src/sysprof/sysprof-graphics-section.ui:369
+#: src/sysprof/sysprof-metadata-section.ui:105
+#: src/sysprof/sysprof-network-section.ui:456
+#: src/sysprof/sysprof-storage-section.ui:456
+msgid "Value"
+msgstr "Érték"
+
+#: src/sysprof/sysprof-cpu-section.ui:529
+#| msgid "Info"
+msgid "CPU Info"
+msgstr "Processzorinformáció"
+
+#: src/sysprof/sysprof-cpu-section.ui:560
+#: src/sysprof/sysprof-process-dialog.ui:248
+#| msgid "PID"
+msgid "ID"
+msgstr "Azonosító"
+
+#: src/sysprof/sysprof-cpu-section.ui:595
+msgid "Core"
+msgstr "Mag"
+
+#: src/sysprof/sysprof-cpu-section.ui:630
+msgid "Model Name"
+msgstr "Modellnév"
+
+#: src/sysprof/sysprof-dbus-section.ui:205
+msgid "Bus"
+msgstr "Busz"
+
+#: src/sysprof/sysprof-dbus-section.ui:244
+msgid "Serial"
+msgstr "Sorozatszám"
+
+#: src/sysprof/sysprof-dbus-section.ui:281
+msgid "Reply"
+msgstr "Válasz"
+
+#: src/sysprof/sysprof-dbus-section.ui:318
+msgid "Flags"
+msgstr "Jelzők"
+
+#: src/sysprof/sysprof-dbus-section.ui:347
+#: src/sysprof/sysprof-files-section.ui:122
+#: src/sysprof/sysprof-memory-callgraph-view.ui:68
+msgid "Size"
+msgstr "Méret"
+
+#: src/sysprof/sysprof-dbus-section.ui:383
+#: src/sysprof/sysprof-frame-utility.ui:20
+#: src/sysprof/sysprof-mark-table.ui:221
+msgid "Type"
+msgstr "Típus"
+
+#: src/sysprof/sysprof-dbus-section.ui:412
+msgid "Sender"
+msgstr "Küldő"
+
+#: src/sysprof/sysprof-dbus-section.ui:446
+#| msgid "Duration"
+msgid "Destination"
+msgstr "Cél"
+
+#: src/sysprof/sysprof-dbus-section.ui:480
+#: src/sysprof/sysprof-files-section.ui:53
+msgid "Path"
+msgstr "Útvonal"
+
+#: src/sysprof/sysprof-dbus-section.ui:514
+msgid "Interface"
+msgstr "Csatoló"
+
+#: src/sysprof/sysprof-dbus-section.ui:548
+msgid "Member"
+msgstr "Tag"
+
+#: src/sysprof/sysprof-dbus-section.ui:582
+#| msgid "Capture"
+msgid "Signature"
+msgstr "Aláírás"
+
+#: src/sysprof/sysprof-dbus-section.ui:626
+#| msgid "Message"
+msgid "Filter Messages"
+msgstr "Üzenetek szűrése"
+
+#: src/sysprof/sysprof-dbus-utility.ui:13
+#: src/sysprof/sysprof-logs-section.c:104
+#: src/sysprof/sysprof-logs-section.ui:286
+msgid "Message"
+msgstr "Üzenet"
+
+#: src/sysprof/sysprof-files-section.ui:4
+#| msgctxt "shortcut window"
+#| msgid "Files"
+msgid "Files"
+msgstr "Fájlok"
+
+#: src/sysprof/sysprof-files-section.ui:88
+msgid "Compressed"
+msgstr "Tömörített"
+
+#: src/sysprof/sysprof-files-section.ui:165
+#| msgid "All Files"
+msgid "Filter Files"
+msgstr "Fájlok szűrése"
+
+#: src/sysprof/sysprof-flame-graph.c:457
+#: src/sysprof/sysprof-process-dialog.ui:177
+#| msgctxt "shortcut window"
+#| msgid "Files"
+msgid "File"
+msgstr "Fájl"
+
+#: src/sysprof/sysprof-frame-utility.ui:80
+#: src/sysprof/sysprof-logs-section.ui:143
+#: src/sysprof/sysprof-mark-table.ui:116
+#: src/sysprof/sysprof-traceables-utility.ui:81
+#: src/sysprof/sysprof-window.ui:272
+msgid "CPU"
+msgstr "Processzor"
+
+#: src/sysprof/sysprof-greeter.c:102
+#| msgid "Remove environment variable"
+msgid "Use KEY=VALUE to set an environment variable"
+msgstr "Használjon KULCS=ÉRTÉK párt egy környezeti változó beállításához"
+
+#: src/sysprof/sysprof-greeter.c:108
+msgid "Keys may not start with a number"
+msgstr "A kulcsok nem kezdődhetnek számmal"
+
+#: src/sysprof/sysprof-greeter.c:118
+msgid "Keys may only contain alpha-numerics or underline."
+msgstr ""
+"A kulcsok csak alfanumerikus karaktereket vagy aláhúzást tartalmazhatnak."
+
+#: src/sysprof/sysprof-greeter.c:265 src/sysprof/sysprof-window.c:155
+msgid "Must Capture to Local File"
+msgstr "Helyi fájlba kell rögzíteni"
+
+#: src/sysprof/sysprof-greeter.c:266 src/sysprof/sysprof-window.c:156
+msgid "You must choose a local file to capture using Sysprof"
+msgstr ""
+"Ki kell választania egy helyi fájlt a Sysprof használatával való rögzítéshez"
+
+#: src/sysprof/sysprof-greeter.c:267 src/sysprof/sysprof-recording-pad.c:115
+#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:718
+msgid "Close"
+msgstr "Bezárás"
+
+#: src/sysprof/sysprof-greeter.c:288
+#, c-format
+msgid "System Capture from %s.syscap"
+msgstr "Rendszer rögzítése %s.syscap fájlból"
+
+#: src/sysprof/sysprof-greeter.c:292
+#| msgid "Recording Failed"
+msgid "Record to File"
+msgstr "Rögzítés fájlba"
+
+#: src/sysprof/sysprof-greeter.c:293
+#| msgid "_Record"
+msgid "Record"
+msgstr "Rögzítés"
+
+#: src/sysprof/sysprof-greeter.c:440
+msgid "No Change"
+msgstr "Nincs változtatás"
+
+#: src/sysprof/sysprof-greeter.c:443
+msgid "Balanced"
+msgstr "Kiegyensúlyozott"
+
+#: src/sysprof/sysprof-greeter.c:446
+msgid "Power Saver"
+msgstr "Energiatakarékos"
+
+#: src/sysprof/sysprof-greeter.c:449
+msgid "Performance"
+msgstr "Teljesítmény"
+
+#: src/sysprof/sysprof-greeter.ui:70
+msgid "Sampling"
+msgstr "Mintavételezés"
+
+#: src/sysprof/sysprof-greeter.ui:74
+msgid "Sample Native Stacks"
+msgstr "Natív vermek mintavételezése"
+
+#: src/sysprof/sysprof-greeter.ui:75
+#| msgid "Do not record stacktraces using Linux perf"
+msgid "Record native stack traces using a sampling profiler"
+msgstr ""
+"Natív veremkiíratások rögzítése egy mintavételező profilozó használatával"
+
+#: src/sysprof/sysprof-greeter.ui:91
+msgid "Sample JavaScript Stacks"
+msgstr "JavaScript vermek mintavételezése"
+
+#: src/sysprof/sysprof-greeter.ui:92
+#| msgid "Do not record stacktraces using Linux perf"
+msgid "Record JavaScript stack traces using a sampling profiler"
+msgstr ""
+"JavaScript veremkiíratások rögzítése egy mintavételező profilozó használatával"
+
+#: src/sysprof/sysprof-greeter.ui:103
+msgid ""
+"Sysprof must launch your application to record JavaScript stacks using GJS."
+msgstr ""
+"A Sysprof programnak el kell indítania az alkalmazását a JavaScript vermek"
+" GJS használatával való rögzítéséhez."
+
+#: src/sysprof/sysprof-greeter.ui:119
+msgid "Record Scheduler Details"
+msgstr "Ütemező részleteinek rögzítése"
+
+#: src/sysprof/sysprof-greeter.ui:120
+msgid "Track when processes are scheduled per CPU"
+msgstr "Annak követése, hogy a folyamatok CPU-nként mikor vannak ütemezve"
+
+#: src/sysprof/sysprof-greeter.ui:133
+msgid "Tracing"
+msgstr "Nyomkövetés"
+
+#: src/sysprof/sysprof-greeter.ui:137
+#| msgid "Memory Allocations"
+msgid "Trace Memory Allocations"
+msgstr "Memóriafoglalások nyomkövetése"
+
+#: src/sysprof/sysprof-greeter.ui:138
+msgid "Record a stack trace when <tt>malloc</tt> or similar functions are used"
+msgstr ""
+"Veremkiíratás rögzítése, ha a <tt>malloc</tt> vagy hasonló függvények lettek"
+" használva"
+
+#: src/sysprof/sysprof-greeter.ui:149
+#| msgid "Sysprof is busy analyzing memory allocations."
+msgid "Sysprof must launch your application to record memory allocations."
+msgstr ""
+"A Sysprof programnak el kell indítania az alkalmazását a memóriafoglalások"
+" rögzítéséhez."
+
+#: src/sysprof/sysprof-greeter.ui:167 src/sysprof/sysprof-greeter.ui:172
+msgid "Application"
+msgstr "Alkalmazás"
+
+#: src/sysprof/sysprof-greeter.ui:175
+#: src/sysprof/sysprof-processes-section.ui:316
+msgid "Command Line"
+msgstr "Parancssor"
+
+#: src/sysprof/sysprof-greeter.ui:181
+msgid "Working directory"
+msgstr "Munkakönyvtár"
+
+#: src/sysprof/sysprof-greeter.ui:187
+msgid "The application will be run as a subprocess of Sysprof."
+msgstr "Az alkalmazás a Sysprof alfolyamataként lesz futtatva."
+
+#: src/sysprof/sysprof-greeter.ui:200
+#| msgid "Inherit Environment"
+msgid "Environment"
+msgstr "Környezet"
+
+#: src/sysprof/sysprof-greeter.ui:204
+#| msgid "Inherit Environment"
+msgid "Clear Environment"
+msgstr "Környezet törlése"
+
+#: src/sysprof/sysprof-greeter.ui:205
+#| msgid "Set GTK_TRACE_FD environment to trace a GTK application"
+msgid "Clear the environment before launching application"
+msgstr "A környezet törlése az alkalmazás indítása előtt"
+
+#: src/sysprof/sysprof-greeter.ui:231
+msgid "Add _Variable"
+msgstr "_Változó hozzáadása"
+
+#: src/sysprof/sysprof-greeter.ui:237
+msgid "Add Variable"
+msgstr "Változó hozzáadása"
+
+#: src/sysprof/sysprof-greeter.ui:238
+msgid "_Add"
+msgstr "_Hozzáadás"
+
+#: src/sysprof/sysprof-greeter.ui:255 src/sysprof/sysprof-greeter.ui:260
+msgid "Counters"
+msgstr "Számlálók"
+
+#: src/sysprof/sysprof-greeter.ui:264
+msgid "CPU Usage"
+msgstr "CPU-használat"
+
+#: src/sysprof/sysprof-greeter.ui:265
+msgid "Record coarse-grained counters about CPU usage and frequency"
+msgstr ""
+"A processzorhasználatra és -frekvenciára vonatkozó durva szemcsés számlálók"
+" rögzítése"
+
+#: src/sysprof/sysprof-greeter.ui:277
+msgid "Memory Usage"
+msgstr "Memóriahasználat"
+
+#: src/sysprof/sysprof-greeter.ui:278
+msgid "Record coarse-grained counters about system memory usage"
+msgstr ""
+"A rendszer memóriahasználatára vonatkozó durva szemcsés számlálók rögzítése"
+
+#: src/sysprof/sysprof-greeter.ui:290
+#| msgid "CPU Usage"
+msgid "Disk Usage"
+msgstr "Lemezhasználat"
+
+#: src/sysprof/sysprof-greeter.ui:291
+msgid "Record coarse-grained counters about storage throughput"
+msgstr ""
+"A tárolási áteresztőképességre vonatkozó durva szemcsés számlálók rögzítése"
+
+#: src/sysprof/sysprof-greeter.ui:303
+#| msgid "Memory Usage"
+msgid "Network Usage"
+msgstr "Hálózathasználat"
+
+#: src/sysprof/sysprof-greeter.ui:304
+msgid "Record coarse-grained counters about network traffic"
+msgstr "A hálózati forgalomra vonatkozó durva szemcsés számlálók rögzítése"
+
+#: src/sysprof/sysprof-greeter.ui:320
+msgid "Energy Usage"
+msgstr "Energiahasználat"
+
+#: src/sysprof/sysprof-greeter.ui:321
+msgid "Record coarse-grained counters about energy usage in Watts"
+msgstr ""
+"A Wattban mért energiahasználatra vonatkozó durva szemcsés számlálók rögzítése"
+
+#: src/sysprof/sysprof-greeter.ui:333
+msgid "Battery Charge"
+msgstr "Akkumulátortöltöttség"
+
+#: src/sysprof/sysprof-greeter.ui:334
+msgid "Record coarse-grained counters about battery charge or discharge rates"
+msgstr ""
+"Az akkumulátortöltési és -kisülési sebességre vonatkozó durva szemcsés"
+" számlálók rögzítése"
+
+#: src/sysprof/sysprof-greeter.ui:352 src/sysprof/sysprof-greeter.ui:357
+#: src/sysprof/sysprof-window.ui:262
+msgid "D-Bus"
+msgstr "D-Bus"
+
+#: src/sysprof/sysprof-greeter.ui:361
+#| msgid "Recording at %s"
+msgid "Record System Bus"
+msgstr "Rendszerbusz rögzítése"
+
+#: src/sysprof/sysprof-greeter.ui:362
+msgid "Record messages on the D-Bus system bus"
+msgstr "A D-Bus rendszerbuszon lévő üzenetek rögzítése"
+
+#: src/sysprof/sysprof-greeter.ui:378
+#| msgid "Recording at %s"
+msgid "Record Session Bus"
+msgstr "Munkamenetbusz rögzítése"
+
+#: src/sysprof/sysprof-greeter.ui:379
+msgid "Record messages on the D-Bus user session bus"
+msgstr "A D-Bus felhasználói munkamenetbuszon lévő üzenetek rögzítése"
+
+#: src/sysprof/sysprof-greeter.ui:390
+msgid ""
+"The session bus may contain sensitive information such as keyboard usage and "
+"passwords."
+msgstr ""
+"A munkamenetbusz érzékeny információkat, például billentyűzethasználatot és"
+" jelszavakat tartalmazhat."
+
+#: src/sysprof/sysprof-greeter.ui:413
+msgid "Timings"
+msgstr "Időzítések"
+
+#: src/sysprof/sysprof-greeter.ui:417
+msgid "Compositor Frame Timings"
+msgstr "Kompozitáló képkocka időzítések"
+
+#: src/sysprof/sysprof-greeter.ui:418
+msgid "Record frame-timing information from the GNOME Shell compositor"
+msgstr "Képkocka-időzítési információk rögzítése a GNOME Shell kompozitálóból"
+
+#: src/sysprof/sysprof-greeter.ui:429
+msgid ""
+"Applications launched by Sysprof will automatically collect GTK frame timing "
+"information."
+msgstr ""
+"A Sysprof által indított alkalmazások automatikusan összegyűjtik a"
+" GTK-képkocka időzítési információit."
+
+#: src/sysprof/sysprof-greeter.ui:469
+msgid "Devices"
+msgstr "Eszközök"
+
+#: src/sysprof/sysprof-greeter.ui:473
+msgid "Include GPU Information"
+msgstr "GPU-információk felvétele"
+
+#: src/sysprof/sysprof-greeter.ui:474
+msgid "Records information about graphics hardware and drivers"
+msgstr "Információkat rögzít a grafikus hardverről és illesztőprogramról"
+
+#: src/sysprof/sysprof-greeter.ui:492
+msgid "System"
+msgstr "Rendszer"
+
+#: src/sysprof/sysprof-greeter.ui:497
+#| msgid "Profiler"
+msgid "Power Profile"
+msgstr "Energiagazdálkodási profil"
+
+#: src/sysprof/sysprof-greeter.ui:500
+msgid "Record with Power Profile"
+msgstr "Rögzítés energiagazdálkodási profillal"
+
+#: src/sysprof/sysprof-greeter.ui:501
+msgid "Switch to power profile while recording"
+msgstr "Váltás az energiagazdálkodási profilra rögzítés közben"
+
+#: src/sysprof/sysprof-greeter.ui:511
+msgid "Details"
+msgstr "Részletek"
+
+#: src/sysprof/sysprof-greeter.ui:515
+msgid "Record System Log"
+msgstr "Rendszernapló rögzítése"
+
+#: src/sysprof/sysprof-greeter.ui:516
+msgid "Watch the system log for new messages and record them"
+msgstr "Új üzenetek megfigyelése a rendszernaplóban és azok rögzítése"
+
+#: src/sysprof/sysprof-greeter.ui:532
+msgid "Include Hardware Information"
+msgstr "Hardverinformációk felvétele"
+
+#: src/sysprof/sysprof-greeter.ui:533
+msgid "Records information about PCI and USB devices"
+msgstr "Információkat rögzít a PCI és USB-eszközökről"
+
+#: src/sysprof/sysprof-greeter.ui:546
+msgid "Symbols"
+msgstr "Szimbólumok"
+
+#: src/sysprof/sysprof-greeter.ui:550
+msgid "Bundle Symbols"
+msgstr "Szimbólumok csomagolása"
+
+#: src/sysprof/sysprof-greeter.ui:551
+msgid "Make recording shareable by symbolizing stack traces after recording"
+msgstr ""
+"A rögzítés megoszthatóvá tétele a veremkiíratás szimbolizálásával a rögzítés"
+" után"
+
+#: src/sysprof/sysprof-greeter.ui:584
+#| msgid "Open Capture…"
+msgid "_Open File…"
+msgstr "Fájl _megnyitása…"
+
+#: src/sysprof/sysprof-greeter.ui:591
+#| msgid "Recording…"
+msgid "Record to _File…"
+msgstr "Rögzítés _fájlba…"
+
+#: src/sysprof/sysprof-greeter.ui:598
+msgid "Record to _Memory"
+msgstr "Rögzítés a _memóriába"
+
+#: src/sysprof/sysprof-greeter.ui:613 src/sysprof/sysprof-window.ui:373
+msgid "Help"
+msgstr "Súgó"
+
+#: src/sysprof/sysprof-greeter.ui:618 src/sysprof/sysprof-window.ui:378
+msgid "About Sysprof"
+msgstr "A Sysprof névjegye"
+
+#: src/sysprof/sysprof-logs-section.c:95
+msgid "Critical"
+msgstr "Kritikus"
+
+#: src/sysprof/sysprof-logs-section.c:98
+msgid "Warning"
+msgstr "Figyelmeztetés"
+
+#: src/sysprof/sysprof-logs-section.c:101
+msgid "Debug"
+msgstr "Hibakeresés"
+
+#: src/sysprof/sysprof-logs-section.c:107
+msgid "Info"
+msgstr "Információ"
+
+#: src/sysprof/sysprof-logs-section.c:110
+msgid "Error"
+msgstr "Hiba"
+
+#: src/sysprof/sysprof-logs-section.ui:4 src/sysprof/sysprof-logs-section.ui:30
+msgid "Logs"
+msgstr "Naplók"
+
+#: src/sysprof/sysprof-logs-section.ui:215
+msgid "Severity"
+msgstr "Súlyosság"
+
+#: src/sysprof/sysprof-logs-section.ui:251
+msgid "Domain"
+msgstr "Tartomány"
+
+#: src/sysprof/sysprof-marks-section.ui:4
+msgid "Marks"
+msgstr "Jelek"
+
+#: src/sysprof/sysprof-marks-section.ui:78
+msgid "Mark Chart"
+msgstr "Jelgrafikon"
+
+#: src/sysprof/sysprof-marks-section.ui:91
+msgid "Mark Table"
+msgstr "Jeltáblázat"
+
+#: src/sysprof/sysprof-marks-section.ui:104
+msgid "Mark Waterfall"
+msgstr "Jelvízesés"
+
+#: src/sysprof/sysprof-marks-section.ui:206
+msgid "Summary"
+msgstr "Összefoglaló"
+
+#: src/sysprof/sysprof-marks-section.ui:311
+msgid "Minimum"
+msgstr "Legkisebb"
+
+#: src/sysprof/sysprof-marks-section.ui:345
+msgid "Maximum"
+msgstr "Legnagyobb"
+
+#: src/sysprof/sysprof-marks-section.ui:379
+msgid "Average"
+msgstr "Átlag"
+
+#: src/sysprof/sysprof-marks-section.ui:413
+msgid "Median"
+msgstr "Medián"
+
+#: src/sysprof/sysprof-mark-table.ui:47
+msgid "Start"
+msgstr "Kezdés"
+
+#: src/sysprof/sysprof-mark-table.ui:81
+#: src/sysprof/sysprof-processes-section.ui:248
+msgid "Duration"
+msgstr "Időtartam"
+
+#: src/sysprof/sysprof-mark-table.ui:151
+#| msgid "Processes"
+msgid "Process"
+msgstr "Folyamat"
+
+#: src/sysprof/sysprof-mark-table.ui:186
+msgid "Group"
+msgstr "Csoport"
+
+#: src/sysprof/sysprof-mark-table.ui:256
+#| msgid "Duration"
+msgid "Description"
+msgstr "Leírás"
+
+#: src/sysprof/sysprof-memory-callgraph-view.ui:8
+#: src/sysprof/sysprof-memory-callgraph-view.ui:105
+#: src/sysprof/sysprof-memory-callgraph-view.ui:172
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:8
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:105
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:172
+msgid "Self"
+msgstr "Önmaga"
+
+#: src/sysprof/sysprof-memory-callgraph-view.ui:38
+#: src/sysprof/sysprof-memory-callgraph-view.ui:135
+#: src/sysprof/sysprof-memory-callgraph-view.ui:202
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:38
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:135
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:202
+msgid "Total"
+msgstr "Összesen"
+
+#: src/sysprof/sysprof-memory-section.ui:4
+msgid "Memory Allocations"
+msgstr "Memóriafoglalások"
+
+#: src/sysprof/sysprof-memory-section.ui:29
+#: src/sysprof/sysprof-samples-section.ui:29
+msgid "Stack Traces"
+msgstr "Veremkiíratások"
+
+#: src/sysprof/sysprof-memory-section.ui:88
+#| msgid "All Allocations"
+msgid "Allocations"
+msgstr "Lefoglalások"
+
+#: src/sysprof/sysprof-memory-section.ui:144
+msgid "Leaks"
+msgstr "Szivárgások"
+
+#: src/sysprof/sysprof-memory-section.ui:212
+#: src/sysprof/sysprof-samples-section.ui:207
+#: src/sysprof/sysprof-traceables-utility.ui:162
+#| msgid "Stack Traces"
+msgid "Stack Trace"
+msgstr "Veremkiíratás"
+
+#: src/sysprof/sysprof-metadata-section.ui:4
+msgid "Metadata"
+msgstr "Metaadatok"
+
+#: src/sysprof/sysprof-metadata-section.ui:71
+msgid "Key"
+msgstr "Kulcs"
+
+#: src/sysprof/sysprof-process-dialog.ui:35
+msgid "Address Layout"
+msgstr "Címkiosztás"
+
+#: src/sysprof/sysprof-process-dialog.ui:97
+msgid "Start Address"
+msgstr "Kezdőcím"
+
+#: src/sysprof/sysprof-process-dialog.ui:137
+msgid "End Address"
+msgstr "Zárócím"
+
+#: src/sysprof/sysprof-process-dialog.ui:219
+#| msgid "Counters"
+msgid "Mounts"
+msgstr "Csatolások"
+
+#: src/sysprof/sysprof-process-dialog.ui:282
+msgid "Parent"
+msgstr "Szülő"
+
+#: src/sysprof/sysprof-process-dialog.ui:316
+msgid "Major"
+msgstr "Elsődleges"
+
+#: src/sysprof/sysprof-process-dialog.ui:350
+msgid "Minor"
+msgstr "Másodlagos"
+
+#: src/sysprof/sysprof-process-dialog.ui:384
+msgid "Mount Point"
+msgstr "Csatolási pont"
+
+#: src/sysprof/sysprof-process-dialog.ui:418
+msgid "Mount Source"
+msgstr "Csatolás forrása"
+
+#: src/sysprof/sysprof-process-dialog.ui:452
+msgid "Root"
+msgstr "Gyökér"
+
+#: src/sysprof/sysprof-process-dialog.ui:486
+#| msgctxt "shortcut window"
+#| msgid "Files"
+msgid "Filesystem"
+msgstr "Fájlrendszer"
+
+#: src/sysprof/sysprof-process-dialog.ui:520
+#| msgid "Functions"
+msgid "Options"
+msgstr "Beállítások"
+
+#: src/sysprof/sysprof-process-dialog.ui:562
+#| msgid "Reads"
+msgid "Threads"
+msgstr "Szálak"
+
+#: src/sysprof/sysprof-process-dialog.ui:591
+msgid "Thread ID"
+msgstr "Szálazonosító"
+
+#: src/sysprof/sysprof-process-dialog.ui:625
+#| msgid "Main Menu"
+msgid "Main Thread"
+msgstr "Fő szál"
+
+#: src/sysprof/sysprof-processes-section.ui:4
+msgid "Processes"
+msgstr "Folyamatok"
+
+#: src/sysprof/sysprof-processes-section.ui:73
+#| msgid "Processes"
+msgid "Process Chart"
+msgstr "Folyamatgrafikon"
+
+#: src/sysprof/sysprof-processes-section.ui:173
+#| msgid "Processes"
+msgid "Process Table"
+msgstr "Folyamattáblázat"
+
+#. translators: this expands to the number of events recorded by the profiler as an indicator of progress
+#: src/sysprof/sysprof-recording-pad.c:56
+msgid "%"
+msgstr "%"
+
+#: src/sysprof/sysprof-recording-pad.c:111
+msgid "Recording Failed"
+msgstr "Felvétel sikertelen"
+
+#: src/sysprof/sysprof-recording-pad.c:113
+#, c-format
+#| msgid "Sysprof failed to parse offset for “%s”."
+msgid ""
+"Sysprof failed to record.\n"
+"\n"
+"%s"
+msgstr ""
+"A Sysprof nem tudott rögzíteni.\n"
+"\n"
+"%s"
+
+#: src/sysprof/sysprof-recording-pad.ui:69
+#| msgid "_Stop Recording"
+msgid "Stop Recording"
+msgstr "Rögzítés leállítása"
+
+#: src/sysprof/sysprof-samples-section.ui:4
+#| msgid "Profiler"
+msgid "Time Profiler"
+msgstr "Időprofilozó"
+
+#: src/sysprof/sysprof-samples-section.ui:89 src/sysprof/sysprof-window.ui:385
+msgid "Callgraph"
+msgstr "Hívási gráf"
+
+#: src/sysprof/sysprof-samples-section.ui:172 src/sysprof/sysprof-window.ui:416
+#| msgid "Callgraph"
+msgid "Flamegraph"
+msgstr "Lánggráf"
+
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:130
+msgid "Seek Backward"
+msgstr "Tekerés vissza"
+
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:140
+#| msgctxt "shortcut window"
+#| msgid "Zoom out"
+msgid "Zoom Out"
+msgstr "Kicsinyítés"
+
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:150
+#| msgctxt "shortcut window"
+#| msgid "Reset zoom"
+msgid "Reset Zoom"
+msgstr "Nagyítás visszaállítása"
+
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:160
+#| msgctxt "shortcut window"
+#| msgid "Zoom in"
+msgid "Zoom In"
+msgstr "Nagyítás"
+
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:170
+msgid "Seek Forward"
+msgstr "Tekerés előre"
+
+#: src/sysprof/sysprof-traceables-utility.ui:109
+msgid "Depth"
+msgstr "Mélység"
+
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:68
+msgid "Hits"
+msgstr "Találatok"
+
+#: src/sysprof/sysprof-window.c:171
+#| msgctxt "shortcut window"
+#| msgid "Open recording"
+msgid "Open Recording"
+msgstr "Rögzítés megnyitása"
+
+#: src/sysprof/sysprof-window.c:172
+msgid "Open"
+msgstr "Megnyitás"
+
+#: src/sysprof/sysprof-window.c:176
+#| msgid "Sysprof Captures"
+msgid "Sysprof Capture (*.syscap)"
+msgstr "Sysprof-rögzítés (*.syscap)"
+
+#: src/sysprof/sysprof-window.c:468
+msgid "Save to File"
+msgstr "Mentés fájlba"
+
+#: src/sysprof/sysprof-window.c:469
+msgid "Save"
+msgstr "Mentés"
+
+#: src/sysprof/sysprof-window.c:638
+msgid "Loading..."
+msgstr "Betöltés…"
+
+#: src/sysprof/sysprof-window.c:714
+msgid "Invalid Document"
+msgstr "Érvénytelen dokumentum"
+
+#: src/sysprof/sysprof-window.c:716
+#, c-format
+msgid ""
+"The document could not be loaded. Please check that you have the correct "
+"capture file.\n"
+"\n"
+"%s"
+msgstr ""
+"A dokumentumot nem sikerült betölteni. Ellenőrizze, hogy a megfelelő"
+" rögzítési fájllal rendelkezik-e.\n"
+"\n"
+"%s"
+
+#: src/sysprof/sysprof-window.ui:120
+msgid "Toggle Left Panel"
+msgstr "Bal panel be- és kikapcsolása"
+
+#: src/sysprof/sysprof-window.ui:184
+msgid "Main Menu"
+msgstr "Főmenü"
+
+#: src/sysprof/sysprof-window.ui:191
+msgid "View Options"
+msgstr "Nézetbeállítások"
+
+#: src/sysprof/sysprof-window.ui:197
+msgid "Toggle Right Panel"
+msgstr "Jobb panel be- és kikapcsolása"
+
+#: src/sysprof/sysprof-window.ui:282
+#| msgid "Energy Usage"
+msgid "Energy"
+msgstr "Energia"
+
+#: src/sysprof/sysprof-window.ui:302
+msgid "Network"
+msgstr "Hálózat"
+
+#: src/sysprof/sysprof-window.ui:312
+msgid "Storage"
+msgstr "Tároló"
+
+#: src/sysprof/sysprof-window.ui:359
+#| msgid "Record Again"
+msgid "_Record Again…"
+msgstr "_Rögzítés újra…"
+
+#: src/sysprof/sysprof-window.ui:363
+msgid "Open Recording…"
+msgstr "Felvétel megnyitása…"
+
+#: src/sysprof/sysprof-window.ui:367
+msgid "Save As…"
+msgstr "Mentés másként…"
+
+#: src/sysprof/sysprof-window.ui:387
+msgid "Categorize Frames"
+msgstr "Képkockák kategorizálása"
+
+#: src/sysprof/sysprof-window.ui:391
+msgid "Hide System Libraries"
+msgstr "Rendszer-programkönyvtárak elrejtése"
+
+#: src/sysprof/sysprof-window.ui:395
+msgid "Include Threads"
+msgstr "Szálak felvétele"
+
+#: src/sysprof/sysprof-window.ui:399
+msgid "Bottom Up"
+msgstr "Lentről fel"
+
+#: src/sysprof/sysprof-window.ui:403
+#| msgid "Search Processes"
+msgid "Ignore Kernel Processes"
+msgstr "Rendszermagfolyamatok mellőzése"
+
+#: src/sysprof/sysprof-window.ui:407
+msgid "Ignore Process 0"
+msgstr "0. folyamat mellőzése"
+
+#: src/sysprof/sysprof-window.ui:411
+#| msgid "Search Processes"
+msgid "Merge Similar Processes"
+msgstr "Hasonló folyamatok összefésülése"
+
+#: src/sysprof/sysprof-window.ui:418
+msgid "Left Heavy"
+msgstr "Bal nehéz"

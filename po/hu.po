@@ -9,16 +9,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-03-04 16:24+0000\n"
-"PO-Revision-Date: 2023-03-07 02:37+0100\n"
+"POT-Creation-Date: 2023-09-11 07:59+0000\n"
+"PO-Revision-Date: 2023-09-11 23:25+0200\n"
 "Last-Translator: Balázs Úr <ur.balazs at fsf dot hu>\n"
-"Language-Team: Hungarian <gnome-hu-list at gnome dot org>\n"
+"Language-Team: Hungarian <openscope at fsf dot hu>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 22.08.2\n"
+"X-Generator: Lokalize 23.04.3\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:5
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:197
@@ -308,34 +308,34 @@ msgstr "Írások"
 
 #: src/libsysprof-ui/sysprof-display.c:228
 msgid "Recording Failed"
-msgstr "Felvétel sikertelen"
+msgstr "A rögzítés sikertelen"
 
 #: src/libsysprof-ui/sysprof-display.c:233
 msgid "Recording…"
-msgstr "Felvétel…"
+msgstr "Rögzítés…"
 
 #. translators: %s is replaced with locale specific time of recording
 #: src/libsysprof-ui/sysprof-display.c:264
 #, c-format
 msgid "Recording at %s"
-msgstr "Felvétel ekkor: %s"
+msgstr "Rögzítés ekkor: %s"
 
 #: src/libsysprof-ui/sysprof-display.c:268
 msgid "New Recording"
-msgstr "Új felvétel"
+msgstr "Új rögzítés"
 
 #: src/libsysprof-ui/sysprof-display.c:1099
 msgid "The recording could not be opened"
-msgstr "A felvételt nem sikerült megnyitni"
+msgstr "A rögzítést nem sikerült megnyitni"
 
 #: src/libsysprof-ui/sysprof-display.c:1246
 #, c-format
 msgid "Failed to save recording: %s"
-msgstr "A felvétel mentése sikertelen: %s"
+msgstr "A rögzítés mentése sikertelen: %s"
 
 #: src/libsysprof-ui/sysprof-display.c:1279
 msgid "Save Recording"
-msgstr "Felvétel mentése"
+msgstr "Rögzítés mentése"
 
 #: src/libsysprof-ui/sysprof-display.c:1282
 msgid "Save"
@@ -359,16 +359,16 @@ msgstr "Környezeti változó eltávolítása"
 msgid "New environment variable…"
 msgstr "Új környezeti változó…"
 
-#: src/libsysprof-ui/sysprof-failed-state-view.ui:27
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:25
 msgid "Ouch, that hurt!"
 msgstr "Jaj, ez fájt!"
 
-#: src/libsysprof-ui/sysprof-failed-state-view.ui:40
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:37
 msgid "Something unexpectedly went wrong while trying to profile your system."
 msgstr "Valami váratlan hiba történt a rendszer profilozási kísérlete során."
 
 #: src/libsysprof-ui/sysprof-log-model.c:210
-#: src/libsysprof-ui/sysprof-logs-page.ui:58
+#: src/libsysprof-ui/sysprof-logs-page.ui:56
 #: src/libsysprof-ui/sysprof-marks-page.ui:103
 msgid "Message"
 msgstr "Üzenet"
@@ -400,16 +400,16 @@ msgstr "Figyelmeztetés"
 msgid "Logs"
 msgstr "Naplók"
 
-#: src/libsysprof-ui/sysprof-logs-page.ui:15
+#: src/libsysprof-ui/sysprof-logs-page.ui:13
 #: src/libsysprof-ui/sysprof-marks-page.ui:64
 msgid "Time"
 msgstr "Idő"
 
-#: src/libsysprof-ui/sysprof-logs-page.ui:29
+#: src/libsysprof-ui/sysprof-logs-page.ui:27
 msgid "Severity"
 msgstr "Súlyosság"
 
-#: src/libsysprof-ui/sysprof-logs-page.ui:44
+#: src/libsysprof-ui/sysprof-logs-page.ui:42
 msgid "Domain"
 msgstr "Tartomány"
 
@@ -525,7 +525,6 @@ msgid "GJS"
 msgstr "GJS"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:46
-#| msgid "Launch Application"
 msgid "Application"
 msgstr "Alkalmazás"
 
@@ -596,7 +595,7 @@ msgstr ""
 "frekvenciáját."
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:172
-#: src/libsysprof-ui/sysprof-visualizers-frame.ui:27
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:26
 msgid "Instruments"
 msgstr "Műszerek"
 
@@ -613,7 +612,7 @@ msgstr "Lassú műveletek követése az alkalmazás fő ciklusában"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:265
 msgid "_Record"
-msgstr "_Felvétel"
+msgstr "_Rögzítés"
 
 #: src/libsysprof-ui/sysprof-rapl-aid.c:175
 #: src/libsysprof-ui/sysprof-rapl-aid.c:248
@@ -624,23 +623,23 @@ msgstr "Energiahasználat"
 msgid "Energy Usage (All)"
 msgstr "Energiahasználat (összes)"
 
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:35
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:32
 msgid ""
 "Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
 msgstr ""
 "Tudta, hogy használhatja a <a href=\"help:sysprof\">sysprof-cli</a> "
 "programot is a rögzítéshez?"
 
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:50
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:45
 msgid "Events"
 msgstr "Események"
 
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:76
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:68
 msgid "_Stop Recording"
-msgstr "Felvétel _leállítása"
+msgstr "Rögzítés _leállítása"
 
 #: src/libsysprof-ui/sysprof-visualizer-group-header.c:192
-#: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:40
 msgid "Select for more details"
 msgstr "További részletekért válassza ki"
 
@@ -680,42 +679,42 @@ msgstr "Fájlok"
 #: src/sysprof/gtk/help-overlay.ui:13
 msgctxt "shortcut window"
 msgid "Save Recording"
-msgstr "Felvétel mentése"
+msgstr "Rögzítés mentése"
 
 #: src/sysprof/gtk/help-overlay.ui:14
 msgctxt "shortcut window"
 msgid "Saves the current recording"
-msgstr "Elmenti a jelenlegi felvételt"
+msgstr "Elmenti a jelenlegi rögzítést"
 
 #: src/sysprof/gtk/help-overlay.ui:20
 msgctxt "shortcut window"
 msgid "Open recording"
-msgstr "Felvétel megnyitása"
+msgstr "Rögzítés megnyitása"
 
 #: src/sysprof/gtk/help-overlay.ui:21
 msgctxt "shortcut window"
 msgid "Opens a previously saved recording"
-msgstr "Megnyitja az előzőleg mentett felvételt"
+msgstr "Megnyitja az előzőleg mentett rögzítést"
 
 #: src/sysprof/gtk/help-overlay.ui:29
 msgctxt "shortcut window"
 msgid "Recording"
-msgstr "Felvétel"
+msgstr "Rögzítés"
 
 #: src/sysprof/gtk/help-overlay.ui:32
 msgctxt "shortcut window"
 msgid "Record again"
-msgstr "Felvétel ismét"
+msgstr "Rögzítés ismét"
 
 #: src/sysprof/gtk/help-overlay.ui:33
 msgctxt "shortcut window"
 msgid "Starts a new recording"
-msgstr "Új felvételt indít"
+msgstr "Új rögzítést indít"
 
 #: src/sysprof/gtk/help-overlay.ui:39
 msgctxt "shortcut window"
 msgid "Stop recording"
-msgstr "Felvétel leállítása"
+msgstr "Rögzítés leállítása"
 
 #: src/sysprof/gtk/help-overlay.ui:47
 msgctxt "shortcut window"
@@ -779,19 +778,16 @@ msgid "General"
 msgstr "Általános"
 
 #: src/sysprof/gtk/help-overlay.ui:99
-#| msgid "Help"
 msgctxt "shortcut window"
 msgid "Show Help"
 msgstr "Súgó megjelenítése"
 
 #: src/sysprof/gtk/help-overlay.ui:105
-#| msgid "Keyboard Shortcuts"
 msgctxt "shortcut window"
 msgid "Keyboard Shortcuts"
 msgstr "Gyorsbillentyűk"
 
 #: src/sysprof/gtk/help-overlay.ui:111
-#| msgid "New Tab"
 msgctxt "shortcut window"
 msgid "New Tab"
 msgstr "Új lap"
@@ -802,13 +798,11 @@ msgid "Switch Tab"
 msgstr "Lap átváltása"
 
 #: src/sysprof/gtk/help-overlay.ui:123
-#| msgid "New Window"
 msgctxt "shortcut window"
 msgid "New Window"
 msgstr "Új ablak"
 
 #: src/sysprof/gtk/help-overlay.ui:129
-#| msgid "New Window"
 msgctxt "shortcut window"
 msgid "Close Window"
 msgstr "Ablak bezárása"
@@ -828,15 +822,15 @@ msgstr "Új ablak"
 
 #: src/sysprof/gtk/menus.ui:16
 msgid "Open Recording…"
-msgstr "Felvétel megnyitása…"
+msgstr "Rögzítés megnyitása…"
 
 #: src/sysprof/gtk/menus.ui:20
 msgid "Save Recording…"
-msgstr "Felvétel mentése…"
+msgstr "Rögzítés mentése…"
 
 #: src/sysprof/gtk/menus.ui:26
 msgid "Record Again"
-msgstr "Felvétel ismét"
+msgstr "Rögzítés ismét"
 
 #: src/sysprof/gtk/menus.ui:32
 msgid "Close"
@@ -860,7 +854,9 @@ msgstr "Rendszerprofilozó"
 
 #: src/sysprof/sysprof-application.c:207
 msgid "translator-credits"
-msgstr "Meskó Balázs <mesko dot balazs at fsf dot hu>"
+msgstr ""
+"Meskó Balázs <mesko dot balazs at fsf dot hu>\n"
+"Úr Balázs <ur dot balazs at fsf dot hu>"
 
 #. Translators: This is a window title.
 #: src/sysprof/sysprof-window.c:279
@@ -880,17 +876,17 @@ msgstr "Sysprof rögzítések"
 msgid "All Files"
 msgstr "Összes fájl"
 
-#: src/sysprof/sysprof-window.ui:20
+#: src/sysprof/sysprof-window.ui:19
 msgid "Main Menu"
 msgstr "Főmenü"
 
-#: src/sysprof/sysprof-window.ui:36
+#: src/sysprof/sysprof-window.ui:29
 msgid "_Open"
 msgstr "_Megnyitás"
 
-#: src/sysprof/sysprof-window.ui:39
+#: src/sysprof/sysprof-window.ui:32
 msgid "Open Recording… (Ctrl+O)"
-msgstr "Felvétel megnyitása… (Ctrl+O)"
+msgstr "Rögzítés megnyitása… (Ctrl+O)"
 
 #: src/tools/sysprof-cli.c:63
 msgid "Stopping profiler. Press twice more ^C to force exit."
@@ -945,7 +941,7 @@ msgstr "Az akkumulátorstatisztika rögzítésének letiltása"
 
 #: src/tools/sysprof-cli.c:233
 msgid "Disable recording of CPU statistics"
-msgstr "A CPU statisztikák rögzítésének letiltása"
+msgstr "A processzorstatisztikák rögzítésének letiltása"
 
 #: src/tools/sysprof-cli.c:234
 msgid "Disable recording of Disk statistics"

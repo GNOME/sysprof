@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-08-21 22:55+0000\n"
-"PO-Revision-Date: 2023-08-22 13:44+0200\n"
+"POT-Creation-Date: 2023-09-06 20:22+0000\n"
+"PO-Revision-Date: 2023-09-11 11:00+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
 "Language: es_ES\n"
@@ -21,7 +21,7 @@ msgstr ""
 #: data/org.gnome.Sysprof.appdata.xml.in.in:5
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
 #: src/sysprof/sysprof-application.c:208
-#: src/sysprof/sysprof-recording-pad.ui:18 src/sysprof/sysprof-window.c:240
+#: src/sysprof/sysprof-recording-pad.ui:18 src/sysprof/sysprof-window.c:243
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -49,88 +49,88 @@ msgstr "Perfilador"
 msgid "Profile an application or entire system."
 msgstr "Perfilar una aplicación o el sistema completo."
 
-#: src/libsysprof/sysprof-category-summary.c:138
+#: src/libsysprof/sysprof-category-summary.c:136
 msgid "Uncategorized"
 msgstr "Sin categorizar"
 
-#: src/libsysprof/sysprof-category-summary.c:141
+#: src/libsysprof/sysprof-category-summary.c:139
 msgid "Accessibility"
 msgstr "Accesibilidad"
 
-#: src/libsysprof/sysprof-category-summary.c:144
+#: src/libsysprof/sysprof-category-summary.c:142
 msgid "Actions"
 msgstr "Acciones"
 
-#: src/libsysprof/sysprof-category-summary.c:147
+#: src/libsysprof/sysprof-category-summary.c:145
 msgid "Crash Handler"
 msgstr "Gestor de errores fatales"
 
-#: src/libsysprof/sysprof-category-summary.c:150
+#: src/libsysprof/sysprof-category-summary.c:148
 msgid "Context Switches"
 msgstr "Cambios de contexto"
 
-#: src/libsysprof/sysprof-category-summary.c:153
+#: src/libsysprof/sysprof-category-summary.c:151
 msgid "CSS"
 msgstr "CSS"
 
-#: src/libsysprof/sysprof-category-summary.c:156
-#: src/sysprof/sysprof-greeter.ui:413 src/sysprof/sysprof-window.ui:260
+#: src/libsysprof/sysprof-category-summary.c:154
+#: src/sysprof/sysprof-greeter.ui:408 src/sysprof/sysprof-window.ui:292
 msgid "Graphics"
 msgstr "Gráficos"
 
-#: src/libsysprof/sysprof-category-summary.c:159
+#: src/libsysprof/sysprof-category-summary.c:157
 msgid "Icons"
 msgstr "Iconos"
 
-#: src/libsysprof/sysprof-category-summary.c:162
+#: src/libsysprof/sysprof-category-summary.c:160
 msgid "Input"
 msgstr "Entrada"
 
-#: src/libsysprof/sysprof-category-summary.c:165
+#: src/libsysprof/sysprof-category-summary.c:163
 msgid "IO"
 msgstr "E/S"
 
-#: src/libsysprof/sysprof-category-summary.c:168
+#: src/libsysprof/sysprof-category-summary.c:166
 msgid "IPC"
 msgstr "IPC"
 
-#: src/libsysprof/sysprof-category-summary.c:171
+#: src/libsysprof/sysprof-category-summary.c:169
 msgid "JavaScript"
 msgstr "JavaScript"
 
-#: src/libsysprof/sysprof-category-summary.c:174
+#: src/libsysprof/sysprof-category-summary.c:172
 msgid "Kernel"
 msgstr "Núcleo"
 
-#: src/libsysprof/sysprof-category-summary.c:177
+#: src/libsysprof/sysprof-category-summary.c:175
 msgid "Layout"
 msgstr "Distribución"
 
-#: src/libsysprof/sysprof-category-summary.c:180
+#: src/libsysprof/sysprof-category-summary.c:178
 msgid "Locking"
 msgstr "Bloqueo"
 
-#: src/libsysprof/sysprof-category-summary.c:183
+#: src/libsysprof/sysprof-category-summary.c:181
 msgid "Main Loop"
 msgstr "Bucle principal"
 
-#: src/libsysprof/sysprof-category-summary.c:186
+#: src/libsysprof/sysprof-category-summary.c:184
 msgid "Memory"
 msgstr "Memoria"
 
-#: src/libsysprof/sysprof-category-summary.c:189
+#: src/libsysprof/sysprof-category-summary.c:187
 msgid "Paint"
 msgstr "Pintar"
 
-#: src/libsysprof/sysprof-category-summary.c:192
+#: src/libsysprof/sysprof-category-summary.c:190
 msgid "Type System"
 msgstr "Tipo de sistema"
 
-#: src/libsysprof/sysprof-category-summary.c:195
+#: src/libsysprof/sysprof-category-summary.c:193
 msgid "Unwindable"
 msgstr "Desenrollable"
 
-#: src/libsysprof/sysprof-category-summary.c:198
+#: src/libsysprof/sysprof-category-summary.c:196
 msgid "Windowing"
 msgstr "Sistema de ventanas"
 
@@ -138,43 +138,47 @@ msgstr "Sistema de ventanas"
 msgid "Allocation"
 msgstr "Asignación"
 
-#: src/libsysprof/sysprof-document.c:1168
-#: src/libsysprof/sysprof-document.c:1204
+#: src/libsysprof/sysprof-document.c:570
+msgid "Unknown Process"
+msgstr "Proceso desconocido"
+
+#: src/libsysprof/sysprof-document.c:1251
+#: src/libsysprof/sysprof-document.c:1287
 msgid "Indexing capture data frames"
 msgstr "Indexando marcos de captura de datos"
 
-#: src/libsysprof/sysprof-document.c:1390
+#: src/libsysprof/sysprof-document.c:1473
 msgid "Discovering file system mounts"
 msgstr "Descubriendo montajes de sistemas de archivos"
 
-#: src/libsysprof/sysprof-document.c:1393
+#: src/libsysprof/sysprof-document.c:1476
 msgid "Discovering process mount namespaces"
-msgstr ""
+msgstr "Descubriendo espacios de nombres de montaje de procesos"
 
-#: src/libsysprof/sysprof-document.c:1396
+#: src/libsysprof/sysprof-document.c:1479
 msgid "Analyzing process address layouts"
-msgstr ""
+msgstr "Analizando diseños de distribuciones de procesos"
 
-#: src/libsysprof/sysprof-document.c:1399
+#: src/libsysprof/sysprof-document.c:1482
 msgid "Analyzing process command line"
 msgstr "Analizando procesos de línea de comandos"
 
-#: src/libsysprof/sysprof-document.c:1402
+#: src/libsysprof/sysprof-document.c:1485
 msgid "Analyzing file system overlays"
-msgstr ""
+msgstr "Analizando solapamientos del sistema de archivos"
 
-#: src/libsysprof/sysprof-document.c:1405
+#: src/libsysprof/sysprof-document.c:1488
 msgid "Processing counters"
 msgstr "Procesando contadores"
 
-#: src/libsysprof/sysprof-document.c:2385
-#: src/libsysprof/sysprof-document.c:2401
+#: src/libsysprof/sysprof-document.c:2476
+#: src/libsysprof/sysprof-document.c:2492
 #, c-format
 msgid "Recording at %X %x"
 msgstr "Grabando a las %X %x"
 
-#: src/libsysprof/sysprof-document.c:2387
-#: src/libsysprof/sysprof-document.c:2403
+#: src/libsysprof/sysprof-document.c:2478
+#: src/libsysprof/sysprof-document.c:2494
 #, c-format
 msgid "Recording at %s"
 msgstr "Grabando a las %s"
@@ -212,12 +216,12 @@ msgstr "Registro"
 msgid "Mark"
 msgstr "Marca"
 
-#: src/libsysprof/sysprof-document-process.c:277
+#: src/libsysprof/sysprof-document-process.c:293
 #, c-format
 msgid "%s [Process %d]"
 msgstr "%s [Proceso %d]"
 
-#: src/libsysprof/sysprof-document-process.c:279
+#: src/libsysprof/sysprof-document-process.c:295
 #, c-format
 msgid "Process %d"
 msgstr "Proceso %d"
@@ -243,6 +247,8 @@ msgid ""
 "Tracing requires spawning a program compiled with ‘-finstrument-functions’. "
 "Tracing will not be available."
 msgstr ""
+"El trazado requiere lanzar un proceso compilado con «-finstrument-"
+"functions». El trazado no estará disponible."
 
 #: src/sysprof-cli/sysprof-cli.c:112
 msgid "--merge requires at least 2 filename arguments"
@@ -404,7 +410,7 @@ msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Se han pasado demasiados argumentos a sysprof-cli:"
 
 #. Translators: %s is a file name.
-#: src/sysprof-cli/sysprof-cli.c:450
+#: src/sysprof-cli/sysprof-cli.c:457
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s existe. Use --force para sobrescribir\n"
@@ -458,6 +464,16 @@ msgstr "A_yuda"
 msgid "_About Sysprof"
 msgstr "_Acerca de Sysprof"
 
+#: src/sysprof/sysprof-animation.c:1038
+#, c-format
+msgid "Failed to find property %s in %s"
+msgstr "Falló al buscar la propiedad %s en %s"
+
+#: src/sysprof/sysprof-animation.c:1047
+#, c-format
+msgid "Failed to retrieve va_list value: %s"
+msgstr "Falló al obtener el valor va_list: %s"
+
 #: src/sysprof/sysprof-application.c:37
 msgid "Show Sysprof version and exit"
 msgstr "Mostrar la versión de Sysprof y salir"
@@ -505,7 +521,7 @@ msgid "Counters Table"
 msgstr "Tabla de contadores"
 
 #: src/sysprof/sysprof-cpu-section.ui:378
-#: src/sysprof/sysprof-dbus-section.ui:105
+#: src/sysprof/sysprof-dbus-section.ui:171
 #: src/sysprof/sysprof-energy-section.ui:348
 #: src/sysprof/sysprof-frame-utility.ui:49
 #: src/sysprof/sysprof-graphics-section.ui:259
@@ -521,6 +537,7 @@ msgstr "Hora"
 
 #: src/sysprof/sysprof-cpu-section.ui:412
 #: src/sysprof/sysprof-energy-section.ui:382
+#: src/sysprof/sysprof-flame-graph.c:453
 #: src/sysprof/sysprof-graphics-section.ui:293
 #: src/sysprof/sysprof-marks-section.ui:242
 #: src/sysprof/sysprof-network-section.ui:380
@@ -563,58 +580,62 @@ msgstr "Núcleo"
 msgid "Model Name"
 msgstr "Nombre del modelo"
 
-#: src/sysprof/sysprof-dbus-section.ui:139
+#: src/sysprof/sysprof-dbus-section.ui:205
 msgid "Bus"
 msgstr "Bus"
 
-#: src/sysprof/sysprof-dbus-section.ui:178
+#: src/sysprof/sysprof-dbus-section.ui:244
 msgid "Serial"
 msgstr "Serie"
 
-#: src/sysprof/sysprof-dbus-section.ui:215
+#: src/sysprof/sysprof-dbus-section.ui:281
 msgid "Reply"
 msgstr "Responder"
 
-#: src/sysprof/sysprof-dbus-section.ui:252
+#: src/sysprof/sysprof-dbus-section.ui:318
 msgid "Flags"
 msgstr "Opciones"
 
-#: src/sysprof/sysprof-dbus-section.ui:281
-#: src/sysprof/sysprof-files-section.ui:107
+#: src/sysprof/sysprof-dbus-section.ui:347
+#: src/sysprof/sysprof-files-section.ui:122
 #: src/sysprof/sysprof-memory-callgraph-view.ui:68
 msgid "Size"
 msgstr "Tamaño"
 
-#: src/sysprof/sysprof-dbus-section.ui:317
+#: src/sysprof/sysprof-dbus-section.ui:383
 #: src/sysprof/sysprof-frame-utility.ui:20
 #: src/sysprof/sysprof-mark-table.ui:221
 msgid "Type"
 msgstr "Tipo"
 
-#: src/sysprof/sysprof-dbus-section.ui:346
+#: src/sysprof/sysprof-dbus-section.ui:412
 msgid "Sender"
 msgstr "Remitente"
 
-#: src/sysprof/sysprof-dbus-section.ui:380
+#: src/sysprof/sysprof-dbus-section.ui:446
 msgid "Destination"
 msgstr "Destino"
 
-#: src/sysprof/sysprof-dbus-section.ui:414
-#: src/sysprof/sysprof-files-section.ui:38
+#: src/sysprof/sysprof-dbus-section.ui:480
+#: src/sysprof/sysprof-files-section.ui:53
 msgid "Path"
 msgstr "Ruta"
 
-#: src/sysprof/sysprof-dbus-section.ui:448
+#: src/sysprof/sysprof-dbus-section.ui:514
 msgid "Interface"
 msgstr "Interfaz"
 
-#: src/sysprof/sysprof-dbus-section.ui:482
+#: src/sysprof/sysprof-dbus-section.ui:548
 msgid "Member"
 msgstr "Miembro"
 
-#: src/sysprof/sysprof-dbus-section.ui:516
+#: src/sysprof/sysprof-dbus-section.ui:582
 msgid "Signature"
 msgstr "Firma"
+
+#: src/sysprof/sysprof-dbus-section.ui:626
+msgid "Filter Messages"
+msgstr "Filtrar mensajes"
 
 #: src/sysprof/sysprof-dbus-utility.ui:13
 #: src/sysprof/sysprof-logs-section.c:104
@@ -626,15 +647,24 @@ msgstr "Mensaje"
 msgid "Files"
 msgstr "Archivos"
 
-#: src/sysprof/sysprof-files-section.ui:73
+#: src/sysprof/sysprof-files-section.ui:88
 msgid "Compressed"
 msgstr "Comprimido"
+
+#: src/sysprof/sysprof-files-section.ui:165
+msgid "Filter Files"
+msgstr "Filtrar archivos"
+
+#: src/sysprof/sysprof-flame-graph.c:457
+#: src/sysprof/sysprof-process-dialog.ui:177
+msgid "File"
+msgstr "Archivo"
 
 #: src/sysprof/sysprof-frame-utility.ui:80
 #: src/sysprof/sysprof-logs-section.ui:143
 #: src/sysprof/sysprof-mark-table.ui:116
 #: src/sysprof/sysprof-traceables-utility.ui:81
-#: src/sysprof/sysprof-window.ui:240
+#: src/sysprof/sysprof-window.ui:272
 msgid "CPU"
 msgstr "CPU"
 
@@ -660,7 +690,7 @@ msgid "You must choose a local file to capture using Sysprof"
 msgstr "Debe elegir un arcihvo local para capturar usando Sysprof"
 
 #: src/sysprof/sysprof-greeter.c:267 src/sysprof/sysprof-recording-pad.c:115
-#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:715
+#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:718
 msgid "Close"
 msgstr "Cerrar"
 
@@ -713,7 +743,7 @@ msgstr "Ejemplo de pilas JavaScript"
 msgid "Record JavaScript stack traces using a sampling profiler"
 msgstr "No grabar trazas de la pila usando Linux perf"
 
-#: src/sysprof/sysprof-greeter.ui:103 src/sysprof/sysprof-greeter.ui:131
+#: src/sysprof/sysprof-greeter.ui:103
 msgid ""
 "Sysprof must launch your application to record JavaScript stacks using GJS."
 msgstr ""
@@ -728,138 +758,141 @@ msgstr "Grabar detalles del planificador"
 msgid "Track when processes are scheduled per CPU"
 msgstr "Registrar cuando la CPU planifica los procesos"
 
-#: src/sysprof/sysprof-greeter.ui:144
+#: src/sysprof/sysprof-greeter.ui:133
 msgid "Tracing"
 msgstr "Traza"
 
-#: src/sysprof/sysprof-greeter.ui:148
+#: src/sysprof/sysprof-greeter.ui:137
 msgid "Trace Memory Allocations"
 msgstr "Trazar reservas de memoria"
 
-#: src/sysprof/sysprof-greeter.ui:149
-msgid ""
-"Record a strack trace when <tt>malloc</tt> or similar functions are used"
+#: src/sysprof/sysprof-greeter.ui:138
+msgid "Record a stack trace when <tt>malloc</tt> or similar functions are used"
 msgstr ""
 "Grabar una traza de la pila cuando se usa la función <tt>malloc</tt> o "
 "similares"
 
-#: src/sysprof/sysprof-greeter.ui:160
+#: src/sysprof/sysprof-greeter.ui:149
 msgid "Sysprof must launch your application to record memory allocations."
 msgstr "Sysprof debe lanzar su aplicación para grabar las reservas de memoria."
 
-#: src/sysprof/sysprof-greeter.ui:178 src/sysprof/sysprof-greeter.ui:183
+#: src/sysprof/sysprof-greeter.ui:167 src/sysprof/sysprof-greeter.ui:172
 msgid "Application"
 msgstr "Aplicación"
 
-#: src/sysprof/sysprof-greeter.ui:186
+#: src/sysprof/sysprof-greeter.ui:175
 #: src/sysprof/sysprof-processes-section.ui:316
 msgid "Command Line"
 msgstr "Línea de comandos"
 
-#: src/sysprof/sysprof-greeter.ui:192
+#: src/sysprof/sysprof-greeter.ui:181
+msgid "Working directory"
+msgstr "Carpeta de trabajo"
+
+#: src/sysprof/sysprof-greeter.ui:187
 msgid "The application will be run as a subprocess of Sysprof."
 msgstr "La aplicación se ejecutará como un subproceso de sysprof."
 
-#: src/sysprof/sysprof-greeter.ui:205
+#: src/sysprof/sysprof-greeter.ui:200
 msgid "Environment"
 msgstr "Entorno"
 
-#: src/sysprof/sysprof-greeter.ui:209
+#: src/sysprof/sysprof-greeter.ui:204
 msgid "Clear Environment"
 msgstr "Limpiar entorno"
 
-#: src/sysprof/sysprof-greeter.ui:210
+#: src/sysprof/sysprof-greeter.ui:205
 msgid "Clear the environment before launching application"
 msgstr "Limpiar el entorno antes de lanzar la aplicación"
 
-#: src/sysprof/sysprof-greeter.ui:236
+#: src/sysprof/sysprof-greeter.ui:231
 msgid "Add _Variable"
 msgstr "Añadir _variable"
 
-#: src/sysprof/sysprof-greeter.ui:242
+#: src/sysprof/sysprof-greeter.ui:237
 msgid "Add Variable"
 msgstr "Añadir variable"
 
-#: src/sysprof/sysprof-greeter.ui:243
+#: src/sysprof/sysprof-greeter.ui:238
 msgid "_Add"
 msgstr "_Añadir"
 
-#: src/sysprof/sysprof-greeter.ui:260 src/sysprof/sysprof-greeter.ui:265
+#: src/sysprof/sysprof-greeter.ui:255 src/sysprof/sysprof-greeter.ui:260
 msgid "Counters"
 msgstr "Contadores"
 
-#: src/sysprof/sysprof-greeter.ui:269
+#: src/sysprof/sysprof-greeter.ui:264
 msgid "CPU Usage"
 msgstr "Uso de CPU"
 
-#: src/sysprof/sysprof-greeter.ui:270
+#: src/sysprof/sysprof-greeter.ui:265
 msgid "Record coarse-grained counters about CPU usage and frequency"
 msgstr "Grabar contadores a grosso modo sobre uso y frecuencia de CPU"
 
-#: src/sysprof/sysprof-greeter.ui:282
+#: src/sysprof/sysprof-greeter.ui:277
 msgid "Memory Usage"
 msgstr "Uso de memoria"
 
-#: src/sysprof/sysprof-greeter.ui:283
+#: src/sysprof/sysprof-greeter.ui:278
 msgid "Record coarse-grained counters about system memory usage"
 msgstr "Grabar contadores a grosso modo sobre uso de memoria del sistema"
 
-#: src/sysprof/sysprof-greeter.ui:295
+#: src/sysprof/sysprof-greeter.ui:290
 msgid "Disk Usage"
 msgstr "Uso de disco"
 
-#: src/sysprof/sysprof-greeter.ui:296
+#: src/sysprof/sysprof-greeter.ui:291
 msgid "Record coarse-grained counters about storage throughput"
 msgstr "Grabar contadores a grosso modo sobre el redimiento del almacenamiento"
 
-#: src/sysprof/sysprof-greeter.ui:308
+#: src/sysprof/sysprof-greeter.ui:303
 msgid "Network Usage"
 msgstr "Uso de red"
 
-#: src/sysprof/sysprof-greeter.ui:309
+#: src/sysprof/sysprof-greeter.ui:304
 msgid "Record coarse-grained counters about network traffic"
 msgstr "Grabar contadores a grosso modo sobre el tráfico de la red"
 
-#: src/sysprof/sysprof-greeter.ui:325
+#: src/sysprof/sysprof-greeter.ui:320
 msgid "Energy Usage"
 msgstr "Uso de energía"
 
-#: src/sysprof/sysprof-greeter.ui:326
+#: src/sysprof/sysprof-greeter.ui:321
 msgid "Record coarse-grained counters about energy usage in Watts"
 msgstr "Grabar contadores a grosso modo sobre el consumo de energía, en watios"
 
-#: src/sysprof/sysprof-greeter.ui:338
+#: src/sysprof/sysprof-greeter.ui:333
 msgid "Battery Charge"
 msgstr "Carga de la batería"
 
-#: src/sysprof/sysprof-greeter.ui:339
+#: src/sysprof/sysprof-greeter.ui:334
 msgid "Record coarse-grained counters about battery charge or discharge rates"
 msgstr ""
 "Grabar contadores a grosso modo sobre el la carga de la batería o la tasa de "
 "descarga"
 
-#: src/sysprof/sysprof-greeter.ui:357 src/sysprof/sysprof-greeter.ui:362
-#: src/sysprof/sysprof-window.ui:230
+#: src/sysprof/sysprof-greeter.ui:352 src/sysprof/sysprof-greeter.ui:357
+#: src/sysprof/sysprof-window.ui:262
 msgid "D-Bus"
 msgstr "D-Bus"
 
-#: src/sysprof/sysprof-greeter.ui:366
+#: src/sysprof/sysprof-greeter.ui:361
 msgid "Record System Bus"
 msgstr "Grabar bus del sistema"
 
-#: src/sysprof/sysprof-greeter.ui:367
+#: src/sysprof/sysprof-greeter.ui:362
 msgid "Record messages on the D-Bus system bus"
 msgstr "Grabar mensajes en el bus D-bus del sistema"
 
-#: src/sysprof/sysprof-greeter.ui:383
+#: src/sysprof/sysprof-greeter.ui:378
 msgid "Record Session Bus"
 msgstr "Grabar bus de la sesión"
 
-#: src/sysprof/sysprof-greeter.ui:384
+#: src/sysprof/sysprof-greeter.ui:379
 msgid "Record messages on the D-Bus user session bus"
 msgstr "Grabar mensajes en el bus D-bus de la sesión del usario"
 
-#: src/sysprof/sysprof-greeter.ui:395
+#: src/sysprof/sysprof-greeter.ui:390
 msgid ""
 "The session bus may contain sensitive information such as keyboard usage and "
 "passwords."
@@ -867,101 +900,107 @@ msgstr ""
 "El bus de sesión puede contener información sensible como uso del teclado y "
 "contraseñas."
 
-#: src/sysprof/sysprof-greeter.ui:418
+#: src/sysprof/sysprof-greeter.ui:413
 msgid "Timings"
 msgstr "Tiempos"
 
-#: src/sysprof/sysprof-greeter.ui:422
+#: src/sysprof/sysprof-greeter.ui:417
 msgid "Compositor Frame Timings"
-msgstr ""
+msgstr "Tiempos del compositor de fotogramas"
 
-#: src/sysprof/sysprof-greeter.ui:423
+#: src/sysprof/sysprof-greeter.ui:418
 msgid "Record frame-timing information from the GNOME Shell compositor"
 msgstr ""
+"Grabar información de tiempos de fotogramas desde el compositor de GNOME "
+"Shell"
 
-#: src/sysprof/sysprof-greeter.ui:434
+#: src/sysprof/sysprof-greeter.ui:429
 msgid ""
 "Applications launched by Sysprof will automatically collect GTK frame timing "
 "information."
 msgstr ""
+"Las aplicaciones lanzadas por Sysprof se recolectarán automáticamente en la "
+"información de tiempos de fotogramas de GTK."
 
-#: src/sysprof/sysprof-greeter.ui:474
+#: src/sysprof/sysprof-greeter.ui:469
 msgid "Devices"
 msgstr "Dispositivos"
 
-#: src/sysprof/sysprof-greeter.ui:478
+#: src/sysprof/sysprof-greeter.ui:473
 msgid "Include GPU Information"
 msgstr "Incluir información de GPU"
 
-#: src/sysprof/sysprof-greeter.ui:479
+#: src/sysprof/sysprof-greeter.ui:474
 msgid "Records information about graphics hardware and drivers"
 msgstr "Graba información sobre el hardware y los controladores"
 
-#: src/sysprof/sysprof-greeter.ui:497
+#: src/sysprof/sysprof-greeter.ui:492
 msgid "System"
 msgstr "Sistema"
 
-#: src/sysprof/sysprof-greeter.ui:502
+#: src/sysprof/sysprof-greeter.ui:497
 msgid "Power Profile"
 msgstr "Perfil de energía"
 
-#: src/sysprof/sysprof-greeter.ui:505
+#: src/sysprof/sysprof-greeter.ui:500
 msgid "Record with Power Profile"
 msgstr "Grabar con perfil de energía"
 
-#: src/sysprof/sysprof-greeter.ui:506
+#: src/sysprof/sysprof-greeter.ui:501
 msgid "Switch to power profile while recording"
 msgstr "Cambiar al perfil de energía durante la grabación"
 
-#: src/sysprof/sysprof-greeter.ui:516
+#: src/sysprof/sysprof-greeter.ui:511
 msgid "Details"
 msgstr "Detalles"
 
-#: src/sysprof/sysprof-greeter.ui:520
+#: src/sysprof/sysprof-greeter.ui:515
 msgid "Record System Log"
 msgstr "Grabar registro del sistema"
 
-#: src/sysprof/sysprof-greeter.ui:521
+#: src/sysprof/sysprof-greeter.ui:516
 msgid "Watch the system log for new messages and record them"
-msgstr ""
+msgstr "Observar el registro del sistema nuevos mensajes y grabarlos"
 
-#: src/sysprof/sysprof-greeter.ui:537
+#: src/sysprof/sysprof-greeter.ui:532
 msgid "Include Hardware Information"
 msgstr "Incluir información de hardware"
 
-#: src/sysprof/sysprof-greeter.ui:538
+#: src/sysprof/sysprof-greeter.ui:533
 msgid "Records information about PCI and USB devices"
 msgstr "Graba información sobre los dispositivos PCI y USB"
 
-#: src/sysprof/sysprof-greeter.ui:551
+#: src/sysprof/sysprof-greeter.ui:546
 msgid "Symbols"
 msgstr "Símbolos"
 
-#: src/sysprof/sysprof-greeter.ui:555
+#: src/sysprof/sysprof-greeter.ui:550
 msgid "Bundle Symbols"
-msgstr ""
+msgstr "Símbolos del paquete"
 
-#: src/sysprof/sysprof-greeter.ui:556
+#: src/sysprof/sysprof-greeter.ui:551
 msgid "Make recording shareable by symbolizing stack traces after recording"
 msgstr ""
+"Hacer que la grabación se pueda compartir simbolizando las trazas de la pila "
+"después de la grabación"
 
-#: src/sysprof/sysprof-greeter.ui:589
+#: src/sysprof/sysprof-greeter.ui:584
 msgid "_Open File…"
 msgstr "_Abrir archivo…"
 
-#: src/sysprof/sysprof-greeter.ui:596
+#: src/sysprof/sysprof-greeter.ui:591
 msgid "Record to _File…"
 msgstr "Grabar a un archivo…"
 
-#: src/sysprof/sysprof-greeter.ui:603
+#: src/sysprof/sysprof-greeter.ui:598
 msgid "Record to _Memory"
 msgstr "Grabar en la _memoria"
 
-#: src/sysprof/sysprof-greeter.ui:618 src/sysprof/sysprof-window.ui:341
+#: src/sysprof/sysprof-greeter.ui:613 src/sysprof/sysprof-window.ui:373
 msgid "Help"
 msgstr "Ayuda"
 
-#: src/sysprof/sysprof-greeter.ui:623 src/sysprof/sysprof-window.ui:346
+#: src/sysprof/sysprof-greeter.ui:618 src/sysprof/sysprof-window.ui:378
 msgid "About Sysprof"
 msgstr "Acerca de Sysprof"
 
@@ -1090,7 +1129,7 @@ msgid "Leaks"
 msgstr "Fugas"
 
 #: src/sysprof/sysprof-memory-section.ui:212
-#: src/sysprof/sysprof-samples-section.ui:154
+#: src/sysprof/sysprof-samples-section.ui:207
 #: src/sysprof/sysprof-traceables-utility.ui:162
 msgid "Stack Trace"
 msgstr "Trazas de la pila"
@@ -1114,10 +1153,6 @@ msgstr "Dirección inicial"
 #: src/sysprof/sysprof-process-dialog.ui:137
 msgid "End Address"
 msgstr "Dirección final"
-
-#: src/sysprof/sysprof-process-dialog.ui:177
-msgid "File"
-msgstr "Archivo"
 
 #: src/sysprof/sysprof-process-dialog.ui:219
 msgid "Mounts"
@@ -1207,23 +1242,31 @@ msgstr "Detener la grabación"
 msgid "Time Profiler"
 msgstr "Perfilador de tiempo"
 
-#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:107
+#: src/sysprof/sysprof-samples-section.ui:89 src/sysprof/sysprof-window.ui:385
+msgid "Callgraph"
+msgstr "Gráfico"
+
+#: src/sysprof/sysprof-samples-section.ui:172 src/sysprof/sysprof-window.ui:416
+msgid "Flamegraph"
+msgstr "Gráfico de llamas"
+
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:130
 msgid "Seek Backward"
 msgstr "Retroceder"
 
-#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:117
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:140
 msgid "Zoom Out"
 msgstr "Reducir"
 
-#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:127
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:150
 msgid "Reset Zoom"
 msgstr "Restablecer ampliación"
 
-#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:137
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:160
 msgid "Zoom In"
 msgstr "Ampliar"
 
-#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:147
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:170
 msgid "Seek Forward"
 msgstr "Avanzar"
 
@@ -1247,23 +1290,23 @@ msgstr "Abrir"
 msgid "Sysprof Capture (*.syscap)"
 msgstr "Capturas de Sysprof (*.syscap)"
 
-#: src/sysprof/sysprof-window.c:465
+#: src/sysprof/sysprof-window.c:468
 msgid "Save to File"
 msgstr "Guardar a un archivo"
 
-#: src/sysprof/sysprof-window.c:466
+#: src/sysprof/sysprof-window.c:469
 msgid "Save"
 msgstr "Guardar"
 
-#: src/sysprof/sysprof-window.c:635
+#: src/sysprof/sysprof-window.c:638
 msgid "Loading..."
 msgstr "Cargando…"
 
-#: src/sysprof/sysprof-window.c:711
+#: src/sysprof/sysprof-window.c:714
 msgid "Invalid Document"
 msgstr "Documento no válido"
 
-#: src/sysprof/sysprof-window.c:713
+#: src/sysprof/sysprof-window.c:716
 #, c-format
 msgid ""
 "The document could not be loaded. Please check that you have the correct "
@@ -1276,29 +1319,77 @@ msgstr ""
 "\n"
 "%s"
 
-#: src/sysprof/sysprof-window.ui:250
+#: src/sysprof/sysprof-window.ui:120
+msgid "Toggle Left Panel"
+msgstr "Conmutar el panel izquierdo"
+
+#: src/sysprof/sysprof-window.ui:184
+msgid "Main Menu"
+msgstr "Menú principal"
+
+#: src/sysprof/sysprof-window.ui:191
+msgid "View Options"
+msgstr "Opciones de la vista"
+
+#: src/sysprof/sysprof-window.ui:197
+msgid "Toggle Right Panel"
+msgstr "Conmutar el panel derecho"
+
+#: src/sysprof/sysprof-window.ui:282
 msgid "Energy"
 msgstr "Energía"
 
-#: src/sysprof/sysprof-window.ui:270
+#: src/sysprof/sysprof-window.ui:302
 msgid "Network"
 msgstr "Red"
 
-#: src/sysprof/sysprof-window.ui:280
+#: src/sysprof/sysprof-window.ui:312
 msgid "Storage"
 msgstr "Almacenamiento"
 
-#: src/sysprof/sysprof-window.ui:327
+#: src/sysprof/sysprof-window.ui:359
 msgid "_Record Again…"
 msgstr "_Grabar de nuevo…"
 
-#: src/sysprof/sysprof-window.ui:331
+#: src/sysprof/sysprof-window.ui:363
 msgid "Open Recording…"
 msgstr "Abrir grabación…"
 
-#: src/sysprof/sysprof-window.ui:335
+#: src/sysprof/sysprof-window.ui:367
 msgid "Save As…"
 msgstr "Guardar como…"
+
+#: src/sysprof/sysprof-window.ui:387
+msgid "Categorize Frames"
+msgstr "Categorizar fotogramas"
+
+#: src/sysprof/sysprof-window.ui:391
+msgid "Hide System Libraries"
+msgstr "Ocultar bibliotecas del sistema"
+
+#: src/sysprof/sysprof-window.ui:395
+msgid "Include Threads"
+msgstr "Incluir hilos"
+
+#: src/sysprof/sysprof-window.ui:399
+msgid "Bottom Up"
+msgstr "De abajo a arriba"
+
+#: src/sysprof/sysprof-window.ui:403
+msgid "Ignore Kernel Processes"
+msgstr "Ignorar procesos del núcleo"
+
+#: src/sysprof/sysprof-window.ui:407
+msgid "Ignore Process 0"
+msgstr "Ignorar proceso 0"
+
+#: src/sysprof/sysprof-window.ui:411
+msgid "Merge Similar Processes"
+msgstr "Combinar procesos similares"
+
+#: src/sysprof/sysprof-window.ui:418
+msgid "Left Heavy"
+msgstr "Izquierda pesada"
 
 #~ msgid "Window size (width and height)."
 #~ msgstr "Tamaño de la ventana (altura y anchura)."
@@ -1369,9 +1460,6 @@ msgstr "Guardar como…"
 
 #~ msgid "Stack Traces (In User)"
 #~ msgstr "Trazas de la pila (usuario)"
-
-#~ msgid "Callgraph"
-#~ msgstr "Gráfico"
 
 #~ msgid "Generating Callgraph"
 #~ msgstr "Generando gráfico"
@@ -1446,10 +1534,6 @@ msgstr "Guardar como…"
 #~ msgid "Cancel"
 #~ msgstr "Cancelar"
 
-#, c-format
-#~ msgid "Failed to save recording: %s"
-#~ msgstr "Falló al guardar la grabación: %s"
-
 #~ msgid "New variable…"
 #~ msgstr "Nueva variable…"
 
@@ -1507,9 +1591,6 @@ msgstr "Guardar como…"
 #~ msgstr ""
 #~ "Analizar operaciones lentas en el bucle principal de sus aplicaciones"
 
-#~ msgid "All Processes"
-#~ msgstr "Todos los procesos"
-
 #~ msgid ""
 #~ "Include all applications and operating system kernel in callgraph. This "
 #~ "may not be possible on some system configurations."
@@ -1517,9 +1598,6 @@ msgstr "Guardar como…"
 #~ "Incluir todas las aplicaciones y el núcleo del sistema operativo en el "
 #~ "gráfico. Esto puede no ser posible en la configuración de algunos "
 #~ "sistemas."
-
-#~ msgid "Search Processes…"
-#~ msgstr "Buscar procesos…"
 
 #~ msgid "Enable to launch a program of your choosing before profiling."
 #~ msgstr "Activar para lanzar un programa de su elección antes del perfilado."
@@ -1728,9 +1806,6 @@ msgstr "Guardar como…"
 
 #~ msgid "Start profiling your system with the <b>Record</b> button above"
 #~ msgstr "Empiece a perfilar su sistema con el botón <b>Grabar</b>"
-
-#~ msgid "New Process"
-#~ msgstr "Nuevo proceso"
 
 #~ msgid "%u Process"
 #~ msgid_plural "%u Processes"

@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
-"POT-Creation-Date: 2023-01-25 22:12+0000\n"
-"PO-Revision-Date: 2023-01-25 23:29+0100\n"
+"POT-Creation-Date: 2023-09-02 23:46+0000\n"
+"PO-Revision-Date: 2023-09-13 00:37+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.3.2\n"
 
 #. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
 msgctxt "_"
@@ -24,21 +24,18 @@ msgstr "Anders Jonsson <anders.jonsson@norsjovallen.se>, 2016"
 
 #. (itstool) path: info/title
 #: C/index.page:7
-#| msgid "Sysprof"
 msgctxt "link:trail"
 msgid "Sysprof"
 msgstr "Sysprof"
 
 #. (itstool) path: info/title
 #: C/index.page:8
-#| msgid "Sysprof"
 msgctxt "link"
 msgid "Sysprof"
 msgstr "Sysprof"
 
 #. (itstool) path: info/title
 #: C/index.page:9
-#| msgid "Sysprof"
 msgctxt "text"
 msgid "Sysprof"
 msgstr "Sysprof"
@@ -211,7 +208,7 @@ msgstr ""
 "profileringssession till disk så att den kan visas vid ett senare tillfälle."
 
 #. (itstool) path: section/p
-#: C/profiling.page:37 C/profiling.page:60
+#: C/profiling.page:37
 msgid ""
 "See <link href=\"profiling#interpreting-results\">interpreting results</"
 "link> for more guidance."
@@ -221,62 +218,26 @@ msgstr ""
 
 #. (itstool) path: section/title
 #: C/profiling.page:46
-msgid "Profile an existing process"
-msgstr "Profilera en befintlig process"
-
-#. (itstool) path: section/p
-#: C/profiling.page:47
-msgid ""
-"With <app>Sysprof</app>, you can profile one or more existing processes on "
-"your system. First, select the <em>profiling target</em> button next to the "
-"<em>Record</em> button. Select <em>Existing Process</em> in the popover that "
-"is displayed. Next, select as many processes as you'd like to profile. "
-"Processes selected for profiling will have a checkmark next to their name."
-msgstr ""
-"Med<app>Sysprof</app> kan du profilera en eller flera befintliga processer "
-"på ditt system. Välj först knappen för <em>profileringsmål</em> intill "
-"knappen <em>Spela in</em>. Välj <em>Befintlig process</em> i kontextfönstret "
-"som visas. Markera sedan så många processer som du vill profilera. Processer "
-"som är markerade för profilering kommer ha en bock intill sitt namn."
-
-#. (itstool) path: section/p
-#: C/profiling.page:54
-msgid ""
-"After selecting your target processes, click the <em>Record</em> button to "
-"start profiling."
-msgstr ""
-"Klicka på knappen <em>Spela in</em> efter att ha valt dina målprocesser för "
-"att börja profilera."
-
-#. (itstool) path: section/p
-#: C/profiling.page:57
-msgid ""
-"When you have completed, click the <em>Record</em> button again to stop "
-"profiling."
-msgstr ""
-"Då du är klar klickar du på knappen <em>Spela in</em> igen för att sluta "
-"profilera."
-
-#. (itstool) path: section/title
-#: C/profiling.page:69
 msgid "Profile a new process"
 msgstr "Profilera en ny process"
 
+# TODO: button at the top, remove *next*
 #. (itstool) path: section/p
-#: C/profiling.page:71
+#: C/profiling.page:48
 msgid ""
 "Often times, you may need to spawn a new process to profile. First, select "
-"the <em>profiling target</em> button next to the <em>Record</em> button. "
-"Next, select <em>New Process</em> and fill out the necessary information to "
-"spawn the process."
+"the <em>Application</em> button next at the top of the recording window. "
+"Fill in your command and working directory, and optionally specify any "
+"environment variables you need. Your process will be started when recording "
+"begins."
 msgstr ""
 "Ofta kan du behöva starta en ny process att profilera. Välj först knappen "
-"för <em>profileringsmål</em> intill knappen <em>Spela in</em>. Välj sedan "
-"<em>Ny process</em> och fyll i nödvändig information för att starta "
-"processen."
+"<em>Program</em> högst upp i inspelningsfönstret. Fyll i ditt kommando och "
+"arbetskatalogen, och valfritt eventuella miljövariabler som du behöver. Din "
+"process kommer startas när inspelningen startar."
 
 #. (itstool) path: note/p
-#: C/profiling.page:77
+#: C/profiling.page:55
 msgid ""
 "If you are spawning a process that requires access to your current display, "
 "such as a GTK+ application, you will want to make sure <em>Inherit current "
@@ -287,12 +248,12 @@ msgstr ""
 "miljö</em> är inställt."
 
 #. (itstool) path: section/title
-#: C/profiling.page:88
+#: C/profiling.page:66
 msgid "Profiling with the sysprof-cli command line tool"
 msgstr "Profilering med kommandoradsverktyget sysprof-cli"
 
 #. (itstool) path: section/p
-#: C/profiling.page:90
+#: C/profiling.page:68
 msgid ""
 "For minimal overhead, you might consider using the <cmd>sysprof-cli</cmd> "
 "command line tool. When run without any arguments, it will record your "
@@ -306,32 +267,23 @@ msgstr ""
 "<app>Sysprof</app> för att visa anropsgrafen."
 
 #. (itstool) path: section/p
-#: C/profiling.page:95
+#: C/profiling.page:73
 msgid ""
-"You can also attach to an existing process using <cmd>sysprof-cli -p pid</"
-"cmd>."
-msgstr ""
-"Du kan också fästa till en befintlig process med <cmd>sysprof-cli -p pid</"
-"cmd>."
-
-#. (itstool) path: section/p
-#: C/profiling.page:98
-msgid ""
-"If you would like to spawn a new process, use <cmd>sysprof-cli -c 'command'</"
+"If you would like to spawn a new process, use <cmd>sysprof-cli -- 'command'</"
 "cmd> to specify a command to be launched. The command will inherit the "
 "current environment."
 msgstr ""
-"Om du vill starta en ny process, använd <cmd>sysprof-cli -c 'kommando'</cmd> "
+"Om du vill starta en ny process, använd <cmd>sysprof-cli -- 'kommando'</cmd> "
 "för att ange ett kommando som ska startas. Kommandot kommer ärva den "
 "aktuella miljön."
 
 #. (itstool) path: section/title
-#: C/profiling.page:108
+#: C/profiling.page:83
 msgid "Interpreting results"
 msgstr "Tolka resultat"
 
 #. (itstool) path: section/p
-#: C/profiling.page:110
+#: C/profiling.page:85
 msgid ""
 "The profiling results in <app>Sysprof</app> are split into three sections. "
 "On the top left is a list of all the functions profiled. They are sorted by "
@@ -342,7 +294,7 @@ msgstr ""
 "sorteras efter hur ofta de anropades under inspelningen."
 
 #. (itstool) path: note/p
-#: C/profiling.page:115
+#: C/profiling.page:90
 msgid ""
 "It is important to note that the amount of time spent in each function is "
 "not captured. That would require a tracing profiler to accurately record. "
@@ -355,7 +307,7 @@ msgstr ""
 "upp i det aktuella stackspåret då ett stickprov spelades in."
 
 #. (itstool) path: section/p
-#: C/profiling.page:121
+#: C/profiling.page:96
 msgid ""
 "After selecting a function from the functions list, all of the recorded "
 "callers of that function will be displayed on the bottom left. They are also "
@@ -367,7 +319,7 @@ msgstr ""
 "efter procentandelen av stickproven som innehåller funktionen i stackspåret."
 
 #. (itstool) path: section/p
-#: C/profiling.page:126
+#: C/profiling.page:101
 msgid ""
 "On the right, are all of the decendants of a selected function. You can "
 "select a function either from the functions list, or the callers list."
@@ -375,25 +327,15 @@ msgstr ""
 "Till höger är alla ättlingarna till en vald funktion. Du kan välja en "
 "funktion antingen från funktionslistan eller från listan över anropare."
 
-#. (itstool) path: section/p
-#: C/profiling.page:129
-msgid ""
-"You can jump into a function by activating a row in the tree of descendants "
-"with a double-click or by pressing <key>Enter</key> or <key>Spacebar</key>."
-msgstr ""
-"Du kan hoppa in i en funktion genom att aktivera en rad i trädet av "
-"ättlingar med ett dubbelklick eller genom att trycka <key>Retur</key> eller "
-"<key>Blanksteg</key>."
-
 #. (itstool) path: note/p
-#: C/profiling.page:133
+#: C/profiling.page:105
 msgid ""
-"If you see <em>- - kernel - -</em> in your results, that means that the "
-"application transitioned into or from the Linux kernel. There can be many "
-"reasons for this such as a <em>syscall</em> or <em>signal</em>."
+"If you see <em>- - Context Switch - -</em> in your results, that means that "
+"the application transitioned into or from the Linux kernel. There can be "
+"many reasons for this such as a <em>syscall</em> or <em>signal</em>."
 msgstr ""
-"Om du ser <em>- - kernel - -</em> bland dina resultat betyder det att "
-"programmet gick in i eller ut från Linux-kärnan. Det kan finnas många "
+"Om du ser <em>- - Context Switch - -</em> bland dina resultat betyder det "
+"att programmet gick in i eller ut från Linux-kärnan. Det kan finnas många "
 "orsaker till detta som ett <em>systemanrop</em> eller en <em>signal</em>."
 
 #. (itstool) path: page/title
@@ -492,3 +434,51 @@ msgstr ""
 "Som ett speciellt undantag ger upphovsrättsinnehavarna dig tillåtelse att "
 "kopiera, modifiera och distribuera exempelkoden som finns i denna "
 "dokumentation under de villkor som du väljer, utan restriktioner."
+
+#~ msgid "Profile an existing process"
+#~ msgstr "Profilera en befintlig process"
+
+#~ msgid ""
+#~ "With <app>Sysprof</app>, you can profile one or more existing processes "
+#~ "on your system. First, select the <em>profiling target</em> button next "
+#~ "to the <em>Record</em> button. Select <em>Existing Process</em> in the "
+#~ "popover that is displayed. Next, select as many processes as you'd like "
+#~ "to profile. Processes selected for profiling will have a checkmark next "
+#~ "to their name."
+#~ msgstr ""
+#~ "Med<app>Sysprof</app> kan du profilera en eller flera befintliga "
+#~ "processer på ditt system. Välj först knappen för <em>profileringsmål</em> "
+#~ "intill knappen <em>Spela in</em>. Välj <em>Befintlig process</em> i "
+#~ "kontextfönstret som visas. Markera sedan så många processer som du vill "
+#~ "profilera. Processer som är markerade för profilering kommer ha en bock "
+#~ "intill sitt namn."
+
+#~ msgid ""
+#~ "After selecting your target processes, click the <em>Record</em> button "
+#~ "to start profiling."
+#~ msgstr ""
+#~ "Klicka på knappen <em>Spela in</em> efter att ha valt dina målprocesser "
+#~ "för att börja profilera."
+
+#~ msgid ""
+#~ "When you have completed, click the <em>Record</em> button again to stop "
+#~ "profiling."
+#~ msgstr ""
+#~ "Då du är klar klickar du på knappen <em>Spela in</em> igen för att sluta "
+#~ "profilera."
+
+#~ msgid ""
+#~ "You can also attach to an existing process using <cmd>sysprof-cli -p pid</"
+#~ "cmd>."
+#~ msgstr ""
+#~ "Du kan också fästa till en befintlig process med <cmd>sysprof-cli -p pid</"
+#~ "cmd>."
+
+#~ msgid ""
+#~ "You can jump into a function by activating a row in the tree of "
+#~ "descendants with a double-click or by pressing <key>Enter</key> or "
+#~ "<key>Spacebar</key>."
+#~ msgstr ""
+#~ "Du kan hoppa in i en funktion genom att aktivera en rad i trädet av "
+#~ "ättlingar med ett dubbelklick eller genom att trycka <key>Retur</key> "
+#~ "eller <key>Blanksteg</key>."

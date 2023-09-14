@@ -8,16 +8,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-09-01 21:26+0000\n"
-"PO-Revision-Date: 2023-09-12 20:00+0200\n"
-"Last-Translator: Vojtěch Perník <translations@pervoj.cz>\n"
+"POT-Creation-Date: 2023-09-12 18:02+0000\n"
+"PO-Revision-Date: 2023-09-14 14:02+0200\n"
+"Last-Translator: Daniel Rusek <mail@asciiwolf.com>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
-"X-Generator: Gtranslator 42.0\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"X-Generator: Poedit 3.3.2\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:5
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
@@ -290,7 +290,7 @@ msgstr ""
 
 #: src/sysprof-cli/sysprof-cli.c:309
 msgid "VAR=VALUE"
-msgstr ""
+msgstr "PROMĚNNÁ=HODNOTA"
 
 #: src/sysprof-cli/sysprof-cli.c:310
 msgid "Force overwrite the capture file"
@@ -702,7 +702,7 @@ msgstr "Zavřít"
 #: src/sysprof/sysprof-greeter.c:288
 #, c-format
 msgid "System Capture from %s.syscap"
-msgstr ""
+msgstr "Systémový záznam z %s.syscap"
 
 #: src/sysprof/sysprof-greeter.c:292
 msgid "Record to File"
@@ -792,7 +792,7 @@ msgstr "Pracovní adresář"
 
 #: src/sysprof/sysprof-greeter.ui:187
 msgid "The application will be run as a subprocess of Sysprof."
-msgstr ""
+msgstr "Aplikace bude spuštěna jako podproces Sysprof."
 
 #: src/sysprof/sysprof-greeter.ui:200
 msgid "Environment"
@@ -1131,7 +1131,7 @@ msgstr ""
 
 #: src/sysprof/sysprof-metadata-section.ui:4
 msgid "Metadata"
-msgstr ""
+msgstr "Metadata"
 
 #: src/sysprof/sysprof-metadata-section.ui:71
 msgid "Key"
@@ -1167,15 +1167,15 @@ msgstr ""
 
 #: src/sysprof/sysprof-process-dialog.ui:384
 msgid "Mount Point"
-msgstr ""
+msgstr "Přípojný bod"
 
 #: src/sysprof/sysprof-process-dialog.ui:418
 msgid "Mount Source"
-msgstr ""
+msgstr "Zdroj připojení"
 
 #: src/sysprof/sysprof-process-dialog.ui:452
 msgid "Root"
-msgstr ""
+msgstr "Kořen"
 
 #: src/sysprof/sysprof-process-dialog.ui:486
 msgid "Filesystem"
@@ -1232,9 +1232,6 @@ msgid ""
 msgstr "Selhalo zpracování posunutí v „%s“;"
 
 #: src/sysprof/sysprof-recording-pad.ui:69
-#, fuzzy
-#| msgctxt "shortcut window"
-#| msgid "Stop recording"
 msgid "Stop Recording"
 msgstr "Zastavit záznam"
 
@@ -1297,7 +1294,7 @@ msgstr "Záznam Sysprof (*.syscap)"
 
 #: src/sysprof/sysprof-window.c:468
 msgid "Save to File"
-msgstr ""
+msgstr "Uložit do souboru"
 
 #: src/sysprof/sysprof-window.c:469
 msgid "Save"

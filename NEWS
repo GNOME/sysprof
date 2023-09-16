@@ -1,3 +1,12 @@
+Overview of changes in Sysprof 45.0
+===================================
+
+Changes since 45.rc:
+
+ * Ignore swapper/# scheduler details to better show activity
+ * Update some subsystem name extraction
+ * Translation updates
+
 Overview of changes in Sysprof 45.rc
 ====================================
 

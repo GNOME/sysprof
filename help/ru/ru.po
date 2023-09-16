@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
-"POT-Creation-Date: 2023-01-25 22:12+0000\n"
-"PO-Revision-Date: 2023-02-09 22:29+1000\n"
+"POT-Creation-Date: 2023-09-10 16:04+0000\n"
+"PO-Revision-Date: 2023-09-11 16:33+1000\n"
 "Last-Translator: Ser82-png <asvmail.as@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@gnome.org>\n"
 "Language: ru\n"
@@ -213,7 +213,7 @@ msgstr ""
 "ваш сеанс профилирования на диск для последующего просмотра."
 
 #. (itstool) path: section/p
-#: C/profiling.page:37 C/profiling.page:60
+#: C/profiling.page:37
 msgid ""
 "See <link href=\"profiling#interpreting-results\">interpreting results</"
 "link> for more guidance."
@@ -223,63 +223,26 @@ msgstr ""
 
 #. (itstool) path: section/title
 #: C/profiling.page:46
-msgid "Profile an existing process"
-msgstr "Профилирование существующего процесса"
-
-#. (itstool) path: section/p
-#: C/profiling.page:47
-msgid ""
-"With <app>Sysprof</app>, you can profile one or more existing processes on "
-"your system. First, select the <em>profiling target</em> button next to the "
-"<em>Record</em> button. Select <em>Existing Process</em> in the popover that "
-"is displayed. Next, select as many processes as you'd like to profile. "
-"Processes selected for profiling will have a checkmark next to their name."
-msgstr ""
-"С помощью <app>Sysprof</app> вы можете профилировать один или несколько "
-"существующих процессов в вашей системе. Сначала нажмите кнопку <em>цель "
-"профилирования</em> рядом с кнопкой <em>Начать запись</em>. Выберите "
-"<em>существующий процесс</em> во всплывающем окне. Затем выберите столько "
-"процессов, сколько вы хотите профилировать. Процессы, выбранные для "
-"профилирования, будут отмечены флажком рядом с их названием."
-
-#. (itstool) path: section/p
-#: C/profiling.page:54
-msgid ""
-"After selecting your target processes, click the <em>Record</em> button to "
-"start profiling."
-msgstr ""
-"Выбрав целевые процессы, нажмите кнопку <em>Начать запись</em>, чтобы начать "
-"профилирование."
-
-#. (itstool) path: section/p
-#: C/profiling.page:57
-msgid ""
-"When you have completed, click the <em>Record</em> button again to stop "
-"profiling."
-msgstr ""
-"Для того что бы завершить запись, нажмите кнопку <em>Остановить запись</em>."
-
-#. (itstool) path: section/title
-#: C/profiling.page:69
 msgid "Profile a new process"
 msgstr "Профилирование нового процесса"
 
 #. (itstool) path: section/p
-#: C/profiling.page:71
+#: C/profiling.page:48
 msgid ""
 "Often times, you may need to spawn a new process to profile. First, select "
-"the <em>profiling target</em> button next to the <em>Record</em> button. "
-"Next, select <em>New Process</em> and fill out the necessary information to "
-"spawn the process."
+"the <em>Application</em> button next at the top of the recording window. "
+"Fill in your command and working directory, and optionally specify any "
+"environment variables you need. Your process will be started when recording "
+"begins."
 msgstr ""
 "Нередко бывает, что у вас появляется потребность в создании нового процесса "
-"для профилирования. Сначала нажмите кнопку <em>цели профилирования</em> "
-"рядом с кнопкой <em>Начать запись</em>. Затем выберите <em>Новый процесс</"
-"em> и введите необходимую информацию для процесса, который необходимо "
-"запустить."
+"для профилирования. Сначала нажмите кнопку <em>Приложение</em>, "
+"расположенную в верхней части окна записи. Запишите свою команду и рабочий "
+"каталог и при необходимости укажите любые необходимые вам переменные "
+"окружения. Ваш процесс будет запущен, когда начнется запись."
 
 #. (itstool) path: note/p
-#: C/profiling.page:77
+#: C/profiling.page:55
 msgid ""
 "If you are spawning a process that requires access to your current display, "
 "such as a GTK+ application, you will want to make sure <em>Inherit current "
@@ -290,12 +253,12 @@ msgstr ""
 "<em>Наследование окружения</em>."
 
 #. (itstool) path: section/title
-#: C/profiling.page:88
+#: C/profiling.page:66
 msgid "Profiling with the sysprof-cli command line tool"
 msgstr "Профилирование с помощью инструмента командной строки sysprof-cli"
 
 #. (itstool) path: section/p
-#: C/profiling.page:90
+#: C/profiling.page:68
 msgid ""
 "For minimal overhead, you might consider using the <cmd>sysprof-cli</cmd> "
 "command line tool. When run without any arguments, it will record your "
@@ -309,32 +272,23 @@ msgstr ""
 "помощью приложения <app>Sysprof</app> для просмотра графа вызовов."
 
 #. (itstool) path: section/p
-#: C/profiling.page:95
+#: C/profiling.page:73
 msgid ""
-"You can also attach to an existing process using <cmd>sysprof-cli -p pid</"
-"cmd>."
-msgstr ""
-"Вы также можете подключиться к существующему процессу, воспользовавшись "
-"командой <cmd>sysprof-cli -p pid</cmd>."
-
-#. (itstool) path: section/p
-#: C/profiling.page:98
-msgid ""
-"If you would like to spawn a new process, use <cmd>sysprof-cli -c 'command'</"
+"If you would like to spawn a new process, use <cmd>sysprof-cli -- 'command'</"
 "cmd> to specify a command to be launched. The command will inherit the "
 "current environment."
 msgstr ""
-"Если вы хотите запустить новый процесс, используйте <cmd>sysprof-cli -c "
+"Если вы хотите запустить новый процесс, используйте <cmd>sysprof-cli -- "
 "'команда'</cmd>, чтобы указать необходимую для запуска команду. Команда "
 "унаследует текущую среду."
 
 #. (itstool) path: section/title
-#: C/profiling.page:108
+#: C/profiling.page:83
 msgid "Interpreting results"
 msgstr "Интерпретация результатов"
 
 #. (itstool) path: section/p
-#: C/profiling.page:110
+#: C/profiling.page:85
 msgid ""
 "The profiling results in <app>Sysprof</app> are split into three sections. "
 "On the top left is a list of all the functions profiled. They are sorted by "
@@ -345,7 +299,7 @@ msgstr ""
 "отсортированы по тому, как часто вызывались во время записи."
 
 #. (itstool) path: note/p
-#: C/profiling.page:115
+#: C/profiling.page:90
 msgid ""
 "It is important to note that the amount of time spent in each function is "
 "not captured. That would require a tracing profiler to accurately record. "
@@ -359,7 +313,7 @@ msgstr ""
 "записи выборки."
 
 #. (itstool) path: section/p
-#: C/profiling.page:121
+#: C/profiling.page:96
 msgid ""
 "After selecting a function from the functions list, all of the recorded "
 "callers of that function will be displayed on the bottom left. They are also "
@@ -371,7 +325,7 @@ msgstr ""
 "выборок, в трассировку стека которых включена эта функция."
 
 #. (itstool) path: section/p
-#: C/profiling.page:126
+#: C/profiling.page:101
 msgid ""
 "On the right, are all of the decendants of a selected function. You can "
 "select a function either from the functions list, or the callers list."
@@ -379,25 +333,17 @@ msgstr ""
 "Справа показаны все потомки выбранной функции. Вы можете выбрать функцию "
 "либо из списка функций, либо из списка источников вызовов."
 
-#. (itstool) path: section/p
-#: C/profiling.page:129
-msgid ""
-"You can jump into a function by activating a row in the tree of descendants "
-"with a double-click or by pressing <key>Enter</key> or <key>Spacebar</key>."
-msgstr ""
-"Вы можете перейти к функции, активировав строку в дереве потомков двойным "
-"щелчком или нажав <key>Enter</key> или <key>Пробел</key>."
-
 #. (itstool) path: note/p
-#: C/profiling.page:133
+#: C/profiling.page:105
 msgid ""
-"If you see <em>- - kernel - -</em> in your results, that means that the "
-"application transitioned into or from the Linux kernel. There can be many "
-"reasons for this such as a <em>syscall</em> or <em>signal</em>."
+"If you see <em>- - Context Switch - -</em> in your results, that means that "
+"the application transitioned into or from the Linux kernel. There can be "
+"many reasons for this such as a <em>syscall</em> or <em>signal</em>."
 msgstr ""
-"Если вы видите в результатах <em>- - kernel - -</em>, то это означает, что "
-"приложение передаёт управление ядру Linux или наоборот. Для этого может быть "
-"много причин, в том числе <em>системный вызов</em> или <em>сигнал</em>."
+"Если вы видите в результатах <em>- - Context Switch - -</em>, то это "
+"означает, что приложение передаёт управление ядру Linux или наоборот. Для "
+"этого может быть много причин, в том числе <em>системный вызов</em> или "
+"<em>сигнал</em>."
 
 #. (itstool) path: page/title
 #: C/faq.page:9
@@ -496,3 +442,50 @@ msgstr ""
 "В качестве особого исключения, владельцы авторского права разрешают вам "
 "копировать, изменять и распространять примеры кодов, содержащиеся в этой "
 "документации на выбранных вами условиях, без ограничения."
+
+#~ msgid "Profile an existing process"
+#~ msgstr "Профилирование существующего процесса"
+
+#~ msgid ""
+#~ "With <app>Sysprof</app>, you can profile one or more existing processes "
+#~ "on your system. First, select the <em>profiling target</em> button next "
+#~ "to the <em>Record</em> button. Select <em>Existing Process</em> in the "
+#~ "popover that is displayed. Next, select as many processes as you'd like "
+#~ "to profile. Processes selected for profiling will have a checkmark next "
+#~ "to their name."
+#~ msgstr ""
+#~ "С помощью <app>Sysprof</app> вы можете профилировать один или несколько "
+#~ "существующих процессов в вашей системе. Сначала нажмите кнопку <em>цель "
+#~ "профилирования</em> рядом с кнопкой <em>Начать запись</em>. Выберите "
+#~ "<em>существующий процесс</em> во всплывающем окне. Затем выберите столько "
+#~ "процессов, сколько вы хотите профилировать. Процессы, выбранные для "
+#~ "профилирования, будут отмечены флажком рядом с их названием."
+
+#~ msgid ""
+#~ "After selecting your target processes, click the <em>Record</em> button "
+#~ "to start profiling."
+#~ msgstr ""
+#~ "Выбрав целевые процессы, нажмите кнопку <em>Начать запись</em>, чтобы "
+#~ "начать профилирование."
+
+#~ msgid ""
+#~ "When you have completed, click the <em>Record</em> button again to stop "
+#~ "profiling."
+#~ msgstr ""
+#~ "Для того что бы завершить запись, нажмите кнопку <em>Остановить запись</"
+#~ "em>."
+
+#~ msgid ""
+#~ "You can also attach to an existing process using <cmd>sysprof-cli -p pid</"
+#~ "cmd>."
+#~ msgstr ""
+#~ "Вы также можете подключиться к существующему процессу, воспользовавшись "
+#~ "командой <cmd>sysprof-cli -p pid</cmd>."
+
+#~ msgid ""
+#~ "You can jump into a function by activating a row in the tree of "
+#~ "descendants with a double-click or by pressing <key>Enter</key> or "
+#~ "<key>Spacebar</key>."
+#~ msgstr ""
+#~ "Вы можете перейти к функции, активировав строку в дереве потомков двойным "
+#~ "щелчком или нажав <key>Enter</key> или <key>Пробел</key>."

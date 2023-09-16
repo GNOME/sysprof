@@ -8,7 +8,7 @@ if sysprof_version[1] in ['alpha', 'beta', 'rc']
 endif
 sysprof_version_conf.set('MAJOR_VERSION', sysprof_version[0])
 sysprof_version_conf.set('MINOR_VERSION', sysprof_version[1])
-sysprof_version_conf.set('MICRO_VERSION', sysprof_version[2])
+sysprof_version_conf.set('MICRO_VERSION', 0)
 sysprof_version_conf.set('VERSION', meson.project_version())
 
 subdir('libsysprof-capture')

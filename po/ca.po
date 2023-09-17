@@ -147,7 +147,7 @@ msgstr "Indexació de marcs de dades de captura"
 
 #: src/libsysprof/sysprof-document.c:1461
 msgid "Discovering file system mounts"
-msgstr "Descobriment del muntatge del sistema de fitxers"
+msgstr "Descoverta del muntatge del sistema de fitxers"
 
 #: src/libsysprof/sysprof-document.c:1464
 msgid "Discovering process mount namespaces"
@@ -477,7 +477,7 @@ msgstr "Un analitzador de rendiment sistema"
 
 #: src/sysprof/sysprof-application.c:171
 msgid "translator-credits"
-msgstr "Jordi Mas i Hernàndez <jmas@softcatala.org>"
+msgstr "crèdits del traductor: Jordi Mas i Hernàndez <jmas@softcatala.org>"
 
 #: src/sysprof/sysprof-callgraph-view.ui:22
 msgid "Functions"
@@ -508,7 +508,7 @@ msgstr "Gràfic de comptadors"
 #: src/sysprof/sysprof-network-section.ui:291 src/sysprof/sysprof-storage-section.ui:291
 #| msgid "Counters"
 msgid "Counters Table"
-msgstr "Taula de comptadors"
+msgstr "Taula de Comptadors"
 
 #: src/sysprof/sysprof-cpu-section.ui:378 src/sysprof/sysprof-dbus-section.ui:105
 #: src/sysprof/sysprof-energy-section.ui:348 src/sysprof/sysprof-frame-utility.ui:49
@@ -689,7 +689,7 @@ msgstr "Estalvi d'energia"
 
 #: src/sysprof/sysprof-greeter.c:449
 msgid "Performance"
-msgstr "Rendiment"
+msgstr "Prestació (rendiment)"
 
 #: src/sysprof/sysprof-greeter.ui:70
 msgid "Sampling"
@@ -854,7 +854,7 @@ msgstr "Bus del sistema de registre"
 
 #: src/sysprof/sysprof-greeter.ui:362
 msgid "Record messages on the D-Bus system bus"
-msgstr "Enregistra els missatges al bus del sistema D-Bus"
+msgstr "Grava missatges al bus del sistema D-Bus"
 
 #: src/sysprof/sysprof-greeter.ui:378
 #| msgid "Recording at %s"
@@ -863,7 +863,7 @@ msgstr "Bus de sessió de gravació"
 
 #: src/sysprof/sysprof-greeter.ui:379
 msgid "Record messages on the D-Bus user session bus"
-msgstr "Enregistra els missatges al bus de sessió d'usuari de D-Bus"
+msgstr "Grava missatges al bus de sessió d'usuari de D-Bus"
 
 #: src/sysprof/sysprof-greeter.ui:390
 msgid "The session bus may contain sensitive information such as keyboard usage and passwords."
@@ -950,7 +950,7 @@ msgstr "Feu que la gravació sigui compartible simbolitzant les traces de la pil
 #: src/sysprof/sysprof-greeter.ui:584
 #| msgid "Open Capture…"
 msgid "_Open File..."
-msgstr "_Obre el fitxer..."
+msgstr "_Obre l'arxiu..."
 
 #: src/sysprof/sysprof-greeter.ui:591
 #| msgid "Recording…"
@@ -1370,7 +1370,7 @@ msgstr "Fusionar processos similars"
 
 #: src/sysprof/sysprof-window.ui:418
 msgid "Left Heavy"
-msgstr "Esquerra pesada"
+msgstr "Esquerra Pesada"
 
 #~ msgid "Window size (width and height)."
 #~ msgstr "Mida de la finestra (amplada i alçada)."

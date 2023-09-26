@@ -1,7 +1,8 @@
 /*
-Imported from https://github.com/LykenSol/rust-demangle.c/pull/2 commit ea6fddfbf526700ee989336d9ff78797e38365eb
+Imported from https://github.com/LykenSol/rust-demangle.c commit 4b3529ee0060d318c60459fbe9a0d95fff82e74f
 Modifications from upstream:
 * Add sysprof_ prefix to exported symbols
+* Use g_strdup in sysprof_rust_demangle
 */
 
 #pragma GCC diagnostic push
@@ -77,6 +78,54 @@ static char next(struct rust_demangler *rdm) {
     CHECK_OR(c, return 0);
     rdm->next++;
     return c;
+}
+
+struct hex_nibbles {
+    const char *nibbles;
+    size_t nibbles_len;
+};
+
+static struct hex_nibbles parse_hex_nibbles(struct rust_demangler *rdm) {
+    struct hex_nibbles hex;
+
+    hex.nibbles = NULL;
+    hex.nibbles_len = 0;
+
+    size_t start = rdm->next, hex_len = 0;
+    while (!eat(rdm, '_')) {
+        char c = next(rdm);
+        CHECK_OR(IS_DIGIT(c) || (c >= 'a' && c <= 'f'), return hex);
+        hex_len++;
+    }
+
+    hex.nibbles = rdm->sym + start;
+    hex.nibbles_len = hex_len;
+    return hex;
+}
+
+static struct hex_nibbles
+parse_hex_nibbles_for_const_uint(struct rust_demangler *rdm) {
+    struct hex_nibbles hex = parse_hex_nibbles(rdm);
+    CHECK_OR(!rdm->errored, return hex);
+
+    // Trim leading `0`s.
+    while (hex.nibbles_len > 0 && *hex.nibbles == '0') {
+        hex.nibbles++;
+        hex.nibbles_len--;
+    }
+
+    return hex;
+}
+
+static struct hex_nibbles
+parse_hex_nibbles_for_const_bytes(struct rust_demangler *rdm) {
+    struct hex_nibbles hex = parse_hex_nibbles(rdm);
+    CHECK_OR(!rdm->errored && (hex.nibbles_len % 2 == 0), return hex);
+    return hex;
+}
+
+static uint8_t decode_hex_nibble(char nibble) {
+    return nibble >= 'a' ? 10 + (nibble - 'a') : nibble - '0';
 }
 
 static uint64_t parse_integer_62(struct rust_demangler *rdm) {
@@ -191,7 +240,10 @@ static void print_uint64_hex(struct rust_demangler *rdm, uint64_t x) {
     PRINT(s);
 }
 
-static void print_quoted_escaped_char(struct rust_demangler *rdm, char quote, uint32_t c) {
+static void
+print_quoted_escaped_char(struct rust_demangler *rdm, char quote, uint32_t c) {
+    CHECK_OR(c < 0xd800 || (c > 0xdfff && c < 0x10ffff), return);
+
     switch (c) {
     case '\0':
         PRINT("\\0");
@@ -260,12 +312,12 @@ print_ident(struct rust_demangler *rdm, struct rust_mangled_ident ident) {
     while (cap < ident.ascii_len) {
         cap *= 2;
         // Check for overflows.
-        CHECK_OR((cap * 4) / 4 == cap, return );
+        CHECK_OR((cap * 4) / 4 == cap, return);
     }
 
     // Store the output codepoints as groups of 4 UTF-8 bytes.
     uint8_t *out = (uint8_t *)malloc(cap * 4);
-    CHECK_OR(out, return );
+    CHECK_OR(out, return);
 
     // Populate initial output from ASCII fragment.
     for (len = 0; len < ident.ascii_len; len++) {
@@ -413,7 +465,7 @@ static void demangle_const_str_literal(struct rust_demangler *rdm);
 /// printing e.g. `for<'a, 'b> `, and make those lifetimes visible
 /// to the caller (via depth level, which the caller should reset).
 static void demangle_binder(struct rust_demangler *rdm) {
-    CHECK_OR(!rdm->errored, return );
+    CHECK_OR(!rdm->errored, return);
 
     uint64_t bound_lifetimes = parse_opt_integer_62(rdm, 'G');
     if (bound_lifetimes > 0) {
@@ -429,7 +481,7 @@ static void demangle_binder(struct rust_demangler *rdm) {
 }
 
 static void demangle_path(struct rust_demangler *rdm, bool in_value) {
-    CHECK_OR(!rdm->errored, return );
+    CHECK_OR(!rdm->errored, return);
 
     char tag = next(rdm);
     switch (tag) {
@@ -447,7 +499,7 @@ static void demangle_path(struct rust_demangler *rdm, bool in_value) {
     }
     case 'N': {
         char ns = next(rdm);
-        CHECK_OR(IS_LOWER(ns) || IS_UPPER(ns), return );
+        CHECK_OR(IS_LOWER(ns) || IS_UPPER(ns), return);
 
         demangle_path(rdm, in_value);
 
@@ -525,7 +577,7 @@ static void demangle_path(struct rust_demangler *rdm, bool in_value) {
         break;
     }
     default:
-        ERROR_AND(return );
+        ERROR_AND(return);
     }
 }
 
@@ -590,7 +642,7 @@ static const char *basic_type(char tag) {
 }
 
 static void demangle_type(struct rust_demangler *rdm) {
-    CHECK_OR(!rdm->errored, return );
+    CHECK_OR(!rdm->errored, return);
 
     char tag = next(rdm);
 
@@ -718,7 +770,7 @@ static void demangle_type(struct rust_demangler *rdm) {
         // Restore `bound_lifetime_depth` to outside the binder.
         rdm->bound_lifetime_depth = old_bound_lifetime_depth;
 
-        CHECK_OR(eat(rdm, 'L'), return );
+        CHECK_OR(eat(rdm, 'L'), return);
         uint64_t lt = parse_integer_62(rdm);
         if (lt) {
             PRINT(" + ");
@@ -775,7 +827,7 @@ static bool demangle_path_maybe_open_generics(struct rust_demangler *rdm) {
 }
 
 static void demangle_dyn_trait(struct rust_demangler *rdm) {
-    CHECK_OR(!rdm->errored, return );
+    CHECK_OR(!rdm->errored, return);
 
     bool open = demangle_path_maybe_open_generics(rdm);
 
@@ -797,7 +849,7 @@ static void demangle_dyn_trait(struct rust_demangler *rdm) {
 }
 
 static void demangle_const(struct rust_demangler *rdm, bool in_value) {
-    CHECK_OR(!rdm->errored, return );
+    CHECK_OR(!rdm->errored, return);
 
     bool opened_brace = false;
 
@@ -830,55 +882,24 @@ static void demangle_const(struct rust_demangler *rdm, bool in_value) {
         break;
 
     case 'b': {
-        uint64_t value = 0;
-        size_t hex_len = 0;
-        while (!eat(rdm, '_')) {
-            value <<= 4;
-
-            char c = next(rdm);
-            if (IS_DIGIT(c))
-                value |= c - '0';
-            else if (c >= 'a' && c <= 'f')
-                value |= 10 + (c - 'a');
-            else
-                ERROR_AND(return );
-            hex_len++;
-        }
-
-        if (value == 0) {
-            PRINT("false");
-        } else if (value == 1) {
-            PRINT("true");
-        } else {
-            ERROR_AND(return );
-        }
+        struct hex_nibbles hex = parse_hex_nibbles_for_const_uint(rdm);
+        CHECK_OR(!rdm->errored && hex.nibbles_len <= 1, return);
+        uint8_t v = hex.nibbles_len > 0 ? decode_hex_nibble(hex.nibbles[0]) : 0;
+        CHECK_OR(v <= 1, return);
+        PRINT(v == 1 ? "true" : "false");
         break;
     }
 
     case 'c': {
-        uint64_t value = 0;
-        size_t hex_len = 0;
-        while (!eat(rdm, '_')) {
-            value <<= 4;
+        struct hex_nibbles hex = parse_hex_nibbles_for_const_uint(rdm);
+        CHECK_OR(!rdm->errored && hex.nibbles_len <= 6, return);
 
-            char c = next(rdm);
-            if (IS_DIGIT(c))
-                value |= c - '0';
-            else if (c >= 'a' && c <= 'f')
-                value |= 10 + (c - 'a');
-            else
-                ERROR_AND(return );
-            hex_len++;
-        }
-
-        if (value >= 0x10FFFF)
-            ERROR_AND(return );
-
-        if (value >= 0xD800 && value <= 0xDFFF)
-            ERROR_AND(return );
+        uint32_t c = 0;
+        for (size_t i = 0; i < hex.nibbles_len; i++)
+            c = (c << 4) | decode_hex_nibble(hex.nibbles[i]);
 
         PRINT("'");
-        print_quoted_escaped_char(rdm, '\'', value);
+        print_quoted_escaped_char(rdm, '\'', c);
         PRINT("'");
 
         break;
@@ -901,7 +922,7 @@ static void demangle_const(struct rust_demangler *rdm, bool in_value) {
     case 'Q':
         if (ty_tag == 'R' && eat(rdm, 'e')) {
             // NOTE(eddyb) this prints `"..."` instead of `&*"..."`, which
-                // is what `Re..._` would imply (see comment for `str` above).
+            // is what `Re..._` would imply (see comment for `str` above).
             demangle_const_str_literal(rdm);
             break;
         }
@@ -929,7 +950,7 @@ static void demangle_const(struct rust_demangler *rdm, bool in_value) {
 
         size_t i = 0;
         while (!eat(rdm, 'E')) {
-            CHECK_OR(!rdm->errored, return );
+            CHECK_OR(!rdm->errored, return);
 
             if (i > 0)
                 PRINT(", ");
@@ -953,7 +974,7 @@ static void demangle_const(struct rust_demangler *rdm, bool in_value) {
 
         size_t i = 0;
         while (!eat(rdm, 'E')) {
-            CHECK_OR(!rdm->errored, return );
+            CHECK_OR(!rdm->errored, return);
 
             if (i > 0)
                 PRINT(", ");
@@ -987,7 +1008,7 @@ static void demangle_const(struct rust_demangler *rdm, bool in_value) {
 
             size_t i = 0;
             while (!eat(rdm, 'E')) {
-                CHECK_OR(!rdm->errored, return );
+                CHECK_OR(!rdm->errored, return);
 
                 if (i > 0)
                     PRINT(", ");
@@ -1006,7 +1027,7 @@ static void demangle_const(struct rust_demangler *rdm, bool in_value) {
 
             size_t i = 0;
             while (!eat(rdm, 'E')) {
-                CHECK_OR(!rdm->errored, return );
+                CHECK_OR(!rdm->errored, return);
 
                 if (i > 0)
                     PRINT(", ");
@@ -1027,9 +1048,9 @@ static void demangle_const(struct rust_demangler *rdm, bool in_value) {
             break;
         }
 
-    default:
-        ERROR_AND(return );
-    }
+        default:
+            ERROR_AND(return);
+        }
 
         break;
 
@@ -1040,12 +1061,12 @@ static void demangle_const(struct rust_demangler *rdm, bool in_value) {
             rdm->next = backref;
             demangle_const(rdm, in_value);
             rdm->next = old_next;
-    }
+        }
         break;
-}
+    }
 
     default:
-        ERROR_AND(return );
+        ERROR_AND(return);
     }
 
     if (opened_brace) {
@@ -1054,66 +1075,85 @@ static void demangle_const(struct rust_demangler *rdm, bool in_value) {
 }
 
 static void demangle_const_uint(struct rust_demangler *rdm, char ty_tag) {
-    CHECK_OR(!rdm->errored, return );
+    CHECK_OR(!rdm->errored, return);
 
-    uint64_t value = 0;
-    size_t hex_len = 0;
-    while (!eat(rdm, '_')) {
-        value <<= 4;
-
-        char c = next(rdm);
-        if (IS_DIGIT(c))
-            value |= c - '0';
-        else if (c >= 'a' && c <= 'f')
-            value |= 10 + (c - 'a');
-        else
-            ERROR_AND(return );
-        hex_len++;
-    }
+    struct hex_nibbles hex = parse_hex_nibbles_for_const_uint(rdm);
+    CHECK_OR(!rdm->errored, return);
 
     // Print anything that doesn't fit in `uint64_t` verbatim.
-    if (hex_len > 16) {
+    if (hex.nibbles_len > 16) {
         PRINT("0x");
-        print_str(rdm, rdm->sym + (rdm->next - hex_len - 1), hex_len);
+        print_str(rdm, hex.nibbles, hex.nibbles_len);
     } else {
-        print_uint64(rdm, value);
+        uint64_t v = 0;
+        for (size_t i = 0; i < hex.nibbles_len; i++)
+            v = (v << 4) | decode_hex_nibble(hex.nibbles[i]);
+        print_uint64(rdm, v);
     }
 
     if (rdm->verbose)
         PRINT(basic_type(ty_tag));
 }
 
+// UTF-8 uses an unary encoding for its "length" field (`1`s followed by a `0`).
+struct utf8_byte {
+    // Decoded "length" field of an UTF-8 byte, including the special cases:
+    // - `0` indicates this is a lone ASCII byte
+    // - `1` indicates a continuation byte (cannot start an UTF-8 sequence)
+    size_t seq_len;
 
-static void demangle_const_str_literal(struct rust_demangler *rdm) {
-    CHECK_OR(!rdm->errored, return );
+    // Remaining (`payload_width`) bits in the UTF-8 byte, contributing to
+    // the Unicode scalar value being encoded in the UTF-8 sequence.
+    uint8_t payload;
+    size_t payload_width;
+};
+static struct utf8_byte utf8_decode(uint8_t byte) {
+    struct utf8_byte utf8;
 
-    PRINT("\"");
+    utf8.seq_len = 0;
+    utf8.payload = byte;
+    utf8.payload_width = 8;
 
-    // FIXME(bjorn3) actually decode UTF-8 strings into individual characters
-    while (!eat(rdm, '_')) {
-        uint32_t value = 0;
-
-        char c = next(rdm);
-        if (IS_DIGIT(c))
-            value |= c - '0';
-        else if (c >= 'a' && c <= 'f')
-            value |= 10 + (c - 'a');
-        else
-            ERROR_AND(return );
-
-        value <<= 4;
-
-        c = next(rdm);
-        if (IS_DIGIT(c))
-            value |= c - '0';
-        else if (c >= 'a' && c <= 'f')
-            value |= 10 + (c - 'a');
-        else
-            ERROR_AND(return );
-
-        print_quoted_escaped_char(rdm, '"', value);
+    // FIXME(eddyb) figure out if using "count leading ones/zeros" is an option.
+    while (utf8.seq_len <= 6) {
+        uint8_t msb = 0x80 >> utf8.seq_len;
+        utf8.payload &= ~msb;
+        utf8.payload_width--;
+        if ((byte & msb) == 0)
+            break;
+        utf8.seq_len++;
     }
 
+    return utf8;
+}
+
+static void demangle_const_str_literal(struct rust_demangler *rdm) {
+    CHECK_OR(!rdm->errored, return);
+
+    struct hex_nibbles hex = parse_hex_nibbles_for_const_bytes(rdm);
+    CHECK_OR(!rdm->errored, return);
+
+    PRINT("\"");
+    for (size_t i = 0; i < hex.nibbles_len; i += 2) {
+        struct utf8_byte utf8 = utf8_decode(
+            (decode_hex_nibble(hex.nibbles[i]) << 4) |
+            decode_hex_nibble(hex.nibbles[i + 1])
+        );
+        uint32_t c = utf8.payload;
+        if (utf8.seq_len > 0) {
+            CHECK_OR(utf8.seq_len >= 2 && utf8.seq_len <= 4, return);
+            for (size_t extra = utf8.seq_len - 1; extra > 0; extra--) {
+                i += 2;
+                utf8 = utf8_decode(
+                    (decode_hex_nibble(hex.nibbles[i]) << 4) |
+                    decode_hex_nibble(hex.nibbles[i + 1])
+                );
+                CHECK_OR(utf8.seq_len == 1, return);
+                c = (c << utf8.payload_width) | utf8.payload;
+            }
+        }
+        print_quoted_escaped_char(rdm, '"', c);
+    }
     PRINT("\"");
 }
 
@@ -1169,7 +1209,8 @@ bool sysprof_rust_demangle_with_callback(
     demangle_path(&rdm, true);
 
     // Skip instantiating crate.
-    if (!rdm.errored && rdm.next < rdm.sym_len && peek(&rdm) >= 'A' && peek(&rdm) <= 'Z') {
+    if (!rdm.errored && rdm.next < rdm.sym_len && peek(&rdm) >= 'A' &&
+        peek(&rdm) <= 'Z') {
         rdm.skipping_printing = true;
         demangle_path(&rdm, false);
     }

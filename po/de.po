@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-09-02 18:41+0000\n"
-"PO-Revision-Date: 2023-09-04 17:46+0200\n"
+"POT-Creation-Date: 2023-09-08 02:19+0000\n"
+"PO-Revision-Date: 2023-09-12 13:24+0200\n"
 "Last-Translator: Philipp Kiemle <philipp.kiemle@gmail.com>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "Language: de\n"
@@ -251,8 +251,9 @@ msgstr ""
 "unterstützt."
 
 #: src/libsysprof/sysprof-tracer.c:65
+#, fuzzy
 msgid "Tracer"
-msgstr ""
+msgstr "Nachvollziehung"
 
 #: src/libsysprof/sysprof-tracer.c:66
 msgid ""
@@ -273,10 +274,8 @@ msgstr ""
 
 # Task ist ein Begriff aus der Informatik
 #: src/sysprof-cli/sysprof-cli.c:307
-#, fuzzy
-#| msgid "Make sysprof specific to a task"
 msgid "Make sysprof specific to a task [Deprecated]"
-msgstr "Sysprof auf einen Task festlegen"
+msgstr "Sysprof auf einen Task festlegen [veraltet]"
 
 #: src/sysprof-cli/sysprof-cli.c:307 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:179
@@ -772,9 +771,8 @@ msgstr "JavaScript-Stapel samplen"
 
 #: src/sysprof/sysprof-greeter.ui:92
 #, fuzzy
-#| msgid "Do not record stacktraces using Linux perf"
 msgid "Record JavaScript stack traces using a sampling profiler"
-msgstr "Stapelverfolgung nicht mit Linux perf aufzeichnen"
+msgstr "JavaScript-Stapelverfolgungen mit ?Profiler aufzeichnen"
 
 #: src/sysprof/sysprof-greeter.ui:103
 msgid ""
@@ -790,24 +788,23 @@ msgid "Track when processes are scheduled per CPU"
 msgstr "Nachverfolgen, wann Prozesse pro CPU eingeplant werden"
 
 #: src/sysprof/sysprof-greeter.ui:133
+#, fuzzy
 msgid "Tracing"
-msgstr ""
+msgstr "Nachvollziehung"
 
 #: src/sysprof/sysprof-greeter.ui:137
 #, fuzzy
-#| msgid "Memory Allocations"
 msgid "Trace Memory Allocations"
-msgstr "Speicherzuweisungen"
+msgstr "Speicherzuweisungen nachvollziehen"
 
 #: src/sysprof/sysprof-greeter.ui:138
 msgid "Record a stack trace when <tt>malloc</tt> or similar functions are used"
 msgstr ""
 
 #: src/sysprof/sysprof-greeter.ui:149
-#, fuzzy
-#| msgid "Sysprof is busy analyzing memory allocations."
 msgid "Sysprof must launch your application to record memory allocations."
-msgstr "Sysprof ist damit beschäftigt, Speicherzuweisungen zu analysieren."
+msgstr ""
+"Sysprof muss ihre Anwendung starten, um Speicherzuweisungen aufzuzeichnen."
 
 #: src/sysprof/sysprof-greeter.ui:167 src/sysprof/sysprof-greeter.ui:172
 msgid "Application"
@@ -820,7 +817,7 @@ msgstr "Befehlszeile"
 
 #: src/sysprof/sysprof-greeter.ui:181
 msgid "Working directory"
-msgstr ""
+msgstr "Arbeitsordner"
 
 #: src/sysprof/sysprof-greeter.ui:187
 msgid "The application will be run as a subprocess of Sysprof."
@@ -835,12 +832,8 @@ msgid "Clear Environment"
 msgstr "Umgebung bereinigen"
 
 #: src/sysprof/sysprof-greeter.ui:205
-#, fuzzy
-#| msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgid "Clear the environment before launching application"
-msgstr ""
-"Umgebungsvariable GTK_TRACE_FD zur Rückverfolgung einer GTK-Anwendung "
-"festlegen"
+msgstr "Vor dem Start einer Anwendung die Umgebung löschen"
 
 #: src/sysprof/sysprof-greeter.ui:231
 msgid "Add _Variable"
@@ -1022,7 +1015,7 @@ msgstr "In Datei au_fzeichnen …"
 
 #: src/sysprof/sysprof-greeter.ui:598
 msgid "Record to _Memory"
-msgstr ""
+msgstr "In den _Arbeitsspeicher aufzeichnen"
 
 #: src/sysprof/sysprof-greeter.ui:613 src/sysprof/sysprof-window.ui:373
 msgid "Help"
@@ -1206,7 +1199,7 @@ msgstr "Einhängepunkt"
 
 #: src/sysprof/sysprof-process-dialog.ui:418
 msgid "Mount Source"
-msgstr ""
+msgstr "Quelle einbinden"
 
 #: src/sysprof/sysprof-process-dialog.ui:452
 msgid "Root"
@@ -1229,20 +1222,16 @@ msgid "Thread ID"
 msgstr "Thread-ID"
 
 #: src/sysprof/sysprof-process-dialog.ui:625
-#, fuzzy
-#| msgid "Main Menu"
 msgid "Main Thread"
-msgstr "Hauptmenü"
+msgstr "Haupt-Thread"
 
 #: src/sysprof/sysprof-processes-section.ui:4
 msgid "Processes"
 msgstr "Prozesse"
 
 #: src/sysprof/sysprof-processes-section.ui:73
-#, fuzzy
-#| msgid "Processes Captured"
 msgid "Process Chart"
-msgstr "Prozesse erfasst"
+msgstr "Prozessdiagramm"
 
 #: src/sysprof/sysprof-processes-section.ui:173
 msgid "Process Table"
@@ -1408,7 +1397,7 @@ msgstr "Threads einschließen"
 
 #: src/sysprof/sysprof-window.ui:399
 msgid "Bottom Up"
-msgstr ""
+msgstr "Von unten nach oben"
 
 #: src/sysprof/sysprof-window.ui:403
 msgid "Ignore Kernel Processes"

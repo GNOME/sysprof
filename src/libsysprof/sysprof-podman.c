@@ -252,16 +252,22 @@ sysprof_podman_get_layers (SysprofPodman *self,
   layers = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 
   /* Add all our known layers starting from current layer */
-  do
-    g_hash_table_add (layers, get_layer_dir (layer));
-  while ((layer = find_parent_layer (self->layers_parser, layer, layers)));
-
-  /* If an image was specified, add its layer */
-  if ((layer = find_image_layer (self->images_parser, image)))
+  if (layer != NULL)
     {
       do
         g_hash_table_add (layers, get_layer_dir (layer));
       while ((layer = find_parent_layer (self->layers_parser, layer, layers)));
+    }
+
+  /* If an image was specified, add its layer */
+  if (image != NULL)
+    {
+      if ((layer = find_image_layer (self->images_parser, image)))
+        {
+          do
+            g_hash_table_add (layers, get_layer_dir (layer));
+          while ((layer = find_parent_layer (self->layers_parser, layer, layers)));
+        }
     }
 
   keys = (const char **)g_hash_table_get_keys_as_array (layers, NULL);

@@ -162,10 +162,15 @@
             <property name="series">
               <object class="SysprofTimeSeries">
                 <property name="model">
-                  <object class="SysprofSingleModel">
-                    <binding name="item">
-                      <lookup name="item">GtkListItem</lookup>
-                    </binding>
+                  <object class="SysprofSampledModel">
+                    <property name="max-items">2000</property>
+                    <property name="model">
+                      <object class="SysprofSingleModel">
+                        <binding name="item">
+                          <lookup name="item">GtkListItem</lookup>
+                        </binding>
+                      </object>
+                    </property>
                   </object>
                 </property>
                 <property name="label-expression">

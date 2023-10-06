@@ -1,5 +1,5 @@
 /*
-Imported from https://github.com/LykenSol/rust-demangle.c commit 4b3529ee0060d318c60459fbe9a0d95fff82e74f
+Imported from https://github.com/LykenSol/rust-demangle.c commit 4283d46e4064a7e1c54bc9918a07b066cb43fca3
 Modifications from upstream:
 * Add sysprof_ prefix to exported symbols and mark them as hidden
 * Add pragma once

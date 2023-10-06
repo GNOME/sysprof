@@ -27,8 +27,6 @@ sysprof_cplus_demangle (const char *name)
   char *real_name;
   char *ret;
   int status;
-  guint i;
-  guint j;
 
   if (name == NULL)
     return NULL;
@@ -38,35 +36,7 @@ sysprof_cplus_demangle (const char *name)
   if (real_name == NULL)
     return NULL;
 
-  /* We need to return a string that is guaranteed it can be freed with
-   * g_free() rather than free(), so we might as well look for Legacy
-   * Rust mangling like '$LT$' and '$GT$' while we're at it.
-   */
-
-  ret = (char *)g_malloc (strlen (real_name) + 1);
-
-  for (i = 0, j = 0; real_name[i]; i++)
-    {
-      if (real_name[i] == '$')
-        {
-          if (real_name[i+1] == 'L' && real_name[i+2] == 'T' && real_name[i+3] == '$')
-            ret[j++] = '<', i += 3;
-          else if (real_name[i+1] == 'G' && real_name[i+2] == 'T' && real_name[i+3] == '$')
-            ret[j++] = '>', i += 3;
-        }
-      else if (real_name[i] == '.' && real_name[i+1] == '.')
-        {
-          ret[j++] = ':', i++;
-          ret[j++] = ':';
-        }
-      else
-        {
-          ret[j++] = real_name[i];
-        }
-    }
-
-  ret[j] = 0;
-
+  ret = g_strdup (real_name);
   free (real_name);
 
   return ret;

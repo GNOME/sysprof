@@ -744,6 +744,7 @@ _sysprof_recording_add_file_data (SysprofRecording *self,
     }
 }
 
+G_GNUC_PRINTF(3,0)
 static void
 _sysprof_recording_message_internal (SysprofRecording *self,
                                      const char       *domain,

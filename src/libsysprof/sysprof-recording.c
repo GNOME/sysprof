@@ -649,7 +649,6 @@ _sysprof_recording_add_file (SysprofRecording *self,
                              const char       *path,
                              gboolean          compress)
 {
-  g_autoptr(GFile) file = NULL;
   AddFile *add_file;
 
   g_return_val_if_fail (SYSPROF_IS_RECORDING (self), NULL);

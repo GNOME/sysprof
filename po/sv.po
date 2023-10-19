@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-09-01 21:26+0000\n"
-"PO-Revision-Date: 2023-09-10 18:02+0200\n"
+"POT-Creation-Date: 2023-10-16 17:44+0000\n"
+"PO-Revision-Date: 2023-10-16 19:51+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -18,11 +18,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.3.2\n"
+"X-Generator: Poedit 3.4\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:5
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
-#: src/sysprof/sysprof-application.c:208
+#: src/sysprof/sysprof-application.c:237
 #: src/sysprof/sysprof-recording-pad.ui:18 src/sysprof/sysprof-window.c:243
 msgid "Sysprof"
 msgstr "Sysprof"
@@ -43,7 +43,7 @@ msgstr ""
 "Sysprof låter dig profilera program för att hjälpa till med felsökning och "
 "optimering."
 
-#: data/org.gnome.Sysprof.desktop.in.in:5 src/sysprof/sysprof-greeter.ui:64
+#: data/org.gnome.Sysprof.desktop.in.in:5 src/sysprof/sysprof-greeter.ui:89
 msgid "Profiler"
 msgstr "Profilerare"
 
@@ -76,7 +76,7 @@ msgid "CSS"
 msgstr "CSS"
 
 #: src/libsysprof/sysprof-category-summary.c:154
-#: src/sysprof/sysprof-greeter.ui:408 src/sysprof/sysprof-window.ui:292
+#: src/sysprof/sysprof-greeter.ui:433 src/sysprof/sysprof-window.ui:317
 msgid "Graphics"
 msgstr "Grafik"
 
@@ -419,27 +419,57 @@ msgstr "Profilera systemet"
 msgid "Authentication is required to profile the system."
 msgstr "Autentisering krävs för att profilera systemet."
 
-#: src/sysprof/gtk/help-overlay.ui:10
+#: src/sysprof/gtk/help-overlay.ui:11
+msgctxt "shortcut window"
+msgid "Recording View"
+msgstr "Inspelningsvy"
+
+#: src/sysprof/gtk/help-overlay.ui:14
+msgctxt "shortcut window"
+msgid "Start New Recording"
+msgstr "Starta ny inspelning"
+
+#: src/sysprof/gtk/help-overlay.ui:20
+msgctxt "shortcut window"
+msgid "Save As"
+msgstr "Spara som"
+
+#: src/sysprof/gtk/help-overlay.ui:26
+msgctxt "shortcut window"
+msgid "Toggle Visibility of Main Sidebar"
+msgstr "Växla synligheten för huvudsidopanel"
+
+#: src/sysprof/gtk/help-overlay.ui:32
+msgctxt "shortcut window"
+msgid "Toggle Visibility of Stack Trace Sidebar"
+msgstr "Växla synligheten för stackspårssidopanel"
+
+#: src/sysprof/gtk/help-overlay.ui:40
 msgctxt "shortcut window"
 msgid "General"
 msgstr "Allmänt"
 
-#: src/sysprof/gtk/help-overlay.ui:13
+#: src/sysprof/gtk/help-overlay.ui:43
 msgctxt "shortcut window"
-msgid "Show Help"
-msgstr "Visa hjälp"
+msgid "Open Recording"
+msgstr "Öppna inspelning"
 
-#: src/sysprof/gtk/help-overlay.ui:19
-msgctxt "shortcut window"
-msgid "Keyboard Shortcuts"
-msgstr "Tangentbordsgenvägar"
-
-#: src/sysprof/gtk/help-overlay.ui:25
+#: src/sysprof/gtk/help-overlay.ui:49
 msgctxt "shortcut window"
 msgid "Close Window"
 msgstr "Stäng fönster"
 
-#: src/sysprof/gtk/help-overlay.ui:31
+#: src/sysprof/gtk/help-overlay.ui:56
+msgctxt "shortcut window"
+msgid "Show Help"
+msgstr "Visa hjälp"
+
+#: src/sysprof/gtk/help-overlay.ui:62
+msgctxt "shortcut window"
+msgid "Show keyboard shortcuts"
+msgstr "Visa tangentbordsgenvägar"
+
+#: src/sysprof/gtk/help-overlay.ui:68
 msgctxt "shortcut window"
 msgid "Quit"
 msgstr "Avsluta"
@@ -448,7 +478,8 @@ msgstr "Avsluta"
 msgid "_Preferences"
 msgstr "_Inställningar"
 
-#: src/sysprof/gtk/menus.ui:10
+#: src/sysprof/gtk/menus.ui:10 src/sysprof/sysprof-greeter.ui:644
+#: src/sysprof/sysprof-window.ui:398
 msgid "_Keyboard Shortcuts"
 msgstr "_Tangentbordsgenvägar"
 
@@ -539,7 +570,7 @@ msgstr "Tid"
 #: src/sysprof/sysprof-energy-section.ui:382
 #: src/sysprof/sysprof-flame-graph.c:453
 #: src/sysprof/sysprof-graphics-section.ui:293
-#: src/sysprof/sysprof-marks-section.ui:242
+#: src/sysprof/sysprof-marks-section.ui:247
 #: src/sysprof/sysprof-network-section.ui:380
 #: src/sysprof/sysprof-storage-section.ui:380
 msgid "Category"
@@ -548,7 +579,7 @@ msgstr "Kategori"
 #: src/sysprof/sysprof-cpu-section.ui:450
 #: src/sysprof/sysprof-energy-section.ui:420
 #: src/sysprof/sysprof-graphics-section.ui:331
-#: src/sysprof/sysprof-marks-section.ui:276
+#: src/sysprof/sysprof-marks-section.ui:281
 #: src/sysprof/sysprof-network-section.ui:418
 #: src/sysprof/sysprof-storage-section.ui:418
 msgid "Name"
@@ -664,7 +695,7 @@ msgstr "Fil"
 #: src/sysprof/sysprof-logs-section.ui:143
 #: src/sysprof/sysprof-mark-table.ui:116
 #: src/sysprof/sysprof-traceables-utility.ui:81
-#: src/sysprof/sysprof-window.ui:272
+#: src/sysprof/sysprof-window.ui:297
 msgid "CPU"
 msgstr "CPU"
 
@@ -722,173 +753,173 @@ msgstr "Strömsparare"
 msgid "Performance"
 msgstr "Prestanda"
 
-#: src/sysprof/sysprof-greeter.ui:70
+#: src/sysprof/sysprof-greeter.ui:95
 msgid "Sampling"
 msgstr "Sampling"
 
-#: src/sysprof/sysprof-greeter.ui:74
+#: src/sysprof/sysprof-greeter.ui:99
 msgid "Sample Native Stacks"
 msgstr "Sampla inbyggda stackar"
 
-#: src/sysprof/sysprof-greeter.ui:75
+#: src/sysprof/sysprof-greeter.ui:100
 msgid "Record native stack traces using a sampling profiler"
 msgstr "Spela in inbyggda stackspår med en samplingsprofilerare"
 
-#: src/sysprof/sysprof-greeter.ui:91
+#: src/sysprof/sysprof-greeter.ui:116
 msgid "Sample JavaScript Stacks"
 msgstr "Sampla Javascript-stackar"
 
-#: src/sysprof/sysprof-greeter.ui:92
+#: src/sysprof/sysprof-greeter.ui:117
 msgid "Record JavaScript stack traces using a sampling profiler"
 msgstr "Spela in Javascript-stackspår med en samplingsprofilerare"
 
-#: src/sysprof/sysprof-greeter.ui:103
+#: src/sysprof/sysprof-greeter.ui:128
 msgid ""
 "Sysprof must launch your application to record JavaScript stacks using GJS."
 msgstr ""
 "Sysprof måste starta ditt program för att spela in Javascript-spår med GJS."
 
-#: src/sysprof/sysprof-greeter.ui:119
+#: src/sysprof/sysprof-greeter.ui:144
 msgid "Record Scheduler Details"
 msgstr "Spela in schemaläggardetaljer"
 
-#: src/sysprof/sysprof-greeter.ui:120
+#: src/sysprof/sysprof-greeter.ui:145
 msgid "Track when processes are scheduled per CPU"
 msgstr "Spåra när processer schemaläggs per processor"
 
-#: src/sysprof/sysprof-greeter.ui:133
+#: src/sysprof/sysprof-greeter.ui:158
 msgid "Tracing"
 msgstr "Spårning"
 
-#: src/sysprof/sysprof-greeter.ui:137
+#: src/sysprof/sysprof-greeter.ui:162
 msgid "Trace Memory Allocations"
 msgstr "Spåra minnesallokeringar"
 
-#: src/sysprof/sysprof-greeter.ui:138
+#: src/sysprof/sysprof-greeter.ui:163
 msgid "Record a stack trace when <tt>malloc</tt> or similar functions are used"
 msgstr ""
 "Spela in ett stackspår när <tt>malloc</tt> eller liknande funktioner används"
 
-#: src/sysprof/sysprof-greeter.ui:149
+#: src/sysprof/sysprof-greeter.ui:174
 msgid "Sysprof must launch your application to record memory allocations."
 msgstr "Sysprof måste starta ditt program för att spela in minnesallokeringar."
 
-#: src/sysprof/sysprof-greeter.ui:167 src/sysprof/sysprof-greeter.ui:172
+#: src/sysprof/sysprof-greeter.ui:192 src/sysprof/sysprof-greeter.ui:197
 msgid "Application"
 msgstr "Program"
 
-#: src/sysprof/sysprof-greeter.ui:175
+#: src/sysprof/sysprof-greeter.ui:200
 #: src/sysprof/sysprof-processes-section.ui:316
 msgid "Command Line"
 msgstr "Kommandorad"
 
-#: src/sysprof/sysprof-greeter.ui:181
+#: src/sysprof/sysprof-greeter.ui:206
 msgid "Working directory"
 msgstr "Arbetskatalog"
 
-#: src/sysprof/sysprof-greeter.ui:187
+#: src/sysprof/sysprof-greeter.ui:212
 msgid "The application will be run as a subprocess of Sysprof."
 msgstr "Programmet kommer köras som en underprocess till Sysprof."
 
-#: src/sysprof/sysprof-greeter.ui:200
+#: src/sysprof/sysprof-greeter.ui:225
 msgid "Environment"
 msgstr "Miljö"
 
-#: src/sysprof/sysprof-greeter.ui:204
+#: src/sysprof/sysprof-greeter.ui:229
 msgid "Clear Environment"
 msgstr "Rensa miljö"
 
-#: src/sysprof/sysprof-greeter.ui:205
+#: src/sysprof/sysprof-greeter.ui:230
 msgid "Clear the environment before launching application"
 msgstr "Rensa miljön före start av program"
 
-#: src/sysprof/sysprof-greeter.ui:231
+#: src/sysprof/sysprof-greeter.ui:256
 msgid "Add _Variable"
 msgstr "Lägg till _variabel"
 
-#: src/sysprof/sysprof-greeter.ui:237
+#: src/sysprof/sysprof-greeter.ui:262
 msgid "Add Variable"
 msgstr "Lägg till variabel"
 
-#: src/sysprof/sysprof-greeter.ui:238
+#: src/sysprof/sysprof-greeter.ui:263
 msgid "_Add"
 msgstr "_Lägg till"
 
-#: src/sysprof/sysprof-greeter.ui:255 src/sysprof/sysprof-greeter.ui:260
+#: src/sysprof/sysprof-greeter.ui:280 src/sysprof/sysprof-greeter.ui:285
 msgid "Counters"
 msgstr "Räknare"
 
-#: src/sysprof/sysprof-greeter.ui:264
+#: src/sysprof/sysprof-greeter.ui:289
 msgid "CPU Usage"
 msgstr "Processoranvändning"
 
-#: src/sysprof/sysprof-greeter.ui:265
+#: src/sysprof/sysprof-greeter.ui:290
 msgid "Record coarse-grained counters about CPU usage and frequency"
 msgstr "Spela in grovmaskiga mätare för processoranvändning och frekvens"
 
-#: src/sysprof/sysprof-greeter.ui:277
+#: src/sysprof/sysprof-greeter.ui:302
 msgid "Memory Usage"
 msgstr "Minnesanvändning"
 
-#: src/sysprof/sysprof-greeter.ui:278
+#: src/sysprof/sysprof-greeter.ui:303
 msgid "Record coarse-grained counters about system memory usage"
 msgstr "Spela in grovmaskiga mätare för systemminnesanvändning"
 
-#: src/sysprof/sysprof-greeter.ui:290
+#: src/sysprof/sysprof-greeter.ui:315
 msgid "Disk Usage"
 msgstr "Diskanvändning"
 
-#: src/sysprof/sysprof-greeter.ui:291
+#: src/sysprof/sysprof-greeter.ui:316
 msgid "Record coarse-grained counters about storage throughput"
 msgstr "Spela in grovmaskiga mätare för lagringsgenomströmning"
 
-#: src/sysprof/sysprof-greeter.ui:303
+#: src/sysprof/sysprof-greeter.ui:328
 msgid "Network Usage"
 msgstr "Nätverksanvändning"
 
-#: src/sysprof/sysprof-greeter.ui:304
+#: src/sysprof/sysprof-greeter.ui:329
 msgid "Record coarse-grained counters about network traffic"
 msgstr "Spela in grovmaskiga mätare för nätverkstrafik"
 
-#: src/sysprof/sysprof-greeter.ui:320
+#: src/sysprof/sysprof-greeter.ui:345
 msgid "Energy Usage"
 msgstr "Energianvändning"
 
-#: src/sysprof/sysprof-greeter.ui:321
+#: src/sysprof/sysprof-greeter.ui:346
 msgid "Record coarse-grained counters about energy usage in Watts"
 msgstr "Spela in grovmaskiga mätare för energianvändning i watt"
 
-#: src/sysprof/sysprof-greeter.ui:333
+#: src/sysprof/sysprof-greeter.ui:358
 msgid "Battery Charge"
 msgstr "Batteriladdning"
 
-#: src/sysprof/sysprof-greeter.ui:334
+#: src/sysprof/sysprof-greeter.ui:359
 msgid "Record coarse-grained counters about battery charge or discharge rates"
 msgstr ""
 "Spela in grovmaskiga mätare för batteriladdning eller urladdningshastighet"
 
-#: src/sysprof/sysprof-greeter.ui:352 src/sysprof/sysprof-greeter.ui:357
-#: src/sysprof/sysprof-window.ui:262
+#: src/sysprof/sysprof-greeter.ui:377 src/sysprof/sysprof-greeter.ui:382
+#: src/sysprof/sysprof-window.ui:287
 msgid "D-Bus"
 msgstr "D-Bus"
 
-#: src/sysprof/sysprof-greeter.ui:361
+#: src/sysprof/sysprof-greeter.ui:386
 msgid "Record System Bus"
 msgstr "Spela in systembuss"
 
-#: src/sysprof/sysprof-greeter.ui:362
+#: src/sysprof/sysprof-greeter.ui:387
 msgid "Record messages on the D-Bus system bus"
 msgstr "Spela in meddelanden på D-Bus-systembussen"
 
-#: src/sysprof/sysprof-greeter.ui:378
+#: src/sysprof/sysprof-greeter.ui:403
 msgid "Record Session Bus"
 msgstr "Spela in sessionsbuss"
 
-#: src/sysprof/sysprof-greeter.ui:379
+#: src/sysprof/sysprof-greeter.ui:404
 msgid "Record messages on the D-Bus user session bus"
 msgstr "Spela in meddelanden på D-Bus-användarsessionsbussen"
 
-#: src/sysprof/sysprof-greeter.ui:390
+#: src/sysprof/sysprof-greeter.ui:415
 msgid ""
 "The session bus may contain sensitive information such as keyboard usage and "
 "passwords."
@@ -896,19 +927,19 @@ msgstr ""
 "Sessionsbussen kan inkludera känslig information såsom "
 "tangentbordsanvändning och lösenord."
 
-#: src/sysprof/sysprof-greeter.ui:413
+#: src/sysprof/sysprof-greeter.ui:438
 msgid "Timings"
 msgstr "Tidsvärden"
 
-#: src/sysprof/sysprof-greeter.ui:417
+#: src/sysprof/sysprof-greeter.ui:442
 msgid "Compositor Frame Timings"
 msgstr "Kompositionsramtider"
 
-#: src/sysprof/sysprof-greeter.ui:418
+#: src/sysprof/sysprof-greeter.ui:443
 msgid "Record frame-timing information from the GNOME Shell compositor"
 msgstr "Spela in ramtidsinformation från GNOME-skalets kompositionshanterare"
 
-#: src/sysprof/sysprof-greeter.ui:429
+#: src/sysprof/sysprof-greeter.ui:454
 msgid ""
 "Applications launched by Sysprof will automatically collect GTK frame timing "
 "information."
@@ -916,86 +947,94 @@ msgstr ""
 "Program som startas av Sysprof kommer automatiskt samla in GTK-"
 "ramtidsinformation."
 
-#: src/sysprof/sysprof-greeter.ui:469
+#: src/sysprof/sysprof-greeter.ui:494
 msgid "Devices"
 msgstr "Enheter"
 
-#: src/sysprof/sysprof-greeter.ui:473
+#: src/sysprof/sysprof-greeter.ui:498
 msgid "Include GPU Information"
 msgstr "Inkludera GPU-information"
 
-#: src/sysprof/sysprof-greeter.ui:474
+#: src/sysprof/sysprof-greeter.ui:499
 msgid "Records information about graphics hardware and drivers"
 msgstr "Spelar in information om grafikhårdvara och drivrutiner"
 
-#: src/sysprof/sysprof-greeter.ui:492
+#: src/sysprof/sysprof-greeter.ui:517
 msgid "System"
 msgstr "System"
 
-#: src/sysprof/sysprof-greeter.ui:497
+#: src/sysprof/sysprof-greeter.ui:522
 msgid "Power Profile"
 msgstr "Strömprofil"
 
-#: src/sysprof/sysprof-greeter.ui:500
+#: src/sysprof/sysprof-greeter.ui:525
 msgid "Record with Power Profile"
 msgstr "Spela in med strömprofil"
 
-#: src/sysprof/sysprof-greeter.ui:501
+#: src/sysprof/sysprof-greeter.ui:526
 msgid "Switch to power profile while recording"
 msgstr "Växla till prestandaprofil under inspelning"
 
-#: src/sysprof/sysprof-greeter.ui:511
+#: src/sysprof/sysprof-greeter.ui:536
 msgid "Details"
 msgstr "Detaljer"
 
-#: src/sysprof/sysprof-greeter.ui:515
+#: src/sysprof/sysprof-greeter.ui:540
 msgid "Record System Log"
 msgstr "Spela in systemlogg"
 
-#: src/sysprof/sysprof-greeter.ui:516
+#: src/sysprof/sysprof-greeter.ui:541
 msgid "Watch the system log for new messages and record them"
 msgstr "Övervaka systemloggen efter nya meddelanden och spela in dem"
 
-#: src/sysprof/sysprof-greeter.ui:532
+#: src/sysprof/sysprof-greeter.ui:557
 msgid "Include Hardware Information"
 msgstr "Inkludera hårdvaruinformation"
 
-#: src/sysprof/sysprof-greeter.ui:533
+#: src/sysprof/sysprof-greeter.ui:558
 msgid "Records information about PCI and USB devices"
 msgstr "Spelar in information om PCI- och USB-enheter"
 
-#: src/sysprof/sysprof-greeter.ui:546
+#: src/sysprof/sysprof-greeter.ui:571
 msgid "Symbols"
 msgstr "Symboler"
 
-#: src/sysprof/sysprof-greeter.ui:550
+#: src/sysprof/sysprof-greeter.ui:575
 msgid "Bundle Symbols"
 msgstr "Skicka med symboler"
 
-#: src/sysprof/sysprof-greeter.ui:551
+#: src/sysprof/sysprof-greeter.ui:576
 msgid "Make recording shareable by symbolizing stack traces after recording"
 msgstr ""
 "Gör inspelning delningsbar genom att symbolisera stackspår efter inspelning"
 
-#: src/sysprof/sysprof-greeter.ui:584
+#: src/sysprof/sysprof-greeter.ui:609
 msgid "_Open File…"
 msgstr "Ö_ppna fil…"
 
-#: src/sysprof/sysprof-greeter.ui:591
+#: src/sysprof/sysprof-greeter.ui:616
 msgid "Record to _File…"
 msgstr "Spela in till _fil…"
 
-#: src/sysprof/sysprof-greeter.ui:598
+#: src/sysprof/sysprof-greeter.ui:623
 msgid "Record to _Memory"
 msgstr "Spela in till _minne"
 
-#: src/sysprof/sysprof-greeter.ui:613 src/sysprof/sysprof-window.ui:373
+#: src/sysprof/sysprof-greeter.ui:638 src/sysprof/sysprof-window.ui:388
+msgid "Open Recording…"
+msgstr "Öppna inspelning…"
+
+#: src/sysprof/sysprof-greeter.ui:648 src/sysprof/sysprof-window.ui:402
 msgid "Help"
 msgstr "Hjälp"
 
-#: src/sysprof/sysprof-greeter.ui:618 src/sysprof/sysprof-window.ui:378
+#: src/sysprof/sysprof-greeter.ui:652 src/sysprof/sysprof-window.ui:406
 msgid "About Sysprof"
 msgstr "Om Sysprof"
+
+#: src/sysprof/sysprof-greeter.ui:658
+msgid "Quit"
+msgstr "Avsluta"
 
 #: src/sysprof/sysprof-logs-section.c:95
 msgid "Critical"
@@ -1045,23 +1084,23 @@ msgstr "Märk tabell"
 msgid "Mark Waterfall"
 msgstr "Märk vattenfall"
 
-#: src/sysprof/sysprof-marks-section.ui:206
+#: src/sysprof/sysprof-marks-section.ui:211
 msgid "Summary"
 msgstr "Sammanfattning"
 
-#: src/sysprof/sysprof-marks-section.ui:311
+#: src/sysprof/sysprof-marks-section.ui:316
 msgid "Minimum"
 msgstr "Minimum"
 
-#: src/sysprof/sysprof-marks-section.ui:345
+#: src/sysprof/sysprof-marks-section.ui:350
 msgid "Maximum"
 msgstr "Maximum"
 
-#: src/sysprof/sysprof-marks-section.ui:379
+#: src/sysprof/sysprof-marks-section.ui:384
 msgid "Average"
 msgstr "Medelvärde"
 
-#: src/sysprof/sysprof-marks-section.ui:413
+#: src/sysprof/sysprof-marks-section.ui:418
 msgid "Median"
 msgstr "Median"
 
@@ -1235,31 +1274,31 @@ msgstr "Sluta spela in"
 msgid "Time Profiler"
 msgstr "Tidsprofilerare"
 
-#: src/sysprof/sysprof-samples-section.ui:89 src/sysprof/sysprof-window.ui:385
+#: src/sysprof/sysprof-samples-section.ui:89 src/sysprof/sysprof-window.ui:419
 msgid "Callgraph"
 msgstr "Anropsgraf"
 
-#: src/sysprof/sysprof-samples-section.ui:172 src/sysprof/sysprof-window.ui:416
+#: src/sysprof/sysprof-samples-section.ui:172 src/sysprof/sysprof-window.ui:450
 msgid "Flamegraph"
 msgstr "Flamgraf"
 
-#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:130
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:154
 msgid "Seek Backward"
 msgstr "Spola bakåt"
 
-#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:140
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:164
 msgid "Zoom Out"
 msgstr "Zooma ut"
 
-#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:150
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:174
 msgid "Reset Zoom"
 msgstr "Återställ zoom"
 
-#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:160
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:184
 msgid "Zoom In"
 msgstr "Zooma in"
 
-#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:170
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:194
 msgid "Seek Forward"
 msgstr "Spola framåt"
 
@@ -1311,75 +1350,75 @@ msgstr ""
 "\n"
 "%s"
 
-#: src/sysprof/sysprof-window.ui:120
+#: src/sysprof/sysprof-window.ui:144
 msgid "Toggle Left Panel"
 msgstr "Aktivera/inaktivera vänsterpanel"
 
-#: src/sysprof/sysprof-window.ui:184
+#: src/sysprof/sysprof-window.ui:209
 msgid "Main Menu"
 msgstr "Huvudmeny"
 
-#: src/sysprof/sysprof-window.ui:191
+#: src/sysprof/sysprof-window.ui:216
 msgid "View Options"
 msgstr "Visningsalternativ"
 
-#: src/sysprof/sysprof-window.ui:197
+#: src/sysprof/sysprof-window.ui:222
 msgid "Toggle Right Panel"
 msgstr "Aktivera/inaktivera högerpanel"
 
-#: src/sysprof/sysprof-window.ui:282
+#: src/sysprof/sysprof-window.ui:307
 msgid "Energy"
 msgstr "Energi"
 
-#: src/sysprof/sysprof-window.ui:302
+#: src/sysprof/sysprof-window.ui:327
 msgid "Network"
 msgstr "Nätverk"
 
-#: src/sysprof/sysprof-window.ui:312
+#: src/sysprof/sysprof-window.ui:337
 msgid "Storage"
 msgstr "Lagring"
 
-#: src/sysprof/sysprof-window.ui:359
+#: src/sysprof/sysprof-window.ui:384
 msgid "_Record Again…"
 msgstr "S_pela in igen…"
 
-#: src/sysprof/sysprof-window.ui:363
-msgid "Open Recording…"
-msgstr "Öppna inspelning…"
-
-#: src/sysprof/sysprof-window.ui:367
+#: src/sysprof/sysprof-window.ui:392
 msgid "Save As…"
 msgstr "Spara som…"
 
-#: src/sysprof/sysprof-window.ui:387
+#: src/sysprof/sysprof-window.ui:412
+msgid "_Quit"
+msgstr "A_vsluta"
+
+#: src/sysprof/sysprof-window.ui:421
 msgid "Categorize Frames"
 msgstr "Kategorisera ramar"
 
-#: src/sysprof/sysprof-window.ui:391
+#: src/sysprof/sysprof-window.ui:425
 msgid "Hide System Libraries"
 msgstr "Dölj systembibliotek"
 
-#: src/sysprof/sysprof-window.ui:395
+#: src/sysprof/sysprof-window.ui:429
 msgid "Include Threads"
 msgstr "Inkludera trådar"
 
-#: src/sysprof/sysprof-window.ui:399
+#: src/sysprof/sysprof-window.ui:433
 msgid "Bottom Up"
 msgstr "Botten upp"
 
-#: src/sysprof/sysprof-window.ui:403
+#: src/sysprof/sysprof-window.ui:437
 msgid "Ignore Kernel Processes"
 msgstr "Ignorera kärnprocesser"
 
-#: src/sysprof/sysprof-window.ui:407
+#: src/sysprof/sysprof-window.ui:441
 msgid "Ignore Process 0"
 msgstr "Ignorera process 0"
 
-#: src/sysprof/sysprof-window.ui:411
+#: src/sysprof/sysprof-window.ui:445
 msgid "Merge Similar Processes"
 msgstr "Slå samman liknande processer"
 
-#: src/sysprof/sysprof-window.ui:418
+#: src/sysprof/sysprof-window.ui:452
 msgid "Left Heavy"
 msgstr "Vänstertung"
 
@@ -1666,10 +1705,6 @@ msgstr "Vänstertung"
 #~ msgctxt "shortcut window"
 #~ msgid "Record again"
 #~ msgstr "Spela in igen"
-
-#~ msgctxt "shortcut window"
-#~ msgid "Starts a new recording"
-#~ msgstr "Startar en ny inspelning"
 
 #~ msgctxt "shortcut window"
 #~ msgid "Stop recording"

@@ -256,6 +256,7 @@ sysprof_sampler_prepare_fiber (gpointer user_data)
   struct perf_event_attr attr = {0};
   gboolean with_mmap2 = TRUE;
   guint n_cpu;
+  gboolean use_software = FALSE;
 
   g_assert (prepare != NULL);
   g_assert (SYSPROF_IS_RECORDING (prepare->recording));
@@ -314,9 +315,18 @@ try_again:
 
   attr.size = sizeof attr;
 
-  attr.type = PERF_TYPE_HARDWARE;
-  attr.config = PERF_COUNT_HW_CPU_CYCLES;
-  attr.sample_period = 1200000;
+  if (use_software)
+    {
+      attr.type = PERF_TYPE_SOFTWARE;
+      attr.config = PERF_COUNT_SW_CPU_CLOCK;
+      attr.sample_period = 1000000;
+    }
+  else
+    {
+      attr.type = PERF_TYPE_HARDWARE;
+      attr.config = PERF_COUNT_HW_CPU_CYCLES;
+      attr.sample_period = 1200000;
+    }
 
   if (!(connection = dex_await_object (dex_bus_get (G_BUS_TYPE_SYSTEM), &error)))
     return dex_future_new_for_error (g_steal_pointer (&error));
@@ -363,6 +373,14 @@ try_again:
           if (with_mmap2)
             {
               with_mmap2 = FALSE;
+              g_ptr_array_remove_range (futures, 0, futures->len);
+              goto try_again;
+            }
+
+          if (use_software == FALSE)
+            {
+              with_mmap2 = TRUE;
+              use_software = TRUE;
               g_ptr_array_remove_range (futures, 0, futures->len);
               goto try_again;
             }

@@ -1,3 +1,13 @@
+Overview of changes in Sysprof 45.1
+===================================
+
+Changes since 45.0:
+
+ * Be more defensive against oddly formed container JSON definitions.
+ * Limit maximum number of marks rendered in marks visualizer row.
+ * Fallback to software perf counters which fixes Sysprof on Asahi.
+ * Improve Rust demangler.
+
 Overview of changes in Sysprof 45.0
 ===================================
 

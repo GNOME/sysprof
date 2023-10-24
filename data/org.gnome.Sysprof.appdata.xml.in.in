@@ -40,7 +40,7 @@
   </provides>
 
   <releases>
-    <release version="45.beta" date="2023-08-07"/>
+    <release version="45.1" date="2023-10-24"/>
   </releases>
 
   <metadata_license>CC0-1.0</metadata_license>

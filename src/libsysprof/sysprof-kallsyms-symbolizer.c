@@ -22,6 +22,8 @@
 
 #include <errno.h>
 
+#include "rust-demangle.h"
+
 #include "sysprof-kallsyms-symbolizer.h"
 #include "sysprof-document-private.h"
 #include "sysprof-strings-private.h"
@@ -153,7 +155,15 @@ sysprof_kallsyms_symbolizer_prepare_worker (GTask        *task,
        * array just detect the simple case and skip them now.
        */
       if (address != last_address)
-        sysprof_kallsyms_symbolizer_add (self, address, type, name);
+        {
+          g_autofree char *demangle = NULL;
+
+          /* If we got a Rust kernel symbol, demangle it */
+          if (name[0] == '_' && name[1] == 'R' && name[2] == 'N')
+            name = demangle = sysprof_rust_demangle (name, 0);
+
+          sysprof_kallsyms_symbolizer_add (self, address, type, name);
+        }
 
       last_address = address;
 

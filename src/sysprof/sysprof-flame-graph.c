@@ -365,7 +365,7 @@ sysprof_flame_graph_set_motion (SysprofFlameGraph *self,
     {
       self->under_pointer = rect;
 
-      gtk_widget_set_cursor_from_name (GTK_WIDGET (self), rect ? "hand" : NULL);
+      gtk_widget_set_cursor_from_name (GTK_WIDGET (self), rect ? "pointer" : NULL);
     }
 
   gtk_widget_queue_draw (GTK_WIDGET (self));

@@ -32,13 +32,17 @@ struct _SysprofMarkChart
   GtkWidget            parent_instance;
 
   SysprofSession      *session;
+  GtkMapListModel     *map;
 
   GtkWidget           *box;
   GtkListView         *list_view;
+
+  guint                max_items;
 };
 
 enum {
   PROP_0,
+  PROP_MAX_ITEMS,
   PROP_SESSION,
   N_PROPS
 };
@@ -51,7 +55,9 @@ static gpointer
 map_func (gpointer item,
           gpointer user_data)
 {
-  gpointer ret = sysprof_mark_chart_item_new (SYSPROF_SESSION (user_data), SYSPROF_MARK_CATALOG (item));
+  SysprofMarkChart *self = SYSPROF_MARK_CHART (user_data);
+  gpointer ret = sysprof_mark_chart_item_new (self->session, SYSPROF_MARK_CATALOG (item));
+  g_object_bind_property (self, "max-items", ret, "max-items", G_BINDING_SYNC_CREATE);
   g_object_unref (item);
   return ret;
 }
@@ -63,6 +69,12 @@ sysprof_mark_chart_disconnect (SysprofMarkChart *self)
   g_assert (SYSPROF_IS_SESSION (self->session));
 
   gtk_list_view_set_model (self->list_view, NULL);
+
+  if (self->map)
+    {
+      gtk_map_list_model_set_map_func (self->map, NULL, NULL, NULL);
+      g_clear_object (&self->map);
+    }
 }
 
 static void
@@ -78,12 +90,11 @@ sysprof_mark_chart_connect (SysprofMarkChart *self)
 
   document = sysprof_session_get_document (self->session);
   flatten = gtk_flatten_list_model_new (sysprof_document_catalog_marks (document));
-  map = gtk_map_list_model_new (G_LIST_MODEL (flatten),
-                                map_func,
-                                g_object_ref (self->session),
-                                g_object_unref);
-  no = gtk_no_selection_new (G_LIST_MODEL (map));
 
+  map = gtk_map_list_model_new (G_LIST_MODEL (flatten), map_func, self, NULL);
+  g_set_object (&self->map, map);
+
+  no = gtk_no_selection_new (G_LIST_MODEL (map));
   gtk_list_view_set_model (self->list_view, GTK_SELECTION_MODEL (no));
 }
 
@@ -96,6 +107,12 @@ sysprof_mark_chart_dispose (GObject *object)
     {
       sysprof_mark_chart_disconnect (self);
       g_clear_object (&self->session);
+    }
+
+  if (self->map)
+    {
+      gtk_map_list_model_set_map_func (self->map, NULL, NULL, NULL);
+      g_clear_object (&self->map);
     }
 
   g_clear_pointer (&self->box, gtk_widget_unparent);
@@ -113,6 +130,10 @@ sysprof_mark_chart_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_MAX_ITEMS:
+      g_value_set_uint (value, self->max_items);
+      break;
+
     case PROP_SESSION:
       g_value_set_object (value, sysprof_mark_chart_get_session (self));
       break;
@@ -132,6 +153,10 @@ sysprof_mark_chart_set_property (GObject      *object,
 
   switch (prop_id)
     {
+    case PROP_MAX_ITEMS:
+      self->max_items = g_value_get_uint (value);
+      break;
+
     case PROP_SESSION:
       sysprof_mark_chart_set_session (self, g_value_get_object (value));
       break;
@@ -150,6 +175,11 @@ sysprof_mark_chart_class_init (SysprofMarkChartClass *klass)
   object_class->dispose = sysprof_mark_chart_dispose;
   object_class->get_property = sysprof_mark_chart_get_property;
   object_class->set_property = sysprof_mark_chart_set_property;
+
+  properties [PROP_MAX_ITEMS] =
+    g_param_spec_uint ("max-items", NULL, NULL,
+                       1, G_MAXUINT-1, 1000,
+                       (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_SESSION] =
     g_param_spec_object ("session", NULL, NULL,
@@ -175,6 +205,8 @@ static void
 sysprof_mark_chart_init (SysprofMarkChart *self)
 {
   _sysprof_css_init ();
+
+  self->max_items = 1000;
 
   gtk_widget_init_template (GTK_WIDGET (self));
 }

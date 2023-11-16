@@ -79,6 +79,7 @@
                 <property name="icon-name">mark-chart-symbolic</property>
                 <property name="child">
                   <object class="SysprofMarkChart" id="mark_chart">
+                    <property name="max-items">5000</property>
                     <binding name="session">
                       <lookup name="session">SysprofMarksSection</lookup>
                     </binding>

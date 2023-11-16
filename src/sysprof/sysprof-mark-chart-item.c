@@ -21,6 +21,7 @@
 #include "config.h"
 
 #include "sysprof-mark-chart-item-private.h"
+#include "sysprof-sampled-model.h"
 #include "sysprof-time-filter-model.h"
 
 struct _SysprofMarkChartItem
@@ -29,11 +30,14 @@ struct _SysprofMarkChartItem
   SysprofSession         *session;
   SysprofMarkCatalog     *catalog;
   SysprofTimeFilterModel *filtered;
+  SysprofSampledModel    *sampled;
   SysprofSeries          *series;
+  guint                   max_items;
 };
 
 enum {
   PROP_0,
+  PROP_MAX_ITEMS,
   PROP_SESSION,
   PROP_CATALOG,
   PROP_SERIES,
@@ -54,7 +58,7 @@ sysprof_mark_chart_item_constructed (GObject *object)
   if (self->catalog == NULL || self->session == NULL)
     g_return_if_reached ();
 
-  sysprof_time_filter_model_set_model (self->filtered, G_LIST_MODEL (self->catalog));
+  sysprof_sampled_model_set_model (self->sampled, G_LIST_MODEL (self->catalog));
 
   g_object_bind_property (self->session, "selected-time",
                           self->filtered, "time-span",
@@ -69,6 +73,7 @@ sysprof_mark_chart_item_dispose (GObject *object)
   g_clear_object (&self->session);
   g_clear_object (&self->catalog);
   g_clear_object (&self->filtered);
+  g_clear_object (&self->sampled);
   g_clear_object (&self->series);
 
   G_OBJECT_CLASS (sysprof_mark_chart_item_parent_class)->dispose (object);
@@ -86,6 +91,10 @@ sysprof_mark_chart_item_get_property (GObject    *object,
     {
     case PROP_CATALOG:
       g_value_set_object (value, sysprof_mark_chart_item_get_catalog (self));
+      break;
+
+    case PROP_MAX_ITEMS:
+      g_value_set_uint (value, self->max_items);
       break;
 
     case PROP_SESSION:
@@ -119,6 +128,11 @@ sysprof_mark_chart_item_set_property (GObject      *object,
       self->session = g_value_dup_object (value);
       break;
 
+    case PROP_MAX_ITEMS:
+      self->max_items = g_value_get_uint (value);
+      sysprof_sampled_model_set_max_items (self->sampled, self->max_items);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -139,6 +153,12 @@ sysprof_mark_chart_item_class_init (SysprofMarkChartItemClass *klass)
                          SYSPROF_TYPE_MARK_CATALOG,
                          (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
 
+  properties[PROP_MAX_ITEMS] =
+    g_param_spec_uint ("max-items", NULL, NULL,
+                       1, G_MAXUINT-1, 1000,
+                       (G_PARAM_READWRITE |
+                        G_PARAM_STATIC_STRINGS));
+
   properties[PROP_SESSION] =
     g_param_spec_object ("session", NULL, NULL,
                          SYSPROF_TYPE_SESSION,
@@ -155,7 +175,13 @@ sysprof_mark_chart_item_class_init (SysprofMarkChartItemClass *klass)
 static void
 sysprof_mark_chart_item_init (SysprofMarkChartItem *self)
 {
+  self->max_items = 1000;
+
   self->filtered = sysprof_time_filter_model_new (NULL, NULL);
+  self->sampled = sysprof_sampled_model_new (NULL, self->max_items);
+
+  sysprof_time_filter_model_set_model (self->filtered,
+                                       G_LIST_MODEL (self->sampled));
 
   self->series = sysprof_time_series_new (NULL,
                                           g_object_ref (G_LIST_MODEL (self->filtered)),

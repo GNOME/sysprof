@@ -15,7 +15,7 @@
   for more information.
   </description>
   <homepage rdf:resource="http://sysprof.com" />
-  <mailing-list rdf:resource="http://mail.gnome.org/mailman/listinfo/sysprof-list" />
+  <developer-forum rdf:resource="https://discourse.gnome.org/c/platform/" />
   <download-page rdf:resource="https://wiki.gnome.org/Apps/Sysprof" />
   <bug-database rdf:resource="https://gitlab.gnome.org/GNOME/sysprof/issues/" />
   <category rdf:resource="http://api.gnome.org/doap-extensions#apps" />

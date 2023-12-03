@@ -8,16 +8,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-08-31 22:05+0000\n"
-"PO-Revision-Date: 2023-09-02 21:40+0300\n"
-"Last-Translator: Yosef Or Boczko <yoseforb@gmail.com>\n"
+"POT-Creation-Date: 2023-10-29 10:36+0000\n"
+"PO-Revision-Date: 2023-12-03 15:40+0200\n"
+"Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language-Team: Hebrew <yoseforb@gmail.com>\n"
 "Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"X-Generator: Gtranslator 42.0\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.4.1\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:5
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
@@ -50,7 +50,7 @@ msgstr "ניתוח יישום או מערכת שלמה."
 
 #: src/libsysprof/sysprof-category-summary.c:136
 msgid "Uncategorized"
-msgstr ""
+msgstr "ללא קטגוריה"
 
 #: src/libsysprof/sysprof-category-summary.c:139
 msgid "Accessibility"
@@ -66,7 +66,7 @@ msgstr "מטפל בקריסות"
 
 #: src/libsysprof/sysprof-category-summary.c:148
 msgid "Context Switches"
-msgstr ""
+msgstr "החלפת הקשר"
 
 #: src/libsysprof/sysprof-category-summary.c:151
 msgid "CSS"
@@ -119,7 +119,7 @@ msgstr "זיכרון"
 
 #: src/libsysprof/sysprof-category-summary.c:187
 msgid "Paint"
-msgstr ""
+msgstr "צבע"
 
 #: src/libsysprof/sysprof-category-summary.c:190
 msgid "Type System"
@@ -141,46 +141,43 @@ msgstr "הקצאה"
 msgid "Unknown Process"
 msgstr "תהליך לא ידוע"
 
-#: src/libsysprof/sysprof-document.c:1239
-#: src/libsysprof/sysprof-document.c:1275
+#: src/libsysprof/sysprof-document.c:1251
+#: src/libsysprof/sysprof-document.c:1287
 msgid "Indexing capture data frames"
 msgstr ""
 
-#: src/libsysprof/sysprof-document.c:1461
+#: src/libsysprof/sysprof-document.c:1473
 msgid "Discovering file system mounts"
 msgstr "גילוי מערכת קבצים מעוגנת"
 
-#: src/libsysprof/sysprof-document.c:1464
+#: src/libsysprof/sysprof-document.c:1476
 msgid "Discovering process mount namespaces"
 msgstr ""
 
-#: src/libsysprof/sysprof-document.c:1467
+#: src/libsysprof/sysprof-document.c:1479
 msgid "Analyzing process address layouts"
 msgstr "ניתוח פריסת כתובות של תהליך"
 
-#: src/libsysprof/sysprof-document.c:1470
+#: src/libsysprof/sysprof-document.c:1482
 msgid "Analyzing process command line"
 msgstr "ניתוך תהליך שורת פקודה"
 
-#: src/libsysprof/sysprof-document.c:1473
+#: src/libsysprof/sysprof-document.c:1485
 msgid "Analyzing file system overlays"
 msgstr ""
 
-#: src/libsysprof/sysprof-document.c:1476
-#, fuzzy
-#| msgid "Processes"
+#: src/libsysprof/sysprof-document.c:1488
 msgid "Processing counters"
-msgstr "תהליכים"
+msgstr "מוני עיבוד"
 
-#: src/libsysprof/sysprof-document.c:2464
-#: src/libsysprof/sysprof-document.c:2480
-#, fuzzy, c-format
-#| msgid "Recording at %s"
+#: src/libsysprof/sysprof-document.c:2476
+#: src/libsysprof/sysprof-document.c:2492
+#, c-format
 msgid "Recording at %X %x"
-msgstr "הקלטה ב־%s"
+msgstr "הקלטה ב־%X %x"
 
-#: src/libsysprof/sysprof-document.c:2466
-#: src/libsysprof/sysprof-document.c:2482
+#: src/libsysprof/sysprof-document.c:2478
+#: src/libsysprof/sysprof-document.c:2494
 #, c-format
 msgid "Recording at %s"
 msgstr "הקלטה ב־%s"
@@ -203,10 +200,8 @@ msgstr "טעינה נכשלה"
 
 #: src/libsysprof/sysprof-document-loader.c:478
 #: src/libsysprof/sysprof-document-symbols.c:217
-#, fuzzy
-#| msgid "Stack Traces"
 msgid "Symbolizing stack traces"
-msgstr "מעקבי מחסניות"
+msgstr "מעקב מהלכים עובר המרה לסמליות"
 
 #: src/libsysprof/sysprof-document-loader.c:547
 msgid "Loading document"
@@ -220,12 +215,12 @@ msgstr "יומן"
 msgid "Mark"
 msgstr "סימן"
 
-#: src/libsysprof/sysprof-document-process.c:277
+#: src/libsysprof/sysprof-document-process.c:293
 #, c-format
 msgid "%s [Process %d]"
 msgstr "‏%s [תהליך %d]"
 
-#: src/libsysprof/sysprof-document-process.c:279
+#: src/libsysprof/sysprof-document-process.c:295
 #, c-format
 msgid "Process %d"
 msgstr "תהליך %d"
@@ -257,16 +252,12 @@ msgid "--merge requires at least 2 filename arguments"
 msgstr "דרוש ‎--merge עם לפחות 2 שמות קבצים כארגומנטים"
 
 #: src/sysprof-cli/sysprof-cli.c:306
-#, fuzzy
-#| msgid "Disable CPU throttling while profiling"
 msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
-msgstr "להשבית האטת מעבד בעת אבחון"
+msgstr "להשבית האטת מעבד בעת הכנת פרופיל [לא תקף על ‎--power-profile]"
 
 #: src/sysprof-cli/sysprof-cli.c:307
-#, fuzzy
-#| msgid "Make sysprof specific to a task"
 msgid "Make sysprof specific to a task [Deprecated]"
-msgstr "להפוך את sysprof לממוקד משימה"
+msgstr "להפוך את sysprof לממוקד משימה [לא תקף עוד]"
 
 #: src/sysprof-cli/sysprof-cli.c:307 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:179
@@ -334,16 +325,12 @@ msgid "Track when processes are scheduled"
 msgstr ""
 
 #: src/sysprof-cli/sysprof-cli.c:320
-#, fuzzy
-#| msgid "Connect to the session bus"
 msgid "Profile the D-Bus session bus"
-msgstr "התחברות לאפיק ההפעלה"
+msgstr "יצירת פרופיל מאפיק ה־D-Bus של ההפעלה"
 
 #: src/sysprof-cli/sysprof-cli.c:321
-#, fuzzy
-#| msgid "Profile the system"
 msgid "Profile the D-Bus system bus"
-msgstr "אבחון המערכת"
+msgstr "יצירת פרופיל מאפיק ה־D-Bus של המערכת"
 
 #: src/sysprof-cli/sysprof-cli.c:322
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
@@ -512,10 +499,8 @@ msgstr "צאצאים"
 #: src/sysprof/sysprof-graphics-section.ui:88
 #: src/sysprof/sysprof-network-section.ui:86
 #: src/sysprof/sysprof-storage-section.ui:86
-#, fuzzy
-#| msgid "Counters Captured"
 msgid "Counters Chart"
-msgstr "מונים שנאספו"
+msgstr "תרשים מונים"
 
 #: src/sysprof/sysprof-counters-section.ui:40
 #: src/sysprof/sysprof-cpu-section.ui:323
@@ -523,10 +508,8 @@ msgstr "מונים שנאספו"
 #: src/sysprof/sysprof-graphics-section.ui:223
 #: src/sysprof/sysprof-network-section.ui:291
 #: src/sysprof/sysprof-storage-section.ui:291
-#, fuzzy
-#| msgid "Counters"
 msgid "Counters Table"
-msgstr "מונים"
+msgstr "טבלת מונים"
 
 #: src/sysprof/sysprof-cpu-section.ui:378
 #: src/sysprof/sysprof-dbus-section.ui:171
@@ -547,7 +530,7 @@ msgstr "זמן"
 #: src/sysprof/sysprof-energy-section.ui:382
 #: src/sysprof/sysprof-flame-graph.c:453
 #: src/sysprof/sysprof-graphics-section.ui:293
-#: src/sysprof/sysprof-marks-section.ui:242
+#: src/sysprof/sysprof-marks-section.ui:247
 #: src/sysprof/sysprof-network-section.ui:380
 #: src/sysprof/sysprof-storage-section.ui:380
 msgid "Category"
@@ -556,7 +539,7 @@ msgstr "קטגוריה"
 #: src/sysprof/sysprof-cpu-section.ui:450
 #: src/sysprof/sysprof-energy-section.ui:420
 #: src/sysprof/sysprof-graphics-section.ui:331
-#: src/sysprof/sysprof-marks-section.ui:276
+#: src/sysprof/sysprof-marks-section.ui:281
 #: src/sysprof/sysprof-network-section.ui:418
 #: src/sysprof/sysprof-storage-section.ui:418
 msgid "Name"
@@ -594,11 +577,11 @@ msgstr "אפיק"
 
 #: src/sysprof/sysprof-dbus-section.ui:244
 msgid "Serial"
-msgstr ""
+msgstr "סידורי"
 
 #: src/sysprof/sysprof-dbus-section.ui:281
 msgid "Reply"
-msgstr ""
+msgstr "תגובה"
 
 #: src/sysprof/sysprof-dbus-section.ui:318
 msgid "Flags"
@@ -651,8 +634,8 @@ msgstr "סינון הודעות"
 msgid "Message"
 msgstr "הודעה"
 
-#: src/sysprof/sysprof-files-section.ui:4
 # msgctxt "shortcut window"
+#: src/sysprof/sysprof-files-section.ui:4
 msgid "Files"
 msgstr "קבצים"
 
@@ -664,9 +647,9 @@ msgstr "דחוס"
 msgid "Filter Files"
 msgstr "סינון קבצים"
 
+# msgctxt "shortcut window"
 #: src/sysprof/sysprof-flame-graph.c:457
 #: src/sysprof/sysprof-process-dialog.ui:177
-# msgctxt "shortcut window"
 msgid "File"
 msgstr "קובץ"
 
@@ -684,7 +667,7 @@ msgstr "יש להשתמש מפתח=ערך לקביעת משתנה סביבת"
 
 #: src/sysprof/sysprof-greeter.c:108
 msgid "Keys may not start with a number"
-msgstr ""
+msgstr "מפתחות לא יכולים להיפתח במספר"
 
 #: src/sysprof/sysprof-greeter.c:118
 msgid "Keys may only contain alpha-numerics or underline."
@@ -692,11 +675,11 @@ msgstr ""
 
 #: src/sysprof/sysprof-greeter.c:265 src/sysprof/sysprof-window.c:155
 msgid "Must Capture to Local File"
-msgstr ""
+msgstr "חובה ללכוד לקובץ מקומי"
 
 #: src/sysprof/sysprof-greeter.c:266 src/sysprof/sysprof-window.c:156
 msgid "You must choose a local file to capture using Sysprof"
-msgstr ""
+msgstr "צריך לבחור בקובץ מקומי כדי ללכוד מידע באמצעות Sysprof"
 
 #: src/sysprof/sysprof-greeter.c:267 src/sysprof/sysprof-recording-pad.c:115
 #: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:718
@@ -706,7 +689,7 @@ msgstr "סגירה"
 #: src/sysprof/sysprof-greeter.c:288
 #, c-format
 msgid "System Capture from %s.syscap"
-msgstr ""
+msgstr "לכידת מערכת מ־%s.syscap"
 
 #: src/sysprof/sysprof-greeter.c:292
 msgid "Record to File"
@@ -734,7 +717,7 @@ msgstr "ביצועים"
 
 #: src/sysprof/sysprof-greeter.ui:70
 msgid "Sampling"
-msgstr ""
+msgstr "דגימה"
 
 #: src/sysprof/sysprof-greeter.ui:74
 msgid "Sample Native Stacks"
@@ -774,20 +757,16 @@ msgid "Tracing"
 msgstr ""
 
 #: src/sysprof/sysprof-greeter.ui:137
-#, fuzzy
-#| msgid "Memory Allocations"
 msgid "Trace Memory Allocations"
-msgstr "הקצאות זיכרון"
+msgstr "מעקב אחר הקצאות זיכרון"
 
 #: src/sysprof/sysprof-greeter.ui:138
 msgid "Record a stack trace when <tt>malloc</tt> or similar functions are used"
 msgstr ""
 
 #: src/sysprof/sysprof-greeter.ui:149
-#, fuzzy
-#| msgid "Sysprof is busy analyzing memory allocations."
 msgid "Sysprof must launch your application to record memory allocations."
-msgstr "ניתוח הקצאות הזיכרון מעסיק את Sysprof כהוגן."
+msgstr "על Sysprof להפעיל את היישום שלך כדי להקליט הקצאות זיכרון."
 
 #: src/sysprof/sysprof-greeter.ui:167 src/sysprof/sysprof-greeter.ui:172
 msgid "Application"
@@ -1040,42 +1019,38 @@ msgid "Domain"
 msgstr "שם תחום"
 
 #: src/sysprof/sysprof-marks-section.ui:4
-#, fuzzy
-#| msgid "Mark"
 msgid "Marks"
-msgstr "סימן"
+msgstr "סימונים"
 
 #: src/sysprof/sysprof-marks-section.ui:78
-#, fuzzy
-#| msgid "Marks Captured"
 msgid "Mark Chart"
-msgstr "סימנים שנאספו"
+msgstr "תרשים סימונים"
 
 #: src/sysprof/sysprof-marks-section.ui:91
 msgid "Mark Table"
-msgstr ""
+msgstr "סימון טבלה"
 
 #: src/sysprof/sysprof-marks-section.ui:104
 msgid "Mark Waterfall"
-msgstr ""
+msgstr "סימון מפל"
 
-#: src/sysprof/sysprof-marks-section.ui:206
+#: src/sysprof/sysprof-marks-section.ui:211
 msgid "Summary"
 msgstr "תקציר"
 
-#: src/sysprof/sysprof-marks-section.ui:311
+#: src/sysprof/sysprof-marks-section.ui:316
 msgid "Minimum"
 msgstr "מזערי"
 
-#: src/sysprof/sysprof-marks-section.ui:345
+#: src/sysprof/sysprof-marks-section.ui:350
 msgid "Maximum"
 msgstr "מרבי"
 
-#: src/sysprof/sysprof-marks-section.ui:379
+#: src/sysprof/sysprof-marks-section.ui:384
 msgid "Average"
 msgstr "ממוצע"
 
-#: src/sysprof/sysprof-marks-section.ui:413
+#: src/sysprof/sysprof-marks-section.ui:418
 msgid "Median"
 msgstr "חציון"
 
@@ -1189,8 +1164,8 @@ msgstr "מקור עיגון"
 msgid "Root"
 msgstr "שורש"
 
-#: src/sysprof/sysprof-process-dialog.ui:486
 # msgctxt "shortcut window"
+#: src/sysprof/sysprof-process-dialog.ui:486
 msgid "Filesystem"
 msgstr "מערכת קבצים"
 
@@ -1215,16 +1190,12 @@ msgid "Processes"
 msgstr "תהליכים"
 
 #: src/sysprof/sysprof-processes-section.ui:73
-#, fuzzy
-#| msgid "Processes Captured"
 msgid "Process Chart"
-msgstr "תהליכים שנאספו"
+msgstr "תרשים תהליכים"
 
 #: src/sysprof/sysprof-processes-section.ui:173
-#, fuzzy
-#| msgid "Processes"
 msgid "Process Table"
-msgstr "תהליכים"
+msgstr "טבלת תהליכים"
 
 #. translators: this expands to the number of events recorded by the profiler as an indicator of progress
 #: src/sysprof/sysprof-recording-pad.c:56
@@ -1236,50 +1207,48 @@ msgid "Recording Failed"
 msgstr "ההקלטה נכשלה"
 
 #: src/sysprof/sysprof-recording-pad.c:113
-#, fuzzy, c-format
-#| msgid "Sysprof failed to parse offset for “%s”."
+#, c-format
 msgid ""
 "Sysprof failed to record.\n"
 "\n"
 "%s"
-msgstr "פענוח ההיסט עבור „%s” על ידי Sysprof נכשל."
+msgstr ""
+"ההקלטה מצד Sysprof נכשלה.\n"
+"\n"
+"%s"
 
 #: src/sysprof/sysprof-recording-pad.ui:69
 msgid "Stop Recording"
 msgstr "עצירת הקלטה"
 
 #: src/sysprof/sysprof-samples-section.ui:4
-#, fuzzy
-#| msgid "Profiler"
 msgid "Time Profiler"
-msgstr "מאפיין"
+msgstr "מרכיב פרופיל לאורך זמן"
 
 #: src/sysprof/sysprof-samples-section.ui:89 src/sysprof/sysprof-window.ui:385
 msgid "Callgraph"
 msgstr "תרשים קריאות"
 
 #: src/sysprof/sysprof-samples-section.ui:172 src/sysprof/sysprof-window.ui:416
-#, fuzzy
-#| msgid "Callgraph"
 msgid "Flamegraph"
-msgstr "תרשים קריאות"
+msgstr "תרשים להבות"
 
 #: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:130
 msgid "Seek Backward"
 msgstr ""
 
-#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:140
 # msgctxt "shortcut window"
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:140
 msgid "Zoom Out"
 msgstr "התרחקות"
 
-#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:150
 # msgctxt "shortcut window"
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:150
 msgid "Reset Zoom"
 msgstr "איפוס התקריב"
 
-#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:160
 # msgctxt "shortcut window"
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:160
 msgid "Zoom In"
 msgstr "התקרבות"
 
@@ -1295,8 +1264,8 @@ msgstr "עומק"
 msgid "Hits"
 msgstr "פניות"
 
-#: src/sysprof/sysprof-window.c:171
 # msgctxt "shortcut window"
+#: src/sysprof/sysprof-window.c:171
 msgid "Open Recording"
 msgstr "פתיחת הקלטה"
 
@@ -1374,7 +1343,7 @@ msgstr "פתיחת הקלטה…"
 
 #: src/sysprof/sysprof-window.ui:367
 msgid "Save As…"
-msgstr "שמירה בשם..."
+msgstr "שמירה בשם…"
 
 #: src/sysprof/sysprof-window.ui:387
 msgid "Categorize Frames"

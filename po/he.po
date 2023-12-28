@@ -1,23 +1,29 @@
 # Hebrew translation for sysprof.
 # Copyright (C) 2022 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
-# Yaron Shahrabani <sh.yaron@gmail.com>, 2022.
 # Yosef Or Boczko <yoseforb@gmail.com>, 2023.
+# Yaron Shahrabani <sh.yaron@gmail.com>, 2022-2023.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-10-29 10:36+0000\n"
-"PO-Revision-Date: 2023-12-03 15:47+0200\n"
+"POT-Creation-Date: 2023-12-03 13:47+0000\n"
+"PO-Revision-Date: 2023-12-28 11:51+0200\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
-"Language-Team: Hebrew <yoseforb@gmail.com>\n"
+"Language-Team: Hebrew <heb-bugzap@hamakor.org.il>\n"
 "Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: ‪nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
+"n % 10 == 0) ? 2 : 3));\n"
 "X-Generator: Poedit 3.4.1\n"
+"X-DL-Lang: he\n"
+"X-DL-Module: sysprof\n"
+"X-DL-Branch: master\n"
+"X-DL-Domain: po\n"
+"X-DL-State: None\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:5
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
@@ -127,7 +133,7 @@ msgstr "סוג מערכת"
 
 #: src/libsysprof/sysprof-category-summary.c:193
 msgid "Unwindable"
-msgstr ""
+msgstr "לא ניתן לגולל"
 
 #: src/libsysprof/sysprof-category-summary.c:196
 msgid "Windowing"
@@ -144,7 +150,7 @@ msgstr "תהליך לא ידוע"
 #: src/libsysprof/sysprof-document.c:1251
 #: src/libsysprof/sysprof-document.c:1287
 msgid "Indexing capture data frames"
-msgstr ""
+msgstr "תמוניות נתונים שנלכדו מתועדות במפתח"
 
 #: src/libsysprof/sysprof-document.c:1473
 msgid "Discovering file system mounts"
@@ -152,7 +158,7 @@ msgstr "גילוי מערכת קבצים מעוגנת"
 
 #: src/libsysprof/sysprof-document.c:1476
 msgid "Discovering process mount namespaces"
-msgstr ""
+msgstr "מתבצע גילוי של מרחבי שם העיגון של התהליך"
 
 #: src/libsysprof/sysprof-document.c:1479
 msgid "Analyzing process address layouts"
@@ -164,7 +170,7 @@ msgstr "ניתוך תהליך שורת פקודה"
 
 #: src/libsysprof/sysprof-document.c:1485
 msgid "Analyzing file system overlays"
-msgstr ""
+msgstr "שכבות העל של מערכת הקבצים מאובחנות"
 
 #: src/libsysprof/sysprof-document.c:1488
 msgid "Processing counters"
@@ -235,17 +241,19 @@ msgstr "יומני מערכת"
 
 #: src/libsysprof/sysprof-system-logs.c:172
 msgid "Recording system logs is not supported on your platform."
-msgstr ""
+msgstr "הקלטת יומני מערכת לא נתמכת בפלטפורמה שלך."
 
 #: src/libsysprof/sysprof-tracer.c:65
 msgid "Tracer"
-msgstr ""
+msgstr "עוקב"
 
 #: src/libsysprof/sysprof-tracer.c:66
 msgid ""
 "Tracing requires spawning a program compiled with ‘-finstrument-functions’. "
 "Tracing will not be available."
 msgstr ""
+"מעקב דורש הרצת תוכנית שהודרה עם ‚‎-finstrument-functions’ כצאצאית. מעקב לא "
+"יהיה זמין."
 
 #: src/sysprof-cli/sysprof-cli.c:112
 msgid "--merge requires at least 2 filename arguments"
@@ -530,7 +538,7 @@ msgstr "זמן"
 #: src/sysprof/sysprof-energy-section.ui:382
 #: src/sysprof/sysprof-flame-graph.c:453
 #: src/sysprof/sysprof-graphics-section.ui:293
-#: src/sysprof/sysprof-marks-section.ui:247
+#: src/sysprof/sysprof-marks-section.ui:248
 #: src/sysprof/sysprof-network-section.ui:380
 #: src/sysprof/sysprof-storage-section.ui:380
 msgid "Category"
@@ -539,7 +547,7 @@ msgstr "קטגוריה"
 #: src/sysprof/sysprof-cpu-section.ui:450
 #: src/sysprof/sysprof-energy-section.ui:420
 #: src/sysprof/sysprof-graphics-section.ui:331
-#: src/sysprof/sysprof-marks-section.ui:281
+#: src/sysprof/sysprof-marks-section.ui:282
 #: src/sysprof/sysprof-network-section.ui:418
 #: src/sysprof/sysprof-storage-section.ui:418
 msgid "Name"
@@ -671,7 +679,7 @@ msgstr "מפתחות לא יכולים להיפתח במספר"
 
 #: src/sysprof/sysprof-greeter.c:118
 msgid "Keys may only contain alpha-numerics or underline."
-msgstr ""
+msgstr "מפתחות יכולים להכיל אותיות, ספרות או קו תחתי."
 
 #: src/sysprof/sysprof-greeter.c:265 src/sysprof/sysprof-window.c:155
 msgid "Must Capture to Local File"
@@ -724,20 +732,17 @@ msgid "Sample Native Stacks"
 msgstr "דגימת מחסניות טבעיות"
 
 #: src/sysprof/sysprof-greeter.ui:75
-#, fuzzy
-#| msgid "Do not record stacktraces using Linux perf"
 msgid "Record native stack traces using a sampling profiler"
-msgstr "לא להקליט את מעקבי המחסניות עם perf של לינוקס"
+msgstr ""
+"להקליט השתלשלות קריאות של יישומים טבעיים למערכת באמצעות מתעד אפיון דגימה"
 
 #: src/sysprof/sysprof-greeter.ui:91
 msgid "Sample JavaScript Stacks"
 msgstr "דגימת מחסניות JavaScript"
 
 #: src/sysprof/sysprof-greeter.ui:92
-#, fuzzy
-#| msgid "Do not record stacktraces using Linux perf"
 msgid "Record JavaScript stack traces using a sampling profiler"
-msgstr "לא להקליט את מעקבי המחסניות עם perf של לינוקס"
+msgstr "להקליט השתלשלות קריאות של JavaScript באמצעות מתעד אפיון דגימה"
 
 #: src/sysprof/sysprof-greeter.ui:103
 msgid ""
@@ -765,6 +770,7 @@ msgstr "מעקב אחר הקצאות זיכרון"
 #: src/sysprof/sysprof-greeter.ui:138
 msgid "Record a stack trace when <tt>malloc</tt> or similar functions are used"
 msgstr ""
+"להקליט השתלשלות קריאות כאשר נעשה שימוש ב־<tt>malloc</tt> או בפונקציות דומות"
 
 #: src/sysprof/sysprof-greeter.ui:149
 msgid "Sysprof must launch your application to record memory allocations."
@@ -821,7 +827,7 @@ msgstr "ניצולת מעבד"
 
 #: src/sysprof/sysprof-greeter.ui:265
 msgid "Record coarse-grained counters about CPU usage and frequency"
-msgstr ""
+msgstr "הקלטת מונים על ניצולת ותדירות המעבד בצורה גסה"
 
 #: src/sysprof/sysprof-greeter.ui:277
 msgid "Memory Usage"
@@ -829,7 +835,7 @@ msgstr "ניצולת זיכרון"
 
 #: src/sysprof/sysprof-greeter.ui:278
 msgid "Record coarse-grained counters about system memory usage"
-msgstr ""
+msgstr "הקלטת מונים על ניצולת זיכרון המערכת בצורה גסה"
 
 #: src/sysprof/sysprof-greeter.ui:290
 msgid "Disk Usage"
@@ -837,7 +843,7 @@ msgstr "שימוש בכונן"
 
 #: src/sysprof/sysprof-greeter.ui:291
 msgid "Record coarse-grained counters about storage throughput"
-msgstr ""
+msgstr "הקלטת מונים על מהירות תעבורת אמצעי האחסון בצורה גסה"
 
 #: src/sysprof/sysprof-greeter.ui:303
 msgid "Network Usage"
@@ -845,7 +851,7 @@ msgstr "שימוש ברשת"
 
 #: src/sysprof/sysprof-greeter.ui:304
 msgid "Record coarse-grained counters about network traffic"
-msgstr ""
+msgstr "הקלטת מונים על תעבורת רשת בצורה גסה"
 
 #: src/sysprof/sysprof-greeter.ui:320
 msgid "Energy Usage"
@@ -853,7 +859,7 @@ msgstr "ניצולת חשמלית"
 
 #: src/sysprof/sysprof-greeter.ui:321
 msgid "Record coarse-grained counters about energy usage in Watts"
-msgstr ""
+msgstr "הקלטת מונים על ניצולת אנרגטית בוואטים בצורה גסה"
 
 #: src/sysprof/sysprof-greeter.ui:333
 msgid "Battery Charge"
@@ -861,7 +867,7 @@ msgstr "טעינת סוללה"
 
 #: src/sysprof/sysprof-greeter.ui:334
 msgid "Record coarse-grained counters about battery charge or discharge rates"
-msgstr ""
+msgstr "הקלטת מונים על שיעורי הטעינה או הפריקה של הסוללה בצורה גסה"
 
 #: src/sysprof/sysprof-greeter.ui:352 src/sysprof/sysprof-greeter.ui:357
 #: src/sysprof/sysprof-window.ui:262
@@ -874,7 +880,7 @@ msgstr "הקלטת אפיק המערכת"
 
 #: src/sysprof/sysprof-greeter.ui:362
 msgid "Record messages on the D-Bus system bus"
-msgstr ""
+msgstr "הקלטת הודעות מאפיק המערכת של D-Bus"
 
 #: src/sysprof/sysprof-greeter.ui:378
 msgid "Record Session Bus"
@@ -882,13 +888,13 @@ msgstr "הקלטת אפיק ההפעלה"
 
 #: src/sysprof/sysprof-greeter.ui:379
 msgid "Record messages on the D-Bus user session bus"
-msgstr ""
+msgstr "הקלטת הודעות מאפיק הפעלת המשתמש של D-Bus"
 
 #: src/sysprof/sysprof-greeter.ui:390
 msgid ""
 "The session bus may contain sensitive information such as keyboard usage and "
 "passwords."
-msgstr ""
+msgstr "אפיק ההפעלה עלול להכיל מידע רגיש כגון אופן השימוש במקלדת וססמאות."
 
 #: src/sysprof/sysprof-greeter.ui:413
 msgid "Timings"
@@ -896,17 +902,18 @@ msgstr "תזמונים"
 
 #: src/sysprof/sysprof-greeter.ui:417
 msgid "Compositor Frame Timings"
-msgstr ""
+msgstr "תזמוני תמוניות במערכת החלונאית"
 
 #: src/sysprof/sysprof-greeter.ui:418
 msgid "Record frame-timing information from the GNOME Shell compositor"
-msgstr ""
+msgstr "הקלטת פרטי תזמון תמוניות מהמערכת החלונאית של מעטפת GNOME"
 
 #: src/sysprof/sysprof-greeter.ui:429
 msgid ""
 "Applications launched by Sysprof will automatically collect GTK frame timing "
 "information."
 msgstr ""
+"יישומים שמופעלים על ידי Sysprof יאספו פרטי תזמון תמוניות של GTK אוטומטית."
 
 #: src/sysprof/sysprof-greeter.ui:469
 msgid "Devices"
@@ -1029,31 +1036,31 @@ msgstr "סימונים"
 msgid "Mark Chart"
 msgstr "תרשים סימונים"
 
-#: src/sysprof/sysprof-marks-section.ui:91
+#: src/sysprof/sysprof-marks-section.ui:92
 msgid "Mark Table"
 msgstr "סימון טבלה"
 
-#: src/sysprof/sysprof-marks-section.ui:104
+#: src/sysprof/sysprof-marks-section.ui:105
 msgid "Mark Waterfall"
 msgstr "סימון מפל"
 
-#: src/sysprof/sysprof-marks-section.ui:211
+#: src/sysprof/sysprof-marks-section.ui:212
 msgid "Summary"
 msgstr "תקציר"
 
-#: src/sysprof/sysprof-marks-section.ui:316
+#: src/sysprof/sysprof-marks-section.ui:317
 msgid "Minimum"
 msgstr "מזערי"
 
-#: src/sysprof/sysprof-marks-section.ui:350
+#: src/sysprof/sysprof-marks-section.ui:351
 msgid "Maximum"
 msgstr "מרבי"
 
-#: src/sysprof/sysprof-marks-section.ui:384
+#: src/sysprof/sysprof-marks-section.ui:385
 msgid "Average"
 msgstr "ממוצע"
 
-#: src/sysprof/sysprof-marks-section.ui:418
+#: src/sysprof/sysprof-marks-section.ui:419
 msgid "Median"
 msgstr "חציון"
 
@@ -1178,15 +1185,15 @@ msgstr "אפשרויות"
 
 #: src/sysprof/sysprof-process-dialog.ui:562
 msgid "Threads"
-msgstr "חוטים"
+msgstr "תהליכונים"
 
 #: src/sysprof/sysprof-process-dialog.ui:591
 msgid "Thread ID"
-msgstr "מזהה חוט"
+msgstr "מזהה תהליכון"
 
 #: src/sysprof/sysprof-process-dialog.ui:625
 msgid "Main Thread"
-msgstr "חוט ראשי"
+msgstr "תהליכון ראשי"
 
 #: src/sysprof/sysprof-processes-section.ui:4
 msgid "Processes"
@@ -1304,7 +1311,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"לא נתין לטעון את המסמך. יש לבדוק שיש ברשותך את קובץ הלכידה המתאים.\n"
+"לא ניתן לטעון את המסמך. יש לבדוק שיש לך את קובץ הלכידה המתאים.\n"
 "\n"
 "‏%s"
 
@@ -1358,7 +1365,7 @@ msgstr "הסתרת ספריות מערכת"
 
 #: src/sysprof/sysprof-window.ui:395
 msgid "Include Threads"
-msgstr "לכלול חוטים"
+msgstr "לכלול תהליכונים"
 
 #: src/sysprof/sysprof-window.ui:399
 msgid "Bottom Up"
@@ -1376,9 +1383,43 @@ msgstr "התעלמות מתהליך 0"
 msgid "Merge Similar Processes"
 msgstr "מיזוג תהליכים דומים"
 
+# הכוונה היא שכל התמוניות/פריימים הגדולים מוצמדים לצד השמאלי של תרשים הלהבות, צריך לראות אם ביישומי יל״ש זה לא מיושר לימין.
 #: src/sysprof/sysprof-window.ui:418
 msgid "Left Heavy"
-msgstr ""
+msgstr "שמאל מעובה"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Recording View"
+#~ msgstr "תצוגת הקלטה"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Start New Recording"
+#~ msgstr "התחלת הקלטה חדשה"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Save As"
+#~ msgstr "שמירה בשם"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Toggle Visibility of Main Sidebar"
+#~ msgstr "החלפת מצב חשיפה של סרגל הצד הראשי"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Toggle Visibility of Stack Trace Sidebar"
+#~ msgstr "החלפת מצב חשיפה של סרגל השתלשלות הקריאות"
+
+# msgctxt "shortcut window"
+#~ msgctxt "shortcut window"
+#~ msgid "Open Recording"
+#~ msgstr "פתיחת הקלטה"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Show keyboard shortcuts"
+#~ msgstr "הצגת צירופי מקשים"
+
+#~ msgctxt "shortcut window"
+#~ msgid "_Quit"
+#~ msgstr "י_ציאה"
 
 #~ msgid "Window size (width and height)."
 #~ msgstr "גודל חלון (רוחב וגובה)."
@@ -1657,10 +1698,6 @@ msgstr ""
 #~ msgctxt "shortcut window"
 #~ msgid "Record again"
 #~ msgstr "להקליט שוב"
-
-#~ msgctxt "shortcut window"
-#~ msgid "Starts a new recording"
-#~ msgstr "התחלת הקלטה חדשה"
 
 #~ msgctxt "shortcut window"
 #~ msgid "Stop recording"

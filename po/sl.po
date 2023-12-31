@@ -9,18 +9,18 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-02-12 18:16+0000\n"
-"PO-Revision-Date: 2023-02-12 19:30+0100\n"
+"POT-Creation-Date: 2023-10-22 13:52+0000\n"
+"PO-Revision-Date: 2023-12-31 15:14+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || "
-"n%100==4 ? 3 : 0);\n"
+"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n"
+"%100==4 ? 3 : 0);\n"
 "X-Poedit-SourceCharset: utf-8\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 2.2.1\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:5
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:197
@@ -29,9 +29,8 @@ msgid "Sysprof"
 msgstr "Sysprof"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:6
-#, fuzzy
 msgid "Profile an application or entire system"
-msgstr "Izberite naziv, ki določa profil na vašem sistemu."
+msgstr "Profilirajte program ali celotni sistem"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:9
 msgid "The GNOME Foundation"
@@ -42,16 +41,16 @@ msgid ""
 "Sysprof allows you to profile applications to aid in debugging and "
 "optimization."
 msgstr ""
+"Sysprof vam omogoča profiliranje programov za pomoč pri odpravljanju napak "
+"in optimizaciji."
 
 #: data/org.gnome.Sysprof.desktop.in.in:5
-#, fuzzy
 msgid "Profiler"
 msgstr "Profilnik"
 
 #: data/org.gnome.Sysprof.desktop.in.in:6
-#, fuzzy
 msgid "Profile an application or entire system."
-msgstr "Izberite naziv, ki določa profil na vašem sistemu."
+msgstr "Profilirajte program ali celotni sistem."
 
 #: src/libsysprof/sysprof-callgraph-profile.c:447
 msgid "Sysprof was unable to generate a callgraph from the system capture."
@@ -80,11 +79,11 @@ msgstr ""
 
 #: src/libsysprof-ui/sysprof-battery-aid.c:182
 msgid "Battery Charge"
-msgstr ""
+msgstr "Napolnjenost baterije"
 
 #: src/libsysprof-ui/sysprof-battery-aid.c:198
 msgid "Battery Charge (All)"
-msgstr ""
+msgstr "Napolnjenost baterije (vse)"
 
 #: src/libsysprof-ui/sysprof-battery-aid.c:240
 msgid "Battery"
@@ -106,7 +105,6 @@ msgstr ""
 
 #: src/libsysprof-ui/sysprof-callgraph-aid.c:243
 #: src/libsysprof-ui/sysprof-callgraph-aid.c:273
-#, fuzzy
 msgid "Callgraph"
 msgstr "Grafikon klicev"
 
@@ -135,7 +133,6 @@ msgstr "Skupno"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:80
 #: src/libsysprof-ui/sysprof-memprof-page.ui:148
-#, fuzzy
 msgid "Callers"
 msgstr "Klicatelji"
 
@@ -151,7 +148,6 @@ msgid "Hits"
 msgstr "Zadetki"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:198
-#, fuzzy
 msgid "Generating Callgraph"
 msgstr "Tvorjenje grafikona klicev"
 
@@ -218,9 +214,8 @@ msgid "%0.4lf seconds"
 msgstr "%0.4lf s"
 
 #: src/libsysprof-ui/sysprof-details-page.ui:8
-#, fuzzy
 msgid "Capture"
-msgstr "Zajemanje"
+msgstr "Zajemi"
 
 #: src/libsysprof-ui/sysprof-details-page.ui:12
 msgid "Location"
@@ -303,6 +298,7 @@ msgstr "Povpr."
 
 #: src/libsysprof-ui/sysprof-diskstat-aid.c:205
 #: src/libsysprof-ui/sysprof-diskstat-aid.c:267
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:58
 msgid "Disk"
 msgstr "Disk"
 
@@ -330,9 +326,8 @@ msgid "Recording at %s"
 msgstr "Poteka snemanje ..."
 
 #: src/libsysprof-ui/sysprof-display.c:268
-#, fuzzy
 msgid "New Recording"
-msgstr "Novo snemanje"
+msgstr "Novo beleženje"
 
 #: src/libsysprof-ui/sysprof-display.c:1099
 msgid "The recording could not be opened"
@@ -369,16 +364,18 @@ msgstr "Odstrani okoljsko spremenljivko"
 msgid "New environment variable…"
 msgstr "Nova okoljska spremenljivka …"
 
-#: src/libsysprof-ui/sysprof-failed-state-view.ui:27
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:25
 msgid "Ouch, that hurt!"
 msgstr "Ojoj, to boli!"
 
-#: src/libsysprof-ui/sysprof-failed-state-view.ui:40
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:37
+#, fuzzy
 msgid "Something unexpectedly went wrong while trying to profile your system."
 msgstr ""
+"Nekaj nepričakovano je šlo narobe, ko ste poskušali profilirati svoj sistem."
 
 #: src/libsysprof-ui/sysprof-log-model.c:210
-#: src/libsysprof-ui/sysprof-logs-page.ui:58
+#: src/libsysprof-ui/sysprof-logs-page.ui:56
 #: src/libsysprof-ui/sysprof-marks-page.ui:103
 msgid "Message"
 msgstr "Sporočilo"
@@ -397,7 +394,7 @@ msgstr "Napaka"
 
 #: src/libsysprof-ui/sysprof-log-model.c:222
 msgid "Debug"
-msgstr ""
+msgstr "Razhroščevanje"
 
 #: src/libsysprof-ui/sysprof-log-model.c:225
 msgid "Warning"
@@ -410,24 +407,23 @@ msgstr "Opozorilo"
 msgid "Logs"
 msgstr "Zapisniki"
 
-#: src/libsysprof-ui/sysprof-logs-page.ui:15
+#: src/libsysprof-ui/sysprof-logs-page.ui:13
 #: src/libsysprof-ui/sysprof-marks-page.ui:64
 msgid "Time"
 msgstr "Čas"
 
-#: src/libsysprof-ui/sysprof-logs-page.ui:29
+#: src/libsysprof-ui/sysprof-logs-page.ui:27
 msgid "Severity"
 msgstr "Resnost"
 
-#: src/libsysprof-ui/sysprof-logs-page.ui:44
+#: src/libsysprof-ui/sysprof-logs-page.ui:42
 msgid "Domain"
 msgstr "Domena"
 
 #: src/libsysprof-ui/sysprof-marks-aid.c:408
 #: src/libsysprof-ui/sysprof-marks-aid.c:413
-#, fuzzy
 msgid "Timings"
-msgstr "Časovne meritve"
+msgstr "Časi"
 
 #: src/libsysprof-ui/sysprof-marks-page.ui:37
 msgid "Group"
@@ -438,12 +434,13 @@ msgid "End"
 msgstr "Konec"
 
 #: src/libsysprof-ui/sysprof-marks-page.ui:234
+#, fuzzy
 msgid "No Timings Available"
-msgstr ""
+msgstr "Časi niso na voljo"
 
 #: src/libsysprof-ui/sysprof-marks-page.ui:246
 msgid "No timing data was found for the current selection"
-msgstr ""
+msgstr "Za trenutni izbor niso bili najdeni nobeni časovni podatki"
 
 #: src/libsysprof-ui/sysprof-memory-aid.c:68
 msgid "Memory Usage"
@@ -455,7 +452,7 @@ msgstr "Pomnilnik"
 
 #: src/libsysprof-ui/sysprof-memprof-aid.c:224
 msgid "Track Allocations"
-msgstr ""
+msgstr "Sledi dodelitvam"
 
 #. translators: %s is replaced with the the lower and upper bound memory sizes in bytes
 #: src/libsysprof-ui/sysprof-memprof-page.c:246
@@ -469,7 +466,7 @@ msgstr "Število dodelitev"
 
 #: src/libsysprof-ui/sysprof-memprof-page.ui:17
 msgid "Total number of allocation and free records"
-msgstr ""
+msgstr "Skupno število dodeljenih in sproščenih zapisov"
 
 #: src/libsysprof-ui/sysprof-memprof-page.ui:30
 #: src/libsysprof-ui/sysprof-memprof-page.ui:318
@@ -504,7 +501,7 @@ msgstr "Analiziranje dodelitev pomnilnika"
 
 #: src/libsysprof-ui/sysprof-memprof-page.ui:265
 msgid "Sysprof is busy analyzing memory allocations."
-msgstr ""
+msgstr "Sysprof je zaposlen z analizo dodelitev pomnilnika."
 
 #: src/libsysprof-ui/sysprof-memprof-page.ui:298
 msgid "Summary"
@@ -528,19 +525,32 @@ msgstr "Omrežje"
 msgid "GNOME Shell"
 msgstr "Lupina GNOME"
 
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:30
+msgid "Speedtrack"
+msgstr ""
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:39
+msgid "GJS"
+msgstr "GJS"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:46
+msgid "Application"
+msgstr "Program"
+
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:69
 msgid "Profiling Target"
 msgstr ""
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:72
-#, fuzzy
 msgid "Profile Entire System"
-msgstr "Izberite naziv, ki določa profil na vašem sistemu."
+msgstr "Profiliraj celotni sistem"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:73
 msgid ""
 "Sysprof can generate callgraphs for one or more processes on your system."
 msgstr ""
+"Sysprof lahko ustvari grafikone klicev za enega ali več procesov v vašem "
+"sistemu."
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:84
 #, fuzzy
@@ -555,13 +565,15 @@ msgstr "Nalaganje procesov ..."
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:114
 msgid "Launch Application"
-msgstr ""
+msgstr "Zaženi program"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:115
 msgid ""
 "Sysprof can launch an application to be profiled. The profiler will "
 "automatically stop when it exits."
 msgstr ""
+"Sysprof lahko zažene program, ki ga želite profilirati. Profilnik se bo "
+"samodejno ustavil, ko program konča z delom."
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:126
 msgid "Command Line"
@@ -572,18 +584,22 @@ msgid "Inherit Environment"
 msgstr "Deduj okolje"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:136
+#, fuzzy
 msgid ""
 "Enable to ensure your application shares the display, message-bus, and other "
 "desktop environment settings."
 msgstr ""
+"Omogočite, da zagotovite, da program deli zaslon, sporočilno vodilo in druge "
+"nastavitve namiznega okolja."
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:153
 msgid "Performance"
 msgstr "Hitrost delovanja"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:156
+#, fuzzy
 msgid "Allow CPU Throttling"
-msgstr ""
+msgstr "Dovoli omejevanje CPE"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:157
 msgid ""
@@ -591,7 +607,7 @@ msgid ""
 msgstr ""
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:172
-#: src/libsysprof-ui/sysprof-visualizers-frame.ui:27
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:26
 msgid "Instruments"
 msgstr "Instrumenti"
 
@@ -617,22 +633,21 @@ msgstr "Poraba energije"
 msgid "Energy Usage (All)"
 msgstr "Poraba energije (vse)"
 
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:35
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:32
 msgid ""
 "Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:50
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:45
 msgid "Events"
 msgstr "Dogodki"
 
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:76
-#, fuzzy
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:68
 msgid "_Stop Recording"
-msgstr "_Ustavi snemanje"
+msgstr "_Ustavi beleženje"
 
 #: src/libsysprof-ui/sysprof-visualizer-group-header.c:192
-#: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:40
 msgid "Select for more details"
 msgstr "Izberite za več podrobnosti"
 
@@ -641,7 +656,6 @@ msgid "Display supplemental graphs"
 msgstr ""
 
 #: src/sysprofd/org.gnome.sysprof3.policy.in:13
-#, fuzzy
 msgid "Profile the system"
 msgstr "Profilirajte sistem"
 
@@ -691,16 +705,14 @@ msgid "Opens a previously saved recording"
 msgstr ""
 
 #: src/sysprof/gtk/help-overlay.ui:29
-#, fuzzy
 msgctxt "shortcut window"
 msgid "Recording"
 msgstr "Beleženje"
 
 #: src/sysprof/gtk/help-overlay.ui:32
-#, fuzzy
 msgctxt "shortcut window"
 msgid "Record again"
-msgstr "Znova posnemi"
+msgstr "Znova beleži"
 
 #: src/sysprof/gtk/help-overlay.ui:33
 msgctxt "shortcut window"
@@ -817,18 +829,16 @@ msgstr "Novo okno"
 
 #: src/sysprof/gtk/menus.ui:16
 #, fuzzy
-#| msgid "Recording…"
 msgid "Open Recording…"
-msgstr "Poteka snemanje ..."
+msgstr "Odpri posnetek …"
 
 #: src/sysprof/gtk/menus.ui:20
 msgid "Save Recording…"
 msgstr "Shrani posnetek ..."
 
 #: src/sysprof/gtk/menus.ui:26
-#, fuzzy
 msgid "Record Again"
-msgstr "Znova posnemi"
+msgstr "Znova beleži"
 
 #: src/sysprof/gtk/menus.ui:32
 msgid "Close"
@@ -847,7 +857,6 @@ msgid "About Sysprof"
 msgstr "O programu Sysprof"
 
 #: src/sysprof/sysprof-application.c:206
-#, fuzzy
 msgid "A system profiler"
 msgstr "Sistemski profilnik"
 
@@ -859,7 +868,6 @@ msgstr ""
 
 #. Translators: This is a window title.
 #: src/sysprof/sysprof-window.c:279
-#, fuzzy
 msgid "Open Capture…"
 msgstr "Odpri zajemanje …"
 
@@ -876,11 +884,15 @@ msgstr ""
 msgid "All Files"
 msgstr "Vse datoteke"
 
-#: src/sysprof/sysprof-window.ui:34
+#: src/sysprof/sysprof-window.ui:19
+msgid "Main Menu"
+msgstr "Glavni meni"
+
+#: src/sysprof/sysprof-window.ui:29
 msgid "_Open"
 msgstr "_Odpri"
 
-#: src/sysprof/sysprof-window.ui:37
+#: src/sysprof/sysprof-window.ui:32
 msgid "Open Recording… (Ctrl+O)"
 msgstr "Odpri posnetek ... (krmilka+O)"
 
@@ -889,13 +901,12 @@ msgid "Stopping profiler. Press twice more ^C to force exit."
 msgstr ""
 
 #: src/tools/sysprof-cli.c:76
-#, fuzzy
 msgid "Profiler stopped."
 msgstr "Profilnik ustavljen."
 
 #: src/tools/sysprof-cli.c:109
 msgid "--merge requires at least 2 filename arguments"
-msgstr ""
+msgstr "--merge zahteva vsaj dve imeni datotek kot argumenta"
 
 #: src/tools/sysprof-cli.c:227
 msgid "Disable CPU throttling while profiling"
@@ -910,9 +921,8 @@ msgid "PID"
 msgstr "PID"
 
 #: src/tools/sysprof-cli.c:229
-#, fuzzy
 msgid "Run a command and profile the process"
-msgstr "Zaženi ukaz in profiliraj proces"
+msgstr "Zaženite ukaz in profilirajte postopek"
 
 #: src/tools/sysprof-cli.c:229
 msgid "COMMAND"
@@ -925,23 +935,23 @@ msgstr ""
 
 #: src/tools/sysprof-cli.c:230
 msgid "VAR=VALUE"
-msgstr ""
+msgstr "SPREMENLJIVKA=VREDNOST"
 
 #: src/tools/sysprof-cli.c:231
 msgid "Force overwrite the capture file"
-msgstr ""
+msgstr "Vsili prepis datoteke za zajem"
 
 #: src/tools/sysprof-cli.c:232
 msgid "Disable recording of battery statistics"
-msgstr ""
+msgstr "Onemogoči beleženje statistike baterije"
 
 #: src/tools/sysprof-cli.c:233
 msgid "Disable recording of CPU statistics"
-msgstr ""
+msgstr "Onemogoči beleženje statistike CPE"
 
 #: src/tools/sysprof-cli.c:234
 msgid "Disable recording of Disk statistics"
-msgstr ""
+msgstr "Onemogoči beleženje statistike diska"
 
 #: src/tools/sysprof-cli.c:235
 msgid "Do not record stacktraces using Linux perf"
@@ -953,15 +963,15 @@ msgstr ""
 
 #: src/tools/sysprof-cli.c:237
 msgid "Disable recording of memory statistics"
-msgstr ""
+msgstr "Onemogoči beleženje statistike pomnilnika"
 
 #: src/tools/sysprof-cli.c:238
 msgid "Disable recording of network statistics"
-msgstr ""
+msgstr "Onemogoči beleženje statistike omrežja"
 
 #: src/tools/sysprof-cli.c:239
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
-msgstr ""
+msgstr "Nastavi okolje SYSPROF_TRACE_FD za podproces"
 
 #: src/tools/sysprof-cli.c:240
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
@@ -973,11 +983,11 @@ msgstr ""
 
 #: src/tools/sysprof-cli.c:242
 msgid "Include RAPL energy statistics"
-msgstr ""
+msgstr "Vključi statistiko energije RAPL"
 
 #: src/tools/sysprof-cli.c:243
 msgid "Profile memory allocations and frees"
-msgstr ""
+msgstr "Dodeljevanje in sproščanje pomnilnika profila"
 
 #: src/tools/sysprof-cli.c:244
 msgid "Connect to org.gnome.Shell for profiler statistics"
@@ -989,7 +999,7 @@ msgstr ""
 
 #: src/tools/sysprof-cli.c:246
 msgid "Merge all provided *.syscap files and write to stdout"
-msgstr ""
+msgstr "Združi vse ponujene datoteke *.syscap in piši v stdout"
 
 #: src/tools/sysprof-cli.c:247
 msgid "Print the sysprof-cli version and exit"
@@ -1015,13 +1025,13 @@ msgstr ""
 
 #: src/tools/sysprof-cli.c:316
 msgid "Too many arguments were passed to sysprof-cli:"
-msgstr ""
+msgstr "Preveč argumentov je bilo posredovanih sysprof-cli:"
 
 #. Translators: %s is a file name.
 #: src/tools/sysprof-cli.c:377
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
-msgstr ""
+msgstr "%s obstaja. Uporabite --force za prepisovanje\n"
 
 #: src/tools/sysprof-profiler-ctl.c:45
 msgid "Connect to the system bus"

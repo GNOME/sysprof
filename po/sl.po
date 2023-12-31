@@ -9,18 +9,18 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-09-11 09:00+0000\n"
-"PO-Revision-Date: 2023-09-11 16:10+0200\n"
+"POT-Creation-Date: 2023-10-29 10:36+0000\n"
+"PO-Revision-Date: 2023-12-31 15:00+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || "
-"n%100==4 ? 3 : 0);\n"
+"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n"
+"%100==4 ? 3 : 0);\n"
 "X-Poedit-SourceCharset: utf-8\n"
-"X-Generator: Poedit 3.3.2\n"
+"X-Generator: Poedit 2.2.1\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:5
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
@@ -31,7 +31,7 @@ msgstr "Sysprof"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:6
 msgid "Profile an application or entire system"
-msgstr ""
+msgstr "Profilirajte program ali celotni sistem"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:9
 msgid "The GNOME Foundation"
@@ -51,7 +51,7 @@ msgstr "Profiler"
 
 #: data/org.gnome.Sysprof.desktop.in.in:6
 msgid "Profile an application or entire system."
-msgstr ""
+msgstr "Profilirajte program ali celotni sistem."
 
 #: src/libsysprof/sysprof-category-summary.c:136
 msgid "Uncategorized"
@@ -161,11 +161,11 @@ msgstr ""
 
 #: src/libsysprof/sysprof-document.c:1479
 msgid "Analyzing process address layouts"
-msgstr ""
+msgstr "Analiziranje postavitev naslovov procesa"
 
 #: src/libsysprof/sysprof-document.c:1482
 msgid "Analyzing process command line"
-msgstr ""
+msgstr "Analiza ukazne vrstice procesa"
 
 #: src/libsysprof/sysprof-document.c:1485
 msgid "Analyzing file system overlays"
@@ -173,7 +173,7 @@ msgstr ""
 
 #: src/libsysprof/sysprof-document.c:1488
 msgid "Processing counters"
-msgstr ""
+msgstr "Obdelovanje števcev"
 
 #: src/libsysprof/sysprof-document.c:2476
 #: src/libsysprof/sysprof-document.c:2492
@@ -240,11 +240,11 @@ msgstr "Sistemski dnevniki"
 
 #: src/libsysprof/sysprof-system-logs.c:172
 msgid "Recording system logs is not supported on your platform."
-msgstr ""
+msgstr "Beleženje sistemskih zapisnikov na vaši platformi ni podprto."
 
 #: src/libsysprof/sysprof-tracer.c:65
 msgid "Tracer"
-msgstr ""
+msgstr "Sledilnik"
 
 #: src/libsysprof/sysprof-tracer.c:66
 msgid ""
@@ -254,7 +254,7 @@ msgstr ""
 
 #: src/sysprof-cli/sysprof-cli.c:112
 msgid "--merge requires at least 2 filename arguments"
-msgstr ""
+msgstr "--merge zahteva vsaj dve imeni datotek kot argumenta"
 
 #: src/sysprof-cli/sysprof-cli.c:306
 msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
@@ -273,36 +273,39 @@ msgstr "PID"
 
 #: src/sysprof-cli/sysprof-cli.c:308
 msgid "Run a command and profile the process"
-msgstr ""
+msgstr "Zaženite ukaz in profilirajte postopek"
 
 #: src/sysprof-cli/sysprof-cli.c:308
 msgid "COMMAND"
 msgstr "UKAZ"
 
 #: src/sysprof-cli/sysprof-cli.c:309
+#, fuzzy
 msgid ""
 "Set environment variable for spawned process. Can be used multiple times."
 msgstr ""
+"Nastavite spremenljivko okolja za drstitveni proces. Lahko se uporablja "
+"večkrat."
 
 #: src/sysprof-cli/sysprof-cli.c:309
 msgid "VAR=VALUE"
-msgstr ""
+msgstr "SPREMENLJIVKA=VREDNOST"
 
 #: src/sysprof-cli/sysprof-cli.c:310
 msgid "Force overwrite the capture file"
-msgstr ""
+msgstr "Vsili prepis datoteke za zajem"
 
 #: src/sysprof-cli/sysprof-cli.c:311
 msgid "Disable recording of battery statistics"
-msgstr ""
+msgstr "Onemogoči beleženje statistike baterije"
 
 #: src/sysprof-cli/sysprof-cli.c:312
 msgid "Disable recording of CPU statistics"
-msgstr ""
+msgstr "Onemogoči beleženje statistike CPE"
 
 #: src/sysprof-cli/sysprof-cli.c:313
 msgid "Disable recording of Disk statistics"
-msgstr ""
+msgstr "Onemogoči beleženje statistike diska"
 
 #: src/sysprof-cli/sysprof-cli.c:314
 msgid "Do not record stacktraces using Linux perf"
@@ -314,15 +317,15 @@ msgstr ""
 
 #: src/sysprof-cli/sysprof-cli.c:316
 msgid "Disable recording of memory statistics"
-msgstr ""
+msgstr "Onemogoči beleženje statistike pomnilnika"
 
 #: src/sysprof-cli/sysprof-cli.c:317
 msgid "Disable recording of network statistics"
-msgstr ""
+msgstr "Onemogoči beleženje statistike omrežja"
 
 #: src/sysprof-cli/sysprof-cli.c:318
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
-msgstr ""
+msgstr "Nastavi okolje SYSPROF_TRACE_FD za podproces"
 
 #: src/sysprof-cli/sysprof-cli.c:319
 msgid "Track when processes are scheduled"
@@ -337,32 +340,36 @@ msgid "Profile the D-Bus system bus"
 msgstr ""
 
 #: src/sysprof-cli/sysprof-cli.c:322
+#, fuzzy
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
-msgstr ""
+msgstr "Nastavit okolje GJS_TRACE_FD za sledenje procesom GJS"
 
 #: src/sysprof-cli/sysprof-cli.c:323
+#, fuzzy
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
-msgstr ""
+msgstr "Nastavi okolje GTK_TRACE_FD za sledenje programu GTK"
 
 #: src/sysprof-cli/sysprof-cli.c:324
 msgid "Include RAPL energy statistics"
-msgstr ""
+msgstr "Vključi statistiko energije RAPL"
 
 #: src/sysprof-cli/sysprof-cli.c:325
 msgid "Profile memory allocations and frees"
-msgstr ""
+msgstr "Dodeljevanje in sproščanje pomnilnika profila"
 
 #: src/sysprof-cli/sysprof-cli.c:326
+#, fuzzy
 msgid "Connect to org.gnome.Shell for profiler statistics"
-msgstr ""
+msgstr "Poveži se z org.gnome.Shell za statistiko profilnikov"
 
 #: src/sysprof-cli/sysprof-cli.c:327
+#, fuzzy
 msgid "Track performance of the applications main loop"
-msgstr ""
+msgstr "Spremljaj hitrost delovanja glavne zanke programov"
 
 #: src/sysprof-cli/sysprof-cli.c:329
 msgid "Merge all provided *.syscap files and write to stdout"
-msgstr ""
+msgstr "Združi vse ponujene datoteke *.syscap in piši v stdout"
 
 #: src/sysprof-cli/sysprof-cli.c:330
 msgid "Print the sysprof-cli version and exit"
@@ -370,7 +377,7 @@ msgstr "Izpiši podatke o različici sysprof-cli in končaj"
 
 #: src/sysprof-cli/sysprof-cli.c:331
 msgid "The size of the buffer in pages (1 = 1 page)"
-msgstr ""
+msgstr "Velikost medpomnilnika v straneh (1 = 1 stran)"
 
 #: src/sysprof-cli/sysprof-cli.c:364
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
@@ -391,13 +398,13 @@ msgstr ""
 
 #: src/sysprof-cli/sysprof-cli.c:403
 msgid "Too many arguments were passed to sysprof-cli:"
-msgstr ""
+msgstr "Preveč argumentov je bilo posredovanih sysprof-cli:"
 
 #. Translators: %s is a file name.
 #: src/sysprof-cli/sysprof-cli.c:457
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
-msgstr ""
+msgstr "%s obstaja. Uporabite --force za prepisovanje\n"
 
 #: src/sysprofd/org.gnome.sysprof3.policy.in:13
 msgid "Profile the system"
@@ -525,7 +532,7 @@ msgstr "Čas"
 #: src/sysprof/sysprof-energy-section.ui:382
 #: src/sysprof/sysprof-flame-graph.c:453
 #: src/sysprof/sysprof-graphics-section.ui:293
-#: src/sysprof/sysprof-marks-section.ui:242
+#: src/sysprof/sysprof-marks-section.ui:247
 #: src/sysprof/sysprof-network-section.ui:380
 #: src/sysprof/sysprof-storage-section.ui:380
 msgid "Category"
@@ -534,7 +541,7 @@ msgstr "Kategorija"
 #: src/sysprof/sysprof-cpu-section.ui:450
 #: src/sysprof/sysprof-energy-section.ui:420
 #: src/sysprof/sysprof-graphics-section.ui:331
-#: src/sysprof/sysprof-marks-section.ui:276
+#: src/sysprof/sysprof-marks-section.ui:281
 #: src/sysprof/sysprof-network-section.ui:418
 #: src/sysprof/sysprof-storage-section.ui:418
 msgid "Name"
@@ -656,15 +663,16 @@ msgstr "CPE"
 
 #: src/sysprof/sysprof-greeter.c:102
 msgid "Use KEY=VALUE to set an environment variable"
-msgstr ""
+msgstr "Uporabite KLJUČ=VREDNOST za nastavitev spremenljivke okolja"
 
 #: src/sysprof/sysprof-greeter.c:108
+#, fuzzy
 msgid "Keys may not start with a number"
-msgstr ""
+msgstr "Ključi se morda ne začnejo s številko"
 
 #: src/sysprof/sysprof-greeter.c:118
 msgid "Keys may only contain alpha-numerics or underline."
-msgstr ""
+msgstr "Ključi lahko vsebujejo le alfanumerične znake in podčrtaje."
 
 #: src/sysprof/sysprof-greeter.c:265 src/sysprof/sysprof-window.c:155
 msgid "Must Capture to Local File"
@@ -772,7 +780,7 @@ msgstr "Delovna mapa"
 
 #: src/sysprof/sysprof-greeter.ui:187
 msgid "The application will be run as a subprocess of Sysprof."
-msgstr ""
+msgstr "Program se bo izvajal kot podproces Sysprof-a."
 
 #: src/sysprof/sysprof-greeter.ui:200
 msgid "Environment"
@@ -784,7 +792,7 @@ msgstr "Počisti okolje"
 
 #: src/sysprof/sysprof-greeter.ui:205
 msgid "Clear the environment before launching application"
-msgstr ""
+msgstr "Počisti okolje pred zagonom programa"
 
 #: src/sysprof/sysprof-greeter.ui:231
 msgid "Add _Variable"
@@ -844,7 +852,7 @@ msgstr ""
 
 #: src/sysprof/sysprof-greeter.ui:333
 msgid "Battery Charge"
-msgstr ""
+msgstr "Napolnjenost baterije"
 
 #: src/sysprof/sysprof-greeter.ui:334
 msgid "Record coarse-grained counters about battery charge or discharge rates"
@@ -879,7 +887,7 @@ msgstr ""
 
 #: src/sysprof/sysprof-greeter.ui:413
 msgid "Timings"
-msgstr ""
+msgstr "Časi"
 
 #: src/sysprof/sysprof-greeter.ui:417
 msgid "Compositor Frame Timings"
@@ -905,7 +913,7 @@ msgstr "Vključi podrobnosti GPU"
 
 #: src/sysprof/sysprof-greeter.ui:474
 msgid "Records information about graphics hardware and drivers"
-msgstr ""
+msgstr "Beleži informacije o grafiki, strojni opremi in gonilnikih"
 
 #: src/sysprof/sysprof-greeter.ui:492
 msgid "System"
@@ -929,19 +937,19 @@ msgstr "Podrobnosti"
 
 #: src/sysprof/sysprof-greeter.ui:515
 msgid "Record System Log"
-msgstr ""
+msgstr "Beleži sistemski zapisnik"
 
 #: src/sysprof/sysprof-greeter.ui:516
 msgid "Watch the system log for new messages and record them"
-msgstr ""
+msgstr "Spremlja nova sporočila v sistemskem zapisniku in jih zabeleži"
 
 #: src/sysprof/sysprof-greeter.ui:532
 msgid "Include Hardware Information"
-msgstr ""
+msgstr "Vključi podatke o strojni opremi"
 
 #: src/sysprof/sysprof-greeter.ui:533
 msgid "Records information about PCI and USB devices"
-msgstr ""
+msgstr "Beleži informacije o napravah PCI in USB"
 
 #: src/sysprof/sysprof-greeter.ui:546
 msgid "Symbols"
@@ -965,7 +973,7 @@ msgstr "Posnemi v datoteko …"
 
 #: src/sysprof/sysprof-greeter.ui:598
 msgid "Record to _Memory"
-msgstr ""
+msgstr "_Beleži v pomnilnik"
 
 #: src/sysprof/sysprof-greeter.ui:613 src/sysprof/sysprof-window.ui:373
 msgid "Help"
@@ -1023,23 +1031,23 @@ msgstr ""
 msgid "Mark Waterfall"
 msgstr ""
 
-#: src/sysprof/sysprof-marks-section.ui:206
+#: src/sysprof/sysprof-marks-section.ui:211
 msgid "Summary"
 msgstr "Povzetek"
 
-#: src/sysprof/sysprof-marks-section.ui:311
+#: src/sysprof/sysprof-marks-section.ui:316
 msgid "Minimum"
 msgstr "Najmanj"
 
-#: src/sysprof/sysprof-marks-section.ui:345
+#: src/sysprof/sysprof-marks-section.ui:350
 msgid "Maximum"
 msgstr "Največ"
 
-#: src/sysprof/sysprof-marks-section.ui:379
+#: src/sysprof/sysprof-marks-section.ui:384
 msgid "Average"
 msgstr "Povprečje"
 
-#: src/sysprof/sysprof-marks-section.ui:413
+#: src/sysprof/sysprof-marks-section.ui:418
 msgid "Median"
 msgstr ""
 
@@ -1096,8 +1104,9 @@ msgid "Allocations"
 msgstr "Dodelitev"
 
 #: src/sysprof/sysprof-memory-section.ui:144
+#, fuzzy
 msgid "Leaks"
-msgstr ""
+msgstr "Utekanja"
 
 #: src/sysprof/sysprof-memory-section.ui:212
 #: src/sysprof/sysprof-samples-section.ui:207
@@ -1329,7 +1338,7 @@ msgstr ""
 
 #: src/sysprof/sysprof-window.ui:391
 msgid "Hide System Libraries"
-msgstr ""
+msgstr "Skrij sistemske knjižnice"
 
 #: src/sysprof/sysprof-window.ui:395
 msgid "Include Threads"
@@ -1337,240 +1346,20 @@ msgstr "Vključi niti"
 
 #: src/sysprof/sysprof-window.ui:399
 msgid "Bottom Up"
-msgstr ""
+msgstr "Od spodaj navzgor"
 
 #: src/sysprof/sysprof-window.ui:403
 msgid "Ignore Kernel Processes"
-msgstr ""
+msgstr "Prezri procese jedra"
 
 #: src/sysprof/sysprof-window.ui:407
 msgid "Ignore Process 0"
-msgstr ""
+msgstr "Prezri proces 0"
 
 #: src/sysprof/sysprof-window.ui:411
 msgid "Merge Similar Processes"
-msgstr ""
+msgstr "Združi podobne procese"
 
 #: src/sysprof/sysprof-window.ui:418
 msgid "Left Heavy"
 msgstr ""
-
-#~ msgid "System Memory Usage"
-#~ msgstr "Uporaba sistemskega pomnilnika"
-
-#~ msgid "D-Bus Profiler"
-#~ msgstr "Profilnik vodila D-Bus"
-
-#~ msgid "Recent"
-#~ msgstr "Nedavno"
-
-#~ msgid "Capture File"
-#~ msgstr "Zajemi datoteko"
-
-#~ msgid "Preferences"
-#~ msgstr "Možnosti"
-
-#, c-format
-#~ msgid "An error occurred while attempting to access performance counters"
-#~ msgstr ""
-#~ "Pri poskusu dostopa do števcev učinkovitosti delovanja je prišlo do napake"
-
-#~ msgid "Battery"
-#~ msgstr "Baterija"
-
-#, fuzzy
-#~ msgid "Generating Callgraph"
-#~ msgstr "Tvorjenje grafikona klicev"
-
-#~ msgid "Not Enough Samples"
-#~ msgstr "Ni dovolj vzorcev"
-
-#, fuzzy, c-format
-#~ msgctxt "progress bar label"
-#~ msgid "%d %%"
-#~ msgstr "%d  %%"
-
-#~ msgid "CPU Frequency"
-#~ msgstr "Frekvenca CPE"
-
-#~ msgid "CPU Frequency (All)"
-#~ msgstr "Frekvenca CPE (vse)"
-
-#~ msgid "CPU Usage (All)"
-#~ msgstr "Uporaba CPE (vse)"
-
-#~ msgid "Memory Capture"
-#~ msgstr "Zajemanje pomnilnika"
-
-#, c-format
-#~ msgid "%0.4lf seconds"
-#~ msgstr "%0.4lf s"
-
-#~ msgid "Location"
-#~ msgstr "Mesto"
-
-#~ msgid "Recorded At"
-#~ msgstr "Posneto"
-
-#~ msgid "CPU Model"
-#~ msgstr "Model CPE"
-
-#~ msgid "Statistics"
-#~ msgstr "Statistika"
-
-#, fuzzy
-#~ msgid "Number of marks seen"
-#~ msgstr "Število vidnih oznak"
-
-#~ msgid "Number of processes seen"
-#~ msgstr "Število vidnih procesov"
-
-#~ msgid "Min"
-#~ msgstr "Najm."
-
-#~ msgid "Max"
-#~ msgstr "Najv."
-
-#~ msgid "Avg"
-#~ msgstr "Povpr."
-
-#~ msgid "Disk"
-#~ msgstr "Disk"
-
-#~ msgid "Writes"
-#~ msgstr "Zapisovanj"
-
-#, fuzzy
-#~ msgid "New Recording"
-#~ msgstr "Novo snemanje"
-
-#~ msgid "The recording could not be opened"
-#~ msgstr "Posnetka ni bilo mogoče odpreti"
-
-#~ msgid "Save Recording"
-#~ msgstr "Shrani posnetek"
-
-#~ msgid "Cancel"
-#~ msgstr "Prekliči"
-
-#~ msgid "New environment variable…"
-#~ msgstr "Nova okoljska spremenljivka …"
-
-#~ msgid "Ouch, that hurt!"
-#~ msgstr "Ojoj, to boli!"
-
-#~ msgid "End"
-#~ msgstr "Konec"
-
-#~ msgid "Number of Allocations"
-#~ msgstr "Število dodelitev"
-
-#, fuzzy
-#~ msgid "Number of allocations without a free record"
-#~ msgstr "Število dodelitev brez prostega/brezplačnega zapisa"
-
-#~ msgid "Temporary Allocations"
-#~ msgstr "Začasne dodelitve"
-
-#~ msgid "Allocations by Size"
-#~ msgstr "Dodelitve po velikosti"
-
-#~ msgid "Analyzing Memory Allocations"
-#~ msgstr "Analiziranje dodelitev pomnilnika"
-
-#~ msgid "GNOME Shell"
-#~ msgstr "Lupina GNOME"
-
-#, fuzzy
-#~ msgid "Profile Entire System"
-#~ msgstr "Izberite naziv, ki določa profil na vašem sistemu."
-
-#~ msgid "Instruments"
-#~ msgstr "Instrumenti"
-
-#~ msgid "Energy Usage (All)"
-#~ msgstr "Poraba energije (vse)"
-
-#~ msgid "Events"
-#~ msgstr "Dogodki"
-
-#~ msgid "Select for more details"
-#~ msgstr "Izberite za več podrobnosti"
-
-#~ msgctxt "shortcut window"
-#~ msgid "Save Recording"
-#~ msgstr "Shrani posnetek"
-
-#~ msgctxt "shortcut window"
-#~ msgid "Saves the current recording"
-#~ msgstr "Shrani trenutni posnetek"
-
-#, fuzzy
-#~ msgctxt "shortcut window"
-#~ msgid "Recording"
-#~ msgstr "Beleženje"
-
-#, fuzzy
-#~ msgctxt "shortcut window"
-#~ msgid "Record again"
-#~ msgstr "Znova posnemi"
-
-#~ msgctxt "shortcut window"
-#~ msgid "Stop recording"
-#~ msgstr "Ustavi snemanje"
-
-#~ msgctxt "shortcut window"
-#~ msgid "Expand function"
-#~ msgstr "Razpostri funkcijo"
-
-#~ msgctxt "shortcut window"
-#~ msgid "Collapse function"
-#~ msgstr "Strni funkcijo"
-
-#~ msgctxt "shortcut window"
-#~ msgid "Jump into function"
-#~ msgstr "Skoči v funkcijo"
-
-#~ msgctxt "shortcut window"
-#~ msgid "Visualizers"
-#~ msgstr "Vizualizatorji"
-
-#~ msgctxt "shortcut window"
-#~ msgid "New Tab"
-#~ msgstr "Nov zavihek"
-
-#~ msgctxt "shortcut window"
-#~ msgid "Switch Tab"
-#~ msgstr "Preklopi zavihek"
-
-#~ msgctxt "shortcut window"
-#~ msgid "New Window"
-#~ msgstr "Odpre novo okno"
-
-#~ msgid "New Tab"
-#~ msgstr "Nov zavihek"
-
-#~ msgid "Save Recording…"
-#~ msgstr "Shrani posnetek ..."
-
-#~ msgid "All Files"
-#~ msgstr "Vse datoteke"
-
-#~ msgid "_Open"
-#~ msgstr "_Odpri"
-
-#~ msgid "Open Recording… (Ctrl+O)"
-#~ msgstr "Odpri posnetek ... (krmilka+O)"
-
-#, fuzzy
-#~ msgid "Profiler stopped."
-#~ msgstr "Profilnik ustavljen."
-
-#~ msgid "Connect to the system bus"
-#~ msgstr "Poveži se s sistemskim vodilom"
-
-#~ msgid "/org/gnome/Sysprof3/Profiler"
-#~ msgstr "/org/gnome/Sysprof3/Profiler"
-
-#~ msgid "Timeout in seconds"
-#~ msgstr "Časovna omejitev v sekundah"

@@ -339,6 +339,15 @@ sysprof_callgraph_view_dispose (GObject *object)
 {
   SysprofCallgraphView *self = (SysprofCallgraphView *)object;
 
+  if (self->functions_column_view)
+    gtk_column_view_set_model (self->functions_column_view, NULL);
+
+  if (self->callers_column_view)
+    gtk_column_view_set_model (self->callers_column_view, NULL);
+
+  if (self->descendants_column_view)
+    gtk_column_view_set_model (self->descendants_column_view, NULL);
+
   if (self->traceables_signals)
     {
       g_signal_group_set_target (self->traceables_signals, NULL);

@@ -36,6 +36,7 @@ struct _SysprofCpuSection
 
   SysprofTimeScrubber *scrubber;
   GtkColumnView       *column_view;
+  GtkColumnView       *cpu_column_view;
   GtkColumnViewColumn *time_column;
 };
 
@@ -45,6 +46,12 @@ static void
 sysprof_cpu_section_dispose (GObject *object)
 {
   SysprofCpuSection *self = (SysprofCpuSection *)object;
+
+  if (self->column_view)
+    gtk_column_view_set_model (self->column_view, NULL);
+
+  if (self->cpu_column_view)
+    gtk_column_view_set_model (self->cpu_column_view, NULL);
 
   gtk_widget_dispose_template (GTK_WIDGET (self), SYSPROF_TYPE_CPU_SECTION);
 
@@ -61,6 +68,7 @@ sysprof_cpu_section_class_init (SysprofCpuSectionClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-cpu-section.ui");
   gtk_widget_class_bind_template_child (widget_class, SysprofCpuSection, column_view);
+  gtk_widget_class_bind_template_child (widget_class, SysprofCpuSection, cpu_column_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofCpuSection, scrubber);
   gtk_widget_class_bind_template_child (widget_class, SysprofCpuSection, time_column);
 

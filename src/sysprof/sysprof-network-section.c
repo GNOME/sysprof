@@ -113,6 +113,9 @@ sysprof_network_section_dispose (GObject *object)
 {
   SysprofNetworkSection *self = (SysprofNetworkSection *)object;
 
+  if (self->column_view != NULL)
+    gtk_column_view_set_model (self->column_view, NULL);
+
   gtk_widget_dispose_template (GTK_WIDGET (self), SYSPROF_TYPE_NETWORK_SECTION);
 
   g_clear_object (&self->pairs);

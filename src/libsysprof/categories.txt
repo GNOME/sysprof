@@ -117,6 +117,7 @@ gdk_frame_clock_paint               paint        inherit
 _gdk_frame_clock_emit_paint         paint        inherit
 _gdk_frame_clock_emit_after_paint   paint        inherit
 surface_render                      paint        inherit
+gtk_css_style_snapshot_*            paint        inherit
 
 _gtk_css_*                          css          inherit
 gtk_css_*                           css          inherit

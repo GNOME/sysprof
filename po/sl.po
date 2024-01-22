@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-10-22 13:52+0000\n"
-"PO-Revision-Date: 2023-12-31 15:14+0100\n"
+"POT-Creation-Date: 2023-12-31 14:16+0000\n"
+"PO-Revision-Date: 2024-01-22 23:13+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
@@ -53,13 +53,14 @@ msgid "Profile an application or entire system."
 msgstr "Profilirajte program ali celotni sistem."
 
 #: src/libsysprof/sysprof-callgraph-profile.c:447
+#, fuzzy
 msgid "Sysprof was unable to generate a callgraph from the system capture."
-msgstr ""
+msgstr "Sysprof ni mogel ustvariti grafa klicev iz zajemov sistema."
 
 #: src/libsysprof/sysprof-perf-source.c:472
-#, c-format
+#, fuzzy, c-format
 msgid "Sysprof failed to find field “%s”."
-msgstr ""
+msgstr "Sysprof ni našel polja »%s«."
 
 #: src/libsysprof/sysprof-perf-source.c:485
 #, c-format
@@ -152,8 +153,9 @@ msgid "Generating Callgraph"
 msgstr "Tvorjenje grafikona klicev"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:199
+#, fuzzy
 msgid "Sysprof is busy creating the selected callgraph."
-msgstr ""
+msgstr "Sysprof je zaposlen z ustvarjanjem izbranega grafikona klicev."
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:205
 #: src/libsysprof-ui/sysprof-memprof-page.ui:271
@@ -163,7 +165,7 @@ msgstr "Ni dovolj vzorcev"
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:206
 #: src/libsysprof-ui/sysprof-memprof-page.ui:272
 msgid "More samples are necessary to display a callgraph."
-msgstr ""
+msgstr "Za prikaz grafikona klicev je potrebnih več vzorcev."
 
 #: src/libsysprof-ui/sysprof-cell-renderer-progress.c:102
 #: src/libsysprof-ui/sysprof-cell-renderer-progress.c:292
@@ -249,7 +251,6 @@ msgid "Marks"
 msgstr ""
 
 #: src/libsysprof-ui/sysprof-details-page.ui:89
-#, fuzzy
 msgid "Number of marks seen"
 msgstr "Število vidnih oznak"
 
@@ -369,10 +370,10 @@ msgid "Ouch, that hurt!"
 msgstr "Ojoj, to boli!"
 
 #: src/libsysprof-ui/sysprof-failed-state-view.ui:37
-#, fuzzy
 msgid "Something unexpectedly went wrong while trying to profile your system."
 msgstr ""
-"Nekaj nepričakovano je šlo narobe, ko ste poskušali profilirati svoj sistem."
+"Nekaj nepričakovanega je šlo narobe, ko ste poskušali profilirati svoj "
+"sistem."
 
 #: src/libsysprof-ui/sysprof-log-model.c:210
 #: src/libsysprof-ui/sysprof-logs-page.ui:56
@@ -660,8 +661,9 @@ msgid "Profile the system"
 msgstr "Profilirajte sistem"
 
 #: src/sysprofd/org.gnome.sysprof3.policy.in:14
+#, fuzzy
 msgid "Authentication is required to profile the system."
-msgstr ""
+msgstr "Za profiliranje sistema je potrebno preverjanje pristnosti."
 
 #: src/sysprofd/org.gnome.sysprof3.policy.in:26
 msgid "Open a perf event stream"
@@ -702,7 +704,7 @@ msgstr "Odpri posnetek"
 #: src/sysprof/gtk/help-overlay.ui:21
 msgctxt "shortcut window"
 msgid "Opens a previously saved recording"
-msgstr ""
+msgstr "Odpre predhodno shranjen posnetek"
 
 #: src/sysprof/gtk/help-overlay.ui:29
 msgctxt "shortcut window"
@@ -727,7 +729,7 @@ msgstr "Ustavi snemanje"
 #: src/sysprof/gtk/help-overlay.ui:47
 msgctxt "shortcut window"
 msgid "Callgraph"
-msgstr ""
+msgstr "Grafikon klicev"
 
 #: src/sysprof/gtk/help-overlay.ui:50
 msgctxt "shortcut window"
@@ -737,7 +739,7 @@ msgstr "Razpostri funkcijo"
 #: src/sysprof/gtk/help-overlay.ui:51
 msgctxt "shortcut window"
 msgid "Shows the direct descendants of the callgraph function"
-msgstr ""
+msgstr "Prikaže neposredne potomce funkcije grafikona klicev"
 
 #: src/sysprof/gtk/help-overlay.ui:57
 msgctxt "shortcut window"
@@ -747,7 +749,7 @@ msgstr "Strni funkcijo"
 #: src/sysprof/gtk/help-overlay.ui:58
 msgctxt "shortcut window"
 msgid "Hides all callgraph descendants below the selected function"
-msgstr ""
+msgstr "Skrije vse potomce grafikona klicev pod izbrano funkcijo"
 
 #: src/sysprof/gtk/help-overlay.ui:64
 msgctxt "shortcut window"
@@ -757,7 +759,7 @@ msgstr "Skoči v funkcijo"
 #: src/sysprof/gtk/help-overlay.ui:65
 msgctxt "shortcut window"
 msgid "Selects the function or file as the top of the callgraph"
-msgstr ""
+msgstr "Izbere funkcijo ali datoteko za vrh grafikona klicev"
 
 #: src/sysprof/gtk/help-overlay.ui:73
 msgctxt "shortcut window"
@@ -828,7 +830,6 @@ msgid "New Window"
 msgstr "Novo okno"
 
 #: src/sysprof/gtk/menus.ui:16
-#, fuzzy
 msgid "Open Recording…"
 msgstr "Odpri posnetek …"
 
@@ -877,8 +878,9 @@ msgid "Open"
 msgstr "Odpri"
 
 #: src/sysprof/sysprof-window.c:288
+#, fuzzy
 msgid "Sysprof Captures"
-msgstr ""
+msgstr "Zajemi sistema Sysprof"
 
 #: src/sysprof/sysprof-window.c:293
 msgid "All Files"
@@ -909,8 +911,9 @@ msgid "--merge requires at least 2 filename arguments"
 msgstr "--merge zahteva vsaj dve imeni datotek kot argumenta"
 
 #: src/tools/sysprof-cli.c:227
+#, fuzzy
 msgid "Disable CPU throttling while profiling"
-msgstr ""
+msgstr "Onemogoči omejevanja CPE med profiliranjem"
 
 #: src/tools/sysprof-cli.c:228
 msgid "Make sysprof specific to a task"
@@ -990,8 +993,9 @@ msgid "Profile memory allocations and frees"
 msgstr "Dodeljevanje in sproščanje pomnilnika profila"
 
 #: src/tools/sysprof-cli.c:244
+#, fuzzy
 msgid "Connect to org.gnome.Shell for profiler statistics"
-msgstr ""
+msgstr "Povežite se z org.gnome.Shell za statistiko profilerjev"
 
 #: src/tools/sysprof-cli.c:245
 msgid "Track performance of the applications main loop"
@@ -1063,7 +1067,7 @@ msgstr "Časovna omejitev v sekundah"
 
 #: src/tools/sysprof-profiler-ctl.c:51
 msgid "Overwrite FILENAME if it exists"
-msgstr ""
+msgstr "Prepiši IME_DATOTEKE, če obstaja"
 
 #: src/tools/sysprof-profiler-ctl.c:79
 msgid "--dest=BUS_NAME [FILENAME] - connect to an embedded sysprof profiler"

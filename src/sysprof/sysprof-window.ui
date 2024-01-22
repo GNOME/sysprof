@@ -449,7 +449,7 @@
     <section>
       <attribute name="label" translatable="yes">Flamegraph</attribute>
       <item>
-        <attribute name="label" translatable="yes">Left Heavy</attribute>
+        <attribute name="label" translatable="yes" context="sort largest stack frames to the left">Left Heavy</attribute>
         <attribute name="action">win.callgraph.left-heavy</attribute>
       </item>
     </section>

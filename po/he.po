@@ -1,23 +1,24 @@
 # Hebrew translation for sysprof.
 # Copyright (C) 2022 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
-# Yosef Or Boczko <yoseforb@gmail.com>, 2023.
 # Yaron Shahrabani <sh.yaron@gmail.com>, 2022-2023.
+# Yosef Or Boczko <yoseforb@gmail.com>, 2023-2024.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-12-24 00:47+0000\n"
-"PO-Revision-Date: 2023-12-28 11:37+0200\n"
-"Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
-"Language-Team: Hebrew <heb-bugzap@hamakor.org.il>\n"
+"POT-Creation-Date: 2024-01-24 18:40+0000\n"
+"PO-Revision-Date: 2024-01-25 13:37+0200\n"
+"Last-Translator: Yosef Or Boczko <yoseforb@gmail.com>\n"
+"Language-Team: Hebrew\n"
 "Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: ‪nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && n % 10 == 0) ? 2 : 3));\n"
-"X-Generator: Poedit 3.4.1\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : n==2 ? 1 : n>10 && n%10==0 ? "
+"2 : 3)\n"
+"X-Generator: Gtranslator 45.3\n"
 "X-DL-Lang: he\n"
 "X-DL-Module: sysprof\n"
 "X-DL-Branch: master\n"
@@ -41,7 +42,9 @@ msgid "The GNOME Project"
 msgstr "מיזם GNOME"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:17
-msgid "Sysprof allows you to profile applications to aid in debugging and optimization."
+msgid ""
+"Sysprof allows you to profile applications to aid in debugging and "
+"optimization."
 msgstr "‫Sysprof מאפשר לך לנתח יישומים כדי לסייע בניפוי שגיאות ובמיטוב."
 
 #: data/org.gnome.Sysprof.desktop.in.in:5 src/sysprof/sysprof-greeter.ui:89
@@ -246,8 +249,12 @@ msgid "Tracer"
 msgstr "עוקב"
 
 #: src/libsysprof/sysprof-tracer.c:66
-msgid "Tracing requires spawning a program compiled with ‘-finstrument-functions’. Tracing will not be available."
-msgstr "מעקב דורש הרצת תוכנית שהודרה עם ‚‎-finstrument-functions’ כצאצאית. מעקב לא יהיה זמין."
+msgid ""
+"Tracing requires spawning a program compiled with ‘-finstrument-functions’. "
+"Tracing will not be available."
+msgstr ""
+"מעקב דורש הרצת תוכנית שהודרה עם ‚‎-finstrument-functions’ כצאצאית. מעקב לא "
+"יהיה זמין."
 
 #: src/sysprof-cli/sysprof-cli.c:112
 msgid "--merge requires at least 2 filename arguments"
@@ -277,8 +284,10 @@ msgid "COMMAND"
 msgstr "COMMAND"
 
 #: src/sysprof-cli/sysprof-cli.c:309
-msgid "Set environment variable for spawned process. Can be used multiple times."
-msgstr "הגדרת משתנים סביבתיים לתהליכים שהופעלו על ידי התוכנית. יכול לשמש מספר פעמים."
+msgid ""
+"Set environment variable for spawned process. Can be used multiple times."
+msgstr ""
+"הגדרת משתנים סביבתיים לתהליכים שהופעלו על ידי התוכנית. יכול לשמש מספר פעמים."
 
 #: src/sysprof-cli/sysprof-cli.c:309
 msgid "VAR=VALUE"
@@ -373,7 +382,8 @@ msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "‫‎[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 
 #: src/sysprof-cli/sysprof-cli.c:367
-msgid "\n"
+msgid ""
+"\n"
 "Examples:\n"
 "\n"
 "  # Record gtk4-widget-factory using trace-fd to get application provided\n"
@@ -382,7 +392,8 @@ msgid "\n"
 "\n"
 "  # Merge multiple syscap files into one\n"
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
-msgstr "\n"
+msgstr ""
+"\n"
 "‫‫דוגמאות:‬\n"
 "\n"
 "‫‫  # יש להקליט gtk4-widget-factory באמצעות trace-fd כדי לקבל נתונים באמצעות‬\n"
@@ -461,6 +472,11 @@ msgctxt "shortcut window"
 msgid "Show keyboard shortcuts"
 msgstr "הצגת צירופי מקשים"
 
+#: src/sysprof/gtk/help-overlay.ui:68
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "יציאה"
+
 #: src/sysprof/gtk/menus.ui:6
 msgid "_Preferences"
 msgstr "_העדפות"
@@ -498,8 +514,10 @@ msgstr "מאבחן מערכת"
 
 #: src/sysprof/sysprof-application.c:171
 msgid "translator-credits"
-msgstr "ירון שהרבני <sh.yaron@gmail.com>\n"
-"יוסף אור בוצ׳קו <yoseforb@gmail.com>"
+msgstr ""
+"ירון שהרבני <sh.yaron@gmail.com>\n"
+"יוסף אור בוצ׳קו <yoseforb@gmail.com>\n"
+"מיזם תרגום GNOME לעברית https://l10n.gnome.org/teams/he/"
 
 #: src/sysprof/sysprof-callgraph-view.ui:22
 msgid "Functions"
@@ -749,7 +767,8 @@ msgstr "דגימת מחסניות טבעיות"
 
 #: src/sysprof/sysprof-greeter.ui:100
 msgid "Record native stack traces using a sampling profiler"
-msgstr "להקליט השתלשלות קריאות של יישומים טבעיים למערכת באמצעות מתעד אפיון דגימה"
+msgstr ""
+"להקליט השתלשלות קריאות של יישומים טבעיים למערכת באמצעות מתעד אפיון דגימה"
 
 #: src/sysprof/sysprof-greeter.ui:116
 msgid "Sample JavaScript Stacks"
@@ -760,8 +779,11 @@ msgid "Record JavaScript stack traces using a sampling profiler"
 msgstr "להקליט השתלשלות קריאות של JavaScript באמצעות מתעד אפיון דגימה"
 
 #: src/sysprof/sysprof-greeter.ui:128
-msgid "Sysprof must launch your application to record JavaScript stacks using GJS."
-msgstr "Sysprof חייב להפעיל את היישום שלך כדי להקליט את מחסניות ה־JavaScript בעזרת GJS."
+msgid ""
+"Sysprof must launch your application to record JavaScript stacks using GJS."
+msgstr ""
+"Sysprof חייב להפעיל את היישום שלך כדי להקליט את מחסניות ה־JavaScript בעזרת "
+"GJS."
 
 #: src/sysprof/sysprof-greeter.ui:144
 msgid "Record Scheduler Details"
@@ -781,7 +803,8 @@ msgstr "מעקב אחר הקצאות זיכרון"
 
 #: src/sysprof/sysprof-greeter.ui:163
 msgid "Record a stack trace when <tt>malloc</tt> or similar functions are used"
-msgstr "להקליט השתלשלות קריאות כאשר נעשה שימוש ב־<tt>malloc</tt> או בפונקציות דומות"
+msgstr ""
+"להקליט השתלשלות קריאות כאשר נעשה שימוש ב־<tt>malloc</tt> או בפונקציות דומות"
 
 #: src/sysprof/sysprof-greeter.ui:174
 msgid "Sysprof must launch your application to record memory allocations."
@@ -902,7 +925,9 @@ msgid "Record messages on the D-Bus user session bus"
 msgstr "הקלטת הודעות מאפיק הפעלת המשתמש של D-Bus"
 
 #: src/sysprof/sysprof-greeter.ui:415
-msgid "The session bus may contain sensitive information such as keyboard usage and passwords."
+msgid ""
+"The session bus may contain sensitive information such as keyboard usage and "
+"passwords."
 msgstr "אפיק ההפעלה עלול להכיל מידע רגיש כגון אופן השימוש במקלדת וססמאות."
 
 #: src/sysprof/sysprof-greeter.ui:438
@@ -918,8 +943,11 @@ msgid "Record frame-timing information from the GNOME Shell compositor"
 msgstr "הקלטת פרטי תזמון תמוניות מהמערכת החלונאית של מעטפת GNOME"
 
 #: src/sysprof/sysprof-greeter.ui:454
-msgid "Applications launched by Sysprof will automatically collect GTK frame timing information."
-msgstr "יישומים שמופעלים על ידי Sysprof יאספו פרטי תזמון תמוניות של GTK אוטומטית."
+msgid ""
+"Applications launched by Sysprof will automatically collect GTK frame timing "
+"information."
+msgstr ""
+"יישומים שמופעלים על ידי Sysprof יאספו פרטי תזמון תמוניות של GTK אוטומטית."
 
 #: src/sysprof/sysprof-greeter.ui:494
 msgid "Devices"
@@ -979,7 +1007,8 @@ msgstr "איגוד סמלים"
 
 #: src/sysprof/sysprof-greeter.ui:576
 msgid "Make recording shareable by symbolizing stack traces after recording"
-msgstr "להפוך את ההקלטה לזמינה לשיתוף על ידי הפיכת מעקבי התהליכים לסמליים לאחר ההקלטה"
+msgstr ""
+"להפוך את ההקלטה לזמינה לשיתוף על ידי הפיכת מעקבי התהליכים לסמליים לאחר ההקלטה"
 
 #: src/sysprof/sysprof-greeter.ui:609
 msgid "_Open File…"
@@ -1005,8 +1034,8 @@ msgstr "עזרה"
 msgid "About Sysprof"
 msgstr "על Sysprof"
 
-#: src/sysprof/sysprof-greeter.ui:658 src/sysprof/gtk/help-overlay.ui:68
-msgctxt "shortcut window"
+#: src/sysprof/sysprof-greeter.ui:658
+# msgctxt "shortcut window"
 msgid "Quit"
 msgstr "יציאה"
 
@@ -1232,10 +1261,12 @@ msgstr "ההקלטה נכשלה"
 
 #: src/sysprof/sysprof-recording-pad.c:113
 #, c-format
-msgid "Sysprof failed to record.\n"
+msgid ""
+"Sysprof failed to record.\n"
 "\n"
 "%s"
-msgstr "ההקלטה מצד Sysprof נכשלה.\n"
+msgstr ""
+"ההקלטה מצד Sysprof נכשלה.\n"
 "\n"
 "%s"
 
@@ -1317,10 +1348,13 @@ msgstr "מסמך לא תקף"
 
 #: src/sysprof/sysprof-window.c:716
 #, c-format
-msgid "The document could not be loaded. Please check that you have the correct capture file.\n"
+msgid ""
+"The document could not be loaded. Please check that you have the correct "
+"capture file.\n"
 "\n"
 "%s"
-msgstr "לא ניתן לטעון את המסמך. יש לבדוק שיש לך את קובץ הלכידה המתאים.\n"
+msgstr ""
+"לא ניתן לטעון את המסמך. יש לבדוק שיש לך את קובץ הלכידה המתאים.\n"
 "\n"
 "‏%s"
 
@@ -1361,9 +1395,9 @@ msgid "Save As…"
 msgstr "שמירה בשם…"
 
 #: src/sysprof/sysprof-window.ui:412
-msgctxt "shortcut window"
+# msgctxt "shortcut window"
 msgid "_Quit"
-msgstr "י_ציאה"
+msgstr "_יציאה"
 
 #: src/sysprof/sysprof-window.ui:421
 msgid "Categorize Frames"
@@ -1395,6 +1429,9 @@ msgstr "מיזוג תהליכים דומים"
 
 # הכוונה היא שכל התמוניות/פריימים הגדולים מוצמדים לצד השמאלי של תרשים הלהבות, צריך לראות אם ביישומי יל״ש זה לא מיושר לימין.
 #: src/sysprof/sysprof-window.ui:452
+#, fuzzy
+#| msgid "Left Heavy"
+msgctxt "sort largest stack frames to the left"
 msgid "Left Heavy"
 msgstr "שמאל מעובה"
 
@@ -1651,64 +1688,64 @@ msgstr "שמאל מעובה"
 
 #~ msgid "Authentication is required to access Linux kernel information."
 #~ msgstr "נדרש אימות כדי לגשת לפרטי ליבת הלינוקס."
-#~ msgctxt "shortcut window"
 
+#~ msgctxt "shortcut window"
 #~ msgid "Sysprof Shortcuts"
 #~ msgstr "הקיצורים של Sysprof"
-#~ msgctxt "shortcut window"
 
+#~ msgctxt "shortcut window"
 #~ msgid "Save Recording"
 #~ msgstr "שמירת הקלטה"
-#~ msgctxt "shortcut window"
 
+#~ msgctxt "shortcut window"
 #~ msgid "Saves the current recording"
 #~ msgstr "שמירת ההקלטה הנוכחית"
-#~ msgctxt "shortcut window"
 
+#~ msgctxt "shortcut window"
 #~ msgid "Opens a previously saved recording"
 #~ msgstr "פתיחת הקלטה שנשמרה קודם לכן"
-#~ msgctxt "shortcut window"
 
+#~ msgctxt "shortcut window"
 #~ msgid "Recording"
 #~ msgstr "הקלטה"
-#~ msgctxt "shortcut window"
 
+#~ msgctxt "shortcut window"
 #~ msgid "Record again"
 #~ msgstr "להקליט שוב"
-#~ msgctxt "shortcut window"
 
+#~ msgctxt "shortcut window"
 #~ msgid "Stop recording"
 #~ msgstr "עצירת הקלטה"
-#~ msgctxt "shortcut window"
 
+#~ msgctxt "shortcut window"
 #~ msgid "Callgraph"
 #~ msgstr "תרשים קריאות"
-#~ msgctxt "shortcut window"
 
+#~ msgctxt "shortcut window"
 #~ msgid "Expand function"
 #~ msgstr "הרחבת פונקציה"
-#~ msgctxt "shortcut window"
 
+#~ msgctxt "shortcut window"
 #~ msgid "Shows the direct descendants of the callgraph function"
 #~ msgstr "מציג את הצאצאים הישירים של פונקציית תרשים הקריאות"
-#~ msgctxt "shortcut window"
 
+#~ msgctxt "shortcut window"
 #~ msgid "Collapse function"
 #~ msgstr "צמצום פונקציה"
-#~ msgctxt "shortcut window"
 
+#~ msgctxt "shortcut window"
 #~ msgid "Hides all callgraph descendants below the selected function"
 #~ msgstr "מסתיר את תרשימי הקריאות הצאצאיים מתחת לפונקציה הנבחרת"
-#~ msgctxt "shortcut window"
 
+#~ msgctxt "shortcut window"
 #~ msgid "Jump into function"
 #~ msgstr "קפיצה לפונקציה"
-#~ msgctxt "shortcut window"
 
+#~ msgctxt "shortcut window"
 #~ msgid "Selects the function or file as the top of the callgraph"
 #~ msgstr "בוחרת את הפונקציה או הקובץ כראש תרשים הקריאות"
-#~ msgctxt "shortcut window"
 
+#~ msgctxt "shortcut window"
 #~ msgid "Visualizers"
 #~ msgstr "ממחישים"
 

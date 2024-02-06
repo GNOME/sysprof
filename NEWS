@@ -1,3 +1,17 @@
+Overview of changes in Sysprof 45.2
+===================================
+
+Changes since 45.1:
+
+ * Sample items in mark chart rows to reduce chances of overflowing
+   Open GL maximum VBO size.
+ * Fix parsing of /proc/$pid/maps by being more lenient in what is
+   accepted device numbers. This fixes some unwindable stack traces.
+ * Update categories that are highlighted.
+ * Be more defensive when cleaning up view models to reduce chances
+   of cuausing issues with GtkExpression.
+ * Translation updates
+
 Overview of changes in Sysprof 45.1
 ===================================
 

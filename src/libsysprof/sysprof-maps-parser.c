@@ -32,7 +32,7 @@ sysprof_maps_parser_init (SysprofMapsParser *self,
   line_reader_init (&self->reader, (char *)str, len);
 
   if (address_range_regex == NULL)
-    address_range_regex = g_regex_new ("^([0-9a-f]+)-([0-9a-f]+) [r\\-][w\\-][x\\-][ps\\-] ([0-9a-f]+) [0-9]{2}:[0-9]{2} ([0-9]+) +(.*)$",
+    address_range_regex = g_regex_new ("^([0-9a-f]+)-([0-9a-f]+) [r\\-][w\\-][x\\-][ps\\-] ([0-9a-f]+) [0-9a-f]{2}:[0-9a-f]{2} ([0-9]+) +(.*)$",
                                        G_REGEX_OPTIMIZE,
                                        G_REGEX_MATCH_DEFAULT,
                                        NULL);

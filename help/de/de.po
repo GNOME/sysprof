@@ -3,13 +3,13 @@
 # This file is distributed under the same license as the sysprof package.
 # Mario Blättermann <mario.blaettermann@gmail.com>, 2016.
 # Tim Sabsch <tim@sabsch.com>, 2018.
-# Jürgen Benvenuti <gastornis@posteo.org>, 2023.
+# Jürgen Benvenuti <gastornis@posteo.org>, 2023, 2024.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
-"POT-Creation-Date: 2023-01-25 22:12+0000\n"
-"PO-Revision-Date: 2023-03-05 19:31+0100\n"
+"POT-Creation-Date: 2024-01-24 18:40+0000\n"
+"PO-Revision-Date: 2024-02-06 20:07+0100\n"
 "Last-Translator: Jürgen Benvenuti <gastornis@posteo.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "Language: de\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.4.2\n"
 
 #. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
 msgctxt "_"
@@ -25,8 +25,8 @@ msgid "translator-credits"
 msgstr ""
 "Mario Blättermann <mario.blaettermann@gmail.com>, 2016\n"
 "Tim Sabsch <tim@sabsch.com>, 2018\n"
-"Christian Kirbach <christian.kirbach@gmail.com>, 2018\n"
-"Jürgen Benvenuti <gastornis@posteo.org>, 2023"
+"Christian Kirbach <christian.kirbach@gmail.com>, 2018, 2024\n"
+"Jürgen Benvenuti <gastornis@posteo.org>, 2023, 2024"
 
 #. (itstool) path: info/title
 #: C/index.page:7
@@ -220,7 +220,7 @@ msgstr ""
 "auf Datenträger abspeichert."
 
 #. (itstool) path: section/p
-#: C/profiling.page:37 C/profiling.page:60
+#: C/profiling.page:37
 msgid ""
 "See <link href=\"profiling#interpreting-results\">interpreting results</"
 "link> for more guidance."
@@ -230,63 +230,25 @@ msgstr ""
 
 #. (itstool) path: section/title
 #: C/profiling.page:46
-msgid "Profile an existing process"
-msgstr "Einen bestehenden Prozess analysieren"
-
-#. (itstool) path: section/p
-#: C/profiling.page:47
-msgid ""
-"With <app>Sysprof</app>, you can profile one or more existing processes on "
-"your system. First, select the <em>profiling target</em> button next to the "
-"<em>Record</em> button. Select <em>Existing Process</em> in the popover that "
-"is displayed. Next, select as many processes as you'd like to profile. "
-"Processes selected for profiling will have a checkmark next to their name."
-msgstr ""
-"Sie können mit <app>Sysprof</app> einen oder mehrere bestehende Prozesse in "
-"Ihrem System analysieren. Wählen Sie zunächst den Knopf <em>Analyseziel</em> "
-"neben dem <em>Aufnehmen</em>-Knopf. Wählen Sie <em>Bestehender Prozess</em> "
-"im Einblenddialog aus. Wählen Sie dann so viele Prozesse aus, wie Sie "
-"analysieren wollen. Für die Analyse ausgewählte Prozesse bekommen ein "
-"Häkchen neben ihren Namen."
-
-#. (itstool) path: section/p
-#: C/profiling.page:54
-msgid ""
-"After selecting your target processes, click the <em>Record</em> button to "
-"start profiling."
-msgstr ""
-"Nachdem Sie Ihre Zielprozesse ausgewählt haben, klicken Sie auf den "
-"<em>Aufnehmen</em>-Knopf, um die Analyse zu starten."
-
-#. (itstool) path: section/p
-#: C/profiling.page:57
-msgid ""
-"When you have completed, click the <em>Record</em> button again to stop "
-"profiling."
-msgstr ""
-"Wenn Sie fertig sind, klicken Sie erneut auf den <em>Aufnehmen</em>-Knopf, "
-"um die Analyse zu beenden."
-
-#. (itstool) path: section/title
-#: C/profiling.page:69
 msgid "Profile a new process"
 msgstr "Einen neuen Prozess analysieren"
 
 #. (itstool) path: section/p
-#: C/profiling.page:71
+#: C/profiling.page:48
 msgid ""
 "Often times, you may need to spawn a new process to profile. First, select "
-"the <em>profiling target</em> button next to the <em>Record</em> button. "
-"Next, select <em>New Process</em> and fill out the necessary information to "
-"spawn the process."
+"the <em>Application</em> button next at the top of the recording window. "
+"Fill in your command and working directory, and optionally specify any "
+"environment variables you need. Your process will be started when recording "
+"begins."
 msgstr ""
 "Oftmals müssen Sie einen neuen Prozess erzeugen, um ihn zu analysieren. Dazu "
-"wählen Sie zunächst den Knopf <em>Analyseziel</em> neben dem <em>Aufnehmen</"
-"em>-Knopf. Wählen Sie dann <em>Neuer Prozess</em> und füllen Sie die "
-"notwendigen Informationen aus, um den Prozess zu erzeugen."
+"wählen Sie den Knopf <em>Anwendung</em> oben im Aufnehmen-Fenster. Geben Sie "
+"dann Ihren Befehl und den Arbeitsordner ein, und optional benötigte "
+"Umgebungsvariablen. Der Prozess wird gestartet, sobald die Aufnahme startet."
 
 #. (itstool) path: note/p
-#: C/profiling.page:77
+#: C/profiling.page:55
 msgid ""
 "If you are spawning a process that requires access to your current display, "
 "such as a GTK+ application, you will want to make sure <em>Inherit current "
@@ -297,12 +259,12 @@ msgstr ""
 "<em>Aktuelle Umgebung vererben</em> eingestellt ist."
 
 #. (itstool) path: section/title
-#: C/profiling.page:88
+#: C/profiling.page:66
 msgid "Profiling with the sysprof-cli command line tool"
 msgstr "Mit dem Befehlszeilen-Programm »sysprof-cli« analysieren"
 
 #. (itstool) path: section/p
-#: C/profiling.page:90
+#: C/profiling.page:68
 msgid ""
 "For minimal overhead, you might consider using the <cmd>sysprof-cli</cmd> "
 "command line tool. When run without any arguments, it will record your "
@@ -316,32 +278,23 @@ msgstr ""
 "den Aufrufgraphen zu betrachten."
 
 #. (itstool) path: section/p
-#: C/profiling.page:95
+#: C/profiling.page:73
 msgid ""
-"You can also attach to an existing process using <cmd>sysprof-cli -p pid</"
-"cmd>."
-msgstr ""
-"Sie können ebenfalls einen bestehenden Prozess mittels <cmd>sysprof-cli -p "
-"pid</cmd> beifügen."
-
-#. (itstool) path: section/p
-#: C/profiling.page:98
-msgid ""
-"If you would like to spawn a new process, use <cmd>sysprof-cli -c 'command'</"
+"If you would like to spawn a new process, use <cmd>sysprof-cli -- 'command'</"
 "cmd> to specify a command to be launched. The command will inherit the "
 "current environment."
 msgstr ""
 "Falls Sie einen neuen Prozess erzeugen möchten, verwenden Sie <cmd>sysprof-"
-"cli -c 'Befehl'</cmd>, um einen Befehl zu spezifizieren, der gestartet "
-"werden soll. Dieser Befehl vererbt von der aktuellen Umgebung."
+"cli -- 'Befehl'</cmd>, um einen Befehl anzugeben, der gestartet werden soll. "
+"Dieser Befehl erbt die aktuelle Umgebung."
 
 #. (itstool) path: section/title
-#: C/profiling.page:108
+#: C/profiling.page:83
 msgid "Interpreting results"
 msgstr "Interpretieren der Ergebnisse"
 
 #. (itstool) path: section/p
-#: C/profiling.page:110
+#: C/profiling.page:85
 msgid ""
 "The profiling results in <app>Sysprof</app> are split into three sections. "
 "On the top left is a list of all the functions profiled. They are sorted by "
@@ -353,7 +306,7 @@ msgstr ""
 "aufgerufen wurden."
 
 #. (itstool) path: note/p
-#: C/profiling.page:115
+#: C/profiling.page:90
 msgid ""
 "It is important to note that the amount of time spent in each function is "
 "not captured. That would require a tracing profiler to accurately record. "
@@ -367,7 +320,7 @@ msgstr ""
 "eine Messung erfolgte."
 
 #. (itstool) path: section/p
-#: C/profiling.page:121
+#: C/profiling.page:96
 msgid ""
 "After selecting a function from the functions list, all of the recorded "
 "callers of that function will be displayed on the bottom left. They are also "
@@ -380,7 +333,7 @@ msgstr ""
 "im Stacktrace beinhalteten."
 
 #. (itstool) path: section/p
-#: C/profiling.page:126
+#: C/profiling.page:101
 msgid ""
 "On the right, are all of the decendants of a selected function. You can "
 "select a function either from the functions list, or the callers list."
@@ -389,28 +342,18 @@ msgstr ""
 "Funktion. Sie können eine Funktion entweder über die Funktionsliste oder die "
 "Aufrufer-Liste auswählen."
 
-#. (itstool) path: section/p
-#: C/profiling.page:129
-msgid ""
-"You can jump into a function by activating a row in the tree of descendants "
-"with a double-click or by pressing <key>Enter</key> or <key>Spacebar</key>."
-msgstr ""
-"Sie können in eine Funktion springen, indem Sie eine Zeile im Nachfolgerbaum "
-"doppelt klicken oder entweder <key>Eingabe</key> oder <key>Leertaste</key> "
-"drücken."
-
 # CHECK: syscall und signal unübersetzt lassen?
 #. (itstool) path: note/p
-#: C/profiling.page:133
+#: C/profiling.page:105
 msgid ""
-"If you see <em>- - kernel - -</em> in your results, that means that the "
-"application transitioned into or from the Linux kernel. There can be many "
-"reasons for this such as a <em>syscall</em> or <em>signal</em>."
+"If you see <em>- - Context Switch - -</em> in your results, that means that "
+"the application transitioned into or from the Linux kernel. There can be "
+"many reasons for this such as a <em>syscall</em> or <em>signal</em>."
 msgstr ""
-"Falls Sie <em>- - kernel - -</em> in Ihren Ergebnissen sehen, bedeutet es, "
-"dass die Anwendung in den Linux-Kernel überging oder aus ihm hervorging. "
-"Dafür kann es mehrere Gründe geben, beispielsweise einen <em>Systemaufruf</"
-"em> oder ein <em>Signal</em>."
+"Falls Sie <em>-- Context Switch --</em> in Ihren Ergebnissen sehen, bedeutet "
+"es, dass die Anwendung in den Linux-Kernel überging oder aus ihm hervorging. "
+"Dafür kann es viele Gründe geben, beispielsweise einen <em>Systemaufruf</em> "
+"oder ein <em>Signal</em>."
 
 #. (itstool) path: page/title
 #: C/faq.page:9
@@ -511,3 +454,51 @@ msgstr ""
 "Als besondere Ausnahme gewähren die Inhaber des Urheberrechts die Erlaubnis, "
 "den Beispiel-Code in diesem Dokument zu kopieren, verändern und "
 "weiterzugeben, unter den Bedingungen Ihrer Wahl, ohne Einschränkungen."
+
+#~ msgid "Profile an existing process"
+#~ msgstr "Einen bestehenden Prozess analysieren"
+
+#~ msgid ""
+#~ "With <app>Sysprof</app>, you can profile one or more existing processes "
+#~ "on your system. First, select the <em>profiling target</em> button next "
+#~ "to the <em>Record</em> button. Select <em>Existing Process</em> in the "
+#~ "popover that is displayed. Next, select as many processes as you'd like "
+#~ "to profile. Processes selected for profiling will have a checkmark next "
+#~ "to their name."
+#~ msgstr ""
+#~ "Sie können mit <app>Sysprof</app> einen oder mehrere bestehende Prozesse "
+#~ "in Ihrem System analysieren. Wählen Sie zunächst den Knopf "
+#~ "<em>Analyseziel</em> neben dem <em>Aufnehmen</em>-Knopf. Wählen Sie "
+#~ "<em>Bestehender Prozess</em> im Einblenddialog aus. Wählen Sie dann so "
+#~ "viele Prozesse aus, wie Sie analysieren wollen. Für die Analyse "
+#~ "ausgewählte Prozesse bekommen ein Häkchen neben ihren Namen."
+
+#~ msgid ""
+#~ "After selecting your target processes, click the <em>Record</em> button "
+#~ "to start profiling."
+#~ msgstr ""
+#~ "Nachdem Sie Ihre Zielprozesse ausgewählt haben, klicken Sie auf den "
+#~ "<em>Aufnehmen</em>-Knopf, um die Analyse zu starten."
+
+#~ msgid ""
+#~ "When you have completed, click the <em>Record</em> button again to stop "
+#~ "profiling."
+#~ msgstr ""
+#~ "Wenn Sie fertig sind, klicken Sie erneut auf den <em>Aufnehmen</em>-"
+#~ "Knopf, um die Analyse zu beenden."
+
+#~ msgid ""
+#~ "You can also attach to an existing process using <cmd>sysprof-cli -p pid</"
+#~ "cmd>."
+#~ msgstr ""
+#~ "Sie können ebenfalls einen bestehenden Prozess mittels <cmd>sysprof-cli -"
+#~ "p pid</cmd> beifügen."
+
+#~ msgid ""
+#~ "You can jump into a function by activating a row in the tree of "
+#~ "descendants with a double-click or by pressing <key>Enter</key> or "
+#~ "<key>Spacebar</key>."
+#~ msgstr ""
+#~ "Sie können in eine Funktion springen, indem Sie eine Zeile im "
+#~ "Nachfolgerbaum doppelt klicken oder entweder <key>Eingabe</key> oder "
+#~ "<key>Leertaste</key> drücken."

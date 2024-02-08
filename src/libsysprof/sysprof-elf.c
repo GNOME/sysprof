@@ -179,6 +179,8 @@ static const struct {
   { "libGL.so", "GL" },
 
   /* Mesa and DRI Drivers */
+  { "asahi_dri.so", "Mesa" },
+  { "apple_dri.so", "Mesa" },
   { "crocus_dri.so", "Mesa" },
   { "i915_dri.so", "Mesa" },
   { "i965_drv_video.so", "Mesa" },

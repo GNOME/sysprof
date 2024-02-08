@@ -5,7 +5,10 @@ Pixman:
 pixman*                             paint        inherit
 
 EGL:
-egl*                                paint        inherit
+egl*                                graphics     inherit
+_egl*                               graphics     inherit
+dri_*                               graphics     inherit
+dri2_*                              graphics     inherit
 
 
 FontConfig:
@@ -104,6 +107,16 @@ g_value_type_transformable          type-system  inherit
 
 GTK 4:
 gsk_gl_command_queue*               graphics     inherit
+gsk_gl_frame_*                      graphics     inherit
+gsk_gl_image_bind_*                 graphics     inherit
+gsk_gl_image_new                    graphics     inherit
+gsk_gpu_render_pass_op_gl_*         graphics     inherit
+*_op_gl_command                     graphics     inherit
+*_op_gl_command_n                   graphics     inherit
+*_use_program                       graphics     inherit
+*_setup_vao                         graphics     inherit
+*_op_alloc                          memory
+gsk_gpu_frame_alloc_op              memory
 
 gdk_cairo*                          paint        inherit
 gtk_widget_snapshot                 paint        inherit

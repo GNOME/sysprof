@@ -6,9 +6,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2024-01-07 12:12+0000\n"
-"PO-Revision-Date: 2024-01-18 03:08+0330\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
+"POT-Creation-Date: 2024-02-12 13:19+0000\n"
+"PO-Revision-Date: 2024-02-13 03:10+0330\n"
 "Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
 "Language-Team: Persian <fa@li.org>\n"
 "Language: fa\n"
@@ -1393,6 +1393,7 @@ msgid "Merge Similar Processes"
 msgstr "ادغام فرایندهای مشابه"
 
 #: src/sysprof/sysprof-window.ui:452
+msgctxt "sort largest stack frames to the left"
 msgid "Left Heavy"
 msgstr "سنگین رها شده"
 

@@ -2,38 +2,40 @@
 # Copyright (C) 2023 sysprof's authors
 # This file is distributed under the same license as the sysprof package.
 # NorwayFun <temuri.doghonadze@gmail.com>, 2022.
-# Ekaterine Papava <papava.e@gtu.ge>, 2023
+# Ekaterine Papava <papava.e@gtu.ge>, 2023-2024.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-10-16 17:44+0000\n"
-"PO-Revision-Date: 2023-10-17 05:59+0200\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
+"POT-Creation-Date: 2024-02-07 19:38+0000\n"
+"PO-Revision-Date: 2024-02-12 14:17+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language-Team: Georgian <ka@li.org>\n"
 "Language: ka\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4\n"
+"X-Generator: Poedit 3.3.2\n"
 
-#: data/org.gnome.Sysprof.appdata.xml.in.in:5
+#: data/org.gnome.Sysprof.appdata.xml.in.in:6
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
 #: src/sysprof/sysprof-application.c:237
 #: src/sysprof/sysprof-recording-pad.ui:18 src/sysprof/sysprof-window.c:243
 msgid "Sysprof"
 msgstr "Sysprof"
 
-#: data/org.gnome.Sysprof.appdata.xml.in.in:6
+#: data/org.gnome.Sysprof.appdata.xml.in.in:7
 msgid "Profile an application or entire system"
 msgstr "აპლიკაციის ან მთელი სისტემის პროფილირება"
 
-#: data/org.gnome.Sysprof.appdata.xml.in.in:9
-msgid "The GNOME Foundation"
-msgstr "The GNOME Foundation"
+#. developer_name tag deprecated with Appstream 1.0
+#: data/org.gnome.Sysprof.appdata.xml.in.in:11
+#| msgid "The GNOME Foundation"
+msgid "The GNOME Project"
+msgstr "პროექტი \"GNOME\""
 
-#: data/org.gnome.Sysprof.appdata.xml.in.in:12
+#: data/org.gnome.Sysprof.appdata.xml.in.in:17
 msgid ""
 "Sysprof allows you to profile applications to aid in debugging and "
 "optimization."
@@ -257,6 +259,8 @@ msgstr "--merge პარამეტრს არგუმენტად ს�
 #: src/sysprof-cli/sysprof-cli.c:306
 msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
 msgstr ""
+"CPU-ის რეგულირების გათიშვა პროფილირების დრო [მოძველებულია. გამოიყენეთ --"
+"power-profile]"
 
 #: src/sysprof-cli/sysprof-cli.c:307
 msgid "Make sysprof specific to a task [Deprecated]"
@@ -306,11 +310,11 @@ msgstr "დისკის სტატისტიკის ჩაწერი�
 
 #: src/sysprof-cli/sysprof-cli.c:314
 msgid "Do not record stacktraces using Linux perf"
-msgstr ""
+msgstr "არ ჩაიწერო სტეკის ტრეისებ Linux Perf-ით"
 
 #: src/sysprof-cli/sysprof-cli.c:315
 msgid "Do not append symbol name information from local machine"
-msgstr ""
+msgstr "არ მიაწერო სიმბოლოს სახელის ინფორმაცია ლოკალური მანქანიდან"
 
 #: src/sysprof-cli/sysprof-cli.c:316
 msgid "Disable recording of memory statistics"
@@ -354,15 +358,16 @@ msgstr "მეხსიერების გამოყოფებისა �
 
 #: src/sysprof-cli/sysprof-cli.c:326
 msgid "Connect to org.gnome.Shell for profiler statistics"
-msgstr ""
+msgstr "პროფაილერის სტატისტიკისთვის დაუკავშირდით org.gnome.Sell"
 
 #: src/sysprof-cli/sysprof-cli.c:327
 msgid "Track performance of the applications main loop"
-msgstr ""
+msgstr "აპლიკაციის მთავარი მარყუჟის წარმადობის თვალყურის დევნება"
 
 #: src/sysprof-cli/sysprof-cli.c:329
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr ""
+"ყველა მითითებული *.syscap ფაილის შერწყმა და სტანდარტულ გამოტანაზე ჩაწერა"
 
 #: src/sysprof-cli/sysprof-cli.c:330
 msgid "Print the sysprof-cli version and exit"
@@ -425,12 +430,12 @@ msgstr "შენახვა, როგორც"
 #: src/sysprof/gtk/help-overlay.ui:26
 msgctxt "shortcut window"
 msgid "Toggle Visibility of Main Sidebar"
-msgstr ""
+msgstr "მთავარი გვერდითი ზოლის ხილვადობის გადართვ"
 
 #: src/sysprof/gtk/help-overlay.ui:32
 msgctxt "shortcut window"
 msgid "Toggle Visibility of Stack Trace Sidebar"
-msgstr ""
+msgstr "სტეკის ტრეიკის გვერდითი პანელის ხილვადობის გადართვა"
 
 #: src/sysprof/gtk/help-overlay.ui:40
 msgctxt "shortcut window"
@@ -554,7 +559,7 @@ msgstr "დრო"
 #: src/sysprof/sysprof-energy-section.ui:382
 #: src/sysprof/sysprof-flame-graph.c:453
 #: src/sysprof/sysprof-graphics-section.ui:293
-#: src/sysprof/sysprof-marks-section.ui:247
+#: src/sysprof/sysprof-marks-section.ui:248
 #: src/sysprof/sysprof-network-section.ui:380
 #: src/sysprof/sysprof-storage-section.ui:380
 msgid "Category"
@@ -563,7 +568,7 @@ msgstr "კატეგორია"
 #: src/sysprof/sysprof-cpu-section.ui:450
 #: src/sysprof/sysprof-energy-section.ui:420
 #: src/sysprof/sysprof-graphics-section.ui:331
-#: src/sysprof/sysprof-marks-section.ui:281
+#: src/sysprof/sysprof-marks-section.ui:282
 #: src/sysprof/sysprof-network-section.ui:418
 #: src/sysprof/sysprof-storage-section.ui:418
 msgid "Name"
@@ -694,6 +699,7 @@ msgstr "გასაღებები, არ შეიძლება, რი�
 #: src/sysprof/sysprof-greeter.c:118
 msgid "Keys may only contain alpha-numerics or underline."
 msgstr ""
+"გასაღებები, მხოლოდ, ალფარიცხვით და ქვედატირის სიმბოლოებს შეიძლება შეიცავეს."
 
 #: src/sysprof/sysprof-greeter.c:265 src/sysprof/sysprof-window.c:155
 msgid "Must Capture to Local File"
@@ -701,7 +707,7 @@ msgstr "ლოკალურ ფაილში ჩაწერა აუცი
 
 #: src/sysprof/sysprof-greeter.c:266 src/sysprof/sysprof-window.c:156
 msgid "You must choose a local file to capture using Sysprof"
-msgstr ""
+msgstr "Sysprof-ით ჩაჭერისთვის ლოკალური ფაილი უნდა აირჩიოთ"
 
 #: src/sysprof/sysprof-greeter.c:267 src/sysprof/sysprof-recording-pad.c:115
 #: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:718
@@ -711,7 +717,7 @@ msgstr "დახურვა"
 #: src/sysprof/sysprof-greeter.c:288
 #, c-format
 msgid "System Capture from %s.syscap"
-msgstr ""
+msgstr "სისტემის ჩაჭერა %s.syscap-დან"
 
 #: src/sysprof/sysprof-greeter.c:292
 msgid "Record to File"
@@ -743,7 +749,7 @@ msgstr "სემპლინგი"
 
 #: src/sysprof/sysprof-greeter.ui:99
 msgid "Sample Native Stacks"
-msgstr ""
+msgstr "მაგალითი ლოკალური სტეკები"
 
 #: src/sysprof/sysprof-greeter.ui:100
 msgid "Record native stack traces using a sampling profiler"
@@ -751,7 +757,7 @@ msgstr ""
 
 #: src/sysprof/sysprof-greeter.ui:116
 msgid "Sample JavaScript Stacks"
-msgstr ""
+msgstr "მაგალითი Javascript-ის სტეკები"
 
 #: src/sysprof/sysprof-greeter.ui:117
 msgid "Record JavaScript stack traces using a sampling profiler"
@@ -761,6 +767,8 @@ msgstr ""
 msgid ""
 "Sysprof must launch your application to record JavaScript stacks using GJS."
 msgstr ""
+"Sysprof-მა თქვენი აპლიკაცია უნდა გაუშვას და ჩაიწეროს Javascript-ის სტეკები "
+"GJS-ით."
 
 #: src/sysprof/sysprof-greeter.ui:144
 msgid "Record Scheduler Details"
@@ -768,7 +776,7 @@ msgstr "მგეგმავის დეტალების ჩაწერ�
 
 #: src/sysprof/sysprof-greeter.ui:145
 msgid "Track when processes are scheduled per CPU"
-msgstr ""
+msgstr "ტრეკინგი, როცა პროცესი დაგეგმილია თითოეული პროცესორისთვის"
 
 #: src/sysprof/sysprof-greeter.ui:158
 msgid "Tracing"
@@ -891,7 +899,7 @@ msgstr "სისტემური მატარებლის ჩაწე�
 
 #: src/sysprof/sysprof-greeter.ui:387
 msgid "Record messages on the D-Bus system bus"
-msgstr ""
+msgstr "D-Bus-ის სისტემური მატარებლის შეტყობინებების ჩაწერა"
 
 #: src/sysprof/sysprof-greeter.ui:403
 msgid "Record Session Bus"
@@ -899,7 +907,7 @@ msgstr "სესიის მატარებლის ჩაწერა"
 
 #: src/sysprof/sysprof-greeter.ui:404
 msgid "Record messages on the D-Bus user session bus"
-msgstr ""
+msgstr "D-Bus-ის სესიის მატარებლის შეტყობინებების ჩაწერა"
 
 #: src/sysprof/sysprof-greeter.ui:415
 msgid ""
@@ -935,7 +943,7 @@ msgstr "GPU-ის ინფორმაციის ჩასმა"
 
 #: src/sysprof/sysprof-greeter.ui:499
 msgid "Records information about graphics hardware and drivers"
-msgstr ""
+msgstr "იწერს ინფორმაციას გრაფიკული აპარატურისა და დრაივერების შესახებ"
 
 #: src/sysprof/sysprof-greeter.ui:517
 msgid "System"
@@ -951,7 +959,7 @@ msgstr "ჩაწერა კვების პროფილით"
 
 #: src/sysprof/sysprof-greeter.ui:526
 msgid "Switch to power profile while recording"
-msgstr ""
+msgstr "ჩაწერისას კვების პროფილზე გადართვა"
 
 #: src/sysprof/sysprof-greeter.ui:536
 msgid "Details"
@@ -1055,31 +1063,31 @@ msgstr "ნიშნები"
 msgid "Mark Chart"
 msgstr "ნიშნების გრაფიკი"
 
-#: src/sysprof/sysprof-marks-section.ui:91
+#: src/sysprof/sysprof-marks-section.ui:92
 msgid "Mark Table"
 msgstr "ნიშნების ცხრილი"
 
-#: src/sysprof/sysprof-marks-section.ui:104
+#: src/sysprof/sysprof-marks-section.ui:105
 msgid "Mark Waterfall"
 msgstr "ნიშნების ჩანჩქერი"
 
-#: src/sysprof/sysprof-marks-section.ui:211
+#: src/sysprof/sysprof-marks-section.ui:212
 msgid "Summary"
 msgstr "ჯამში"
 
-#: src/sysprof/sysprof-marks-section.ui:316
+#: src/sysprof/sysprof-marks-section.ui:317
 msgid "Minimum"
 msgstr "მინიმუმი"
 
-#: src/sysprof/sysprof-marks-section.ui:350
+#: src/sysprof/sysprof-marks-section.ui:351
 msgid "Maximum"
 msgstr "მაქსიმუმი"
 
-#: src/sysprof/sysprof-marks-section.ui:384
+#: src/sysprof/sysprof-marks-section.ui:385
 msgid "Average"
 msgstr "საშუალო"
 
-#: src/sysprof/sysprof-marks-section.ui:418
+#: src/sysprof/sysprof-marks-section.ui:419
 msgid "Median"
 msgstr "საშუალო"
 
@@ -1395,6 +1403,7 @@ msgid "Merge Similar Processes"
 msgstr "მსგავსი პროცესების შერწყმა"
 
 #: src/sysprof/sysprof-window.ui:452
+msgctxt "sort largest stack frames to the left"
 msgid "Left Heavy"
 msgstr "მარცხენა მძიმე"
 

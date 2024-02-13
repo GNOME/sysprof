@@ -2,13 +2,13 @@
 # Copyright (C) 2020 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
 #
-# Yuri Chornoivan <yurchor@ukr.net>, 2020, 2021, 2022, 2023.
+# Yuri Chornoivan <yurchor@ukr.net>, 2020, 2021, 2022, 2023, 2024.
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-36\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-10-16 17:44+0000\n"
-"PO-Revision-Date: 2023-10-17 09:47+0300\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
+"POT-Creation-Date: 2024-02-12 13:19+0000\n"
+"PO-Revision-Date: 2024-02-13 20:14+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -17,24 +17,26 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=n==1 ? 3 : n%10==1 && n%100!=11 ? 0 : n"
 "%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Lokalize 20.12.0\n"
+"X-Generator: Lokalize 23.04.1\n"
 
-#: data/org.gnome.Sysprof.appdata.xml.in.in:5
+#: data/org.gnome.Sysprof.appdata.xml.in.in:6
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
 #: src/sysprof/sysprof-application.c:237
 #: src/sysprof/sysprof-recording-pad.ui:18 src/sysprof/sysprof-window.c:243
 msgid "Sysprof"
 msgstr "Sysprof"
 
-#: data/org.gnome.Sysprof.appdata.xml.in.in:6
+#: data/org.gnome.Sysprof.appdata.xml.in.in:7
 msgid "Profile an application or entire system"
 msgstr "Профілювання програми або усієї системи"
 
-#: data/org.gnome.Sysprof.appdata.xml.in.in:9
-msgid "The GNOME Foundation"
-msgstr "Фундація GNOME"
+#. developer_name tag deprecated with Appstream 1.0
+#: data/org.gnome.Sysprof.appdata.xml.in.in:11
+#| msgid "The GNOME Foundation"
+msgid "The GNOME Project"
+msgstr "Проєкт GNOME"
 
-#: data/org.gnome.Sysprof.appdata.xml.in.in:12
+#: data/org.gnome.Sysprof.appdata.xml.in.in:17
 msgid ""
 "Sysprof allows you to profile applications to aid in debugging and "
 "optimization."
@@ -425,20 +427,16 @@ msgstr ""
 "Для отримання доступу до профілювання системи слід пройти розпізнавання."
 
 #: src/sysprof/gtk/help-overlay.ui:11
-#| msgid "Recording Failed"
 msgctxt "shortcut window"
 msgid "Recording View"
 msgstr "Панель перегляду запису"
 
 #: src/sysprof/gtk/help-overlay.ui:14
-#| msgctxt "shortcut window"
-#| msgid "Starts a new recording"
 msgctxt "shortcut window"
 msgid "Start New Recording"
 msgstr "Розпочати нове записування"
 
 #: src/sysprof/gtk/help-overlay.ui:20
-#| msgid "Save As…"
 msgctxt "shortcut window"
 msgid "Save As"
 msgstr "Зберегти як"
@@ -459,7 +457,6 @@ msgid "General"
 msgstr "Загальне"
 
 #: src/sysprof/gtk/help-overlay.ui:43
-#| msgid "Open Recording"
 msgctxt "shortcut window"
 msgid "Open Recording"
 msgstr "Відкрити запис"
@@ -475,8 +472,6 @@ msgid "Show Help"
 msgstr "Показати довідку"
 
 #: src/sysprof/gtk/help-overlay.ui:62
-#| msgctxt "shortcut window"
-#| msgid "Keyboard Shortcuts"
 msgctxt "shortcut window"
 msgid "Show keyboard shortcuts"
 msgstr "Показати клавіатурні скорочення"
@@ -578,7 +573,7 @@ msgstr "Час"
 #: src/sysprof/sysprof-energy-section.ui:382
 #: src/sysprof/sysprof-flame-graph.c:453
 #: src/sysprof/sysprof-graphics-section.ui:293
-#: src/sysprof/sysprof-marks-section.ui:247
+#: src/sysprof/sysprof-marks-section.ui:248
 #: src/sysprof/sysprof-network-section.ui:380
 #: src/sysprof/sysprof-storage-section.ui:380
 msgid "Category"
@@ -587,7 +582,7 @@ msgstr "Категорія"
 #: src/sysprof/sysprof-cpu-section.ui:450
 #: src/sysprof/sysprof-energy-section.ui:420
 #: src/sysprof/sysprof-graphics-section.ui:331
-#: src/sysprof/sysprof-marks-section.ui:281
+#: src/sysprof/sysprof-marks-section.ui:282
 #: src/sysprof/sysprof-network-section.ui:418
 #: src/sysprof/sysprof-storage-section.ui:418
 msgid "Name"
@@ -1051,8 +1046,6 @@ msgid "About Sysprof"
 msgstr "Про Sysprof"
 
 #: src/sysprof/sysprof-greeter.ui:658
-#| msgctxt "shortcut window"
-#| msgid "Quit"
 msgid "Quit"
 msgstr "Вийти"
 
@@ -1096,31 +1089,31 @@ msgstr "Позначки"
 msgid "Mark Chart"
 msgstr "Діаграма позначок"
 
-#: src/sysprof/sysprof-marks-section.ui:91
+#: src/sysprof/sysprof-marks-section.ui:92
 msgid "Mark Table"
 msgstr "Таблиця позначок"
 
-#: src/sysprof/sysprof-marks-section.ui:104
+#: src/sysprof/sysprof-marks-section.ui:105
 msgid "Mark Waterfall"
 msgstr "Водоспад позначок"
 
-#: src/sysprof/sysprof-marks-section.ui:211
+#: src/sysprof/sysprof-marks-section.ui:212
 msgid "Summary"
 msgstr "Резюме"
 
-#: src/sysprof/sysprof-marks-section.ui:316
+#: src/sysprof/sysprof-marks-section.ui:317
 msgid "Minimum"
 msgstr "Мінімум"
 
-#: src/sysprof/sysprof-marks-section.ui:350
+#: src/sysprof/sysprof-marks-section.ui:351
 msgid "Maximum"
 msgstr "Максимум"
 
-#: src/sysprof/sysprof-marks-section.ui:384
+#: src/sysprof/sysprof-marks-section.ui:385
 msgid "Average"
 msgstr "Середнє"
 
-#: src/sysprof/sysprof-marks-section.ui:418
+#: src/sysprof/sysprof-marks-section.ui:419
 msgid "Median"
 msgstr "Медіана"
 
@@ -1408,8 +1401,6 @@ msgid "Save As…"
 msgstr "Зберегти як…"
 
 #: src/sysprof/sysprof-window.ui:412
-#| msgctxt "shortcut window"
-#| msgid "Quit"
 msgid "_Quit"
 msgstr "Ви_йти"
 
@@ -1442,8 +1433,10 @@ msgid "Merge Similar Processes"
 msgstr "Об'єднувати подібні процеси"
 
 #: src/sysprof/sysprof-window.ui:452
+#| msgid "Left Heavy"
+msgctxt "sort largest stack frames to the left"
 msgid "Left Heavy"
-msgstr "Вага ліворуч"
+msgstr "Найважче ліворуч"
 
 #~| msgid "Hold the performance profile for the duration of the recording"
 #~ msgid ""

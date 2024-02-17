@@ -1,3 +1,15 @@
+Overview of changes in Sysprof 46.beta
+======================================
+
+Changes since 45
+
+ * Rust and C++ demangler improvements
+ * Protection against extremely large mark collections
+ * Various fixes for parsing certain load bearing /proc files
+ * Improved stack trace categorization
+ * Fix use of pointer cursor
+ * Translation updates
+
 Overview of changes in Sysprof 45.0
 ===================================
 

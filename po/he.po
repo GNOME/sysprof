@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-02-12 13:19+0000\n"
-"PO-Revision-Date: 2024-02-17 00:06+0200\n"
+"POT-Creation-Date: 2024-02-19 18:37+0000\n"
+"PO-Revision-Date: 2024-02-19 23:21+0200\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language-Team: Hebrew\n"
 "Language: he\n"
@@ -1428,8 +1428,8 @@ msgid "Merge Similar Processes"
 msgstr "מיזוג תהליכים דומים"
 
 # הכוונה היא שכל התמוניות/פריימים הגדולים מוצמדים לצד השמאלי של תרשים הלהבות, צריך לראות אם ביישומי יל״ש זה לא מיושר לימין.
-#: src/sysprof/sysprof-window.ui:452
-msgctxt "sort largest stack frames to the left"
+#. translators: Left Heavy means to sort larger (heavier) stack frames before others, starting from the left
+#: src/sysprof/sysprof-window.ui:453
 msgid "Left Heavy"
 msgstr "שמאל מעובה"
 

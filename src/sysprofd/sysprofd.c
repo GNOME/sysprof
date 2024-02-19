@@ -22,6 +22,10 @@
 
 #include "config.h"
 
+#ifdef LIBC_COMPAT
+# include "libc-compat.h"
+#endif
+
 #include <gio/gio.h>
 #include <stdlib.h>
 #include <sysprof-capture.h>

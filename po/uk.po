@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-36\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-02-12 13:19+0000\n"
-"PO-Revision-Date: 2024-02-13 20:14+0200\n"
+"POT-Creation-Date: 2024-02-19 18:37+0000\n"
+"PO-Revision-Date: 2024-02-19 21:46+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -32,7 +32,6 @@ msgstr "Профілювання програми або усієї систем
 
 #. developer_name tag deprecated with Appstream 1.0
 #: data/org.gnome.Sysprof.appdata.xml.in.in:11
-#| msgid "The GNOME Foundation"
 msgid "The GNOME Project"
 msgstr "Проєкт GNOME"
 
@@ -1432,9 +1431,10 @@ msgstr "Ігнорувати процес 0"
 msgid "Merge Similar Processes"
 msgstr "Об'єднувати подібні процеси"
 
-#: src/sysprof/sysprof-window.ui:452
+#. translators: Left Heavy means to sort larger (heavier) stack frames before others, starting from the left
+#: src/sysprof/sysprof-window.ui:453
+#| msgctxt "sort largest stack frames to the left"
 #| msgid "Left Heavy"
-msgctxt "sort largest stack frames to the left"
 msgid "Left Heavy"
 msgstr "Найважче ліворуч"
 

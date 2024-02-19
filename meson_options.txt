@@ -20,6 +20,10 @@ option('sysprofd', type: 'combo',
   value: 'bundled',
 )
 
+# If we should build sysprofd as a system extension to be installed from
+# a flatpak application
+option('sysext', type: 'boolean', value: false)
+
 # The directory to place systemd service files, so that we can auto-launch
 # sysprofd as necessary (for the daemon privilege helper).
 option('systemdunitdir', type: 'string',

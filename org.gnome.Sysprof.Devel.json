@@ -222,20 +222,19 @@
             ]
         },
         {
-            "name" : "sysprof",
+            "name" : "sysprofd",
             "config-opts" : [
-                "--libdir=/app/lib",
-                "--buildtype=debugoptimized",
-                "-Ddevelopment=true",
-                "-Dlibsysprof=true",
-                "-Dtools=true",
-                "-Dgtk=true",
-                "-Dpkg_config_path=/app/lib/extensions/usr/lib/pkgconfig:/app/lib/pkgconfig",
+                "--prefix=/app/lib/extensions/usr",
+                "-Dsystemdunitdir=/app/lib/extensions/usr/systemd/system",
+                "-Dlibsysprof=false",
+                "-Dtools=false",
+                "-Dgtk=false",
                 "-Dpreloads=false",
                 "-Dsysprofd=bundled",
                 "-Dsysext=true",
-                "-Dlibexecdir=/app/lib/extensions/usr/libexec",
-                "-Dsystemdunitdir=/app/lib/extensions/usr/systemd/system"
+                "-Dhelp=false",
+                "-Dtests=false",
+                "-Dexamples=false"
             ],
             "buildsystem" : "meson",
             "builddir" : true,
@@ -243,7 +242,26 @@
                 {
                     "type" : "git",
                     "url" : "https://gitlab.gnome.org/GNOME/sysprof.git",
-                    "branch" : "master"
+                    "branch" : "wip/chergert/sysext"
+                }
+            ]
+        },
+        {
+            "name" : "sysprof",
+            "config-opts" : [
+                "--libdir=/app/lib",
+                "-Ddevelopment=true",
+                "-Dlibsysprof=true",
+                "-Dgtk=true",
+                "-Dsysprofd=host"
+            ],
+            "buildsystem" : "meson",
+            "builddir" : true,
+            "sources" : [
+                {
+                    "type" : "git",
+                    "url" : "https://gitlab.gnome.org/GNOME/sysprof.git",
+                    "branch" : "wip/chergert/sysext"
                 }
             ]
         }

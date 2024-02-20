@@ -243,7 +243,7 @@
                 "--prefix=/app/lib/extensions/usr",
                 "--libdir=lib",
                 "-Ddefault_library=static",
-                "-Dpkg_config_path=/app/lib/extensions/usr/lib/pkgconfig",
+                "-Dpkg_config_path=/app/lib/extensions/usr/lib/pkgconfig:/app/lib/pkgconfig:",
                 "-Dsystemdunitdir=/app/lib/extensions/usr/systemd/system",
                 "-Dlibsysprof=false",
                 "-Dtools=false",

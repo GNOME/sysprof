@@ -197,7 +197,7 @@ libsysprof_deps = [
 ]
 
 libsysprof_static = static_library(
-  'sysprof-@0@'.format(soname_major_version),
+  'sysprof-static-@0@'.format(soname_major_version),
   libsysprof_public_sources +
   libsysprof_private_sources +
   libsysprof_enums,

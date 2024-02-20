@@ -69,7 +69,11 @@ sysprofd = executable('sysprofd', sysprofd_sources,
 )
 
 sysprofdconf = configuration_data()
-sysprofdconf.set('sysprofdprivdir', pkglibexecdir)
+if get_option('sysext')
+  sysprofdconf.set('sysprofdprivdir', '/usr/libexec')
+else
+  sysprofdconf.set('sysprofdprivdir', pkglibexecdir)
+endif
 
 systemdunitdir = get_option('systemdunitdir')
 if systemdunitdir == ''

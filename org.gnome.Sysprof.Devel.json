@@ -242,6 +242,7 @@
             "config-opts" : [
                 "--prefix=/app/lib/extensions/usr",
                 "-Ddefault_library=static",
+                "-Dpkg_config_path=/app/lib/extensions/usr/lib/pkgconfig",
                 "-Dsystemdunitdir=/app/lib/extensions/usr/systemd/system",
                 "-Dlibsysprof=false",
                 "-Dtools=false",

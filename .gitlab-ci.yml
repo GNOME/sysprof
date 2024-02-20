@@ -1,20 +1,37 @@
-include: 'https://gitlab.gnome.org/GNOME/citemplates/raw/master/flatpak/flatpak_ci_initiative.yml'
+include:
+  - project: "gnome/citemplates"
+    file: "flatpak/flatpak_ci_initiative.yml"
 
-flatpak:
-  extends: .flatpak
-  timeout: 60m
+stages:
+  - "test"
+  - "deploy"
+
+.flatpak_vars:
   variables:
-    GIT_SUBMODULE_STRATEGY: normal
-
-    # Replace with your manifest path
     MANIFEST_PATH: "org.gnome.Sysprof.Devel.json"
-    RUNTIME_REPO: "https://nightly.gnome.org/gnome-nightly.flatpakrepo"
-    # Replace with your application name, as written in the manifest
     FLATPAK_MODULE: "sysprof"
+    RUNTIME_REPO: "https://nightly.gnome.org/gnome-nightly.flatpakrepo"
     APP_ID: "org.gnome.Sysprof.Devel"
-    BUNDLE: "sysprof-git.flatpak"
+  extends: ".flatpak"
 
-nightly:
-  extends: '.publish_nightly'
-  needs:
-    - 'flatpak'
+flatpak@x86_64:
+  extends:
+    - '.flatpak_vars'
+    - '.flatpak@x86_64'
+  variables:
+    BUNDLE: "org.gnome.Sysprof.Devel-x86_64.flatpak"
+
+flatpak@aarch64:
+  extends:
+    - '.flatpak_vars'
+    - '.flatpak@aarch64'
+  variables:
+    BUNDLE: "org.gnome.Sysprof.Devel-aarch64.flatpak"
+
+nightly@x86_64:
+  extends: ".publish_nightly"
+  needs: ["flatpak@x86_64"]
+
+nightly@aarch64:
+  extends: ".publish_nightly"
+  needs: ["flatpak@aarch64"]

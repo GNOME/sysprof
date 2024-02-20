@@ -47,15 +47,23 @@
         "*.la",
         "*.a",
         "/lib/extensions/usr/bin",
-        "/lib/extensions/usr/lib/include",
-        "/lib/extensions/usr/lib/pkgconfig",
+        "/lib/extensions/usr/include",
         "/lib/extensions/usr/lib/*.so",
         "/lib/extensions/usr/lib/*.la",
         "/lib/extensions/usr/lib/*.a",
         "/lib/extensions/usr/lib/gio",
         "/lib/extensions/usr/lib/glib-2.0",
-        "/lib/extensions/usr/lib/share",
-        "/lib/extensions/usr/libexec/gio-launch-desktop"
+        "/lib/extensions/usr/lib/pkgconfig",
+        "/lib/extensions/usr/libexec/gio-launch-desktop",
+        "/lib/extensions/usr/share/aclocal",
+        "/lib/extensions/usr/share/bash-completion",
+        "/lib/extensions/usr/share/doc",
+        "/lib/extensions/usr/share/dbus-1/interfaces",
+        "/lib/extensions/usr/share/gdb",
+        "/lib/extensions/usr/share/gettext",
+        "/lib/extensions/usr/share/glib-2.0",
+        "/lib/extensions/usr/share/locale",
+        "/lib/extensions/usr/share/man"
     ],
     "modules" : [
         {

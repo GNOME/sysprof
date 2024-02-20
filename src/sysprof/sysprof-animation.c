@@ -1,6 +1,6 @@
 /* sysprof-animation.c
  *
- * Copyright (C) 2010-2016 Christian Hergert <christian@hergert.me>
+ * Copyright (C) 2010-2024 Christian Hergert <christian@hergert.me>
  *
  * This file is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -576,7 +576,7 @@ sysprof_animation_start (SysprofAnimation *animation)
 
   /*
    * We want the real current time instead of the GdkFrameClocks current time
-   * because if the clock was asleep, it could be innaccurate.
+   * because if the clock was asleep, it could be inaccurate.
    */
 
   if (animation->frame_clock)

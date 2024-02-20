@@ -244,7 +244,7 @@
                 "--libdir=lib",
                 "-Ddefault_library=static",
                 "-Dpkg_config_path=/app/lib/extensions/usr/lib/pkgconfig:/app/lib/pkgconfig:",
-                "-Dsystemdunitdir=/app/lib/extensions/usr/systemd/system",
+                "-Dsystemdunitdir=/app/lib/extensions/usr/lib/systemd/system",
                 "-Dlibsysprof=false",
                 "-Dtools=false",
                 "-Dgtk=false",

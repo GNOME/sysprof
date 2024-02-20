@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-02-07 19:38+0000\n"
-"PO-Revision-Date: 2024-02-12 14:17+0100\n"
+"POT-Creation-Date: 2024-02-19 18:37+0000\n"
+"PO-Revision-Date: 2024-02-20 04:18+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language-Team: Georgian <ka@li.org>\n"
 "Language: ka\n"
@@ -31,7 +31,6 @@ msgstr "აპლიკაციის ან მთელი სისტემ
 
 #. developer_name tag deprecated with Appstream 1.0
 #: data/org.gnome.Sysprof.appdata.xml.in.in:11
-#| msgid "The GNOME Foundation"
 msgid "The GNOME Project"
 msgstr "პროექტი \"GNOME\""
 
@@ -1402,8 +1401,8 @@ msgstr "0 პროცესის გამოტოვება"
 msgid "Merge Similar Processes"
 msgstr "მსგავსი პროცესების შერწყმა"
 
-#: src/sysprof/sysprof-window.ui:452
-msgctxt "sort largest stack frames to the left"
+#. translators: Left Heavy means to sort larger (heavier) stack frames before others, starting from the left
+#: src/sysprof/sysprof-window.ui:453
 msgid "Left Heavy"
 msgstr "მარცხენა მძიმე"
 

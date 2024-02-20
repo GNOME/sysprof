@@ -241,6 +241,7 @@
             "name" : "sysprofd",
             "config-opts" : [
                 "--prefix=/app/lib/extensions/usr",
+                "--libdir=lib",
                 "-Ddefault_library=static",
                 "-Dpkg_config_path=/app/lib/extensions/usr/lib/pkgconfig",
                 "-Dsystemdunitdir=/app/lib/extensions/usr/systemd/system",
@@ -269,9 +270,15 @@
             "config-opts" : [
                 "--libdir=/app/lib",
                 "-Ddevelopment=true",
-                "-Dlibsysprof=true",
+                "-Dexamples=false",
                 "-Dgtk=true",
-                "-Dsysprofd=host"
+                "-Dinstall-static=false",
+                "-Dlibsysprof=true",
+                "-Dpreloads=false",
+                "-Dsysext=false",
+                "-Dsysprofd=host",
+                "-Dtests=false",
+                "-Dtools=false"
             ],
             "buildsystem" : "meson",
             "builddir" : true,

@@ -15,7 +15,9 @@ subdir('libsysprof-capture')
 
 if need_libsysprof
   subdir('libsysprof')
-  subdir('preload')
+  if get_option('preloads')
+    subdir('preload')
+  endif
 endif
 
 if get_option('sysprofd') == 'bundled'

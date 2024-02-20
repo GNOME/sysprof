@@ -45,7 +45,17 @@
         "/share/vala",
         "/share/bash-completions",
         "*.la",
-        "*.a"
+        "*.a",
+        "/lib/extensions/usr/bin",
+        "/lib/extensions/usr/lib/include",
+        "/lib/extensions/usr/lib/pkgconfig",
+        "/lib/extensions/usr/lib/*.so",
+        "/lib/extensions/usr/lib/*.la",
+        "/lib/extensions/usr/lib/*.a",
+        "/lib/extensions/usr/lib/gio",
+        "/lib/extensions/usr/lib/glib-2.0",
+        "/lib/extensions/usr/lib/share",
+        "/lib/extensions/usr/libexec/gio-launch-desktop"
     ],
     "modules" : [
         {
@@ -62,6 +72,7 @@
         {
             "name" : "polkit",
             "config-opts" : [
+                "--enable-static",
                 "--disable-polkitd",
                 "--disable-man-pages",
                 "--disable-introspection",
@@ -122,17 +133,90 @@
             "name" : "libdex",
             "buildsystem" : "meson",
             "config-opts" : [
-                "--buildtype=debugoptimized",
                 "-Ddocs=false",
-                "-Dintrospection=enabled",
-                "-Dexamples=false",
-                "-Dtests=false",
-                "-Dsysprof=false"
+                "-Dintrospection=disabled",
+                "-Dvapi=false"
             ],
             "sources" : [
                 {
                     "type" : "git",
                     "url" : "https://gitlab.gnome.org/GNOME/libdex.git",
+                    "branch" : "main"
+                }
+            ]
+        },
+        {
+            "name" : "zlib",
+            "buildsystem" : "simple",
+           "build-commands" : [
+                "./configure --prefix=/app/lib/extensions/usr --libdir=/app/lib/extensions/usr/lib",
+                "make",
+                "make install"
+            ],
+            "sources" : [
+                {
+                    "type" : "git",
+                    "url" : "https://github.com/madler/zlib.git",
+                    "tag" : "v1.3.1"
+                }
+            ]
+        },
+        {
+            "name" : "pcre2",
+            "buildsystem" : "autotools",
+            "config-opts" : [
+                "--enable-static",
+                "--prefix=/app/lib/extensions/usr",
+                "--libdir=/app/lib/extensions/usr/lib"
+            ],
+            "sources" : [
+                {
+                    "type" : "git",
+                    "url" : "https://github.com/PCRE2Project/pcre2.git"
+                }
+            ]
+        },
+        {
+            "name" : "libffi",
+            "buildsystem" : "autotools",
+            "config-opts" : [
+                "--enable-static",
+                "--prefix=/app/lib/extensions/usr",
+                "--libdir=/app/lib/extensions/usr/lib"
+            ],
+            "sources" : [
+                {
+                    "type" : "git",
+                    "url" : "https://github.com/libffi/libffi.git"
+                }
+            ]
+        },
+        {
+            "name" : "glib",
+            "buildsystem" : "meson",
+            "build-options" : {
+                "env" : {
+                    "PKG_CONFIG_PATH" : "/app/lib/extensions/usr/lib/pkgconfig"
+                }
+            },
+            "config-opts" : [
+                "--prefix=/app/lib/extensions/usr",
+                "--libdir=lib",
+                "-Ddefault_library=static",
+                "-Ddocumentation=false",
+                "-Dintrospection=disabled",
+                "-Dlibelf=disabled",
+                "-Dlibmount=disabled",
+                "-Dman-pages=disabled",
+                "-Dselinux=disabled",
+                "-Dsysprof=disabled",
+                "-Dtests=false",
+                "-Dxattr=false"
+            ],
+            "sources" : [
+                {
+                    "type" : "git",
+                    "url" : "https://gitlab.gnome.org/GNOME/glib.git",
                     "branch" : "main"
                 }
             ]
@@ -146,10 +230,12 @@
                 "-Dlibsysprof=true",
                 "-Dtools=true",
                 "-Dgtk=true",
+                "-Dpkg_config_path=/app/lib/extensions/usr/lib/pkgconfig:/app/lib/pkgconfig",
+                "-Dpreloads=false",
                 "-Dsysprofd=bundled",
                 "-Dsysext=true",
                 "-Dlibexecdir=/app/lib/extensions/usr/libexec",
-		"-Dsystemdunitdir=/app/lib/extensions/usr/systemd/system"
+                "-Dsystemdunitdir=/app/lib/extensions/usr/systemd/system"
             ],
             "buildsystem" : "meson",
             "builddir" : true,

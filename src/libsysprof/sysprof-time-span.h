@@ -60,7 +60,7 @@ sysprof_time_span_relative_to (SysprofTimeSpan time_span,
 static inline void
 sysprof_time_span_normalize (SysprofTimeSpan        time_span,
                              SysprofTimeSpan        allowed,
-                             float                  values[restrict 2])
+                             float                  values[SYSPROF_RESTRICT 2])
 {
   double duration = allowed.end_nsec - allowed.begin_nsec;
 

@@ -91,9 +91,11 @@
 #ifdef __cplusplus
 #define SYSPROF_BEGIN_DECLS extern "C" {
 #define SYSPROF_END_DECLS }
+#define SYSPROF_RESTRICT /* nothing */
 #else
 #define SYSPROF_BEGIN_DECLS
 #define SYSPROF_END_DECLS
+#define SYSPROF_RESTRICT restrict
 #endif
 
 #if defined (__GNUC__)

@@ -42,7 +42,7 @@ SYSPROF_AVAILABLE_IN_ALL
 void        sysprof_document_ctrset_get_raw_value    (SysprofDocumentCtrset  *self,
                                                       guint                   nth,
                                                       guint                  *id,
-                                                      guint8                  value[restrict 8]);
+                                                      guint8                  value[SYSPROF_RESTRICT 8]);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofDocumentCtrset, g_object_unref)
 

@@ -16,6 +16,7 @@ libsysprof_testsuite = {
   'test-allocs-by-func'           : {'skip': true},
   'test-callgraph'                : {'skip': true},
   'test-capture-model'            : {'skip': true},
+  'test-cplusplus'                : {'cpp': true},
   'test-elf-loader'               : {'skip': true},
   'test-leak-detector'            : {'skip': true},
   'test-list-counters'            : {'skip': true},
@@ -41,10 +42,18 @@ libsysprof_testsuite_deps = [
 ]
 
 foreach test, params: libsysprof_testsuite
-  test_exe = executable(test, '@0@.c'.format(test),
-          c_args: libsysprof_testsuite_c_args,
-    dependencies: libsysprof_testsuite_deps,
-  )
+  if params.get('cpp', false)
+    test_exe = executable(test, '@0@.cpp'.format(test),
+          cpp_args: libsysprof_testsuite_c_args,
+      dependencies: libsysprof_testsuite_deps,
+    )
+  else
+    test_exe = executable(test, '@0@.c'.format(test),
+            c_args: libsysprof_testsuite_c_args,
+      dependencies: libsysprof_testsuite_deps,
+    )
+  endif
+
   if not params.get('skip', false)
     test(test, test_exe, env: libsysprof_test_env)
   endif

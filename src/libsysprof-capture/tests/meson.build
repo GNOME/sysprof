@@ -21,6 +21,7 @@ libsysprof_capture_testsuite = {
   'rewrite-pid'             : {'skip': true},
   'test-capture'            : {},
   'test-capture-cursor'     : {},
+  'test-cplusplus'          : {'cpp': true},
   'test-mapped-ring-buffer' : {},
 }
 
@@ -30,10 +31,18 @@ libsysprof_capture_testsuite_deps = [
 ]
 
 foreach test, params: libsysprof_capture_testsuite
-  test_exe = executable(test, '@0@.c'.format(test),
-          c_args: libsysprof_capture_testsuite_c_args,
-    dependencies: libsysprof_capture_testsuite_deps,
-  )
+  if params.get('cpp', false)
+    test_exe = executable(test, '@0@.cpp'.format(test),
+          cpp_args: libsysprof_capture_testsuite_c_args,
+      dependencies: libsysprof_capture_testsuite_deps,
+    )
+  else
+    test_exe = executable(test, '@0@.c'.format(test),
+            c_args: libsysprof_capture_testsuite_c_args,
+      dependencies: libsysprof_capture_testsuite_deps,
+    )
+  endif
+
   if not params.get('skip', false)
     test(test, test_exe, env: libsysprof_capture_test_env)
   endif

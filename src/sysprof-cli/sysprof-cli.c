@@ -273,6 +273,7 @@ main (int   argc,
   g_autofree char *power_profile = NULL;
   g_auto(GStrv) child_argv = NULL;
   g_auto(GStrv) envs = NULL;
+  g_auto(GStrv) monitor_bus = NULL;
   GMainContext *main_context;
   GOptionContext *context;
   const char *filename = "capture.syscap";
@@ -329,6 +330,7 @@ main (int   argc,
     { "merge", 0, 0, G_OPTION_ARG_NONE, &merge, N_("Merge all provided *.syscap files and write to stdout") },
     { "version", 0, 0, G_OPTION_ARG_NONE, &version, N_("Print the sysprof-cli version and exit") },
     { "buffer-size", 0, 0, G_OPTION_ARG_INT, &n_buffer_pages, N_("The size of the buffer in pages (1 = 1 page)") },
+    { "monitor-bus", 0, 0, G_OPTION_ARG_STRING_ARRAY, &monitor_bus, N_("Additional D-Bus address to monitor") },
     { NULL }
   };
 
@@ -564,6 +566,13 @@ Examples:\n\
 
   if (scheduler_details)
     sysprof_profiler_add_instrument (profiler, sysprof_scheduler_details_new ());
+
+  if (monitor_bus != NULL)
+    {
+      for (guint i = 0; monitor_bus[i]; i++)
+        sysprof_profiler_add_instrument (profiler,
+                                         sysprof_dbus_monitor_new_for_bus_address (monitor_bus[i]));
+    }
 
   sysprof_profiler_add_instrument (profiler,
                                    g_object_new (SYSPROF_TYPE_SUBPROCESS_OUTPUT,

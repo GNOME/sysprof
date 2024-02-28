@@ -330,7 +330,10 @@ main (int   argc,
     { "merge", 0, 0, G_OPTION_ARG_NONE, &merge, N_("Merge all provided *.syscap files and write to stdout") },
     { "version", 0, 0, G_OPTION_ARG_NONE, &version, N_("Print the sysprof-cli version and exit") },
     { "buffer-size", 0, 0, G_OPTION_ARG_INT, &n_buffer_pages, N_("The size of the buffer in pages (1 = 1 page)") },
-    { "monitor-bus", 0, 0, G_OPTION_ARG_STRING_ARRAY, &monitor_bus, N_("Additional D-Bus address to monitor") },
+
+    /* Add translation post-46 */
+    { "monitor-bus", 0, 0, G_OPTION_ARG_STRING_ARRAY, &monitor_bus, "Additional D-Bus address to monitor" },
+
     { NULL }
   };
 

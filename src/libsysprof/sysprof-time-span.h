@@ -108,7 +108,7 @@ sysprof_time_offset_to_string (gint64 o)
     g_snprintf (str, sizeof str, "%.3lfs", .0);
   else if (o < 1000000)
     g_snprintf (str, sizeof str, "%.3lfμs", o/1000.);
-  else if (o < SYSPROF_NSEC_PER_SEC)
+  else if (o < (gint64)SYSPROF_NSEC_PER_SEC)
     g_snprintf (str, sizeof str, "%.3lfms", o/1000000.);
   else
     g_snprintf (str, sizeof str, "%.3lfs", o/(double)SYSPROF_NSEC_PER_SEC);

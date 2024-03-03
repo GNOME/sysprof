@@ -1,3 +1,12 @@
+Overview of changes in Sysprof 46.rc
+====================================
+
+Changes since 46.beta
+
+ * Avoid C99 restrict keyword when using C++
+ * Add --monitor-bus option to sysprof-cli to record bus address
+ * Fix compiler warning on integer comparison
+
 Overview of changes in Sysprof 46.beta
 ======================================
 

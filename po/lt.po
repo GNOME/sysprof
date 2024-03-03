@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-48\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-02-26 19:54+0000\n"
-"PO-Revision-Date: 2024-02-26 22:52+0200\n"
+"POT-Creation-Date: 2024-03-01 17:43+0000\n"
+"PO-Revision-Date: 2024-03-03 22:57+0200\n"
 "Last-Translator: \n"
 "Language-Team: Lithuanian <gnome-lt@lists.akl.lt>\n"
 "Language: lt\n"
@@ -255,129 +255,133 @@ msgstr ""
 msgid "--merge requires at least 2 filename arguments"
 msgstr "--merge reikalauja bent 2 failų pavadinimų"
 
-#: src/sysprof-cli/sysprof-cli.c:306
+#: src/sysprof-cli/sysprof-cli.c:307
 msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
 msgstr "Išjungti CPU ribotuvą profiliuojant [pasenęs, naudoti --power-profile]"
 
-#: src/sysprof-cli/sysprof-cli.c:307
+#: src/sysprof-cli/sysprof-cli.c:308
 msgid "Make sysprof specific to a task [Deprecated]"
 msgstr "Padaryti sysprof specifiniu užduočiai [pasenęs]"
 
-#: src/sysprof-cli/sysprof-cli.c:307 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof-cli/sysprof-cli.c:308 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:179
 #: src/sysprof/sysprof-processes-section.ui:282
 #: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "PID"
 
-#: src/sysprof-cli/sysprof-cli.c:308
+#: src/sysprof-cli/sysprof-cli.c:309
 msgid "Run a command and profile the process"
 msgstr "Vykdyti komandą ir profiliuoti procesą"
 
-#: src/sysprof-cli/sysprof-cli.c:308
+#: src/sysprof-cli/sysprof-cli.c:309
 msgid "COMMAND"
 msgstr "KOMANDA"
 
-#: src/sysprof-cli/sysprof-cli.c:309
+#: src/sysprof-cli/sysprof-cli.c:310
 msgid ""
 "Set environment variable for spawned process. Can be used multiple times."
 msgstr ""
 "Nustatyti aplinkos kintamąjį paleistam procesui. Galima naudoti kelis kartus."
 
-#: src/sysprof-cli/sysprof-cli.c:309
+#: src/sysprof-cli/sysprof-cli.c:310
 msgid "VAR=VALUE"
 msgstr "KINT=VERTĖ"
 
-#: src/sysprof-cli/sysprof-cli.c:310
+#: src/sysprof-cli/sysprof-cli.c:311
 msgid "Force overwrite the capture file"
 msgstr "Priverstinai perrašyti surinkimų failą"
 
-#: src/sysprof-cli/sysprof-cli.c:311
+#: src/sysprof-cli/sysprof-cli.c:312
 msgid "Disable recording of battery statistics"
 msgstr "Išjungti baterijos statistikos įrašymą"
 
-#: src/sysprof-cli/sysprof-cli.c:312
+#: src/sysprof-cli/sysprof-cli.c:313
 msgid "Disable recording of CPU statistics"
 msgstr "Išjungti CPU statistikos įrašymą"
 
-#: src/sysprof-cli/sysprof-cli.c:313
+#: src/sysprof-cli/sysprof-cli.c:314
 msgid "Disable recording of Disk statistics"
 msgstr "Išjungti disko statistikos įrašymą"
 
-#: src/sysprof-cli/sysprof-cli.c:314
+#: src/sysprof-cli/sysprof-cli.c:315
 msgid "Do not record stacktraces using Linux perf"
 msgstr "Neįrašyti steko pėdsakų naudojant linux perf"
 
-#: src/sysprof-cli/sysprof-cli.c:315
+#: src/sysprof-cli/sysprof-cli.c:316
 msgid "Do not append symbol name information from local machine"
 msgstr "Nepridėti simbolių informacijos iš vietinio kompiuterio"
 
-#: src/sysprof-cli/sysprof-cli.c:316
+#: src/sysprof-cli/sysprof-cli.c:317
 msgid "Disable recording of memory statistics"
 msgstr "Išjungti atminties statistikos įrašymą"
 
-#: src/sysprof-cli/sysprof-cli.c:317
+#: src/sysprof-cli/sysprof-cli.c:318
 msgid "Disable recording of network statistics"
 msgstr "Išjungti tinklo statistikos įrašymą"
 
-#: src/sysprof-cli/sysprof-cli.c:318
+#: src/sysprof-cli/sysprof-cli.c:319
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr "Nustatyti SYSPROF_TRACE_FD aplinką vaikiniam procesui"
 
-#: src/sysprof-cli/sysprof-cli.c:319
+#: src/sysprof-cli/sysprof-cli.c:320
 msgid "Track when processes are scheduled"
 msgstr "Sekti, kada procesai suplanuojami"
 
-#: src/sysprof-cli/sysprof-cli.c:320
+#: src/sysprof-cli/sysprof-cli.c:321
 msgid "Profile the D-Bus session bus"
 msgstr "Profiliuoti D-Bus seanso magistralę"
 
-#: src/sysprof-cli/sysprof-cli.c:321
+#: src/sysprof-cli/sysprof-cli.c:322
 msgid "Profile the D-Bus system bus"
 msgstr "Profiliuoti D-Bus sisteminę magistralę"
 
-#: src/sysprof-cli/sysprof-cli.c:322
+#: src/sysprof-cli/sysprof-cli.c:323
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr "Nustatyti GJS_TRACE_FD aplinką vaikiniam GJS procesui profiliuoti"
 
-#: src/sysprof-cli/sysprof-cli.c:323
+#: src/sysprof-cli/sysprof-cli.c:324
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr "Nustatyti GTK_TRACE_FD aplinką GTK programai profiliuoti"
 
-#: src/sysprof-cli/sysprof-cli.c:324
+#: src/sysprof-cli/sysprof-cli.c:325
 msgid "Include RAPL energy statistics"
 msgstr "Įtraukti RAPL energijos statistiką"
 
-#: src/sysprof-cli/sysprof-cli.c:325
+#: src/sysprof-cli/sysprof-cli.c:326
 msgid "Profile memory allocations and frees"
 msgstr "Profiliuoti atminties išskyrimus bei atlaisvinimus"
 
-#: src/sysprof-cli/sysprof-cli.c:326
+#: src/sysprof-cli/sysprof-cli.c:327
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr "Prisijungti prie org.gnome.Shell profiliatoriaus statistikai"
 
-#: src/sysprof-cli/sysprof-cli.c:327
+#: src/sysprof-cli/sysprof-cli.c:328
 msgid "Track performance of the applications main loop"
 msgstr "Sekti programų pagrindinio ciklo našumą"
 
-#: src/sysprof-cli/sysprof-cli.c:329
+#: src/sysprof-cli/sysprof-cli.c:330
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr ""
 "Sulieti visus pateiktus *.syscap failus ir išvesti į standartinę išvestį"
 
-#: src/sysprof-cli/sysprof-cli.c:330
+#: src/sysprof-cli/sysprof-cli.c:331
 msgid "Print the sysprof-cli version and exit"
 msgstr "Parašyti sysprof-cli versiją ir išeiti"
 
-#: src/sysprof-cli/sysprof-cli.c:331
+#: src/sysprof-cli/sysprof-cli.c:332
 msgid "The size of the buffer in pages (1 = 1 page)"
 msgstr "Buferio dydis puslapiais (1 = 1 puslapis)"
 
-#: src/sysprof-cli/sysprof-cli.c:364
+#: src/sysprof-cli/sysprof-cli.c:333
+msgid "Additional D-Bus address to monitor"
+msgstr "Papildomi stebimi D-Bus adresai"
+
+#: src/sysprof-cli/sysprof-cli.c:366
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[SURINKIMO_FAILAS] [--KOMANDA ARG] — Sysprof"
 
-#: src/sysprof-cli/sysprof-cli.c:367
+#: src/sysprof-cli/sysprof-cli.c:369
 msgid ""
 "\n"
 "Examples:\n"
@@ -399,12 +403,12 @@ msgstr ""
 " # Sulieti kelis syscap failus į vieną\n"
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 
-#: src/sysprof-cli/sysprof-cli.c:403
+#: src/sysprof-cli/sysprof-cli.c:405
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Perduota per daug argumentų sysprof-cli:"
 
 #. Translators: %s is a file name.
-#: src/sysprof-cli/sysprof-cli.c:457
+#: src/sysprof-cli/sysprof-cli.c:459
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s nau yra. Naudokite --foce perrašymui\n"

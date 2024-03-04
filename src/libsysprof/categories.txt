@@ -107,6 +107,7 @@ g_value_type_transformable          type-system  inherit
 
 GTK 4:
 gsk_gl_command_queue*               graphics     inherit
+gsk_gl_device_load_shader           graphics     inherit
 gsk_gl_frame_*                      graphics     inherit
 gsk_gl_image_bind_*                 graphics     inherit
 gsk_gl_image_new                    graphics     inherit

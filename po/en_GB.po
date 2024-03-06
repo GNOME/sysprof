@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-02-22 18:12+0000\n"
-"PO-Revision-Date: 2024-02-24 16:32+0000\n"
+"POT-Creation-Date: 2024-03-01 17:43+0000\n"
+"PO-Revision-Date: 2024-03-03 14:01+0000\n"
 "Last-Translator: Bruce Cowan <bruce@bcowan.me.uk>\n"
 "Language-Team: British English <en_GB@li.org>\n"
 "Language: en_GB\n"
@@ -256,129 +256,133 @@ msgstr ""
 msgid "--merge requires at least 2 filename arguments"
 msgstr "--merge requires at least 2 filename arguments"
 
-#: src/sysprof-cli/sysprof-cli.c:306
+#: src/sysprof-cli/sysprof-cli.c:307
 msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
 msgstr ""
 "Disable CPU throttling while profiling [Deprecated for --power-profile]"
 
-#: src/sysprof-cli/sysprof-cli.c:307
+#: src/sysprof-cli/sysprof-cli.c:308
 msgid "Make sysprof specific to a task [Deprecated]"
 msgstr "Make sysprof specific to a task [Deprecated]"
 
-#: src/sysprof-cli/sysprof-cli.c:307 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof-cli/sysprof-cli.c:308 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:179
 #: src/sysprof/sysprof-processes-section.ui:282
 #: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "PID"
 
-#: src/sysprof-cli/sysprof-cli.c:308
+#: src/sysprof-cli/sysprof-cli.c:309
 msgid "Run a command and profile the process"
 msgstr "Run a command and profile the process"
 
-#: src/sysprof-cli/sysprof-cli.c:308
+#: src/sysprof-cli/sysprof-cli.c:309
 msgid "COMMAND"
 msgstr "COMMAND"
 
-#: src/sysprof-cli/sysprof-cli.c:309
+#: src/sysprof-cli/sysprof-cli.c:310
 msgid ""
 "Set environment variable for spawned process. Can be used multiple times."
 msgstr ""
 "Set environment variable for spawned process. Can be used multiple times."
 
-#: src/sysprof-cli/sysprof-cli.c:309
+#: src/sysprof-cli/sysprof-cli.c:310
 msgid "VAR=VALUE"
 msgstr "VAR=VALUE"
 
-#: src/sysprof-cli/sysprof-cli.c:310
+#: src/sysprof-cli/sysprof-cli.c:311
 msgid "Force overwrite the capture file"
 msgstr "Force overwrite the capture file"
 
-#: src/sysprof-cli/sysprof-cli.c:311
+#: src/sysprof-cli/sysprof-cli.c:312
 msgid "Disable recording of battery statistics"
 msgstr "Disable recording of battery statistics"
 
-#: src/sysprof-cli/sysprof-cli.c:312
+#: src/sysprof-cli/sysprof-cli.c:313
 msgid "Disable recording of CPU statistics"
 msgstr "Disable recording of CPU statistics"
 
-#: src/sysprof-cli/sysprof-cli.c:313
+#: src/sysprof-cli/sysprof-cli.c:314
 msgid "Disable recording of Disk statistics"
 msgstr "Disable recording of Disk statistics"
 
-#: src/sysprof-cli/sysprof-cli.c:314
+#: src/sysprof-cli/sysprof-cli.c:315
 msgid "Do not record stacktraces using Linux perf"
 msgstr "Do not record stacktraces using Linux perf"
 
-#: src/sysprof-cli/sysprof-cli.c:315
+#: src/sysprof-cli/sysprof-cli.c:316
 msgid "Do not append symbol name information from local machine"
 msgstr "Do not append symbol name information from local machine"
 
-#: src/sysprof-cli/sysprof-cli.c:316
+#: src/sysprof-cli/sysprof-cli.c:317
 msgid "Disable recording of memory statistics"
 msgstr "Disable recording of memory statistics"
 
-#: src/sysprof-cli/sysprof-cli.c:317
+#: src/sysprof-cli/sysprof-cli.c:318
 msgid "Disable recording of network statistics"
 msgstr "Disable recording of network statistics"
 
-#: src/sysprof-cli/sysprof-cli.c:318
+#: src/sysprof-cli/sysprof-cli.c:319
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr "Set SYSPROF_TRACE_FD environment for subprocess"
 
-#: src/sysprof-cli/sysprof-cli.c:319
+#: src/sysprof-cli/sysprof-cli.c:320
 msgid "Track when processes are scheduled"
 msgstr "Track when processes are scheduled"
 
-#: src/sysprof-cli/sysprof-cli.c:320
+#: src/sysprof-cli/sysprof-cli.c:321
 msgid "Profile the D-Bus session bus"
 msgstr "Profile the D-Bus session bus"
 
-#: src/sysprof-cli/sysprof-cli.c:321
+#: src/sysprof-cli/sysprof-cli.c:322
 msgid "Profile the D-Bus system bus"
 msgstr "Profile the D-Bus system bus"
 
-#: src/sysprof-cli/sysprof-cli.c:322
+#: src/sysprof-cli/sysprof-cli.c:323
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr "Set GJS_TRACE_FD environment to trace GJS processes"
 
-#: src/sysprof-cli/sysprof-cli.c:323
+#: src/sysprof-cli/sysprof-cli.c:324
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr "Set GTK_TRACE_FD environment to trace a GTK application"
 
-#: src/sysprof-cli/sysprof-cli.c:324
+#: src/sysprof-cli/sysprof-cli.c:325
 msgid "Include RAPL energy statistics"
 msgstr "Include RAPL energy statistics"
 
-#: src/sysprof-cli/sysprof-cli.c:325
+#: src/sysprof-cli/sysprof-cli.c:326
 msgid "Profile memory allocations and frees"
 msgstr "Profile memory allocations and frees"
 
-#: src/sysprof-cli/sysprof-cli.c:326
+#: src/sysprof-cli/sysprof-cli.c:327
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr "Connect to org.gnome.Shell for profiler statistics"
 
-#: src/sysprof-cli/sysprof-cli.c:327
+#: src/sysprof-cli/sysprof-cli.c:328
 msgid "Track performance of the applications main loop"
 msgstr "Track performance of the applications main loop"
 
-#: src/sysprof-cli/sysprof-cli.c:329
+#: src/sysprof-cli/sysprof-cli.c:330
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr "Merge all provided *.syscap files and write to stdout"
 
-#: src/sysprof-cli/sysprof-cli.c:330
+#: src/sysprof-cli/sysprof-cli.c:331
 msgid "Print the sysprof-cli version and exit"
 msgstr "Print the sysprof-cli version and exit"
 
-#: src/sysprof-cli/sysprof-cli.c:331
+#: src/sysprof-cli/sysprof-cli.c:332
 msgid "The size of the buffer in pages (1 = 1 page)"
 msgstr "The size of the buffer in pages (1 = 1 page)"
 
-#: src/sysprof-cli/sysprof-cli.c:364
+#: src/sysprof-cli/sysprof-cli.c:333
+msgid "Additional D-Bus address to monitor"
+msgstr "Additional D-Bus address to monitor"
+
+#: src/sysprof-cli/sysprof-cli.c:366
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 
-#: src/sysprof-cli/sysprof-cli.c:367
+#: src/sysprof-cli/sysprof-cli.c:369
 msgid ""
 "\n"
 "Examples:\n"
@@ -400,12 +404,12 @@ msgstr ""
 "  # Merge multiple syscap files into one\n"
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 
-#: src/sysprof-cli/sysprof-cli.c:403
+#: src/sysprof-cli/sysprof-cli.c:405
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Too many arguments were passed to sysprof-cli:"
 
 #. Translators: %s is a file name.
-#: src/sysprof-cli/sysprof-cli.c:457
+#: src/sysprof-cli/sysprof-cli.c:459
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s exists. Use --force to overwrite\n"

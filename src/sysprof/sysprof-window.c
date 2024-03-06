@@ -635,7 +635,7 @@ sysprof_window_init (SysprofWindow *self)
                                               "show-sidebar");
   g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (show_right_sidebar));
 
-  adw_window_title_set_title (self->stack_title, _("Loading..."));
+  adw_window_title_set_title (self->stack_title, _("Loading…"));
 }
 
 GtkWidget *

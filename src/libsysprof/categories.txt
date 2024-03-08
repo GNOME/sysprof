@@ -112,6 +112,7 @@ gsk_gl_frame_*                      graphics     inherit
 gsk_gl_image_bind_*                 graphics     inherit
 gsk_gl_image_new                    graphics     inherit
 gsk_gpu_render_pass_op_gl_*         graphics     inherit
+gsk_vulkan_frame_*                  graphics     inherit
 *_op_gl_command                     graphics     inherit
 *_op_gl_command_n                   graphics     inherit
 *_use_program                       graphics     inherit

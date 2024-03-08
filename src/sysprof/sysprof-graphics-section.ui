@@ -426,7 +426,6 @@
     </binding>
     <property name="filter">
       <object class="GtkStringFilter">
-        <property name="match-mode">exact</property>
         <property name="search">gtk</property>
         <property name="expression">
           <lookup name="category" type="SysprofDocumentCounter"/>

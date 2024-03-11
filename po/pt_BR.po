@@ -10,16 +10,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-10-29 10:36+0000\n"
-"PO-Revision-Date: 2023-12-02 21:38-0300\n"
-"Last-Translator: Alex Jr <alexjrsh@proton.me>\n"
+"POT-Creation-Date: 2024-01-22 22:18+0000\n"
+"PO-Revision-Date: 2024-03-08 10:54-0300\n"
+"Last-Translator: Leônidas Araújo <leorusvellt@hotmail.com>\n"
 "Language-Team: Brazilian Portuguese <https://br.gnome.org/traducao>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
-"X-Generator: Gtranslator 45.3\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 3.3.1\n"
 "X-Project-Style: gnome\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:5
@@ -143,10 +143,8 @@ msgid "Allocation"
 msgstr "Alocação"
 
 #: src/libsysprof/sysprof-document.c:570
-#, fuzzy
-#| msgid "Ignore Process 0"
 msgid "Unknown Process"
-msgstr "Ignorar processo 0"
+msgstr "Processo desconhecido"
 
 #: src/libsysprof/sysprof-document.c:1251
 #: src/libsysprof/sysprof-document.c:1287
@@ -466,10 +464,9 @@ msgid "_About Sysprof"
 msgstr "_Sobre o Sysprof"
 
 #: src/sysprof/sysprof-animation.c:1038
-#, fuzzy, c-format
-#| msgid "Failed to save recording: %s"
+#, c-format
 msgid "Failed to find property %s in %s"
-msgstr "Falha ao salvar a gravação: %s"
+msgstr "Falha ao encontrar a propriedade %s em %s"
 
 #: src/sysprof/sysprof-animation.c:1047
 #, c-format
@@ -488,7 +485,8 @@ msgstr "Um perfilador de sistema"
 msgid "translator-credits"
 msgstr ""
 "Enrico Nicoletto <hiko@duck.com>, 2016-2017, 2022\n"
-"Rafael Fontenelle <rafaelff@gnome.org>, 2016-2023"
+"Rafael Fontenelle <rafaelff@gnome.org>, 2016-2023\n"
+"Leônidas Araújo <leorusvellt@hotmail.com>, 2024"
 
 #: src/sysprof/sysprof-callgraph-view.ui:22
 msgid "Functions"
@@ -543,7 +541,7 @@ msgstr "Tempo"
 #: src/sysprof/sysprof-energy-section.ui:382
 #: src/sysprof/sysprof-flame-graph.c:453
 #: src/sysprof/sysprof-graphics-section.ui:293
-#: src/sysprof/sysprof-marks-section.ui:247
+#: src/sysprof/sysprof-marks-section.ui:248
 #: src/sysprof/sysprof-network-section.ui:380
 #: src/sysprof/sysprof-storage-section.ui:380
 msgid "Category"
@@ -552,7 +550,7 @@ msgstr "Categoria"
 #: src/sysprof/sysprof-cpu-section.ui:450
 #: src/sysprof/sysprof-energy-section.ui:420
 #: src/sysprof/sysprof-graphics-section.ui:331
-#: src/sysprof/sysprof-marks-section.ui:281
+#: src/sysprof/sysprof-marks-section.ui:282
 #: src/sysprof/sysprof-network-section.ui:418
 #: src/sysprof/sysprof-storage-section.ui:418
 msgid "Name"
@@ -638,10 +636,8 @@ msgid "Signature"
 msgstr "Assinatura"
 
 #: src/sysprof/sysprof-dbus-section.ui:626
-#, fuzzy
-#| msgid "Message"
 msgid "Filter Messages"
-msgstr "Mensagem"
+msgstr "Filtrar mensagens"
 
 #: src/sysprof/sysprof-dbus-utility.ui:13
 #: src/sysprof/sysprof-logs-section.c:104
@@ -658,10 +654,8 @@ msgid "Compressed"
 msgstr "Comprimido"
 
 #: src/sysprof/sysprof-files-section.ui:165
-#, fuzzy
-#| msgid "Filter Functions"
 msgid "Filter Files"
-msgstr "Filtrar funções"
+msgstr "Filtrar arquivos"
 
 #: src/sysprof/sysprof-flame-graph.c:457
 #: src/sysprof/sysprof-process-dialog.ui:177
@@ -704,7 +698,7 @@ msgstr "Fechar"
 #: src/sysprof/sysprof-greeter.c:288
 #, c-format
 msgid "System Capture from %s.syscap"
-msgstr "Captura de sistema do %s.syscap "
+msgstr "Captura de sistema do %s.syscap"
 
 #: src/sysprof/sysprof-greeter.c:292
 msgid "Record to File"
@@ -1001,7 +995,7 @@ msgstr "_Gravar para arquivo…"
 
 #: src/sysprof/sysprof-greeter.ui:598
 msgid "Record to _Memory"
-msgstr "Gravar para _memória…"
+msgstr "Gravar para _memória"
 
 #: src/sysprof/sysprof-greeter.ui:613 src/sysprof/sysprof-window.ui:373
 msgid "Help"
@@ -1051,31 +1045,31 @@ msgstr "Marcas"
 msgid "Mark Chart"
 msgstr "Gráfico de marcas"
 
-#: src/sysprof/sysprof-marks-section.ui:91
+#: src/sysprof/sysprof-marks-section.ui:92
 msgid "Mark Table"
 msgstr "Tabela de marcas"
 
-#: src/sysprof/sysprof-marks-section.ui:104
+#: src/sysprof/sysprof-marks-section.ui:105
 msgid "Mark Waterfall"
 msgstr "Cachoeira de marcas"
 
-#: src/sysprof/sysprof-marks-section.ui:211
+#: src/sysprof/sysprof-marks-section.ui:212
 msgid "Summary"
 msgstr "Resumo"
 
-#: src/sysprof/sysprof-marks-section.ui:316
+#: src/sysprof/sysprof-marks-section.ui:317
 msgid "Minimum"
 msgstr "Mínimo"
 
-#: src/sysprof/sysprof-marks-section.ui:350
+#: src/sysprof/sysprof-marks-section.ui:351
 msgid "Maximum"
 msgstr "Máximo"
 
-#: src/sysprof/sysprof-marks-section.ui:384
+#: src/sysprof/sysprof-marks-section.ui:385
 msgid "Average"
 msgstr "Média"
 
-#: src/sysprof/sysprof-marks-section.ui:418
+#: src/sysprof/sysprof-marks-section.ui:419
 msgid "Median"
 msgstr "Mediana"
 
@@ -1151,7 +1145,7 @@ msgstr "Chave"
 
 #: src/sysprof/sysprof-process-dialog.ui:35
 msgid "Address Layout"
-msgstr "Layout de endereços "
+msgstr "Layout de endereços"
 
 #: src/sysprof/sysprof-process-dialog.ui:97
 msgid "Start Address"
@@ -1383,20 +1377,16 @@ msgid "Bottom Up"
 msgstr "Baixo para cima"
 
 #: src/sysprof/sysprof-window.ui:403
-#, fuzzy
-#| msgid "Ignore Process 0"
 msgid "Ignore Kernel Processes"
-msgstr "Ignorar processo 0"
+msgstr "Ignorar processos do kernel"
 
 #: src/sysprof/sysprof-window.ui:407
 msgid "Ignore Process 0"
 msgstr "Ignorar processo 0"
 
 #: src/sysprof/sysprof-window.ui:411
-#, fuzzy
-#| msgid "Search Processes"
 msgid "Merge Similar Processes"
-msgstr "Pesquisar processos"
+msgstr "Mesclar processos semelhantes"
 
 #: src/sysprof/sysprof-window.ui:418
 msgid "Left Heavy"

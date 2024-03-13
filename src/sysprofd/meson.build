@@ -14,6 +14,11 @@ if get_option('sysext')
     libc_compat = false
   endif
 
+  sysprofd_c_args += [
+    '-static',
+    '-pthread',
+  ]
+
   if libc_compat
     sysprofd_c_args += '-DLIBC_COMPAT'
     sysprofd_link_args += ['-Wl,--wrap=__libc_start_main']

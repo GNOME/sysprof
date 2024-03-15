@@ -210,7 +210,7 @@
             <child>
               <object class="AdwViewStackPage">
                 <property name="title" translatable="yes">Summary</property>
-                <property name="icon-name">info-symbolic</property>
+                <property name="icon-name">summary-symbolic</property>
                 <property name="child">
                   <object class="GtkScrolledWindow">
                     <child>

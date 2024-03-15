@@ -1,3 +1,13 @@
+Overview of changes in Sysprof 46.0
+===================================
+
+Changes since 46.rc
+
+ * Flamegraph and callgraph colorization improvements
+ * Fix graphics page for GTK counters
+ * Fix missing summary icon
+ * Translation updates
+
 Overview of changes in Sysprof 46.rc
 ====================================
 

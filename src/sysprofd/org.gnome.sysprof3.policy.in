@@ -6,7 +6,7 @@
 
 <policyconfig>
   <vendor>The sysprof Project</vendor>
-  <vendor_url>https://wiki.gnome.org/Apps/Sysprof</vendor_url>
+  <vendor_url>https://apps.gnome.org/Sysprof/</vendor_url>
   <icon_name>org.gnome.Sysprof-symbolic</icon_name>
 
   <action id="org.gnome.sysprof3.profile">

@@ -17,8 +17,9 @@
     <p>Sysprof allows you to profile applications to aid in debugging and optimization.</p>
   </description>
 
-  <url type="homepage">https://wiki.gnome.org/Apps/Sysprof</url>
+  <url type="homepage">https://apps.gnome.org/Sysprof/</url>
   <url type="bugtracker">https://gitlab.gnome.org/GNOME/sysprof/issues</url>
+  <url type="contribute">https://welcome.gnome.org/app/Sysprof/</url>
   <url type="donation">https://www.gnome.org/donate/</url>
   <url type="translate">https://l10n.gnome.org/module/sysprof/</url>
   <url type="vcs-browser">https://gitlab.gnome.org/GNOME/sysprof/</url>

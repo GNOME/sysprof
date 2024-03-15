@@ -169,7 +169,7 @@ sysprof_about (GSimpleAction *action,
                          "artists", sysprof_artists,
                          "comments", _("A system profiler"),
                          "translator-credits", _("translator-credits"),
-                         "website", "https://wiki.gnome.org/Apps/Sysprof",
+                         "website", "https://apps.gnome.org/Sysprof/",
                          NULL);
 }
 

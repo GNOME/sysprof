@@ -10,13 +10,13 @@
   <description>The Sysprof profiler is a statistical profiler based on
   hardware performance counters in modern CPUs. Please see
 
-    https://wiki.gnome.org/Apps/Sysprof
+    https://apps.gnome.org/Sysprof/
 
   for more information.
   </description>
   <homepage rdf:resource="http://sysprof.com" />
   <developer-forum rdf:resource="https://discourse.gnome.org/c/platform/" />
-  <download-page rdf:resource="https://wiki.gnome.org/Apps/Sysprof" />
+  <download-page rdf:resource="https://download.gnome.org/sources/sysprof/" />
   <bug-database rdf:resource="https://gitlab.gnome.org/GNOME/sysprof/issues/" />
   <category rdf:resource="http://api.gnome.org/doap-extensions#apps" />
   <programming-language>C</programming-language>

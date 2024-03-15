@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-02-28 18:20+0000\n"
-"PO-Revision-Date: 2024-03-02 01:57+0900\n"
+"POT-Creation-Date: 2024-03-11 16:52+0000\n"
+"PO-Revision-Date: 2024-03-15 22:59+0900\n"
 "Last-Translator: Seong-ho Cho <darkcircle.0426@gmail.com>\n"
 "Language-Team: Korean <gnome-kr@googlegroups.com>\n"
 "Language: ko\n"
@@ -371,11 +371,15 @@ msgstr "sysprof-cli 버전을 출력하고 빠져나갑니다"
 msgid "The size of the buffer in pages (1 = 1 page)"
 msgstr "페이지당 버퍼 크기(1 = 1페이지)"
 
-#: src/sysprof-cli/sysprof-cli.c:369
+#: src/sysprof-cli/sysprof-cli.c:333
+msgid "Additional D-Bus address to monitor"
+msgstr "감시 관찰할 D-Bus 추가 주소"
+
+#: src/sysprof-cli/sysprof-cli.c:366
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[<캡쳐_파일>] [-- <명령> <인자>] — Sysprof"
 
-#: src/sysprof-cli/sysprof-cli.c:372
+#: src/sysprof-cli/sysprof-cli.c:369
 msgid ""
 "\n"
 "Examples:\n"
@@ -397,12 +401,12 @@ msgstr ""
 "  # 여러 syscap 파일을 하나로 병합\n"
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 
-#: src/sysprof-cli/sysprof-cli.c:408
+#: src/sysprof-cli/sysprof-cli.c:405
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "sysprof-cli에 너무 많은 인자 값을 전달했습니다:"
 
 #. Translators: %s is a file name.
-#: src/sysprof-cli/sysprof-cli.c:462
+#: src/sysprof-cli/sysprof-cli.c:459
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s이(가) 있습니다. 덮어쓰려면 --force 옵션을 사용하십시오\n"

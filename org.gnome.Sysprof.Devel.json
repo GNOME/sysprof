@@ -164,7 +164,7 @@
         {
             "name" : "zlib",
             "buildsystem" : "simple",
-           "build-commands" : [
+            "build-commands" : [
                 "./configure --prefix=/app/lib/extensions/usr --libdir=/app/lib/extensions/usr/lib",
                 "make",
                 "make install"

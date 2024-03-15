@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-02-11 00:28+0000\n"
-"PO-Revision-Date: 2024-02-26 20:51+0100\n"
+"POT-Creation-Date: 2024-02-26 19:53+0000\n"
+"PO-Revision-Date: 2024-03-11 22:47+0100\n"
 "Last-Translator: Christian Kirbach <christian.kirbach@gmail.com>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "Language: de\n"
@@ -133,7 +133,7 @@ msgstr "Typensystem"
 
 #: src/libsysprof/sysprof-category-summary.c:193
 msgid "Unwindable"
-msgstr ""
+msgstr "Abwickelbar"
 
 #: src/libsysprof/sysprof-category-summary.c:196
 msgid "Windowing"
@@ -150,15 +150,16 @@ msgstr "Unbekannter Prozess"
 #: src/libsysprof/sysprof-document.c:1251
 #: src/libsysprof/sysprof-document.c:1287
 msgid "Indexing capture data frames"
-msgstr ""
+msgstr "Aufzeichnungs-Datenrahmen werden indiziert"
 
 #: src/libsysprof/sysprof-document.c:1473
 msgid "Discovering file system mounts"
 msgstr "Einhängepunkte von Dateisystemen erkunden"
 
 #: src/libsysprof/sysprof-document.c:1476
+#, fuzzy
 msgid "Discovering process mount namespaces"
-msgstr ""
+msgstr "Die Namensräume der Einbindung des Prozesses entdecken"
 
 #: src/libsysprof/sysprof-document.c:1479
 msgid "Analyzing process address layouts"
@@ -500,7 +501,8 @@ msgstr ""
 "Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Tim Sabsch <tim@sabsch.com>\n"
 "Philipp Kiemle <philipp.kiemle@gmail.com>\n"
-"Jürgen Benvenuti <gastornis@posteo.org>"
+"Jürgen Benvenuti <gastornis@posteo.org>\n"
+"Christian Kirbach <christian.kirbach@gmail.com>"
 
 #: src/sysprof/sysprof-callgraph-view.ui:22
 msgid "Functions"

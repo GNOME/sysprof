@@ -7,9 +7,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-11-12 07:56+0000\n"
-"PO-Revision-Date: 2023-11-12 09:14+0100\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
+"POT-Creation-Date: 2024-03-15 23:29+0000\n"
+"PO-Revision-Date: 2024-03-25 06:04+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language-Team: Georgian <ka@li.org>\n"
 "Language: ka\n"
@@ -391,6 +391,16 @@ msgid ""
 "  # Merge multiple syscap files into one\n"
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 msgstr ""
+"\n"
+"მაგალითები:\n"
+"\n"
+"  #gtk4-widget-factory-ის ჩაწერა trace-fd-ით, რომ მივიღოთ როგორც\n"
+"  #აპლიკაციის მოწოდებული მონაცემები, ასევე GTK/GNOME Shell-ის მონაცემების "
+"მომწოდებლებიც\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd --gtk4-widget-factory\n"
+"\n"
+"# ბევრი syscap ფაილის ერთში შერწყმა\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 
 #: src/sysprof-cli/sysprof-cli.c:403
 msgid "Too many arguments were passed to sysprof-cli:"
@@ -526,7 +536,7 @@ msgstr "დრო"
 #: src/sysprof/sysprof-energy-section.ui:382
 #: src/sysprof/sysprof-flame-graph.c:453
 #: src/sysprof/sysprof-graphics-section.ui:293
-#: src/sysprof/sysprof-marks-section.ui:247
+#: src/sysprof/sysprof-marks-section.ui:248
 #: src/sysprof/sysprof-network-section.ui:380
 #: src/sysprof/sysprof-storage-section.ui:380
 msgid "Category"
@@ -535,7 +545,7 @@ msgstr "კატეგორია"
 #: src/sysprof/sysprof-cpu-section.ui:450
 #: src/sysprof/sysprof-energy-section.ui:420
 #: src/sysprof/sysprof-graphics-section.ui:331
-#: src/sysprof/sysprof-marks-section.ui:281
+#: src/sysprof/sysprof-marks-section.ui:282
 #: src/sysprof/sysprof-network-section.ui:418
 #: src/sysprof/sysprof-storage-section.ui:418
 msgid "Name"
@@ -720,7 +730,7 @@ msgstr "მაგალითი ლოკალური სტეკები"
 
 #: src/sysprof/sysprof-greeter.ui:75
 msgid "Record native stack traces using a sampling profiler"
-msgstr ""
+msgstr "საკუთარი სტეკის ტრეისების ჩაწერა სემპლინგის პროფაილერის გამოყენებით"
 
 #: src/sysprof/sysprof-greeter.ui:91
 msgid "Sample JavaScript Stacks"
@@ -729,6 +739,7 @@ msgstr "მაგალითი Javascript-ის სტეკები"
 #: src/sysprof/sysprof-greeter.ui:92
 msgid "Record JavaScript stack traces using a sampling profiler"
 msgstr ""
+"JavaScript-ის სტეკის ტრეისების ჩაწერა სემპლინგის პროფაილერის გამოყენებით"
 
 #: src/sysprof/sysprof-greeter.ui:103
 msgid ""
@@ -756,6 +767,7 @@ msgstr "მეხსიერების გამოყოფების ტ�
 #: src/sysprof/sysprof-greeter.ui:138
 msgid "Record a stack trace when <tt>malloc</tt> or similar functions are used"
 msgstr ""
+"სტეკის ტრეისის ჩაწერა, როცა <tt>malloc</tt>, ან მსგავსი ფუნქცია გამოიყენება"
 
 #: src/sysprof/sysprof-greeter.ui:149
 msgid "Sysprof must launch your application to record memory allocations."
@@ -813,7 +825,7 @@ msgstr "CPU -ის გამოყენება"
 
 #: src/sysprof/sysprof-greeter.ui:265
 msgid "Record coarse-grained counters about CPU usage and frequency"
-msgstr ""
+msgstr "უხეში რიცხვების ჩაწერა CPU-ის გამოყენებისა და სიხშირის შესახებ"
 
 #: src/sysprof/sysprof-greeter.ui:277
 msgid "Memory Usage"
@@ -821,7 +833,7 @@ msgstr "მეხსიერების გამოყენება"
 
 #: src/sysprof/sysprof-greeter.ui:278
 msgid "Record coarse-grained counters about system memory usage"
-msgstr ""
+msgstr "უხეში რიცხვების ჩაწერა სისტემური მეხსიერების გამოყენების შესახებ"
 
 #: src/sysprof/sysprof-greeter.ui:290
 msgid "Disk Usage"
@@ -829,7 +841,7 @@ msgstr "დისკის გამოყენება"
 
 #: src/sysprof/sysprof-greeter.ui:291
 msgid "Record coarse-grained counters about storage throughput"
-msgstr ""
+msgstr "უხეში რიცხვების ჩაწერა საცავთან მიმოცვლის შესახებ"
 
 #: src/sysprof/sysprof-greeter.ui:303
 msgid "Network Usage"
@@ -837,7 +849,7 @@ msgstr "ქსელის გამოყენება"
 
 #: src/sysprof/sysprof-greeter.ui:304
 msgid "Record coarse-grained counters about network traffic"
-msgstr ""
+msgstr "უხეში რიცხვების ჩაწერა ქსელის ტრაფიკის შესახებ"
 
 #: src/sysprof/sysprof-greeter.ui:320
 msgid "Energy Usage"
@@ -845,7 +857,7 @@ msgstr "ენერგიის გამოყენება"
 
 #: src/sysprof/sysprof-greeter.ui:321
 msgid "Record coarse-grained counters about energy usage in Watts"
-msgstr ""
+msgstr "უხეში რიცხვების ჩაწერა ენერგიის გამოყენებისა შესახებ, ვატებში"
 
 #: src/sysprof/sysprof-greeter.ui:333
 msgid "Battery Charge"
@@ -853,7 +865,7 @@ msgstr "ელემენტის მუხტი"
 
 #: src/sysprof/sysprof-greeter.ui:334
 msgid "Record coarse-grained counters about battery charge or discharge rates"
-msgstr ""
+msgstr "უხეში რიცხვების ჩაწერა ელემენტის დაცლისა და დატენვის სიხშირის შესახებ"
 
 #: src/sysprof/sysprof-greeter.ui:352 src/sysprof/sysprof-greeter.ui:357
 #: src/sysprof/sysprof-window.ui:262
@@ -881,6 +893,8 @@ msgid ""
 "The session bus may contain sensitive information such as keyboard usage and "
 "passwords."
 msgstr ""
+"სესიის მატარებელი, შეიძლება, ისეთ კონფიდენციალურ ინფორმაციას შეიცავდეს, "
+"როგორიცაა კლავიატურის გამოყენება და პაროლები."
 
 #: src/sysprof/sysprof-greeter.ui:413
 msgid "Timings"
@@ -888,17 +902,19 @@ msgstr "დრო"
 
 #: src/sysprof/sysprof-greeter.ui:417
 msgid "Compositor Frame Timings"
-msgstr ""
+msgstr "კომპოზიტორის კადრების დროები"
 
 #: src/sysprof/sysprof-greeter.ui:418
 msgid "Record frame-timing information from the GNOME Shell compositor"
-msgstr ""
+msgstr "კადრების დროის ინფორმაციის ჩაწერა GNOME Shell-ის კომპოზიტორიდან"
 
 #: src/sysprof/sysprof-greeter.ui:429
 msgid ""
 "Applications launched by Sysprof will automatically collect GTK frame timing "
 "information."
 msgstr ""
+"აპლიკაციები, რომლებსაც Sysprof გაუშვებს, GTK-ის კადრის დროის ინფორმაციას "
+"ავტომატურად მოაგროვებენ."
 
 #: src/sysprof/sysprof-greeter.ui:469
 msgid "Devices"
@@ -961,6 +977,8 @@ msgstr "სიმბოლოების მიყოლება"
 #: src/sysprof/sysprof-greeter.ui:551
 msgid "Make recording shareable by symbolizing stack traces after recording"
 msgstr ""
+"ჩანაწერის გაზიარებადად გადაკეთება ჩაწერის შემდეგ სტეკის ტრეისების "
+"სიმბოლოებად გადაკეთებით"
 
 #: src/sysprof/sysprof-greeter.ui:584
 msgid "_Open File…"
@@ -1022,31 +1040,31 @@ msgstr "ნიშნები"
 msgid "Mark Chart"
 msgstr "ნიშნების გრაფიკი"
 
-#: src/sysprof/sysprof-marks-section.ui:91
+#: src/sysprof/sysprof-marks-section.ui:92
 msgid "Mark Table"
 msgstr "ნიშნების ცხრილი"
 
-#: src/sysprof/sysprof-marks-section.ui:104
+#: src/sysprof/sysprof-marks-section.ui:105
 msgid "Mark Waterfall"
 msgstr "ნიშნების ჩანჩქერი"
 
-#: src/sysprof/sysprof-marks-section.ui:211
+#: src/sysprof/sysprof-marks-section.ui:212
 msgid "Summary"
 msgstr "ჯამში"
 
-#: src/sysprof/sysprof-marks-section.ui:316
+#: src/sysprof/sysprof-marks-section.ui:317
 msgid "Minimum"
 msgstr "მინიმუმი"
 
-#: src/sysprof/sysprof-marks-section.ui:350
+#: src/sysprof/sysprof-marks-section.ui:351
 msgid "Maximum"
 msgstr "მაქსიმუმი"
 
-#: src/sysprof/sysprof-marks-section.ui:384
+#: src/sysprof/sysprof-marks-section.ui:385
 msgid "Average"
 msgstr "საშუალო"
 
-#: src/sysprof/sysprof-marks-section.ui:418
+#: src/sysprof/sysprof-marks-section.ui:419
 msgid "Median"
 msgstr "საშუალო"
 
@@ -1292,6 +1310,10 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"დოკუმენტის ჩატვირთვა შეუძლებელია. გადაამოწმეთ, არის თუ არა თქვენი ჩაჭერის "
+"ფაილი სწორი.\n"
+"\n"
+"%s"
 
 #: src/sysprof/sysprof-window.ui:120
 msgid "Toggle Left Panel"

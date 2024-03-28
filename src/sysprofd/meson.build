@@ -4,6 +4,8 @@ sysprofd_deps = [
   libsysprof_capture_dep,
 ]
 
+want_pie = true
+
 if get_option('sysext')
   libc_compat = true
   if target_machine.cpu_family() == 'x86_64'
@@ -13,6 +15,8 @@ if get_option('sysext')
   else
     libc_compat = false
   endif
+
+  want_pie = false
 
   sysprofd_c_args += [
     '-static',
@@ -67,7 +71,7 @@ sysprofd = executable('sysprofd', sysprofd_sources,
          dependencies: sysprofd_deps,
               install: true,
           install_dir: pkglibexecdir,
-                  pie: true,
+                  pie: want_pie,
   include_directories: [include_directories('.')],
                c_args: sysprofd_c_args,
             link_args: sysprofd_link_args,

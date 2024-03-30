@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-12-31 14:01+0000\n"
-"PO-Revision-Date: 2024-01-22 23:17+0100\n"
+"POT-Creation-Date: 2024-01-22 22:18+0000\n"
+"PO-Revision-Date: 2024-03-30 18:18+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
@@ -281,7 +281,6 @@ msgid "COMMAND"
 msgstr "UKAZ"
 
 #: src/sysprof-cli/sysprof-cli.c:309
-#, fuzzy
 msgid ""
 "Set environment variable for spawned process. Can be used multiple times."
 msgstr ""
@@ -343,7 +342,7 @@ msgstr ""
 #: src/sysprof-cli/sysprof-cli.c:322
 #, fuzzy
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
-msgstr "Nastavit okolje GJS_TRACE_FD za sledenje procesom GJS"
+msgstr "Nastavi okolje GJS_TRACE_FD za sledenje procesom GJS"
 
 #: src/sysprof-cli/sysprof-cli.c:323
 #, fuzzy
@@ -359,12 +358,10 @@ msgid "Profile memory allocations and frees"
 msgstr "Dodeljevanje in sproščanje pomnilnika profila"
 
 #: src/sysprof-cli/sysprof-cli.c:326
-#, fuzzy
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr "Poveži se z org.gnome.Shell za statistiko profilnikov"
 
 #: src/sysprof-cli/sysprof-cli.c:327
-#, fuzzy
 msgid "Track performance of the applications main loop"
 msgstr "Spremljaj hitrost delovanja glavne zanke programov"
 
@@ -412,7 +409,6 @@ msgid "Profile the system"
 msgstr "Profiliraj sistem"
 
 #: src/sysprofd/org.gnome.sysprof3.policy.in:14
-#, fuzzy
 msgid "Authentication is required to profile the system."
 msgstr "Za profiliranje sistema je potrebno preverjanje pristnosti."
 
@@ -677,7 +673,6 @@ msgid "Keys may only contain alpha-numerics or underline."
 msgstr "Ključi lahko vsebujejo le alfanumerične znake in podčrtaje."
 
 #: src/sysprof/sysprof-greeter.c:265 src/sysprof/sysprof-window.c:155
-#, fuzzy
 msgid "Must Capture to Local File"
 msgstr "Obvezen zajem v krajevno datoteko"
 
@@ -691,9 +686,9 @@ msgid "Close"
 msgstr "Zapri"
 
 #: src/sysprof/sysprof-greeter.c:288
-#, c-format
+#, fuzzy, c-format
 msgid "System Capture from %s.syscap"
-msgstr ""
+msgstr "Zajem sistema iz %s.syscap"
 
 #: src/sysprof/sysprof-greeter.c:292
 msgid "Record to File"
@@ -712,8 +707,9 @@ msgid "Balanced"
 msgstr "Uravnoteženo"
 
 #: src/sysprof/sysprof-greeter.c:446
+#, fuzzy
 msgid "Power Saver"
-msgstr ""
+msgstr "Varčevalni način"
 
 #: src/sysprof/sysprof-greeter.c:449
 msgid "Performance"
@@ -868,19 +864,19 @@ msgstr "Vodila D-Bus"
 
 #: src/sysprof/sysprof-greeter.ui:361
 msgid "Record System Bus"
-msgstr ""
+msgstr "Snemaj sistemsko vodilo"
 
 #: src/sysprof/sysprof-greeter.ui:362
 msgid "Record messages on the D-Bus system bus"
-msgstr ""
+msgstr "Snemanje sporočil na sistemskem vodilu D-Bus"
 
 #: src/sysprof/sysprof-greeter.ui:378
 msgid "Record Session Bus"
-msgstr ""
+msgstr "Snemaj vodilo seje"
 
 #: src/sysprof/sysprof-greeter.ui:379
 msgid "Record messages on the D-Bus user session bus"
-msgstr ""
+msgstr "Snemanje sporočil na vodilu uporabniške seje D-Bus"
 
 #: src/sysprof/sysprof-greeter.ui:390
 msgid ""
@@ -923,12 +919,14 @@ msgid "System"
 msgstr "Sistem"
 
 #: src/sysprof/sysprof-greeter.ui:497
+#, fuzzy
 msgid "Power Profile"
-msgstr ""
+msgstr "Profil porabe energije"
 
 #: src/sysprof/sysprof-greeter.ui:500
+#, fuzzy
 msgid "Record with Power Profile"
-msgstr ""
+msgstr "Snemanje s profilom porabe energije"
 
 #: src/sysprof/sysprof-greeter.ui:501
 msgid "Switch to power profile while recording"
@@ -1019,8 +1017,9 @@ msgid "Domain"
 msgstr "Domena"
 
 #: src/sysprof/sysprof-marks-section.ui:4
+#, fuzzy
 msgid "Marks"
-msgstr ""
+msgstr "Oznake"
 
 #: src/sysprof/sysprof-marks-section.ui:78
 msgid "Mark Chart"
@@ -1107,7 +1106,6 @@ msgid "Allocations"
 msgstr "Dodelitev"
 
 #: src/sysprof/sysprof-memory-section.ui:144
-#, fuzzy
 msgid "Leaks"
 msgstr "Utekanja"
 

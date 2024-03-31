@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
 "POT-Creation-Date: 2024-03-30 17:16+0000\n"
-"PO-Revision-Date: 2024-03-31 13:05+0200\n"
+"PO-Revision-Date: 2024-03-31 17:08+0200\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
@@ -132,7 +132,6 @@ msgid "Type System"
 msgstr "Tipski sistem"
 
 #: src/libsysprof/sysprof-category-summary.c:193
-#, fuzzy
 msgid "Unwindable"
 msgstr "Sprostljivo"
 
@@ -150,17 +149,14 @@ msgstr "Neznano opravilo"
 
 #: src/libsysprof/sysprof-document.c:1251
 #: src/libsysprof/sysprof-document.c:1287
-#, fuzzy
 msgid "Indexing capture data frames"
 msgstr "Indeksiranje podatkovnih okvirjev za zajem"
 
 #: src/libsysprof/sysprof-document.c:1473
-#, fuzzy
 msgid "Discovering file system mounts"
 msgstr "Odkrivanje priklopov datotečnega sistema"
 
 #: src/libsysprof/sysprof-document.c:1476
-#, fuzzy
 msgid "Discovering process mount namespaces"
 msgstr "Proces odkrivanja imenskih prostorov priklopov"
 
@@ -182,15 +178,15 @@ msgstr "Obdelovanje števcev"
 
 #: src/libsysprof/sysprof-document.c:2476
 #: src/libsysprof/sysprof-document.c:2492
-#, fuzzy, c-format
+#, c-format
 msgid "Recording at %X %x"
-msgstr "Snemanje na %X %x"
+msgstr "Beleženje na %X %x"
 
 #: src/libsysprof/sysprof-document.c:2478
 #: src/libsysprof/sysprof-document.c:2494
-#, fuzzy, c-format
+#, c-format
 msgid "Recording at %s"
-msgstr "Snemanje na %s"
+msgstr "Beleženje na %s"
 
 #: src/libsysprof/sysprof-document-dbus-message.c:152
 msgid "D-Bus Message"
@@ -391,7 +387,6 @@ msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[DATOTEKA_ZAJEMA] [-- UKAZ ARGUMENTI] — Sysprof"
 
 #: src/sysprof-cli/sysprof-cli.c:369
-#, fuzzy
 msgid ""
 "\n"
 "Examples:\n"
@@ -406,9 +401,8 @@ msgstr ""
 "\n"
 "Primeri:\n"
 "\n"
-"# Zabeležite gtk4-widget-factory z uporabo trace-fd za zagotovitev "
-"aplikacije\n"
-"  # podatki ter ponudniki podatkov GTK in GNOME Shell\n"
+"# Beležite gtk4-widget-factory z uporabo trace-fd za pridobivanje podatkov\n"
+"  # programa ter ponudnikov podatkov GTK in lupine GNOME\n"
 "  sysprof-cli ---gtk --gnome-shell --use-trace-fd -- GTK4-Widget-Factory\n"
 "\n"
 "# Združite več datotek syscap v eno\n"
@@ -758,7 +752,6 @@ msgid "Balanced"
 msgstr "Uravnoteženo"
 
 #: src/sysprof/sysprof-greeter.c:446
-#, fuzzy
 msgid "Power Saver"
 msgstr "Varčevalni način"
 
@@ -771,12 +764,10 @@ msgid "Sampling"
 msgstr "Vzorčenje"
 
 #: src/sysprof/sysprof-greeter.ui:99
-#, fuzzy
 msgid "Sample Native Stacks"
 msgstr "Vzorčni izvorni skladi"
 
 #: src/sysprof/sysprof-greeter.ui:100
-#, fuzzy
 msgid "Record native stack traces using a sampling profiler"
 msgstr "Beleži sledi izvornega sklada s profilnikom vzorčenja"
 
@@ -785,7 +776,6 @@ msgid "Sample JavaScript Stacks"
 msgstr "Vzorčni skladi JavaScripta"
 
 #: src/sysprof/sysprof-greeter.ui:117
-#, fuzzy
 msgid "Record JavaScript stack traces using a sampling profiler"
 msgstr "Beleži sledi sklada JavaScript z profilnikom vzorčenja"
 
@@ -797,7 +787,6 @@ msgstr ""
 "GJS."
 
 #: src/sysprof/sysprof-greeter.ui:144
-#, fuzzy
 msgid "Record Scheduler Details"
 msgstr "Beleži podrobnosti razporejevalnika"
 
@@ -873,56 +862,48 @@ msgid "CPU Usage"
 msgstr "Obremenitev CPE"
 
 #: src/sysprof/sysprof-greeter.ui:290
-#, fuzzy
 msgid "Record coarse-grained counters about CPU usage and frequency"
-msgstr "Zabeležite grobo zrnate števce o uporabi in frekvenci CPE-ja"
+msgstr "Beleži grobe števce o rabi in frekvenci CPE-jev"
 
 #: src/sysprof/sysprof-greeter.ui:302
 msgid "Memory Usage"
 msgstr "Uporaba pomnilnika"
 
 #: src/sysprof/sysprof-greeter.ui:303
-#, fuzzy
 msgid "Record coarse-grained counters about system memory usage"
-msgstr "Snemanje grobozrnatih števcev o uporabi sistemskega pomnilnika"
+msgstr "Beleži grobe števce o rabi sistemskega pomnilnika"
 
 #: src/sysprof/sysprof-greeter.ui:315
 msgid "Disk Usage"
 msgstr "Uporaba diska"
 
 #: src/sysprof/sysprof-greeter.ui:316
-#, fuzzy
 msgid "Record coarse-grained counters about storage throughput"
-msgstr "Zabeležite grobo zrnate števce o pretoku skladišč"
+msgstr "Beleži grobe števce o pretoku skladišč"
 
 #: src/sysprof/sysprof-greeter.ui:328
 msgid "Network Usage"
 msgstr "Uporaba oprežja"
 
 #: src/sysprof/sysprof-greeter.ui:329
-#, fuzzy
 msgid "Record coarse-grained counters about network traffic"
-msgstr "Snemanje grobozrnatih števcev o omrežnem prometu"
+msgstr "Beleži grobe števce o omrežnem prometu"
 
 #: src/sysprof/sysprof-greeter.ui:345
 msgid "Energy Usage"
 msgstr "Poraba energije"
 
 #: src/sysprof/sysprof-greeter.ui:346
-#, fuzzy
 msgid "Record coarse-grained counters about energy usage in Watts"
-msgstr "Zabeležite grobo zrnate števce o porabi energije v vatih"
+msgstr "Beležit grobe števce o porabi energije v vatih"
 
 #: src/sysprof/sysprof-greeter.ui:358
 msgid "Battery Charge"
 msgstr "Napolnjenost baterije"
 
 #: src/sysprof/sysprof-greeter.ui:359
-#, fuzzy
 msgid "Record coarse-grained counters about battery charge or discharge rates"
-msgstr ""
-"Zabeležite grobo zrnate števce o napolnjenosti baterije ali hitrosti "
-"praznjenja"
+msgstr "Beleži grobe števce o napolnjenosti baterije ali hitrosti praznjenja"
 
 #: src/sysprof/sysprof-greeter.ui:377 src/sysprof/sysprof-greeter.ui:382
 #: src/sysprof/sysprof-window.ui:287
@@ -958,23 +939,20 @@ msgid "Timings"
 msgstr "Časi"
 
 #: src/sysprof/sysprof-greeter.ui:442
-#, fuzzy
 msgid "Compositor Frame Timings"
 msgstr "Časi okvirjev skladatelja"
 
 #: src/sysprof/sysprof-greeter.ui:443
-#, fuzzy
 msgid "Record frame-timing information from the GNOME Shell compositor"
-msgstr "Snemaj informacije o času okvirja iz skladatelja GNOME Shell"
+msgstr "Beleži informacije o času okvirja iz skladatelja GNOME Shell"
 
 #: src/sysprof/sysprof-greeter.ui:454
-#, fuzzy
 msgid ""
 "Applications launched by Sysprof will automatically collect GTK frame timing "
 "information."
 msgstr ""
-"Programi, ki jih zažene Sysprof, bodo samodejno zbirali informacije o času "
-"okvirjev GTK."
+"Programi, ki jih zažene Sysprof, bodo samodejno zbirali informacije o "
+"časovnih okvirjih/sličicah GTK."
 
 #: src/sysprof/sysprof-greeter.ui:494
 msgid "Devices"
@@ -997,14 +975,12 @@ msgid "Power Profile"
 msgstr "Profil porabe energije"
 
 #: src/sysprof/sysprof-greeter.ui:525
-#, fuzzy
 msgid "Record with Power Profile"
-msgstr "Snemanje s profilom porabe energije"
+msgstr "Beleži s profilom porabe energije"
 
 #: src/sysprof/sysprof-greeter.ui:526
-#, fuzzy
 msgid "Switch to power profile while recording"
-msgstr "Preklopi na profil napajanja med snemanjem"
+msgstr "Preklopi na profil napajanja med beleženjem"
 
 #: src/sysprof/sysprof-greeter.ui:536
 msgid "Details"
@@ -1031,9 +1007,8 @@ msgid "Symbols"
 msgstr "Simboli"
 
 #: src/sysprof/sysprof-greeter.ui:575
-#, fuzzy
 msgid "Bundle Symbols"
-msgstr "Simboli svežnja"
+msgstr "Vključl simbole"
 
 #: src/sysprof/sysprof-greeter.ui:576
 msgid "Make recording shareable by symbolizing stack traces after recording"
@@ -1238,7 +1213,6 @@ msgid "Mount Point"
 msgstr "Priklopna točka"
 
 #: src/sysprof/sysprof-process-dialog.ui:418
-#, fuzzy
 msgid "Mount Source"
 msgstr "Priklopi vir"
 
@@ -1311,7 +1285,6 @@ msgid "Callgraph"
 msgstr "Grafikon klicev"
 
 #: src/sysprof/sysprof-samples-section.ui:172 src/sysprof/sysprof-window.ui:450
-#, fuzzy
 msgid "Flamegraph"
 msgstr "Plamenski graf"
 
@@ -1425,7 +1398,6 @@ msgid "_Quit"
 msgstr "_Izhod"
 
 #: src/sysprof/sysprof-window.ui:421
-#, fuzzy
 msgid "Categorize Frames"
 msgstr "Kategoriziraj okvirje"
 
@@ -1455,6 +1427,5 @@ msgstr "Združi podobne procese"
 
 #. translators: Left Heavy means to sort larger (heavier) stack frames before others, starting from the left
 #: src/sysprof/sysprof-window.ui:453
-#, fuzzy
 msgid "Left Heavy"
-msgstr "Levo težko"
+msgstr "Z leve, težji naprej"

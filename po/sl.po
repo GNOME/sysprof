@@ -2,15 +2,15 @@
 # Copyright (C) 2016 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
 #
-# Martin Srebotnjak <miles@filmsi.net>, 2022.
+# Martin Srebotnjak <miles@filmsi.net>, 2022,2024.
 # Matej Urbančič <mateju@svn.gnome.org>, 2016–2023
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-03-01 17:43+0000\n"
-"PO-Revision-Date: 2024-03-30 18:15+0100\n"
+"POT-Creation-Date: 2024-03-30 17:16+0000\n"
+"PO-Revision-Date: 2024-03-31 13:05+0200\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
@@ -124,21 +124,21 @@ msgid "Memory"
 msgstr "Pomnilnik"
 
 #: src/libsysprof/sysprof-category-summary.c:187
-#, fuzzy
 msgid "Paint"
 msgstr "Slikaj"
 
 #: src/libsysprof/sysprof-category-summary.c:190
 msgid "Type System"
-msgstr ""
+msgstr "Tipski sistem"
 
 #: src/libsysprof/sysprof-category-summary.c:193
+#, fuzzy
 msgid "Unwindable"
-msgstr ""
+msgstr "Sprostljivo"
 
 #: src/libsysprof/sysprof-category-summary.c:196
 msgid "Windowing"
-msgstr ""
+msgstr "Izrisovanje oken"
 
 #: src/libsysprof/sysprof-document-allocation.c:151
 msgid "Allocation"
@@ -150,16 +150,19 @@ msgstr "Neznano opravilo"
 
 #: src/libsysprof/sysprof-document.c:1251
 #: src/libsysprof/sysprof-document.c:1287
+#, fuzzy
 msgid "Indexing capture data frames"
-msgstr ""
+msgstr "Indeksiranje podatkovnih okvirjev za zajem"
 
 #: src/libsysprof/sysprof-document.c:1473
+#, fuzzy
 msgid "Discovering file system mounts"
-msgstr ""
+msgstr "Odkrivanje priklopov datotečnega sistema"
 
 #: src/libsysprof/sysprof-document.c:1476
+#, fuzzy
 msgid "Discovering process mount namespaces"
-msgstr ""
+msgstr "Proces odkrivanja imenskih prostorov priklopov"
 
 #: src/libsysprof/sysprof-document.c:1479
 msgid "Analyzing process address layouts"
@@ -171,7 +174,7 @@ msgstr "Analiza ukazne vrstice procesa"
 
 #: src/libsysprof/sysprof-document.c:1485
 msgid "Analyzing file system overlays"
-msgstr ""
+msgstr "Analiziranje prekrivnih elementov datotečnega sistema"
 
 #: src/libsysprof/sysprof-document.c:1488
 msgid "Processing counters"
@@ -179,15 +182,15 @@ msgstr "Obdelovanje števcev"
 
 #: src/libsysprof/sysprof-document.c:2476
 #: src/libsysprof/sysprof-document.c:2492
-#, c-format
+#, fuzzy, c-format
 msgid "Recording at %X %x"
-msgstr ""
+msgstr "Snemanje na %X %x"
 
 #: src/libsysprof/sysprof-document.c:2478
 #: src/libsysprof/sysprof-document.c:2494
-#, c-format
+#, fuzzy, c-format
 msgid "Recording at %s"
-msgstr ""
+msgstr "Snemanje na %s"
 
 #: src/libsysprof/sysprof-document-dbus-message.c:152
 msgid "D-Bus Message"
@@ -208,7 +211,7 @@ msgstr "Nalaganje je spodletelo"
 #: src/libsysprof/sysprof-document-loader.c:478
 #: src/libsysprof/sysprof-document-symbols.c:217
 msgid "Symbolizing stack traces"
-msgstr ""
+msgstr "Simbolne sledi sklada"
 
 #: src/libsysprof/sysprof-document-loader.c:547
 msgid "Loading document"
@@ -253,6 +256,8 @@ msgid ""
 "Tracing requires spawning a program compiled with ‘-finstrument-functions’. "
 "Tracing will not be available."
 msgstr ""
+"Sledenje zahteva drstenje programa, izgrajenega z »-finstrument-functions«. "
+"Sledenje ne bo na voljo."
 
 #: src/sysprof-cli/sysprof-cli.c:112
 msgid "--merge requires at least 2 filename arguments"
@@ -261,10 +266,11 @@ msgstr "--merge zahteva vsaj dve imeni datotek kot argumenta"
 #: src/sysprof-cli/sysprof-cli.c:307
 msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
 msgstr ""
+"Onemogoči omejevanja CPE-ja med profiliranjem [opuščeno za --power-profile]"
 
 #: src/sysprof-cli/sysprof-cli.c:308
 msgid "Make sysprof specific to a task [Deprecated]"
-msgstr ""
+msgstr "Naj bo sysprof specifičen za opravilo [opuščeno]"
 
 #: src/sysprof-cli/sysprof-cli.c:308 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:179
@@ -310,11 +316,11 @@ msgstr "Onemogoči beleženje statistike diska"
 
 #: src/sysprof-cli/sysprof-cli.c:315
 msgid "Do not record stacktraces using Linux perf"
-msgstr ""
+msgstr "Ne beleži sledi skladov z Linux perf"
 
 #: src/sysprof-cli/sysprof-cli.c:316
 msgid "Do not append symbol name information from local machine"
-msgstr ""
+msgstr "Ne dodajaj podatkov o imenu simbola iz krajevne naprave"
 
 #: src/sysprof-cli/sysprof-cli.c:317
 msgid "Disable recording of memory statistics"
@@ -330,25 +336,23 @@ msgstr "Nastavi okolje SYSPROF_TRACE_FD za podproces"
 
 #: src/sysprof-cli/sysprof-cli.c:320
 msgid "Track when processes are scheduled"
-msgstr ""
+msgstr "Spremljaj, kdaj so procesi načrtovani"
 
 #: src/sysprof-cli/sysprof-cli.c:321
 msgid "Profile the D-Bus session bus"
-msgstr ""
+msgstr "Profiliraj vodilo seje D-Bus"
 
 #: src/sysprof-cli/sysprof-cli.c:322
 msgid "Profile the D-Bus system bus"
-msgstr ""
+msgstr "Profiliraj sistemsko vodilo D-Bus"
 
 #: src/sysprof-cli/sysprof-cli.c:323
-#, fuzzy
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
-msgstr "Nastavi okolje GJS_TRACE_FD za sledenje procesom GJS"
+msgstr "Nastavi okoljsko spremenljivko GJS_TRACE_FD za sledenje procesom GJS"
 
 #: src/sysprof-cli/sysprof-cli.c:324
-#, fuzzy
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
-msgstr "Nastavi okolje GTK_TRACE_FD za sledenje programu GTK"
+msgstr "Nastavi okoljsko spremenljivko GTK_TRACE_FD za sledenje programu GTK"
 
 #: src/sysprof-cli/sysprof-cli.c:325
 msgid "Include RAPL energy statistics"
@@ -380,13 +384,14 @@ msgstr "Velikost medpomnilnika v straneh (1 = 1 stran)"
 
 #: src/sysprof-cli/sysprof-cli.c:333
 msgid "Additional D-Bus address to monitor"
-msgstr ""
+msgstr "Dodatni naslov D-Bus za nadzor"
 
 #: src/sysprof-cli/sysprof-cli.c:366
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
-msgstr ""
+msgstr "[DATOTEKA_ZAJEMA] [-- UKAZ ARGUMENTI] — Sysprof"
 
 #: src/sysprof-cli/sysprof-cli.c:369
+#, fuzzy
 msgid ""
 "\n"
 "Examples:\n"
@@ -398,6 +403,16 @@ msgid ""
 "  # Merge multiple syscap files into one\n"
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 msgstr ""
+"\n"
+"Primeri:\n"
+"\n"
+"# Zabeležite gtk4-widget-factory z uporabo trace-fd za zagotovitev "
+"aplikacije\n"
+"  # podatki ter ponudniki podatkov GTK in GNOME Shell\n"
+"  sysprof-cli ---gtk --gnome-shell --use-trace-fd -- GTK4-Widget-Factory\n"
+"\n"
+"# Združite več datotek syscap v eno\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 
 #: src/sysprof-cli/sysprof-cli.c:405
 msgid "Too many arguments were passed to sysprof-cli:"
@@ -435,12 +450,12 @@ msgstr "Shrani kot"
 #: src/sysprof/gtk/help-overlay.ui:26
 msgctxt "shortcut window"
 msgid "Toggle Visibility of Main Sidebar"
-msgstr ""
+msgstr "Preklopi vidljivosti glavne stranske vrstice"
 
 #: src/sysprof/gtk/help-overlay.ui:32
 msgctxt "shortcut window"
 msgid "Toggle Visibility of Stack Trace Sidebar"
-msgstr ""
+msgstr "Preklopi vidljivost stranske vrstice sledenja sklada"
 
 #: src/sysprof/gtk/help-overlay.ui:40
 msgctxt "shortcut window"
@@ -526,7 +541,6 @@ msgid "Callers"
 msgstr "Klicatelji"
 
 #: src/sysprof/sysprof-callgraph-view.ui:146
-#, fuzzy
 msgid "Descendants"
 msgstr "Potomci"
 
@@ -715,6 +729,7 @@ msgstr "Obvezen zajem v krajevno datoteko"
 #: src/sysprof/sysprof-greeter.c:266 src/sysprof/sysprof-window.c:156
 msgid "You must choose a local file to capture using Sysprof"
 msgstr ""
+"Izbrati morate krajevno datoteko, ki jo želite zajeti s programom Sysprof"
 
 #: src/sysprof/sysprof-greeter.c:267 src/sysprof/sysprof-recording-pad.c:115
 #: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:718
@@ -722,7 +737,7 @@ msgid "Close"
 msgstr "Zapri"
 
 #: src/sysprof/sysprof-greeter.c:288
-#, fuzzy, c-format
+#, c-format
 msgid "System Capture from %s.syscap"
 msgstr "Zajem sistema iz %s.syscap"
 
@@ -756,33 +771,39 @@ msgid "Sampling"
 msgstr "Vzorčenje"
 
 #: src/sysprof/sysprof-greeter.ui:99
+#, fuzzy
 msgid "Sample Native Stacks"
-msgstr ""
+msgstr "Vzorčni izvorni skladi"
 
 #: src/sysprof/sysprof-greeter.ui:100
+#, fuzzy
 msgid "Record native stack traces using a sampling profiler"
-msgstr ""
+msgstr "Beleži sledi izvornega sklada s profilnikom vzorčenja"
 
 #: src/sysprof/sysprof-greeter.ui:116
 msgid "Sample JavaScript Stacks"
-msgstr ""
+msgstr "Vzorčni skladi JavaScripta"
 
 #: src/sysprof/sysprof-greeter.ui:117
+#, fuzzy
 msgid "Record JavaScript stack traces using a sampling profiler"
-msgstr ""
+msgstr "Beleži sledi sklada JavaScript z profilnikom vzorčenja"
 
 #: src/sysprof/sysprof-greeter.ui:128
 msgid ""
 "Sysprof must launch your application to record JavaScript stacks using GJS."
 msgstr ""
+"Sysprof mora zagnati vaš program za snemanje skladov JavaScript z uporabo "
+"GJS."
 
 #: src/sysprof/sysprof-greeter.ui:144
+#, fuzzy
 msgid "Record Scheduler Details"
-msgstr ""
+msgstr "Beleži podrobnosti razporejevalnika"
 
 #: src/sysprof/sysprof-greeter.ui:145
 msgid "Track when processes are scheduled per CPU"
-msgstr ""
+msgstr "Spremljaj, kdaj so procesi načrtovani na CPE"
 
 #: src/sysprof/sysprof-greeter.ui:158
 msgid "Tracing"
@@ -795,10 +816,12 @@ msgstr "Zaznavanje dodelitve pomnilnika"
 #: src/sysprof/sysprof-greeter.ui:163
 msgid "Record a stack trace when <tt>malloc</tt> or similar functions are used"
 msgstr ""
+"Beleži sledi sklada, kadar je uporabljena funkcija <tt>malloc</tt> ali "
+"podobne funkcije"
 
 #: src/sysprof/sysprof-greeter.ui:174
 msgid "Sysprof must launch your application to record memory allocations."
-msgstr ""
+msgstr "Sysprof mora zagnati vaš program za beleženje dodelitev pomnilnika."
 
 #: src/sysprof/sysprof-greeter.ui:192 src/sysprof/sysprof-greeter.ui:197
 msgid "Application"
@@ -850,48 +873,56 @@ msgid "CPU Usage"
 msgstr "Obremenitev CPE"
 
 #: src/sysprof/sysprof-greeter.ui:290
+#, fuzzy
 msgid "Record coarse-grained counters about CPU usage and frequency"
-msgstr ""
+msgstr "Zabeležite grobo zrnate števce o uporabi in frekvenci CPE-ja"
 
 #: src/sysprof/sysprof-greeter.ui:302
 msgid "Memory Usage"
 msgstr "Uporaba pomnilnika"
 
 #: src/sysprof/sysprof-greeter.ui:303
+#, fuzzy
 msgid "Record coarse-grained counters about system memory usage"
-msgstr ""
+msgstr "Snemanje grobozrnatih števcev o uporabi sistemskega pomnilnika"
 
 #: src/sysprof/sysprof-greeter.ui:315
 msgid "Disk Usage"
 msgstr "Uporaba diska"
 
 #: src/sysprof/sysprof-greeter.ui:316
+#, fuzzy
 msgid "Record coarse-grained counters about storage throughput"
-msgstr ""
+msgstr "Zabeležite grobo zrnate števce o pretoku skladišč"
 
 #: src/sysprof/sysprof-greeter.ui:328
 msgid "Network Usage"
 msgstr "Uporaba oprežja"
 
 #: src/sysprof/sysprof-greeter.ui:329
+#, fuzzy
 msgid "Record coarse-grained counters about network traffic"
-msgstr ""
+msgstr "Snemanje grobozrnatih števcev o omrežnem prometu"
 
 #: src/sysprof/sysprof-greeter.ui:345
 msgid "Energy Usage"
 msgstr "Poraba energije"
 
 #: src/sysprof/sysprof-greeter.ui:346
+#, fuzzy
 msgid "Record coarse-grained counters about energy usage in Watts"
-msgstr ""
+msgstr "Zabeležite grobo zrnate števce o porabi energije v vatih"
 
 #: src/sysprof/sysprof-greeter.ui:358
 msgid "Battery Charge"
 msgstr "Napolnjenost baterije"
 
 #: src/sysprof/sysprof-greeter.ui:359
+#, fuzzy
 msgid "Record coarse-grained counters about battery charge or discharge rates"
 msgstr ""
+"Zabeležite grobo zrnate števce o napolnjenosti baterije ali hitrosti "
+"praznjenja"
 
 #: src/sysprof/sysprof-greeter.ui:377 src/sysprof/sysprof-greeter.ui:382
 #: src/sysprof/sysprof-window.ui:287
@@ -919,18 +950,22 @@ msgid ""
 "The session bus may contain sensitive information such as keyboard usage and "
 "passwords."
 msgstr ""
+"Sejno vodilo lahko vsebuje občutljive podatke, kot so uporaba tipkovnice in "
+"gesla."
 
 #: src/sysprof/sysprof-greeter.ui:438
 msgid "Timings"
 msgstr "Časi"
 
 #: src/sysprof/sysprof-greeter.ui:442
+#, fuzzy
 msgid "Compositor Frame Timings"
-msgstr ""
+msgstr "Časi okvirjev skladatelja"
 
 #: src/sysprof/sysprof-greeter.ui:443
+#, fuzzy
 msgid "Record frame-timing information from the GNOME Shell compositor"
-msgstr ""
+msgstr "Snemaj informacije o času okvirja iz skladatelja GNOME Shell"
 
 #: src/sysprof/sysprof-greeter.ui:454
 #, fuzzy
@@ -958,7 +993,6 @@ msgid "System"
 msgstr "Sistem"
 
 #: src/sysprof/sysprof-greeter.ui:522
-#, fuzzy
 msgid "Power Profile"
 msgstr "Profil porabe energije"
 
@@ -968,8 +1002,9 @@ msgid "Record with Power Profile"
 msgstr "Snemanje s profilom porabe energije"
 
 #: src/sysprof/sysprof-greeter.ui:526
+#, fuzzy
 msgid "Switch to power profile while recording"
-msgstr ""
+msgstr "Preklopi na profil napajanja med snemanjem"
 
 #: src/sysprof/sysprof-greeter.ui:536
 msgid "Details"
@@ -996,12 +1031,13 @@ msgid "Symbols"
 msgstr "Simboli"
 
 #: src/sysprof/sysprof-greeter.ui:575
+#, fuzzy
 msgid "Bundle Symbols"
-msgstr ""
+msgstr "Simboli svežnja"
 
 #: src/sysprof/sysprof-greeter.ui:576
 msgid "Make recording shareable by symbolizing stack traces after recording"
-msgstr ""
+msgstr "Omogoči souporabo posnetka s simboliziranjem sledi sklada po beleženju"
 
 #: src/sysprof/sysprof-greeter.ui:609
 msgid "_Open File…"
@@ -1065,19 +1101,19 @@ msgstr "Domena"
 
 #: src/sysprof/sysprof-marks-section.ui:4
 msgid "Marks"
-msgstr ""
+msgstr "Oznake"
 
 #: src/sysprof/sysprof-marks-section.ui:78
 msgid "Mark Chart"
-msgstr ""
+msgstr "Označi grafikon"
 
 #: src/sysprof/sysprof-marks-section.ui:92
 msgid "Mark Table"
-msgstr ""
+msgstr "Označi tabelo"
 
 #: src/sysprof/sysprof-marks-section.ui:105
 msgid "Mark Waterfall"
-msgstr ""
+msgstr "Označi slap"
 
 #: src/sysprof/sysprof-marks-section.ui:212
 msgid "Summary"
@@ -1145,7 +1181,7 @@ msgstr "Dodelitve pomnilnika"
 #: src/sysprof/sysprof-memory-section.ui:29
 #: src/sysprof/sysprof-samples-section.ui:29
 msgid "Stack Traces"
-msgstr ""
+msgstr "Sledi sklada"
 
 #: src/sysprof/sysprof-memory-section.ui:88
 msgid "Allocations"
@@ -1159,7 +1195,7 @@ msgstr "Utekanja"
 #: src/sysprof/sysprof-samples-section.ui:207
 #: src/sysprof/sysprof-traceables-utility.ui:162
 msgid "Stack Trace"
-msgstr ""
+msgstr "Sledenje sklada"
 
 #: src/sysprof/sysprof-metadata-section.ui:4
 msgid "Metadata"
@@ -1171,7 +1207,7 @@ msgstr "Ključ"
 
 #: src/sysprof/sysprof-process-dialog.ui:35
 msgid "Address Layout"
-msgstr ""
+msgstr "Postavitev naslova"
 
 #: src/sysprof/sysprof-process-dialog.ui:97
 msgid "Start Address"
@@ -1202,8 +1238,9 @@ msgid "Mount Point"
 msgstr "Priklopna točka"
 
 #: src/sysprof/sysprof-process-dialog.ui:418
+#, fuzzy
 msgid "Mount Source"
-msgstr ""
+msgstr "Priklopi vir"
 
 #: src/sysprof/sysprof-process-dialog.ui:452
 msgid "Root"
@@ -1257,6 +1294,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Sysprof ni uspel zabeležiti.\n"
+"\n"
+"%s"
 
 #: src/sysprof/sysprof-recording-pad.ui:69
 msgid "Stop Recording"
@@ -1271,8 +1311,9 @@ msgid "Callgraph"
 msgstr "Grafikon klicev"
 
 #: src/sysprof/sysprof-samples-section.ui:172 src/sysprof/sysprof-window.ui:450
+#, fuzzy
 msgid "Flamegraph"
-msgstr ""
+msgstr "Plamenski graf"
 
 #: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:154
 msgid "Seek Backward"
@@ -1338,6 +1379,10 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Dokumenta ni bilo mogoče naložiti. Preverite, ali imate pravilno datoteko za "
+"zajem.\n"
+"\n"
+"%s"
 
 #: src/sysprof/sysprof-window.ui:144
 msgid "Toggle Left Panel"
@@ -1380,8 +1425,9 @@ msgid "_Quit"
 msgstr "_Izhod"
 
 #: src/sysprof/sysprof-window.ui:421
+#, fuzzy
 msgid "Categorize Frames"
-msgstr ""
+msgstr "Kategoriziraj okvirje"
 
 #: src/sysprof/sysprof-window.ui:425
 msgid "Hide System Libraries"
@@ -1409,5 +1455,6 @@ msgstr "Združi podobne procese"
 
 #. translators: Left Heavy means to sort larger (heavier) stack frames before others, starting from the left
 #: src/sysprof/sysprof-window.ui:453
+#, fuzzy
 msgid "Left Heavy"
-msgstr ""
+msgstr "Levo težko"

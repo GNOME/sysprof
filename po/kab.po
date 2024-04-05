@@ -1,0 +1,1426 @@
+# Kabyle translation for sysprof.
+# Copyright (C) 2024 sysprof's COPYRIGHT HOLDER
+# This file is distributed under the same license as the sysprof package.
+# Rachida SACI <rgebbid@gmail.com>, 2024.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sysprof master\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
+"POT-Creation-Date: 2024-03-31 11:09+0000\n"
+"PO-Revision-Date: 2024-04-05 21:37+0200\n"
+"Last-Translator: sa\n"
+"Language-Team: Kabyle <kab@li.org>\n"
+"Language: kab\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: data/org.gnome.Sysprof.appdata.xml.in.in:6
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
+#: src/sysprof/sysprof-application.c:237
+#: src/sysprof/sysprof-recording-pad.ui:18 src/sysprof/sysprof-window.c:243
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#: data/org.gnome.Sysprof.appdata.xml.in.in:7
+msgid "Profile an application or entire system"
+msgstr "Tameɣna n usnas neɣ n ungraw ummid"
+
+#. developer_name tag deprecated with Appstream 1.0
+#: data/org.gnome.Sysprof.appdata.xml.in.in:11
+msgid "The GNOME Project"
+msgstr "Asenfar n GNOME"
+
+#: data/org.gnome.Sysprof.appdata.xml.in.in:17
+msgid ""
+"Sysprof allows you to profile applications to aid in debugging and "
+"optimization."
+msgstr "Sysprof yessirig i tmeɣna n yisnasen i usifses n useɣti akked usekkey."
+
+#: data/org.gnome.Sysprof.desktop.in.in:5 src/sysprof/sysprof-greeter.ui:89
+msgid "Profiler"
+msgstr "Amaɣnay"
+
+#: data/org.gnome.Sysprof.desktop.in.in:6
+msgid "Profile an application or entire system."
+msgstr "Tameɣna n usnas neɣ n ungraw ummid."
+
+#: src/libsysprof/sysprof-category-summary.c:136
+msgid "Uncategorized"
+msgstr "War-taggayt"
+
+#: src/libsysprof/sysprof-category-summary.c:139
+msgid "Accessibility"
+msgstr "Tanekcumt"
+
+#: src/libsysprof/sysprof-category-summary.c:142
+msgid "Actions"
+msgstr "Tigawin"
+
+#: src/libsysprof/sysprof-category-summary.c:145
+msgid "Crash Handler"
+msgstr "Asefrak n truẓi"
+
+#: src/libsysprof/sysprof-category-summary.c:148
+msgid "Context Switches"
+msgstr "Isenfalen n usatel"
+
+#: src/libsysprof/sysprof-category-summary.c:151
+msgid "CSS"
+msgstr "CSS"
+
+#: src/libsysprof/sysprof-category-summary.c:154
+#: src/sysprof/sysprof-greeter.ui:433 src/sysprof/sysprof-window.ui:317
+msgid "Graphics"
+msgstr "Asedlef"
+
+#: src/libsysprof/sysprof-category-summary.c:157
+msgid "Icons"
+msgstr "Tignitin"
+
+#: src/libsysprof/sysprof-category-summary.c:160
+msgid "Input"
+msgstr "Anekcum"
+
+#: src/libsysprof/sysprof-category-summary.c:163
+msgid "IO"
+msgstr "IO"
+
+#: src/libsysprof/sysprof-category-summary.c:166
+msgid "IPC"
+msgstr "IPC"
+
+#: src/libsysprof/sysprof-category-summary.c:169
+msgid "JavaScript"
+msgstr "JavaScript"
+
+#: src/libsysprof/sysprof-category-summary.c:172
+msgid "Kernel"
+msgstr "Kernel"
+
+#: src/libsysprof/sysprof-category-summary.c:175
+msgid "Layout"
+msgstr "Asettef"
+
+#: src/libsysprof/sysprof-category-summary.c:178
+msgid "Locking"
+msgstr "Amdal"
+
+#: src/libsysprof/sysprof-category-summary.c:181
+msgid "Main Loop"
+msgstr "Taneddict tagejdant"
+
+#: src/libsysprof/sysprof-category-summary.c:184
+msgid "Memory"
+msgstr "Takatut"
+
+#: src/libsysprof/sysprof-category-summary.c:187
+msgid "Paint"
+msgstr "Paint"
+
+#: src/libsysprof/sysprof-category-summary.c:190
+msgid "Type System"
+msgstr "Anagraw n tira"
+
+#: src/libsysprof/sysprof-category-summary.c:193
+msgid "Unwindable"
+msgstr "Ur ttwabḍan ara"
+
+#: src/libsysprof/sysprof-category-summary.c:196
+msgid "Windowing"
+msgstr "Asexdem n yisfuyla"
+
+#: src/libsysprof/sysprof-document-allocation.c:151
+msgid "Allocation"
+msgstr "Aḥerri"
+
+#: src/libsysprof/sysprof-document.c:570
+msgid "Unknown Process"
+msgstr "Akal arussin"
+
+#: src/libsysprof/sysprof-document.c:1251
+#: src/libsysprof/sysprof-document.c:1287
+msgid "Indexing capture data frames"
+msgstr "Asmiter n yikataren n yisefka n tuṭṭfiwin n ugdil"
+
+#: src/libsysprof/sysprof-document.c:1473
+msgid "Discovering file system mounts"
+msgstr "Asnirem n yiserkaben n unagraw n yifuyla"
+
+#: src/libsysprof/sysprof-document.c:1476
+msgid "Discovering process mount namespaces"
+msgstr "Asnirem n tallunin n yismawen n yiserkaben n ukala"
+
+#: src/libsysprof/sysprof-document.c:1479
+msgid "Analyzing process address layouts"
+msgstr "Aslaḍ n tneɣrufin n tansiwin n ukala"
+
+#: src/libsysprof/sysprof-document.c:1482
+msgid "Analyzing process command line"
+msgstr "Aslaḍ n yizirig n tiludna n ukala"
+
+#: src/libsysprof/sysprof-document.c:1485
+msgid "Analyzing file system overlays"
+msgstr "Aslaḍ n tduliyin n unagraw n yifuyla"
+
+#: src/libsysprof/sysprof-document.c:1488
+msgid "Processing counters"
+msgstr "Asesfer n yimesmiḍanen"
+
+#: src/libsysprof/sysprof-document.c:2476
+#: src/libsysprof/sysprof-document.c:2492
+#, c-format
+msgid "Recording at %X %x"
+msgstr "Asekles ɣer %X %x"
+
+#: src/libsysprof/sysprof-document.c:2478
+#: src/libsysprof/sysprof-document.c:2494
+#, c-format
+msgid "Recording at %s"
+msgstr "Asekles ɣer %s"
+
+#: src/libsysprof/sysprof-document-dbus-message.c:152
+msgid "D-Bus Message"
+msgstr "Izen n D-Bus"
+
+#: src/libsysprof/sysprof-document-frame.c:139
+msgid "Frame"
+msgstr "Akatar"
+
+#: src/libsysprof/sysprof-document-loader.c:435
+msgid "Document loaded"
+msgstr "Isemli yuli-d"
+
+#: src/libsysprof/sysprof-document-loader.c:466
+msgid "Loading failed"
+msgstr "Asali yecceḍ"
+
+#: src/libsysprof/sysprof-document-loader.c:478
+#: src/libsysprof/sysprof-document-symbols.c:217
+msgid "Symbolizing stack traces"
+msgstr "Asezmel n lǧerray n tnebdant"
+
+#: src/libsysprof/sysprof-document-loader.c:547
+msgid "Loading document"
+msgstr "Asali n yisemli"
+
+#: src/libsysprof/sysprof-document-log.c:85
+msgid "Log"
+msgstr "Aɣmis"
+
+#: src/libsysprof/sysprof-document-mark.c:113
+msgid "Mark"
+msgstr "Creḍ"
+
+#: src/libsysprof/sysprof-document-process.c:293
+#, c-format
+msgid "%s [Process %d]"
+msgstr "%s [Akala %d]"
+
+#: src/libsysprof/sysprof-document-process.c:295
+#, c-format
+msgid "Process %d"
+msgstr "Akala %d"
+
+#: src/libsysprof/sysprof-document-sample.c:136
+msgid "Sample"
+msgstr "Amedya"
+
+#: src/libsysprof/sysprof-system-logs.c:171
+msgid "System Logs"
+msgstr "Iɣmisen n unagraw"
+
+#: src/libsysprof/sysprof-system-logs.c:172
+msgid "Recording system logs is not supported on your platform."
+msgstr "Asekles n yiɣmisen n unagraw ur yettwasefrak ara ɣef tɣerɣert-ik."
+
+#: src/libsysprof/sysprof-tracer.c:65
+msgid "Tracer"
+msgstr "Asunaɣ"
+
+#: src/libsysprof/sysprof-tracer.c:66
+msgid ""
+"Tracing requires spawning a program compiled with ‘-finstrument-functions’. "
+"Tracing will not be available."
+msgstr ""
+"Asuneɣ yesra asnulfu n wahil i d-yettwasefsun s ‘-finstrument-functions’. "
+"Asuneɣ ur yettili ara."
+
+#: src/sysprof-cli/sysprof-cli.c:112
+msgid "--merge requires at least 2 filename arguments"
+msgstr "--merge yesra ma drus 2 yifukal n yismawen n ufaylu"
+
+#: src/sysprof-cli/sysprof-cli.c:307
+msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
+msgstr "Sens taẓẓayt n CPU lawan n tmeɣna n [Asefruri n --power-profile]"
+
+#: src/sysprof-cli/sysprof-cli.c:308
+msgid "Make sysprof specific to a task [Deprecated]"
+msgstr "Err sysprof d uzzig i temsekrit [Yefruri]"
+
+#: src/sysprof-cli/sysprof-cli.c:308 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof/sysprof-logs-section.ui:179
+#: src/sysprof/sysprof-processes-section.ui:282
+#: src/sysprof/sysprof-traceables-utility.ui:52
+msgid "PID"
+msgstr "PID"
+
+#: src/sysprof-cli/sysprof-cli.c:309
+msgid "Run a command and profile the process"
+msgstr "Selkem taladna syen sebded amaɣnu n ukala"
+
+#: src/sysprof-cli/sysprof-cli.c:309
+msgid "COMMAND"
+msgstr "COMMAND"
+
+#: src/sysprof-cli/sysprof-cli.c:310
+msgid ""
+"Set environment variable for spawned process. Can be used multiple times."
+msgstr ""
+"Sbadu tamattayt n twennaḍt i ukala i yettwarnan. Yezmer ad yettwaseqdac "
+"acḥal n tikkal."
+
+#: src/sysprof-cli/sysprof-cli.c:310
+msgid "VAR=VALUE"
+msgstr "VAR=VALUE"
+
+#: src/sysprof-cli/sysprof-cli.c:311
+msgid "Force overwrite the capture file"
+msgstr "Ḥettem taruẓi n ufaylu n tuṭṭfa"
+
+#: src/sysprof-cli/sysprof-cli.c:312
+msgid "Disable recording of battery statistics"
+msgstr "Sens asekles n tdaddanin n uẓru"
+
+#: src/sysprof-cli/sysprof-cli.c:313
+msgid "Disable recording of CPU statistics"
+msgstr "Sens asekles n tdaddanin n COU"
+
+#: src/sysprof-cli/sysprof-cli.c:314
+msgid "Disable recording of Disk statistics"
+msgstr "Sens asekles n tdaddanin n uḍebsi"
+
+#: src/sysprof-cli/sysprof-cli.c:315
+msgid "Do not record stacktraces using Linux perf"
+msgstr "Ur sseklas ra lǧerrat n tnebdant s useqdec n Linux perf"
+
+#: src/sysprof-cli/sysprof-cli.c:316
+msgid "Do not append symbol name information from local machine"
+msgstr ""
+"Ur rennu ara talɣut ɣef yismawen n yizamulen i d-yusan seg tmacint tadigant"
+
+#: src/sysprof-cli/sysprof-cli.c:317
+msgid "Disable recording of memory statistics"
+msgstr "Sens asekles n tdaddanin n tkatut"
+
+#: src/sysprof-cli/sysprof-cli.c:318
+msgid "Disable recording of network statistics"
+msgstr "Sens asekles n tdaddanin n uzeṭṭa"
+
+#: src/sysprof-cli/sysprof-cli.c:319
+msgid "Set SYSPROF_TRACE_FD environment for subprocess"
+msgstr "Sbadu tawennaḍt SYSPROF_TRACE_FD i ukla arnaw"
+
+#: src/sysprof-cli/sysprof-cli.c:320
+msgid "Track when processes are scheduled"
+msgstr "Lkem mi ara ikalayen ttusɣiwsen"
+
+#: src/sysprof-cli/sysprof-cli.c:321
+msgid "Profile the D-Bus session bus"
+msgstr "Amaɣnu n uzrug n tɣimit D-Bus"
+
+#: src/sysprof-cli/sysprof-cli.c:322
+msgid "Profile the D-Bus system bus"
+msgstr "Amaɣnu n uzrug n unagraw D-Bus"
+
+#: src/sysprof-cli/sysprof-cli.c:323
+msgid "Set GJS_TRACE_FD environment to trace GJS processes"
+msgstr "Sbadu tawennaḍt GJS_TRACE_FD i usuneɣ n ukala GJS"
+
+#: src/sysprof-cli/sysprof-cli.c:324
+msgid "Set GTK_TRACE_FD environment to trace a GTK application"
+msgstr "Sbadu tawennaḍt GTK_TRACE_FD i usuneɣ n usnas GTK"
+
+#: src/sysprof-cli/sysprof-cli.c:325
+msgid "Include RAPL energy statistics"
+msgstr "Seddu tidaddanin n tezmert RAPL"
+
+#: src/sysprof-cli/sysprof-cli.c:326
+msgid "Profile memory allocations and frees"
+msgstr "Aḥerri d uslelli n tkatut n umaɣnu"
+
+#: src/sysprof-cli/sysprof-cli.c:327
+msgid "Connect to org.gnome.Shell for profiler statistics"
+msgstr "Qqen ɣer org.gnome.Shell i tdaddanin n umaɣnay"
+
+#: src/sysprof-cli/sysprof-cli.c:328
+msgid "Track performance of the applications main loop"
+msgstr "Ḍfer tamellit n tneddict tagejdant n usnas"
+
+#: src/sysprof-cli/sysprof-cli.c:330
+msgid "Merge all provided *.syscap files and write to stdout"
+msgstr "Sdukkel akk ifuyla i d-yekkan seg *.syscap syen aru ɣer stdout"
+
+#: src/sysprof-cli/sysprof-cli.c:331
+msgid "Print the sysprof-cli version and exit"
+msgstr "Siggez lqem n sysprof-cli syen ffeɣ"
+
+#: src/sysprof-cli/sysprof-cli.c:332
+msgid "The size of the buffer in pages (1 = 1 page)"
+msgstr "Teɣzi n tkatut tafellayt deg yisebtar (1 = 1 usebter)"
+
+#: src/sysprof-cli/sysprof-cli.c:333
+msgid "Additional D-Bus address to monitor"
+msgstr "Tansa n D-Bus niḍen i usefrak"
+
+#: src/sysprof-cli/sysprof-cli.c:366
+msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
+msgstr "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
+
+#: src/sysprof-cli/sysprof-cli.c:369
+msgid ""
+"\n"
+"Examples:\n"
+"\n"
+"  # Record gtk4-widget-factory using trace-fd to get application provided\n"
+"  # data as well as GTK and GNOME Shell data providers\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"  # Merge multiple syscap files into one\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+msgstr ""
+"\n"
+"Imedyaten:\n"
+"\n"
+"  # Sekles gtk4-widget-factory s useqdec n trace-fd i wawway n yisefka i d-"
+"imudd usnas\n"
+"  # ula d isaǧǧawen data as well as GTK and GNOME Shell data providers\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"  #  # Sdukkel aṭas n yifuyla sysprof deg yiwen\n"
+
+#: src/sysprof-cli/sysprof-cli.c:405
+msgid "Too many arguments were passed to sysprof-cli:"
+msgstr "Aṭas n yifukal uɣalen ɣer sysprof-cli:"
+
+#. Translators: %s is a file name.
+#: src/sysprof-cli/sysprof-cli.c:459
+#, c-format
+msgid "%s exists. Use --force to overwrite\n"
+msgstr "%s yella. Seqdec --force i truẓi\n"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:13
+msgid "Profile the system"
+msgstr "Amaɣnu n unagraw"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:14
+msgid "Authentication is required to profile the system."
+msgstr "Asesteb yettwasra i usbeddi n umaɣnu n unagraw."
+
+#: src/sysprof/gtk/help-overlay.ui:11
+msgctxt "shortcut window"
+msgid "Recording View"
+msgstr "Asekles n teskant"
+
+#: src/sysprof/gtk/help-overlay.ui:14
+msgctxt "shortcut window"
+msgid "Start New Recording"
+msgstr "Bdu asekles amaynut"
+
+#: src/sysprof/gtk/help-overlay.ui:20
+msgctxt "shortcut window"
+msgid "Save As"
+msgstr "Sekles s yisem"
+
+#: src/sysprof/gtk/help-overlay.ui:26
+msgctxt "shortcut window"
+msgid "Toggle Visibility of Main Sidebar"
+msgstr "Sken/Ffer abani n ufeggag adisan agejdn"
+
+#: src/sysprof/gtk/help-overlay.ui:32
+msgctxt "shortcut window"
+msgid "Toggle Visibility of Stack Trace Sidebar"
+msgstr "Sken/Γumm abani n ufeggag adisan n lǧerra n tnebdant"
+
+#: src/sysprof/gtk/help-overlay.ui:40
+msgctxt "shortcut window"
+msgid "General"
+msgstr "Amatu"
+
+#: src/sysprof/gtk/help-overlay.ui:43
+msgctxt "shortcut window"
+msgid "Open Recording"
+msgstr "Ldi asekles"
+
+#: src/sysprof/gtk/help-overlay.ui:49
+msgctxt "shortcut window"
+msgid "Close Window"
+msgstr "Mdel asfaylu"
+
+#: src/sysprof/gtk/help-overlay.ui:56
+msgctxt "shortcut window"
+msgid "Show Help"
+msgstr "Sken-d tallalt"
+
+#: src/sysprof/gtk/help-overlay.ui:62
+msgctxt "shortcut window"
+msgid "Show keyboard shortcuts"
+msgstr "Sken inegzumen n unasiw"
+
+#: src/sysprof/gtk/help-overlay.ui:68
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "Ffeɣ"
+
+#: src/sysprof/gtk/menus.ui:6
+msgid "_Preferences"
+msgstr "Ismenyafen (_P)"
+
+#: src/sysprof/gtk/menus.ui:10 src/sysprof/sysprof-greeter.ui:644
+#: src/sysprof/sysprof-window.ui:398
+msgid "_Keyboard Shortcuts"
+msgstr "Inegzumen n unasiw (_K)"
+
+#: src/sysprof/gtk/menus.ui:14
+msgid "_Help"
+msgstr "Tallelt (_H)"
+
+#: src/sysprof/gtk/menus.ui:18
+msgid "_About Sysprof"
+msgstr "Γef Sysprof (_A)"
+
+#: src/sysprof/sysprof-animation.c:1038
+#, c-format
+msgid "Failed to find property %s in %s"
+msgstr "Tecceḍ tifin n warat %s deg %s"
+
+#: src/sysprof/sysprof-animation.c:1047
+#, c-format
+msgid "Failed to retrieve va_list value: %s"
+msgstr "Tecceḍ tririt n wazal va_list: %s"
+
+#: src/sysprof/sysprof-application.c:37
+msgid "Show Sysprof version and exit"
+msgstr "Sken lqem n Sysprof syen ffeɣ"
+
+#: src/sysprof/sysprof-application.c:170
+msgid "A system profiler"
+msgstr "Amaɣnay n unagraw"
+
+#: src/sysprof/sysprof-application.c:171
+msgid "translator-credits"
+msgstr "amsuqqel-isemdan"
+
+#: src/sysprof/sysprof-callgraph-view.ui:22
+msgid "Functions"
+msgstr "Tiwuriwin"
+
+#: src/sysprof/sysprof-callgraph-view.ui:71
+msgid "Filter Functions"
+msgstr "Tiwuriwin n umaɣnay"
+
+#: src/sysprof/sysprof-callgraph-view.ui:94
+msgid "Callers"
+msgstr "Wid d-yessawalen"
+
+#: src/sysprof/sysprof-callgraph-view.ui:146
+msgid "Descendants"
+msgstr "Urisen"
+
+#: src/sysprof/sysprof-counters-section.ui:26
+#: src/sysprof/sysprof-cpu-section.ui:169
+#: src/sysprof/sysprof-energy-section.ui:177
+#: src/sysprof/sysprof-graphics-section.ui:88
+#: src/sysprof/sysprof-network-section.ui:86
+#: src/sysprof/sysprof-storage-section.ui:86
+msgid "Counters Chart"
+msgstr "Unuɣ n yimsiḍnen"
+
+#: src/sysprof/sysprof-counters-section.ui:40
+#: src/sysprof/sysprof-cpu-section.ui:323
+#: src/sysprof/sysprof-energy-section.ui:312
+#: src/sysprof/sysprof-graphics-section.ui:223
+#: src/sysprof/sysprof-network-section.ui:291
+#: src/sysprof/sysprof-storage-section.ui:291
+msgid "Counters Table"
+msgstr "Tafelwit n yimsiḍnen"
+
+#: src/sysprof/sysprof-cpu-section.ui:378
+#: src/sysprof/sysprof-dbus-section.ui:171
+#: src/sysprof/sysprof-energy-section.ui:348
+#: src/sysprof/sysprof-frame-utility.ui:49
+#: src/sysprof/sysprof-graphics-section.ui:259
+#: src/sysprof/sysprof-logs-section.ui:110
+#: src/sysprof/sysprof-metadata-section.ui:38
+#: src/sysprof/sysprof-network-section.ui:346
+#: src/sysprof/sysprof-process-dialog.ui:64
+#: src/sysprof/sysprof-processes-section.ui:214
+#: src/sysprof/sysprof-storage-section.ui:346
+#: src/sysprof/sysprof-traceables-utility.ui:23
+msgid "Time"
+msgstr "Akud"
+
+#: src/sysprof/sysprof-cpu-section.ui:412
+#: src/sysprof/sysprof-energy-section.ui:382
+#: src/sysprof/sysprof-flame-graph.c:453
+#: src/sysprof/sysprof-graphics-section.ui:293
+#: src/sysprof/sysprof-marks-section.ui:248
+#: src/sysprof/sysprof-network-section.ui:380
+#: src/sysprof/sysprof-storage-section.ui:380
+msgid "Category"
+msgstr "Taggayt"
+
+#: src/sysprof/sysprof-cpu-section.ui:450
+#: src/sysprof/sysprof-energy-section.ui:420
+#: src/sysprof/sysprof-graphics-section.ui:331
+#: src/sysprof/sysprof-marks-section.ui:282
+#: src/sysprof/sysprof-network-section.ui:418
+#: src/sysprof/sysprof-storage-section.ui:418
+msgid "Name"
+msgstr "Isem"
+
+#: src/sysprof/sysprof-cpu-section.ui:488
+#: src/sysprof/sysprof-energy-section.ui:458
+#: src/sysprof/sysprof-graphics-section.ui:369
+#: src/sysprof/sysprof-metadata-section.ui:105
+#: src/sysprof/sysprof-network-section.ui:456
+#: src/sysprof/sysprof-storage-section.ui:456
+msgid "Value"
+msgstr "Azal"
+
+#: src/sysprof/sysprof-cpu-section.ui:529
+msgid "CPU Info"
+msgstr "Talɣut CPU"
+
+#: src/sysprof/sysprof-cpu-section.ui:560
+#: src/sysprof/sysprof-process-dialog.ui:248
+msgid "ID"
+msgstr "Asulay"
+
+#: src/sysprof/sysprof-cpu-section.ui:595
+msgid "Core"
+msgstr "Core"
+
+#: src/sysprof/sysprof-cpu-section.ui:630
+msgid "Model Name"
+msgstr "Isem n timudemt"
+
+#: src/sysprof/sysprof-dbus-section.ui:205
+msgid "Bus"
+msgstr "Azrug"
+
+#: src/sysprof/sysprof-dbus-section.ui:244
+msgid "Serial"
+msgstr "Amazrar"
+
+#: src/sysprof/sysprof-dbus-section.ui:281
+msgid "Reply"
+msgstr "Err"
+
+#: src/sysprof/sysprof-dbus-section.ui:318
+msgid "Flags"
+msgstr "Anayen"
+
+#: src/sysprof/sysprof-dbus-section.ui:347
+#: src/sysprof/sysprof-files-section.ui:122
+#: src/sysprof/sysprof-memory-callgraph-view.ui:68
+msgid "Size"
+msgstr "Teɣzi"
+
+#: src/sysprof/sysprof-dbus-section.ui:383
+#: src/sysprof/sysprof-frame-utility.ui:20
+#: src/sysprof/sysprof-mark-table.ui:221
+msgid "Type"
+msgstr "Anaw"
+
+#: src/sysprof/sysprof-dbus-section.ui:412
+msgid "Sender"
+msgstr "Amazan"
+
+#: src/sysprof/sysprof-dbus-section.ui:446
+msgid "Destination"
+msgstr "Tanila"
+
+#: src/sysprof/sysprof-dbus-section.ui:480
+#: src/sysprof/sysprof-files-section.ui:53
+msgid "Path"
+msgstr "Abrid"
+
+#: src/sysprof/sysprof-dbus-section.ui:514
+msgid "Interface"
+msgstr "Agrudem"
+
+#: src/sysprof/sysprof-dbus-section.ui:548
+msgid "Member"
+msgstr "Aεeggal"
+
+#: src/sysprof/sysprof-dbus-section.ui:582
+msgid "Signature"
+msgstr "Azmul"
+
+#: src/sysprof/sysprof-dbus-section.ui:626
+msgid "Filter Messages"
+msgstr "Sizdeg iznan"
+
+#: src/sysprof/sysprof-dbus-utility.ui:13
+#: src/sysprof/sysprof-logs-section.c:104
+#: src/sysprof/sysprof-logs-section.ui:286
+msgid "Message"
+msgstr "Izen"
+
+#: src/sysprof/sysprof-files-section.ui:4
+msgid "Files"
+msgstr "Ifuyla"
+
+#: src/sysprof/sysprof-files-section.ui:88
+msgid "Compressed"
+msgstr "Yekussem"
+
+#: src/sysprof/sysprof-files-section.ui:165
+msgid "Filter Files"
+msgstr "Sizdeg ifuyla"
+
+#: src/sysprof/sysprof-flame-graph.c:457
+#: src/sysprof/sysprof-process-dialog.ui:177
+msgid "File"
+msgstr "Afaylu"
+
+#: src/sysprof/sysprof-frame-utility.ui:80
+#: src/sysprof/sysprof-logs-section.ui:143
+#: src/sysprof/sysprof-mark-table.ui:116
+#: src/sysprof/sysprof-traceables-utility.ui:81
+#: src/sysprof/sysprof-window.ui:297
+msgid "CPU"
+msgstr "CPU"
+
+#: src/sysprof/sysprof-greeter.c:102
+msgid "Use KEY=VALUE to set an environment variable"
+msgstr "Seqdec KEY=VALUE i usbadu n tmattayt n twennaḍt"
+
+#: src/sysprof/sysprof-greeter.c:108
+msgid "Keys may not start with a number"
+msgstr "Tisura ur zmirent ara ad bdunt s wuṭṭun"
+
+#: src/sysprof/sysprof-greeter.c:118
+msgid "Keys may only contain alpha-numerics or underline."
+msgstr "Tisura zemrent kan ad sεunt isekkilen alpha umḍinen neɣ aderrer."
+
+#: src/sysprof/sysprof-greeter.c:265 src/sysprof/sysprof-window.c:155
+msgid "Must Capture to Local File"
+msgstr "Ilaq tuṭṭfa deg ufaylu adigan"
+
+#: src/sysprof/sysprof-greeter.c:266 src/sysprof/sysprof-window.c:156
+msgid "You must choose a local file to capture using Sysprof"
+msgstr "Ilaq ad tferneḍ afaylu adigan i tuṭṭfa s sueqdec n Sysprof"
+
+#: src/sysprof/sysprof-greeter.c:267 src/sysprof/sysprof-recording-pad.c:115
+#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:718
+msgid "Close"
+msgstr "Mdel"
+
+#: src/sysprof/sysprof-greeter.c:288
+#, c-format
+msgid "System Capture from %s.syscap"
+msgstr "Tuṭṭfa n unagraw seg %s.syscap"
+
+#: src/sysprof/sysprof-greeter.c:292
+msgid "Record to File"
+msgstr "Sekles deg ufaylu"
+
+#: src/sysprof/sysprof-greeter.c:293
+msgid "Record"
+msgstr "Sekles"
+
+#: src/sysprof/sysprof-greeter.c:440
+msgid "No Change"
+msgstr "Ulac isenfal"
+
+#: src/sysprof/sysprof-greeter.c:443
+msgid "Balanced"
+msgstr "Yeεdel"
+
+#: src/sysprof/sysprof-greeter.c:446
+msgid "Power Saver"
+msgstr "Aseklas iǧehden"
+
+#: src/sysprof/sysprof-greeter.c:449
+msgid "Performance"
+msgstr "Atwal"
+
+#: src/sysprof/sysprof-greeter.ui:95
+msgid "Sampling"
+msgstr "Alemmec"
+
+#: src/sysprof/sysprof-greeter.ui:99
+msgid "Sample Native Stacks"
+msgstr "Imedyaten n yikufan n tesrewt"
+
+#: src/sysprof/sysprof-greeter.ui:100
+msgid "Record native stack traces using a sampling profiler"
+msgstr "Sekles lǧerrat n tnebdant tadigant s useqdec n umaɣnay n ulemmec"
+
+#: src/sysprof/sysprof-greeter.ui:116
+msgid "Sample JavaScript Stacks"
+msgstr "Imedyaten n tnebdatin n JavaScript"
+
+#: src/sysprof/sysprof-greeter.ui:117
+msgid "Record JavaScript stack traces using a sampling profiler"
+msgstr "Sekles lǧerrat n tnebdantn JavaScript s useqdec n umaɣnay n ulemmec"
+
+#: src/sysprof/sysprof-greeter.ui:128
+msgid ""
+"Sysprof must launch your application to record JavaScript stacks using GJS."
+msgstr ""
+"Sysprof yezmer ad isenker asnas-ik neɣ ad issekles tinebdatin n JavaScript s "
+"useqdec n GJS."
+
+#: src/sysprof/sysprof-greeter.ui:144
+msgid "Record Scheduler Details"
+msgstr "Sekles talqayt n usɣawas"
+
+#: src/sysprof/sysprof-greeter.ui:145
+msgid "Track when processes are scheduled per CPU"
+msgstr "Lkem mi ara ikalayen ttusɣiwsen s CPU"
+
+#: src/sysprof/sysprof-greeter.ui:158
+msgid "Tracing"
+msgstr "Aḍfar"
+
+#: src/sysprof/sysprof-greeter.ui:162
+msgid "Trace Memory Allocations"
+msgstr "Later n yiḥerriyen n tkatut"
+
+#: src/sysprof/sysprof-greeter.ui:163
+msgid "Record a stack trace when <tt>malloc</tt> or similar functions are used"
+msgstr ""
+"Sekles later n ukufi mi ara yettwaseqdac <tt>malloc</tt> neɣ tiwuriwin i t-"
+"yecban"
+
+#: src/sysprof/sysprof-greeter.ui:174
+msgid "Sysprof must launch your application to record memory allocations."
+msgstr "Sysprof ilaq ad isenker asnas-ik i usekles n yiḥerriyen n tkatut."
+
+#: src/sysprof/sysprof-greeter.ui:192 src/sysprof/sysprof-greeter.ui:197
+msgid "Application"
+msgstr "Asnas"
+
+#: src/sysprof/sysprof-greeter.ui:200
+#: src/sysprof/sysprof-processes-section.ui:316
+msgid "Command Line"
+msgstr "Izirig n inezḍayen"
+
+#: src/sysprof/sysprof-greeter.ui:206
+msgid "Working directory"
+msgstr "Akaram n umahil"
+
+#: src/sysprof/sysprof-greeter.ui:212
+msgid "The application will be run as a subprocess of Sysprof."
+msgstr "Asnas ad yettwaselkem am ukala arnaw n Sysprof."
+
+#: src/sysprof/sysprof-greeter.ui:225
+msgid "Environment"
+msgstr "Tawennaḍt"
+
+#: src/sysprof/sysprof-greeter.ui:229
+msgid "Clear Environment"
+msgstr "Sfeḍ  tamnaḍt"
+
+#: src/sysprof/sysprof-greeter.ui:230
+msgid "Clear the environment before launching application"
+msgstr "Sfeḍ tawennaḍt send asenker n usnas"
+
+#: src/sysprof/sysprof-greeter.ui:256
+msgid "Add _Variable"
+msgstr "Rnu tamattayt (_V)"
+
+#: src/sysprof/sysprof-greeter.ui:262
+msgid "Add Variable"
+msgstr "Rnu tamattayt"
+
+#: src/sysprof/sysprof-greeter.ui:263
+msgid "_Add"
+msgstr "Rnu (_A)"
+
+#: src/sysprof/sysprof-greeter.ui:280 src/sysprof/sysprof-greeter.ui:285
+msgid "Counters"
+msgstr "Imesmiḍanen"
+
+#: src/sysprof/sysprof-greeter.ui:289
+msgid "CPU Usage"
+msgstr "Aseqdec n SPU"
+
+#: src/sysprof/sysprof-greeter.ui:290
+msgid "Record coarse-grained counters about CPU usage and frequency"
+msgstr ""
+"Sekles imesmiḍanen n tεeqqayin tizuranin ɣef useqdec akked usnagar n CPU"
+
+#: src/sysprof/sysprof-greeter.ui:302
+msgid "Memory Usage"
+msgstr "Aseqdec n tkatut"
+
+#: src/sysprof/sysprof-greeter.ui:303
+msgid "Record coarse-grained counters about system memory usage"
+msgstr ""
+"Sekles imesmiḍanen n tεeqqayin tizuranin ɣef useqdec n tkatut n unagraw"
+
+#: src/sysprof/sysprof-greeter.ui:315
+msgid "Disk Usage"
+msgstr "Aseqdec n uḍebsi"
+
+#: src/sysprof/sysprof-greeter.ui:316
+msgid "Record coarse-grained counters about storage throughput"
+msgstr "Sekles imesmiḍanen n tεeqqayin tizuranin ɣef uktum n uḥraz"
+
+#: src/sysprof/sysprof-greeter.ui:328
+msgid "Network Usage"
+msgstr "Aseqdec n uzeṭṭa"
+
+#: src/sysprof/sysprof-greeter.ui:329
+msgid "Record coarse-grained counters about network traffic"
+msgstr "Sekles imesmiḍanen n tεeqqayin tizuranin ɣef usiweḍ n uzeṭṭa"
+
+#: src/sysprof/sysprof-greeter.ui:345
+msgid "Energy Usage"
+msgstr "Aseqdec n tezmert"
+
+#: src/sysprof/sysprof-greeter.ui:346
+msgid "Record coarse-grained counters about energy usage in Watts"
+msgstr ""
+"Sekles imesmiḍanen n tεeqqayin tizuranin ɣef useqdec n tezmert deg Watts"
+
+#: src/sysprof/sysprof-greeter.ui:358
+msgid "Battery Charge"
+msgstr "Aεebbi n uẓru"
+
+#: src/sysprof/sysprof-greeter.ui:359
+msgid "Record coarse-grained counters about battery charge or discharge rates"
+msgstr ""
+"Sekles imesmiḍanen n tεeqqayin tizuranin ɣef yiktumen n uzdam neɣ aɣelluy n "
+"uzdam n uẓru"
+
+#: src/sysprof/sysprof-greeter.ui:377 src/sysprof/sysprof-greeter.ui:382
+#: src/sysprof/sysprof-window.ui:287
+msgid "D-Bus"
+msgstr "D-Bus"
+
+#: src/sysprof/sysprof-greeter.ui:386
+msgid "Record System Bus"
+msgstr "Sekles azrug n unagraw"
+
+#: src/sysprof/sysprof-greeter.ui:387
+msgid "Record messages on the D-Bus system bus"
+msgstr "Sekles iznan ɣef uzrug n unagraw n D-Bus"
+
+#: src/sysprof/sysprof-greeter.ui:403
+msgid "Record Session Bus"
+msgstr "Sekles azrug n tɣimit"
+
+#: src/sysprof/sysprof-greeter.ui:404
+msgid "Record messages on the D-Bus user session bus"
+msgstr "Sekles iznan ɣef uzrug n tɣimit n useqdac n D-Bus"
+
+#: src/sysprof/sysprof-greeter.ui:415
+msgid ""
+"The session bus may contain sensitive information such as keyboard usage and "
+"passwords."
+msgstr ""
+"Azrug n tɣimit yezmer ad yesεu talɣut tamḥulfut am useqdec n unasiw d "
+"wawalen n uεeddi."
+
+#: src/sysprof/sysprof-greeter.ui:438
+msgid "Timings"
+msgstr "Asragen"
+
+#: src/sysprof/sysprof-greeter.ui:442
+msgid "Compositor Frame Timings"
+msgstr "Asragen n ukatar n usuddis"
+
+#: src/sysprof/sysprof-greeter.ui:443
+msgid "Record frame-timing information from the GNOME Shell compositor"
+msgstr "Sekles talɣut n wakud n ukaram seg usuddis n GNOME Shell"
+
+#: src/sysprof/sysprof-greeter.ui:454
+msgid ""
+"Applications launched by Sysprof will automatically collect GTK frame timing "
+"information."
+msgstr ""
+"Isnasen yettwasenkaren s Sysprof ad d-leqḍen s wudem awurman talɣut n wakud "
+"n ukatar GTK."
+
+#: src/sysprof/sysprof-greeter.ui:494
+msgid "Devices"
+msgstr "Ibenkan"
+
+#: src/sysprof/sysprof-greeter.ui:498
+msgid "Include GPU Information"
+msgstr "Seddu talɣut GPU"
+
+#: src/sysprof/sysprof-greeter.ui:499
+msgid "Records information about graphics hardware and drivers"
+msgstr "Yesseklas talɣut ɣef warrum n wudlifen akked yinuḍafen"
+
+#: src/sysprof/sysprof-greeter.ui:517
+msgid "System"
+msgstr "Anagraw"
+
+#: src/sysprof/sysprof-greeter.ui:522
+msgid "Power Profile"
+msgstr "Amaɣnu n tnezmert"
+
+#: src/sysprof/sysprof-greeter.ui:525
+msgid "Record with Power Profile"
+msgstr "Sekles s umaɣnu n tnezmert"
+
+#: src/sysprof/sysprof-greeter.ui:526
+msgid "Switch to power profile while recording"
+msgstr "Uɣal ɣer umaɣnu n tnezmert mi ara tesseklaseḍ"
+
+#: src/sysprof/sysprof-greeter.ui:536
+msgid "Details"
+msgstr "Talqayt"
+
+#: src/sysprof/sysprof-greeter.ui:540
+msgid "Record System Log"
+msgstr "Sekles aɣmis n unagraw"
+
+#: src/sysprof/sysprof-greeter.ui:541
+msgid "Watch the system log for new messages and record them"
+msgstr "Ԑass aɣmis n unagraw i unadi n yiznan imaynuten akked usekles-nsen"
+
+#: src/sysprof/sysprof-greeter.ui:557
+msgid "Include Hardware Information"
+msgstr "Seddu talɣut n warrum"
+
+#: src/sysprof/sysprof-greeter.ui:558
+msgid "Records information about PCI and USB devices"
+msgstr "Isseklas talɣut ɣef yibenkan PCI akked USB"
+
+#: src/sysprof/sysprof-greeter.ui:571
+msgid "Symbols"
+msgstr "Izamulen"
+
+#: src/sysprof/sysprof-greeter.ui:575
+msgid "Bundle Symbols"
+msgstr "Izamulen n tewlellut"
+
+#: src/sysprof/sysprof-greeter.ui:576
+msgid "Make recording shareable by symbolizing stack traces after recording"
+msgstr "Err asekles yettwabḍay s usezmel n lǧerrat n tnebdant seld asekles"
+
+#: src/sysprof/sysprof-greeter.ui:609
+msgid "_Open File…"
+msgstr "Ldi afaylu… (O)"
+
+#: src/sysprof/sysprof-greeter.ui:616
+msgid "Record to _File…"
+msgstr "Sekles deg ufaylu… (_F)"
+
+#: src/sysprof/sysprof-greeter.ui:623
+msgid "Record to _Memory"
+msgstr "Sekles ɣer tkatut (_M)"
+
+#: src/sysprof/sysprof-greeter.ui:638 src/sysprof/sysprof-window.ui:388
+msgid "Open Recording…"
+msgstr "Ldi asekles…"
+
+#: src/sysprof/sysprof-greeter.ui:648 src/sysprof/sysprof-window.ui:402
+msgid "Help"
+msgstr "Tallalt"
+
+#: src/sysprof/sysprof-greeter.ui:652 src/sysprof/sysprof-window.ui:406
+msgid "About Sysprof"
+msgstr "Γef Sysprof"
+
+#: src/sysprof/sysprof-greeter.ui:658
+msgid "Quit"
+msgstr "Ffeɣ"
+
+#: src/sysprof/sysprof-logs-section.c:95
+msgid "Critical"
+msgstr "Uzɣin"
+
+#: src/sysprof/sysprof-logs-section.c:98
+msgid "Warning"
+msgstr "Ɣur-k"
+
+#: src/sysprof/sysprof-logs-section.c:101
+msgid "Debug"
+msgstr "Aseɣti"
+
+#: src/sysprof/sysprof-logs-section.c:107
+msgid "Info"
+msgstr "Talɣut"
+
+#: src/sysprof/sysprof-logs-section.c:110
+msgid "Error"
+msgstr "Tuccḍa"
+
+#: src/sysprof/sysprof-logs-section.ui:4 src/sysprof/sysprof-logs-section.ui:30
+msgid "Logs"
+msgstr "Iɣmisen"
+
+#: src/sysprof/sysprof-logs-section.ui:215
+msgid "Severity"
+msgstr "Imihi"
+
+#: src/sysprof/sysprof-logs-section.ui:251
+msgid "Domain"
+msgstr "Taɣult"
+
+#: src/sysprof/sysprof-marks-section.ui:4
+msgid "Marks"
+msgstr "Ticraḍ"
+
+#: src/sysprof/sysprof-marks-section.ui:78
+msgid "Mark Chart"
+msgstr "Unuɣ n tecreḍt"
+
+#: src/sysprof/sysprof-marks-section.ui:92
+msgid "Mark Table"
+msgstr "Tafelwit n tecreḍt"
+
+#: src/sysprof/sysprof-marks-section.ui:105
+msgid "Mark Waterfall"
+msgstr "Ticreḍt Waterfall"
+
+#: src/sysprof/sysprof-marks-section.ui:212
+msgid "Summary"
+msgstr "Agzul"
+
+#: src/sysprof/sysprof-marks-section.ui:317
+msgid "Minimum"
+msgstr "Adda"
+
+#: src/sysprof/sysprof-marks-section.ui:351
+msgid "Maximum"
+msgstr "Afellay"
+
+#: src/sysprof/sysprof-marks-section.ui:385
+msgid "Average"
+msgstr "Alemmas"
+
+#: src/sysprof/sysprof-marks-section.ui:419
+msgid "Median"
+msgstr "Alemmas"
+
+#: src/sysprof/sysprof-mark-table.ui:47
+msgid "Start"
+msgstr "Bdu"
+
+#: src/sysprof/sysprof-mark-table.ui:81
+#: src/sysprof/sysprof-processes-section.ui:248
+msgid "Duration"
+msgstr "Tanzagt"
+
+#: src/sysprof/sysprof-mark-table.ui:151
+msgid "Process"
+msgstr "Asesfer"
+
+#: src/sysprof/sysprof-mark-table.ui:186
+msgid "Group"
+msgstr "Agraw"
+
+#: src/sysprof/sysprof-mark-table.ui:256
+msgid "Description"
+msgstr "Aglam"
+
+#: src/sysprof/sysprof-memory-callgraph-view.ui:8
+#: src/sysprof/sysprof-memory-callgraph-view.ui:105
+#: src/sysprof/sysprof-memory-callgraph-view.ui:172
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:8
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:105
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:172
+msgid "Self"
+msgstr "Iman"
+
+#: src/sysprof/sysprof-memory-callgraph-view.ui:38
+#: src/sysprof/sysprof-memory-callgraph-view.ui:135
+#: src/sysprof/sysprof-memory-callgraph-view.ui:202
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:38
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:135
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:202
+msgid "Total"
+msgstr "Asemday"
+
+#: src/sysprof/sysprof-memory-section.ui:4
+msgid "Memory Allocations"
+msgstr "Iḥerriyen n tkatut"
+
+#: src/sysprof/sysprof-memory-section.ui:29
+#: src/sysprof/sysprof-samples-section.ui:29
+msgid "Stack Traces"
+msgstr "Lǧerrat n tnebdant"
+
+#: src/sysprof/sysprof-memory-section.ui:88
+msgid "Allocations"
+msgstr "Iḥerriyen"
+
+#: src/sysprof/sysprof-memory-section.ui:144
+msgid "Leaks"
+msgstr "Tuffɣiwin"
+
+#: src/sysprof/sysprof-memory-section.ui:212
+#: src/sysprof/sysprof-samples-section.ui:207
+#: src/sysprof/sysprof-traceables-utility.ui:162
+msgid "Stack Trace"
+msgstr "Lǧerra n tnebdant"
+
+#: src/sysprof/sysprof-metadata-section.ui:4
+msgid "Metadata"
+msgstr "Iɣefisefka"
+
+#: src/sysprof/sysprof-metadata-section.ui:71
+msgid "Key"
+msgstr "Tasarut"
+
+#: src/sysprof/sysprof-process-dialog.ui:35
+msgid "Address Layout"
+msgstr "Taneɣruft n tansa"
+
+#: src/sysprof/sysprof-process-dialog.ui:97
+msgid "Start Address"
+msgstr "Tansa n tazwara"
+
+#: src/sysprof/sysprof-process-dialog.ui:137
+msgid "End Address"
+msgstr "Tansa n taggara"
+
+#: src/sysprof/sysprof-process-dialog.ui:219
+msgid "Mounts"
+msgstr "Iserkaben"
+
+#: src/sysprof/sysprof-process-dialog.ui:282
+msgid "Parent"
+msgstr "Amarraw"
+
+#: src/sysprof/sysprof-process-dialog.ui:316
+msgid "Major"
+msgstr "Ameqqran"
+
+#: src/sysprof/sysprof-process-dialog.ui:350
+msgid "Minor"
+msgstr "Amecṭuḥ"
+
+#: src/sysprof/sysprof-process-dialog.ui:384
+msgid "Mount Point"
+msgstr "Agaz n userkeb"
+
+#: src/sysprof/sysprof-process-dialog.ui:418
+msgid "Mount Source"
+msgstr "Aɣbalu n userkeb"
+
+#: src/sysprof/sysprof-process-dialog.ui:452
+msgid "Root"
+msgstr "Abrid"
+
+#: src/sysprof/sysprof-process-dialog.ui:486
+msgid "Filesystem"
+msgstr "Anagraw n yifuyla"
+
+#: src/sysprof/sysprof-process-dialog.ui:520
+msgid "Options"
+msgstr "Tinefrunin"
+
+#: src/sysprof/sysprof-process-dialog.ui:562
+msgid "Threads"
+msgstr "Asqerdec"
+
+#: src/sysprof/sysprof-process-dialog.ui:591
+msgid "Thread ID"
+msgstr "Asulay n usqerdec"
+
+#: src/sysprof/sysprof-process-dialog.ui:625
+msgid "Main Thread"
+msgstr "Asqerdec agejdan"
+
+#: src/sysprof/sysprof-processes-section.ui:4
+msgid "Processes"
+msgstr "Akala"
+
+#: src/sysprof/sysprof-processes-section.ui:73
+msgid "Process Chart"
+msgstr "Udlif n ukala"
+
+#: src/sysprof/sysprof-processes-section.ui:173
+msgid "Process Table"
+msgstr "Tafelwit n ukala"
+
+#. translators: this expands to the number of events recorded by the profiler as an indicator of progress
+#: src/sysprof/sysprof-recording-pad.c:56
+msgid "%"
+msgstr "%"
+
+#: src/sysprof/sysprof-recording-pad.c:111
+msgid "Recording Failed"
+msgstr "Asekles yecceḍ"
+
+#: src/sysprof/sysprof-recording-pad.c:113
+#, c-format
+msgid ""
+"Sysprof failed to record.\n"
+"\n"
+"%s"
+msgstr ""
+"Sysprof yecceḍ deg usekles.\n"
+"\n"
+"%s"
+
+#: src/sysprof/sysprof-recording-pad.ui:69
+msgid "Stop Recording"
+msgstr "Seḥbes asekles"
+
+#: src/sysprof/sysprof-samples-section.ui:4
+msgid "Time Profiler"
+msgstr "Amaɣnay n wakud"
+
+#: src/sysprof/sysprof-samples-section.ui:89 src/sysprof/sysprof-window.ui:419
+msgid "Callgraph"
+msgstr "Callgraph"
+
+#: src/sysprof/sysprof-samples-section.ui:172 src/sysprof/sysprof-window.ui:450
+msgid "Flamegraph"
+msgstr "Flamegraph"
+
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:154
+msgid "Seek Backward"
+msgstr "Ddu ɣer deffir"
+
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:164
+msgid "Zoom Out"
+msgstr "Semẓi"
+
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:174
+msgid "Reset Zoom"
+msgstr "Wennez asemɣer/asemẓi"
+
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:184
+msgid "Zoom In"
+msgstr "Semɣer"
+
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:194
+msgid "Seek Forward"
+msgstr "Ddu ɣer sdat"
+
+#: src/sysprof/sysprof-traceables-utility.ui:109
+msgid "Depth"
+msgstr "Talqayt"
+
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:68
+msgid "Hits"
+msgstr "Amsiḍan"
+
+#: src/sysprof/sysprof-window.c:171
+msgid "Open Recording"
+msgstr "Ldi asekles"
+
+#: src/sysprof/sysprof-window.c:172
+msgid "Open"
+msgstr "Ldi"
+
+#: src/sysprof/sysprof-window.c:176
+msgid "Sysprof Capture (*.syscap)"
+msgstr "Tuṭṭfa n Sysprof (*.syscap)"
+
+#: src/sysprof/sysprof-window.c:468
+msgid "Save to File"
+msgstr "Sekles deg ufaylu"
+
+#: src/sysprof/sysprof-window.c:469
+msgid "Save"
+msgstr "Sekles"
+
+#: src/sysprof/sysprof-window.c:638
+msgid "Loading..."
+msgstr "Asali…"
+
+#: src/sysprof/sysprof-window.c:714
+msgid "Invalid Document"
+msgstr "Isemli arameɣtu"
+
+#: src/sysprof/sysprof-window.c:716
+#, c-format
+msgid ""
+"The document could not be loaded. Please check that you have the correct "
+"capture file.\n"
+"\n"
+"%s"
+msgstr ""
+"Isemli ur yezmir ara ad yettwasmiren. Ttxil-k senqed ma tesεiḍ afaylu n "
+"tuṭṭfa ameɣtu.\n"
+"\n"
+"%s"
+
+#: src/sysprof/sysprof-window.ui:144
+msgid "Toggle Left Panel"
+msgstr "Uɣal ɣer ugalis n zelmeḍ"
+
+#: src/sysprof/sysprof-window.ui:209
+msgid "Main Menu"
+msgstr "Umuɣ agejdan"
+
+#: src/sysprof/sysprof-window.ui:216
+msgid "View Options"
+msgstr "Wali tixtiṛiyin"
+
+#: src/sysprof/sysprof-window.ui:222
+msgid "Toggle Right Panel"
+msgstr "Uɣal ɣer ugalis n yeffus"
+
+#: src/sysprof/sysprof-window.ui:307
+msgid "Energy"
+msgstr "Tazmert"
+
+#: src/sysprof/sysprof-window.ui:327
+msgid "Network"
+msgstr "Azeṭṭa"
+
+#: src/sysprof/sysprof-window.ui:337
+msgid "Storage"
+msgstr "Asekles"
+
+#: src/sysprof/sysprof-window.ui:384
+msgid "_Record Again…"
+msgstr "Sekles i tikkelt tayeḍ… (_R)"
+
+#: src/sysprof/sysprof-window.ui:392
+msgid "Save As…"
+msgstr "Sekles am…"
+
+#: src/sysprof/sysprof-window.ui:412
+msgid "_Quit"
+msgstr "Ffeɣ (_Q)"
+
+#: src/sysprof/sysprof-window.ui:421
+msgid "Categorize Frames"
+msgstr "Sesmel ikataren"
+
+#: src/sysprof/sysprof-window.ui:425
+msgid "Hide System Libraries"
+msgstr "Ffer tikarḍiwin n unagraw"
+
+#: src/sysprof/sysprof-window.ui:429
+msgid "Include Threads"
+msgstr "Seddu asqerdec"
+
+#: src/sysprof/sysprof-window.ui:433
+msgid "Bottom Up"
+msgstr "Seg ukessar ar usawen"
+
+#: src/sysprof/sysprof-window.ui:437
+msgid "Ignore Kernel Processes"
+msgstr "Zgel ikalayen n yiɣes"
+
+#: src/sysprof/sysprof-window.ui:441
+msgid "Ignore Process 0"
+msgstr "Zgel akala 0"
+
+#: src/sysprof/sysprof-window.ui:445
+msgid "Merge Similar Processes"
+msgstr "Sdukkel ikalayen yemcuban"
+
+#. translators: Left Heavy means to sort larger (heavier) stack frames before others, starting from the left
+#: src/sysprof/sysprof-window.ui:453
+msgid "Left Heavy"
+msgstr "Taẓayt ɣer zelmeḍ"

@@ -6,9 +6,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof 45\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2024-01-22 22:18+0000\n"
-"PO-Revision-Date: 2024-01-24 17:03+0700\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
+"POT-Creation-Date: 2024-03-31 15:11+0000\n"
+"PO-Revision-Date: 2024-04-24 15:06+0700\n"
 "Last-Translator: Andika Triwidada <andika@gmail.com>\n"
 "Language-Team: Indonesian <gnome-l10n-id@googlegroups.com>\n"
 "Language: id\n"
@@ -120,21 +120,19 @@ msgstr "Memori"
 
 #: src/libsysprof/sysprof-category-summary.c:187
 msgid "Paint"
-msgstr ""
+msgstr "Cat"
 
 #: src/libsysprof/sysprof-category-summary.c:190
 msgid "Type System"
-msgstr ""
+msgstr "Tipe Sistem"
 
 #: src/libsysprof/sysprof-category-summary.c:193
 msgid "Unwindable"
-msgstr ""
+msgstr "Unwindable"
 
 #: src/libsysprof/sysprof-category-summary.c:196
-#, fuzzy
-#| msgid "New Window"
 msgid "Windowing"
-msgstr "Jendela Baru"
+msgstr "Perjendelaan"
 
 #: src/libsysprof/sysprof-document-allocation.c:151
 msgid "Allocation"
@@ -257,10 +255,10 @@ msgid "--merge requires at least 2 filename arguments"
 msgstr "--merge membutuhkan setidaknya 2 argumen nama berkas"
 
 #: src/sysprof-cli/sysprof-cli.c:306
-#, fuzzy
-#| msgid "Disable CPU throttling while profiling"
 msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
-msgstr "Nonaktifkan pelambatan CPU saat membuat profil"
+msgstr ""
+"Nonaktifkan pelambatan CPU saat membuat profil [Tidak berlaku lagi untuk --"
+"power-profile]"
 
 #: src/sysprof-cli/sysprof-cli.c:307
 msgid "Make sysprof specific to a task [Deprecated]"
@@ -482,7 +480,7 @@ msgstr "Pembuat profil sistem"
 #: src/sysprof/sysprof-application.c:171
 msgid "translator-credits"
 msgstr ""
-"Andika Triwidada <andika@gmail.com>, 2017-2020, 2023.\n"
+"Andika Triwidada <andika@gmail.com>, 2017-2020, 2023, 2024.\n"
 "Kukuh Syafaat <kukuhsyafaat@gnome.org>, 2018-2022."
 
 #: src/sysprof/sysprof-callgraph-view.ui:22
@@ -731,10 +729,8 @@ msgid "Sample Native Stacks"
 msgstr "Cuplik Stack Native"
 
 #: src/sysprof/sysprof-greeter.ui:75
-#, fuzzy
-#| msgid "Do not record stacktraces using Linux perf"
 msgid "Record native stack traces using a sampling profiler"
-msgstr "Jangan rekam jejak stack memakai perf Linux"
+msgstr "Rekam jejak stack native memakai suatu pemrofil pencuplikan"
 
 #: src/sysprof/sysprof-greeter.ui:91
 msgid "Sample JavaScript Stacks"
@@ -826,56 +822,49 @@ msgid "CPU Usage"
 msgstr "Penggunaan CPU"
 
 #: src/sysprof/sysprof-greeter.ui:265
-#, fuzzy
 msgid "Record coarse-grained counters about CPU usage and frequency"
-msgstr "Rekam pencacah berbutir kasar tentang penggunaan dan frekuensi CPU"
+msgstr "Rekam pencacah kasar tentang penggunaan dan frekuensi CPU"
 
 #: src/sysprof/sysprof-greeter.ui:277
 msgid "Memory Usage"
 msgstr "Penggunaan Memori"
 
 #: src/sysprof/sysprof-greeter.ui:278
-#, fuzzy
 msgid "Record coarse-grained counters about system memory usage"
-msgstr "Rekam pencacah berbutir kasar tentang penggunaan memori sistem"
+msgstr "Rekam pencacah kasar tentang penggunaan memori sistem"
 
 #: src/sysprof/sysprof-greeter.ui:290
 msgid "Disk Usage"
 msgstr "Penggunaan Diska"
 
 #: src/sysprof/sysprof-greeter.ui:291
-#, fuzzy
 msgid "Record coarse-grained counters about storage throughput"
-msgstr "Rekam pencacah berbutir kasar tentang throughput penyimpanan"
+msgstr "Rekam pencacah kasar tentang throughput penyimpanan"
 
 #: src/sysprof/sysprof-greeter.ui:303
 msgid "Network Usage"
 msgstr "Penggunaan Jaringan"
 
 #: src/sysprof/sysprof-greeter.ui:304
-#, fuzzy
 msgid "Record coarse-grained counters about network traffic"
-msgstr "Rekam pencacah berbutir kasar tentang lalu lintas jaringan"
+msgstr "Rekam pencacah kasar tentang lalu lintas jaringan"
 
 #: src/sysprof/sysprof-greeter.ui:320
 msgid "Energy Usage"
 msgstr "Penggunaan Energi"
 
 #: src/sysprof/sysprof-greeter.ui:321
-#, fuzzy
 msgid "Record coarse-grained counters about energy usage in Watts"
-msgstr "Rekam pencacah berbutir kasar tentang penggunaan energi dalam Watt"
+msgstr "Rekam pencacah kasar tentang penggunaan energi dalam Watt"
 
 #: src/sysprof/sysprof-greeter.ui:333
 msgid "Battery Charge"
 msgstr "Muatan Baterai"
 
 #: src/sysprof/sysprof-greeter.ui:334
-#, fuzzy
 msgid "Record coarse-grained counters about battery charge or discharge rates"
 msgstr ""
-"Catat pencacah berbutir kasar tentang tingkat pengisian atau pengosongan "
-"baterai"
+"Catat pencacah kasar tentang tingkat pengisian atau pengosongan baterai"
 
 #: src/sysprof/sysprof-greeter.ui:352 src/sysprof/sysprof-greeter.ui:357
 #: src/sysprof/sysprof-window.ui:262
@@ -912,11 +901,11 @@ msgstr "Pewaktuan"
 
 #: src/sysprof/sysprof-greeter.ui:417
 msgid "Compositor Frame Timings"
-msgstr ""
+msgstr "Pewaktuan Bingkai Kompositor"
 
 #: src/sysprof/sysprof-greeter.ui:418
 msgid "Record frame-timing information from the GNOME Shell compositor"
-msgstr ""
+msgstr "Rekam informasi pewaktuan bingkai dari kompositor GNOME Shell"
 
 #: src/sysprof/sysprof-greeter.ui:429
 msgid ""
@@ -944,16 +933,15 @@ msgstr "Sistem"
 
 #: src/sysprof/sysprof-greeter.ui:497
 msgid "Power Profile"
-msgstr "Profil Daya"
+msgstr "Profil Bertenaga"
 
 #: src/sysprof/sysprof-greeter.ui:500
-#, fuzzy
 msgid "Record with Power Profile"
-msgstr "Rekam dengan Profil Daya"
+msgstr "Rekam dengan Profil Bertenaga"
 
 #: src/sysprof/sysprof-greeter.ui:501
 msgid "Switch to power profile while recording"
-msgstr ""
+msgstr "Beralih ke profil bertenaga ketika merekam"
 
 #: src/sysprof/sysprof-greeter.ui:511
 msgid "Details"
@@ -981,11 +969,13 @@ msgstr "Simbol"
 
 #: src/sysprof/sysprof-greeter.ui:550
 msgid "Bundle Symbols"
-msgstr ""
+msgstr "Bundelkan Simbol"
 
 #: src/sysprof/sysprof-greeter.ui:551
 msgid "Make recording shareable by symbolizing stack traces after recording"
 msgstr ""
+"Buat perekaman dapat dibagikan dengan mensimbolkan jejak stack setelah "
+"perekaman"
 
 #: src/sysprof/sysprof-greeter.ui:584
 msgid "_Open File…"
@@ -1134,8 +1124,6 @@ msgstr "Kebocoran"
 #: src/sysprof/sysprof-memory-section.ui:212
 #: src/sysprof/sysprof-samples-section.ui:207
 #: src/sysprof/sysprof-traceables-utility.ui:162
-#, fuzzy
-#| msgid "Stack Traces"
 msgid "Stack Trace"
 msgstr "Jejak Stack"
 
@@ -1253,7 +1241,7 @@ msgstr "Bagan Pemanggilan"
 
 #: src/sysprof/sysprof-samples-section.ui:172 src/sysprof/sysprof-window.ui:416
 msgid "Flamegraph"
-msgstr ""
+msgstr "Bagan Api"
 
 #: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:130
 msgid "Seek Backward"
@@ -1378,7 +1366,7 @@ msgstr "Sertakan Thread"
 
 #: src/sysprof/sysprof-window.ui:399
 msgid "Bottom Up"
-msgstr ""
+msgstr "Dasar Ke Puncak"
 
 #: src/sysprof/sysprof-window.ui:403
 msgid "Ignore Kernel Processes"
@@ -1394,4 +1382,4 @@ msgstr "Gabungkan Proses Serupa"
 
 #: src/sysprof/sysprof-window.ui:418
 msgid "Left Heavy"
-msgstr ""
+msgstr "Berat Di Kiri"

@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-04-06 10:40+0000\n"
-"PO-Revision-Date: 2024-04-11 17:14-0300\n"
+"POT-Creation-Date: 2024-03-11 16:52+0000\n"
+"PO-Revision-Date: 2024-04-04 18:47-0300\n"
 "Last-Translator: Leônidas Araújo <leorusvellt@hotmail.com>\n"
 "Language-Team: Brazilian Portuguese <https://br.gnome.org/traducao>\n"
 "Language: pt_BR\n"
@@ -430,7 +430,7 @@ msgstr "É necessária autenticação para perfilar o sistema."
 #: src/sysprof/gtk/help-overlay.ui:11
 msgctxt "shortcut window"
 msgid "Recording View"
-msgstr "Visualiza gravação"
+msgstr "Visualização da gravação"
 
 #: src/sysprof/gtk/help-overlay.ui:14
 msgctxt "shortcut window"
@@ -445,12 +445,12 @@ msgstr "Salva como"
 #: src/sysprof/gtk/help-overlay.ui:26
 msgctxt "shortcut window"
 msgid "Toggle Visibility of Main Sidebar"
-msgstr "Alterna visibilidade da barra lateral principal"
+msgstr "Alterna a visibilidade da barra lateral principal"
 
 #: src/sysprof/gtk/help-overlay.ui:32
 msgctxt "shortcut window"
 msgid "Toggle Visibility of Stack Trace Sidebar"
-msgstr "Alterna visibilidade da barra lateral do Stack Trace"
+msgstr "Alterna a visibilidade da barra lateral do Stack Trace"
 
 #: src/sysprof/gtk/help-overlay.ui:40
 msgctxt "shortcut window"

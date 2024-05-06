@@ -7,7 +7,6 @@
     "tags" : [
         "nightly"
     ],
-    "desktop-file-name-suffix" : " (Nightly)",
     "finish-args" : [
         "--require-version=1.0.0",
         "--allow=devel",

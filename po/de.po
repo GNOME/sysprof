@@ -12,9 +12,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-04-07 10:07+0000\n"
-"PO-Revision-Date: 2024-04-13 20:26+0200\n"
-"Last-Translator: Jürgen Benvenuti <gastornis@posteo.org>\n"
+"POT-Creation-Date: 2024-04-29 17:26+0000\n"
+"PO-Revision-Date: 2024-05-08 23:10+0200\n"
+"Last-Translator: Christian Kirbach <christian.kirbach@gmail.com>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -159,7 +159,7 @@ msgstr "Einhängepunkte von Dateisystemen erkunden"
 
 #: src/libsysprof/sysprof-document.c:1476
 msgid "Discovering process mount namespaces"
-msgstr "Die Namensräume der Einbindung des Prozesses entdecken"
+msgstr "Die Einhänge-Namensräume des Prozesses werden erkundet"
 
 #: src/libsysprof/sysprof-document.c:1479
 msgid "Analyzing process address layouts"

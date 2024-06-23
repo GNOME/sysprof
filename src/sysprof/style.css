@@ -1,5 +1,5 @@
 progresscell progress {
- background: @accent_bg_color;
+ background: var(--accent-bg-color);
  border-right: none;
 }
 
@@ -9,7 +9,7 @@ progresscell {
 }
 
 progresscell trough {
- background: alpha(@borders, .5);
+ background: color-mix(in srgb, var(--border-color), transparent);
 }
 
 progresscell label {
@@ -19,7 +19,7 @@ progresscell label {
 }
 
 progresscell label.in-progress {
- color: @accent_fg_color;
+ color: var(--accent-fg-color);
 }
 
 callgraphview {
@@ -39,32 +39,31 @@ callgraphview row:not(:selected) treeexpander expander:checked+box symbol.proces
 callgraphview row:not(:selected) treeexpander expander:checked+box symbol.thread,
 callgraphview row:not(:selected) treeexpander expander:checked+box symbol.root {
   border-radius: 9999px;
-  background-color: alpha(currentColor, .05);
+  background-color: color-mix(in srgb, currentColor 5%, transparent);
 }
 callgraphview row:not(:selected) treeexpander symbol.context-switch {
   border-radius: 9999px;
-  background-color: alpha(@warning_color, .1);
+  background-color: color-mix(in srgb, var(--warning-color) 10%, transparent);
 }
 callgraphview row:not(:selected) treeexpander symbol.unwindable {
   border-radius: 9999px;
-  background-color: alpha(@error_color, .1);
+  background-color: color-mix(in srgb, var(--error-color) 10%, transparent);
 }
 
 timeruler {
   min-height: 24px;
   font-size: 0.833em;
-  color: alpha(currentColor, .8);
+  color: color-mix(in srgb, currentColor 80%, transparent);
 }
 
 timescrubber informative,
 timescrubber timecode {
   border-radius: 7px;
-  background: @accent_bg_color;
-  color: @accent_fg_color;
+  background: var(--accent-bg-color);
+  color: var(--accent-fg-color);
   padding: 1px 3px;
   margin: 2px 6px;
-  box-shadow: 0 2px 8px 2px alpha(black, .27);
-  border: 1px solid shade(@accent_bg_color, .9);
+  box-shadow: 0 2px 8px 2px rgb(0 0 0 / 27%);
   font-feature-settings: "tnum";
   font-size: .9em;
 }
@@ -74,7 +73,7 @@ timescrubber timecode {
 }
 
 .navigation-sidebar label.indicator {
-  color: alpha(currentColor, .5);
+  color: color-mix(in srgb, currentColor, transparent);
   border-radius: 50px;
   padding: 1px 5px;
   font-feature-settings: 'tnum';

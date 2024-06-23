@@ -121,6 +121,7 @@
             <property name="hexpand">true</property>
             <child>
               <object class="SysprofTimeSpanLayer">
+                <property name="auto-color">False</property>
                 <binding name="axis">
                   <lookup name="selected-time-axis" type="SysprofSession">
                     <lookup name="session" type="SysprofSessionModelItem">

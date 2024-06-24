@@ -242,6 +242,8 @@ sysprof_progress_cell_init (SysprofProgressCell *self)
   gtk_widget_set_parent (GTK_WIDGET (self->progress), GTK_WIDGET (self));
   gtk_widget_set_parent (GTK_WIDGET (self->alt_label), GTK_WIDGET (self));
 
+  gtk_widget_set_overflow (GTK_WIDGET (self), GTK_OVERFLOW_HIDDEN);
+
   gtk_accessible_update_property (GTK_ACCESSIBLE (self),
                                   GTK_ACCESSIBLE_PROPERTY_VALUE_MAX, 1.0,
                                   GTK_ACCESSIBLE_PROPERTY_VALUE_MIN, 0.0,

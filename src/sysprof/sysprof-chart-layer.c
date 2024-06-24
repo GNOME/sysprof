@@ -58,6 +58,8 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   gtk_style_context_lookup_color (style_context, "accent_fg_color", &accent_fg_color);
   gtk_style_context_lookup_color (style_context, "accent_bg_color", &accent_bg_color);
 G_GNUC_END_IGNORE_DEPRECATIONS
+
+  gtk_widget_queue_draw (widget);
 }
 
 static SysprofSession *

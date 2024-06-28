@@ -1,3 +1,13 @@
+Overview of changes in Sysprof 47.alpha
+=======================================
+
+Changes in this release:
+
+ * Style improvements to match libadwaita 1.6 and libpanel 1.7.
+ * Various chart drawing fixes.
+ * Build fixes.
+ * Translation updates
+
 Overview of changes in Sysprof 46.0
 ===================================
 

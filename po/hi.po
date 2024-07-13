@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-04-06 10:39+0000\n"
-"PO-Revision-Date: 2024-04-18 22:05+0530\n"
+"POT-Creation-Date: 2024-06-28 23:08+0000\n"
+"PO-Revision-Date: 2024-07-01 09:20+0530\n"
 "Last-Translator: Scrambled777 <weblate.scrambled777@simplelogin.com>\n"
-"Language-Team: Hindi\n"
+"Language-Team: Hindi <indlinux-hindi@lists.sourceforge.net>\n"
 "Language: hi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Gtranslator 46.0\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Gtranslator 46.1\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:6
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
@@ -27,19 +27,19 @@ msgstr "Sysprof"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:7
 msgid "Profile an application or entire system"
-msgstr "किसी एप्लिकेशन या संपूर्ण सिस्टम की प्रोफाइल बनाएं"
+msgstr "किसी अनुप्रयोग या संपूर्ण सिस्टम की प्रोफाइल बनाएं"
 
 #. developer_name tag deprecated with Appstream 1.0
 #: data/org.gnome.Sysprof.appdata.xml.in.in:11
-msgid "The GNOME Project"
-msgstr "GNOME परियोजना"
+msgid "Christian Hergert"
+msgstr "क्रिश्चियन हेर्गर्ट"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:17
 msgid ""
 "Sysprof allows you to profile applications to aid in debugging and "
 "optimization."
 msgstr ""
-"Sysprof आपको डिबगिंग और अनुकूलन में सहायता के लिए एप्लिकेशन को प्रोफाइल करने की अनुमति "
+"Sysprof आपको डिबगिंग और अनुकूलन में सहायता के लिए अनुप्रयोग को प्रोफाइल करने की अनुमति "
 "देता है।"
 
 #: data/org.gnome.Sysprof.desktop.in.in:5 src/sysprof/sysprof-greeter.ui:89
@@ -48,7 +48,7 @@ msgstr "प्रोफाइलर"
 
 #: data/org.gnome.Sysprof.desktop.in.in:6
 msgid "Profile an application or entire system."
-msgstr "किसी एप्लिकेशन या संपूर्ण सिस्टम की प्रोफाइल बनाएं।"
+msgstr "किसी अनुप्रयोग या संपूर्ण सिस्टम की प्रोफाइल बनाएं।"
 
 #: src/libsysprof/sysprof-category-summary.c:136
 msgid "Uncategorized"
@@ -265,7 +265,7 @@ msgstr "किसी कार्य के लिए sysprof को विश�
 
 #: src/sysprof-cli/sysprof-cli.c:308 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:179
-#: src/sysprof/sysprof-processes-section.ui:282
+#: src/sysprof/sysprof-processes-section.ui:283
 #: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "PID"
@@ -286,7 +286,7 @@ msgstr ""
 
 #: src/sysprof-cli/sysprof-cli.c:310
 msgid "VAR=VALUE"
-msgstr "VAR=VALUE"
+msgstr "चर=मान"
 
 #: src/sysprof-cli/sysprof-cli.c:311
 msgid "Force overwrite the capture file"
@@ -298,7 +298,7 @@ msgstr "बैटरी आंकड़ों की रिकॉर्डिं
 
 #: src/sysprof-cli/sysprof-cli.c:313
 msgid "Disable recording of CPU statistics"
-msgstr "Disable recording of CPU statistics"
+msgstr "CPU आंकड़ों की रिकॉर्डिंग अक्षम करें"
 
 #: src/sysprof-cli/sysprof-cli.c:314
 msgid "Disable recording of Disk statistics"
@@ -326,7 +326,7 @@ msgstr "उपप्रक्रिया के लिए SYSPROF_TRACE_FD व�
 
 #: src/sysprof-cli/sysprof-cli.c:320
 msgid "Track when processes are scheduled"
-msgstr "प्रक्रियाएँ निर्धारित होने पर ट्रैक करें"
+msgstr "प्रक्रियाएं निर्धारित होने पर ट्रैक करें"
 
 #: src/sysprof-cli/sysprof-cli.c:321
 msgid "Profile the D-Bus session bus"
@@ -342,7 +342,7 @@ msgstr "GJS प्रक्रियाओं को ट्रैक करन�
 
 #: src/sysprof-cli/sysprof-cli.c:324
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
-msgstr "GTK एप्लिकेशन को ट्रेस करने के लिए GTK_TRACE_FD वातावरण निर्धारित करें"
+msgstr "GTK अनुप्रयोग को ट्रेस करने के लिए GTK_TRACE_FD वातावरण निर्धारित करें"
 
 #: src/sysprof-cli/sysprof-cli.c:325
 msgid "Include RAPL energy statistics"
@@ -358,7 +358,7 @@ msgstr "प्रोफाइलर आँकड़ों के लिए org.g
 
 #: src/sysprof-cli/sysprof-cli.c:328
 msgid "Track performance of the applications main loop"
-msgstr "एप्लिकेशन के मुख्य लूप के प्रदर्शन को ट्रैक करें"
+msgstr "अनुप्रयोग के मुख्य लूप के प्रदर्शन को ट्रैक करें"
 
 #: src/sysprof-cli/sysprof-cli.c:330
 msgid "Merge all provided *.syscap files and write to stdout"
@@ -395,7 +395,7 @@ msgstr ""
 "\n"
 "उदाहरण:\n"
 "\n"
-"  # एप्लिकेशन द्वारा प्रदान किए गए डेटा के साथ-साथ GTK और गनोम शेल डेटा प्रदाताओं को "
+"  # अनुप्रयोग द्वारा प्रदान किए गए डेटा के साथ-साथ GTK और गनोम शेल डेटा प्रदाताओं को "
 "प्राप्त करने के लिए\n"
 "  # trace-fd का उपयोग करके gtk4-widget-factory रिकॉर्ड करें\n"
 "  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
@@ -496,7 +496,7 @@ msgstr "Sysprof के बारे में (_A)"
 #: src/sysprof/sysprof-animation.c:1038
 #, c-format
 msgid "Failed to find property %s in %s"
-msgstr "%s में प्रॉपर्टी %s खोजने में विफल"
+msgstr "%2$s में प्रॉपर्टी %1$s खोजने में विफल"
 
 #: src/sysprof/sysprof-animation.c:1047
 #, c-format
@@ -558,7 +558,7 @@ msgstr "काउंटर की तालिका"
 #: src/sysprof/sysprof-metadata-section.ui:38
 #: src/sysprof/sysprof-network-section.ui:346
 #: src/sysprof/sysprof-process-dialog.ui:64
-#: src/sysprof/sysprof-processes-section.ui:214
+#: src/sysprof/sysprof-processes-section.ui:215
 #: src/sysprof/sysprof-storage-section.ui:346
 #: src/sysprof/sysprof-traceables-utility.ui:23
 msgid "Time"
@@ -699,11 +699,11 @@ msgstr "CPU"
 
 #: src/sysprof/sysprof-greeter.c:102
 msgid "Use KEY=VALUE to set an environment variable"
-msgstr "पर्यावरण चर सेट करने के लिए KEY=VALUE का उपयोग करें"
+msgstr "पर्यावरण चर सेट करने के लिए कुंजी=मान का उपयोग करें"
 
 #: src/sysprof/sysprof-greeter.c:108
 msgid "Keys may not start with a number"
-msgstr "कुंजियाँ किसी संख्या से प्रारंभ नहीं हो सकतीं"
+msgstr "कुंजियां किसी संख्या से प्रारंभ नहीं हो सकतीं"
 
 #: src/sysprof/sysprof-greeter.c:118
 msgid "Keys may only contain alpha-numerics or underline."
@@ -715,12 +715,12 @@ msgstr "स्थानीय फाइल में अवश्य कैप�
 
 #: src/sysprof/sysprof-greeter.c:266 src/sysprof/sysprof-window.c:156
 msgid "You must choose a local file to capture using Sysprof"
-msgstr "You must choose a local file to capture using Sysprof"
+msgstr "आपको Sysprof का उपयोग करके कैप्चर करने के लिए एक स्थानीय फाइल चुननी होगी"
 
 #: src/sysprof/sysprof-greeter.c:267 src/sysprof/sysprof-recording-pad.c:115
 #: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:718
 msgid "Close"
-msgstr "बंद"
+msgstr "बंद करें"
 
 #: src/sysprof/sysprof-greeter.c:288
 #, c-format
@@ -745,7 +745,7 @@ msgstr "संतुलित"
 
 #: src/sysprof/sysprof-greeter.c:446
 msgid "Power Saver"
-msgstr "पावर सेवर"
+msgstr "ऊर्जा बचत"
 
 #: src/sysprof/sysprof-greeter.c:449
 msgid "Performance"
@@ -775,8 +775,8 @@ msgstr "सैंपलिंग प्रोफाइलर का उपयो
 msgid ""
 "Sysprof must launch your application to record JavaScript stacks using GJS."
 msgstr ""
-"GJS का उपयोग करके जावास्क्रिप्ट स्टैक रिकॉर्ड करने के लिए Sysprof को आपका एप्लिकेशन "
-"लॉन्च करना होगा।"
+"GJS का उपयोग करके जावास्क्रिप्ट स्टैक रिकॉर्ड करने के लिए Sysprof को आपका अनुप्रयोग शुरू "
+"करना होगा।"
 
 #: src/sysprof/sysprof-greeter.ui:144
 msgid "Record Scheduler Details"
@@ -784,7 +784,7 @@ msgstr "अनुसूचक विवरण रिकार्ड करें
 
 #: src/sysprof/sysprof-greeter.ui:145
 msgid "Track when processes are scheduled per CPU"
-msgstr "प्रति CPU प्रक्रियाएँ निर्धारित होने पर ट्रैक करें"
+msgstr "प्रति CPU प्रक्रियाएं निर्धारित होने पर ट्रैक करें"
 
 #: src/sysprof/sysprof-greeter.ui:158
 msgid "Tracing"
@@ -801,14 +801,14 @@ msgstr ""
 
 #: src/sysprof/sysprof-greeter.ui:174
 msgid "Sysprof must launch your application to record memory allocations."
-msgstr "मेमोरी आवंटन रिकॉर्ड करने के लिए Sysprof को आपका एप्लिकेशन लॉन्च करना होगा।"
+msgstr "मेमोरी आवंटन रिकॉर्ड करने के लिए Sysprof को आपका अनुप्रयोग शुरू करना होगा।"
 
 #: src/sysprof/sysprof-greeter.ui:192 src/sysprof/sysprof-greeter.ui:197
 msgid "Application"
-msgstr "एप्लिकेशन"
+msgstr "अनुप्रयोग"
 
 #: src/sysprof/sysprof-greeter.ui:200
-#: src/sysprof/sysprof-processes-section.ui:316
+#: src/sysprof/sysprof-processes-section.ui:317
 msgid "Command Line"
 msgstr "कमांड लाइन"
 
@@ -818,7 +818,7 @@ msgstr "कार्यशील निर्देशिका"
 
 #: src/sysprof/sysprof-greeter.ui:212
 msgid "The application will be run as a subprocess of Sysprof."
-msgstr "एप्लिकेशन को Sysprof की उपप्रक्रिया के रूप में चलाया जाएगा।"
+msgstr "अनुप्रयोग को Sysprof की उपप्रक्रिया के रूप में चलाया जाएगा।"
 
 #: src/sysprof/sysprof-greeter.ui:225
 msgid "Environment"
@@ -830,7 +830,7 @@ msgstr "पर्यावरण साफ़ करें"
 
 #: src/sysprof/sysprof-greeter.ui:230
 msgid "Clear the environment before launching application"
-msgstr "एप्लिकेशन लॉन्च करने से पहले वातावरण साफ़ करें"
+msgstr "अनुप्रयोग शुरू करने से पहले वातावरण साफ़ करें"
 
 #: src/sysprof/sysprof-greeter.ui:256
 msgid "Add _Variable"
@@ -842,7 +842,7 @@ msgstr "चर जोड़ें"
 
 #: src/sysprof/sysprof-greeter.ui:263
 msgid "_Add"
-msgstr " जोड़ें (_A)"
+msgstr "जोड़ें (_A)"
 
 #: src/sysprof/sysprof-greeter.ui:280 src/sysprof/sysprof-greeter.ui:285
 msgid "Counters"
@@ -940,8 +940,7 @@ msgid ""
 "Applications launched by Sysprof will automatically collect GTK frame timing "
 "information."
 msgstr ""
-"Sysprof द्वारा लॉन्च किए गए एप्लिकेशन स्वचालित रूप से GTK फ़्रेम टाइमिंग जानकारी एकत्र "
-"करेंगे।"
+"Sysprof द्वारा शुरू किए गए अनुप्रयोग स्वचालित रूप से GTK फ़्रेम टाइमिंग जानकारी एकत्र करेंगे।"
 
 #: src/sysprof/sysprof-greeter.ui:494
 msgid "Devices"
@@ -957,7 +956,7 @@ msgstr "ग्राफिक्स हार्डवेयर और ड्र
 
 #: src/sysprof/sysprof-greeter.ui:517
 msgid "System"
-msgstr "तंत्र"
+msgstr "सिस्टम"
 
 #: src/sysprof/sysprof-greeter.ui:522
 msgid "Power Profile"
@@ -1104,7 +1103,7 @@ msgid "Start"
 msgstr "प्रारंभ"
 
 #: src/sysprof/sysprof-mark-table.ui:81
-#: src/sysprof/sysprof-processes-section.ui:248
+#: src/sysprof/sysprof-processes-section.ui:249
 msgid "Duration"
 msgstr "अवधि"
 
@@ -1237,7 +1236,7 @@ msgstr "प्रक्रियाएं"
 msgid "Process Chart"
 msgstr "प्रक्रिया चार्ट"
 
-#: src/sysprof/sysprof-processes-section.ui:173
+#: src/sysprof/sysprof-processes-section.ui:174
 msgid "Process Table"
 msgstr "प्रक्रिया तालिका"
 
@@ -1283,7 +1282,7 @@ msgstr "पीछे खोजें"
 
 #: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:164
 msgid "Zoom Out"
-msgstr "ज़ूम आउट"
+msgstr "छोटा करें"
 
 #: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:174
 msgid "Reset Zoom"
@@ -1291,7 +1290,7 @@ msgstr "ज़ूम रीसेट"
 
 #: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:184
 msgid "Zoom In"
-msgstr "ज़ूम इन"
+msgstr "बड़ा करें"
 
 #: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:194
 msgid "Seek Forward"

@@ -69,6 +69,7 @@
                 "--disable-gtk-doc",
                 "--disable-libelogind",
                 "--disable-libsystemd-login",
+                "--disable-test",
                 "--with-systemdsystemunitdir=no",
                 "--with-authdb=dummy",
                 "--with-authfw=none"

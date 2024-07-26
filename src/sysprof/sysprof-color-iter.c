@@ -37,7 +37,7 @@ sysprof_color_iter_init (SysprofColorIter *iter)
         "#9141ac",
         "#e5a50a",
         "#63452c",
-        "#ffbe6f"
+        "#ffbe6f",
         "#613583",
         "#9a9996",
         "#ed333b",

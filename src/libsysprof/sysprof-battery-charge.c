@@ -169,7 +169,7 @@ sysprof_battery_charge_record_fiber (gpointer user_data)
 
       counter->id = ids[n_counters] = sysprof_capture_writer_request_counter (writer, 1);
       counter->type = SYSPROF_CAPTURE_COUNTER_INT64;
-      g_strlcpy (counter->category, "Battery Charge", sizeof counter->description);
+      g_strlcpy (counter->category, "Battery Charge", sizeof counter->category);
       if (g_file_get_contents (model_name_path, &model_name_data, NULL, NULL))
         g_strlcpy (counter->name, g_strstrip (model_name_data), sizeof counter->name);
       else

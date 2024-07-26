@@ -92,9 +92,6 @@ flags_to_string (GType type,
   if (!(flags_class = g_type_class_ref (type)))
     return NULL;
 
-  if (flags_class == NULL)
-    return NULL;
-
   str = g_string_new (NULL);
 
   while ((str->len == 0 || value != 0) &&

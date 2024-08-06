@@ -1,3 +1,13 @@
+Overview of changes in Sysprof 47.beta
+======================================
+
+Changes in this release:
+
+ * Recording window can now be dragged by clicking
+   anywhere but the stop button.
+ * Various coverity warning fixes.
+ * Translation updates.
+
 Overview of changes in Sysprof 47.alpha
 =======================================
 

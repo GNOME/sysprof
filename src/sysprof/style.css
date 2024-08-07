@@ -83,3 +83,7 @@ timescrubber timecode {
 flamegraph {
   font-size: 11px;
 }
+
+timespanlayer {
+  font-size: 10px;
+}

@@ -330,7 +330,6 @@ sysprof_time_series_dup_label (SysprofTimeSeries *self,
   if (!(item = g_list_model_get_item (model, position)))
     return NULL;
 
-  g_value_init (&value, G_TYPE_STRING);
   gtk_expression_evaluate (self->label_expression, item, &value);
   return g_value_dup_string (&value);
 }

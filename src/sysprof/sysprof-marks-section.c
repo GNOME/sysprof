@@ -43,6 +43,25 @@ struct _SysprofMarksSection
 G_DEFINE_FINAL_TYPE (SysprofMarksSection, sysprof_marks_section, SYSPROF_TYPE_SECTION)
 
 static char *
+format_mark_label (gpointer             unused,
+                   SysprofDocumentMark *mark)
+{
+  const char *message;
+  const char *name;
+
+  if (mark == NULL)
+    return NULL;
+
+  name = sysprof_document_mark_get_name (mark);
+  message = sysprof_document_mark_get_message (mark);
+
+  if (name && *name && message && *message)
+    return g_strdup_printf ("%s – %s", name, message);
+  else
+    return g_strdup_printf ("%s", name);
+}
+
+static char *
 format_number (gpointer unused,
                guint    number)
 {
@@ -74,6 +93,7 @@ sysprof_marks_section_class_init (SysprofMarksSectionClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofMarksSection, mark_table);
   gtk_widget_class_bind_template_child (widget_class, SysprofMarksSection, median_column);
   gtk_widget_class_bind_template_child (widget_class, SysprofMarksSection, summary_column_view);
+  gtk_widget_class_bind_template_callback (widget_class, format_mark_label);
   gtk_widget_class_bind_template_callback (widget_class, format_number);
 
   g_type_ensure (SYSPROF_TYPE_CHART);

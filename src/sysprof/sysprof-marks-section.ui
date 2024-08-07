@@ -175,9 +175,9 @@
                   </object>
                 </property>
                 <property name="label-expression">
-                  <lookup name="message" type="SysprofDocumentMark">
+                  <closure type="gchararray" function="format_mark_label">
                     <lookup name="item" type="SysprofSessionModelItem"/>
-                  </lookup>
+                  </closure>
                 </property>
                 <property name="begin-time-expression">
                   <lookup name="time" type="SysprofDocumentMark">

@@ -216,16 +216,41 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
                   gtk_snapshot_append_color (snapshot, color, &rect);
                 }
 
-              if (rect.size.width > 20)
+              if (label != NULL)
                 {
+                  gboolean rect_fits_text;
+                  int right_empty_space;
+                  int label_width;
 
-                  if (label != NULL)
+                  pango_layout_set_text (layout, label, -1);
+                  pango_layout_set_alignment (layout, PANGO_ALIGN_LEFT);
+
+                  pango_layout_get_pixel_size (layout, &label_width, NULL);
+
+                  /* If it fits 75% of the text inside the rect, it's enough and
+                   * won't look too busy.
+                   */
+                  rect_fits_text = ((rect.size.width - 6) / (float) label_width) > 0.75;
+                  right_empty_space = width - (rect.origin.x + rect.size.width) - 6;
+
+                  /* Draw inside the rect if the label fits, or if there's not more
+                   * space outside the rect.
+                   */
+                  if (rect_fits_text || (rect.size.width - 6) > right_empty_space)
                     {
-                      pango_layout_set_text (layout, label, -1);
                       pango_layout_set_width (layout, (rect.size.width - 6) * PANGO_SCALE);
 
                       gtk_snapshot_save (snapshot);
                       gtk_snapshot_translate (snapshot, &GRAPHENE_POINT_INIT (rect.origin.x + 3, layout_y));
+                      gtk_snapshot_append_layout (snapshot, layout, label_color);
+                      gtk_snapshot_restore (snapshot);
+                    }
+                  else if (n_values == 1 && right_empty_space > 20)
+                    {
+                      pango_layout_set_width (layout, right_empty_space * PANGO_SCALE);
+
+                      gtk_snapshot_save (snapshot);
+                      gtk_snapshot_translate (snapshot, &GRAPHENE_POINT_INIT (rect.origin.x + rect.size.width + 3, layout_y));
                       gtk_snapshot_append_layout (snapshot, layout, label_color);
                       gtk_snapshot_restore (snapshot);
                     }

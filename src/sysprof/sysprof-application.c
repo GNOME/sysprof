@@ -157,7 +157,7 @@ sysprof_about (GSimpleAction *action,
         }
     }
 
-  adw_show_about_window (best_toplevel,
+  adw_show_about_dialog (GTK_WIDGET (best_toplevel),
                          "application-name", _("Sysprof"),
                          "application-icon", APP_ID_S,
                          "version", "GNOME " PACKAGE_VERSION,

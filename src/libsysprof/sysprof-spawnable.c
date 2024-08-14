@@ -363,6 +363,7 @@ sysprof_spawnable_add_trace_fd (SysprofSpawnable *self,
   g_autofd int dest = -1;
   g_autofree char *name = NULL;
   g_autofree char *fdstr = NULL;
+  int id_in_child;
 
   g_return_val_if_fail (SYSPROF_IS_SPAWNABLE (self), -1);
 
@@ -377,10 +378,10 @@ sysprof_spawnable_add_trace_fd (SysprofSpawnable *self,
   if (-1 == (dest = dup (fd)))
     return -1;
 
-  fdstr = g_strdup_printf ("%d", dest);
+  id_in_child = sysprof_spawnable_take_fd (self, g_steal_fd (&dest), -1);
 
+  fdstr = g_strdup_printf ("%d", id_in_child);
   sysprof_spawnable_setenv (self, envvar, fdstr);
-  sysprof_spawnable_take_fd (self, g_steal_fd (&dest), -1);
 
   return g_steal_fd (&fd);
 }

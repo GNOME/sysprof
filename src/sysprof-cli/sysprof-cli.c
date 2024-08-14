@@ -509,7 +509,10 @@ Examples:\n\
       sysprof_profiler_set_spawnable (profiler, spawnable);
 
       if (gjs)
-        add_trace_fd (profiler, spawnable, "GJS_TRACE_FD");
+        {
+          sysprof_spawnable_setenv (spawnable, "GJS_ENABLE_PROFILER", "1");
+          add_trace_fd (profiler, spawnable, "GJS_TRACE_FD");
+        }
 
       if (use_trace_fd)
         add_trace_fd (profiler, spawnable, NULL);

@@ -106,7 +106,9 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
                                   GtkSnapshot *snapshot)
 {
   SysprofTimeSpanLayer *self = (SysprofTimeSpanLayer *)widget;
+  const GdkRGBA *label_color = _sysprof_chart_layer_get_accent_fg_color ();
   static const GdkRGBA black = {0,0,0,1};
+  g_autoptr(PangoLayout) layout = NULL;
   const double *x_values;
   const double *x2_values;
   const GdkRGBA *color;
@@ -117,6 +119,8 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
   guint n_x_values = 0;
   guint n_x2_values = 0;
   guint n_values;
+  int layout_y;
+  int layout_h;
   int width;
   int height;
 
@@ -152,12 +156,9 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
       !(n_values = MIN (n_x_values, n_x2_values)))
     return;
 
-  if (color->alpha > 0)
+  if (color->alpha > 0 || event_color->alpha > 0)
     {
-      const GdkRGBA *label_color = _sysprof_chart_layer_get_accent_fg_color ();
-      PangoLayout *layout = gtk_widget_create_pango_layout (GTK_WIDGET (self), NULL);
-      int layout_y;
-      int layout_h;
+      layout = gtk_widget_create_pango_layout (GTK_WIDGET (self), NULL);
 
       pango_layout_set_single_paragraph_mode (layout, TRUE);
       pango_layout_set_ellipsize (layout, PANGO_ELLIPSIZE_END);
@@ -165,7 +166,10 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
       pango_layout_get_pixel_size (layout, NULL, &layout_h);
 
       layout_y = (height - layout_h) / 2;
+    }
 
+  if (color->alpha > 0)
+    {
       /* First pass, draw our rectangles for duration which we
        * always want in the background compared to "points" which
        * are marks w/o a duration.
@@ -264,8 +268,6 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
                 }
             }
         }
-
-      g_object_unref (layout);
     }
 
   if (event_color->alpha > 0)
@@ -295,6 +297,34 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
               gtk_snapshot_restore (snapshot);
 
               last_x = begin;
+
+              if (n_values == 1)
+                {
+                  g_autofree char *label = sysprof_time_series_dup_label (self->series, i);
+                  const GdkRGBA *fg = dark ? label_color : &black;
+                  int right_empty_space;
+                  int label_width;
+                  int label_x;
+
+                  if (label == NULL || *label == '\0')
+                    continue;
+
+                  pango_layout_set_text (layout, label, -1);
+                  pango_layout_set_alignment (layout, PANGO_ALIGN_LEFT);
+                  pango_layout_get_pixel_size (layout, &label_width, NULL);
+
+                  label_x = begin * width + ceil (height / 3.) + 2;
+                  right_empty_space = width - label_x;
+                  pango_layout_set_width (layout, right_empty_space * PANGO_SCALE);
+
+                  if (right_empty_space <= 20)
+                    continue;
+
+                  gtk_snapshot_save (snapshot);
+                  gtk_snapshot_translate (snapshot, &GRAPHENE_POINT_INIT (label_x, layout_y));
+                  gtk_snapshot_append_layout (snapshot, layout, fg);
+                  gtk_snapshot_restore (snapshot);
+                }
             }
         }
     }

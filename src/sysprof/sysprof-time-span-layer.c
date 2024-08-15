@@ -21,6 +21,8 @@
 
 #include "config.h"
 
+#include <adwaita.h>
+
 #include "sysprof-chart-layer-private.h"
 #include "sysprof-color-iter-private.h"
 #include "sysprof-normalized-series.h"
@@ -104,11 +106,13 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
                                   GtkSnapshot *snapshot)
 {
   SysprofTimeSpanLayer *self = (SysprofTimeSpanLayer *)widget;
+  static const GdkRGBA black = {0,0,0,1};
   const double *x_values;
   const double *x2_values;
   const GdkRGBA *color;
   const GdkRGBA *event_color;
   GdkRGBA mixed;
+  gboolean dark;
   graphene_rect_t box_rect;
   guint n_x_values = 0;
   guint n_x2_values = 0;
@@ -118,6 +122,8 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
 
   g_assert (SYSPROF_IS_TIME_SPAN_LAYER (self));
   g_assert (GTK_IS_SNAPSHOT (snapshot));
+
+  dark = adw_style_manager_get_dark (adw_style_manager_get_default ());
 
   width = gtk_widget_get_width (widget);
   height = gtk_widget_get_height (widget);
@@ -247,11 +253,12 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
                     }
                   else if (n_values == 1 && right_empty_space > 20)
                     {
+                      const GdkRGBA *fg = dark ? label_color : &black;
                       pango_layout_set_width (layout, right_empty_space * PANGO_SCALE);
 
                       gtk_snapshot_save (snapshot);
                       gtk_snapshot_translate (snapshot, &GRAPHENE_POINT_INIT (rect.origin.x + rect.size.width + 3, layout_y));
-                      gtk_snapshot_append_layout (snapshot, layout, label_color);
+                      gtk_snapshot_append_layout (snapshot, layout, fg);
                       gtk_snapshot_restore (snapshot);
                     }
                 }

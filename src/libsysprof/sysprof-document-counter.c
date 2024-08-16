@@ -318,11 +318,16 @@ sysprof_document_counter_get_value_double (SysprofDocumentCounter *self,
 }
 
 static inline double
-value_as_double (guint                            type,
-                 const SysprofDocumentTimedValue *value)
+value_as_double_with_correction (guint                      type,
+                                 SysprofDocumentTimedValue *value)
 {
   if (type == SYSPROF_CAPTURE_COUNTER_DOUBLE)
-    return value->v_double;
+    {
+      /* sanitize awkward data coming over */
+      if (value->v_double > (double)G_MAXINT64)
+        value->v_double = 0;
+      return value->v_double;
+    }
   else if (type == SYSPROF_CAPTURE_COUNTER_INT64)
     return value->v_int64;
   else
@@ -348,7 +353,7 @@ sort_by_time (gconstpointer aptr,
 void
 _sysprof_document_counter_calculate_range (SysprofDocumentCounter *self)
 {
-  const SysprofDocumentTimedValue *values;
+  SysprofDocumentTimedValue *values;
   gboolean min_value_changed = FALSE;
   gboolean max_value_changed = FALSE;
   double min_value;
@@ -369,12 +374,12 @@ _sysprof_document_counter_calculate_range (SysprofDocumentCounter *self)
   values = &g_array_index (self->values, SysprofDocumentTimedValue, 0);
   n_values = self->values->len;
 
-  min_value = value_as_double (self->type, &values[0]);
+  min_value = value_as_double_with_correction (self->type, &values[0]);
   max_value = min_value;
 
   for (guint i = 1; i < n_values; i++)
     {
-      double value = value_as_double (self->type, &values[i]);
+      double value = value_as_double_with_correction (self->type, &values[i]);
 
       min_value = MIN (min_value, value);
       max_value = MAX (max_value, value);

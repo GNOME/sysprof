@@ -425,11 +425,31 @@
       </lookup>
     </binding>
     <property name="filter">
-      <object class="GtkStringFilter">
-        <property name="search">gtk</property>
-        <property name="expression">
-          <lookup name="category" type="SysprofDocumentCounter"/>
-        </property>
+      <object class="GtkAnyFilter">
+        <child>
+          <object class="GtkStringFilter">
+            <property name="search">gtk</property>
+            <property name="expression">
+              <lookup name="category" type="SysprofDocumentCounter"/>
+            </property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStringFilter">
+            <property name="search">mutter</property>
+            <property name="expression">
+              <lookup name="category" type="SysprofDocumentCounter"/>
+            </property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStringFilter">
+            <property name="search">gio</property>
+            <property name="expression">
+              <lookup name="category" type="SysprofDocumentCounter"/>
+            </property>
+          </object>
+        </child>
       </object>
     </property>
   </object>

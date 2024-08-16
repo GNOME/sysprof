@@ -22,6 +22,8 @@
 
 #include <errno.h>
 
+#include "timsort/gtktimsortprivate.h"
+
 #include "rust-demangle.h"
 
 #include "sysprof-kallsyms-symbolizer.h"
@@ -174,7 +176,11 @@ sysprof_kallsyms_symbolizer_prepare_worker (GTask        *task,
   /* We cannot rely on sorting of kallsyms up-front from Linux in all
    * cases so we must sort the resulting array now.
    */
-  g_array_sort (self->kallsyms, sort_by_address);
+  gtk_tim_sort (self->kallsyms->data,
+                self->kallsyms->len,
+                sizeof (KernelSymbol),
+                (GCompareDataFunc)sort_by_address,
+                NULL);
 
   /* Store a "best guess" at an lower/upper bound for the max address so that
    * we can avoid searching for anything unreasonably past the end of the last

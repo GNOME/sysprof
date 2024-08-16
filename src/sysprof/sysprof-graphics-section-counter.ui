@@ -15,7 +15,13 @@
         <property name="y-axis">
           <object class="SysprofValueAxis">
             <property name="min-value">0</property>
-            <property name="max-value">100</property>
+            <binding name="max-value">
+              <lookup name="max-value" type="SysprofDocumentCounter">
+                <lookup name="item" type="SysprofSessionModelItem">
+                  <lookup name="item">SysprofChartLayerItem</lookup>
+                </lookup>
+              </lookup>
+            </binding>
           </object>
         </property>
         <property name="series">

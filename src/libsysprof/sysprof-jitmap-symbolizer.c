@@ -22,6 +22,8 @@
 
 #include <stdlib.h>
 
+#include "timsort/gtktimsortprivate.h"
+
 #include "sysprof-document-jitmap.h"
 #include "sysprof-document-private.h"
 #include "sysprof-jitmap-symbolizer.h"
@@ -122,7 +124,11 @@ sysprof_jitmap_symbolizer_prepare_worker (GTask        *task,
         }
     }
 
-  g_array_sort (self->jitmaps, compare_by_address);
+  gtk_tim_sort (self->jitmaps->data,
+                self->jitmaps->len,
+                sizeof (Jitmap),
+                (GCompareDataFunc)compare_by_address,
+                NULL);
 
   g_task_return_boolean (task, TRUE);
 }

@@ -22,6 +22,8 @@
 
 #include <glib/gi18n.h>
 
+#include "timsort/gtktimsortprivate.h"
+
 #include "sysprof-animation.h"
 #include "sysprof-callgraph-private.h"
 #include "sysprof-category-icon.h"
@@ -791,7 +793,11 @@ sysprof_flame_graph_generate_worker (GTask        *task,
 
   generate (array, g->root, &area, TRUE);
 
-  g_array_sort (array, sort_by_coord);
+  gtk_tim_sort (array->data,
+                array->len,
+                sizeof (FlameRectangle),
+                (GCompareDataFunc)sort_by_coord,
+                NULL);
 
   g_task_return_pointer (task, g_steal_pointer (&array), (GDestroyNotify)g_array_unref);
 }

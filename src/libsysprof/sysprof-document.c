@@ -2585,7 +2585,11 @@ sysprof_document_serialize_symbols_fiber (gpointer user_data)
                                               process_info->pid);
     }
 
-  g_array_sort (packed_symbols, sort_symbols_for_bsearch);
+  gtk_tim_sort (packed_symbols->data,
+                packed_symbols->len,
+                sizeof (SysprofPackedSymbol),
+                (GCompareDataFunc)sort_symbols_for_bsearch,
+                NULL);
   g_array_append_val (packed_symbols, empty_symbol);
 
   packed_len = sizeof (SysprofPackedSymbol) * packed_symbols->len;

@@ -22,6 +22,8 @@
 
 #include <math.h>
 
+#include "timsort/gtktimsortprivate.h"
+
 #include "sysprof-document-counter-private.h"
 #include "sysprof-document-counter-value-private.h"
 #include "sysprof-document-private.h"
@@ -358,7 +360,11 @@ _sysprof_document_counter_calculate_range (SysprofDocumentCounter *self)
   if (self->values->len == 0)
     return;
 
-  g_array_sort (self->values, sort_by_time);
+  gtk_tim_sort (self->values->data,
+                self->values->len,
+                sizeof (SysprofDocumentTimedValue),
+                (GCompareDataFunc)sort_by_time,
+                NULL);
 
   values = &g_array_index (self->values, SysprofDocumentTimedValue, 0);
   n_values = self->values->len;

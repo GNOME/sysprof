@@ -22,6 +22,8 @@
 
 #include <gio/gio.h>
 
+#include "timsort/gtktimsortprivate.h"
+
 #include "sysprof-mount-namespace-private.h"
 
 struct _SysprofMountNamespace
@@ -249,7 +251,11 @@ sysprof_mount_namespace_translate (SysprofMountNamespace *self,
 
   if G_UNLIKELY (self->mounts_dirty)
     {
-      g_ptr_array_sort (self->mounts, compare_mount);
+      gtk_tim_sort (self->mounts->pdata,
+                    self->mounts->len,
+                    sizeof (gpointer),
+                    (GCompareDataFunc)compare_mount,
+                    NULL);
       self->mounts_dirty = FALSE;
     }
 

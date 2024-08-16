@@ -20,7 +20,10 @@
 
 #include "config.h"
 
+#include "timsort/gtktimsortprivate.h"
+
 #include <gio/gio.h>
+
 #include <eggbitset.h>
 
 #include "sysprof-address-layout-private.h"
@@ -204,7 +207,11 @@ sysprof_address_layout_lookup (SysprofAddressLayout *self,
 
       self->mmaps_dirty = FALSE;
 
-      g_ptr_array_sort (self->mmaps, compare_mmaps);
+      gtk_tim_sort (self->mmaps->pdata,
+                    self->mmaps->len,
+                    sizeof (gpointer),
+                    (GCompareDataFunc)compare_mmaps,
+                    NULL);
       dups = find_duplicates (self->mmaps);
 
       if (egg_bitset_iter_init_last (&iter, dups, &i))

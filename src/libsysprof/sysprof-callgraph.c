@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#include "timsort/gtktimsortprivate.h"
+
 #include "sysprof-callgraph-private.h"
 #include "sysprof-callgraph-frame-private.h"
 #include "sysprof-callgraph-symbol-private.h"
@@ -990,7 +992,11 @@ sysprof_callgraph_list_traceables_for_node_async (SysprofCallgraph     *self,
     }
 
   /* Sort the bitsets by size to shrink potential interscetions */
-  g_ptr_array_sort (bitsets, sort_by_size_asc);
+  gtk_tim_sort (bitsets->pdata,
+                bitsets->len,
+                sizeof (gpointer),
+                (GCompareDataFunc)sort_by_size_asc,
+                NULL);
   bitset = egg_bitset_copy (g_ptr_array_index (bitsets, 0));
   for (guint i = 1; i < bitsets->len; i++)
     {

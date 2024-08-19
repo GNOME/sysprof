@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-44\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-05-29 14:23+0000\n"
-"PO-Revision-Date: 2024-06-22 13:11+0300\n"
+"POT-Creation-Date: 2024-07-26 13:47+0000\n"
+"PO-Revision-Date: 2024-07-27 13:52+0300\n"
 "Last-Translator: Artur So <arturios2005@mail.ru>\n"
 "Language-Team: Russian <gnome-cyr@gnome.org>\n"
 "Language: ru\n"
@@ -268,7 +268,7 @@ msgstr "Настроить sysprof для выполнения специфич�
 
 #: src/sysprof-cli/sysprof-cli.c:308 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:179
-#: src/sysprof/sysprof-processes-section.ui:282
+#: src/sysprof/sysprof-processes-section.ui:283
 #: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "Идентификатор процесса"
@@ -564,7 +564,7 @@ msgstr "Таблица счётчиков"
 #: src/sysprof/sysprof-metadata-section.ui:38
 #: src/sysprof/sysprof-network-section.ui:346
 #: src/sysprof/sysprof-process-dialog.ui:64
-#: src/sysprof/sysprof-processes-section.ui:214
+#: src/sysprof/sysprof-processes-section.ui:215
 #: src/sysprof/sysprof-storage-section.ui:346
 #: src/sysprof/sysprof-traceables-utility.ui:23
 msgid "Time"
@@ -820,7 +820,7 @@ msgid "Application"
 msgstr "Приложение"
 
 #: src/sysprof/sysprof-greeter.ui:200
-#: src/sysprof/sysprof-processes-section.ui:316
+#: src/sysprof/sysprof-processes-section.ui:317
 msgid "Command Line"
 msgstr "Командная строка"
 
@@ -1122,7 +1122,7 @@ msgid "Start"
 msgstr "Начало"
 
 #: src/sysprof/sysprof-mark-table.ui:81
-#: src/sysprof/sysprof-processes-section.ui:248
+#: src/sysprof/sysprof-processes-section.ui:249
 msgid "Duration"
 msgstr "Продолжительность"
 
@@ -1255,7 +1255,7 @@ msgstr "Процессы"
 msgid "Process Chart"
 msgstr "График процессов"
 
-#: src/sysprof/sysprof-processes-section.ui:173
+#: src/sysprof/sysprof-processes-section.ui:174
 msgid "Process Table"
 msgstr "Таблица процессов"
 
@@ -1344,8 +1344,8 @@ msgid "Save"
 msgstr "Сохранить"
 
 #: src/sysprof/sysprof-window.c:638
-msgid "Loading..."
-msgstr "Загрузка..."
+msgid "Loading…"
+msgstr "Загрузка…"
 
 #: src/sysprof/sysprof-window.c:714
 msgid "Invalid Document"

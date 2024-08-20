@@ -100,7 +100,7 @@ config_h.set_quoted('GETTEXT_PACKAGE', 'sysprof')
 config_h.set_quoted('PACKAGE_LOCALE_DIR', join_paths(get_option('prefix'), get_option('datadir'), 'locale'))
 config_h.set10('HAVE_LIBSYSTEMD', libsystemd_dep.found())
 
-polkit_agent_dep = dependency('polkit-agent-1', required: false)
+polkit_agent_dep = dependency('polkit-agent-1', required: get_option('polkit-agent'))
 config_h.set10('HAVE_POLKIT_AGENT', polkit_agent_dep.found())
 
 polkit_dep = dependency('polkit-gobject-1', version: polkit_req_version, required: false)

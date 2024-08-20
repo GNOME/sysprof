@@ -32,9 +32,11 @@
 
 #include <sysprof.h>
 
-#define POLKIT_AGENT_I_KNOW_API_IS_SUBJECT_TO_CHANGE
-#include <polkit/polkit.h>
-#include <polkitagent/polkitagent.h>
+#if HAVE_POLKIT_AGENT
+# define POLKIT_AGENT_I_KNOW_API_IS_SUBJECT_TO_CHANGE
+# include <polkit/polkit.h>
+# include <polkitagent/polkitagent.h>
+#endif
 
 #include "sysprof-capture-util-private.h"
 
@@ -266,8 +268,10 @@ int
 main (int   argc,
       char *argv[])
 {
+#if HAVE_POLKIT_AGENT
   PolkitAgentListener *polkit = NULL;
   PolkitSubject *subject = NULL;
+#endif
   g_autoptr(SysprofCaptureWriter) writer = NULL;
   g_autoptr(SysprofProfiler) profiler = NULL;
   g_autofree char *power_profile = NULL;
@@ -413,6 +417,7 @@ Examples:\n\
 
   main_loop = g_main_loop_new (NULL, FALSE);
 
+#if HAVE_POLKIT_AGENT
   /* Start polkit agent so that we can elevate privileges from a TTY */
   if (g_getenv ("DESKTOP_SESSION") == NULL &&
       (subject = polkit_unix_process_new_for_owner (getpid (), 0, -1)))
@@ -434,6 +439,7 @@ Examples:\n\
                       pkerror->message);
         }
     }
+#endif
 
   /* Warn about access if we're in a container */
   if (g_file_test ("/.flatpak-info", G_FILE_TEST_EXISTS))

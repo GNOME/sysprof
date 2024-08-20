@@ -11,6 +11,12 @@ option('gtk', type: 'boolean')
 # Allow disabling the installation of libsysprof-capture*.a
 option('install-static', type: 'boolean')
 
+# Allow disabling of features that depend on polkit-agent.
+option('polkit-agent', type: 'feature',
+  value: 'auto',
+  description: 'Enable features which require polkit-agent-1'
+)
+
 # Optionally compile sysprofd, which is needed to get elevated privileges.
 # You only really want to ignore this if you are running from a container
 # and are talking to a host daemon. Also, if you're compiling for something

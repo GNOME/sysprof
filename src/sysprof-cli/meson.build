@@ -6,10 +6,12 @@ sysprof_cli_c_args = [
 ]
 
 sysprof_cli_deps = [
-  dependency('polkit-agent-1'),
-
   libsysprof_static_dep,
 ]
+
+if polkit_agent_dep.found()
+  sysprof_cli_deps += polkit_agent_dep
+endif
 
 sysprof_cli = executable('sysprof-cli', sysprof_cli_sources,
   dependencies: sysprof_cli_deps,

@@ -178,7 +178,6 @@ _sysprof_instruments_acquire_policy (GPtrArray        *instruments,
                                      SysprofRecording *recording)
 {
   g_autoptr(GDBusConnection) connection = NULL;
-  g_autoptr(PolkitDetails) details = NULL;
   g_autoptr(GError) error = NULL;
   g_auto(GStrv) required_policy = NULL;
 
@@ -202,7 +201,7 @@ _sysprof_instruments_acquire_policy (GPtrArray        *instruments,
         {
           if (!dex_await_boolean (_sysprof_polkit_authorize (connection,
                                                              required_policy[i],
-                                                             details,
+                                                             NULL,
                                                              TRUE), &error))
             return dex_future_new_for_error (g_steal_pointer (&error));
         }

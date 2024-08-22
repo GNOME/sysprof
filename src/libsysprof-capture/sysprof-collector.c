@@ -58,6 +58,7 @@
 
 #include <assert.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <poll.h>
 #include <pthread.h>
 #ifdef __linux__
@@ -140,7 +141,7 @@ set_fd_blocking (int fd)
 {
 #ifdef F_GETFL
   long fcntl_flags;
-  fcntl_flags = fcntl (peer_fd, F_GETFL);
+  fcntl_flags = fcntl (fd, F_GETFL);
 
   if (fcntl_flags == -1)
     return false;
@@ -151,7 +152,7 @@ set_fd_blocking (int fd)
   fcntl_flags &= ~O_NDELAY;
 #endif
 
-  if (fcntl (peer_fd, F_SETFL, fcntl_flags) == -1)
+  if (fcntl (fd, F_SETFL, fcntl_flags) == -1)
     return false;
 
   return true;

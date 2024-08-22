@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-04-07 10:07+0000\n"
-"PO-Revision-Date: 2024-04-13 20:26+0200\n"
+"POT-Creation-Date: 2024-08-04 18:14+0000\n"
+"PO-Revision-Date: 2024-08-22 22:19+0200\n"
 "Last-Translator: Jürgen Benvenuti <gastornis@posteo.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "Language: de\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.4.4\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:6
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
@@ -36,8 +36,8 @@ msgstr "Ein Profil einer Anwendung oder des gesamten Systems erstellen"
 
 #. developer_name tag deprecated with Appstream 1.0
 #: data/org.gnome.Sysprof.appdata.xml.in.in:11
-msgid "The GNOME Project"
-msgstr "Das GNOME-Projekt"
+msgid "Christian Hergert"
+msgstr "Christian Hergert"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:17
 msgid ""
@@ -276,7 +276,7 @@ msgstr "Sysprof auf einen Task festlegen [veraltet]"
 
 #: src/sysprof-cli/sysprof-cli.c:308 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:179
-#: src/sysprof/sysprof-processes-section.ui:282
+#: src/sysprof/sysprof-processes-section.ui:283
 #: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "PID"
@@ -582,7 +582,7 @@ msgstr "Zähler-Tabelle"
 #: src/sysprof/sysprof-metadata-section.ui:38
 #: src/sysprof/sysprof-network-section.ui:346
 #: src/sysprof/sysprof-process-dialog.ui:64
-#: src/sysprof/sysprof-processes-section.ui:214
+#: src/sysprof/sysprof-processes-section.ui:215
 #: src/sysprof/sysprof-storage-section.ui:346
 #: src/sysprof/sysprof-traceables-utility.ui:23
 msgid "Time"
@@ -837,7 +837,7 @@ msgid "Application"
 msgstr "Anwendung"
 
 #: src/sysprof/sysprof-greeter.ui:200
-#: src/sysprof/sysprof-processes-section.ui:316
+#: src/sysprof/sysprof-processes-section.ui:317
 msgid "Command Line"
 msgstr "Befehlszeile"
 
@@ -1142,7 +1142,7 @@ msgid "Start"
 msgstr "Beginn"
 
 #: src/sysprof/sysprof-mark-table.ui:81
-#: src/sysprof/sysprof-processes-section.ui:248
+#: src/sysprof/sysprof-processes-section.ui:249
 msgid "Duration"
 msgstr "Dauer"
 
@@ -1275,7 +1275,7 @@ msgstr "Prozesse"
 msgid "Process Chart"
 msgstr "Prozessdiagramm"
 
-#: src/sysprof/sysprof-processes-section.ui:173
+#: src/sysprof/sysprof-processes-section.ui:174
 msgid "Process Table"
 msgstr "Prozesstabelle"
 
@@ -1365,7 +1365,7 @@ msgid "Save"
 msgstr "Speichern"
 
 #: src/sysprof/sysprof-window.c:638
-msgid "Loading..."
+msgid "Loading…"
 msgstr "Wird geladen …"
 
 #: src/sysprof/sysprof-window.c:714
@@ -1457,6 +1457,9 @@ msgstr "Ähnliche Prozesse zusammenführen"
 #: src/sysprof/sysprof-window.ui:453
 msgid "Left Heavy"
 msgstr "Linkslastig"
+
+#~ msgid "The GNOME Project"
+#~ msgstr "Das GNOME-Projekt"
 
 #~ msgid "Sysprof was unable to generate a callgraph from the system capture."
 #~ msgstr ""

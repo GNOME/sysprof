@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-36\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-02-28 01:08+0000\n"
-"PO-Revision-Date: 2024-02-28 12:14+0200\n"
+"POT-Creation-Date: 2024-07-26 13:47+0000\n"
+"PO-Revision-Date: 2024-08-23 13:29+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=n==1 ? 3 : n%10==1 && n%100!=11 ? 0 : n"
 "%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Lokalize 23.04.1\n"
+"X-Generator: Lokalize 23.04.3\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:6
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
@@ -32,8 +32,8 @@ msgstr "Профілювання програми або усієї систем
 
 #. developer_name tag deprecated with Appstream 1.0
 #: data/org.gnome.Sysprof.appdata.xml.in.in:11
-msgid "The GNOME Project"
-msgstr "Проєкт GNOME"
+msgid "Christian Hergert"
+msgstr "Christian Hergert"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:17
 msgid ""
@@ -269,7 +269,7 @@ msgstr "Налаштувати sysprof на виконання специфіч�
 
 #: src/sysprof-cli/sysprof-cli.c:308 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:179
-#: src/sysprof/sysprof-processes-section.ui:282
+#: src/sysprof/sysprof-processes-section.ui:283
 #: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "PID"
@@ -566,7 +566,7 @@ msgstr "Таблиця лічильників"
 #: src/sysprof/sysprof-metadata-section.ui:38
 #: src/sysprof/sysprof-network-section.ui:346
 #: src/sysprof/sysprof-process-dialog.ui:64
-#: src/sysprof/sysprof-processes-section.ui:214
+#: src/sysprof/sysprof-processes-section.ui:215
 #: src/sysprof/sysprof-storage-section.ui:346
 #: src/sysprof/sysprof-traceables-utility.ui:23
 msgid "Time"
@@ -825,7 +825,7 @@ msgid "Application"
 msgstr "Програма"
 
 #: src/sysprof/sysprof-greeter.ui:200
-#: src/sysprof/sysprof-processes-section.ui:316
+#: src/sysprof/sysprof-processes-section.ui:317
 msgid "Command Line"
 msgstr "Командний рядок"
 
@@ -1125,7 +1125,7 @@ msgid "Start"
 msgstr "Початок"
 
 #: src/sysprof/sysprof-mark-table.ui:81
-#: src/sysprof/sysprof-processes-section.ui:248
+#: src/sysprof/sysprof-processes-section.ui:249
 msgid "Duration"
 msgstr "Тривалість"
 
@@ -1258,7 +1258,7 @@ msgstr "Процеси"
 msgid "Process Chart"
 msgstr "Діаграма процесів"
 
-#: src/sysprof/sysprof-processes-section.ui:173
+#: src/sysprof/sysprof-processes-section.ui:174
 msgid "Process Table"
 msgstr "Таблиця процесів"
 
@@ -1347,7 +1347,8 @@ msgid "Save"
 msgstr "Зберегти"
 
 #: src/sysprof/sysprof-window.c:638
-msgid "Loading..."
+#| msgid "Loading..."
+msgid "Loading…"
 msgstr "Завантаження…"
 
 #: src/sysprof/sysprof-window.c:714
@@ -1439,6 +1440,9 @@ msgstr "Об'єднувати подібні процеси"
 #: src/sysprof/sysprof-window.ui:453
 msgid "Left Heavy"
 msgstr "Найважче ліворуч"
+
+#~ msgid "The GNOME Project"
+#~ msgstr "Проєкт GNOME"
 
 #~| msgid "Hold the performance profile for the duration of the recording"
 #~ msgid ""

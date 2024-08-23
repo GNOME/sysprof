@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-03-01 17:43+0000\n"
-"PO-Revision-Date: 2024-03-02 08:28+0100\n"
+"POT-Creation-Date: 2024-07-26 13:47+0000\n"
+"PO-Revision-Date: 2024-08-23 10:10+0200\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language-Team: Georgian <ka@li.org>\n"
 "Language: ka\n"
@@ -32,8 +32,8 @@ msgstr "აპლიკაციის ან მთელი სისტემ
 
 #. developer_name tag deprecated with Appstream 1.0
 #: data/org.gnome.Sysprof.appdata.xml.in.in:11
-msgid "The GNOME Project"
-msgstr "პროექტი \"GNOME\""
+msgid "Christian Hergert"
+msgstr "Christian Hergert"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:17
 msgid ""
@@ -268,7 +268,7 @@ msgstr "Sysprof-ის მითითებულ ამოცანაზე �
 
 #: src/sysprof-cli/sysprof-cli.c:308 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:179
-#: src/sysprof/sysprof-processes-section.ui:282
+#: src/sysprof/sysprof-processes-section.ui:283
 #: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "PID"
@@ -563,7 +563,7 @@ msgstr "მთვლელების ცხრილი"
 #: src/sysprof/sysprof-metadata-section.ui:38
 #: src/sysprof/sysprof-network-section.ui:346
 #: src/sysprof/sysprof-process-dialog.ui:64
-#: src/sysprof/sysprof-processes-section.ui:214
+#: src/sysprof/sysprof-processes-section.ui:215
 #: src/sysprof/sysprof-storage-section.ui:346
 #: src/sysprof/sysprof-traceables-utility.ui:23
 msgid "Time"
@@ -816,7 +816,7 @@ msgid "Application"
 msgstr "აპლიკაცია"
 
 #: src/sysprof/sysprof-greeter.ui:200
-#: src/sysprof/sysprof-processes-section.ui:316
+#: src/sysprof/sysprof-processes-section.ui:317
 msgid "Command Line"
 msgstr "ბრძანების სტრიქონი"
 
@@ -1118,7 +1118,7 @@ msgid "Start"
 msgstr "დაწყება"
 
 #: src/sysprof/sysprof-mark-table.ui:81
-#: src/sysprof/sysprof-processes-section.ui:248
+#: src/sysprof/sysprof-processes-section.ui:249
 msgid "Duration"
 msgstr "ხანგრძლივობა"
 
@@ -1251,7 +1251,7 @@ msgstr "პროცესები"
 msgid "Process Chart"
 msgstr "პროცესების გრაფიკი"
 
-#: src/sysprof/sysprof-processes-section.ui:173
+#: src/sysprof/sysprof-processes-section.ui:174
 msgid "Process Table"
 msgstr "პროცესის ცხრილი"
 
@@ -1340,8 +1340,8 @@ msgid "Save"
 msgstr "შენახვა"
 
 #: src/sysprof/sysprof-window.c:638
-msgid "Loading..."
-msgstr "იტვირთება..."
+msgid "Loading…"
+msgstr "ჩატვირთვა…"
 
 #: src/sysprof/sysprof-window.c:714
 msgid "Invalid Document"
@@ -1432,6 +1432,9 @@ msgstr "მსგავსი პროცესების შერწყმ�
 #: src/sysprof/sysprof-window.ui:453
 msgid "Left Heavy"
 msgstr "მარცხენა მძიმე"
+
+#~ msgid "The GNOME Project"
+#~ msgstr "პროექტი \"GNOME\""
 
 #~ msgid "Logging"
 #~ msgstr "ჩაწერა"

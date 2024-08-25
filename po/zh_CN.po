@@ -3,22 +3,22 @@
 # This file is distributed under the same license as the sysprof package.
 # Damned <damnedlies@163.com>, 2020.
 # Dingzhong Chen <wsxy162@gmail.com>, 2020.
-# lumingzh <lumingzh@qq.com>, 2022.
+# lumingzh <lumingzh@qq.com>, 2022-2024.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-03-01 17:43+0000\n"
-"PO-Revision-Date: 2024-04-03 19:21-0400\n"
-"Last-Translator: Boyuan Yang <073plan@gmail.com>\n"
-"Language-Team: Chinese - China <i18n-zh@googlegroups.com>\n"
+"POT-Creation-Date: 2024-08-04 18:14+0000\n"
+"PO-Revision-Date: 2024-08-25 12:49+0800\n"
+"Last-Translator: lumingzh <lumingzh@qq.com>\n"
+"Language-Team: Chinese (China) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.4.3\n"
+"X-Generator: Gtranslator 46.1\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:6
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
@@ -33,8 +33,8 @@ msgstr "对应用程序或整个系统进行性能分析"
 
 #. developer_name tag deprecated with Appstream 1.0
 #: data/org.gnome.Sysprof.appdata.xml.in.in:11
-msgid "The GNOME Project"
-msgstr "GNOME 项目"
+msgid "Christian Hergert"
+msgstr "Christian Hergert"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:17
 msgid ""
@@ -56,7 +56,7 @@ msgstr "未分类"
 
 #: src/libsysprof/sysprof-category-summary.c:139
 msgid "Accessibility"
-msgstr "辅助功能"
+msgstr "无障碍"
 
 #: src/libsysprof/sysprof-category-summary.c:142
 msgid "Actions"
@@ -64,7 +64,7 @@ msgstr "操作"
 
 #: src/libsysprof/sysprof-category-summary.c:145
 msgid "Crash Handler"
-msgstr ""
+msgstr "崩溃处理器"
 
 #: src/libsysprof/sysprof-category-summary.c:148
 msgid "Context Switches"
@@ -89,31 +89,31 @@ msgstr "输入"
 
 #: src/libsysprof/sysprof-category-summary.c:163
 msgid "IO"
-msgstr ""
+msgstr "IO"
 
 #: src/libsysprof/sysprof-category-summary.c:166
 msgid "IPC"
-msgstr ""
+msgstr "IPC"
 
 #: src/libsysprof/sysprof-category-summary.c:169
 msgid "JavaScript"
-msgstr ""
+msgstr "JavaScript"
 
 #: src/libsysprof/sysprof-category-summary.c:172
 msgid "Kernel"
-msgstr ""
+msgstr "内核"
 
 #: src/libsysprof/sysprof-category-summary.c:175
 msgid "Layout"
-msgstr ""
+msgstr "布局"
 
 #: src/libsysprof/sysprof-category-summary.c:178
 msgid "Locking"
-msgstr ""
+msgstr "锁定"
 
 #: src/libsysprof/sysprof-category-summary.c:181
 msgid "Main Loop"
-msgstr ""
+msgstr "主回环"
 
 #: src/libsysprof/sysprof-category-summary.c:184
 msgid "Memory"
@@ -121,27 +121,23 @@ msgstr "内存"
 
 #: src/libsysprof/sysprof-category-summary.c:187
 msgid "Paint"
-msgstr ""
+msgstr "绘制"
 
 #: src/libsysprof/sysprof-category-summary.c:190
 msgid "Type System"
-msgstr ""
+msgstr "分类系统"
 
 #: src/libsysprof/sysprof-category-summary.c:193
 msgid "Unwindable"
-msgstr ""
+msgstr "可展开"
 
 #: src/libsysprof/sysprof-category-summary.c:196
-#, fuzzy
-#| msgid "Window size"
 msgid "Windowing"
-msgstr "窗口大小"
+msgstr "窗口化"
 
 #: src/libsysprof/sysprof-document-allocation.c:151
-#, fuzzy
-#| msgid "All Allocations"
 msgid "Allocation"
-msgstr "全部分配"
+msgstr "分配"
 
 #: src/libsysprof/sysprof-document.c:570
 msgid "Unknown Process"
@@ -150,46 +146,43 @@ msgstr "未知进程"
 #: src/libsysprof/sysprof-document.c:1251
 #: src/libsysprof/sysprof-document.c:1287
 msgid "Indexing capture data frames"
-msgstr ""
+msgstr "索引捕获的数据帧"
 
 #: src/libsysprof/sysprof-document.c:1473
 msgid "Discovering file system mounts"
-msgstr ""
+msgstr "发现文件系统挂载"
 
 #: src/libsysprof/sysprof-document.c:1476
 msgid "Discovering process mount namespaces"
-msgstr ""
+msgstr "发现进程挂载命名空间"
 
 #: src/libsysprof/sysprof-document.c:1479
 msgid "Analyzing process address layouts"
-msgstr ""
+msgstr "分析进程地址布局"
 
 #: src/libsysprof/sysprof-document.c:1482
 msgid "Analyzing process command line"
-msgstr ""
+msgstr "分析进程命令行"
 
 #: src/libsysprof/sysprof-document.c:1485
 msgid "Analyzing file system overlays"
-msgstr ""
+msgstr "分析文件系统叠加"
 
 #: src/libsysprof/sysprof-document.c:1488
-#, fuzzy
-#| msgid "Processes"
 msgid "Processing counters"
-msgstr "进程"
+msgstr "进程计数器"
 
 #: src/libsysprof/sysprof-document.c:2476
 #: src/libsysprof/sysprof-document.c:2492
-#, fuzzy, c-format
-#| msgid "Recording at %s"
+#, c-format
 msgid "Recording at %X %x"
-msgstr "%s 时的记录"
+msgstr "记录于 %X %x"
 
 #: src/libsysprof/sysprof-document.c:2478
 #: src/libsysprof/sysprof-document.c:2494
 #, c-format
 msgid "Recording at %s"
-msgstr "%s 时的记录"
+msgstr "记录于 %s"
 
 #: src/libsysprof/sysprof-document-dbus-message.c:152
 msgid "D-Bus Message"
@@ -197,34 +190,26 @@ msgstr "D-Bus 消息"
 
 #: src/libsysprof/sysprof-document-frame.c:139
 msgid "Frame"
-msgstr ""
+msgstr "帧"
 
 #: src/libsysprof/sysprof-document-loader.c:435
 msgid "Document loaded"
-msgstr ""
+msgstr "文档已加载"
 
 #: src/libsysprof/sysprof-document-loader.c:466
-#, fuzzy
-#| msgid "Recording Failed"
 msgid "Loading failed"
-msgstr "记录失败"
+msgstr "加载失败"
 
 #: src/libsysprof/sysprof-document-loader.c:478
 #: src/libsysprof/sysprof-document-symbols.c:217
-#, fuzzy
-#| msgid "Stack Traces"
 msgid "Symbolizing stack traces"
-msgstr "栈轨迹"
+msgstr "符号化堆栈追踪"
 
 #: src/libsysprof/sysprof-document-loader.c:547
-#, fuzzy
-#| msgid "Loading Processes…"
 msgid "Loading document"
-msgstr "正在载入进程……"
+msgstr "正在加载文档"
 
 #: src/libsysprof/sysprof-document-log.c:85
-#, fuzzy
-#| msgid "Logs"
 msgid "Log"
 msgstr "日志"
 
@@ -235,58 +220,54 @@ msgstr "标记"
 #: src/libsysprof/sysprof-document-process.c:293
 #, c-format
 msgid "%s [Process %d]"
-msgstr ""
+msgstr "%s [进程 %d]"
 
 #: src/libsysprof/sysprof-document-process.c:295
-#, fuzzy, c-format
-#| msgid "Processes"
+#, c-format
 msgid "Process %d"
-msgstr "进程"
+msgstr "进程 %d"
 
 #: src/libsysprof/sysprof-document-sample.c:136
 msgid "Sample"
-msgstr ""
+msgstr "采样"
 
 #: src/libsysprof/sysprof-system-logs.c:171
 msgid "System Logs"
-msgstr ""
+msgstr "系统日志"
 
 #: src/libsysprof/sysprof-system-logs.c:172
 msgid "Recording system logs is not supported on your platform."
-msgstr ""
+msgstr "您的平台不支持记录系统日志。"
 
 #: src/libsysprof/sysprof-tracer.c:65
 msgid "Tracer"
-msgstr ""
+msgstr "追踪器"
 
 #: src/libsysprof/sysprof-tracer.c:66
 msgid ""
 "Tracing requires spawning a program compiled with ‘-finstrument-functions’. "
 "Tracing will not be available."
 msgstr ""
+"追踪需要产生一个使用“-finstrument-functions”参数编译的程序。追踪将不可用。"
 
 #: src/sysprof-cli/sysprof-cli.c:112
 msgid "--merge requires at least 2 filename arguments"
 msgstr "--merge 至少需要 2 个文件名参数"
 
 #: src/sysprof-cli/sysprof-cli.c:307
-#, fuzzy
-#| msgid "Disable CPU throttling while profiling"
 msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
-msgstr "在性能分析时禁用 CPU 降频"
+msgstr "在性能分析时禁用 CPU 降频 [已由 --power-profile 替代]"
 
 #: src/sysprof-cli/sysprof-cli.c:308
-#, fuzzy
-#| msgid "Make sysprof specific to a task"
 msgid "Make sysprof specific to a task [Deprecated]"
-msgstr "使 sysprof 特定于一项任务"
+msgstr "使 sysprof 特定于一项任务 [已废弃]"
 
 #: src/sysprof-cli/sysprof-cli.c:308 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:179
-#: src/sysprof/sysprof-processes-section.ui:282
+#: src/sysprof/sysprof-processes-section.ui:283
 #: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
-msgstr "进程号"
+msgstr "PID"
 
 #: src/sysprof-cli/sysprof-cli.c:309
 msgid "Run a command and profile the process"
@@ -343,19 +324,15 @@ msgstr "为子进程设置 SYSPROF_TRACE_FD 环境"
 
 #: src/sysprof-cli/sysprof-cli.c:320
 msgid "Track when processes are scheduled"
-msgstr ""
+msgstr "进程调度时追踪"
 
 #: src/sysprof-cli/sysprof-cli.c:321
-#, fuzzy
-#| msgid "Connect to the session bus"
 msgid "Profile the D-Bus session bus"
-msgstr "连接到会话总线"
+msgstr "对 D-Bus 会话总线性能分析"
 
 #: src/sysprof-cli/sysprof-cli.c:322
-#, fuzzy
-#| msgid "Profile the system"
 msgid "Profile the D-Bus system bus"
-msgstr "对系统进行性能分析"
+msgstr "对 D-Bus 系统总线性能分析"
 
 #: src/sysprof-cli/sysprof-cli.c:323
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
@@ -391,11 +368,11 @@ msgstr "打印 sysprof-cli 的版本并退出"
 
 #: src/sysprof-cli/sysprof-cli.c:332
 msgid "The size of the buffer in pages (1 = 1 page)"
-msgstr ""
+msgstr "页面中的缓冲区大小（1 = 1 页）"
 
 #: src/sysprof-cli/sysprof-cli.c:333
 msgid "Additional D-Bus address to monitor"
-msgstr ""
+msgstr "要监控的额外 D-Bus 地址"
 
 #: src/sysprof-cli/sysprof-cli.c:366
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
@@ -442,16 +419,11 @@ msgid "Authentication is required to profile the system."
 msgstr "需要授权才能对系统进行性能分析。"
 
 #: src/sysprof/gtk/help-overlay.ui:11
-#, fuzzy
-#| msgid "Recording Failed"
 msgctxt "shortcut window"
 msgid "Recording View"
-msgstr "记录失败"
+msgstr "记录视图"
 
 #: src/sysprof/gtk/help-overlay.ui:14
-#, fuzzy
-#| msgctxt "shortcut window"
-#| msgid "Starts a new recording"
 msgctxt "shortcut window"
 msgid "Start New Recording"
 msgstr "开始新记录"
@@ -464,12 +436,12 @@ msgstr "另存为"
 #: src/sysprof/gtk/help-overlay.ui:26
 msgctxt "shortcut window"
 msgid "Toggle Visibility of Main Sidebar"
-msgstr ""
+msgstr "切换主侧边栏"
 
 #: src/sysprof/gtk/help-overlay.ui:32
 msgctxt "shortcut window"
 msgid "Toggle Visibility of Stack Trace Sidebar"
-msgstr ""
+msgstr "切换堆栈追踪侧边栏"
 
 #: src/sysprof/gtk/help-overlay.ui:40
 msgctxt "shortcut window"
@@ -477,9 +449,6 @@ msgid "General"
 msgstr "常规"
 
 #: src/sysprof/gtk/help-overlay.ui:43
-#, fuzzy
-#| msgctxt "shortcut window"
-#| msgid "Open recording"
 msgctxt "shortcut window"
 msgid "Open Recording"
 msgstr "打开记录"
@@ -502,7 +471,7 @@ msgstr "显示键盘快捷键"
 #: src/sysprof/gtk/help-overlay.ui:68
 msgctxt "shortcut window"
 msgid "Quit"
-msgstr ""
+msgstr "退出"
 
 #: src/sysprof/gtk/menus.ui:6
 msgid "_Preferences"
@@ -522,21 +491,18 @@ msgid "_About Sysprof"
 msgstr "关于 Sysprof(_A)"
 
 #: src/sysprof/sysprof-animation.c:1038
-#, fuzzy, c-format
-#| msgid "Failed to save recording: %s"
+#, c-format
 msgid "Failed to find property %s in %s"
-msgstr "无法保存记录：%s"
+msgstr "在 %2$s 中查找 %1$s 属性失败"
 
 #: src/sysprof/sysprof-animation.c:1047
 #, c-format
 msgid "Failed to retrieve va_list value: %s"
-msgstr ""
+msgstr "获取 va_list 值失败：%s"
 
 #: src/sysprof/sysprof-application.c:37
-#, fuzzy
-#| msgid "Print the sysprof-cli version and exit"
 msgid "Show Sysprof version and exit"
-msgstr "打印 sysprof-cli 的版本并退出"
+msgstr "显示 Sysprof 版本并退出"
 
 #: src/sysprof/sysprof-application.c:170
 msgid "A system profiler"
@@ -544,17 +510,17 @@ msgstr "系统性能分析器"
 
 #: src/sysprof/sysprof-application.c:171
 msgid "translator-credits"
-msgstr "Damned <damnedlies@163.com>, 2020."
+msgstr ""
+"Damned <damnedlies@163.com>, 2020.\n"
+"lumingzh <lumingzh@qq.com>, 2024."
 
 #: src/sysprof/sysprof-callgraph-view.ui:22
 msgid "Functions"
 msgstr "函数"
 
 #: src/sysprof/sysprof-callgraph-view.ui:71
-#, fuzzy
-#| msgid "Functions"
 msgid "Filter Functions"
-msgstr "函数"
+msgstr "筛选函数"
 
 #: src/sysprof/sysprof-callgraph-view.ui:94
 msgid "Callers"
@@ -570,10 +536,8 @@ msgstr "后代"
 #: src/sysprof/sysprof-graphics-section.ui:88
 #: src/sysprof/sysprof-network-section.ui:86
 #: src/sysprof/sysprof-storage-section.ui:86
-#, fuzzy
-#| msgid "Counters Captured"
 msgid "Counters Chart"
-msgstr "已采集的计数器"
+msgstr "计数器图表"
 
 #: src/sysprof/sysprof-counters-section.ui:40
 #: src/sysprof/sysprof-cpu-section.ui:323
@@ -581,10 +545,8 @@ msgstr "已采集的计数器"
 #: src/sysprof/sysprof-graphics-section.ui:223
 #: src/sysprof/sysprof-network-section.ui:291
 #: src/sysprof/sysprof-storage-section.ui:291
-#, fuzzy
-#| msgid "Counters"
 msgid "Counters Table"
-msgstr "计数器"
+msgstr "计数器表格"
 
 #: src/sysprof/sysprof-cpu-section.ui:378
 #: src/sysprof/sysprof-dbus-section.ui:171
@@ -595,7 +557,7 @@ msgstr "计数器"
 #: src/sysprof/sysprof-metadata-section.ui:38
 #: src/sysprof/sysprof-network-section.ui:346
 #: src/sysprof/sysprof-process-dialog.ui:64
-#: src/sysprof/sysprof-processes-section.ui:214
+#: src/sysprof/sysprof-processes-section.ui:215
 #: src/sysprof/sysprof-storage-section.ui:346
 #: src/sysprof/sysprof-traceables-utility.ui:23
 msgid "Time"
@@ -609,7 +571,7 @@ msgstr "时间"
 #: src/sysprof/sysprof-network-section.ui:380
 #: src/sysprof/sysprof-storage-section.ui:380
 msgid "Category"
-msgstr ""
+msgstr "类别"
 
 #: src/sysprof/sysprof-cpu-section.ui:450
 #: src/sysprof/sysprof-energy-section.ui:420
@@ -618,7 +580,7 @@ msgstr ""
 #: src/sysprof/sysprof-network-section.ui:418
 #: src/sysprof/sysprof-storage-section.ui:418
 msgid "Name"
-msgstr ""
+msgstr "名称"
 
 #: src/sysprof/sysprof-cpu-section.ui:488
 #: src/sysprof/sysprof-energy-section.ui:458
@@ -627,44 +589,40 @@ msgstr ""
 #: src/sysprof/sysprof-network-section.ui:456
 #: src/sysprof/sysprof-storage-section.ui:456
 msgid "Value"
-msgstr ""
+msgstr "值"
 
 #: src/sysprof/sysprof-cpu-section.ui:529
-#, fuzzy
-#| msgid "Info"
 msgid "CPU Info"
-msgstr "信息"
+msgstr "CPU 信息"
 
 #: src/sysprof/sysprof-cpu-section.ui:560
 #: src/sysprof/sysprof-process-dialog.ui:248
-#, fuzzy
-#| msgid "PID"
 msgid "ID"
-msgstr "进程号"
+msgstr "ID"
 
 #: src/sysprof/sysprof-cpu-section.ui:595
 msgid "Core"
-msgstr ""
+msgstr "核心"
 
 #: src/sysprof/sysprof-cpu-section.ui:630
 msgid "Model Name"
-msgstr ""
+msgstr "型号名称"
 
 #: src/sysprof/sysprof-dbus-section.ui:205
 msgid "Bus"
-msgstr ""
+msgstr "总线"
 
 #: src/sysprof/sysprof-dbus-section.ui:244
 msgid "Serial"
-msgstr ""
+msgstr "序列号"
 
 #: src/sysprof/sysprof-dbus-section.ui:281
 msgid "Reply"
-msgstr ""
+msgstr "响应"
 
 #: src/sysprof/sysprof-dbus-section.ui:318
 msgid "Flags"
-msgstr ""
+msgstr "标志"
 
 #: src/sysprof/sysprof-dbus-section.ui:347
 #: src/sysprof/sysprof-files-section.ui:122
@@ -676,17 +634,15 @@ msgstr "大小"
 #: src/sysprof/sysprof-frame-utility.ui:20
 #: src/sysprof/sysprof-mark-table.ui:221
 msgid "Type"
-msgstr ""
+msgstr "类型"
 
 #: src/sysprof/sysprof-dbus-section.ui:412
 msgid "Sender"
-msgstr ""
+msgstr "发送者"
 
 #: src/sysprof/sysprof-dbus-section.ui:446
-#, fuzzy
-#| msgid "Duration"
 msgid "Destination"
-msgstr "持续时间"
+msgstr "目标位置"
 
 #: src/sysprof/sysprof-dbus-section.ui:480
 #: src/sysprof/sysprof-files-section.ui:53
@@ -695,23 +651,19 @@ msgstr "路径"
 
 #: src/sysprof/sysprof-dbus-section.ui:514
 msgid "Interface"
-msgstr ""
+msgstr "接口"
 
 #: src/sysprof/sysprof-dbus-section.ui:548
 msgid "Member"
-msgstr ""
+msgstr "成员"
 
 #: src/sysprof/sysprof-dbus-section.ui:582
-#, fuzzy
-#| msgid "Capture"
 msgid "Signature"
-msgstr "采集"
+msgstr "特征"
 
 #: src/sysprof/sysprof-dbus-section.ui:626
-#, fuzzy
-#| msgid "Message"
 msgid "Filter Messages"
-msgstr "消息"
+msgstr "筛选消息"
 
 #: src/sysprof/sysprof-dbus-utility.ui:13
 #: src/sysprof/sysprof-logs-section.c:104
@@ -725,13 +677,11 @@ msgstr "文件"
 
 #: src/sysprof/sysprof-files-section.ui:88
 msgid "Compressed"
-msgstr ""
+msgstr "已压缩"
 
 #: src/sysprof/sysprof-files-section.ui:165
-#, fuzzy
-#| msgid "Functions"
 msgid "Filter Files"
-msgstr "函数"
+msgstr "筛选文件"
 
 #: src/sysprof/sysprof-flame-graph.c:457
 #: src/sysprof/sysprof-process-dialog.ui:177
@@ -744,29 +694,27 @@ msgstr "文件"
 #: src/sysprof/sysprof-traceables-utility.ui:81
 #: src/sysprof/sysprof-window.ui:297
 msgid "CPU"
-msgstr ""
+msgstr "CPU"
 
 #: src/sysprof/sysprof-greeter.c:102
-#, fuzzy
-#| msgid "Remove environment variable"
 msgid "Use KEY=VALUE to set an environment variable"
-msgstr "移除环境变量"
+msgstr "使用 KEY=VALUE 设定环境变量"
 
 #: src/sysprof/sysprof-greeter.c:108
 msgid "Keys may not start with a number"
-msgstr ""
+msgstr "设定键不可以数字开头"
 
 #: src/sysprof/sysprof-greeter.c:118
 msgid "Keys may only contain alpha-numerics or underline."
-msgstr ""
+msgstr "设定键仅可包含字母数字或下划线。"
 
 #: src/sysprof/sysprof-greeter.c:265 src/sysprof/sysprof-window.c:155
 msgid "Must Capture to Local File"
-msgstr ""
+msgstr "必须捕获至本地文件"
 
 #: src/sysprof/sysprof-greeter.c:266 src/sysprof/sysprof-window.c:156
 msgid "You must choose a local file to capture using Sysprof"
-msgstr ""
+msgstr "您必须选择本地文件以使用 Sysprof 进行捕获"
 
 #: src/sysprof/sysprof-greeter.c:267 src/sysprof/sysprof-recording-pad.c:115
 #: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:718
@@ -776,101 +724,87 @@ msgstr "关闭"
 #: src/sysprof/sysprof-greeter.c:288
 #, c-format
 msgid "System Capture from %s.syscap"
-msgstr ""
+msgstr "来自 %s.syscap 的系统捕获"
 
 #: src/sysprof/sysprof-greeter.c:292
-#, fuzzy
-#| msgid "Recording Failed"
 msgid "Record to File"
-msgstr "记录失败"
+msgstr "记录至文件"
 
 #: src/sysprof/sysprof-greeter.c:293
-#, fuzzy
-#| msgid "_Record"
 msgid "Record"
-msgstr "记录 (_R)"
+msgstr "记录"
 
 #: src/sysprof/sysprof-greeter.c:440
 msgid "No Change"
-msgstr ""
+msgstr "无更改"
 
 #: src/sysprof/sysprof-greeter.c:443
 msgid "Balanced"
-msgstr ""
+msgstr "平衡"
 
 #: src/sysprof/sysprof-greeter.c:446
 msgid "Power Saver"
-msgstr ""
+msgstr "节电"
 
 #: src/sysprof/sysprof-greeter.c:449
-#, fuzzy
-#| msgid "Performance"
 msgid "Performance"
 msgstr "性能"
 
 #: src/sysprof/sysprof-greeter.ui:95
 msgid "Sampling"
-msgstr ""
+msgstr "采样"
 
 #: src/sysprof/sysprof-greeter.ui:99
 msgid "Sample Native Stacks"
-msgstr ""
+msgstr "采样本地堆栈"
 
 #: src/sysprof/sysprof-greeter.ui:100
-#, fuzzy
-#| msgid "Do not record stacktraces using Linux perf"
 msgid "Record native stack traces using a sampling profiler"
-msgstr "不要使用 Linux perf 记录栈轨迹"
+msgstr "使用采样分析器记录本地堆栈追踪"
 
 #: src/sysprof/sysprof-greeter.ui:116
 msgid "Sample JavaScript Stacks"
-msgstr ""
+msgstr "采样 JavaScript 堆栈"
 
 #: src/sysprof/sysprof-greeter.ui:117
-#, fuzzy
-#| msgid "Do not record stacktraces using Linux perf"
 msgid "Record JavaScript stack traces using a sampling profiler"
-msgstr "不要使用 Linux perf 记录栈轨迹"
+msgstr "使用采样分析器记录 JavaScript 堆栈追踪"
 
 #: src/sysprof/sysprof-greeter.ui:128
 msgid ""
 "Sysprof must launch your application to record JavaScript stacks using GJS."
-msgstr ""
+msgstr "Sysprof 必须启动您的应用程序来使用 GJS 记录 JavaScript 堆栈。"
 
 #: src/sysprof/sysprof-greeter.ui:144
 msgid "Record Scheduler Details"
-msgstr ""
+msgstr "记录调度详情"
 
 #: src/sysprof/sysprof-greeter.ui:145
 msgid "Track when processes are scheduled per CPU"
-msgstr ""
+msgstr "对每个 CPU 追踪进程调度"
 
 #: src/sysprof/sysprof-greeter.ui:158
 msgid "Tracing"
-msgstr ""
+msgstr "追踪"
 
 #: src/sysprof/sysprof-greeter.ui:162
-#, fuzzy
-#| msgid "Memory Allocations"
 msgid "Trace Memory Allocations"
-msgstr "内存分配"
+msgstr "追踪内存分配"
 
 #: src/sysprof/sysprof-greeter.ui:163
 msgid "Record a stack trace when <tt>malloc</tt> or similar functions are used"
-msgstr ""
+msgstr "当使用 <tt>malloc</tt> 或类似函数时记录堆栈追踪"
 
 #: src/sysprof/sysprof-greeter.ui:174
-#, fuzzy
-#| msgid "Sysprof is busy analyzing memory allocations."
 msgid "Sysprof must launch your application to record memory allocations."
-msgstr "Sysprof 正在分析内存分配。"
+msgstr "Sysprof 必须启动您的应用程序来记录内存分配。"
 
 #: src/sysprof/sysprof-greeter.ui:192 src/sysprof/sysprof-greeter.ui:197
 msgid "Application"
 msgstr "应用程序"
 
 #: src/sysprof/sysprof-greeter.ui:200
-#: src/sysprof/sysprof-processes-section.ui:316
+#: src/sysprof/sysprof-processes-section.ui:317
 msgid "Command Line"
 msgstr "命令行"
 
@@ -880,23 +814,19 @@ msgstr "工作目录"
 
 #: src/sysprof/sysprof-greeter.ui:212
 msgid "The application will be run as a subprocess of Sysprof."
-msgstr ""
+msgstr "应用程序将作为 Sysprof 的子进程运行。"
 
 #: src/sysprof/sysprof-greeter.ui:225
 msgid "Environment"
 msgstr "环境"
 
 #: src/sysprof/sysprof-greeter.ui:229
-#, fuzzy
-#| msgid "Environment"
 msgid "Clear Environment"
-msgstr "环境"
+msgstr "清除环境"
 
 #: src/sysprof/sysprof-greeter.ui:230
-#, fuzzy
-#| msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgid "Clear the environment before launching application"
-msgstr "设置 GTK_TRACE_FD 环境以跟踪 GTK 应用程序"
+msgstr "启动应用程序前清除环境"
 
 #: src/sysprof/sysprof-greeter.ui:256
 msgid "Add _Variable"
@@ -916,21 +846,19 @@ msgstr "计数器"
 
 #: src/sysprof/sysprof-greeter.ui:289
 msgid "CPU Usage"
-msgstr "CPU 使用率"
+msgstr "CPU 占用"
 
 #: src/sysprof/sysprof-greeter.ui:290
 msgid "Record coarse-grained counters about CPU usage and frequency"
-msgstr ""
+msgstr "记录 CPU 使用和频率的粗略计数器"
 
 #: src/sysprof/sysprof-greeter.ui:302
-#, fuzzy
-#| msgid "Memory Used"
 msgid "Memory Usage"
-msgstr "已用内存"
+msgstr "内存占用"
 
 #: src/sysprof/sysprof-greeter.ui:303
 msgid "Record coarse-grained counters about system memory usage"
-msgstr ""
+msgstr "记录系统内存使用的粗略计数器"
 
 #: src/sysprof/sysprof-greeter.ui:315
 msgid "Disk Usage"
@@ -938,25 +866,23 @@ msgstr "磁盘占用"
 
 #: src/sysprof/sysprof-greeter.ui:316
 msgid "Record coarse-grained counters about storage throughput"
-msgstr ""
+msgstr "记录存储吞吐量的粗略计数器"
 
 #: src/sysprof/sysprof-greeter.ui:328
-#, fuzzy
-#| msgid "Memory Usage"
 msgid "Network Usage"
-msgstr "内存用量"
+msgstr "网络占用"
 
 #: src/sysprof/sysprof-greeter.ui:329
 msgid "Record coarse-grained counters about network traffic"
-msgstr ""
+msgstr "记录网络传输的粗略计数器"
 
 #: src/sysprof/sysprof-greeter.ui:345
 msgid "Energy Usage"
-msgstr "电量用量"
+msgstr "能量占用"
 
 #: src/sysprof/sysprof-greeter.ui:346
 msgid "Record coarse-grained counters about energy usage in Watts"
-msgstr ""
+msgstr "记录电量使用（瓦）的粗略计数器"
 
 #: src/sysprof/sysprof-greeter.ui:358
 msgid "Battery Charge"
@@ -964,7 +890,7 @@ msgstr "电池电量"
 
 #: src/sysprof/sysprof-greeter.ui:359
 msgid "Record coarse-grained counters about battery charge or discharge rates"
-msgstr ""
+msgstr "记录电池充放电的粗略计数器"
 
 #: src/sysprof/sysprof-greeter.ui:377 src/sysprof/sysprof-greeter.ui:382
 #: src/sysprof/sysprof-window.ui:287
@@ -972,52 +898,48 @@ msgid "D-Bus"
 msgstr "D-Bus"
 
 #: src/sysprof/sysprof-greeter.ui:386
-#, fuzzy
-#| msgid "Recording at %s"
 msgid "Record System Bus"
-msgstr "%s 时的记录"
+msgstr "记录系统总线"
 
 #: src/sysprof/sysprof-greeter.ui:387
 msgid "Record messages on the D-Bus system bus"
-msgstr ""
+msgstr "记录 D-Bus 系统总线的消息"
 
 #: src/sysprof/sysprof-greeter.ui:403
-#, fuzzy
-#| msgid "Recording at %s"
 msgid "Record Session Bus"
-msgstr "%s 时的记录"
+msgstr "记录会话总线"
 
 #: src/sysprof/sysprof-greeter.ui:404
 msgid "Record messages on the D-Bus user session bus"
-msgstr ""
+msgstr "记录 D-Bus 用户会话总线的消息"
 
 #: src/sysprof/sysprof-greeter.ui:415
 msgid ""
 "The session bus may contain sensitive information such as keyboard usage and "
 "passwords."
-msgstr ""
+msgstr "会话总线可能包含敏感信息如键盘使用和密码等。"
 
 #: src/sysprof/sysprof-greeter.ui:438
 msgid "Timings"
-msgstr "定时"
+msgstr "计时"
 
 #: src/sysprof/sysprof-greeter.ui:442
 msgid "Compositor Frame Timings"
-msgstr ""
+msgstr "合成器帧计时"
 
 #: src/sysprof/sysprof-greeter.ui:443
 msgid "Record frame-timing information from the GNOME Shell compositor"
-msgstr ""
+msgstr "记录来自 GNOME Shell 合成器的帧计时信息"
 
 #: src/sysprof/sysprof-greeter.ui:454
 msgid ""
 "Applications launched by Sysprof will automatically collect GTK frame timing "
 "information."
-msgstr ""
+msgstr "由 Sysprof 启动的应用程序将自动收集 GTK 帧计时信息。"
 
 #: src/sysprof/sysprof-greeter.ui:494
 msgid "Devices"
-msgstr ""
+msgstr "设备"
 
 #: src/sysprof/sysprof-greeter.ui:498
 msgid "Include GPU Information"
@@ -1025,47 +947,43 @@ msgstr "包括 GPU 信息"
 
 #: src/sysprof/sysprof-greeter.ui:499
 msgid "Records information about graphics hardware and drivers"
-msgstr ""
+msgstr "记录关于图形硬件和驱动的信息"
 
 #: src/sysprof/sysprof-greeter.ui:517
 msgid "System"
 msgstr "系统"
 
 #: src/sysprof/sysprof-greeter.ui:522
-#, fuzzy
-#| msgid "Profiler"
 msgid "Power Profile"
-msgstr "性能分析器"
+msgstr "性能配置文件"
 
 #: src/sysprof/sysprof-greeter.ui:525
-#, fuzzy
-#| msgid "Recording Failed"
 msgid "Record with Power Profile"
-msgstr "记录失败"
+msgstr "使用性能配置文件记录"
 
 #: src/sysprof/sysprof-greeter.ui:526
 msgid "Switch to power profile while recording"
-msgstr ""
+msgstr "记录时切换至性能配置文件"
 
 #: src/sysprof/sysprof-greeter.ui:536
 msgid "Details"
-msgstr "详细信息"
+msgstr "详情"
 
 #: src/sysprof/sysprof-greeter.ui:540
 msgid "Record System Log"
-msgstr ""
+msgstr "记录系统日志"
 
 #: src/sysprof/sysprof-greeter.ui:541
 msgid "Watch the system log for new messages and record them"
-msgstr ""
+msgstr "监视系统日志以获取新消息并记录它们"
 
 #: src/sysprof/sysprof-greeter.ui:557
 msgid "Include Hardware Information"
-msgstr ""
+msgstr "包括硬件信息"
 
 #: src/sysprof/sysprof-greeter.ui:558
 msgid "Records information about PCI and USB devices"
-msgstr ""
+msgstr "记录关于 PCI 和 USB 设备的信息"
 
 #: src/sysprof/sysprof-greeter.ui:571
 msgid "Symbols"
@@ -1073,27 +991,23 @@ msgstr "符号"
 
 #: src/sysprof/sysprof-greeter.ui:575
 msgid "Bundle Symbols"
-msgstr ""
+msgstr "捆绑符号"
 
 #: src/sysprof/sysprof-greeter.ui:576
 msgid "Make recording shareable by symbolizing stack traces after recording"
-msgstr ""
+msgstr "通过记录后符号化堆栈追踪使记录可分享"
 
 #: src/sysprof/sysprof-greeter.ui:609
 msgid "_Open File…"
 msgstr "打开文件(_O)…"
 
 #: src/sysprof/sysprof-greeter.ui:616
-#, fuzzy
-#| msgid "Recording…"
 msgid "Record to _File…"
-msgstr "正在记录……"
+msgstr "记录至文件(_F)…"
 
 #: src/sysprof/sysprof-greeter.ui:623
-#, fuzzy
-#| msgid "Recording Failed"
 msgid "Record to _Memory"
-msgstr "记录失败"
+msgstr "记录至内存(_M)"
 
 #: src/sysprof/sysprof-greeter.ui:638 src/sysprof/sysprof-window.ui:388
 msgid "Open Recording…"
@@ -1109,11 +1023,11 @@ msgstr "关于 Sysprof"
 
 #: src/sysprof/sysprof-greeter.ui:658
 msgid "Quit"
-msgstr ""
+msgstr "退出"
 
 #: src/sysprof/sysprof-logs-section.c:95
 msgid "Critical"
-msgstr "严重错误"
+msgstr "关键"
 
 #: src/sysprof/sysprof-logs-section.c:98
 msgid "Warning"
@@ -1148,18 +1062,16 @@ msgid "Marks"
 msgstr "标记"
 
 #: src/sysprof/sysprof-marks-section.ui:78
-#, fuzzy
-#| msgid "Marks Captured"
 msgid "Mark Chart"
-msgstr "已采集的标记"
+msgstr "标记图表"
 
 #: src/sysprof/sysprof-marks-section.ui:92
 msgid "Mark Table"
-msgstr ""
+msgstr "标记表格"
 
 #: src/sysprof/sysprof-marks-section.ui:105
 msgid "Mark Waterfall"
-msgstr ""
+msgstr "标记瀑布流"
 
 #: src/sysprof/sysprof-marks-section.ui:212
 msgid "Summary"
@@ -1167,26 +1079,26 @@ msgstr "概要"
 
 #: src/sysprof/sysprof-marks-section.ui:317
 msgid "Minimum"
-msgstr ""
+msgstr "最小"
 
 #: src/sysprof/sysprof-marks-section.ui:351
 msgid "Maximum"
-msgstr ""
+msgstr "最大"
 
 #: src/sysprof/sysprof-marks-section.ui:385
 msgid "Average"
-msgstr ""
+msgstr "平均"
 
 #: src/sysprof/sysprof-marks-section.ui:419
 msgid "Median"
-msgstr ""
+msgstr "中值"
 
 #: src/sysprof/sysprof-mark-table.ui:47
 msgid "Start"
-msgstr ""
+msgstr "起始"
 
 #: src/sysprof/sysprof-mark-table.ui:81
-#: src/sysprof/sysprof-processes-section.ui:248
+#: src/sysprof/sysprof-processes-section.ui:249
 msgid "Duration"
 msgstr "持续时间"
 
@@ -1226,28 +1138,22 @@ msgstr "内存分配"
 
 #: src/sysprof/sysprof-memory-section.ui:29
 #: src/sysprof/sysprof-samples-section.ui:29
-#, fuzzy
-#| msgid "Stack Traces"
 msgid "Stack Traces"
-msgstr "栈轨迹"
+msgstr "堆栈追踪"
 
 #: src/sysprof/sysprof-memory-section.ui:88
-#, fuzzy
-#| msgid "All Allocations"
 msgid "Allocations"
-msgstr "全部分配"
+msgstr "分配"
 
 #: src/sysprof/sysprof-memory-section.ui:144
 msgid "Leaks"
-msgstr ""
+msgstr "泄漏"
 
 #: src/sysprof/sysprof-memory-section.ui:212
 #: src/sysprof/sysprof-samples-section.ui:207
 #: src/sysprof/sysprof-traceables-utility.ui:162
-#, fuzzy
-#| msgid "Stack Traces"
 msgid "Stack Trace"
-msgstr "栈轨迹"
+msgstr "堆栈追踪"
 
 #: src/sysprof/sysprof-metadata-section.ui:4
 msgid "Metadata"
@@ -1255,7 +1161,7 @@ msgstr "元数据"
 
 #: src/sysprof/sysprof-metadata-section.ui:71
 msgid "Key"
-msgstr ""
+msgstr "键"
 
 #: src/sysprof/sysprof-process-dialog.ui:35
 msgid "Address Layout"
@@ -1270,22 +1176,20 @@ msgid "End Address"
 msgstr "结束地址"
 
 #: src/sysprof/sysprof-process-dialog.ui:219
-#, fuzzy
-#| msgid "Counters"
 msgid "Mounts"
-msgstr "计数器"
+msgstr "挂载"
 
 #: src/sysprof/sysprof-process-dialog.ui:282
 msgid "Parent"
-msgstr ""
+msgstr "上级"
 
 #: src/sysprof/sysprof-process-dialog.ui:316
 msgid "Major"
-msgstr ""
+msgstr "主要"
 
 #: src/sysprof/sysprof-process-dialog.ui:350
 msgid "Minor"
-msgstr ""
+msgstr "次级"
 
 #: src/sysprof/sysprof-process-dialog.ui:384
 msgid "Mount Point"
@@ -1293,133 +1197,109 @@ msgstr "挂载点"
 
 #: src/sysprof/sysprof-process-dialog.ui:418
 msgid "Mount Source"
-msgstr ""
+msgstr "挂载源"
 
 #: src/sysprof/sysprof-process-dialog.ui:452
 msgid "Root"
-msgstr ""
+msgstr "根"
 
 #: src/sysprof/sysprof-process-dialog.ui:486
 msgid "Filesystem"
 msgstr "文件系统"
 
 #: src/sysprof/sysprof-process-dialog.ui:520
-#, fuzzy
-#| msgid "Functions"
 msgid "Options"
-msgstr "函数"
+msgstr "选项"
 
 #: src/sysprof/sysprof-process-dialog.ui:562
-#, fuzzy
-#| msgid "Reads"
 msgid "Threads"
-msgstr "读取"
+msgstr "线程"
 
 #: src/sysprof/sysprof-process-dialog.ui:591
 msgid "Thread ID"
-msgstr ""
+msgstr "线程 ID"
 
 #: src/sysprof/sysprof-process-dialog.ui:625
 msgid "Main Thread"
-msgstr ""
+msgstr "主线程"
 
 #: src/sysprof/sysprof-processes-section.ui:4
 msgid "Processes"
 msgstr "进程"
 
 #: src/sysprof/sysprof-processes-section.ui:73
-#, fuzzy
-#| msgid "Processes Captured"
 msgid "Process Chart"
-msgstr "已采集的进程"
+msgstr "进程图表"
 
-#: src/sysprof/sysprof-processes-section.ui:173
-#, fuzzy
-#| msgid "Processes"
+#: src/sysprof/sysprof-processes-section.ui:174
 msgid "Process Table"
-msgstr "进程"
+msgstr "进程表格"
 
 #. translators: this expands to the number of events recorded by the profiler as an indicator of progress
 #: src/sysprof/sysprof-recording-pad.c:56
 msgid "%"
-msgstr ""
+msgstr "%"
 
 #: src/sysprof/sysprof-recording-pad.c:111
 msgid "Recording Failed"
 msgstr "记录失败"
 
 #: src/sysprof/sysprof-recording-pad.c:113
-#, fuzzy, c-format
-#| msgid "Sysprof failed to parse offset for “%s”."
+#, c-format
 msgid ""
 "Sysprof failed to record.\n"
 "\n"
 "%s"
-msgstr "Sysprof 无法解析“%s”的偏移量。"
+msgstr ""
+"Sysprof 记录失败。\n"
+"\n"
+"%s"
 
 #: src/sysprof/sysprof-recording-pad.ui:69
-#, fuzzy
-#| msgid "_Stop Recording"
 msgid "Stop Recording"
-msgstr "停止记录 (_S)"
+msgstr "停止记录"
 
 #: src/sysprof/sysprof-samples-section.ui:4
-#, fuzzy
-#| msgid "Profiler"
 msgid "Time Profiler"
-msgstr "性能分析器"
+msgstr "时间分析器"
 
 #: src/sysprof/sysprof-samples-section.ui:89 src/sysprof/sysprof-window.ui:419
 msgid "Callgraph"
 msgstr "调用图"
 
 #: src/sysprof/sysprof-samples-section.ui:172 src/sysprof/sysprof-window.ui:450
-#, fuzzy
-#| msgid "Callgraph"
 msgid "Flamegraph"
-msgstr "调用图"
+msgstr "火焰图"
 
 #: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:154
 msgid "Seek Backward"
-msgstr ""
+msgstr "向后查找"
 
 #: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:164
-#, fuzzy
-#| msgctxt "shortcut window"
-#| msgid "Zoom out"
 msgid "Zoom Out"
 msgstr "缩小"
 
 #: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:174
-#, fuzzy
-#| msgctxt "shortcut window"
-#| msgid "Reset zoom"
 msgid "Reset Zoom"
 msgstr "重置缩放"
 
 #: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:184
-#, fuzzy
-#| msgctxt "shortcut window"
-#| msgid "Zoom in"
 msgid "Zoom In"
 msgstr "放大"
 
 #: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:194
 msgid "Seek Forward"
-msgstr ""
+msgstr "向前查找"
 
 #: src/sysprof/sysprof-traceables-utility.ui:109
 msgid "Depth"
-msgstr ""
+msgstr "深度"
 
 #: src/sysprof/sysprof-weighted-callgraph-view.ui:68
 msgid "Hits"
 msgstr "采样数"
 
 #: src/sysprof/sysprof-window.c:171
-#, fuzzy
-#| msgctxt "shortcut window"
-#| msgid "Open recording"
 msgid "Open Recording"
 msgstr "打开记录"
 
@@ -1428,10 +1308,8 @@ msgid "Open"
 msgstr "打开"
 
 #: src/sysprof/sysprof-window.c:176
-#, fuzzy
-#| msgid "Sysprof Captures"
 msgid "Sysprof Capture (*.syscap)"
-msgstr "Sysprof 采集文件"
+msgstr "Sysprof 捕获文件（*.syscap）"
 
 #: src/sysprof/sysprof-window.c:468
 msgid "Save to File"
@@ -1442,7 +1320,7 @@ msgid "Save"
 msgstr "保存"
 
 #: src/sysprof/sysprof-window.c:638
-msgid "Loading..."
+msgid "Loading…"
 msgstr "正在加载…"
 
 #: src/sysprof/sysprof-window.c:714
@@ -1457,6 +1335,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"该文档无法加载。请确认您使用了正确的捕获文件。\n"
+"\n"
+"%s"
 
 #: src/sysprof/sysprof-window.ui:144
 msgid "Toggle Left Panel"
@@ -1487,10 +1368,8 @@ msgid "Storage"
 msgstr "存储"
 
 #: src/sysprof/sysprof-window.ui:384
-#, fuzzy
-#| msgid "Record Again"
 msgid "_Record Again…"
-msgstr "再次记录"
+msgstr "再次记录(_R)…"
 
 #: src/sysprof/sysprof-window.ui:392
 msgid "Save As…"
@@ -1502,44 +1381,39 @@ msgstr "退出(_Q)"
 
 #: src/sysprof/sysprof-window.ui:421
 msgid "Categorize Frames"
-msgstr ""
+msgstr "分类帧"
 
 #: src/sysprof/sysprof-window.ui:425
 msgid "Hide System Libraries"
-msgstr ""
+msgstr "隐藏系统库"
 
 #: src/sysprof/sysprof-window.ui:429
-#, fuzzy
-#| msgid "Reads"
 msgid "Include Threads"
-msgstr "读取"
+msgstr "包括线程"
 
 #: src/sysprof/sysprof-window.ui:433
 msgid "Bottom Up"
-msgstr ""
+msgstr "底部开始"
 
 #: src/sysprof/sysprof-window.ui:437
-#, fuzzy
-#| msgid "Search Processes"
 msgid "Ignore Kernel Processes"
-msgstr "搜索进程"
+msgstr "忽略内核进程"
 
 #: src/sysprof/sysprof-window.ui:441
-#, fuzzy
-#| msgid "Processes"
 msgid "Ignore Process 0"
-msgstr "进程"
+msgstr "忽略进程 0"
 
 #: src/sysprof/sysprof-window.ui:445
-#, fuzzy
-#| msgid "Search Processes"
 msgid "Merge Similar Processes"
-msgstr "搜索进程"
+msgstr "合并类似进程"
 
 #. translators: Left Heavy means to sort larger (heavier) stack frames before others, starting from the left
 #: src/sysprof/sysprof-window.ui:453
 msgid "Left Heavy"
-msgstr ""
+msgstr "左侧最重"
+
+#~ msgid "The GNOME Project"
+#~ msgstr "GNOME 项目"
 
 #, fuzzy
 #~| msgid "Memory Usage"

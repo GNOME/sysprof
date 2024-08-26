@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-03-15 23:29+0000\n"
-"PO-Revision-Date: 2024-03-20 03:51+0330\n"
+"POT-Creation-Date: 2024-07-26 13:47+0000\n"
+"PO-Revision-Date: 2024-08-26 12:37+0330\n"
 "Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
 "Language-Team: Persian <fa@li.org>\n"
 "Language: fa\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.4.4\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:6
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
@@ -30,8 +30,8 @@ msgstr "نمایه سازی از یک برنامه یا کل سامانه"
 
 #. developer_name tag deprecated with Appstream 1.0
 #: data/org.gnome.Sysprof.appdata.xml.in.in:11
-msgid "The GNOME Project"
-msgstr "پروژهٔ گنوم"
+msgid "Christian Hergert"
+msgstr "کریستین هرگرت"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:17
 msgid ""
@@ -261,7 +261,7 @@ msgstr "محدود کردن سامانما به یک وظیفه [منسوخ]"
 
 #: src/sysprof-cli/sysprof-cli.c:308 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:179
-#: src/sysprof/sysprof-processes-section.ui:282
+#: src/sysprof/sysprof-processes-section.ui:283
 #: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "شناسهٔ فرایند"
@@ -551,7 +551,7 @@ msgstr "جدول شمارشگرها"
 #: src/sysprof/sysprof-metadata-section.ui:38
 #: src/sysprof/sysprof-network-section.ui:346
 #: src/sysprof/sysprof-process-dialog.ui:64
-#: src/sysprof/sysprof-processes-section.ui:214
+#: src/sysprof/sysprof-processes-section.ui:215
 #: src/sysprof/sysprof-storage-section.ui:346
 #: src/sysprof/sysprof-traceables-utility.ui:23
 msgid "Time"
@@ -790,7 +790,7 @@ msgstr "سامانما باید برای ضبط تخصیص حافظه‌ها ب�
 msgid "Application"
 msgstr "برنامه"
 
-#: src/sysprof/sysprof-greeter.ui:200 src/sysprof/sysprof-processes-section.ui:316
+#: src/sysprof/sysprof-greeter.ui:200 src/sysprof/sysprof-processes-section.ui:317
 msgid "Command Line"
 msgstr "خط فرمان"
 
@@ -1087,7 +1087,7 @@ msgid "Start"
 msgstr "شروع"
 
 #: src/sysprof/sysprof-mark-table.ui:81
-#: src/sysprof/sysprof-processes-section.ui:248
+#: src/sysprof/sysprof-processes-section.ui:249
 msgid "Duration"
 msgstr "طول"
 
@@ -1220,7 +1220,7 @@ msgstr "فرایندها"
 msgid "Process Chart"
 msgstr "نمودار فرایند"
 
-#: src/sysprof/sysprof-processes-section.ui:173
+#: src/sysprof/sysprof-processes-section.ui:174
 msgid "Process Table"
 msgstr "جدول فرایند"
 
@@ -1309,8 +1309,8 @@ msgid "Save"
 msgstr "ذخیره"
 
 #: src/sysprof/sysprof-window.c:638
-msgid "Loading..."
-msgstr "در حال بار کردن..."
+msgid "Loading…"
+msgstr "بار کردن…"
 
 #: src/sysprof/sysprof-window.c:714
 msgid "Invalid Document"
@@ -1400,6 +1400,9 @@ msgstr "ادغام فرایندهای مشابه"
 #: src/sysprof/sysprof-window.ui:453
 msgid "Left Heavy"
 msgstr "چپ سنگین"
+
+#~ msgid "The GNOME Project"
+#~ msgstr "پروژهٔ گنوم"
 
 #~ msgid "Hold the performance profile for the duration of the recording"
 #~ msgstr "نگه داشتن نمایه‌گر کارایی در طول ضبط"

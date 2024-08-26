@@ -5,21 +5,22 @@
 # Enrico Nicoletto <hiko@duck.com>, 2016-2018, 2021-2022.
 # Rafael Fontenelle <rafaelff@gnome.org>, 2016-2023.
 # Alex Jr <alexjrsh@proton.me>, 2023.
+# Juliano de Souza Camargo <julianosc@pm.me>, 2024.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-03-11 16:52+0000\n"
-"PO-Revision-Date: 2024-04-04 18:47-0300\n"
-"Last-Translator: Leônidas Araújo <leorusvellt@hotmail.com>\n"
-"Language-Team: Brazilian Portuguese <https://br.gnome.org/traducao>\n"
+"POT-Creation-Date: 2024-08-04 18:14+0000\n"
+"PO-Revision-Date: 2024-08-26 09:10-0300\n"
+"Last-Translator: Juliano de Souza Camargo <julianosc@pm.me>\n"
+"Language-Team: Brazilian Portuguese <https://br.gnome.org/traducao>>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Gtranslator 46.1\n"
 "X-Project-Style: gnome\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:6
@@ -35,8 +36,8 @@ msgstr "Perfile um aplicativo ou todo o sistema"
 
 #. developer_name tag deprecated with Appstream 1.0
 #: data/org.gnome.Sysprof.appdata.xml.in.in:11
-msgid "The GNOME Project"
-msgstr "O Projeto GNOME"
+msgid "Christian Hergert"
+msgstr "Christian Hergert"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:17
 msgid ""
@@ -271,7 +272,7 @@ msgstr "Usa o sysprof especificamente para uma tarefa [Descontinuado]"
 
 #: src/sysprof-cli/sysprof-cli.c:308 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:179
-#: src/sysprof/sysprof-processes-section.ui:282
+#: src/sysprof/sysprof-processes-section.ui:283
 #: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "PID"
@@ -567,7 +568,7 @@ msgstr "Tabela de contadores"
 #: src/sysprof/sysprof-metadata-section.ui:38
 #: src/sysprof/sysprof-network-section.ui:346
 #: src/sysprof/sysprof-process-dialog.ui:64
-#: src/sysprof/sysprof-processes-section.ui:214
+#: src/sysprof/sysprof-processes-section.ui:215
 #: src/sysprof/sysprof-storage-section.ui:346
 #: src/sysprof/sysprof-traceables-utility.ui:23
 msgid "Time"
@@ -820,7 +821,7 @@ msgid "Application"
 msgstr "Aplicativo"
 
 #: src/sysprof/sysprof-greeter.ui:200
-#: src/sysprof/sysprof-processes-section.ui:316
+#: src/sysprof/sysprof-processes-section.ui:317
 msgid "Command Line"
 msgstr "Linha de comando"
 
@@ -1122,7 +1123,7 @@ msgid "Start"
 msgstr "Início"
 
 #: src/sysprof/sysprof-mark-table.ui:81
-#: src/sysprof/sysprof-processes-section.ui:248
+#: src/sysprof/sysprof-processes-section.ui:249
 msgid "Duration"
 msgstr "Duração"
 
@@ -1255,7 +1256,7 @@ msgstr "Processos"
 msgid "Process Chart"
 msgstr "Gráfico de processos"
 
-#: src/sysprof/sysprof-processes-section.ui:173
+#: src/sysprof/sysprof-processes-section.ui:174
 msgid "Process Table"
 msgstr "Tabela de processos"
 
@@ -1344,8 +1345,8 @@ msgid "Save"
 msgstr "Salvar"
 
 #: src/sysprof/sysprof-window.c:638
-msgid "Loading..."
-msgstr "Carregando..."
+msgid "Loading…"
+msgstr "Carregando…"
 
 #: src/sysprof/sysprof-window.c:714
 msgid "Invalid Document"
@@ -1436,6 +1437,9 @@ msgstr "Mesclar processos semelhantes"
 #: src/sysprof/sysprof-window.ui:453
 msgid "Left Heavy"
 msgstr "Esquerda pesada"
+
+#~ msgid "The GNOME Project"
+#~ msgstr "O Projeto GNOME"
 
 #~ msgid "Sysprof was unable to generate a callgraph from the system capture."
 #~ msgstr ""

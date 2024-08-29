@@ -235,6 +235,7 @@ sysprof_application_init (SysprofApplication *self)
   textdomain (GETTEXT_PACKAGE);
 
   g_set_application_name (_("Sysprof"));
+  gtk_window_set_default_icon_name (APP_ID_S);
 
   g_application_add_main_option_entries (G_APPLICATION (self), option_entries);
 

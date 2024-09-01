@@ -2,14 +2,14 @@
 # Copyright (C) 2023-2024 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
 #
-# Sabri Ünal <libreajans@gmail.com>, 2023, 2024.
+# Sabri Ünal <yakushabb@gmail.com>, 2023, 2024.
 # Emin Tufan Çetin <etcetin@gmail.com>, 2023, 2024.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-07-26 13:47+0000\n"
+"POT-Creation-Date: 2024-08-04 18:14+0000\n"
 "PO-Revision-Date: 2024-06-25 13:20+0300\n"
 "Last-Translator: Sabri Ünal <yakushabb@gmail.com>\n"
 "Language-Team: Turkish <takim@gnome.org.tr>\n"
@@ -519,7 +519,7 @@ msgstr "Sistem profilleyici"
 #: src/sysprof/sysprof-application.c:171
 msgid "translator-credits"
 msgstr ""
-"Sabri Ünal <libreajans@gmail.com>\n"
+"Sabri Ünal <yakushabb@gmail.com>\n"
 "Emin Tufan Çetin <etcetin@gmail.com>"
 
 #: src/sysprof/sysprof-callgraph-view.ui:22
@@ -1426,6 +1426,3 @@ msgstr "Benzer Süreçleri Birleştir"
 #: src/sysprof/sysprof-window.ui:453
 msgid "Left Heavy"
 msgstr "Sol Ağırlıklı"
-
-#~ msgid "The GNOME Project"
-#~ msgstr "GNOME Projesi"

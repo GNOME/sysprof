@@ -6,8 +6,8 @@
 msgid ""
 msgstr "Project-Id-Version: sysprof sysprof-3-30\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-03-01 17:43+0000\n"
-"PO-Revision-Date: 2024-03-01 10:00+0100\n"
+"POT-Creation-Date: 2024-07-26 13:47+0000\n"
+"PO-Revision-Date: 2024-09-02 10:00+0100\n"
 "Last-Translator: Asier Sarasua Garmendia <asiersarasua@ni.eus>\n"
 "Language-Team: Basque <librezale@librezale.eus>\n"
 "Language: eu\n"
@@ -29,8 +29,8 @@ msgstr "Profilatu aplikazio bat edo sistema oso bat"
 
 #. developer_name tag deprecated with Appstream 1.0
 #: data/org.gnome.Sysprof.appdata.xml.in.in:11
-msgid "The GNOME Project"
-msgstr "GNOME proiektua"
+msgid "Christian Hergert"
+msgstr "Christian Hergert"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:17
 msgid ""
@@ -68,7 +68,7 @@ msgstr "Testuinguruaren araberako aldatzaileak"
 
 #: src/libsysprof/sysprof-category-summary.c:151
 msgid "CSS"
-msgstr "CSS"
+msgstr "CSSa"
 
 #: src/libsysprof/sysprof-category-summary.c:154
 #: src/sysprof/sysprof-greeter.ui:433 src/sysprof/sysprof-window.ui:317
@@ -221,7 +221,7 @@ msgstr "%s [%d. prozesua]"
 #: src/libsysprof/sysprof-document-process.c:295
 #, c-format
 msgid "Process %d"
-msgstr "%d. prozesua"
+msgstr "Prozesatu %d"
 
 #: src/libsysprof/sysprof-document-sample.c:136
 msgid "Sample"
@@ -260,7 +260,7 @@ msgstr "Bihurtu sysprof zeregin batekiko espezifiko [zaharkituta]"
 
 #: src/sysprof-cli/sysprof-cli.c:308 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:179
-#: src/sysprof/sysprof-processes-section.ui:282
+#: src/sysprof/sysprof-processes-section.ui:283
 #: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "PIDa"
@@ -461,7 +461,7 @@ msgstr "Erakutsi laguntza"
 #: src/sysprof/gtk/help-overlay.ui:62
 msgctxt "shortcut window"
 msgid "Show keyboard shortcuts"
-msgstr "Erakutsi lasterbideak"
+msgstr "Erakutsi laster-teklak"
 
 #: src/sysprof/gtk/help-overlay.ui:68
 msgctxt "shortcut window"
@@ -488,7 +488,7 @@ msgstr "Sysprof aplikazioari _buruz"
 #: src/sysprof/sysprof-animation.c:1038
 #, c-format
 msgid "Failed to find property %s in %s"
-msgstr "Ez da aurkitu %s propietatea hemen: %s"
+msgstr "Ez da aurkitu %s propietatea %s(e)n"
 
 #: src/sysprof/sysprof-animation.c:1047
 #, c-format
@@ -550,7 +550,7 @@ msgstr "Kontagailuen taula"
 #: src/sysprof/sysprof-metadata-section.ui:38
 #: src/sysprof/sysprof-network-section.ui:346
 #: src/sysprof/sysprof-process-dialog.ui:64
-#: src/sysprof/sysprof-processes-section.ui:214
+#: src/sysprof/sysprof-processes-section.ui:215
 #: src/sysprof/sysprof-storage-section.ui:346
 #: src/sysprof/sysprof-traceables-utility.ui:23
 msgid "Time"
@@ -695,7 +695,7 @@ msgstr "Erabili GAKOA=BALIOA ingurune-aldagai bat ezartzeko"
 
 #: src/sysprof/sysprof-greeter.c:108
 msgid "Keys may not start with a number"
-msgstr "Gakoek ez dute zenbakiekin hasi behar"
+msgstr "Gakoek ez dute zenbakiekin hasi behar."
 
 #: src/sysprof/sysprof-greeter.c:118
 msgid "Keys may only contain alpha-numerics or underline."
@@ -774,7 +774,7 @@ msgstr "Grabatu antolatzailearen xehetasunak"
 
 #: src/sysprof/sysprof-greeter.ui:145
 msgid "Track when processes are scheduled per CPU"
-msgstr "Jarraitu prozesuak noiz sartzen diren antolatzailean PUZeko"
+msgstr "Jarraitu prozesuak noiz sartzen diren antolatzailean PUZen arabera"
 
 #: src/sysprof/sysprof-greeter.ui:158
 msgid "Tracing"
@@ -797,7 +797,7 @@ msgid "Application"
 msgstr "Aplikazioa"
 
 #: src/sysprof/sysprof-greeter.ui:200
-#: src/sysprof/sysprof-processes-section.ui:316
+#: src/sysprof/sysprof-processes-section.ui:317
 msgid "Command Line"
 msgstr "Komando-lerroa"
 
@@ -831,7 +831,7 @@ msgstr "Gehitu aldagaia"
 
 #: src/sysprof/sysprof-greeter.ui:263
 msgid "_Add"
-msgstr "_Gehitu"
+msgstr "G_ehitu"
 
 #: src/sysprof/sysprof-greeter.ui:280 src/sysprof/sysprof-greeter.ui:285
 msgid "Counters"
@@ -1040,7 +1040,7 @@ msgstr "Errorea"
 
 #: src/sysprof/sysprof-logs-section.ui:4 src/sysprof/sysprof-logs-section.ui:30
 msgid "Logs"
-msgstr "Egunkariak"
+msgstr "Erregistroak"
 
 #: src/sysprof/sysprof-logs-section.ui:215
 msgid "Severity"
@@ -1088,10 +1088,10 @@ msgstr "Mediana"
 
 #: src/sysprof/sysprof-mark-table.ui:47
 msgid "Start"
-msgstr "Hasiera"
+msgstr "Hasi"
 
 #: src/sysprof/sysprof-mark-table.ui:81
-#: src/sysprof/sysprof-processes-section.ui:248
+#: src/sysprof/sysprof-processes-section.ui:249
 msgid "Duration"
 msgstr "Iraupena"
 
@@ -1105,7 +1105,7 @@ msgstr "Taldea"
 
 #: src/sysprof/sysprof-mark-table.ui:256
 msgid "Description"
-msgstr "Deskribapena"
+msgstr "Azalpena"
 
 #: src/sysprof/sysprof-memory-callgraph-view.ui:8
 #: src/sysprof/sysprof-memory-callgraph-view.ui:105
@@ -1224,7 +1224,7 @@ msgstr "Prozesuak"
 msgid "Process Chart"
 msgstr "Prozesuaren diagrama"
 
-#: src/sysprof/sysprof-processes-section.ui:173
+#: src/sysprof/sysprof-processes-section.ui:174
 msgid "Process Table"
 msgstr "Prozesuaren taula"
 
@@ -1249,7 +1249,7 @@ msgstr "Sysprof-ek ezin izan du grabatu.\n"
 
 #: src/sysprof/sysprof-recording-pad.ui:69
 msgid "Stop Recording"
-msgstr "Gelditu grabatzea"
+msgstr "Gelditu grabazioa"
 
 #: src/sysprof/sysprof-samples-section.ui:4
 msgid "Time Profiler"
@@ -1312,7 +1312,7 @@ msgid "Save"
 msgstr "Gorde"
 
 #: src/sysprof/sysprof-window.c:638
-msgid "Loading..."
+msgid "Loading…"
 msgstr "Kargatzen…"
 
 #: src/sysprof/sysprof-window.c:714
@@ -1340,7 +1340,7 @@ msgstr "Menu nagusia"
 
 #: src/sysprof/sysprof-window.ui:216
 msgid "View Options"
-msgstr "Ikusi aukerak"
+msgstr "Ikusteko aukerak"
 
 #: src/sysprof/sysprof-window.ui:222
 msgid "Toggle Right Panel"
@@ -1368,7 +1368,7 @@ msgstr "Gorde honela…"
 
 #: src/sysprof/sysprof-window.ui:412
 msgid "_Quit"
-msgstr "_Irten"
+msgstr "I_rten"
 
 #: src/sysprof/sysprof-window.ui:421
 msgid "Categorize Frames"
@@ -1402,6 +1402,9 @@ msgstr "Batu antzeko prozesuak"
 #: src/sysprof/sysprof-window.ui:453
 msgid "Left Heavy"
 msgstr "Astuna ezkerrean"
+
+#~ msgid "The GNOME Project"
+#~ msgstr "GNOME proiektua"
 
 #~ msgid "Hold the performance profile for the duration of the recording"
 #~ msgstr "Eutsi errendimendu-profilari grabazioaren iraupenean zehar"

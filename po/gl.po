@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-03-01 17:43+0000\n"
-"PO-Revision-Date: 2024-03-10 11:25+0100\n"
+"POT-Creation-Date: 2024-07-26 13:47+0000\n"
+"PO-Revision-Date: 2024-09-02 19:13+0200\n"
 "Last-Translator: Fran Dieguez <fran.dieguez@gnome.org>\n"
 "Language-Team: Galician <proxecto@trasno.gal>\n"
 "Language: gl\n"
@@ -22,7 +22,7 @@ msgstr ""
 "X-DL-Module: sysprof\n"
 "X-DL-State: None\n"
 "X-DL-Team: gl\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.5\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:6
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
@@ -37,8 +37,8 @@ msgstr "Perfile unha aplicación ou o sistema enteiro"
 
 #. developer_name tag deprecated with Appstream 1.0
 #: data/org.gnome.Sysprof.appdata.xml.in.in:11
-msgid "The GNOME Project"
-msgstr "O Proxecto GNOME"
+msgid "Christian Hergert"
+msgstr "Christian Hergert"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:17
 msgid ""
@@ -274,7 +274,7 @@ msgstr "Fai que Sysprof sexa específico para unha tarefa [Obsoleto]"
 
 #: src/sysprof-cli/sysprof-cli.c:308 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:179
-#: src/sysprof/sysprof-processes-section.ui:282
+#: src/sysprof/sysprof-processes-section.ui:283
 #: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "PID"
@@ -570,7 +570,7 @@ msgstr "Táboa de contadores"
 #: src/sysprof/sysprof-metadata-section.ui:38
 #: src/sysprof/sysprof-network-section.ui:346
 #: src/sysprof/sysprof-process-dialog.ui:64
-#: src/sysprof/sysprof-processes-section.ui:214
+#: src/sysprof/sysprof-processes-section.ui:215
 #: src/sysprof/sysprof-storage-section.ui:346
 #: src/sysprof/sysprof-traceables-utility.ui:23
 msgid "Time"
@@ -823,7 +823,7 @@ msgid "Application"
 msgstr "Aplicación"
 
 #: src/sysprof/sysprof-greeter.ui:200
-#: src/sysprof/sysprof-processes-section.ui:316
+#: src/sysprof/sysprof-processes-section.ui:317
 msgid "Command Line"
 msgstr "Liña de ordes"
 
@@ -1124,7 +1124,7 @@ msgid "Start"
 msgstr "Inicio"
 
 #: src/sysprof/sysprof-mark-table.ui:81
-#: src/sysprof/sysprof-processes-section.ui:248
+#: src/sysprof/sysprof-processes-section.ui:249
 msgid "Duration"
 msgstr "Duración"
 
@@ -1257,7 +1257,7 @@ msgstr "Procesos"
 msgid "Process Chart"
 msgstr "Gráfica de procesos"
 
-#: src/sysprof/sysprof-processes-section.ui:173
+#: src/sysprof/sysprof-processes-section.ui:174
 msgid "Process Table"
 msgstr "Táboa de procesos"
 
@@ -1346,7 +1346,7 @@ msgid "Save"
 msgstr "Gardar"
 
 #: src/sysprof/sysprof-window.c:638
-msgid "Loading..."
+msgid "Loading…"
 msgstr "Cargando…"
 
 #: src/sysprof/sysprof-window.c:714
@@ -1438,6 +1438,9 @@ msgstr "Combinar procesos similares"
 #: src/sysprof/sysprof-window.ui:453
 msgid "Left Heavy"
 msgstr "Esquerda pesada"
+
+#~ msgid "The GNOME Project"
+#~ msgstr "O Proxecto GNOME"
 
 #, fuzzy
 #~ msgid ""

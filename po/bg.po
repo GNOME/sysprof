@@ -12,10 +12,10 @@
 # compositor мениджър за наслагане
 msgid ""
 msgstr ""
-"Project-Id-Version: sysprof sysprof-46\n"
+"Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-08-04 18:14+0000\n"
-"PO-Revision-Date: 2024-09-06 10:46+0200\n"
+"POT-Creation-Date: 2024-09-04 20:30+0000\n"
+"PO-Revision-Date: 2024-09-06 10:49+0200\n"
 "Last-Translator: twlvnn kraftwerk <kraft_werk@tutanota.com>\n"
 "Language-Team: Bulgarian <dict-notifications@fsa-bg.org>\n"
 "Language: bg\n"
@@ -28,7 +28,7 @@ msgstr ""
 #: data/org.gnome.Sysprof.appdata.xml.in.in:6
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
 #: src/sysprof/sysprof-application.c:237
-#: src/sysprof/sysprof-recording-pad.ui:18 src/sysprof/sysprof-window.c:243
+#: src/sysprof/sysprof-recording-pad.ui:20 src/sysprof/sysprof-window.c:243
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -38,8 +38,8 @@ msgstr "Профилиране на програма или цялата сис�
 
 #. developer_name tag deprecated with Appstream 1.0
 #: data/org.gnome.Sysprof.appdata.xml.in.in:11
-msgid "The GNOME Project"
-msgstr "Проектът GNOME"
+msgid "Christian Hergert"
+msgstr "Christian Hergert"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:17
 msgid ""
@@ -258,145 +258,145 @@ msgstr ""
 "Проследяването изисква създаване на програма, компилирана с „-finstrument-"
 "functions“. Проследяването няма да бъде достъпно."
 
-#: src/sysprof-cli/sysprof-cli.c:112
+#: src/sysprof-cli/sysprof-cli.c:114
 msgid "--merge requires at least 2 filename arguments"
 msgstr "„--merge“ изисква поне 2 аргумента — имена на файлове"
 
-#: src/sysprof-cli/sysprof-cli.c:307
+#: src/sysprof-cli/sysprof-cli.c:311
 msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
 msgstr ""
 "Изключване на ограничаването на ЦП по време на профилиране (изоставено за „--"
 "power-profile“)"
 
-#: src/sysprof-cli/sysprof-cli.c:308
+#: src/sysprof-cli/sysprof-cli.c:312
 msgid "Make sysprof specific to a task [Deprecated]"
 msgstr "Следене със sysprof специфично за дадена задача (изоставено)"
 
-#: src/sysprof-cli/sysprof-cli.c:308 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof-cli/sysprof-cli.c:312 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:179
-#: src/sysprof/sysprof-processes-section.ui:282
+#: src/sysprof/sysprof-processes-section.ui:283
 #: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "Ид. пр."
 
-#: src/sysprof-cli/sysprof-cli.c:309
+#: src/sysprof-cli/sysprof-cli.c:313
 msgid "Run a command and profile the process"
 msgstr "Изпълнение на команда и след това профилиране на процеса"
 
-#: src/sysprof-cli/sysprof-cli.c:309
+#: src/sysprof-cli/sysprof-cli.c:313
 msgid "COMMAND"
 msgstr "КОМАНДА"
 
-#: src/sysprof-cli/sysprof-cli.c:310
+#: src/sysprof-cli/sysprof-cli.c:314
 msgid ""
 "Set environment variable for spawned process. Can be used multiple times."
 msgstr ""
 "Задайте променлива на средата за създаден процес. Може да се използва "
 "многократно."
 
-#: src/sysprof-cli/sysprof-cli.c:310
+#: src/sysprof-cli/sysprof-cli.c:314
 msgid "VAR=VALUE"
 msgstr "ПРОМЕНЛИВА=СТОЙНОСТ"
 
-#: src/sysprof-cli/sysprof-cli.c:311
+#: src/sysprof-cli/sysprof-cli.c:315
 msgid "Force overwrite the capture file"
 msgstr "Принудително презаписване на файла със записите"
 
-#: src/sysprof-cli/sysprof-cli.c:312
+#: src/sysprof-cli/sysprof-cli.c:316
 msgid "Disable recording of battery statistics"
 msgstr "Изключване на записването на статистиката за батерията"
 
-#: src/sysprof-cli/sysprof-cli.c:313
+#: src/sysprof-cli/sysprof-cli.c:317
 msgid "Disable recording of CPU statistics"
 msgstr "Без записване на статистиката за ЦП"
 
-#: src/sysprof-cli/sysprof-cli.c:314
+#: src/sysprof-cli/sysprof-cli.c:318
 msgid "Disable recording of Disk statistics"
 msgstr "Без записване на статистиката за диска"
 
-#: src/sysprof-cli/sysprof-cli.c:315
+#: src/sysprof-cli/sysprof-cli.c:319
 msgid "Do not record stacktraces using Linux perf"
 msgstr "Без записване на проследяването на стековете с Linux perf"
 
-#: src/sysprof-cli/sysprof-cli.c:316
+#: src/sysprof-cli/sysprof-cli.c:320
 msgid "Do not append symbol name information from local machine"
 msgstr "Без добавяне на символите от локалната машина"
 
-#: src/sysprof-cli/sysprof-cli.c:317
+#: src/sysprof-cli/sysprof-cli.c:321
 msgid "Disable recording of memory statistics"
 msgstr "Без записване на статистиката за паметта"
 
-#: src/sysprof-cli/sysprof-cli.c:318
+#: src/sysprof-cli/sysprof-cli.c:322
 msgid "Disable recording of network statistics"
 msgstr "Без записване на статистиката за мрежата"
 
-#: src/sysprof-cli/sysprof-cli.c:319
+#: src/sysprof-cli/sysprof-cli.c:323
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr "Задаване на променливата на средата SYSPROF_TRACE_FD за подпроцеса"
 
-#: src/sysprof-cli/sysprof-cli.c:320
+#: src/sysprof-cli/sysprof-cli.c:324
 msgid "Track when processes are scheduled"
 msgstr "Следене кога процесите са насрочени"
 
-#: src/sysprof-cli/sysprof-cli.c:321
+#: src/sysprof-cli/sysprof-cli.c:325
 msgid "Profile the D-Bus session bus"
 msgstr "Профилиране на сесийната шина D-Bus"
 
-#: src/sysprof-cli/sysprof-cli.c:322
+#: src/sysprof-cli/sysprof-cli.c:326
 msgid "Profile the D-Bus system bus"
 msgstr "Профилиране на системната шина D-Bus"
 
-#: src/sysprof-cli/sysprof-cli.c:323
+#: src/sysprof-cli/sysprof-cli.c:327
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr ""
 "Задаване на променливата на средата GJS_TRACE_FD за проследяване на GJS "
 "процеси"
 
-#: src/sysprof-cli/sysprof-cli.c:324
+#: src/sysprof-cli/sysprof-cli.c:328
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr ""
 "Задаване на променливата на средата GTK_TRACE_FD за проследяване на "
 "програма, ползваща GTK"
 
-#: src/sysprof-cli/sysprof-cli.c:325
+#: src/sysprof-cli/sysprof-cli.c:329
 msgid "Include RAPL energy statistics"
 msgstr "Включване на статистика за енергопотребление RAPL"
 
-#: src/sysprof-cli/sysprof-cli.c:326
+#: src/sysprof-cli/sysprof-cli.c:330
 msgid "Profile memory allocations and frees"
 msgstr "Профилиране на заделянето и освобождаването на паметта"
 
-#: src/sysprof-cli/sysprof-cli.c:327
+#: src/sysprof-cli/sysprof-cli.c:331
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr "Свързване с „org.gnome.Shell“ за статистика за профилиране"
 
-#: src/sysprof-cli/sysprof-cli.c:328
+#: src/sysprof-cli/sysprof-cli.c:332
 msgid "Track performance of the applications main loop"
 msgstr "Следене на производителността на основния цикъл на приложенията"
 
-#: src/sysprof-cli/sysprof-cli.c:330
+#: src/sysprof-cli/sysprof-cli.c:334
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr ""
 "Сливане на всички предоставени *.syscap файлове и извеждане в стандартния "
 "изход"
 
-#: src/sysprof-cli/sysprof-cli.c:331
+#: src/sysprof-cli/sysprof-cli.c:335
 msgid "Print the sysprof-cli version and exit"
 msgstr "Извеждане на версията на „sysprof-cli“ и спиране"
 
-#: src/sysprof-cli/sysprof-cli.c:332
+#: src/sysprof-cli/sysprof-cli.c:336
 msgid "The size of the buffer in pages (1 = 1 page)"
 msgstr "Размерът на буфера в страници (1 = 1 страница)"
 
-#: src/sysprof-cli/sysprof-cli.c:333
+#: src/sysprof-cli/sysprof-cli.c:337
 msgid "Additional D-Bus address to monitor"
 msgstr "Допълнителен адрес на D-Bus за наблюдение"
 
-#: src/sysprof-cli/sysprof-cli.c:366
+#: src/sysprof-cli/sysprof-cli.c:370
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[ФАЙЛ_СЪС_ЗАПИСИ] [-- АРГУМЕНТ…] — Sysprof"
 
-#: src/sysprof-cli/sysprof-cli.c:369
+#: src/sysprof-cli/sysprof-cli.c:373
 msgid ""
 "\n"
 "Examples:\n"
@@ -420,12 +420,12 @@ msgstr ""
 "  # Сливане на няколко syscap файла в един\n"
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 
-#: src/sysprof-cli/sysprof-cli.c:405
+#: src/sysprof-cli/sysprof-cli.c:409
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Прекалено много аргументи бяха подадени на „sysprof-cli“:"
 
 #. Translators: %s is a file name.
-#: src/sysprof-cli/sysprof-cli.c:459
+#: src/sysprof-cli/sysprof-cli.c:465
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s съществува. Използвайте „--force“, за да презапишете\n"
@@ -585,7 +585,7 @@ msgstr "Таблица на броячите"
 #: src/sysprof/sysprof-metadata-section.ui:38
 #: src/sysprof/sysprof-network-section.ui:346
 #: src/sysprof/sysprof-process-dialog.ui:64
-#: src/sysprof/sysprof-processes-section.ui:214
+#: src/sysprof/sysprof-processes-section.ui:215
 #: src/sysprof/sysprof-storage-section.ui:346
 #: src/sysprof/sysprof-traceables-utility.ui:23
 msgid "Time"
@@ -593,7 +593,7 @@ msgstr "Време"
 
 #: src/sysprof/sysprof-cpu-section.ui:412
 #: src/sysprof/sysprof-energy-section.ui:382
-#: src/sysprof/sysprof-flame-graph.c:453
+#: src/sysprof/sysprof-flame-graph.c:455
 #: src/sysprof/sysprof-graphics-section.ui:293
 #: src/sysprof/sysprof-marks-section.ui:248
 #: src/sysprof/sysprof-network-section.ui:380
@@ -711,7 +711,7 @@ msgstr "Компресирано"
 msgid "Filter Files"
 msgstr "Филтриране на файловете"
 
-#: src/sysprof/sysprof-flame-graph.c:457
+#: src/sysprof/sysprof-flame-graph.c:459
 #: src/sysprof/sysprof-process-dialog.ui:177
 msgid "File"
 msgstr "Файл"
@@ -838,7 +838,7 @@ msgid "Application"
 msgstr "Програма"
 
 #: src/sysprof/sysprof-greeter.ui:200
-#: src/sysprof/sysprof-processes-section.ui:316
+#: src/sysprof/sysprof-processes-section.ui:317
 msgid "Command Line"
 msgstr "Команден ред"
 
@@ -1142,7 +1142,7 @@ msgid "Start"
 msgstr "Начало"
 
 #: src/sysprof/sysprof-mark-table.ui:81
-#: src/sysprof/sysprof-processes-section.ui:248
+#: src/sysprof/sysprof-processes-section.ui:249
 msgid "Duration"
 msgstr "Продължителност"
 
@@ -1275,7 +1275,7 @@ msgstr "Процеси"
 msgid "Process Chart"
 msgstr "Диаграма на процесите"
 
-#: src/sysprof/sysprof-processes-section.ui:173
+#: src/sysprof/sysprof-processes-section.ui:174
 msgid "Process Table"
 msgstr "Таблица на процесите"
 
@@ -1299,7 +1299,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: src/sysprof/sysprof-recording-pad.ui:69
+#: src/sysprof/sysprof-recording-pad.ui:71
 msgid "Stop Recording"
 msgstr "Спиране на записа"
 
@@ -1364,7 +1364,7 @@ msgid "Save"
 msgstr "Запазване"
 
 #: src/sysprof/sysprof-window.c:638
-msgid "Loading..."
+msgid "Loading…"
 msgstr "Зареждане…"
 
 #: src/sysprof/sysprof-window.c:714
@@ -1456,3 +1456,6 @@ msgstr "Сливане на подобни процеси"
 #: src/sysprof/sysprof-window.ui:453
 msgid "Left Heavy"
 msgstr "Най—тежки вляво"
+
+#~ msgid "The GNOME Project"
+#~ msgstr "Проектът GNOME"

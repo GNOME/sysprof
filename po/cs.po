@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-07-26 13:47+0000\n"
-"PO-Revision-Date: 2024-08-30 00:46+0200\n"
+"POT-Creation-Date: 2024-09-06 08:48+0000\n"
+"PO-Revision-Date: 2024-09-09 16:50+0200\n"
 "Last-Translator: Daniel Rusek <mail@asciiwolf.com>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
@@ -22,7 +22,7 @@ msgstr ""
 #: data/org.gnome.Sysprof.appdata.xml.in.in:6
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
 #: src/sysprof/sysprof-application.c:237
-#: src/sysprof/sysprof-recording-pad.ui:18 src/sysprof/sysprof-window.c:243
+#: src/sysprof/sysprof-recording-pad.ui:20 src/sysprof/sysprof-window.c:243
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -33,7 +33,7 @@ msgstr "Profilujte aplikaci nebo celý systém"
 #. developer_name tag deprecated with Appstream 1.0
 #: data/org.gnome.Sysprof.appdata.xml.in.in:11
 msgid "Christian Hergert"
-msgstr ""
+msgstr "Christian Hergert"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:17
 msgid ""
@@ -255,135 +255,135 @@ msgid ""
 "Tracing will not be available."
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:112
+#: src/sysprof-cli/sysprof-cli.c:114
 msgid "--merge requires at least 2 filename arguments"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:307
+#: src/sysprof-cli/sysprof-cli.c:311
 msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:308
+#: src/sysprof-cli/sysprof-cli.c:312
 msgid "Make sysprof specific to a task [Deprecated]"
 msgstr "Určit konkrétní úlohu pro sysprof [zastaralé]"
 
-#: src/sysprof-cli/sysprof-cli.c:308 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof-cli/sysprof-cli.c:312 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:179
 #: src/sysprof/sysprof-processes-section.ui:283
 #: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "PID"
 
-#: src/sysprof-cli/sysprof-cli.c:309
+#: src/sysprof-cli/sysprof-cli.c:313
 msgid "Run a command and profile the process"
 msgstr "Spustit příkaz a profilovat proces"
 
-#: src/sysprof-cli/sysprof-cli.c:309
+#: src/sysprof-cli/sysprof-cli.c:313
 msgid "COMMAND"
 msgstr "PŘÍKAZ"
 
-#: src/sysprof-cli/sysprof-cli.c:310
+#: src/sysprof-cli/sysprof-cli.c:314
 msgid ""
 "Set environment variable for spawned process. Can be used multiple times."
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:310
+#: src/sysprof-cli/sysprof-cli.c:314
 msgid "VAR=VALUE"
 msgstr "PROMĚNNÁ=HODNOTA"
 
-#: src/sysprof-cli/sysprof-cli.c:311
+#: src/sysprof-cli/sysprof-cli.c:315
 msgid "Force overwrite the capture file"
 msgstr "Vynutit přepsání souboru se záznamem"
 
-#: src/sysprof-cli/sysprof-cli.c:312
+#: src/sysprof-cli/sysprof-cli.c:316
 msgid "Disable recording of battery statistics"
 msgstr "Zakázat záznam statistik baterie"
 
-#: src/sysprof-cli/sysprof-cli.c:313
+#: src/sysprof-cli/sysprof-cli.c:317
 msgid "Disable recording of CPU statistics"
 msgstr "Zakázat záznam procesorových statistik"
 
-#: src/sysprof-cli/sysprof-cli.c:314
+#: src/sysprof-cli/sysprof-cli.c:318
 msgid "Disable recording of Disk statistics"
 msgstr "Zakázat záznam diskových statistik"
 
-#: src/sysprof-cli/sysprof-cli.c:315
+#: src/sysprof-cli/sysprof-cli.c:319
 msgid "Do not record stacktraces using Linux perf"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:316
+#: src/sysprof-cli/sysprof-cli.c:320
 msgid "Do not append symbol name information from local machine"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:317
+#: src/sysprof-cli/sysprof-cli.c:321
 msgid "Disable recording of memory statistics"
 msgstr "Zakázat záznam paměťových statistik"
 
-#: src/sysprof-cli/sysprof-cli.c:318
+#: src/sysprof-cli/sysprof-cli.c:322
 msgid "Disable recording of network statistics"
 msgstr "Zakázat záznam síťových statistik"
 
-#: src/sysprof-cli/sysprof-cli.c:319
+#: src/sysprof-cli/sysprof-cli.c:323
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:320
+#: src/sysprof-cli/sysprof-cli.c:324
 msgid "Track when processes are scheduled"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:321
+#: src/sysprof-cli/sysprof-cli.c:325
 msgid "Profile the D-Bus session bus"
 msgstr "Profilovat sběrnici sezení D-Bus"
 
-#: src/sysprof-cli/sysprof-cli.c:322
+#: src/sysprof-cli/sysprof-cli.c:326
 msgid "Profile the D-Bus system bus"
 msgstr "Profilovat systémovou sběrnici D-Bus"
 
-#: src/sysprof-cli/sysprof-cli.c:323
+#: src/sysprof-cli/sysprof-cli.c:327
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:324
+#: src/sysprof-cli/sysprof-cli.c:328
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:325
+#: src/sysprof-cli/sysprof-cli.c:329
 msgid "Include RAPL energy statistics"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:326
+#: src/sysprof-cli/sysprof-cli.c:330
 msgid "Profile memory allocations and frees"
 msgstr "Profilovat alokace a uvolňování paměti"
 
-#: src/sysprof-cli/sysprof-cli.c:327
+#: src/sysprof-cli/sysprof-cli.c:331
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:328
+#: src/sysprof-cli/sysprof-cli.c:332
 msgid "Track performance of the applications main loop"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:330
+#: src/sysprof-cli/sysprof-cli.c:334
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:331
+#: src/sysprof-cli/sysprof-cli.c:335
 msgid "Print the sysprof-cli version and exit"
 msgstr "Vypsat verzi sysprof-cli a skončit"
 
-#: src/sysprof-cli/sysprof-cli.c:332
+#: src/sysprof-cli/sysprof-cli.c:336
 msgid "The size of the buffer in pages (1 = 1 page)"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:333
+#: src/sysprof-cli/sysprof-cli.c:337
 msgid "Additional D-Bus address to monitor"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:366
+#: src/sysprof-cli/sysprof-cli.c:370
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[SOUBOR_ZÁZNAMU] [-- ARGUMENTY PŘÍKAZU] – Sysprof"
 
-#: src/sysprof-cli/sysprof-cli.c:369
+#: src/sysprof-cli/sysprof-cli.c:373
 msgid ""
 "\n"
 "Examples:\n"
@@ -396,12 +396,12 @@ msgid ""
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 msgstr ""
 
-#: src/sysprof-cli/sysprof-cli.c:405
+#: src/sysprof-cli/sysprof-cli.c:409
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Do sysprof-cli bylo předáno příliš mnoho argumentů:"
 
 #. Translators: %s is a file name.
-#: src/sysprof-cli/sysprof-cli.c:459
+#: src/sysprof-cli/sysprof-cli.c:465
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s již existuje. Použijte --force k jeho přepsání\n"
@@ -561,7 +561,7 @@ msgstr "Čas"
 
 #: src/sysprof/sysprof-cpu-section.ui:412
 #: src/sysprof/sysprof-energy-section.ui:382
-#: src/sysprof/sysprof-flame-graph.c:453
+#: src/sysprof/sysprof-flame-graph.c:455
 #: src/sysprof/sysprof-graphics-section.ui:293
 #: src/sysprof/sysprof-marks-section.ui:248
 #: src/sysprof/sysprof-network-section.ui:380
@@ -679,7 +679,7 @@ msgstr "Komprimované"
 msgid "Filter Files"
 msgstr "Filtrovat soubory"
 
-#: src/sysprof/sysprof-flame-graph.c:457
+#: src/sysprof/sysprof-flame-graph.c:459
 #: src/sysprof/sysprof-process-dialog.ui:177
 msgid "File"
 msgstr "Soubor"
@@ -1251,7 +1251,7 @@ msgid ""
 "%s"
 msgstr "Selhalo zpracování posunutí v „%s“;"
 
-#: src/sysprof/sysprof-recording-pad.ui:69
+#: src/sysprof/sysprof-recording-pad.ui:71
 msgid "Stop Recording"
 msgstr "Zastavit záznam"
 

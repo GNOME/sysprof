@@ -1,15 +1,15 @@
 # Danish translation for sysprof.
-# Copyright (C) 2019, 2023 sysprof's COPYRIGHT HOLDER
+# Copyright (C) 2019, 2023-24 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
 # scootergrisen, 2019-2020.
 # Alan Mortensen <alanmortensen.am@gmail.com>, 2022-23.
-# Ask Hjorth Larsen <asklarsen@gmail.com>, 2023.
+# Ask Hjorth Larsen <asklarsen@gmail.com>, 2023-24.
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-03-01 17:43+0000\n"
-"PO-Revision-Date: 2024-03-12 22:54+0100\n"
+"POT-Creation-Date: 2024-07-26 13:47+0000\n"
+"PO-Revision-Date: 2024-09-10 00:13+0200\n"
 "Last-Translator: Ask Hjorth Larsen <asklarsen@gmail.com>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
 "Language: da\n"
@@ -32,8 +32,8 @@ msgstr "Profilér et program eller hele systemet"
 
 #. developer_name tag deprecated with Appstream 1.0
 #: data/org.gnome.Sysprof.appdata.xml.in.in:11
-msgid "The GNOME Project"
-msgstr "GNOME-projektet"
+msgid "Christian Hergert"
+msgstr "Christian Hergert"
 
 # scootergrisen: måske "fejlsøgning"
 #: data/org.gnome.Sysprof.appdata.xml.in.in:17
@@ -275,7 +275,7 @@ msgstr "Gør sysprof specifik til en opgave [forældet]"
 
 #: src/sysprof-cli/sysprof-cli.c:308 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:179
-#: src/sysprof/sysprof-processes-section.ui:282
+#: src/sysprof/sysprof-processes-section.ui:283
 #: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "PID"
@@ -573,7 +573,7 @@ msgstr "Tabel over tællere"
 #: src/sysprof/sysprof-metadata-section.ui:38
 #: src/sysprof/sysprof-network-section.ui:346
 #: src/sysprof/sysprof-process-dialog.ui:64
-#: src/sysprof/sysprof-processes-section.ui:214
+#: src/sysprof/sysprof-processes-section.ui:215
 #: src/sysprof/sysprof-storage-section.ui:346
 #: src/sysprof/sysprof-traceables-utility.ui:23
 msgid "Time"
@@ -824,7 +824,7 @@ msgid "Application"
 msgstr "Program"
 
 #: src/sysprof/sysprof-greeter.ui:200
-#: src/sysprof/sysprof-processes-section.ui:316
+#: src/sysprof/sysprof-processes-section.ui:317
 msgid "Command Line"
 msgstr "Kommandolinje"
 
@@ -1125,7 +1125,7 @@ msgid "Start"
 msgstr "Startpunkt"
 
 #: src/sysprof/sysprof-mark-table.ui:81
-#: src/sysprof/sysprof-processes-section.ui:248
+#: src/sysprof/sysprof-processes-section.ui:249
 msgid "Duration"
 msgstr "Varighed"
 
@@ -1259,7 +1259,7 @@ msgstr "Processer"
 msgid "Process Chart"
 msgstr "Procesdiagram"
 
-#: src/sysprof/sysprof-processes-section.ui:173
+#: src/sysprof/sysprof-processes-section.ui:174
 msgid "Process Table"
 msgstr "Procestabel"
 
@@ -1349,7 +1349,7 @@ msgid "Save"
 msgstr "Gem"
 
 #: src/sysprof/sysprof-window.c:638
-msgid "Loading..."
+msgid "Loading…"
 msgstr "Indlæser …"
 
 #: src/sysprof/sysprof-window.c:714
@@ -1442,6 +1442,9 @@ msgstr "Sammenflet lignende processer"
 #: src/sysprof/sysprof-window.ui:453
 msgid "Left Heavy"
 msgstr "Tung venstre"
+
+#~ msgid "The GNOME Project"
+#~ msgstr "GNOME-projektet"
 
 #~ msgid "Sysprof was unable to generate a callgraph from the system capture."
 #~ msgstr ""

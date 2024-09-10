@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-03-01 17:43+0000\n"
-"PO-Revision-Date: 2024-03-03 14:01+0000\n"
+"POT-Creation-Date: 2024-08-20 21:43+0000\n"
+"PO-Revision-Date: 2024-09-01 12:35+0100\n"
 "Last-Translator: Bruce Cowan <bruce@bcowan.me.uk>\n"
 "Language-Team: British English <en_GB@li.org>\n"
 "Language: en_GB\n"
@@ -17,12 +17,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);;\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.4.4\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:6
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
 #: src/sysprof/sysprof-application.c:237
-#: src/sysprof/sysprof-recording-pad.ui:18 src/sysprof/sysprof-window.c:243
+#: src/sysprof/sysprof-recording-pad.ui:20 src/sysprof/sysprof-window.c:243
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -32,8 +32,8 @@ msgstr "Profile an application or entire system"
 
 #. developer_name tag deprecated with Appstream 1.0
 #: data/org.gnome.Sysprof.appdata.xml.in.in:11
-msgid "The GNOME Project"
-msgstr "The GNOME Project"
+msgid "Christian Hergert"
+msgstr "Christian Hergert"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:17
 msgid ""
@@ -252,137 +252,137 @@ msgstr ""
 "Tracing requires spawning a program compiled with ‘-finstrument-functions’. "
 "Tracing will not be available."
 
-#: src/sysprof-cli/sysprof-cli.c:112
+#: src/sysprof-cli/sysprof-cli.c:114
 msgid "--merge requires at least 2 filename arguments"
 msgstr "--merge requires at least 2 filename arguments"
 
-#: src/sysprof-cli/sysprof-cli.c:307
+#: src/sysprof-cli/sysprof-cli.c:311
 msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
 msgstr ""
 "Disable CPU throttling while profiling [Deprecated for --power-profile]"
 
-#: src/sysprof-cli/sysprof-cli.c:308
+#: src/sysprof-cli/sysprof-cli.c:312
 msgid "Make sysprof specific to a task [Deprecated]"
 msgstr "Make sysprof specific to a task [Deprecated]"
 
-#: src/sysprof-cli/sysprof-cli.c:308 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof-cli/sysprof-cli.c:312 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:179
-#: src/sysprof/sysprof-processes-section.ui:282
+#: src/sysprof/sysprof-processes-section.ui:283
 #: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "PID"
 
-#: src/sysprof-cli/sysprof-cli.c:309
+#: src/sysprof-cli/sysprof-cli.c:313
 msgid "Run a command and profile the process"
 msgstr "Run a command and profile the process"
 
-#: src/sysprof-cli/sysprof-cli.c:309
+#: src/sysprof-cli/sysprof-cli.c:313
 msgid "COMMAND"
 msgstr "COMMAND"
 
-#: src/sysprof-cli/sysprof-cli.c:310
+#: src/sysprof-cli/sysprof-cli.c:314
 msgid ""
 "Set environment variable for spawned process. Can be used multiple times."
 msgstr ""
 "Set environment variable for spawned process. Can be used multiple times."
 
-#: src/sysprof-cli/sysprof-cli.c:310
+#: src/sysprof-cli/sysprof-cli.c:314
 msgid "VAR=VALUE"
 msgstr "VAR=VALUE"
 
-#: src/sysprof-cli/sysprof-cli.c:311
+#: src/sysprof-cli/sysprof-cli.c:315
 msgid "Force overwrite the capture file"
 msgstr "Force overwrite the capture file"
 
-#: src/sysprof-cli/sysprof-cli.c:312
+#: src/sysprof-cli/sysprof-cli.c:316
 msgid "Disable recording of battery statistics"
 msgstr "Disable recording of battery statistics"
 
-#: src/sysprof-cli/sysprof-cli.c:313
+#: src/sysprof-cli/sysprof-cli.c:317
 msgid "Disable recording of CPU statistics"
 msgstr "Disable recording of CPU statistics"
 
-#: src/sysprof-cli/sysprof-cli.c:314
+#: src/sysprof-cli/sysprof-cli.c:318
 msgid "Disable recording of Disk statistics"
 msgstr "Disable recording of Disk statistics"
 
-#: src/sysprof-cli/sysprof-cli.c:315
+#: src/sysprof-cli/sysprof-cli.c:319
 msgid "Do not record stacktraces using Linux perf"
 msgstr "Do not record stacktraces using Linux perf"
 
-#: src/sysprof-cli/sysprof-cli.c:316
+#: src/sysprof-cli/sysprof-cli.c:320
 msgid "Do not append symbol name information from local machine"
 msgstr "Do not append symbol name information from local machine"
 
-#: src/sysprof-cli/sysprof-cli.c:317
+#: src/sysprof-cli/sysprof-cli.c:321
 msgid "Disable recording of memory statistics"
 msgstr "Disable recording of memory statistics"
 
-#: src/sysprof-cli/sysprof-cli.c:318
+#: src/sysprof-cli/sysprof-cli.c:322
 msgid "Disable recording of network statistics"
 msgstr "Disable recording of network statistics"
 
-#: src/sysprof-cli/sysprof-cli.c:319
+#: src/sysprof-cli/sysprof-cli.c:323
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr "Set SYSPROF_TRACE_FD environment for subprocess"
 
-#: src/sysprof-cli/sysprof-cli.c:320
+#: src/sysprof-cli/sysprof-cli.c:324
 msgid "Track when processes are scheduled"
 msgstr "Track when processes are scheduled"
 
-#: src/sysprof-cli/sysprof-cli.c:321
+#: src/sysprof-cli/sysprof-cli.c:325
 msgid "Profile the D-Bus session bus"
 msgstr "Profile the D-Bus session bus"
 
-#: src/sysprof-cli/sysprof-cli.c:322
+#: src/sysprof-cli/sysprof-cli.c:326
 msgid "Profile the D-Bus system bus"
 msgstr "Profile the D-Bus system bus"
 
-#: src/sysprof-cli/sysprof-cli.c:323
+#: src/sysprof-cli/sysprof-cli.c:327
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr "Set GJS_TRACE_FD environment to trace GJS processes"
 
-#: src/sysprof-cli/sysprof-cli.c:324
+#: src/sysprof-cli/sysprof-cli.c:328
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr "Set GTK_TRACE_FD environment to trace a GTK application"
 
-#: src/sysprof-cli/sysprof-cli.c:325
+#: src/sysprof-cli/sysprof-cli.c:329
 msgid "Include RAPL energy statistics"
 msgstr "Include RAPL energy statistics"
 
-#: src/sysprof-cli/sysprof-cli.c:326
+#: src/sysprof-cli/sysprof-cli.c:330
 msgid "Profile memory allocations and frees"
 msgstr "Profile memory allocations and frees"
 
-#: src/sysprof-cli/sysprof-cli.c:327
+#: src/sysprof-cli/sysprof-cli.c:331
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr "Connect to org.gnome.Shell for profiler statistics"
 
-#: src/sysprof-cli/sysprof-cli.c:328
+#: src/sysprof-cli/sysprof-cli.c:332
 msgid "Track performance of the applications main loop"
 msgstr "Track performance of the applications main loop"
 
-#: src/sysprof-cli/sysprof-cli.c:330
+#: src/sysprof-cli/sysprof-cli.c:334
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr "Merge all provided *.syscap files and write to stdout"
 
-#: src/sysprof-cli/sysprof-cli.c:331
+#: src/sysprof-cli/sysprof-cli.c:335
 msgid "Print the sysprof-cli version and exit"
 msgstr "Print the sysprof-cli version and exit"
 
-#: src/sysprof-cli/sysprof-cli.c:332
+#: src/sysprof-cli/sysprof-cli.c:336
 msgid "The size of the buffer in pages (1 = 1 page)"
 msgstr "The size of the buffer in pages (1 = 1 page)"
 
-#: src/sysprof-cli/sysprof-cli.c:333
+#: src/sysprof-cli/sysprof-cli.c:337
 msgid "Additional D-Bus address to monitor"
 msgstr "Additional D-Bus address to monitor"
 
-#: src/sysprof-cli/sysprof-cli.c:366
+#: src/sysprof-cli/sysprof-cli.c:370
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 
-#: src/sysprof-cli/sysprof-cli.c:369
+#: src/sysprof-cli/sysprof-cli.c:373
 msgid ""
 "\n"
 "Examples:\n"
@@ -404,12 +404,12 @@ msgstr ""
 "  # Merge multiple syscap files into one\n"
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 
-#: src/sysprof-cli/sysprof-cli.c:405
+#: src/sysprof-cli/sysprof-cli.c:409
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Too many arguments were passed to sysprof-cli:"
 
 #. Translators: %s is a file name.
-#: src/sysprof-cli/sysprof-cli.c:459
+#: src/sysprof-cli/sysprof-cli.c:465
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s exists. Use --force to overwrite\n"
@@ -561,7 +561,7 @@ msgstr "Counters Table"
 #: src/sysprof/sysprof-metadata-section.ui:38
 #: src/sysprof/sysprof-network-section.ui:346
 #: src/sysprof/sysprof-process-dialog.ui:64
-#: src/sysprof/sysprof-processes-section.ui:214
+#: src/sysprof/sysprof-processes-section.ui:215
 #: src/sysprof/sysprof-storage-section.ui:346
 #: src/sysprof/sysprof-traceables-utility.ui:23
 msgid "Time"
@@ -569,7 +569,7 @@ msgstr "Time"
 
 #: src/sysprof/sysprof-cpu-section.ui:412
 #: src/sysprof/sysprof-energy-section.ui:382
-#: src/sysprof/sysprof-flame-graph.c:453
+#: src/sysprof/sysprof-flame-graph.c:455
 #: src/sysprof/sysprof-graphics-section.ui:293
 #: src/sysprof/sysprof-marks-section.ui:248
 #: src/sysprof/sysprof-network-section.ui:380
@@ -687,7 +687,7 @@ msgstr "Compressed"
 msgid "Filter Files"
 msgstr "Filter Files"
 
-#: src/sysprof/sysprof-flame-graph.c:457
+#: src/sysprof/sysprof-flame-graph.c:459
 #: src/sysprof/sysprof-process-dialog.ui:177
 msgid "File"
 msgstr "File"
@@ -810,7 +810,7 @@ msgid "Application"
 msgstr "Application"
 
 #: src/sysprof/sysprof-greeter.ui:200
-#: src/sysprof/sysprof-processes-section.ui:316
+#: src/sysprof/sysprof-processes-section.ui:317
 msgid "Command Line"
 msgstr "Command Line"
 
@@ -1005,7 +1005,7 @@ msgstr "Bundle Symbols"
 
 #: src/sysprof/sysprof-greeter.ui:576
 msgid "Make recording shareable by symbolizing stack traces after recording"
-msgstr "Make recording shareable by symbolizing stack traces after recording"
+msgstr "Make recording shareable by symbolising stack traces after recording"
 
 #: src/sysprof/sysprof-greeter.ui:609
 msgid "_Open File…"
@@ -1108,7 +1108,7 @@ msgid "Start"
 msgstr "Start"
 
 #: src/sysprof/sysprof-mark-table.ui:81
-#: src/sysprof/sysprof-processes-section.ui:248
+#: src/sysprof/sysprof-processes-section.ui:249
 msgid "Duration"
 msgstr "Duration"
 
@@ -1241,7 +1241,7 @@ msgstr "Processes"
 msgid "Process Chart"
 msgstr "Process Chart"
 
-#: src/sysprof/sysprof-processes-section.ui:173
+#: src/sysprof/sysprof-processes-section.ui:174
 msgid "Process Table"
 msgstr "Process Table"
 
@@ -1265,7 +1265,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: src/sysprof/sysprof-recording-pad.ui:69
+#: src/sysprof/sysprof-recording-pad.ui:71
 msgid "Stop Recording"
 msgstr "Stop Recording"
 
@@ -1330,8 +1330,8 @@ msgid "Save"
 msgstr "Save"
 
 #: src/sysprof/sysprof-window.c:638
-msgid "Loading..."
-msgstr "Loading..."
+msgid "Loading…"
+msgstr "Loading…"
 
 #: src/sysprof/sysprof-window.c:714
 msgid "Invalid Document"
@@ -1422,3 +1422,6 @@ msgstr "Merge Similar Processes"
 #: src/sysprof/sysprof-window.ui:453
 msgid "Left Heavy"
 msgstr "Left Heavy"
+
+#~ msgid "The GNOME Project"
+#~ msgstr "The GNOME Project"

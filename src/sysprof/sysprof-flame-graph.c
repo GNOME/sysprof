@@ -269,6 +269,9 @@ sysprof_flame_graph_snapshot (GtkWidget   *widget,
                                      rect->w / (double)G_MAXUINT16 * width,
                                      rect->h);
 
+          if (area.size.width < .25)
+            continue;
+
           if (!highlight && graphene_rect_contains_point (&area, &point))
             highlight = rect;
 

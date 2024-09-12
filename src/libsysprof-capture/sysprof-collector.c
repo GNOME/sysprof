@@ -525,6 +525,9 @@ sysprof_collector_allocate (SysprofCaptureAddress   alloc_addr,
         else
           n_addrs = 0;
 
+        if (n_addrs < 0)
+          n_addrs = 0;
+
         ev->n_addrs = ((n_addrs < 0) ? 0 : (n_addrs > MAX_UNWIND_DEPTH) ? MAX_UNWIND_DEPTH : n_addrs);
         ev->frame.len = sizeof *ev + sizeof (SysprofCaptureAddress) * ev->n_addrs;
         ev->frame.type = SYSPROF_CAPTURE_FRAME_ALLOCATION;

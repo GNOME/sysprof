@@ -58,6 +58,9 @@ void              sysprof_callgraph_view_set_ignore_kernel_processes (SysprofCal
 gboolean          sysprof_callgraph_view_get_include_threads         (SysprofCallgraphView *self);
 void              sysprof_callgraph_view_set_include_threads         (SysprofCallgraphView *self,
                                                                       gboolean              include_threads);
+gboolean          sysprof_callgraph_view_get_hide_memory             (SysprofCallgraphView *self);
+void              sysprof_callgraph_view_set_hide_memory             (SysprofCallgraphView *self,
+                                                                      gboolean              hide_memory);
 gboolean          sysprof_callgraph_view_get_hide_system_libraries   (SysprofCallgraphView *self);
 void              sysprof_callgraph_view_set_hide_system_libraries   (SysprofCallgraphView *self,
                                                                       gboolean              hide_system_libraries);

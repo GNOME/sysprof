@@ -323,6 +323,7 @@ realloc                             memory       inherit
 aligned_alloc                       memory       inherit
 posix_memalign                      memory       inherit
 memalign                            memory       inherit
+track_malloc                        memory       inherit
 
 
 Wayland Client:

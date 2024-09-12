@@ -377,6 +377,8 @@ static void
 sysprof_memory_callgraph_view_init (SysprofMemoryCallgraphView *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  sysprof_callgraph_view_set_hide_memory (SYSPROF_CALLGRAPH_VIEW (self), TRUE);
 }
 
 GtkWidget *

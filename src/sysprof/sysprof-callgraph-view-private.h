@@ -54,6 +54,7 @@ struct _SysprofCallgraphView
 
   guint bottom_up : 1;
   guint categorize_frames : 1;
+  guint hide_memory : 1;
   guint hide_system_libraries : 1;
   guint ignore_kernel_processes : 1;
   guint ignore_process_0 : 1;

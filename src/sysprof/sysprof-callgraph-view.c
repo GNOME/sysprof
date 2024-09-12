@@ -35,6 +35,7 @@ enum {
   PROP_CATEGORIZE_FRAMES,
   PROP_CALLGRAPH,
   PROP_DOCUMENT,
+  PROP_HIDE_MEMORY,
   PROP_HIDE_SYSTEM_LIBRARIES,
   PROP_IGNORE_KERNEL_PROCESSES,
   PROP_IGNORE_PROCESS_0,
@@ -398,6 +399,10 @@ sysprof_callgraph_view_get_property (GObject    *object,
       g_value_set_object (value, sysprof_callgraph_view_get_document (self));
       break;
 
+    case PROP_HIDE_MEMORY:
+      g_value_set_boolean (value, sysprof_callgraph_view_get_hide_memory (self));
+      break;
+
     case PROP_HIDE_SYSTEM_LIBRARIES:
       g_value_set_boolean (value, sysprof_callgraph_view_get_hide_system_libraries (self));
       break;
@@ -451,6 +456,10 @@ sysprof_callgraph_view_set_property (GObject      *object,
 
     case PROP_DOCUMENT:
       sysprof_callgraph_view_set_document (self, g_value_get_object (value));
+      break;
+
+    case PROP_HIDE_MEMORY:
+      sysprof_callgraph_view_set_hide_memory (self, g_value_get_boolean (value));
       break;
 
     case PROP_HIDE_SYSTEM_LIBRARIES:
@@ -515,6 +524,11 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
     g_param_spec_object ("document", NULL, NULL,
                          SYSPROF_TYPE_DOCUMENT,
                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_HIDE_MEMORY] =
+    g_param_spec_boolean ("hide-memory", NULL, NULL,
+                          FALSE,
+                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   properties[PROP_HIDE_SYSTEM_LIBRARIES] =
     g_param_spec_boolean ("hide-system-libraries", NULL, NULL,
@@ -736,6 +750,9 @@ sysprof_callgraph_view_reload (SysprofCallgraphView *self)
   if (self->ignore_kernel_processes)
     flags |= SYSPROF_CALLGRAPH_FLAGS_IGNORE_KERNEL_PROCESSES;
 
+  if (self->hide_memory)
+    flags |= SYSPROF_CALLGRAPH_FLAGS_HIDE_MEMORY;
+
   sysprof_document_callgraph_async (self->document,
                                     flags,
                                     self->traceables,
@@ -914,6 +931,30 @@ sysprof_callgraph_view_set_categorize_frames (SysprofCallgraphView *self,
     {
       self->categorize_frames = categorize_frames;
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_CATEGORIZE_FRAMES]);
+      sysprof_callgraph_view_queue_reload (self);
+    }
+}
+
+gboolean
+sysprof_callgraph_view_get_hide_memory (SysprofCallgraphView *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_VIEW (self), FALSE);
+
+  return self->hide_memory;
+}
+
+void
+sysprof_callgraph_view_set_hide_memory (SysprofCallgraphView *self,
+                                        gboolean              hide_memory)
+{
+  g_return_if_fail (SYSPROF_IS_CALLGRAPH_VIEW (self));
+
+  hide_memory = !!hide_memory;
+
+  if (self->hide_memory != hide_memory)
+    {
+      self->hide_memory = hide_memory;
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_HIDE_MEMORY]);
       sysprof_callgraph_view_queue_reload (self);
     }
 }

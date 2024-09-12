@@ -523,6 +523,62 @@ sort_children (SysprofCallgraphNode  *node,
 }
 
 static void
+filter_memory_recurse (SysprofCallgraphNode *parent,
+                       SysprofCallgraphNode *child)
+{
+  SysprofCallgraphNode *grandchild;
+  SysprofCallgraphCategory category;
+
+  category = SYSPROF_CALLGRAPH_CATEGORY_UNMASK (_sysprof_callgraph_node_categorize (child));
+
+  if (category == SYSPROF_CALLGRAPH_CATEGORY_MEMORY)
+    {
+      if (child->prev != NULL)
+        child->prev->next = child->next;
+
+      if (child->next != NULL)
+        child->next->prev = child->prev;
+
+      if (parent->children == child)
+        parent->children = child->next;
+
+      parent->is_toplevel = TRUE;
+      parent->count += child->count;
+
+      _sysprof_callgraph_node_free (child, TRUE);
+
+      return;
+    }
+
+  grandchild = child->children;
+
+  while (grandchild != NULL)
+    {
+      SysprofCallgraphNode *iter = grandchild;
+      grandchild = grandchild->next;
+      filter_memory_recurse (child, iter);
+    }
+}
+
+static void
+filter_graph (SysprofCallgraph      *self,
+              SysprofCallgraphNode  *root,
+              SysprofCallgraphFlags  flags)
+{
+  if ((flags & SYSPROF_CALLGRAPH_FLAGS_HIDE_MEMORY) != 0)
+    {
+      SysprofCallgraphNode *child = root->children;
+
+      while (child != NULL)
+        {
+          SysprofCallgraphNode *iter = child;
+          child = child->next;
+          filter_memory_recurse (root, iter);
+        }
+    }
+}
+
+static void
 sysprof_callgraph_new_worker (GTask        *task,
                               gpointer      source_object,
                               gpointer      task_data,
@@ -551,6 +607,9 @@ sysprof_callgraph_new_worker (GTask        *task,
 
       sysprof_callgraph_add_traceable (self, traceable, i);
     }
+
+  /* Filter the graph if we are ignoring certain types of nodes. */
+  filter_graph (self, &self->root, self->flags);
 
   /* Sort callgraph nodes alphabetically so that we can use them in the
    * flamegraph without any further processing.

@@ -131,6 +131,7 @@ libsysprof_public_headers = [
 libsysprof_private_sources = [
   'mapped-ring-buffer-source.c',
   'sysprof-address-layout.c',
+  'sysprof-allocator.c',
   'sysprof-controlfd-instrument.c',
   'sysprof-descendants-model.c',
   'sysprof-document-bitset-index.c',

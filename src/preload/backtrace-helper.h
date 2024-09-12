@@ -38,12 +38,14 @@ backtrace_func (SysprofCaptureAddress  *addrs,
                 G_GNUC_UNUSED gpointer  user_data)
 {
 #if GLIB_SIZEOF_VOID_P == 8
+  SYSPROF_STATIC_ASSERT (offsetof (SysprofCaptureAllocation, addrs) >= GLIB_SIZEOF_VOID_P * 2,
+                         "Require space for 2 discarded instruction pointers");
   /* We know that collector will overwrite fields *AFTER* it
    * has called the backtrace function allowing us to cheat
    * and subtract an offset from addrs to avoid having to
    * copy frame pointers around.
    */
-  return unw_backtrace ((void **)addrs - 2, n_addrs) - 2;
+  return unw_backtrace (((void **)addrs) - 2, n_addrs) - 2;
 #else
   static const int skip = 2;
   void **stack = alloca (n_addrs * sizeof (gpointer));

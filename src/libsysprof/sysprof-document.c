@@ -2024,7 +2024,9 @@ sysprof_document_symbolize_traceable (SysprofDocument           *self,
 
       symbols[n_symbolized] = _sysprof_document_symbols_lookup (self->symbols, process_info, last_context, addresses[i]);
 
-      if (symbols[n_symbolized] != NULL)
+      if (symbols[n_symbolized] != NULL &&
+          /* if we symbolized recursively, skip this one */
+          (n_symbolized == 0 || symbols[n_symbolized-1] != symbols[n_symbolized]))
         n_symbolized++;
 
       if (sysprof_address_is_context_switch (addresses[i], &context))

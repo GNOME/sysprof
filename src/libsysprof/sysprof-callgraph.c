@@ -113,22 +113,6 @@ sysprof_callgraph_get_summary (SysprofCallgraph *self,
 
   return summary;
 }
-void
-_sysprof_callgraph_node_free (SysprofCallgraphNode *node,
-                              gboolean              free_self)
-{
-  SysprofCallgraphNode *iter = node->children;
-
-  while (iter)
-    {
-      SysprofCallgraphNode *to_free = iter;
-      iter = iter->next;
-      _sysprof_callgraph_node_free (to_free, TRUE);
-    }
-
-  if (free_self)
-    g_free (node);
-}
 
 static void
 sysprof_callgraph_dispose (GObject *object)
@@ -159,7 +143,7 @@ sysprof_callgraph_finalize (GObject *object)
   g_clear_object (&self->document);
   g_clear_object (&self->traceables);
 
-  _sysprof_callgraph_node_free (&self->root, FALSE);
+  g_clear_pointer (&self->allocator, sysprof_allocator_unref);
 
   G_OBJECT_CLASS (sysprof_callgraph_parent_class)->finalize (object);
 }
@@ -183,6 +167,7 @@ sysprof_callgraph_class_init (SysprofCallgraphClass *klass)
 static void
 sysprof_callgraph_init (SysprofCallgraph *self)
 {
+  self->allocator = sysprof_allocator_new ();
 }
 
 static void
@@ -256,7 +241,7 @@ sysprof_callgraph_add_trace (SysprofCallgraph  *self,
         }
 
       /* Otherwise create a new node */
-      node = g_new0 (SysprofCallgraphNode, 1);
+      node = sysprof_allocator_new0 (self->allocator, SysprofCallgraphNode);
       node->summary = sysprof_callgraph_get_summary (self, symbol);
       node->parent = parent;
       node->next = parent->children;

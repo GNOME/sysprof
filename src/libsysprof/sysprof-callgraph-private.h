@@ -22,6 +22,7 @@
 
 #include <gio/gio.h>
 
+#include "sysprof-allocator-private.h"
 #include "sysprof-callgraph.h"
 #include "sysprof-document.h"
 
@@ -56,6 +57,8 @@ struct _SysprofCallgraphNode
 struct _SysprofCallgraph
 {
   GObject                  parent_instance;
+
+  SysprofAllocator        *allocator;
 
   SysprofDocument         *document;
   GListModel              *traceables;

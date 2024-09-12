@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include "sysprof-allocator-private.h"
 #include "sysprof-callgraph-private.h"
 #include "sysprof-callgraph-frame-private.h"
 #include "sysprof-descendants-model-private.h"
@@ -30,10 +31,11 @@
 
 struct _SysprofDescendantsModel
 {
-  GObject parent_instance;
-  SysprofCallgraph *callgraph;
-  SysprofSymbol *symbol;
-  SysprofCallgraphNode root;
+  GObject               parent_instance;
+  SysprofAllocator     *allocator;
+  SysprofCallgraph     *callgraph;
+  SysprofSymbol        *symbol;
+  SysprofCallgraphNode  root;
 };
 
 static GType
@@ -76,10 +78,10 @@ sysprof_descendants_model_finalize (GObject *object)
 {
   SysprofDescendantsModel *self = (SysprofDescendantsModel *)object;
 
-  _sysprof_callgraph_node_free (&self->root, FALSE);
-
   g_clear_object (&self->callgraph);
   g_clear_object (&self->symbol);
+
+  g_clear_pointer (&self->allocator, sysprof_allocator_unref);
 
   G_OBJECT_CLASS (sysprof_descendants_model_parent_class)->finalize (object);
 }
@@ -95,6 +97,7 @@ sysprof_descendants_model_class_init (SysprofDescendantsModelClass *klass)
 static void
 sysprof_descendants_model_init (SysprofDescendantsModel *self)
 {
+  self->allocator = sysprof_allocator_new ();
 }
 
 static SysprofCallgraphNode *
@@ -141,7 +144,7 @@ sysprof_descendants_model_add_trace (SysprofDescendantsModel  *self,
         }
 
       /* Otherwise create a new node */
-      node = g_new0 (SysprofCallgraphNode, 1);
+      node = sysprof_allocator_new0 (self->allocator, SysprofCallgraphNode);
       node->summary = summary;
       node->parent = parent;
       node->next = parent->children;

@@ -46,10 +46,7 @@
   </provides>
 
   <releases>
-    <release version="45.1" date="2023-10-24"/>
-    <release version="45" date="2023-09-17"/>
-    <release version="45~rc" date="2023-09-01"/>
-    <release version="45~beta" date="2023-08-07"/>
+    <release version="47.0" date="2024-09-13"/>
   </releases>
 
   <metadata_license>CC0-1.0</metadata_license>

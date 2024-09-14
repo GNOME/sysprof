@@ -1,3 +1,18 @@
+Overview of changes in Sysprof 47.0
+===================================
+
+ * Speed up capture loading using gtk_tim_sort().
+ * Speed up capture loading using a private bump allocator
+   for callgraph nodes.
+ * Use AdwAboutDialog.
+ * Add GIO and Mutter to graphics section.
+ * Fix use of tracefd on some child processes.
+ * Fix some use of blocking FDs.
+ * Collapse some recursive functions in callgraphs.
+ * Improve styling of waterfall labels.
+ * Allow polkit to be optional in some situations.
+ * Translation updates.
+
 Overview of changes in Sysprof 47.beta
 ======================================
 

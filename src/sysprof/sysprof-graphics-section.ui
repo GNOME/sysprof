@@ -450,6 +450,14 @@
             </property>
           </object>
         </child>
+        <child>
+          <object class="GtkStringFilter">
+            <property name="search">webkit</property>
+            <property name="expression">
+              <lookup name="category" type="SysprofDocumentCounter"/>
+            </property>
+          </object>
+        </child>
       </object>
     </property>
   </object>

@@ -28,6 +28,7 @@ endif
 
 if get_option('tools')
   subdir('sysprof-agent')
+  subdir('sysprof-cat')
   subdir('sysprof-cli')
   subdir('sysprof-diff')
 endif

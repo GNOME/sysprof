@@ -216,6 +216,8 @@ sysprof_dbus_monitor_record_fiber (gpointer user_data)
         }
     }
 
+  g_subprocess_force_exit (subprocess);
+
   return dex_future_new_for_boolean (TRUE);
 }
 

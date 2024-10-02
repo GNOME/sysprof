@@ -101,19 +101,20 @@ set_motion (SysprofTimeScrubber *self,
         {
           g_autoptr(GObject) item = NULL;
           g_autofree char *text = NULL;
-          double layer_x;
-          double layer_y;
+          graphene_point_t point;
 
-          gtk_widget_translate_coordinates (GTK_WIDGET (self),
-                                            GTK_WIDGET (layer),
-                                            x, y, &layer_x, &layer_y);
+          if (!gtk_widget_compute_point (GTK_WIDGET (self),
+                                         GTK_WIDGET (layer),
+                                         &GRAPHENE_POINT_INIT (x, y),
+                                         &point))
+            {
+              if ((item = sysprof_chart_layer_lookup_item (layer, point.x, point.y)))
+                text = _sysprof_session_describe (self->session, item);
 
-          if ((item = sysprof_chart_layer_lookup_item (layer, layer_x, layer_y)))
-            text = _sysprof_session_describe (self->session, item);
+              gtk_label_set_label (self->informative, text);
 
-          gtk_label_set_label (self->informative, text);
-
-          informative_visible = text != NULL;
+              informative_visible = text != NULL;
+            }
         }
     }
 
@@ -164,15 +165,18 @@ sysprof_time_scrubber_drag_begin_cb (SysprofTimeScrubber *self,
                                      GtkGestureDrag      *drag)
 {
   graphene_rect_t zoom_area;
-  double x, y;
+  graphene_point_t point;
 
   g_assert (SYSPROF_IS_TIME_SCRUBBER (self));
   g_assert (GTK_IS_GESTURE_DRAG (drag));
 
-  gtk_widget_translate_coordinates (GTK_WIDGET (self->zoom),
-                                    GTK_WIDGET (self),
-                                    0, 0, &x, &y);
-  zoom_area = GRAPHENE_RECT_INIT (x, y,
+  if (!gtk_widget_compute_point (GTK_WIDGET (self->zoom),
+                                 GTK_WIDGET (self),
+                                 &GRAPHENE_POINT_INIT (0, 0),
+                                 &point))
+    return;
+
+  zoom_area = GRAPHENE_RECT_INIT (point.x, point.y,
                                   gtk_widget_get_width (GTK_WIDGET (self->zoom)),
                                   gtk_widget_get_height (GTK_WIDGET (self->zoom)));
 

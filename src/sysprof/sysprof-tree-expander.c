@@ -172,10 +172,16 @@ expander_contains_point (SysprofTreeExpander *self,
                          double               x,
                          double               y)
 {
-  gtk_widget_translate_coordinates (GTK_WIDGET (self), GTK_WIDGET (self->expander),
-                                    x, y, &x, &y);
+  graphene_point_t point;
 
-  if (x < 0 || y < 0 || x > gtk_widget_get_width (self->expander) || y > gtk_widget_get_height (self->expander))
+  if (!gtk_widget_compute_point (GTK_WIDGET (self), GTK_WIDGET (self->expander),
+                                 &GRAPHENE_POINT_INIT (x, y), &point))
+    return FALSE;
+
+  if (point.x < 0 ||
+      point.y < 0 ||
+      x > gtk_widget_get_width (self->expander) ||
+      y > gtk_widget_get_height (self->expander))
     return FALSE;
 
   return TRUE;

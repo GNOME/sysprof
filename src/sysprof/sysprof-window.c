@@ -151,11 +151,15 @@ sysprof_window_open_file_cb (GObject      *object,
         {
           GtkWidget *message;
 
+          G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+
           message = adw_message_dialog_new (NULL,
                                             _("Must Capture to Local File"),
                                             _("You must choose a local file to capture using Sysprof"));
           adw_message_dialog_add_response (ADW_MESSAGE_DIALOG (message), "close", _("Close"));
           gtk_window_present (GTK_WINDOW (message));
+
+          G_GNUC_END_IGNORE_DEPRECATIONS
         }
     }
 }
@@ -711,6 +715,8 @@ sysprof_window_load_cb (GObject      *object,
     {
       GtkWidget *dialog;
 
+      G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+
       dialog = adw_message_dialog_new (NULL, _("Invalid Document"), NULL);
       adw_message_dialog_format_body (ADW_MESSAGE_DIALOG (dialog),
                                       _("The document could not be loaded. Please check that you have the correct capture file.\n\n%s"),
@@ -718,6 +724,8 @@ sysprof_window_load_cb (GObject      *object,
       adw_message_dialog_add_response (ADW_MESSAGE_DIALOG (dialog), "close", _("Close"));
       gtk_application_add_window (GTK_APPLICATION (app), GTK_WINDOW (dialog));
       gtk_window_present (GTK_WINDOW (dialog));
+
+      G_GNUC_END_IGNORE_DEPRECATIONS
 
       return;
     }

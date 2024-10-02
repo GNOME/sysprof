@@ -108,6 +108,8 @@ sysprof_recording_pad_wait_cb (GObject      *object,
     {
       GtkWidget *dialog;
 
+      G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+
       dialog = adw_message_dialog_new (NULL, _("Recording Failed"), NULL);
       adw_message_dialog_format_body (ADW_MESSAGE_DIALOG (dialog),
                                       _("Sysprof failed to record.\n\n%s"),
@@ -116,6 +118,8 @@ sysprof_recording_pad_wait_cb (GObject      *object,
       gtk_application_add_window (GTK_APPLICATION (SYSPROF_APPLICATION_DEFAULT),
                                   GTK_WINDOW (dialog));
       gtk_window_present (GTK_WINDOW (dialog));
+
+      G_GNUC_END_IGNORE_DEPRECATIONS
     }
   else if (-1 != (fd = sysprof_recording_dup_fd (self->recording)))
     {

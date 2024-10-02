@@ -261,11 +261,15 @@ sysprof_greeter_choose_file_for_record_cb (GObject      *object,
         {
           GtkWidget *message;
 
+          G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+
           message = adw_message_dialog_new (NULL,
                                             _("Must Capture to Local File"),
                                             _("You must choose a local file to capture using Sysprof"));
           adw_message_dialog_add_response (ADW_MESSAGE_DIALOG (message), "close", _("Close"));
           gtk_window_present (GTK_WINDOW (message));
+
+          G_GNUC_END_IGNORE_DEPRECATIONS
         }
     }
 }

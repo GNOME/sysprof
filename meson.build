@@ -63,6 +63,7 @@ gio_unix_dep = dependency('gio-unix-2.0', version: glib_req_version,
                           required: need_glib and host_machine.system() != 'windows')
 gtk_dep = dependency('gtk4', version: gtk_req_version, required: need_gtk)
 libsystemd_dep = dependency('libsystemd', required: false)
+debuginfod_dep = dependency('libdebuginfod', required: get_option('debuginfod'))
 
 config_h = configuration_data()
 config_h.set_quoted('API_VERSION_S', libsysprof_api_version.to_string())
@@ -99,6 +100,7 @@ config_h.set10('ENABLE_NLS', true)
 config_h.set_quoted('GETTEXT_PACKAGE', 'sysprof')
 config_h.set_quoted('PACKAGE_LOCALE_DIR', join_paths(get_option('prefix'), get_option('datadir'), 'locale'))
 config_h.set10('HAVE_LIBSYSTEMD', libsystemd_dep.found())
+config_h.set10('HAVE_DEBUGINFOD', debuginfod_dep.found())
 
 polkit_agent_dep = dependency('polkit-agent-1', required: get_option('polkit-agent'))
 config_h.set10('HAVE_POLKIT_AGENT', polkit_agent_dep.found())

@@ -133,6 +133,7 @@ libsysprof_private_sources = [
   'sysprof-address-layout.c',
   'sysprof-allocator.c',
   'sysprof-controlfd-instrument.c',
+  'sysprof-debuginfod-symbolizer.c',
   'sysprof-descendants-model.c',
   'sysprof-document-bitset-index.c',
   'sysprof-document-symbols.c',
@@ -190,6 +191,7 @@ libsysprof_deps = [
 
   libsystemd_dep,
   polkit_dep,
+  debuginfod_dep,
 
   libeggbitset_static_dep,
   libelfparser_static_dep,

@@ -61,9 +61,9 @@ sysprof_elf_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
   g_autoptr(SysprofElf) elf = NULL;
   SysprofDocumentMmap *map;
   g_autofree char *name = NULL;
+  const char *nick = NULL;
   const char *path;
   const char *build_id;
-  gboolean is_fallback = FALSE;
   guint64 map_begin;
   guint64 map_end;
   guint64 relative_address;
@@ -115,14 +115,15 @@ sysprof_elf_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
                                        NULL)))
     goto fallback;
 
+  nick = sysprof_elf_get_nick (elf);
+
   /* Try to get the symbol name at the address and the begin/end address
    * so that it can be inserted into our symbol cache.
    */
   if (!(name = sysprof_elf_get_symbol_at_address (elf,
                                                   relative_address,
                                                   &begin_address,
-                                                  &end_address,
-                                                  &is_fallback)))
+                                                  &end_address)))
     goto fallback;
 
   /* Sanitize address ranges if we have to. Sometimes that can happen
@@ -135,11 +136,10 @@ sysprof_elf_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
 
   ret = _sysprof_symbol_new (sysprof_strings_get (strings, name),
                              sysprof_strings_get (strings, path),
-                             sysprof_strings_get (strings, sysprof_elf_get_nick (elf)),
+                             sysprof_strings_get (strings, nick),
                              map_begin + (begin_address - file_offset),
                              map_begin + (end_address - file_offset),
                              SYSPROF_SYMBOL_KIND_USER);
-  ret->is_fallback = is_fallback;
 
   return ret;
 
@@ -156,7 +156,7 @@ fallback:
 
   ret = _sysprof_symbol_new (sysprof_strings_get (strings, name),
                              sysprof_strings_get (strings, path),
-                             NULL,
+                             sysprof_strings_get (strings, nick),
                              begin_address, end_address,
                              SYSPROF_SYMBOL_KIND_USER);
   ret->is_fallback = TRUE;

@@ -53,7 +53,7 @@ format_event_count (GObject *unused,
                     gint64   event_count)
 {
   /* translators: this expands to the number of events recorded by the profiler as an indicator of progress */
-  return g_strdup_printf (_("%"G_GINT64_FORMAT" events"), event_count);
+  return g_strdup_printf (_("%"PRIi64" events"), event_count);
 }
 
 static char *

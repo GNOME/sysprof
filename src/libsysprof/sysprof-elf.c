@@ -502,6 +502,7 @@ sysprof_elf_set_debug_link_elf (SysprofElf *self,
 {
   g_return_if_fail (SYSPROF_IS_ELF (self));
   g_return_if_fail (!debug_link_elf || SYSPROF_IS_ELF (debug_link_elf));
+  g_return_if_fail (debug_link_elf != self);
 
   if (g_set_object (&self->debug_link_elf, debug_link_elf))
     g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_DEBUG_LINK_ELF]);

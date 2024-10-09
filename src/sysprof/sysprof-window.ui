@@ -109,15 +109,8 @@
                         <property name="title-widget">
                           <object class="GtkCenterBox">
                             <child type="start">
-                              <object class="GtkSpinner">
+                              <object class="AdwSpinner">
                                 <binding name="visible">
-                                  <lookup name="busy" type="SysprofDocument">
-                                    <lookup name="document" type="SysprofSession">
-                                      <lookup name="session">SysprofWindow</lookup>
-                                    </lookup>
-                                  </lookup>
-                                </binding>
-                                <binding name="spinning">
                                   <lookup name="busy" type="SysprofDocument">
                                     <lookup name="document" type="SysprofSession">
                                       <lookup name="session">SysprofWindow</lookup>

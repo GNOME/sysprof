@@ -27,6 +27,7 @@
 #include <glib/gstdio.h>
 
 #include "sysprof-bundled-symbolizer.h"
+#include "sysprof-debuginfod-symbolizer.h"
 #include "sysprof-document-bitset-index-private.h"
 #include "sysprof-document-loader.h"
 #include "sysprof-document-private.h"
@@ -192,6 +193,8 @@ static void
 set_default_symbolizer (SysprofDocumentLoader *self)
 {
   g_autoptr(SysprofMultiSymbolizer) multi = NULL;
+  g_autoptr(SysprofSymbolizer) debuginfod = NULL;
+  g_autoptr(GError) error = NULL;
 
   g_assert (SYSPROF_IS_DOCUMENT_LOADER (self));
 
@@ -200,8 +203,16 @@ set_default_symbolizer (SysprofDocumentLoader *self)
   multi = sysprof_multi_symbolizer_new ();
   sysprof_multi_symbolizer_take (multi, sysprof_bundled_symbolizer_new ());
   sysprof_multi_symbolizer_take (multi, sysprof_kallsyms_symbolizer_new ());
+
+  if (!(debuginfod = sysprof_debuginfod_symbolizer_new (&error)))
+    g_warning ("Failed to create debuginfod symbolizer: %s", error->message);
+  else
+    sysprof_multi_symbolizer_take (multi, g_steal_pointer (&debuginfod));
+
   sysprof_multi_symbolizer_take (multi, sysprof_elf_symbolizer_new ());
   sysprof_multi_symbolizer_take (multi, sysprof_jitmap_symbolizer_new ());
+
+
   self->symbolizer = SYSPROF_SYMBOLIZER (g_steal_pointer (&multi));
 }
 

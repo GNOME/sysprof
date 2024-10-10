@@ -18,29 +18,31 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include <stdatomic.h>
-#include <glib/gstdio.h>
-
 #include "config.h"
+
+#include <elfutils/debuginfod.h>
+#include <errno.h>
+#include <stdatomic.h>
+
+#include <glib/gstdio.h>
 
 #include "sysprof-symbolizer-private.h"
 #include "sysprof-debuginfod-symbolizer.h"
+#include "sysprof-debuginfod-task-private.h"
 #include "sysprof-elf-loader-private.h"
 #include "sysprof-symbol-private.h"
 
-// TODO: handle !HAVE_DEBUGINFOD
-
-#include <elfutils/debuginfod.h>
-
 struct _SysprofDebuginfodSymbolizer
 {
-  SysprofSymbolizer parent_instance;
+  SysprofSymbolizer  parent_instance;
 
   debuginfod_client *client;
-  SysprofElfLoader *loader;
-  GHashTable *cache;
+  SysprofElfLoader  *loader;
+  GHashTable        *cache;
 
-  GCancellable *cancellable; // TODO: unused
+  double             progress;
+
+  guint              cancelled : 1;
 };
 
 struct _SysprofDebuginfodSymbolizerClass
@@ -48,64 +50,28 @@ struct _SysprofDebuginfodSymbolizerClass
   SysprofSymbolizerClass parent_class;
 };
 
-static int client_progress_callback (debuginfod_client *client,
-                                     long a, long b)
+enum {
+  PROP_0,
+  PROP_PROGRESS,
+  N_PROPS
+};
+
+static GParamSpec *properties[N_PROPS];
+
+static int
+client_progress_callback (debuginfod_client *client,
+                          long               a,
+                          long               b)
 {
   SysprofDebuginfodSymbolizer *self = debuginfod_get_user_data (client);
+  double progress = b > 0 ? (double)a / (double)b : 0;
 
-  g_debug ("debuginfod progress: %ld / %ld", a, b);
+  g_debug ("debuginfod progress: %lf\n", progress);
 
-  if (g_cancellable_is_cancelled (self->cancellable))
-    return -1;
-
-  return 0;
+  return self->cancelled ? -1 : 0;
 }
 
-static gboolean initable_init (GInitable    *initable,
-                               GCancellable *cancellable,
-                               GError      **error)
-{
-  SysprofDebuginfodSymbolizer *self;
-
-  g_return_val_if_fail (SYSPROF_IS_DEBUGINFOD_SYMBOLIZER (initable), FALSE);
-
-  self = SYSPROF_DEBUGINFOD_SYMBOLIZER (initable);
-
-  g_assert (!self->client);
-
-  if (cancellable) {
-    g_set_error_literal (error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED,
-                         "Cancellable initialization not supported");
-    return FALSE;
-  }
-
-  self->client = debuginfod_begin ();
-  if (!self->client) {
-    // TODO: check if errno is really set
-    g_set_error_literal (error,
-                         G_IO_ERROR, g_io_error_from_errno (errno),
-                         "Failed to initialize debuginfod client");
-    return FALSE;
-  }
-
-  debuginfod_set_user_data (self->client, self);
-  debuginfod_set_progressfn (self->client, client_progress_callback);
-
-  self->loader = sysprof_elf_loader_new ();
-  self->cache = g_hash_table_new (g_direct_hash, g_direct_equal);
-
-  return TRUE;
-}
-
-
-static void
-initable_iface_init (GInitableIface *iface)
-{
-  iface->init = initable_init;
-}
-
-G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofDebuginfodSymbolizer, sysprof_debuginfod_symbolizer, SYSPROF_TYPE_SYMBOLIZER,
-                               G_IMPLEMENT_INTERFACE (G_TYPE_INITABLE, initable_iface_init))
+G_DEFINE_FINAL_TYPE (SysprofDebuginfodSymbolizer, sysprof_debuginfod_symbolizer, SYSPROF_TYPE_SYMBOLIZER)
 
 static SysprofSymbol *
 sysprof_debuginfod_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
@@ -115,7 +81,7 @@ sysprof_debuginfod_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
                                          SysprofAddress            address)
 {
   SysprofDebuginfodSymbolizer *self = SYSPROF_DEBUGINFOD_SYMBOLIZER (symbolizer);
-  g_autoptr (SysprofElf) elf = NULL;
+  g_autoptr(SysprofElf) elf = NULL;
   g_autofree char *name = NULL;
   SysprofSymbol *sym = NULL;
   SysprofDocumentMmap *map;
@@ -128,12 +94,11 @@ sysprof_debuginfod_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
   guint64 map_begin;
   guint64 map_end;
 
-  if (!process_info || !process_info->address_layout || !process_info->mount_namespace ||
-      (context != SYSPROF_ADDRESS_CONTEXT_NONE && context != SYSPROF_ADDRESS_CONTEXT_USER))
-    return NULL;
-
-  map = sysprof_address_layout_lookup (process_info->address_layout, address);
-  if (!map)
+  if (process_info == NULL ||
+      process_info->address_layout == NULL ||
+      process_info->mount_namespace == NULL ||
+      (context != SYSPROF_ADDRESS_CONTEXT_NONE && context != SYSPROF_ADDRESS_CONTEXT_USER) ||
+      !(map = sysprof_address_layout_lookup (process_info->address_layout, address)))
     return NULL;
 
   map_begin = sysprof_document_mmap_get_start_address (map);
@@ -151,36 +116,24 @@ sysprof_debuginfod_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
                                  sysprof_document_mmap_get_build_id (map),
                                  sysprof_document_mmap_get_file_inode (map),
                                  NULL);
-  if (!elf)
+  if (elf == NULL)
     return NULL;
 
-  build_id = sysprof_elf_get_build_id (elf);
-  if (!build_id)
+  if (!(build_id = sysprof_elf_get_build_id (elf)))
     return NULL;
 
-  if (!g_hash_table_contains (self->cache, elf)) {
-    g_autoptr (GMappedFile) mapped_file = NULL;
-    g_autoptr (SysprofElf) debuginfo_elf = NULL;
-    g_autofree char *debuginfo_path = NULL;
-    g_autofd int fd = -1;
+  if (!g_hash_table_contains (self->cache, elf))
+    {
+      g_autoptr(SysprofDebuginfodTask) task = sysprof_debuginfod_task_new ();
+      g_autoptr(SysprofElf) debuginfo_elf = NULL;
 
-    fd = debuginfod_find_debuginfo (self->client,
-                                    (const unsigned char *) build_id, 0,
-                                    &debuginfo_path);
-    if (fd < 0)
-      return NULL;
+      if (!(debuginfo_elf = sysprof_debuginfod_task_find_debuginfo (task, self->client, path, build_id, NULL)))
+        return NULL;
 
-    mapped_file = g_mapped_file_new_from_fd (fd, FALSE, NULL);
-    if (!mapped_file)
-      return NULL;
+      sysprof_elf_set_debug_link_elf (elf, debuginfo_elf);
 
-    debuginfo_elf = sysprof_elf_new (debuginfo_path, g_steal_pointer (&mapped_file), 0, NULL);
-    if (!debuginfo_elf)
-      return NULL;
-
-    sysprof_elf_set_debug_link_elf (elf, debuginfo_elf);
-    g_hash_table_add (self->cache, elf);
-  }
+      g_hash_table_insert (self->cache, g_object_ref (elf), NULL);
+    }
 
   relative_address = address;
   relative_address -= map_begin;
@@ -211,24 +164,66 @@ sysprof_debuginfod_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
 }
 
 static void
+sysprof_debuginfod_symbolizer_dispose (GObject *object)
+{
+  SysprofDebuginfodSymbolizer *self = SYSPROF_DEBUGINFOD_SYMBOLIZER (object);
+
+  g_hash_table_remove_all (self->cache);
+
+  G_OBJECT_CLASS (sysprof_debuginfod_symbolizer_parent_class)->dispose (object);
+}
+
+static void
 sysprof_debuginfod_symbolizer_finalize (GObject *object)
 {
   SysprofDebuginfodSymbolizer *self = SYSPROF_DEBUGINFOD_SYMBOLIZER (object);
 
-  g_clear_pointer (&self->cache, g_hash_table_unref);
   g_clear_object (&self->loader);
+
+  g_clear_pointer (&self->cache, g_hash_table_unref);
   g_clear_pointer (&self->client, debuginfod_end);
+
+  G_OBJECT_CLASS (sysprof_debuginfod_symbolizer_parent_class)->finalize (object);
+}
+
+static void
+sysprof_debuginfod_symbolizer_get_property (GObject    *object,
+                                            guint       prop_id,
+                                            GValue     *value,
+                                            GParamSpec *pspec)
+{
+  SysprofDebuginfodSymbolizer *self = SYSPROF_DEBUGINFOD_SYMBOLIZER (object);
+
+  switch (prop_id)
+    {
+    case PROP_PROGRESS:
+      g_value_set_double (value, self->progress);
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
 }
 
 static void
 sysprof_debuginfod_symbolizer_class_init (SysprofDebuginfodSymbolizerClass *klass)
 {
-  SysprofSymbolizerClass *symbolizer_class = SYSPROF_SYMBOLIZER_CLASS (klass);
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  SysprofSymbolizerClass *symbolizer_class = SYSPROF_SYMBOLIZER_CLASS (klass);
+
+  object_class->dispose = sysprof_debuginfod_symbolizer_dispose;
+  object_class->finalize = sysprof_debuginfod_symbolizer_finalize;
+  object_class->get_property = sysprof_debuginfod_symbolizer_get_property;
 
   symbolizer_class->symbolize = sysprof_debuginfod_symbolizer_symbolize;
 
-  object_class->finalize = sysprof_debuginfod_symbolizer_finalize;
+  properties[PROP_PROGRESS] =
+    g_param_spec_double ("progress", NULL, NULL,
+                         0, 1, 0,
+                         (G_PARAM_READABLE |
+                          G_PARAM_STATIC_STRINGS));
+
+  g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
 static void
@@ -239,5 +234,26 @@ sysprof_debuginfod_symbolizer_init (SysprofDebuginfodSymbolizer *self)
 SysprofSymbolizer *
 sysprof_debuginfod_symbolizer_new (GError **error)
 {
-  return SYSPROF_SYMBOLIZER (g_initable_new (SYSPROF_TYPE_DEBUGINFOD_SYMBOLIZER, NULL, error, NULL));
+  g_autoptr(SysprofDebuginfodSymbolizer) self = NULL;
+
+  self = g_object_new (SYSPROF_TYPE_DEBUGINFOD_SYMBOLIZER, NULL);
+  self->client = debuginfod_begin ();
+
+  if (self->client == NULL)
+    {
+      int errsv = errno;
+      g_set_error_literal (error,
+                           G_IO_ERROR,
+                           g_io_error_from_errno (errsv),
+                           g_strerror (errsv));
+      return NULL;
+    }
+
+  debuginfod_set_user_data (self->client, self);
+  debuginfod_set_progressfn (self->client, client_progress_callback);
+
+  self->loader = sysprof_elf_loader_new ();
+  self->cache = g_hash_table_new_full (NULL, NULL, g_object_unref, NULL);
+
+  return SYSPROF_SYMBOLIZER (g_steal_pointer (&self));
 }

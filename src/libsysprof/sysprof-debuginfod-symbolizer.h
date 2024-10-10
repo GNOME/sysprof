@@ -32,9 +32,9 @@ G_BEGIN_DECLS
 typedef struct _SysprofDebuginfodSymbolizer      SysprofDebuginfodSymbolizer;
 typedef struct _SysprofDebuginfodSymbolizerClass SysprofDebuginfodSymbolizerClass;
 
-SYSPROF_AVAILABLE_IN_ALL
+SYSPROF_AVAILABLE_IN_48
 GType              sysprof_debuginfod_symbolizer_get_type (void) G_GNUC_CONST;
-SYSPROF_AVAILABLE_IN_ALL
+SYSPROF_AVAILABLE_IN_48
 SysprofSymbolizer *sysprof_debuginfod_symbolizer_new      (GError **error);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofDebuginfodSymbolizer, g_object_unref)

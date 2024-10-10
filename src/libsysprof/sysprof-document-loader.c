@@ -35,6 +35,7 @@
 #include "sysprof-jitmap-symbolizer.h"
 #include "sysprof-kallsyms-symbolizer.h"
 #include "sysprof-multi-symbolizer.h"
+#include "sysprof-symbolizer-private.h"
 
 struct _SysprofDocumentLoader
 {
@@ -556,6 +557,8 @@ sysprof_document_loader_load_async (SysprofDocumentLoader *self,
   g_task_set_source_tag (task, sysprof_document_loader_load_async);
 
   set_progress (0., _("Loading document"), self);
+
+  _sysprof_symbolizer_setup (self->symbolizer, self);
 
   if (self->fd != -1)
     mapped_file_new_from_fd_async (self->fd,

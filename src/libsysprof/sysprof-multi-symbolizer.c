@@ -27,6 +27,7 @@ struct _SysprofMultiSymbolizer
 {
   SysprofSymbolizer parent_instance;
   GPtrArray *symbolizers;
+  guint frozen : 1;
 };
 
 struct _SysprofMultiSymbolizerClass
@@ -139,6 +140,25 @@ sysprof_multi_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
 }
 
 static void
+sysprof_multi_symbolizer_setup (SysprofSymbolizer     *symbolizer,
+                                SysprofDocumentLoader *loader)
+{
+  SysprofMultiSymbolizer *self = (SysprofMultiSymbolizer *)symbolizer;
+
+  g_assert (SYSPROF_IS_MULTI_SYMBOLIZER (self));
+  g_assert (SYSPROF_IS_DOCUMENT_LOADER (loader));
+
+  self->frozen = TRUE;
+
+  for (guint i = 0; i < self->symbolizers->len; i++)
+    {
+      SysprofSymbolizer *child = g_ptr_array_index (self->symbolizers, i);
+
+      _sysprof_symbolizer_setup (child, loader);
+    }
+}
+
+static void
 sysprof_multi_symbolizer_finalize (GObject *object)
 {
   SysprofMultiSymbolizer *self = (SysprofMultiSymbolizer *)object;
@@ -159,6 +179,7 @@ sysprof_multi_symbolizer_class_init (SysprofMultiSymbolizerClass *klass)
   symbolizer_class->prepare_async = sysprof_multi_symbolizer_prepare_async;
   symbolizer_class->prepare_finish = sysprof_multi_symbolizer_prepare_finish;
   symbolizer_class->symbolize = sysprof_multi_symbolizer_symbolize;
+  symbolizer_class->setup = sysprof_multi_symbolizer_setup;
 }
 
 static void
@@ -188,6 +209,7 @@ sysprof_multi_symbolizer_take (SysprofMultiSymbolizer *self,
   g_return_if_fail (SYSPROF_IS_MULTI_SYMBOLIZER (self));
   g_return_if_fail (SYSPROF_IS_SYMBOLIZER (symbolizer));
   g_return_if_fail ((gpointer)self != (gpointer)symbolizer);
+  g_return_if_fail (self->frozen == FALSE);
 
   g_ptr_array_add (self->symbolizers, symbolizer);
 }

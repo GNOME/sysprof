@@ -10,6 +10,7 @@ libsysprof_public_sources = [
   'sysprof-cpu-info.c',
   'sysprof-cpu-usage.c',
   'sysprof-dbus-monitor.c',
+  'sysprof-debuginfod-symbolizer.c',
   'sysprof-diagnostic.c',
   'sysprof-disk-usage.c',
   'sysprof-document-allocation.c',
@@ -75,6 +76,7 @@ libsysprof_public_headers = [
   'sysprof-cpu-info.h',
   'sysprof-cpu-usage.h',
   'sysprof-dbus-monitor.h',
+  'sysprof-debuginfod-symbolizer.h',
   'sysprof-diagnostic.h',
   'sysprof-disk-usage.h',
   'sysprof-document-allocation.h',
@@ -155,7 +157,6 @@ libsysprof_private_sources = [
 
 if debuginfod_dep.found()
   libsysprof_private_sources += [
-    'sysprof-debuginfod-symbolizer.c',
     'sysprof-debuginfod-task.c'
   ]
 endif

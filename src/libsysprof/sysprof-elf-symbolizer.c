@@ -113,7 +113,7 @@ sysprof_elf_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
                                        build_id,
                                        file_inode,
                                        NULL)))
-    goto fallback;
+    return NULL;
 
   nick = sysprof_elf_get_nick (elf);
 
@@ -124,7 +124,7 @@ sysprof_elf_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
                                                   relative_address,
                                                   &begin_address,
                                                   &end_address)))
-    goto fallback;
+    return NULL;
 
   /* Sanitize address ranges if we have to. Sometimes that can happen
    * for us, but it seems to be limited to glibc.
@@ -140,26 +140,6 @@ sysprof_elf_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
                              map_begin + (begin_address - file_offset),
                              map_begin + (end_address - file_offset),
                              SYSPROF_SYMBOL_KIND_USER);
-
-  return ret;
-
-fallback:
-  /* Fallback, we failed to locate the symbol within a file we can
-   * access, so tell the user about what file contained the symbol
-   * and where (relative to that file) the IP was.
-   */
-  name = g_strdup_printf ("In File %s+0x%"G_GINT64_MODIFIER"x",
-                          sysprof_document_mmap_get_file (map),
-                          relative_address);
-  begin_address = address;
-  end_address = address + 1;
-
-  ret = _sysprof_symbol_new (sysprof_strings_get (strings, name),
-                             sysprof_strings_get (strings, path),
-                             sysprof_strings_get (strings, nick),
-                             begin_address, end_address,
-                             SYSPROF_SYMBOL_KIND_USER);
-  ret->is_fallback = TRUE;
 
   return ret;
 }

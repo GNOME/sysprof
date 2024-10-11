@@ -56,6 +56,7 @@ G_BEGIN_DECLS
 # include "sysprof-document-overlay.h"
 # include "sysprof-document-process.h"
 # include "sysprof-document-sample.h"
+# include "sysprof-document-task.h"
 # include "sysprof-document-traceable.h"
 # include "sysprof-document.h"
 # include "sysprof-elf-symbolizer.h"

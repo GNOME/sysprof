@@ -53,6 +53,7 @@
     <file preprocess="xml-stripblanks">sysprof-samples-section.ui</file>
     <file preprocess="xml-stripblanks">sysprof-sidebar.ui</file>
     <file preprocess="xml-stripblanks">sysprof-storage-section.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-task-row.ui</file>
     <file preprocess="xml-stripblanks">sysprof-time-scrubber.ui</file>
     <file preprocess="xml-stripblanks">sysprof-traceables-utility.ui</file>
     <file preprocess="xml-stripblanks">sysprof-weighted-callgraph-view.ui</file>

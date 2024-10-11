@@ -38,29 +38,32 @@
 #include "sysprof-samples-section.h"
 #include "sysprof-sidebar.h"
 #include "sysprof-storage-section.h"
+#include "sysprof-task-row.h"
 #include "sysprof-util.h"
 #include "sysprof-window.h"
 
 struct _SysprofWindow
 {
-  AdwApplicationWindow  parent_instance;
+  AdwApplicationWindow   parent_instance;
 
-  SysprofDocument      *document;
-  SysprofSession       *session;
+  SysprofDocument       *document;
+  SysprofDocumentLoader *loader;
+  SysprofSession        *session;
 
-  GtkToggleButton      *show_right_sidebar;
-  GtkWidget            *left_split_overlay;
-  GtkWidget            *right_split_overlay;
-  GtkProgressBar       *progress_bar;
-  AdwWindowTitle       *stack_title;
+  GtkToggleButton       *show_right_sidebar;
+  GtkWidget             *left_split_overlay;
+  GtkWidget             *right_split_overlay;
+  GtkProgressBar        *progress_bar;
+  AdwWindowTitle        *stack_title;
 
-  guint                 disposed : 1;
+  guint                  disposed : 1;
 };
 
 enum {
   PROP_0,
   PROP_DOCUMENT,
   PROP_IS_LOADED,
+  PROP_LOADER,
   PROP_SESSION,
   N_PROPS
 };
@@ -513,6 +516,10 @@ sysprof_window_get_property (GObject    *object,
       g_value_set_object (value, sysprof_window_get_document (self));
       break;
 
+    case PROP_LOADER:
+      g_value_set_object (value, self->loader);
+      break;
+
     case PROP_IS_LOADED:
       g_value_set_boolean (value, !!sysprof_window_get_document (self));
       break;
@@ -559,6 +566,11 @@ sysprof_window_class_init (SysprofWindowClass *klass)
     g_param_spec_object ("document", NULL, NULL,
                          SYSPROF_TYPE_DOCUMENT,
                          (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_LOADER] =
+    g_param_spec_object ("loader", NULL, NULL,
+                         SYSPROF_TYPE_DOCUMENT_LOADER,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_IS_LOADED] =
     g_param_spec_boolean ("is-loaded", NULL, NULL,
@@ -617,6 +629,7 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   g_type_ensure (SYSPROF_TYPE_SESSION);
   g_type_ensure (SYSPROF_TYPE_SYMBOL);
   g_type_ensure (SYSPROF_TYPE_SIDEBAR);
+  g_type_ensure (SYSPROF_TYPE_TASK_ROW);
 }
 
 static void
@@ -711,6 +724,9 @@ sysprof_window_load_cb (GObject      *object,
   g_binding_unbind (g_object_get_data (G_OBJECT (loader), "message-binding"));
   g_object_set_data (G_OBJECT (loader), "message-binding", NULL);
 
+  if (g_set_object (&self->loader, NULL))
+    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_LOADER]);
+
   if (!(document = sysprof_document_loader_load_finish (loader, result, &error)))
     {
       GtkWidget *dialog;
@@ -750,6 +766,8 @@ sysprof_window_create (SysprofApplication    *app,
   self = g_object_new (SYSPROF_TYPE_WINDOW,
                        "application", app,
                        NULL);
+  self->loader = g_object_ref (loader);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_LOADER]);
   g_object_bind_property (loader, "fraction",
                           self->progress_bar, "fraction",
                           G_BINDING_SYNC_CREATE);

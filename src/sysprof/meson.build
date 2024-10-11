@@ -59,6 +59,7 @@ sysprof_sources = [
   'sysprof-split-layer.c',
   'sysprof-storage-section.c',
   'sysprof-symbol-label.c',
+  'sysprof-task-row.c',
   'sysprof-time-filter-model.c',
   'sysprof-time-label.c',
   'sysprof-time-ruler.c',

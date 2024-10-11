@@ -22,6 +22,7 @@
 
 #include "sysprof-address-layout-private.h"
 #include "sysprof-document.h"
+#include "sysprof-document-loader.h"
 #include "sysprof-mount-namespace-private.h"
 #include "sysprof-process-info-private.h"
 #include "sysprof-strings-private.h"
@@ -41,6 +42,8 @@ struct _SysprofSymbolizerClass
 {
   GObjectClass parent_class;
 
+  void           (*setup)          (SysprofSymbolizer         *self,
+                                    SysprofDocumentLoader     *loader);
   void           (*prepare_async)  (SysprofSymbolizer         *self,
                                     SysprofDocument           *document,
                                     GCancellable              *cancellable,
@@ -56,7 +59,8 @@ struct _SysprofSymbolizerClass
                                     SysprofAddress             address);
 };
 
-
+void           _sysprof_symbolizer_setup          (SysprofSymbolizer         *self,
+                                                   SysprofDocumentLoader     *loader);
 void           _sysprof_symbolizer_prepare_async  (SysprofSymbolizer         *self,
                                                    SysprofDocument           *document,
                                                    GCancellable              *cancellable,

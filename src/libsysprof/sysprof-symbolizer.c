@@ -99,3 +99,14 @@ _sysprof_symbolizer_symbolize (SysprofSymbolizer        *self,
 {
   return SYSPROF_SYMBOLIZER_GET_CLASS (self)->symbolize (self, strings, process_info, context, address);
 }
+
+void
+_sysprof_symbolizer_setup (SysprofSymbolizer     *self,
+                           SysprofDocumentLoader *loader)
+{
+  g_return_if_fail (SYSPROF_IS_SYMBOLIZER (self));
+  g_return_if_fail (SYSPROF_IS_DOCUMENT_LOADER (loader));
+
+  if (SYSPROF_SYMBOLIZER_GET_CLASS (self)->setup)
+    SYSPROF_SYMBOLIZER_GET_CLASS (self)->setup (self, loader);
+}

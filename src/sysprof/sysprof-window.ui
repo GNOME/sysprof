@@ -108,17 +108,6 @@
                       <object class="AdwHeaderBar">
                         <property name="title-widget">
                           <object class="GtkCenterBox">
-                            <child type="start">
-                              <object class="AdwSpinner">
-                                <binding name="visible">
-                                  <lookup name="busy" type="SysprofDocument">
-                                    <lookup name="document" type="SysprofSession">
-                                      <lookup name="session">SysprofWindow</lookup>
-                                    </lookup>
-                                  </lookup>
-                                </binding>
-                              </object>
-                            </child>
                             <child type="center">
                               <object class="AdwWindowTitle" id="stack_title">
                                 <binding name="title">
@@ -213,6 +202,70 @@
                           <object class="GtkToggleButton" id="show_right_sidebar">
                             <property name="icon-name">sidebar-show-right-symbolic</property>
                             <property name="tooltip-text" translatable="yes">Toggle Right Panel</property>
+                          </object>
+                        </child>
+                        <child type="end">
+                          <object class="GtkMenuButton" id="tasks_button">
+                            <property name="always-show-arrow">true</property>
+                            <property name="focus-on-click">false</property>
+                            <child>
+                              <object class="AdwSpinner">
+                              </object>
+                            </child>
+                            <binding name="visible">
+                              <lookup name="busy" type="SysprofDocument">
+                                <lookup name="document" type="SysprofSession">
+                                  <lookup name="session">SysprofWindow</lookup>
+                                </lookup>
+                              </lookup>
+                            </binding>
+                            <property name="popover">
+                              <object class="GtkPopover">
+                                <style>
+                                  <class name="tasks"/>
+                                </style>
+                                <property name="width-request">300</property>
+                                <child>
+                                  <object class="GtkScrolledWindow">
+                                    <property name="hscrollbar-policy">never</property>
+                                    <property name="propagate-natural-height">true</property>
+                                    <property name="max-content-height">600</property>
+                                    <child>
+                                      <object class="GtkListView">
+                                        <property name="model">
+                                          <object class="GtkNoSelection">
+                                            <binding name="model">
+                                              <lookup name="tasks" type="SysprofDocumentLoader">
+                                                <lookup name="loader">SysprofWindow</lookup>
+                                              </lookup>
+                                            </binding>
+                                          </object>
+                                        </property>
+                                        <property name="factory">
+                                          <object class="GtkBuilderListItemFactory">
+                                            <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="SysprofTaskRow">
+        <binding name="task">
+          <lookup name="item">GtkListItem</lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                            </property>
+                                          </object>
+                                        </property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </property>
                           </object>
                         </child>
                       </object>

@@ -85,6 +85,71 @@ symbolize_free (Symbolize *state)
   g_free (state);
 }
 
+static SysprofSymbol *
+do_symbolize (SysprofSymbolizer     *symbolizer,
+              SysprofStrings        *strings,
+              SysprofProcessInfo    *process_info,
+              SysprofAddressContext  last_context,
+              SysprofAddress         address)
+{
+  SysprofDocumentMmap *map;
+  g_autofree char *name = NULL;
+  SysprofSymbol *ret;
+  const char *nick = NULL;
+  const char *path;
+  guint64 map_begin;
+  guint64 map_end;
+  guint64 relative_address;
+  guint64 begin_address;
+  guint64 end_address;
+  guint64 file_offset;
+
+  if ((ret = _sysprof_symbolizer_symbolize (symbolizer, strings, process_info, last_context, address)))
+    return ret;
+
+  /* Fallback, we failed to locate the symbol within a file we can
+   * access, so tell the user about what file contained the symbol
+   * and where (relative to that file) the IP was.
+   */
+
+  if (!(map = sysprof_address_layout_lookup (process_info->address_layout, address)))
+    return NULL;
+
+  map_begin = sysprof_document_mmap_get_start_address (map);
+  map_end = sysprof_document_mmap_get_end_address (map);
+
+  g_assert (address >= map_begin);
+  g_assert (address < map_end);
+
+  file_offset = sysprof_document_mmap_get_file_offset (map);
+
+  relative_address = address;
+  relative_address -= map_begin;
+  relative_address += file_offset;
+
+  path = sysprof_document_mmap_get_file (map);
+
+  begin_address = CLAMP (begin_address, file_offset, file_offset + (map_end - map_begin));
+  end_address = CLAMP (end_address, file_offset, file_offset + (map_end - map_begin));
+  if (end_address == begin_address)
+    end_address++;
+
+  name = g_strdup_printf ("In File %s+0x%"G_GINT64_MODIFIER"x",
+                          sysprof_document_mmap_get_file (map),
+                          relative_address);
+  begin_address = address;
+  end_address = address + 1;
+
+  ret = _sysprof_symbol_new (sysprof_strings_get (strings, name),
+                             sysprof_strings_get (strings, path),
+                             sysprof_strings_get (strings, nick),
+                             begin_address, end_address,
+                             SYSPROF_SYMBOL_KIND_USER);
+  ret->is_fallback = TRUE;
+
+  return ret;
+}
+
 static void
 add_traceable (SysprofDocumentSymbols   *self,
                SysprofStrings           *strings,
@@ -123,7 +188,7 @@ add_traceable (SysprofDocumentSymbols   *self,
           if (sysprof_symbol_cache_lookup (self->kernel_symbols, address) != NULL)
             continue;
 
-          if ((symbol = _sysprof_symbolizer_symbolize (symbolizer, strings, process_info, last_context, address)))
+          if ((symbol = do_symbolize (symbolizer, strings, process_info, last_context, address)))
             sysprof_symbol_cache_take (self->kernel_symbols, g_steal_pointer (&symbol));
         }
       else
@@ -134,7 +199,7 @@ add_traceable (SysprofDocumentSymbols   *self,
               sysprof_symbol_cache_lookup (process_info->symbol_cache, address) != NULL)
             continue;
 
-          if ((symbol = _sysprof_symbolizer_symbolize (symbolizer, strings, process_info, last_context, address)))
+          if ((symbol = do_symbolize (symbolizer, strings, process_info, last_context, address)))
             sysprof_symbol_cache_take (process_info->symbol_cache, g_steal_pointer (&symbol));
         }
     }

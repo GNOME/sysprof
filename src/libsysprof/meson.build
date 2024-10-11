@@ -32,6 +32,7 @@ libsysprof_public_sources = [
   'sysprof-document-overlay.c',
   'sysprof-document-process.c',
   'sysprof-document-sample.c',
+  'sysprof-document-task.c',
   'sysprof-document-traceable.c',
   'sysprof-document.c',
   'sysprof-elf-symbolizer.c',
@@ -96,6 +97,7 @@ libsysprof_public_headers = [
   'sysprof-document-overlay.h',
   'sysprof-document-process.h',
   'sysprof-document-sample.h',
+  'sysprof-document-task.h',
   'sysprof-document-traceable.h',
   'sysprof-document.h',
   'sysprof-elf-symbolizer.h',
@@ -151,6 +153,13 @@ libsysprof_private_sources = [
   'timsort/gtktimsort.c',
 ]
 
+if debuginfod_dep.found() and get_option('debuginfod').enabled()
+  libsysprof_private_sources += [
+    'sysprof-debuginfod-symbolizer.c',
+    'sysprof-debuginfod-task.c'
+  ]
+endif
+
 if polkit_dep.found()
   libsysprof_private_sources += ['sysprof-polkit.c']
 endif
@@ -190,6 +199,7 @@ libsysprof_deps = [
 
   libsystemd_dep,
   polkit_dep,
+  debuginfod_dep,
 
   libeggbitset_static_dep,
   libelfparser_static_dep,

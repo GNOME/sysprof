@@ -48,6 +48,8 @@ SYSPROF_AVAILABLE_IN_ALL
 double                 sysprof_document_loader_get_fraction   (SysprofDocumentLoader  *self);
 SYSPROF_AVAILABLE_IN_ALL
 const char            *sysprof_document_loader_get_message    (SysprofDocumentLoader  *self);
+SYSPROF_AVAILABLE_IN_48
+GListModel            *sysprof_document_loader_list_tasks     (SysprofDocumentLoader  *self);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofDocument       *sysprof_document_loader_load           (SysprofDocumentLoader  *self,
                                                                GCancellable           *cancellable,

@@ -87,3 +87,12 @@ flamegraph {
 timespanlayer {
   font-size: 10px;
 }
+
+popover.tasks listview row {
+  background: transparent;
+  padding: 6px;
+}
+
+popover.tasks listview row label.heading {
+  padding-bottom: 3px;
+}

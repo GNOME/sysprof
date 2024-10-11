@@ -34,6 +34,7 @@ G_BEGIN_DECLS
 # include "sysprof-cpu-info.h"
 # include "sysprof-cpu-usage.h"
 # include "sysprof-dbus-monitor.h"
+# include "sysprof-debuginfod-symbolizer.h"
 # include "sysprof-diagnostic.h"
 # include "sysprof-disk-usage.h"
 # include "sysprof-document-allocation.h"

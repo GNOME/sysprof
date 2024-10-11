@@ -20,17 +20,21 @@
 
 #include "config.h"
 
-#include <elfutils/debuginfod.h>
 #include <errno.h>
-#include <stdatomic.h>
 
 #include <glib/gstdio.h>
 
 #include "sysprof-symbolizer-private.h"
 #include "sysprof-debuginfod-symbolizer.h"
-#include "sysprof-debuginfod-task-private.h"
 #include "sysprof-elf-loader-private.h"
 #include "sysprof-symbol-private.h"
+
+#if HAVE_DEBUGINFOD
+# include <elfutils/debuginfod.h>
+# include "sysprof-debuginfod-task-private.h"
+#else
+typedef struct _debuginfod_client debuginfod_client;
+#endif
 
 struct _SysprofDebuginfodSymbolizer
 {
@@ -58,6 +62,7 @@ sysprof_debuginfod_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
                                          SysprofAddressContext     context,
                                          SysprofAddress            address)
 {
+#if HAVE_DEBUGINFOD
   SysprofDebuginfodSymbolizer *self = SYSPROF_DEBUGINFOD_SYMBOLIZER (symbolizer);
   g_autoptr(SysprofElf) elf = NULL;
   g_autofree char *name = NULL;
@@ -145,6 +150,9 @@ sysprof_debuginfod_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
                              SYSPROF_SYMBOL_KIND_USER);
 
   return sym;
+#else
+  return NULL;
+#endif
 }
 
 static void
@@ -177,11 +185,45 @@ sysprof_debuginfod_symbolizer_finalize (GObject *object)
 
   g_clear_pointer (&self->cache, g_hash_table_unref);
   g_clear_pointer (&self->failed, g_hash_table_unref);
+
+#if HAVE_DEBUGINFOD
   g_clear_pointer (&self->client, debuginfod_end);
+#endif
 
   g_weak_ref_clear (&self->loader_wr);
 
   G_OBJECT_CLASS (sysprof_debuginfod_symbolizer_parent_class)->finalize (object);
+}
+
+static GObject *
+sysprof_debuginfod_symbolizer_constructor (GType                  type,
+                                           guint                  n_construct_params,
+                                           GObjectConstructParam *construct_properties)
+{
+#if HAVE_DEBUGINFOD
+  debuginfod_client *client;
+  GObject *object;
+
+  g_assert (type == SYSPROF_TYPE_DEBUGINFOD_SYMBOLIZER);
+
+  /* Don't even allow creating a SysprofDebuginfodSymbolizer instance unless we
+   * can create a new debuginfod_client. This ensures that even if an application
+   * does `g_object_new(SYSPROF_TYPE_DEBUGINFOD_SYMBOLIZER, NULL)` they will get
+   * `NULL` back instead of a misconfigured instance.
+   */
+  if (!(client = debuginfod_begin ()))
+    return NULL;
+
+  object = G_OBJECT_CLASS (sysprof_debuginfod_symbolizer_parent_class)
+      ->constructor (type, n_construct_params, construct_properties);
+
+  SYSPROF_DEBUGINFOD_SYMBOLIZER (object)->client = client;
+
+  return object;
+#else
+  errno = ENOTSUP;
+  return NULL;
+#endif
 }
 
 static void
@@ -190,6 +232,7 @@ sysprof_debuginfod_symbolizer_class_init (SysprofDebuginfodSymbolizerClass *klas
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   SysprofSymbolizerClass *symbolizer_class = SYSPROF_SYMBOLIZER_CLASS (klass);
 
+  object_class->constructor = sysprof_debuginfod_symbolizer_constructor;
   object_class->dispose = sysprof_debuginfod_symbolizer_dispose;
   object_class->finalize = sysprof_debuginfod_symbolizer_finalize;
 
@@ -201,17 +244,18 @@ static void
 sysprof_debuginfod_symbolizer_init (SysprofDebuginfodSymbolizer *self)
 {
   g_weak_ref_init (&self->loader_wr, NULL);
+
+  self->loader = sysprof_elf_loader_new ();
+  self->cache = g_hash_table_new_full (NULL, NULL, g_object_unref, NULL);
+  self->failed = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 }
 
 SysprofSymbolizer *
 sysprof_debuginfod_symbolizer_new (GError **error)
 {
-  g_autoptr(SysprofDebuginfodSymbolizer) self = NULL;
+  SysprofSymbolizer *self;
 
-  self = g_object_new (SYSPROF_TYPE_DEBUGINFOD_SYMBOLIZER, NULL);
-  self->client = debuginfod_begin ();
-
-  if (self->client == NULL)
+  if (!(self = g_object_new (SYSPROF_TYPE_DEBUGINFOD_SYMBOLIZER, NULL)))
     {
       int errsv = errno;
       g_set_error_literal (error,
@@ -221,9 +265,5 @@ sysprof_debuginfod_symbolizer_new (GError **error)
       return NULL;
     }
 
-  self->loader = sysprof_elf_loader_new ();
-  self->cache = g_hash_table_new_full (NULL, NULL, g_object_unref, NULL);
-  self->failed = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
-
-  return SYSPROF_SYMBOLIZER (g_steal_pointer (&self));
+  return self;
 }

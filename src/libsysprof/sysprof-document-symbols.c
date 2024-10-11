@@ -112,6 +112,9 @@ do_symbolize (SysprofSymbolizer     *symbolizer,
    * and where (relative to that file) the IP was.
    */
 
+  if (process_info == NULL || process_info->address_layout == NULL)
+    return NULL;
+
   if (!(map = sysprof_address_layout_lookup (process_info->address_layout, address)))
     return NULL;
 

@@ -153,7 +153,7 @@ libsysprof_private_sources = [
   'timsort/gtktimsort.c',
 ]
 
-if debuginfod_dep.found() and get_option('debuginfod').enabled()
+if debuginfod_dep.found()
   libsysprof_private_sources += [
     'sysprof-debuginfod-symbolizer.c',
     'sysprof-debuginfod-task.c'

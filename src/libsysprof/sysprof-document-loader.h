@@ -50,6 +50,8 @@ G_GNUC_INTERNAL
 char                  *sysprof_document_loader_dup_message    (SysprofDocumentLoader  *self);
 SYSPROF_AVAILABLE_IN_ALL
 const char            *sysprof_document_loader_get_message    (SysprofDocumentLoader  *self);
+SYSPROF_AVAILABLE_IN_47
+GListModel            *sysprof_document_loader_list_tasks     (SysprofDocumentLoader  *self);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofDocument       *sysprof_document_loader_load           (SysprofDocumentLoader  *self,
                                                                GCancellable           *cancellable,

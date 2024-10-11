@@ -27,18 +27,21 @@
 #include <glib/gstdio.h>
 
 #include "sysprof-bundled-symbolizer.h"
+#include "sysprof-debuginfod-symbolizer.h"
 #include "sysprof-document-bitset-index-private.h"
-#include "sysprof-document-loader.h"
+#include "sysprof-document-loader-private.h"
 #include "sysprof-document-private.h"
 #include "sysprof-elf-symbolizer.h"
 #include "sysprof-jitmap-symbolizer.h"
 #include "sysprof-kallsyms-symbolizer.h"
 #include "sysprof-multi-symbolizer.h"
+#include "sysprof-symbolizer-private.h"
 
 struct _SysprofDocumentLoader
 {
   GObject            parent_instance;
   GMutex             mutex;
+  GListStore        *tasks;
   SysprofSymbolizer *symbolizer;
   char              *filename;
   char              *message;
@@ -53,6 +56,7 @@ enum {
   PROP_FRACTION,
   PROP_MESSAGE,
   PROP_SYMBOLIZER,
+  PROP_TASKS,
   N_PROPS
 };
 
@@ -192,6 +196,8 @@ static void
 set_default_symbolizer (SysprofDocumentLoader *self)
 {
   g_autoptr(SysprofMultiSymbolizer) multi = NULL;
+  g_autoptr(SysprofSymbolizer) debuginfod = NULL;
+  g_autoptr(GError) error = NULL;
 
   g_assert (SYSPROF_IS_DOCUMENT_LOADER (self));
 
@@ -202,7 +208,23 @@ set_default_symbolizer (SysprofDocumentLoader *self)
   sysprof_multi_symbolizer_take (multi, sysprof_kallsyms_symbolizer_new ());
   sysprof_multi_symbolizer_take (multi, sysprof_elf_symbolizer_new ());
   sysprof_multi_symbolizer_take (multi, sysprof_jitmap_symbolizer_new ());
+
+  if (!(debuginfod = sysprof_debuginfod_symbolizer_new (&error)))
+    g_warning ("Failed to create debuginfod symbolizer: %s", error->message);
+  else
+    sysprof_multi_symbolizer_take (multi, g_steal_pointer (&debuginfod));
+
   self->symbolizer = SYSPROF_SYMBOLIZER (g_steal_pointer (&multi));
+}
+
+static void
+sysprof_document_loader_dispose (GObject *object)
+{
+  SysprofDocumentLoader *self = (SysprofDocumentLoader *)object;
+
+  g_list_store_remove_all (self->tasks);
+
+  G_OBJECT_CLASS (sysprof_document_loader_parent_class)->dispose (object);
 }
 
 static void
@@ -212,6 +234,7 @@ sysprof_document_loader_finalize (GObject *object)
 
   g_clear_handle_id (&self->notify_source, g_source_remove);
   g_clear_object (&self->symbolizer);
+  g_clear_object (&self->tasks);
   g_clear_pointer (&self->filename, g_free);
   g_clear_pointer (&self->message, g_free);
   g_clear_fd (&self->fd, NULL);
@@ -240,6 +263,10 @@ sysprof_document_loader_get_property (GObject    *object,
 
     case PROP_SYMBOLIZER:
       g_value_set_object (value, sysprof_document_loader_get_symbolizer (self));
+      break;
+
+    case PROP_TASKS:
+      g_value_take_object (value, sysprof_document_loader_list_tasks (self));
       break;
 
     default:
@@ -271,6 +298,7 @@ sysprof_document_loader_class_init (SysprofDocumentLoaderClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
+  object_class->dispose = sysprof_document_loader_dispose;
   object_class->finalize = sysprof_document_loader_finalize;
   object_class->get_property = sysprof_document_loader_get_property;
   object_class->set_property = sysprof_document_loader_set_property;
@@ -290,6 +318,11 @@ sysprof_document_loader_class_init (SysprofDocumentLoaderClass *klass)
                          SYSPROF_TYPE_SYMBOLIZER,
                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
+  properties[PROP_TASKS] =
+    g_param_spec_object ("tasks", NULL, NULL,
+                         G_TYPE_LIST_MODEL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
   g_type_ensure (SYSPROF_TYPE_DOCUMENT);
@@ -302,6 +335,7 @@ sysprof_document_loader_init (SysprofDocumentLoader *self)
   g_mutex_init (&self->mutex);
 
   self->fd = -1;
+  self->tasks = g_list_store_new (SYSPROF_TYPE_DOCUMENT_TASK);
 
   set_default_symbolizer (self);
 }
@@ -571,6 +605,8 @@ sysprof_document_loader_load_async (SysprofDocumentLoader *self,
 
   set_progress (0., _("Loading document"), self);
 
+  _sysprof_symbolizer_setup (self->symbolizer, self);
+
   if (self->fd != -1)
     mapped_file_new_from_fd_async (self->fd,
                                    cancellable,
@@ -681,4 +717,95 @@ sysprof_document_loader_load (SysprofDocumentLoader  *self,
     g_propagate_error (error, state.error);
 
   return state.document;
+}
+
+typedef struct _TaskOp
+{
+  SysprofDocumentLoader *loader;
+  SysprofDocumentTask *task;
+  guint remove : 1;
+} TaskOp;
+
+static void
+_g_list_store_remove (GListStore *store,
+                      gpointer    instance)
+{
+  GListModel *model = G_LIST_MODEL (store);
+  guint n_items = g_list_model_get_n_items (model);
+
+  for (guint i = 0; i < n_items; i++)
+    {
+      g_autoptr(GObject) element = g_list_model_get_item (model, i);
+
+      if (element == instance)
+        {
+          g_list_store_remove (store, i);
+          return;
+        }
+    }
+}
+
+static gboolean
+task_op_run (gpointer data)
+{
+  TaskOp *op = data;
+
+  if (op->remove)
+    _g_list_store_remove (op->loader->tasks, op->task);
+  else
+    g_list_store_append (op->loader->tasks, op->task);
+
+  g_clear_object (&op->loader);
+  g_clear_object (&op->task);
+  g_free (op);
+
+  return G_SOURCE_REMOVE;
+}
+
+static TaskOp *
+task_op_new (SysprofDocumentLoader *loader,
+             SysprofDocumentTask   *task,
+             gboolean               remove)
+{
+  TaskOp op = {
+    g_object_ref (loader),
+    g_object_ref (task),
+    !!remove
+  };
+
+  return g_memdup2 (&op, sizeof op);
+}
+
+void
+_sysprof_document_loader_add_task (SysprofDocumentLoader *self,
+                                   SysprofDocumentTask   *task)
+{
+  g_return_if_fail (SYSPROF_IS_DOCUMENT_LOADER (self));
+  g_return_if_fail (SYSPROF_IS_DOCUMENT_TASK (task));
+
+  g_idle_add (task_op_run, task_op_new (self, task, FALSE));
+}
+
+void
+_sysprof_document_loader_remove_task (SysprofDocumentLoader *self,
+                                      SysprofDocumentTask   *task)
+{
+  g_return_if_fail (SYSPROF_IS_DOCUMENT_LOADER (self));
+  g_return_if_fail (SYSPROF_IS_DOCUMENT_TASK (task));
+
+  g_idle_add (task_op_run, task_op_new (self, task, TRUE));
+}
+
+/**
+ * sysprof_document_loader_list_tasks:
+ * @self: a #SysprofDocumentLoader
+ *
+ * Returns: (transfer full): a #GListModel of #SysprofDocumentTask.
+ */
+GListModel *
+sysprof_document_loader_list_tasks (SysprofDocumentLoader *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_LOADER (self), NULL);
+
+  return g_object_ref (G_LIST_MODEL (self->tasks));
 }

@@ -16,6 +16,8 @@
 
 #mesondefine HAVE_LIBSYSTEMD
 
+#mesondefine HAVE_DEBUGINFOD
+
 #mesondefine HAVE_PERF_CLOCKID
 
 #mesondefine HAVE_POLKIT

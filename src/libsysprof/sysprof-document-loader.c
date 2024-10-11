@@ -196,7 +196,6 @@ static void
 set_default_symbolizer (SysprofDocumentLoader *self)
 {
   g_autoptr(SysprofMultiSymbolizer) multi = NULL;
-  g_autoptr(SysprofSymbolizer) debuginfod = NULL;
   g_autoptr(GError) error = NULL;
 
   g_assert (SYSPROF_IS_DOCUMENT_LOADER (self));
@@ -209,10 +208,16 @@ set_default_symbolizer (SysprofDocumentLoader *self)
   sysprof_multi_symbolizer_take (multi, sysprof_elf_symbolizer_new ());
   sysprof_multi_symbolizer_take (multi, sysprof_jitmap_symbolizer_new ());
 
-  if (!(debuginfod = sysprof_debuginfod_symbolizer_new (&error)))
-    g_warning ("Failed to create debuginfod symbolizer: %s", error->message);
-  else
-    sysprof_multi_symbolizer_take (multi, g_steal_pointer (&debuginfod));
+#if HAVE_DEBUGINFOD
+  {
+    g_autoptr(SysprofSymbolizer) debuginfod = NULL;
+
+    if (!(debuginfod = sysprof_debuginfod_symbolizer_new (&error)))
+      g_warning ("Failed to create debuginfod symbolizer: %s", error->message);
+    else
+      sysprof_multi_symbolizer_take (multi, g_steal_pointer (&debuginfod));
+  }
+#endif
 
   self->symbolizer = SYSPROF_SYMBOLIZER (g_steal_pointer (&multi));
 }

@@ -49,3 +49,5 @@ option('tests', type: 'boolean')
 # Optionally disable the examples (this is mostly only useful for building only
 # libsysprof-capture as a subproject)
 option('examples', type: 'boolean')
+
+option('debuginfod', type: 'feature')

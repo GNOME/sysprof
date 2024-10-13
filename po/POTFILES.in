@@ -3,6 +3,7 @@
 data/org.gnome.Sysprof.appdata.xml.in.in
 data/org.gnome.Sysprof.desktop.in.in
 src/libsysprof/sysprof-category-summary.c
+src/libsysprof/sysprof-debuginfod-task.c
 src/libsysprof/sysprof-document-allocation.c
 src/libsysprof/sysprof-document.c
 src/libsysprof/sysprof-document-dbus-message.c

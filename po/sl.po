@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-10-09 18:05+0000\n"
-"PO-Revision-Date: 2024-10-10 18:04+0200\n"
+"POT-Creation-Date: 2024-10-13 10:11+0000\n"
+"PO-Revision-Date: 2024-10-14 16:11+0200\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
@@ -25,7 +25,7 @@ msgstr ""
 #: data/org.gnome.Sysprof.appdata.xml.in.in:6
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
 #: src/sysprof/sysprof-application.c:237
-#: src/sysprof/sysprof-recording-pad.ui:20 src/sysprof/sysprof-window.c:247
+#: src/sysprof/sysprof-recording-pad.ui:20 src/sysprof/sysprof-window.c:250
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -79,7 +79,7 @@ msgid "CSS"
 msgstr "CSS"
 
 #: src/libsysprof/sysprof-category-summary.c:154
-#: src/sysprof/sysprof-greeter.ui:433 src/sysprof/sysprof-window.ui:317
+#: src/sysprof/sysprof-greeter.ui:433 src/sysprof/sysprof-window.ui:363
 msgid "Graphics"
 msgstr "Grafični prikaz"
 
@@ -139,6 +139,10 @@ msgstr "Sprostljivo"
 msgid "Windowing"
 msgstr "Izrisovanje oken"
 
+#: src/libsysprof/sysprof-debuginfod-task.c:97
+msgid "Downloading Symbols…"
+msgstr "Prenašanje simbolov …"
+
 #: src/libsysprof/sysprof-document-allocation.c:151
 msgid "Allocation"
 msgstr "Dodelitev"
@@ -196,20 +200,20 @@ msgstr "Sporočilo vodila D-Bus"
 msgid "Frame"
 msgstr "Okvir"
 
-#: src/libsysprof/sysprof-document-loader.c:435
+#: src/libsysprof/sysprof-document-loader.c:474
 msgid "Document loaded"
 msgstr "Dokument je naložen"
 
-#: src/libsysprof/sysprof-document-loader.c:466
+#: src/libsysprof/sysprof-document-loader.c:505
 msgid "Loading failed"
 msgstr "Nalaganje je spodletelo"
 
-#: src/libsysprof/sysprof-document-loader.c:478
-#: src/libsysprof/sysprof-document-symbols.c:217
+#: src/libsysprof/sysprof-document-loader.c:517
+#: src/libsysprof/sysprof-document-symbols.c:285
 msgid "Symbolizing stack traces"
 msgstr "Simbolne sledi sklada"
 
-#: src/libsysprof/sysprof-document-loader.c:547
+#: src/libsysprof/sysprof-document-loader.c:586
 msgid "Loading document"
 msgstr "Poteka nalaganje dokumenta"
 
@@ -486,7 +490,7 @@ msgid "_Preferences"
 msgstr "_Možnosti"
 
 #: src/sysprof/gtk/menus.ui:10 src/sysprof/sysprof-greeter.ui:644
-#: src/sysprof/sysprof-window.ui:398
+#: src/sysprof/sysprof-window.ui:444
 msgid "_Keyboard Shortcuts"
 msgstr "_Tipkovne bližnjice‫"
 
@@ -700,7 +704,7 @@ msgstr "Datoteka"
 #: src/sysprof/sysprof-logs-section.ui:143
 #: src/sysprof/sysprof-mark-table.ui:116
 #: src/sysprof/sysprof-traceables-utility.ui:81
-#: src/sysprof/sysprof-window.ui:297
+#: src/sysprof/sysprof-window.ui:343
 msgid "CPU"
 msgstr "CPE"
 
@@ -716,17 +720,17 @@ msgstr "Ključi se morda ne začnejo s številko"
 msgid "Keys may only contain alpha-numerics or underline."
 msgstr "Ključi lahko vsebujejo le alfanumerične znake in podčrtaje."
 
-#: src/sysprof/sysprof-greeter.c:267 src/sysprof/sysprof-window.c:157
+#: src/sysprof/sysprof-greeter.c:267 src/sysprof/sysprof-window.c:160
 msgid "Must Capture to Local File"
 msgstr "Obvezen zajem v krajevno datoteko"
 
-#: src/sysprof/sysprof-greeter.c:268 src/sysprof/sysprof-window.c:158
+#: src/sysprof/sysprof-greeter.c:268 src/sysprof/sysprof-window.c:161
 msgid "You must choose a local file to capture using Sysprof"
 msgstr ""
 "Izbrati morate krajevno datoteko, ki jo želite zajeti s programom Sysprof"
 
 #: src/sysprof/sysprof-greeter.c:269 src/sysprof/sysprof-recording-pad.c:117
-#: src/sysprof/sysprof-window.c:159 src/sysprof/sysprof-window.c:724
+#: src/sysprof/sysprof-window.c:162 src/sysprof/sysprof-window.c:740
 msgid "Close"
 msgstr "Zapri"
 
@@ -906,7 +910,7 @@ msgid "Record coarse-grained counters about battery charge or discharge rates"
 msgstr "Beleži grobe števce o napolnjenosti baterije ali hitrosti praznjenja"
 
 #: src/sysprof/sysprof-greeter.ui:377 src/sysprof/sysprof-greeter.ui:382
-#: src/sysprof/sysprof-window.ui:287
+#: src/sysprof/sysprof-window.ui:333
 msgid "D-Bus"
 msgstr "Vodila D-Bus"
 
@@ -1026,15 +1030,15 @@ msgstr "Posnemi v datoteko …"
 msgid "Record to _Memory"
 msgstr "_Beleži v pomnilnik"
 
-#: src/sysprof/sysprof-greeter.ui:638 src/sysprof/sysprof-window.ui:388
+#: src/sysprof/sysprof-greeter.ui:638 src/sysprof/sysprof-window.ui:434
 msgid "Open Recording…"
 msgstr "Odpri posnetek …"
 
-#: src/sysprof/sysprof-greeter.ui:648 src/sysprof/sysprof-window.ui:402
+#: src/sysprof/sysprof-greeter.ui:648 src/sysprof/sysprof-window.ui:448
 msgid "Help"
 msgstr "Pomoč"
 
-#: src/sysprof/sysprof-greeter.ui:652 src/sysprof/sysprof-window.ui:406
+#: src/sysprof/sysprof-greeter.ui:652 src/sysprof/sysprof-window.ui:452
 msgid "About Sysprof"
 msgstr "O programu"
 
@@ -1281,31 +1285,31 @@ msgstr "Ustavi snemanje"
 msgid "Time Profiler"
 msgstr "Profil časovnice"
 
-#: src/sysprof/sysprof-samples-section.ui:89 src/sysprof/sysprof-window.ui:419
+#: src/sysprof/sysprof-samples-section.ui:89 src/sysprof/sysprof-window.ui:465
 msgid "Callgraph"
 msgstr "Grafikon klicev"
 
-#: src/sysprof/sysprof-samples-section.ui:172 src/sysprof/sysprof-window.ui:450
+#: src/sysprof/sysprof-samples-section.ui:172 src/sysprof/sysprof-window.ui:496
 msgid "Flamegraph"
 msgstr "Plamenski graf"
 
-#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:154
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:136
 msgid "Seek Backward"
 msgstr "Išči nazaj"
 
-#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:164
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:146
 msgid "Zoom Out"
 msgstr "Oddalji"
 
-#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:174
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:156
 msgid "Reset Zoom"
 msgstr "Ponastavi približanje"
 
-#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:184
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:166
 msgid "Zoom In"
 msgstr "Približaj"
 
-#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:194
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:176
 msgid "Seek Forward"
 msgstr "Išči naprej"
 
@@ -1317,35 +1321,35 @@ msgstr "Globina"
 msgid "Hits"
 msgstr "Zadetki"
 
-#: src/sysprof/sysprof-window.c:175
+#: src/sysprof/sysprof-window.c:178
 msgid "Open Recording"
 msgstr "Odpri posnetek"
 
-#: src/sysprof/sysprof-window.c:176
+#: src/sysprof/sysprof-window.c:179
 msgid "Open"
 msgstr "Odpri"
 
-#: src/sysprof/sysprof-window.c:180
+#: src/sysprof/sysprof-window.c:183
 msgid "Sysprof Capture (*.syscap)"
 msgstr "Sysprof Capture (*.syscap)"
 
-#: src/sysprof/sysprof-window.c:472
+#: src/sysprof/sysprof-window.c:475
 msgid "Save to File"
 msgstr "Shrani v datoteko"
 
-#: src/sysprof/sysprof-window.c:473
+#: src/sysprof/sysprof-window.c:476
 msgid "Save"
 msgstr "Shrani"
 
-#: src/sysprof/sysprof-window.c:642
+#: src/sysprof/sysprof-window.c:655
 msgid "Loading…"
 msgstr "Poteka nalaganje ..."
 
-#: src/sysprof/sysprof-window.c:720
+#: src/sysprof/sysprof-window.c:736
 msgid "Invalid Document"
 msgstr "Neveljaven dokument"
 
-#: src/sysprof/sysprof-window.c:722
+#: src/sysprof/sysprof-window.c:738
 #, c-format
 msgid ""
 "The document could not be loaded. Please check that you have the correct "
@@ -1358,75 +1362,75 @@ msgstr ""
 "\n"
 "%s"
 
-#: src/sysprof/sysprof-window.ui:144
+#: src/sysprof/sysprof-window.ui:126
 msgid "Toggle Left Panel"
 msgstr "Preklopi levi pladenj"
 
-#: src/sysprof/sysprof-window.ui:209
+#: src/sysprof/sysprof-window.ui:191
 msgid "Main Menu"
 msgstr "Glavni meni"
 
-#: src/sysprof/sysprof-window.ui:216
+#: src/sysprof/sysprof-window.ui:198
 msgid "View Options"
 msgstr "Možnosti pogleda"
 
-#: src/sysprof/sysprof-window.ui:222
+#: src/sysprof/sysprof-window.ui:204
 msgid "Toggle Right Panel"
 msgstr "Preklopi desni pladenj"
 
-#: src/sysprof/sysprof-window.ui:307
+#: src/sysprof/sysprof-window.ui:353
 msgid "Energy"
 msgstr "Poraba energije"
 
-#: src/sysprof/sysprof-window.ui:327
+#: src/sysprof/sysprof-window.ui:373
 msgid "Network"
 msgstr "Omrežje"
 
-#: src/sysprof/sysprof-window.ui:337
+#: src/sysprof/sysprof-window.ui:383
 msgid "Storage"
 msgstr "Shramba"
 
-#: src/sysprof/sysprof-window.ui:384
+#: src/sysprof/sysprof-window.ui:430
 msgid "_Record Again…"
 msgstr "_posnemi znova …"
 
-#: src/sysprof/sysprof-window.ui:392
+#: src/sysprof/sysprof-window.ui:438
 msgid "Save As…"
 msgstr "Shrani kot …"
 
-#: src/sysprof/sysprof-window.ui:412
+#: src/sysprof/sysprof-window.ui:458
 msgid "_Quit"
 msgstr "_Izhod"
 
-#: src/sysprof/sysprof-window.ui:421
+#: src/sysprof/sysprof-window.ui:467
 msgid "Categorize Frames"
 msgstr "Kategoriziraj okvirje"
 
-#: src/sysprof/sysprof-window.ui:425
+#: src/sysprof/sysprof-window.ui:471
 msgid "Hide System Libraries"
 msgstr "Skrij sistemske knjižnice"
 
-#: src/sysprof/sysprof-window.ui:429
+#: src/sysprof/sysprof-window.ui:475
 msgid "Include Threads"
 msgstr "Vključi niti"
 
-#: src/sysprof/sysprof-window.ui:433
+#: src/sysprof/sysprof-window.ui:479
 msgid "Bottom Up"
 msgstr "Od spodaj navzgor"
 
-#: src/sysprof/sysprof-window.ui:437
+#: src/sysprof/sysprof-window.ui:483
 msgid "Ignore Kernel Processes"
 msgstr "Prezri procese jedra"
 
-#: src/sysprof/sysprof-window.ui:441
+#: src/sysprof/sysprof-window.ui:487
 msgid "Ignore Process 0"
 msgstr "Prezri proces 0"
 
-#: src/sysprof/sysprof-window.ui:445
+#: src/sysprof/sysprof-window.ui:491
 msgid "Merge Similar Processes"
 msgstr "Združi podobne procese"
 
 #. translators: Left Heavy means to sort larger (heavier) stack frames before others, starting from the left
-#: src/sysprof/sysprof-window.ui:453
+#: src/sysprof/sysprof-window.ui:499
 msgid "Left Heavy"
 msgstr "Z leve, težji naprej"

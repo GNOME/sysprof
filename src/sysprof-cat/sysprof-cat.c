@@ -389,6 +389,29 @@ end_document (SysprofDocument *document)
   g_print ("}\n");
 }
 
+static void
+load_document_cb (GObject      *object,
+                  GAsyncResult *result,
+                  gpointer      user_data)
+{
+  g_autoptr(DexPromise) promise = user_data;
+  SysprofDocument *document;
+  GError *error = NULL;
+
+  if ((document = sysprof_document_loader_load_finish (SYSPROF_DOCUMENT_LOADER (object), result, &error)))
+    dex_promise_resolve_object (promise, document);
+  else
+    dex_promise_reject (promise, error);
+}
+
+static DexFuture *
+load_document (SysprofDocumentLoader *loader)
+{
+  DexPromise *promise = dex_promise_new ();
+  sysprof_document_loader_load_async (loader, NULL, load_document_cb, dex_ref (promise));
+  return DEX_FUTURE (promise);
+}
+
 static DexFuture *
 sysprof_cat_fiber (gpointer data)
 {
@@ -401,7 +424,7 @@ sysprof_cat_fiber (gpointer data)
 
   loader = sysprof_document_loader_new (filename);
 
-  if (!(document = sysprof_document_loader_load (loader, NULL, &error)))
+  if (!(document = dex_await_object (load_document (loader), &error)))
     return dex_future_new_for_error (g_steal_pointer (&error));
 
   begin_document (document);

@@ -438,22 +438,20 @@ sysprof_cat_fiber (gpointer data)
 
   exit_code = EXIT_SUCCESS;
 
-  g_main_loop_quit (main_loop);
-
   return dex_future_new_for_boolean (TRUE);
 }
 
 static DexFuture *
-sysprof_cat_catch_error_cb (DexFuture *future,
-                            gpointer   user_data)
+sysprof_cat_finally_cb (DexFuture *future,
+                        gpointer   user_data)
 {
   g_autoptr(GError) error = NULL;
 
-  dex_await (dex_ref (future), &error);
-
-  g_printerr ("Error: %s\n", error->message);
-
-  exit_code = EXIT_FAILURE;
+  if (!dex_await (dex_ref (future), &error))
+    {
+      g_printerr ("Error: %s\n", error->message);
+      exit_code = EXIT_FAILURE;
+    }
 
   g_main_loop_quit (main_loop);
 
@@ -490,12 +488,12 @@ main (int   argc,
     }
 
   dex_future_disown (
-      dex_future_catch (
+      dex_future_finally (
           dex_scheduler_spawn (NULL, 0,
                                sysprof_cat_fiber,
                                g_strdup (argv[1]),
                                g_free),
-          sysprof_cat_catch_error_cb,
+          sysprof_cat_finally_cb,
           NULL, NULL));
 
   if (exit_code == -1)

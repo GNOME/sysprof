@@ -169,6 +169,29 @@ diff (SysprofCallgraphNode *left,
     }
 }
 
+static void
+load_document_cb (GObject      *object,
+                  GAsyncResult *result,
+                  gpointer      user_data)
+{
+  g_autoptr(DexPromise) promise = user_data;
+  SysprofDocument *document;
+  GError *error = NULL;
+
+  if ((document = sysprof_document_loader_load_finish (SYSPROF_DOCUMENT_LOADER (object), result, &error)))
+    dex_promise_resolve_object (promise, document);
+  else
+    dex_promise_reject (promise, error);
+}
+
+static DexFuture *
+load_document (SysprofDocumentLoader *loader)
+{
+  DexPromise *promise = dex_promise_new ();
+  sysprof_document_loader_load_async (loader, NULL, load_document_cb, dex_ref (promise));
+  return DEX_FUTURE (promise);
+}
+
 static DexFuture *
 sysprof_diff_fiber (gpointer data)
 {
@@ -192,7 +215,7 @@ sysprof_diff_fiber (gpointer data)
   loader2 = sysprof_document_loader_new (filenames[1]);
 
   g_printerr ("Loading %s...\n", filenames[0]);
-  if (!(document1 = sysprof_document_loader_load (loader1, NULL, &error)))
+  if (!(document1 = dex_await_object (load_document (loader1), &error)))
     return dex_future_new_for_error (g_steal_pointer (&error));
 
   traceables1 = sysprof_document_list_samples (document1);
@@ -201,7 +224,7 @@ sysprof_diff_fiber (gpointer data)
     return dex_future_new_for_error (g_steal_pointer (&error));
 
   g_printerr ("Loading %s...\n", filenames[1]);
-  if (!(document2 = sysprof_document_loader_load (loader2, NULL, &error)))
+  if (!(document2 = dex_await_object (load_document (loader2), &error)))
     return dex_future_new_for_error (g_steal_pointer (&error));
 
   traceables2 = sysprof_document_list_samples (document2);

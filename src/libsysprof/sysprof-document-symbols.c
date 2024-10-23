@@ -100,8 +100,6 @@ do_symbolize (SysprofSymbolizer     *symbolizer,
   guint64 map_begin;
   guint64 map_end;
   guint64 relative_address;
-  guint64 begin_address;
-  guint64 end_address;
   guint64 file_offset;
 
   if ((ret = _sysprof_symbolizer_symbolize (symbolizer, strings, process_info, last_context, address)))
@@ -132,21 +130,14 @@ do_symbolize (SysprofSymbolizer     *symbolizer,
 
   path = sysprof_document_mmap_get_file (map);
 
-  begin_address = CLAMP (begin_address, file_offset, file_offset + (map_end - map_begin));
-  end_address = CLAMP (end_address, file_offset, file_offset + (map_end - map_begin));
-  if (end_address == begin_address)
-    end_address++;
-
   name = g_strdup_printf ("In File %s+0x%"G_GINT64_MODIFIER"x",
                           sysprof_document_mmap_get_file (map),
                           relative_address);
-  begin_address = address;
-  end_address = address + 1;
 
   ret = _sysprof_symbol_new (sysprof_strings_get (strings, name),
                              sysprof_strings_get (strings, path),
                              sysprof_strings_get (strings, nick),
-                             begin_address, end_address,
+                             address, address + 1,
                              SYSPROF_SYMBOL_KIND_USER);
   ret->is_fallback = TRUE;
 

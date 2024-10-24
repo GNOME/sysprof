@@ -31,6 +31,8 @@ struct _SysprofSampler
 {
   SysprofInstrument parent_instance;
   GPtrArray *perf_event_streams;
+  guint sample_lost_counter_id;
+  gint64 lost_count;
 };
 
 struct _SysprofSamplerClass
@@ -38,7 +40,66 @@ struct _SysprofSamplerClass
   SysprofInstrumentClass parent_class;
 };
 
+typedef struct
+{
+  SysprofRecording *recording;
+  SysprofCaptureWriter *writer;
+  guint lost_counter_id;
+  gint64 lost;
+} StreamData;
+
 G_DEFINE_FINAL_TYPE (SysprofSampler, sysprof_sampler, SYSPROF_TYPE_INSTRUMENT)
+
+static StreamData *
+stream_data_new (SysprofRecording *recording)
+{
+  SysprofCaptureCounter info = {0};
+  StreamData *data;
+
+  g_assert (SYSPROF_IS_RECORDING (recording));
+
+  data = g_atomic_rc_box_new0 (StreamData);
+  data->recording = g_object_ref (recording);
+  data->writer = sysprof_capture_writer_ref (_sysprof_recording_writer (recording));
+  data->lost_counter_id = sysprof_capture_writer_request_counter (data->writer, 1);
+  data->lost = 0;
+
+  g_strlcpy (info.category, "Sampler", sizeof info.category);
+  g_strlcpy (info.name, "Lost Samples", sizeof info.name);
+  g_strlcpy (info.description, "Samples dropped due to full ring buffer", sizeof info.description);
+  info.id = data->lost_counter_id;
+  info.type = SYSPROF_CAPTURE_COUNTER_INT64;
+  info.value.v64 = 0;
+
+  sysprof_capture_writer_define_counters (data->writer,
+                                          SYSPROF_CAPTURE_CURRENT_TIME, -1, -1,
+                                          &info, 1);
+
+  return data;
+}
+
+static StreamData *
+stream_data_ref (StreamData *data)
+{
+  return g_atomic_rc_box_acquire (data);
+}
+
+static void
+stream_data_finalize (gpointer ptr)
+{
+  StreamData *data = ptr;
+
+  g_clear_pointer (&data->writer, sysprof_capture_writer_unref);
+  g_clear_object (&data->recording);
+}
+
+static void
+stream_data_unref (StreamData *data)
+{
+  g_atomic_rc_box_release_full (data, stream_data_finalize);
+}
+
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (StreamData, stream_data_unref)
 
 static char **
 sysprof_sampler_list_required_policy (SysprofInstrument *instrument)
@@ -105,12 +166,13 @@ sysprof_sampler_perf_event_stream_cb (const SysprofPerfEvent *event,
                                       guint                   cpu,
                                       gpointer                user_data)
 {
-  SysprofRecording *recording = user_data;
-  SysprofCaptureWriter *writer = _sysprof_recording_writer (recording);
+  StreamData *data = user_data;
+  SysprofRecording *recording = data->recording;
+  SysprofCaptureWriter *writer = data->writer;
   gsize offset;
   gint64 time;
 
-  g_assert (writer != NULL);
+  g_assert (data != NULL);
   g_assert (event != NULL);
 
   switch (event->header.type)
@@ -157,7 +219,22 @@ sysprof_sampler_perf_event_stream_cb (const SysprofPerfEvent *event,
       break;
 
     case PERF_RECORD_LOST:
-      break;
+      {
+        SysprofCaptureCounterValue value;
+        gint64 now = SYSPROF_CAPTURE_CURRENT_TIME;
+        char message[64];
+
+        g_snprintf (message, sizeof message,
+                    "Lost %"G_GUINT64_FORMAT" samples",
+                    event->lost.lost);
+        sysprof_capture_writer_add_log (writer, now, -1, -1, G_LOG_LEVEL_CRITICAL,
+                                        "Sampler", message);
+
+        value.v64 = (data->lost += event->lost.lost);
+        sysprof_capture_writer_set_counters (writer, now, -1, -1,
+                                             &data->lost_counter_id, &value, 1);
+        break;
+      }
 
     case PERF_RECORD_MMAP:
       offset = strlen (event->mmap.filename) + 1;
@@ -251,6 +328,7 @@ sysprof_sampler_prepare_fiber (gpointer user_data)
 {
   Prepare *prepare = user_data;
   g_autoptr(GDBusConnection) connection = NULL;
+  g_autoptr(StreamData) stream_data = NULL;
   g_autoptr(GPtrArray) futures = NULL;
   g_autoptr(GError) error = NULL;
   struct perf_event_attr attr = {0};
@@ -334,6 +412,7 @@ try_again:
   /* Pipeline our request for n_cpu perf_event_open calls and then
    * await them all to complete.
    */
+  stream_data = stream_data_new (prepare->recording);
   for (guint i = 0; i < n_cpu; i++)
     g_ptr_array_add (futures,
                      sysprof_perf_event_stream_new (connection,
@@ -342,8 +421,8 @@ try_again:
                                                     -1,
                                                     0,
                                                     sysprof_sampler_perf_event_stream_cb,
-                                                    g_object_ref (prepare->recording),
-                                                    g_object_unref));
+                                                    stream_data_ref (stream_data),
+                                                    (GDestroyNotify)stream_data_unref));
 
   if (!dex_await (dex_future_allv ((DexFuture **)futures->pdata, futures->len), &error))
     {

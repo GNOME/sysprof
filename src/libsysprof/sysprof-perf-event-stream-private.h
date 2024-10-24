@@ -133,6 +133,15 @@ typedef struct _SysprofPerfEventTracepoint
 SYSPROF_ALIGNED_END(1);
 
 SYSPROF_ALIGNED_BEGIN(1)
+typedef struct _SysprofPerfEventLost
+{
+  struct perf_event_header header;
+  guint64 identifier;
+  guint64 lost;
+} SysprofPerfEventLost
+SYSPROF_ALIGNED_END(1);
+
+SYSPROF_ALIGNED_BEGIN(1)
 typedef union _SysprofPerfEvent
 {
   struct perf_event_header   header;
@@ -143,6 +152,7 @@ typedef union _SysprofPerfEvent
   SysprofPerfEventMmap2      mmap2;
   SysprofPerfEventCallchain  callchain;
   SysprofPerfEventTracepoint tracepoint;
+  SysprofPerfEventLost       lost;
   guint8                     raw[0];
 } SysprofPerfEvent
 SYSPROF_ALIGNED_END(1);

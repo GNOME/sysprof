@@ -88,6 +88,16 @@ format_number (gpointer unused,
 }
 
 static char *
+int_to_string_filtered (gpointer unused,
+                        int      value)
+{
+  if (value < 0)
+    return NULL;
+
+  return g_strdup_printf ("%d", value);
+}
+
+static char *
 format_severity (gpointer       unused,
                  GLogLevelFlags severity)
 {
@@ -135,6 +145,7 @@ sysprof_logs_section_class_init (SysprofLogsSectionClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofLogsSection, time_column);
   gtk_widget_class_bind_template_callback (widget_class, format_number);
   gtk_widget_class_bind_template_callback (widget_class, format_severity);
+  gtk_widget_class_bind_template_callback (widget_class, int_to_string_filtered);
   gtk_widget_class_bind_template_callback (widget_class, sysprof_logs_section_activate_layer_item_cb);
 
   g_type_ensure (SYSPROF_TYPE_DOCUMENT_BITSET_INDEX);

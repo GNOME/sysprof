@@ -160,9 +160,11 @@
         <property name="min-chars">2</property>
         <property name="nat-chars">2</property>
         <binding name="text">
-          <lookup name="cpu" type="SysprofDocumentLog">
-            <lookup name="item">GtkListItem</lookup>
-          </lookup>
+          <closure function="int_to_string_filtered" type="gchararray">
+            <lookup name="cpu" type="SysprofDocumentLog">
+              <lookup name="item">GtkListItem</lookup>
+            </lookup>
+          </closure>
         </binding>
       </object>
     </property>
@@ -196,9 +198,11 @@
         <property name="min-chars">2</property>
         <property name="nat-chars">2</property>
         <binding name="text">
-          <lookup name="pid" type="SysprofDocumentLog">
-            <lookup name="item">GtkListItem</lookup>
-          </lookup>
+          <closure function="int_to_string_filtered" type="gchararray">
+            <lookup name="pid" type="SysprofDocumentLog">
+              <lookup name="item">GtkListItem</lookup>
+            </lookup>
+          </closure>
         </binding>
       </object>
     </property>

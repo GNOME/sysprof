@@ -86,6 +86,7 @@ struct _SysprofPerfEventStream
   struct perf_event_mmap_page *map;
   guint8 *map_data;
   guint64 tail;
+  gsize map_size;
 
   guint active : 1;
 };
@@ -347,6 +348,13 @@ sysprof_perf_event_stream_finalize (GObject *object)
 
   g_clear_fd (&self->perf_fd, NULL);
 
+  if (self->map != NULL && self->map_size > 0)
+    {
+      munmap (self->map, self->map_size);
+      self->map = NULL;
+      self->map_size = 0;
+    }
+
   G_OBJECT_CLASS (sysprof_perf_event_stream_parent_class)->finalize (object);
 }
 
@@ -434,6 +442,7 @@ sysprof_perf_event_stream_new_cb (GObject      *object,
             }
           else
             {
+              self->map_size = map_size;
               self->map = (gpointer)map;
               self->map_data = map + sysprof_getpagesize ();
               self->tail = 0;

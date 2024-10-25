@@ -147,6 +147,7 @@ libsysprof_private_sources = [
   'sysprof-mount-device.c',
   'sysprof-mount-namespace.c',
   'sysprof-mount.c',
+  'sysprof-muxer-source.c',
   'sysprof-perf-event-stream.c',
   'sysprof-podman.c',
   'sysprof-process-info.c',

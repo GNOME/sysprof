@@ -10,17 +10,23 @@ ipc_service_src = gnome.gdbus_codegen('ipc-service',
          namespace: 'Ipc',
 )
 
+ipc_unwinder_src = gnome.gdbus_codegen('ipc-unwinder',
+           sources: 'org.gnome.Sysprof3.Unwinder.xml',
+  interface_prefix: 'org.gnome.Sysprof3.',
+         namespace: 'Ipc',
+)
+
 sysprofd_sources = [
   'sysprofd.c',
   'ipc-rapl-profiler.c',
   'ipc-service-impl.c',
+  'ipc-unwinder-impl.c',
   'sysprof-turbostat.c',
   'helpers.c',
   ipc_profiler_src,
   ipc_service_src,
+  ipc_unwinder_src,
 ]
-
-pkglibexecdir = join_paths(get_option('prefix'), get_option('libexecdir'))
 
 sysprofd_deps = [
   glib_dep,

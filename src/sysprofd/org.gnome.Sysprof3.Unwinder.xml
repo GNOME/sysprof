@@ -1,0 +1,23 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.gnome.Sysprof3.Unwinder">
+    <!--
+      Unwind:
+      @stack_size: the size of stacks that are sampled
+      @perf_fds: an array of (perf_fd, CPU number)
+      @event_fd: an event fd to write to for notifying unwinder should exit
+      @capture_fd: (out): a FD that will be written to containing samples
+
+      Unwinding will stop when capture_fd can no longer be written to
+      such as being closed by the consumer of this API.
+    -->
+    <method name="Unwind">
+      <annotation name="org.gtk.GDBus.C.UnixFD" value="true"/>
+      <arg type="u" name="stack_size" direction="in"/>
+      <arg type="a(hi)" name="perf_fds" direction="in"/>
+      <arg type="h" name="event_fd" direction="in"/>
+      <arg type="h" name="capture_fd" direction="out"/>
+    </method>
+  </interface>
+</node>

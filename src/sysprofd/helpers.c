@@ -127,6 +127,8 @@ helpers_perf_event_open (GVariant *options,
   guint64 sample_period = 0;
   guint64 sample_type = 0;
   guint64 config = 0;
+  guint64 sample_regs_user = 0;
+  guint sample_stack_user = 0;
   int clockid = CLOCK_MONOTONIC;
   int comm = 0;
   int mmap_ = 0;
@@ -236,6 +238,18 @@ helpers_perf_event_open (GVariant *options,
             goto bad_arg;
           use_clockid = g_variant_get_boolean (value);
         }
+      else if (strcmp (key, "sample_stack_user") == 0)
+        {
+          if (!g_variant_is_of_type (value, G_VARIANT_TYPE_UINT32))
+            goto bad_arg;
+          sample_stack_user = g_variant_get_uint32 (value);
+        }
+      else if (strcmp (key, "sample_regs_user") == 0)
+        {
+          if (!g_variant_is_of_type (value, G_VARIANT_TYPE_UINT64))
+            goto bad_arg;
+          sample_regs_user = g_variant_get_uint64 (value);
+        }
 
       continue;
 
@@ -257,6 +271,8 @@ helpers_perf_event_open (GVariant *options,
   attr.task = !!task;
   attr.type = type;
   attr.wakeup_events = wakeup_events;
+  attr.sample_regs_user = sample_regs_user;
+  attr.sample_stack_user = sample_stack_user;
 
 #ifdef HAVE_PERF_CLOCKID
   if (!use_clockid || clockid < 0)

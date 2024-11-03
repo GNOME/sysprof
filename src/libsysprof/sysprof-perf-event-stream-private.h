@@ -165,17 +165,18 @@ typedef void (*SysprofPerfEventCallback) (const SysprofPerfEvent *event,
 
 G_DECLARE_FINAL_TYPE (SysprofPerfEventStream, sysprof_perf_event_stream, SYSPROF, PERF_EVENT_STREAM, GObject)
 
-DexFuture *sysprof_perf_event_stream_new     (GDBusConnection           *connection,
-                                              struct perf_event_attr    *attr,
-                                              int                        cpu,
-                                              int                        group_fd,
-                                              guint64                    flags,
-                                              SysprofPerfEventCallback   callback,
-                                              gpointer                   callback_data,
-                                              GDestroyNotify             callback_data_destroy);
-gboolean   sysprof_perf_event_stream_enable  (SysprofPerfEventStream    *self,
-                                              GError                   **error);
-gboolean   sysprof_perf_event_stream_disable (SysprofPerfEventStream    *self,
-                                              GError                   **error);
+DexFuture *sysprof_perf_event_stream_new       (GDBusConnection               *connection,
+                                                struct perf_event_attr        *attr,
+                                                int                            cpu,
+                                                int                            group_fd,
+                                                guint64                        flags,
+                                                SysprofPerfEventCallback       callback,
+                                                gpointer                       callback_data,
+                                                GDestroyNotify                 callback_data_destroy);
+gboolean   sysprof_perf_event_stream_enable    (SysprofPerfEventStream        *self,
+                                                GError                       **error);
+gboolean   sysprof_perf_event_stream_disable   (SysprofPerfEventStream        *self,
+                                                GError                       **error);
+GVariant  *_sysprof_perf_event_attr_to_variant (const struct perf_event_attr  *attr);
 
 G_END_DECLS

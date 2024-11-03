@@ -303,6 +303,7 @@ main (int   argc,
   gboolean scheduler_details = FALSE;
   gboolean system_bus = FALSE;
   gboolean session_bus = FALSE;
+  int stack_size = 0;
   int pid = -1;
   int fd;
   int flags;
@@ -335,6 +336,7 @@ main (int   argc,
     { "version", 0, 0, G_OPTION_ARG_NONE, &version, N_("Print the sysprof-cli version and exit") },
     { "buffer-size", 0, 0, G_OPTION_ARG_INT, &n_buffer_pages, N_("The size of the buffer in pages (1 = 1 page)") },
     { "monitor-bus", 0, 0, G_OPTION_ARG_STRING_ARRAY, &monitor_bus, N_("Additional D-Bus address to monitor") },
+    { "stack-size", 0, 0, G_OPTION_ARG_INT, &stack_size, N_("Stack size to copy for unwinding in user-space") },
     { NULL }
   };
 
@@ -379,6 +381,10 @@ Examples:\n\
 \n\
   # Merge multiple syscap files into one\n\
   sysprof-cli --merge a.syscap b.syscap > c.syscap\n\
+\n\
+  # Unwind by capturing stack/register contents instead of frame-pointers\n\
+  # where the stack-size is a multiple of page-size\n\
+  sysprof-cli --stack-size=8192\n\
 "));
 
   if (!g_option_context_parse (context, &argc, &argv, &error))
@@ -533,7 +539,12 @@ Examples:\n\
   sysprof_profiler_add_instrument (profiler, sysprof_system_logs_new ());
 
   if (!no_perf)
-    sysprof_profiler_add_instrument (profiler, sysprof_sampler_new ());
+    {
+      if (stack_size == 0)
+        sysprof_profiler_add_instrument (profiler, sysprof_sampler_new ());
+      else
+        sysprof_profiler_add_instrument (profiler, sysprof_user_sampler_new (stack_size));
+    }
 
   if (!no_disk)
     sysprof_profiler_add_instrument (profiler, sysprof_disk_usage_new ());

@@ -63,6 +63,7 @@ libsysprof_public_sources = [
   'sysprof-time-span.c',
   'sysprof-tracefd-consumer.c',
   'sysprof-tracer.c',
+  'sysprof-user-sampler.c',
 ]
 
 libsysprof_public_headers = [
@@ -130,6 +131,7 @@ libsysprof_public_headers = [
   'sysprof-time-span.h',
   'sysprof-tracefd-consumer.h',
   'sysprof-tracer.h',
+  'sysprof-user-sampler.h',
 ]
 
 libsysprof_private_sources = [
@@ -147,12 +149,18 @@ libsysprof_private_sources = [
   'sysprof-mount-device.c',
   'sysprof-mount-namespace.c',
   'sysprof-mount.c',
+  'sysprof-muxer-source.c',
   'sysprof-perf-event-stream.c',
   'sysprof-podman.c',
   'sysprof-process-info.c',
   'sysprof-strings.c',
   'sysprof-symbol-cache.c',
   'timsort/gtktimsort.c',
+
+  gnome.gdbus_codegen('ipc-unwinder',
+             sources: '../sysprofd/org.gnome.Sysprof3.Unwinder.xml',
+    interface_prefix: 'org.gnome.Sysprof3.',
+           namespace: 'Ipc'),
 ]
 
 if debuginfod_dep.found()

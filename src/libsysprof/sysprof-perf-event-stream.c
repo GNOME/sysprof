@@ -109,8 +109,8 @@ G_DEFINE_FINAL_TYPE (SysprofPerfEventStream, sysprof_perf_event_stream, G_TYPE_O
 
 static GParamSpec *properties [N_PROPS];
 
-static GVariant *
-build_options_dict (const struct perf_event_attr *attr)
+GVariant *
+_sysprof_perf_event_attr_to_variant (const struct perf_event_attr *attr)
 {
   return g_variant_take_ref (
     g_variant_new_parsed ("["
@@ -130,6 +130,8 @@ build_options_dict (const struct perf_event_attr *attr)
                             "{'sample_period', <%t>},"
                             "{'sample_type', <%t>},"
                             "{'task', <%b>},"
+                            "{'sample_stack_user', <%u>},"
+                            "{'sample_regs_user', <%t>},"
                             "{'type', <%u>}"
                           "]",
                           (gboolean)!!attr->comm,
@@ -148,6 +150,8 @@ build_options_dict (const struct perf_event_attr *attr)
                           (guint64)attr->sample_period,
                           (guint64)attr->sample_type,
                           (gboolean)!!attr->task,
+                          (guint32)attr->sample_stack_user,
+                          (guint64)attr->sample_regs_user,
                           (guint32)attr->type));
 }
 
@@ -513,7 +517,7 @@ sysprof_perf_event_stream_new (GDBusConnection          *connection,
       group_fd_handle = g_unix_fd_list_append (fd_list, group_fd, NULL);
     }
 
-  options = build_options_dict (attr);
+  options = _sysprof_perf_event_attr_to_variant (attr);
 
   g_dbus_connection_call_with_unix_fd_list (connection,
                                             "org.gnome.Sysprof3",

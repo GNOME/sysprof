@@ -106,6 +106,41 @@
                                 </child>
                               </object>
                             </child>
+                            <child>
+                              <object class="AdwExpanderRow">
+                                <property name="title" translatable="yes">Unwind Stacks in User Space</property>
+                                <property name="subtitle" translatable="yes">Copy stack contents and registers for unwinding in user-space</property>
+                                <property name="expanded" bind-source="sample_user_stack" bind-property="active" bind-flags="sync-create|bidirectional"/>
+                                <child type="action">
+                                  <object class="GtkSwitch" id="sample_user_stack">
+                                    <property name="halign">end</property>
+                                    <property name="valign">center</property>
+                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="user-stacks"/>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="AdwComboRow" id="sample_user_stack_size">
+                                    <property name="title" translatable="yes">Stack Size</property>
+                                    <property name="subtitle" translatable="yes">The number of bytes to copy from the stack</property>
+                                    <property name="model">stack_sizes</property>
+                                    <property name="expression">
+                                      <lookup name="label" type="SysprofStackSize"/>
+                                    </property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="label" translatable="yes">Unwinding in user-space has considerable overhead but may help in situations where frame-pointers are unavailable.</property>
+                                <property name="xalign">0</property>
+                                <property name="margin-top">8</property>
+                                <style>
+                                  <class name="caption"/>
+                                  <class name="dim-label"/>
+                                </style>
+                              </object>
+                            </child>
                           </object>
                         </child>
                         <child>
@@ -663,5 +698,37 @@
   <object class="SysprofRecordingTemplate" id="recording_template">
   </object>
   <object class="GtkStringList" id="envvars">
+  </object>
+  <object class="GListStore" id="stack_sizes">
+    <child>
+      <object class="SysprofStackSize">
+        <property name="label">8 KB</property>
+        <property name="size">8192</property>
+      </object>
+    </child>
+    <child>
+      <object class="SysprofStackSize">
+        <property name="label">16 KB</property>
+        <property name="size">16384</property>
+      </object>
+    </child>
+    <child>
+      <object class="SysprofStackSize">
+        <property name="label">24 KB</property>
+        <property name="size">24576</property>
+      </object>
+    </child>
+    <child>
+      <object class="SysprofStackSize">
+        <property name="label">32 KB</property>
+        <property name="size">32768</property>
+      </object>
+    </child>
+    <child>
+      <object class="SysprofStackSize">
+        <property name="label">64 KB</property>
+        <property name="size">65536</property>
+      </object>
+    </child>
   </object>
 </interface>

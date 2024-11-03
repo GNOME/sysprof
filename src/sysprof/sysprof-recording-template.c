@@ -22,6 +22,8 @@
 
 #include "sysprof-recording-template.h"
 
+#define DEFAULT_STACK_SIZE (4096*4)
+
 struct _SysprofRecordingTemplate
 {
   GObject parent_instance;
@@ -30,6 +32,8 @@ struct _SysprofRecordingTemplate
   char *cwd;
   char *power_profile;
   char **environ;
+
+  guint stack_size;
 
   guint battery_charge : 1;
   guint bundle_symbols : 1;
@@ -49,6 +53,7 @@ struct _SysprofRecordingTemplate
   guint session_bus : 1;
   guint system_bus : 1;
   guint system_log : 1;
+  guint user_stacks : 1;
 };
 
 enum {
@@ -73,8 +78,10 @@ enum {
   PROP_POWER_PROFILE,
   PROP_SCHEDULER_DETAILS,
   PROP_SESSION_BUS,
+  PROP_STACK_SIZE,
   PROP_SYSTEM_BUS,
   PROP_SYSTEM_LOG,
+  PROP_USER_STACKS,
   N_PROPS
 };
 
@@ -185,12 +192,20 @@ sysprof_recording_template_get_property (GObject    *object,
       g_value_set_boolean (value, self->session_bus);
       break;
 
+    case PROP_STACK_SIZE:
+      g_value_set_uint (value, self->stack_size);
+      break;
+
     case PROP_SYSTEM_BUS:
       g_value_set_boolean (value, self->system_bus);
       break;
 
     case PROP_SYSTEM_LOG:
       g_value_set_boolean (value, self->system_log);
+      break;
+
+    case PROP_USER_STACKS:
+      g_value_set_boolean (value, self->user_stacks);
       break;
 
     default:
@@ -289,12 +304,20 @@ sysprof_recording_template_set_property (GObject      *object,
       self->session_bus = g_value_get_boolean (value);
       break;
 
+    case PROP_STACK_SIZE:
+      self->stack_size = g_value_get_uint (value);
+      break;
+
     case PROP_SYSTEM_BUS:
       self->system_bus = g_value_get_boolean (value);
       break;
 
     case PROP_SYSTEM_LOG:
       self->system_log = g_value_get_boolean (value);
+      break;
+
+    case PROP_USER_STACKS:
+      self->user_stacks = g_value_get_boolean (value);
       break;
 
     default:
@@ -421,6 +444,16 @@ sysprof_recording_template_class_init (SysprofRecordingTemplateClass *klass)
                           TRUE,
                           (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
+  properties[PROP_USER_STACKS] =
+    g_param_spec_boolean ("user-stacks", NULL, NULL,
+                          FALSE,
+                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_STACK_SIZE] =
+    g_param_spec_uint ("stack-size", NULL, NULL,
+                       0, G_MAXUINT, DEFAULT_STACK_SIZE,
+                       (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
@@ -439,6 +472,7 @@ sysprof_recording_template_init (SysprofRecordingTemplate *self)
   self->system_log = TRUE;
   self->command_line = g_strdup ("");
   self->cwd = g_strdup("");
+  self->stack_size = DEFAULT_STACK_SIZE;
 }
 
 SysprofRecordingTemplate *
@@ -619,7 +653,12 @@ sysprof_recording_template_apply (SysprofRecordingTemplate  *self,
     sysprof_profiler_add_instrument (profiler, sysprof_memory_usage_new ());
 
   if (self->native_stacks)
-    sysprof_profiler_add_instrument (profiler, sysprof_sampler_new ());
+    {
+      if (self->user_stacks)
+        sysprof_profiler_add_instrument (profiler, sysprof_user_sampler_new (self->stack_size));
+      else
+        sysprof_profiler_add_instrument (profiler, sysprof_sampler_new ());
+    }
 
   if (self->network_usage)
     sysprof_profiler_add_instrument (profiler, sysprof_network_usage_new ());

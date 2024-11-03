@@ -11,6 +11,8 @@ sysprof_version_conf.set('MINOR_VERSION', sysprof_version[1])
 sysprof_version_conf.set('MICRO_VERSION', 0)
 sysprof_version_conf.set('VERSION', meson.project_version())
 
+pkglibexecdir = join_paths(get_option('prefix'), get_option('libexecdir'))
+
 subdir('libsysprof-capture')
 
 if need_libsysprof
@@ -20,6 +22,7 @@ endif
 
 if get_option('sysprofd') == 'bundled'
   subdir('sysprofd')
+  subdir('sysprof-live-unwinder')
 endif
 
 if get_option('gtk')

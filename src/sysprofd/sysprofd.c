@@ -30,9 +30,11 @@
 
 #include "ipc-rapl-profiler.h"
 #include "ipc-service-impl.h"
+#include "ipc-unwinder-impl.h"
 
 #define V3_PATH                 "/org/gnome/Sysprof3"
 #define RAPL_PATH               "/org/gnome/Sysprof3/RAPL"
+#define UNWINDER_PATH           "/org/gnome/Sysprof3/Unwinder"
 #define NAME_ACQUIRE_DELAY_SECS 3
 #define INACTIVITY_TIMEOUT_SECS 120
 
@@ -126,6 +128,7 @@ main (gint   argc,
     {
       g_autoptr(IpcProfiler) rapl = ipc_rapl_profiler_new ();
       g_autoptr(IpcService) v3_service = ipc_service_impl_new ();
+      g_autoptr(IpcUnwinder) unwinder = ipc_unwinder_impl_new ();
 
       g_signal_connect (v3_service, "activity", G_CALLBACK (activity_cb), NULL);
       g_signal_connect (rapl, "activity", G_CALLBACK (activity_cb), NULL);
@@ -133,7 +136,8 @@ main (gint   argc,
       activity_cb (NULL, NULL);
 
       if (g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (v3_service), bus, V3_PATH, &error) &&
-          g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (rapl), bus, RAPL_PATH, &error))
+          g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (rapl), bus, RAPL_PATH, &error) &&
+          g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (unwinder), bus, UNWINDER_PATH, &error))
         {
           for (guint i = 0; i < G_N_ELEMENTS (bus_names); i++)
             {

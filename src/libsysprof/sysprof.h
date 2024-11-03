@@ -89,6 +89,7 @@ G_BEGIN_DECLS
 # include "sysprof-time-span.h"
 # include "sysprof-tracefd-consumer.h"
 # include "sysprof-tracer.h"
+# include "sysprof-user-sampler.h"
 #undef SYSPROF_INSIDE
 
 G_END_DECLS

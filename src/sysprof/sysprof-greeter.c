@@ -31,6 +31,7 @@
 #include "sysprof-power-profiles.h"
 #include "sysprof-recording-pad.h"
 #include "sysprof-recording-template.h"
+#include "sysprof-stack-size.h"
 #include "sysprof-window.h"
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureWriter, sysprof_capture_writer_unref)
@@ -56,6 +57,7 @@ struct _SysprofGreeter
   GtkSwitch                *bundle_symbols;
   GtkButton                *record_to_memory;
   AdwComboRow              *power_combo;
+  AdwComboRow              *sample_user_stack_size;
   SysprofRecordingTemplate *recording_template;
 };
 
@@ -456,6 +458,26 @@ translate_power_profile (GtkStringObject *strobj)
 }
 
 static void
+on_stack_size_changed_cb (SysprofGreeter *self,
+                          GParamSpec     *pspec,
+                          AdwComboRow    *row)
+{
+  GObject *item;
+
+  g_assert (SYSPROF_IS_GREETER (self));
+  g_assert (ADW_IS_COMBO_ROW (row));
+
+  if ((item = adw_combo_row_get_selected_item (row)))
+    {
+      guint stack_size = sysprof_stack_size_get_size (SYSPROF_STACK_SIZE (item));
+
+      g_object_set (self->recording_template,
+                    "stack-size", stack_size,
+                    NULL);
+    }
+}
+
+static void
 sysprof_greeter_dispose (GObject *object)
 {
   SysprofGreeter *self = (SysprofGreeter *)object;
@@ -492,6 +514,7 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, recording_template);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, sample_javascript_stacks);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, sample_native_stacks);
+  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, sample_user_stack_size);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, sidebar_list_box);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, view_stack);
 
@@ -507,6 +530,7 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
 
   g_type_ensure (SYSPROF_TYPE_ENTRY_POPOVER);
   g_type_ensure (SYSPROF_TYPE_RECORDING_TEMPLATE);
+  g_type_ensure (SYSPROF_TYPE_STACK_SIZE);
 }
 
 static void
@@ -539,6 +563,14 @@ sysprof_greeter_init (SysprofGreeter *self)
   row = gtk_list_box_get_row_at_index (self->sidebar_list_box, 0);
   gtk_list_box_select_row (self->sidebar_list_box, row);
   sidebar_row_activated_cb (self, row, self->sidebar_list_box);
+
+  g_signal_connect_object (self->sample_user_stack_size,
+                           "notify::selected-item",
+                           G_CALLBACK (on_stack_size_changed_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+  /* Set to 16KB */
+  adw_combo_row_set_selected (self->sample_user_stack_size, 1);
 
   gtk_widget_grab_focus (GTK_WIDGET (self->record_to_memory));
 }

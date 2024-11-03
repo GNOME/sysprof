@@ -57,6 +57,7 @@ sysprof_sources = [
   'sysprof-sidebar.c',
   'sysprof-single-model.c',
   'sysprof-split-layer.c',
+  'sysprof-stack-size.c',
   'sysprof-storage-section.c',
   'sysprof-symbol-label.c',
   'sysprof-task-row.c',

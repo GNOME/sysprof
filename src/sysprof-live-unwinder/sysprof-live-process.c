@@ -80,6 +80,7 @@ typedef struct _SysprofUnwinder
 
 static SysprofUnwinder *current_unwinder;
 
+#if defined(__x86_64__) || defined(__i386__)
 static inline GPid
 sysprof_unwinder_next_thread (Dwfl  *dwfl,
                               void  *user_data,
@@ -230,6 +231,7 @@ sysprof_unwinder_frame_cb (Dwfl_Frame *frame,
 
   return DWARF_CB_OK;
 }
+#endif
 
 static inline guint
 sysprof_unwind (SysprofLiveProcess *self,
@@ -406,6 +408,7 @@ sysprof_live_process_is_active (SysprofLiveProcess *self)
   return self->fd > -1;
 }
 
+#if defined(__x86_64__) || defined(__i386__)
 static Dwfl *
 sysprof_live_process_get_dwfl (SysprofLiveProcess *self)
 {
@@ -440,6 +443,7 @@ sysprof_live_process_get_dwfl (SysprofLiveProcess *self)
 
   return self->dwfl;
 }
+#endif
 
 guint
 sysprof_live_process_unwind (SysprofLiveProcess *self,

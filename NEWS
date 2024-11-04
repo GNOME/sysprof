@@ -1,3 +1,14 @@
+Overview of changes in Sysprof 47.1
+===================================
+
+ * Webkit counter fixes
+ * Add a lost counter for dropped perf events
+ * Deprecation fixes for GTK
+ * Ignore -1 for CPU/PID in log cells
+ * Reduce glib build requirement
+ * Ensure dbus-monitor exits after capturing
+ * Translation updates
+
 Overview of changes in Sysprof 47.0
 ===================================
 

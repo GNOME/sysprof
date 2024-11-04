@@ -107,7 +107,7 @@
                               </object>
                             </child>
                             <child>
-                              <object class="AdwExpanderRow">
+                              <object class="AdwExpanderRow" id="user_stacks">
                                 <property name="title" translatable="yes">Unwind Stacks in User Space</property>
                                 <property name="subtitle" translatable="yes">Copy stack contents and registers for unwinding in user-space</property>
                                 <property name="expanded" bind-source="sample_user_stack" bind-property="active" bind-flags="sync-create|bidirectional"/>

@@ -446,7 +446,8 @@ sysprof_recording_template_class_init (SysprofRecordingTemplateClass *klass)
 
   properties[PROP_USER_STACKS] =
     g_param_spec_boolean ("user-stacks", NULL, NULL,
-                          FALSE,
+                          /* Default to stack capturing in CentOS/RHEL */
+                          TRUE,
                           (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   properties[PROP_STACK_SIZE] =
@@ -473,6 +474,9 @@ sysprof_recording_template_init (SysprofRecordingTemplate *self)
   self->command_line = g_strdup ("");
   self->cwd = g_strdup("");
   self->stack_size = DEFAULT_STACK_SIZE;
+
+  /* Default to stack capturing in CentOS/RHEL */
+  self->user_stacks = TRUE;
 }
 
 SysprofRecordingTemplate *

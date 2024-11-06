@@ -144,6 +144,7 @@ libsysprof_private_sources = [
   'sysprof-document-symbols.c',
   'sysprof-elf-loader.c',
   'sysprof-elf.c',
+  'sysprof-fd.c',
   'sysprof-leak-detector.c',
   'sysprof-maps-parser.c',
   'sysprof-mount-device.c',

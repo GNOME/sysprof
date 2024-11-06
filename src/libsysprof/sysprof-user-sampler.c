@@ -32,6 +32,7 @@
 #include "sysprof-recording-private.h"
 #include "sysprof-user-sampler.h"
 #include "sysprof-muxer-source.h"
+#include "sysprof-fd-private.h"
 
 #include "ipc-unwinder.h"
 
@@ -83,6 +84,30 @@ close_fd (gpointer data)
       close (*fdp);
       *fdp = -1;
     }
+}
+
+static void
+promise_resolve_fd (DexPromise *promise,
+                    int         fd)
+{
+  GValue gvalue = {SYSPROF_TYPE_FD, {{.v_pointer = &fd}, {.v_int = 0}}};
+  dex_promise_resolve (promise, &gvalue);
+}
+
+static int
+await_fd (DexFuture  *future,
+          GError    **error)
+{
+  SysprofFD *fd = dex_await_boxed (future, error);
+  int ret = -1;
+
+  if (fd != NULL)
+    {
+      ret = sysprof_fd_steal (fd);
+      sysprof_fd_free (fd);
+    }
+
+  return ret;
 }
 
 static void
@@ -149,7 +174,7 @@ _perf_event_open_cb (GObject      *object,
       if (-1 == (fd = g_unix_fd_list_get (fd_list, handle, &error)))
         goto failure;
 
-      dex_promise_resolve_fd (promise, g_steal_fd (&fd));
+      promise_resolve_fd (promise, g_steal_fd (&fd));
       return;
     }
 
@@ -234,7 +259,7 @@ try_again:
                                             _perf_event_open_cb,
                                             dex_ref (promise));
 
-  if (-1 == (perf_fd = dex_await_fd (dex_ref (promise), error)))
+  if (-1 == (perf_fd = await_fd (dex_ref (promise), error)))
     {
       g_clear_pointer (&options, g_variant_unref);
 
@@ -274,7 +299,7 @@ call_unwind_cb (GObject      *object,
 
   if (ipc_unwinder_call_unwind_finish (IPC_UNWINDER (object), &out_capture_fd, &out_fd_list, result, &error) &&
       -1 != (capture_fd = g_unix_fd_list_get (out_fd_list, g_variant_get_handle (out_capture_fd), &error)))
-    dex_promise_resolve_fd (promise, g_steal_fd (&capture_fd));
+    promise_resolve_fd (promise, g_steal_fd (&capture_fd));
   else
     dex_promise_reject (promise, error);
 }
@@ -406,7 +431,7 @@ sysprof_user_sampler_prepare_fiber (gpointer user_data)
                                     call_unwind_cb,
                                     dex_ref (promise));
 
-          fd = dex_await_fd (dex_ref (promise), &error);
+          fd = await_fd (dex_ref (promise), &error);
 
           if (fd == -1)
             {

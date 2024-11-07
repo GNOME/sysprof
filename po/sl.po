@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-11-03 22:42+0000\n"
-"PO-Revision-Date: 2024-11-05 15:00+0100\n"
+"POT-Creation-Date: 2024-11-05 14:01+0000\n"
+"PO-Revision-Date: 2024-11-07 08:50+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
@@ -387,16 +387,14 @@ msgid "Additional D-Bus address to monitor"
 msgstr "Dodatni naslov D-Bus za nadzor"
 
 #: src/sysprof-cli/sysprof-cli.c:339
-#, fuzzy
 msgid "Stack size to copy for unwinding in user-space"
-msgstr "Velikost sklada za kopiranje za sproščanje v uporabniškem prostoru"
+msgstr "Velikost sklada za kopiranje za sprostitev uporabniškega prostora"
 
 #: src/sysprof-cli/sysprof-cli.c:372
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[DATOTEKA_ZAJEMA] [-- UKAZ ARGUMENTI] — Sysprof"
 
 #: src/sysprof-cli/sysprof-cli.c:375
-#, fuzzy
 msgid ""
 "\n"
 "Examples:\n"
@@ -722,58 +720,58 @@ msgstr "Datoteka"
 msgid "CPU"
 msgstr "CPE"
 
-#: src/sysprof/sysprof-greeter.c:104
+#: src/sysprof/sysprof-greeter.c:105
 msgid "Use KEY=VALUE to set an environment variable"
 msgstr "Uporabite KLJUČ=VREDNOST za nastavitev spremenljivke okolja"
 
-#: src/sysprof/sysprof-greeter.c:110
+#: src/sysprof/sysprof-greeter.c:111
 msgid "Keys may not start with a number"
 msgstr "Ključi se morda ne začnejo s številko"
 
-#: src/sysprof/sysprof-greeter.c:120
+#: src/sysprof/sysprof-greeter.c:121
 msgid "Keys may only contain alpha-numerics or underline."
 msgstr "Ključi lahko vsebujejo le alfanumerične znake in podčrtaje."
 
-#: src/sysprof/sysprof-greeter.c:269 src/sysprof/sysprof-window.c:160
+#: src/sysprof/sysprof-greeter.c:270 src/sysprof/sysprof-window.c:160
 msgid "Must Capture to Local File"
 msgstr "Obvezen zajem v krajevno datoteko"
 
-#: src/sysprof/sysprof-greeter.c:270 src/sysprof/sysprof-window.c:161
+#: src/sysprof/sysprof-greeter.c:271 src/sysprof/sysprof-window.c:161
 msgid "You must choose a local file to capture using Sysprof"
 msgstr ""
 "Izbrati morate krajevno datoteko, ki jo želite zajeti s programom Sysprof"
 
-#: src/sysprof/sysprof-greeter.c:271 src/sysprof/sysprof-recording-pad.c:117
+#: src/sysprof/sysprof-greeter.c:272 src/sysprof/sysprof-recording-pad.c:117
 #: src/sysprof/sysprof-window.c:162 src/sysprof/sysprof-window.c:740
 msgid "Close"
 msgstr "Zapri"
 
-#: src/sysprof/sysprof-greeter.c:294
+#: src/sysprof/sysprof-greeter.c:295
 #, c-format
 msgid "System Capture from %s.syscap"
 msgstr "Zajem sistema iz %s.syscap"
 
-#: src/sysprof/sysprof-greeter.c:298
+#: src/sysprof/sysprof-greeter.c:299
 msgid "Record to File"
 msgstr "Posnemi v datoteko"
 
-#: src/sysprof/sysprof-greeter.c:299
+#: src/sysprof/sysprof-greeter.c:300
 msgid "Record"
 msgstr "Snemaj"
 
-#: src/sysprof/sysprof-greeter.c:446
+#: src/sysprof/sysprof-greeter.c:447
 msgid "No Change"
 msgstr "Ni sprememb"
 
-#: src/sysprof/sysprof-greeter.c:449
+#: src/sysprof/sysprof-greeter.c:450
 msgid "Balanced"
 msgstr "Uravnoteženo"
 
-#: src/sysprof/sysprof-greeter.c:452
+#: src/sysprof/sysprof-greeter.c:453
 msgid "Power Saver"
 msgstr "Varčevalni način"
 
-#: src/sysprof/sysprof-greeter.c:455
+#: src/sysprof/sysprof-greeter.c:456
 msgid "Performance"
 msgstr "Zmogljivost"
 
@@ -790,15 +788,13 @@ msgid "Record native stack traces using a sampling profiler"
 msgstr "Beleži sledi izvornega sklada s profilnikom vzorčenja"
 
 #: src/sysprof/sysprof-greeter.ui:111
-#, fuzzy
 msgid "Unwind Stacks in User Space"
-msgstr "Sprostite sklade v uporabniškem prostoru"
+msgstr "Sprosti sklade v uporabniškem prostoru"
 
 #: src/sysprof/sysprof-greeter.ui:112
-#, fuzzy
 msgid "Copy stack contents and registers for unwinding in user-space"
 msgstr ""
-"Kopiranje vsebine sklada in registrov za sproščanje v uporabniškem prostoru"
+"Kopiraj vsebino sklada in registrov za sprostitev uporabniškega prostora"
 
 #: src/sysprof/sysprof-greeter.ui:123
 msgid "Stack Size"
@@ -809,12 +805,11 @@ msgid "The number of bytes to copy from the stack"
 msgstr "Število bajtov za kopiranje s sklada"
 
 #: src/sysprof/sysprof-greeter.ui:135
-#, fuzzy
 msgid ""
 "Unwinding in user-space has considerable overhead but may help in situations "
 "where frame-pointers are unavailable."
 msgstr ""
-"Sproščanje v uporabniškem prostoru predstavlja precejšnje režijske stroške, "
+"Sprostitev uporabniškega prostora predstavlja precejšnje režijske stroške, "
 "vendar lahko pomaga v primerih, ko okvirni kazalci niso na voljo."
 
 #: src/sysprof/sysprof-greeter.ui:151

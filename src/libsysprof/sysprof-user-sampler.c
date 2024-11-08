@@ -48,7 +48,11 @@
 #define SYSPROF_ARCH_PREFERRED_REGS DWARF_NEEDED_REGS
 /* TODO: add other architectures, imitating the linux tools/perf tree */
 #else
-# define SYSPROF_ARCH_PREFERRED_REGS PERF_REG_EXTENDED_MASK
+# ifdef PERF_REG_EXTENDED_MASK
+#  define SYSPROF_ARCH_PREFERRED_REGS PERF_REG_EXTENDED_MASK
+# else
+#  define SYSPROF_ARCH_PREFERRED_REGS 0
+# endif
 #endif /* _ASM_{arch}_PERF_REGS_H */
 
 #define N_WAKEUP_EVENTS 149

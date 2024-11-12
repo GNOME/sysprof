@@ -642,7 +642,9 @@ bump_to_max_fd_limit (void)
 }
 
 static gboolean
-exit_callback (gpointer user_data)
+exit_callback (int          fd,
+               GIOCondition condition,
+               gpointer     user_data)
 {
   g_main_loop_quit (user_data);
   return G_SOURCE_REMOVE;
@@ -738,7 +740,7 @@ Examples:\n\
       g_autoptr(GSource) exit_source = g_unix_fd_source_new (event_fd, G_IO_IN);
 
       g_source_set_callback (exit_source,
-                             exit_callback,
+                             (GSourceFunc)exit_callback,
                              g_main_loop_ref (main_loop),
                              (GDestroyNotify) g_main_loop_unref);
       g_source_attach (exit_source, NULL);

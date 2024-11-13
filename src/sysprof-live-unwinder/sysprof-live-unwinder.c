@@ -377,6 +377,11 @@ sysprof_live_unwinder_process_sampled_with_stack (SysprofLiveUnwinder         *s
       return;
     }
 
+  /* We seem to get values > stack_size, which perhaps indicates we can
+   * sometimes discover if we would not have gotten enough stack to unwind.
+   */
+  stack_dyn_size = MIN (stack_dyn_size, stack_size);
+
   live_pid = sysprof_live_unwinder_find_pid (self, pid, TRUE);
 
   /* Copy addresses over (which might be kernel, context-switch, etc until

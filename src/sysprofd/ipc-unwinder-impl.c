@@ -27,7 +27,6 @@
 #include <fcntl.h>
 
 #include <signal.h>
-#include <sys/prctl.h>
 #include <sys/socket.h>
 
 #include <glib/gstdio.h>
@@ -40,12 +39,6 @@ struct _IpcUnwinderImpl
 {
   IpcUnwinderSkeleton parent_instance;
 };
-
-static void
-child_setup (gpointer data)
-{
-  prctl (PR_SET_PDEATHSIG, SIGKILL);
-}
 
 static void
 ipc_unwinder_impl_wait_cb (GObject      *object,

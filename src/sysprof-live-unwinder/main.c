@@ -708,7 +708,13 @@ Examples:\n\
       return EXIT_FAILURE;
     }
 
-  writer = sysprof_capture_writer_new_from_fd (g_steal_fd (&capture_fd), CAPTURE_BUFFER_SIZE);
+  if (!(writer = sysprof_capture_writer_new_from_fd (g_steal_fd (&capture_fd), CAPTURE_BUFFER_SIZE)))
+    {
+      int errsv = errno;
+      g_printerr ("Failed to create capture writer: %s\n",
+                  g_strerror (errsv));
+      return EXIT_FAILURE;
+    }
 
   if (all_perf_fds->len == 0)
     {

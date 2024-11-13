@@ -88,7 +88,7 @@ sysprof_deps = [
   cc.find_library('m', required: false),
   dependency('gtk4', version: gtk_req_version),
   dependency('libadwaita-1', version: '>= 1.6.0'),
-  dependency('libpanel-1', version: '>= 1.7.0'),
+  dependency('libpanel-1', version: '>= 1.4'),
 
   libsysprof_static_dep,
 ]

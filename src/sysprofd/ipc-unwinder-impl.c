@@ -24,6 +24,7 @@
 #include "config.h"
 
 #include <errno.h>
+#include <fcntl.h>
 
 #include <signal.h>
 #include <sys/prctl.h>
@@ -71,19 +72,16 @@ ipc_unwinder_impl_handle_unwind (IpcUnwinder           *unwinder,
                                  GUnixFDList           *fd_list,
                                  guint                  stack_size,
                                  GVariant              *arg_perf_fds,
-                                 GVariant              *arg_event_fd)
+                                 GVariant              *arg_event_fd,
+                                 GVariant              *arg_capture_fd)
 {
   g_autoptr(GSubprocessLauncher) launcher = NULL;
   g_autoptr(GSubprocess) subprocess = NULL;
-  g_autoptr(GUnixFDList) out_fd_list = NULL;
   g_autoptr(GPtrArray) argv = NULL;
   g_autoptr(GError) error = NULL;
-  g_autofd int our_fd = -1;
-  g_autofd int their_fd = -1;
+  g_autofd int capture_fd = -1;
   g_autofd int event_fd = -1;
   GVariantIter iter;
-  int capture_fd_handle;
-  int pair[2];
   int next_target_fd = 3;
   int perf_fd_handle;
   int cpu;
@@ -116,13 +114,14 @@ ipc_unwinder_impl_handle_unwind (IpcUnwinder           *unwinder,
   g_ptr_array_add (argv, g_strdup (PACKAGE_LIBEXECDIR "/sysprof-live-unwinder"));
   g_ptr_array_add (argv, g_strdup_printf ("--stack-size=%u", stack_size));
 
-  if (-1 == (event_fd = g_unix_fd_list_get (fd_list, g_variant_get_handle (arg_event_fd), &error)))
+  if (-1 == (event_fd = g_unix_fd_list_get (fd_list, g_variant_get_handle (arg_event_fd), &error)) ||
+      -1 == (capture_fd = g_unix_fd_list_get (fd_list, g_variant_get_handle (arg_capture_fd), &error)))
     {
       g_dbus_method_invocation_return_gerror (g_steal_pointer (&invocation), error);
       return TRUE;
     }
 
-  g_ptr_array_add (argv, g_strdup_printf ("--event-fd=%u", next_target_fd));
+  g_ptr_array_add (argv, g_strdup_printf ("--event-fd=%d", next_target_fd));
   g_subprocess_launcher_take_fd (launcher, g_steal_fd (&event_fd), next_target_fd++);
 
   g_variant_iter_init (&iter, arg_perf_fds);
@@ -143,32 +142,8 @@ ipc_unwinder_impl_handle_unwind (IpcUnwinder           *unwinder,
                                      next_target_fd++);
     }
 
-  g_subprocess_launcher_set_child_setup (launcher, child_setup, NULL, NULL);
-
-  if (socketpair (AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0, pair) < 0)
-    {
-      int errsv = errno;
-      g_dbus_method_invocation_return_error_literal (g_steal_pointer (&invocation),
-                                                     G_IO_ERROR,
-                                                     g_io_error_from_errno (errsv),
-                                                     g_strerror (errsv));
-      return TRUE;
-    }
-
-  our_fd = g_steal_fd (&pair[0]);
-  their_fd = g_steal_fd (&pair[1]);
-
-  out_fd_list = g_unix_fd_list_new ();
-  capture_fd_handle = g_unix_fd_list_append (out_fd_list, their_fd, &error);
-
-  if (capture_fd_handle < 0)
-    {
-      g_dbus_method_invocation_return_gerror (g_steal_pointer (&invocation), error);
-      return TRUE;
-    }
-
   g_ptr_array_add (argv, g_strdup_printf ("--capture-fd=%d", next_target_fd));
-  g_subprocess_launcher_take_fd (launcher, g_steal_fd (&our_fd), next_target_fd++);
+  g_subprocess_launcher_take_fd (launcher, g_steal_fd (&capture_fd), next_target_fd++);
 
   g_ptr_array_add (argv, NULL);
 
@@ -182,10 +157,7 @@ ipc_unwinder_impl_handle_unwind (IpcUnwinder           *unwinder,
   g_message ("sysprof-live-unwinder started as process %s",
              g_subprocess_get_identifier (subprocess));
 
-  ipc_unwinder_complete_unwind (unwinder,
-                                g_steal_pointer (&invocation),
-                                out_fd_list,
-                                g_variant_new_handle (capture_fd_handle));
+  ipc_unwinder_complete_unwind (unwinder, g_steal_pointer (&invocation), NULL);
 
   g_subprocess_wait_check_async (subprocess,
                                  NULL,

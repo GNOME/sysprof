@@ -46,6 +46,25 @@ child_setup (gpointer data)
   prctl (PR_SET_PDEATHSIG, SIGKILL);
 }
 
+static void
+ipc_unwinder_impl_wait_cb (GObject      *object,
+                           GAsyncResult *result,
+                           gpointer      user_data)
+{
+  GSubprocess *subprocess = (GSubprocess *)object;
+  g_autoptr(IpcUnwinderImpl) self = user_data;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (G_IS_SUBPROCESS (subprocess));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (IPC_IS_UNWINDER_IMPL (self));
+
+  if (!g_subprocess_wait_check_finish (subprocess, result, &error))
+    g_warning ("wait_check failure: %s", error->message);
+  else
+    g_info ("sysprof-live-unwinder exited");
+}
+
 static gboolean
 ipc_unwinder_impl_handle_unwind (IpcUnwinder           *unwinder,
                                  GDBusMethodInvocation *invocation,
@@ -155,16 +174,23 @@ ipc_unwinder_impl_handle_unwind (IpcUnwinder           *unwinder,
 
   if (!(subprocess = g_subprocess_launcher_spawnv (launcher, (const char * const *)argv->pdata, &error)))
     {
+      g_critical ("Failed to start sysprof-live-unwinder: %s", error->message);
       g_dbus_method_invocation_return_gerror (g_steal_pointer (&invocation), error);
       return TRUE;
     }
+
+  g_message ("sysprof-live-unwinder started as process %s",
+             g_subprocess_get_identifier (subprocess));
 
   ipc_unwinder_complete_unwind (unwinder,
                                 g_steal_pointer (&invocation),
                                 out_fd_list,
                                 g_variant_new_handle (capture_fd_handle));
 
-  g_subprocess_wait_async (subprocess, NULL, NULL, NULL);
+  g_subprocess_wait_check_async (subprocess,
+                                 NULL,
+                                 ipc_unwinder_impl_wait_cb,
+                                 g_object_ref (unwinder));
 
   return TRUE;
 }

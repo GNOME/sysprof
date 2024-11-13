@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#include <fcntl.h>
+
 #include <sys/ioctl.h>
 #include <sys/eventfd.h>
 
@@ -62,7 +64,8 @@ struct _SysprofUserSampler
 {
   SysprofInstrument parent_instance;
   GArray *perf_fds;
-  int capture_fd;
+  int capture_fd_read;
+  int capture_fd_write;
   int event_fd;
   guint stack_size;
 };
@@ -289,17 +292,14 @@ call_unwind_cb (GObject      *object,
 {
   g_autoptr(DexPromise) promise = user_data;
   g_autoptr(GUnixFDList) out_fd_list = NULL;
-  g_autoptr(GVariant) out_capture_fd = NULL;
-  g_autofd int capture_fd = -1;
   GError *error = NULL;
 
   g_assert (IPC_IS_UNWINDER (object));
   g_assert (G_IS_ASYNC_RESULT (result));
   g_assert (DEX_IS_PROMISE (promise));
 
-  if (ipc_unwinder_call_unwind_finish (IPC_UNWINDER (object), &out_capture_fd, &out_fd_list, result, &error) &&
-      -1 != (capture_fd = g_unix_fd_list_get (out_fd_list, g_variant_get_handle (out_capture_fd), &error)))
-    promise_resolve_fd (promise, g_steal_fd (&capture_fd));
+  if (ipc_unwinder_call_unwind_finish (IPC_UNWINDER (object), &out_fd_list, result, &error))
+    dex_promise_resolve_boolean (promise, TRUE);
   else
     dex_promise_reject (promise, error);
 }
@@ -420,30 +420,25 @@ sysprof_user_sampler_prepare_fiber (gpointer user_data)
         {
           g_autoptr(DexPromise) promise = dex_promise_new ();
           int event_fd_handle = g_unix_fd_list_append (fd_list, prepare->sampler->event_fd, NULL);
-          g_autofd int fd = -1;
+          int capture_fd_handle = g_unix_fd_list_append (fd_list, prepare->sampler->capture_fd_write, NULL);
 
           ipc_unwinder_call_unwind (unwinder,
                                     prepare->stack_size,
                                     g_variant_builder_end (&builder),
                                     g_variant_new_handle (event_fd_handle),
+                                    g_variant_new_handle (capture_fd_handle),
                                     fd_list,
                                     NULL,
                                     call_unwind_cb,
                                     dex_ref (promise));
 
-          fd = await_fd (dex_ref (promise), &error);
-
-          if (fd == -1)
+          if (!dex_await (dex_ref (promise), &error))
             {
               _sysprof_recording_diagnostic (prepare->recording,
                                              "Sampler",
-                                             "Failed to setup user-space unwinder: %s",
+                                             "Failed to setup thread unwinder: %s",
                                              error->message);
               g_clear_error (&error);
-            }
-          else
-            {
-              prepare->sampler->capture_fd = g_steal_fd (&fd);
             }
         }
     }
@@ -506,21 +501,26 @@ sysprof_user_sampler_record_fiber (gpointer user_data)
 
   writer = _sysprof_recording_writer (record->recording);
 
-  sysprof_user_sampler_ioctl (record->sampler, TRUE);
+  if (record->sampler->capture_fd_read != -1)
+    {
+      sysprof_user_sampler_ioctl (record->sampler, TRUE);
 
-  g_debug ("Staring muxer for capture_fd");
-  muxer_source = sysprof_muxer_source_new (g_steal_fd (&record->sampler->capture_fd), writer);
-  g_source_set_static_name (muxer_source, "[stack-muxer]");
-  g_source_attach (muxer_source, NULL);
+      g_debug ("Staring muxer for capture_fd %d", record->sampler->capture_fd_read);
+      muxer_source = sysprof_muxer_source_new (g_steal_fd (&record->sampler->capture_fd_read), writer);
+      g_source_set_static_name (muxer_source, "[stack-muxer]");
+      g_source_attach (muxer_source, NULL);
 
-  if (!dex_await (dex_ref (record->cancellable), &error))
-    g_debug ("UserSampler shutting down for reason: %s", error->message);
+      if (!dex_await (dex_ref (record->cancellable), &error))
+        g_debug ("UserSampler shutting down for reason: %s", error->message);
 
-  write (record->sampler->event_fd, &exiting, sizeof exiting);
+      write (record->sampler->event_fd, &exiting, sizeof exiting);
 
-  g_source_destroy (muxer_source);
+      g_source_destroy (muxer_source);
 
-  sysprof_user_sampler_ioctl (record->sampler, FALSE);
+      sysprof_user_sampler_ioctl (record->sampler, FALSE);
+    }
+  else
+    g_warning ("No capture FD available for muxing");
 
   return dex_future_new_for_boolean (TRUE);
 }
@@ -555,7 +555,8 @@ sysprof_user_sampler_finalize (GObject *object)
 
   g_clear_pointer (&self->perf_fds, g_array_unref);
 
-  g_clear_fd (&self->capture_fd, NULL);
+  g_clear_fd (&self->capture_fd_read, NULL);
+  g_clear_fd (&self->capture_fd_write, NULL);
   g_clear_fd (&self->event_fd, NULL);
 
   G_OBJECT_CLASS (sysprof_user_sampler_parent_class)->finalize (object);
@@ -577,8 +578,18 @@ sysprof_user_sampler_class_init (SysprofUserSamplerClass *klass)
 static void
 sysprof_user_sampler_init (SysprofUserSampler *self)
 {
-  self->capture_fd = -1;
+  int fds[2];
+
   self->event_fd = eventfd (0, EFD_CLOEXEC);
+
+  self->capture_fd_read = -1;
+  self->capture_fd_write = -1;
+
+  if (pipe2 (fds, O_CLOEXEC) == 0)
+    {
+      self->capture_fd_read = fds[0];
+      self->capture_fd_write = fds[1];
+    }
 
   self->perf_fds = g_array_new (FALSE, FALSE, sizeof (int));
   g_array_set_clear_func (self->perf_fds, close_fd);

@@ -104,6 +104,7 @@ sysprof_recording_fiber (gpointer user_data)
   g_autoptr(DexFuture) monitor = NULL;
   g_autoptr(DexFuture) message = NULL;
   g_autoptr(GError) error = NULL;
+  const char *debuginfod_urls = NULL;
   struct utsname uts;
   struct sysinfo si;
   gint64 begin_time;
@@ -188,6 +189,9 @@ sysprof_recording_fiber (gpointer user_data)
   add_metadata (self, "DESKTOP_SESSION", g_getenv ("DESKTOP_SESSION"));
   add_metadata (self, "HOSTTYPE", g_getenv ("HOSTTYPE"));
   add_metadata (self, "OSTYPE", g_getenv ("OSTYPE"));
+
+  if ((debuginfod_urls = g_getenv ("DEBUGINFOD_URLS")))
+    add_metadata (self, "DEBUGINFOD_URLS", debuginfod_urls);
 
   /* Log information about the spawning process */
   if (self->spawnable != NULL)

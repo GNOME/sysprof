@@ -547,7 +547,7 @@ _sysprof_session_describe (SysprofSession *self,
       const char *message = sysprof_document_mark_get_message (mark);
       SysprofTimeSpan span = {
         .begin_nsec = sysprof_document_frame_get_time (item),
-        .end_nsec = sysprof_document_frame_get_time (item) + sysprof_document_mark_get_duration (mark),
+        .end_nsec = sysprof_document_mark_get_end_time (mark),
       };
 
       span = sysprof_time_span_relative_to (span, begin->begin_nsec);

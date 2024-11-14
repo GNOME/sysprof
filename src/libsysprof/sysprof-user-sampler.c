@@ -90,30 +90,6 @@ close_fd (gpointer data)
 }
 
 static void
-promise_resolve_fd (DexPromise *promise,
-                    int         fd)
-{
-  GValue gvalue = {SYSPROF_TYPE_FD, {{.v_pointer = &fd}, {.v_int = 0}}};
-  dex_promise_resolve (promise, &gvalue);
-}
-
-static int
-await_fd (DexFuture  *future,
-          GError    **error)
-{
-  SysprofFD *fd = dex_await_boxed (future, error);
-  int ret = -1;
-
-  if (fd != NULL)
-    {
-      ret = sysprof_fd_steal (fd);
-      sysprof_fd_free (fd);
-    }
-
-  return ret;
-}
-
-static void
 sysprof_user_sampler_ioctl (SysprofUserSampler *self,
                             gboolean            enable)
 {
@@ -177,7 +153,7 @@ _perf_event_open_cb (GObject      *object,
       if (-1 == (fd = g_unix_fd_list_get (fd_list, handle, &error)))
         goto failure;
 
-      promise_resolve_fd (promise, g_steal_fd (&fd));
+      sysprof_promise_resolve_fd (promise, g_steal_fd (&fd));
       return;
     }
 
@@ -262,7 +238,7 @@ try_again:
                                             _perf_event_open_cb,
                                             dex_ref (promise));
 
-  if (-1 == (perf_fd = await_fd (dex_ref (promise), error)))
+  if (-1 == (perf_fd = sysprof_await_fd (dex_ref (promise), error)))
     {
       g_clear_pointer (&options, g_variant_unref);
 

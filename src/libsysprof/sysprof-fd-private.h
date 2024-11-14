@@ -22,6 +22,8 @@
 
 #include <glib-object.h>
 
+#include <libdex.h>
+
 G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_FD (sysprof_fd_get_type())
@@ -35,5 +37,10 @@ SysprofFD *sysprof_fd_dup      (const SysprofFD *fd);
 void       sysprof_fd_free     (SysprofFD       *fd);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofFD, sysprof_fd_free)
+
+int  sysprof_await_fd           (DexFuture   *future,
+                                 GError     **error);
+void sysprof_promise_resolve_fd (DexPromise  *promise,
+                                 int          fd);
 
 G_END_DECLS

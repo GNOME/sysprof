@@ -33,6 +33,7 @@
 
 #include <sysprof.h>
 
+#include "sysprof-fd-private.h"
 #include "sysprof-perf-event-stream-private.h"
 
 #if HAVE_POLKIT_AGENT
@@ -89,7 +90,7 @@ open_perf_stream_cb (GObject      *object,
 
       if (-1 != (fd = g_unix_fd_list_get (fd_list, handle, &error)))
         {
-          dex_promise_resolve_fd (promise, g_steal_fd (&fd));
+          sysprof_promise_resolve_fd (promise, g_steal_fd (&fd));
           return;
         }
     }
@@ -179,7 +180,7 @@ try_again:
                                               open_perf_stream_cb,
                                               dex_ref (promise));
 
-    fd = dex_await_fd (dex_ref (promise), error);
+    fd = sysprof_await_fd (dex_ref (promise), error);
 
     if (*error == NULL)
       {

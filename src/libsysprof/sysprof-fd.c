@@ -65,3 +65,27 @@ sysprof_fd_dup (const SysprofFD *fd)
 }
 
 G_DEFINE_BOXED_TYPE (SysprofFD, sysprof_fd, sysprof_fd_dup, sysprof_fd_free)
+
+void
+sysprof_promise_resolve_fd (DexPromise *promise,
+                            int         fd)
+{
+  GValue gvalue = {SYSPROF_TYPE_FD, {{.v_pointer = &fd}, {.v_int = 0}}};
+  dex_promise_resolve (promise, &gvalue);
+}
+
+int
+sysprof_await_fd (DexFuture  *future,
+                  GError    **error)
+{
+  SysprofFD *fd = dex_await_boxed (future, error);
+  int ret = -1;
+
+  if (fd != NULL)
+    {
+      ret = sysprof_fd_steal (fd);
+      sysprof_fd_free (fd);
+    }
+
+  return ret;
+}

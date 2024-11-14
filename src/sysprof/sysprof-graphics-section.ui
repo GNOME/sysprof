@@ -184,7 +184,7 @@
         <child>
           <object class="SysprofChart">
             <property name="hexpand">true</property>
-            <property name="height-request">24</property>
+            <property name="height-request">32</property>
             <binding name="session">
               <lookup name="session" type="SysprofSessionModelItem">
                 <lookup name="item">GtkListItem</lookup>

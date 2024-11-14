@@ -24,6 +24,7 @@
 
 #include "sysprof-document-frame-private.h"
 #include "sysprof-document-mark.h"
+#include "sysprof-time-span.h"
 
 struct _SysprofDocumentMark
 {
@@ -51,17 +52,37 @@ G_DEFINE_FINAL_TYPE (SysprofDocumentMark, sysprof_document_mark, SYSPROF_TYPE_DO
 static GParamSpec *properties [N_PROPS];
 
 static char *
+get_time_str (gint64 o)
+{
+  char str[32];
+
+  if (o == 0)
+    g_snprintf (str, sizeof str, "%.3lf s", .0);
+  else if (o < 1000000)
+    g_snprintf (str, sizeof str, "%.3lf μs", o/1000.);
+  else if (o < SYSPROF_NSEC_PER_SEC)
+    g_snprintf (str, sizeof str, "%.3lf ms", o/1000000.);
+  else
+    g_snprintf (str, sizeof str, "%.3lf s", o/(double)SYSPROF_NSEC_PER_SEC);
+
+  return g_strdup (str);
+}
+
+static char *
 sysprof_document_mark_dup_tooltip (SysprofDocumentFrame *frame)
 {
   SysprofDocumentMark *self = (SysprofDocumentMark *)frame;
+  g_autofree char *duration_string = NULL;
   g_autofree char *time_string = NULL;
 
   g_assert (SYSPROF_IS_DOCUMENT_MARK (self));
 
   time_string = sysprof_document_frame_dup_time_string (SYSPROF_DOCUMENT_FRAME (self));
+  duration_string = get_time_str (sysprof_document_mark_get_duration (self));
 
-  return g_strdup_printf ("%s: %s: %s: %s",
+  return g_strdup_printf ("%s (%s): %s / %s: %s",
                           time_string,
+                          duration_string,
                           sysprof_document_mark_get_group (self),
                           sysprof_document_mark_get_name (self),
                           sysprof_document_mark_get_message (self));

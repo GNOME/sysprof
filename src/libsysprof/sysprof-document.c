@@ -2804,3 +2804,45 @@ sysprof_document_get_busy (SysprofDocument *self)
 
   return self->busy_count > 0;
 }
+
+static void
+sysprof_document_serialize_symbols_cb (GObject      *object,
+                                       GAsyncResult *result,
+                                       gpointer      user_data)
+{
+  SysprofDocument *document = (SysprofDocument *)object;
+  g_autoptr(DexPromise) promise = user_data;
+  g_autoptr(GBytes) bytes = NULL;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (SYSPROF_IS_DOCUMENT (document));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (DEX_IS_PROMISE (promise));
+
+  if ((bytes = sysprof_document_serialize_symbols_finish (document, result, &error)))
+    {
+      GValue value = G_VALUE_INIT;
+
+      g_value_init (&value, G_TYPE_BYTES);
+      g_value_take_boxed (&value, g_steal_pointer (&bytes));
+
+      dex_promise_resolve (promise, &value);
+    }
+  else
+    dex_promise_reject (promise, g_steal_pointer (&error));
+}
+
+DexFuture *
+_sysprof_document_serialize_symbols (SysprofDocument *document)
+{
+  DexPromise *promise;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (document), NULL);
+
+  promise = dex_promise_new ();
+  sysprof_document_serialize_symbols_async (document,
+                                            NULL,
+                                            sysprof_document_serialize_symbols_cb,
+                                            dex_ref (promise));
+  return DEX_FUTURE (promise);
+}

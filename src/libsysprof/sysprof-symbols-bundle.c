@@ -28,6 +28,7 @@
 #include <sysprof.h>
 
 #include "sysprof-document-loader-private.h"
+#include "sysprof-document-private.h"
 
 #include "sysprof-instrument-private.h"
 #include "sysprof-recording-private.h"
@@ -50,11 +51,6 @@ G_DEFINE_FINAL_TYPE (SysprofSymbolsBundle, sysprof_symbols_bundle, SYSPROF_TYPE_
 static DexFuture *
 sysprof_symbols_bundle_augment_fiber (gpointer user_data)
 {
-  const DexAsyncPairInfo serialize_info = DEX_ASYNC_PAIR_INFO_BOXED (
-    sysprof_document_serialize_symbols_async,
-    sysprof_document_serialize_symbols_finish,
-    G_TYPE_BYTES);
-
   g_autoptr(SysprofDocumentLoader) loader = NULL;
   g_autoptr(SysprofSymbolizer) elf = NULL;
   g_autoptr(SysprofDocument) document = NULL;
@@ -83,7 +79,7 @@ sysprof_symbols_bundle_augment_fiber (gpointer user_data)
     return dex_future_new_for_error (g_steal_pointer (&error));
   g_assert (SYSPROF_IS_DOCUMENT (document));
 
-  if (!(bytes = dex_await_boxed (dex_async_pair_new (document, &serialize_info), &error)))
+  if (!(bytes = dex_await_boxed (_sysprof_document_serialize_symbols (document), &error)))
     return dex_future_new_for_error (g_steal_pointer (&error));
 
   _sysprof_recording_add_file_data (recording,

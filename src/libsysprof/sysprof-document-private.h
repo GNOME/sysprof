@@ -22,6 +22,8 @@
 
 #include <eggbitset.h>
 
+#include <libdex.h>
+
 #include "sysprof-document.h"
 #include "sysprof-symbolizer.h"
 #include "sysprof-symbol.h"
@@ -83,5 +85,6 @@ SysprofSymbol   *_sysprof_document_thread_symbol    (SysprofDocument      *self,
 SysprofSymbol   *_sysprof_document_kernel_symbol    (SysprofDocument      *self);
 GArray          *_sysprof_document_get_frames       (SysprofDocument      *self);
 EggBitset       *_sysprof_document_get_allocations  (SysprofDocument      *self);
+DexFuture       *_sysprof_document_serialize_symbols(SysprofDocument      *self);
 
 G_END_DECLS

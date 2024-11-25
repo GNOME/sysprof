@@ -21,14 +21,17 @@
 
 #pragma once
 
+#include <libdex.h>
+
 #include "sysprof-document-loader.h"
 #include "sysprof-document-task.h"
 
 G_BEGIN_DECLS
 
-void _sysprof_document_loader_add_task    (SysprofDocumentLoader *self,
-                                           SysprofDocumentTask   *task);
-void _sysprof_document_loader_remove_task (SysprofDocumentLoader *self,
-                                           SysprofDocumentTask   *task);
+DexFuture *_sysprof_document_loader_load        (SysprofDocumentLoader *loader);
+void       _sysprof_document_loader_add_task    (SysprofDocumentLoader *self,
+                                                 SysprofDocumentTask   *task);
+void       _sysprof_document_loader_remove_task (SysprofDocumentLoader *self,
+                                                 SysprofDocumentTask   *task);
 
 G_END_DECLS

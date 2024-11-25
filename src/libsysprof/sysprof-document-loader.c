@@ -789,3 +789,38 @@ sysprof_document_loader_list_tasks (SysprofDocumentLoader *self)
 
   return g_object_ref (G_LIST_MODEL (self->tasks));
 }
+
+static void
+sysprof_document_loader_load_cb (GObject      *object,
+                                 GAsyncResult *result,
+                                 gpointer      user_data)
+{
+  SysprofDocumentLoader *loader = (SysprofDocumentLoader *)object;
+  g_autoptr(DexPromise) promise = user_data;
+  g_autoptr(SysprofDocument) document = NULL;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (SYSPROF_IS_DOCUMENT_LOADER (loader));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (DEX_IS_PROMISE (promise));
+
+  if ((document = sysprof_document_loader_load_finish (loader, result, &error)))
+    dex_promise_resolve_object (promise, g_steal_pointer (&document));
+  else
+    dex_promise_reject (promise, g_steal_pointer (&error));
+}
+
+DexFuture *
+_sysprof_document_loader_load (SysprofDocumentLoader *loader)
+{
+  DexPromise *promise;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_LOADER (loader), NULL);
+
+  promise = dex_promise_new ();
+  sysprof_document_loader_load_async (loader,
+                                      NULL,
+                                      sysprof_document_loader_load_cb,
+                                      dex_ref (promise));
+  return DEX_FUTURE (promise);
+}

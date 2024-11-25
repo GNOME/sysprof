@@ -27,15 +27,13 @@
 
 #include <sysprof.h>
 
+#include "sysprof-document-loader-private.h"
+
 #include "sysprof-instrument-private.h"
 #include "sysprof-recording-private.h"
 #include "sysprof-symbols-bundle.h"
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureReader, sysprof_capture_reader_unref)
-
-static const DexAsyncPairInfo load_info =
-  DEX_ASYNC_PAIR_INFO_OBJECT (sysprof_document_loader_load_async,
-                              sysprof_document_loader_load_finish);
 
 struct _SysprofSymbolsBundle
 {
@@ -81,7 +79,7 @@ sysprof_symbols_bundle_augment_fiber (gpointer user_data)
   elf = sysprof_elf_symbolizer_new ();
   sysprof_document_loader_set_symbolizer (loader, elf);
 
-  if (!(document = dex_await_object (dex_async_pair_new (loader, &load_info), &error)))
+  if (!(document = dex_await_object (_sysprof_document_loader_load (loader), &error)))
     return dex_future_new_for_error (g_steal_pointer (&error));
   g_assert (SYSPROF_IS_DOCUMENT (document));
 

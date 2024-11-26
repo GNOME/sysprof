@@ -69,8 +69,9 @@ struct _SysprofCallgraphViewClass
   gsize augment_size;
   SysprofAugmentationFunc augment_func;
 
-  void (*load) (SysprofCallgraphView *self,
-                SysprofCallgraph     *callgraph);
+  void (*load)   (SysprofCallgraphView *self,
+                  SysprofCallgraph     *callgraph);
+  void (*unload) (SysprofCallgraphView *self);
 };
 
 G_END_DECLS

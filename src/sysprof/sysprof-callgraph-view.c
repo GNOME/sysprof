@@ -339,6 +339,14 @@ sysprof_callgraph_view_dispose (GObject *object)
 {
   SysprofCallgraphView *self = (SysprofCallgraphView *)object;
 
+  if (self->callgraph != NULL)
+    {
+      if (SYSPROF_CALLGRAPH_VIEW_GET_CLASS (self)->unload)
+        SYSPROF_CALLGRAPH_VIEW_GET_CLASS (self)->unload (self);
+
+      g_clear_object (&self->callgraph);
+    }
+
   if (self->functions_column_view)
     gtk_column_view_set_model (self->functions_column_view, NULL);
 
@@ -363,7 +371,6 @@ sysprof_callgraph_view_dispose (GObject *object)
   g_cancellable_cancel (self->cancellable);
   g_clear_object (&self->cancellable);
 
-  g_clear_object (&self->callgraph);
   g_clear_object (&self->document);
   g_clear_object (&self->traceables);
   g_clear_object (&self->utility_summary);
@@ -668,6 +675,9 @@ sysprof_callgraph_view_reload_cb (GObject      *object,
       return;
     }
 
+  if (SYSPROF_CALLGRAPH_VIEW_GET_CLASS (self)->unload)
+    SYSPROF_CALLGRAPH_VIEW_GET_CLASS (self)->unload (self);
+
   g_set_object (&self->callgraph, callgraph);
 
   sysprof_callgraph_view_set_descendants (self, G_LIST_MODEL (callgraph));
@@ -698,7 +708,7 @@ sysprof_callgraph_view_reload_cb (GObject      *object,
                                    functions_name_compare, NULL, NULL);
 
   if (SYSPROF_CALLGRAPH_VIEW_GET_CLASS (self)->load)
-   SYSPROF_CALLGRAPH_VIEW_GET_CLASS (self)->load (self, callgraph);
+    SYSPROF_CALLGRAPH_VIEW_GET_CLASS (self)->load (self, callgraph);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_CALLGRAPH]);
 }

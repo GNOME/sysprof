@@ -282,7 +282,7 @@ functions_sort_by_total (gconstpointer a,
 
 static void
 sysprof_memory_callgraph_view_load (SysprofCallgraphView *view,
-                                      SysprofCallgraph     *callgraph)
+                                    SysprofCallgraph     *callgraph)
 {
   SysprofMemoryCallgraphView *self = (SysprofMemoryCallgraphView *)view;
   AugmentMemory *root;
@@ -318,6 +318,23 @@ sysprof_memory_callgraph_view_load (SysprofCallgraphView *view,
                                   GTK_SORT_DESCENDING);
 }
 
+static void
+sysprof_memory_callgraph_view_unload (SysprofCallgraphView *view)
+{
+  SysprofMemoryCallgraphView *self = (SysprofMemoryCallgraphView *)view;
+
+  g_assert (SYSPROF_IS_MEMORY_CALLGRAPH_VIEW (self));
+
+  gtk_custom_sorter_set_sort_func (self->descendants_self_sorter, NULL, NULL, NULL);
+  gtk_custom_sorter_set_sort_func (self->descendants_total_sorter, NULL, NULL, NULL);
+
+  gtk_custom_sorter_set_sort_func (self->functions_self_sorter, NULL, NULL, NULL);
+  gtk_custom_sorter_set_sort_func (self->functions_total_sorter, NULL, NULL, NULL);
+
+  gtk_custom_sorter_set_sort_func (self->callers_self_sorter, NULL, NULL, NULL);
+  gtk_custom_sorter_set_sort_func (self->callers_total_sorter, NULL, NULL, NULL);
+}
+
 static char *
 get_total_size (GObject *item)
 {
@@ -346,6 +363,7 @@ sysprof_memory_callgraph_view_class_init (SysprofMemoryCallgraphViewClass *klass
   callgraph_view_class->augment_size = sizeof (AugmentMemory);
   callgraph_view_class->augment_func = augment_memory;
   callgraph_view_class->load = sysprof_memory_callgraph_view_load;
+  callgraph_view_class->unload = sysprof_memory_callgraph_view_unload;
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-memory-callgraph-view.ui");
 

@@ -58,6 +58,9 @@ sysprof_series_get_item (GListModel *model,
 
   item = g_list_model_get_item (self->model, position);
 
+  if (item == NULL)
+    return NULL;
+
   if (SYSPROF_SERIES_GET_CLASS (self)->get_series_item == NULL)
     return item;
 

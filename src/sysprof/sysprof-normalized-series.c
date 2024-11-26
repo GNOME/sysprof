@@ -173,8 +173,8 @@ sysprof_normalized_series_items_changed (SysprofSeries *series,
   g_assert (SYSPROF_IS_NORMALIZED_SERIES (self));
   g_assert (G_IS_LIST_MODEL (model));
 
-  egg_bitset_splice (self->missing, position, removed, added);
-  egg_bitset_add_range (self->missing, position, added);
+  if (removed > 0 || added > 0)
+    egg_bitset_splice (self->missing, position, removed, added);
 
   if (removed > 0)
     g_array_remove_range (self->values, position, removed);

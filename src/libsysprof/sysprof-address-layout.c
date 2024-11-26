@@ -224,11 +224,14 @@ sysprof_address_layout_lookup (SysprofAddressLayout *self,
       g_list_model_items_changed (G_LIST_MODEL (self), 0, old_len, self->mmaps->len);
     }
 
-  ret = bsearch (&address,
-                 self->mmaps->pdata,
-                 self->mmaps->len,
-                 sizeof (gpointer),
-                 find_by_address);
+  if (self->mmaps->len > 0)
+    ret = bsearch (&address,
+                   self->mmaps->pdata,
+                   self->mmaps->len,
+                   sizeof (gpointer),
+                   find_by_address);
+  else
+    ret = NULL;
 
   return ret ? *ret : NULL;
 }

@@ -319,7 +319,9 @@ egg_bitset_copy (const EggBitset *self)
   g_return_val_if_fail (self != NULL, NULL);
 
   copy = egg_bitset_new_empty ();
-  roaring_bitmap_overwrite (&copy->roaring, &self->roaring);
+
+  if (!egg_bitset_is_empty (self))
+    roaring_bitmap_overwrite (&copy->roaring, &self->roaring);
 
   return copy;
 }

@@ -233,6 +233,15 @@ sysprof_normalized_series_get_series_item (SysprofSeries *series,
   SysprofNormalizedSeries *self = SYSPROF_NORMALIZED_SERIES (series);
   SysprofNormalizedSeriesItem *ret;
 
+  g_assert (SYSPROF_IS_NORMALIZED_SERIES (series));
+  g_assert (G_IS_OBJECT (item));
+
+  if (position >= self->values->len)
+    {
+      g_object_unref (item);
+      return NULL;
+    }
+
   ret = g_object_new (SYSPROF_TYPE_NORMALIZED_SERIES_ITEM,
                       "item", item,
                       "value", g_array_index (self->values, double, position),

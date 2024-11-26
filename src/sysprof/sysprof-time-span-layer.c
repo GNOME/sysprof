@@ -119,7 +119,7 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
   guint n_x_values = 0;
   guint n_x2_values = 0;
   guint n_values;
-  int layout_y;
+  int layout_y = 0;
   int layout_h;
   int width;
   int height;

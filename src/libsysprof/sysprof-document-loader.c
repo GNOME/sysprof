@@ -235,7 +235,7 @@ sysprof_document_loader_get_property (GObject    *object,
       break;
 
     case PROP_MESSAGE:
-      g_value_set_string (value, sysprof_document_loader_get_message (self));
+      g_value_take_string (value, sysprof_document_loader_dup_message (self));
       break;
 
     case PROP_SYMBOLIZER:
@@ -406,14 +406,39 @@ sysprof_document_loader_get_fraction (SysprofDocumentLoader *self)
  * This only updates between calls of sysprof_document_loader_load_async()
  * and sysprof_document_loader_load_finish().
  *
- * Returns: (nullable): a string containing a load message
+ * Returns: (nullable): %NULL
  */
 const char *
 sysprof_document_loader_get_message (SysprofDocumentLoader *self)
 {
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT_LOADER (self), NULL);
 
-  return self->message;
+  return NULL;
+}
+
+/**
+ * sysprof_document_loader_dup_message:
+ * @self: a #SysprofDocumentLoader
+ *
+ * Gets a text message representing what is happenin with loading.
+ *
+ * This only updates between calls of sysprof_document_loader_load_async()
+ * and sysprof_document_loader_load_finish().
+ *
+ * Returns: (nullable) (transfer full): a string or %NULL
+ */
+char *
+sysprof_document_loader_dup_message (SysprofDocumentLoader *self)
+{
+  char *ret;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_LOADER (self), NULL);
+
+  g_mutex_lock (&self->mutex);
+  ret = g_strdup (self->message);
+  g_mutex_unlock (&self->mutex);
+
+  return ret;
 }
 
 static void

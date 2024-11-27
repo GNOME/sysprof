@@ -46,6 +46,8 @@ void                   sysprof_document_loader_set_symbolizer (SysprofDocumentLo
                                                                SysprofSymbolizer      *symbolizer);
 SYSPROF_AVAILABLE_IN_ALL
 double                 sysprof_document_loader_get_fraction   (SysprofDocumentLoader  *self);
+G_GNUC_INTERNAL
+char                  *sysprof_document_loader_dup_message    (SysprofDocumentLoader  *self);
 SYSPROF_AVAILABLE_IN_ALL
 const char            *sysprof_document_loader_get_message    (SysprofDocumentLoader  *self);
 SYSPROF_AVAILABLE_IN_ALL

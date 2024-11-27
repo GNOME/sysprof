@@ -1,3 +1,12 @@
+Overview of changes in Sysprof 47.2
+===================================
+
+ * Use pid when generating counter IDs in SysprofCollector
+ * Fix potential UB in GtkBitset
+ * Avoid UB in bsearch() with no data
+ * Increased safety in SysprofDocumentLoader
+ * Increased safety when parsing CPU counters with async IO
+
 Overview of changes in Sysprof 47.1
 ===================================
 

@@ -236,10 +236,9 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
         }
       cpu_future = dex_aio_read (NULL, stat_fd, read_buffer, PROC_STAT_BUF_SIZE, 0);
       g_ptr_array_add (futures, dex_ref (cpu_future));
-      if (!dex_await (dex_future_first (dex_ref (record->cancellable),
-                                        dex_future_allv ((DexFuture **)futures->pdata, futures->len),
-                                        NULL),
-                      NULL))
+
+      /* Wait for all IO futures as they point at buffers owned by the array */
+      if (!dex_await (dex_future_allv ((DexFuture **)futures->pdata, futures->len), NULL))
         break;
 
       /* Now parse all the contents of the stat files which should be

@@ -46,7 +46,9 @@ void                   sysprof_document_loader_set_symbolizer (SysprofDocumentLo
                                                                SysprofSymbolizer      *symbolizer);
 SYSPROF_AVAILABLE_IN_ALL
 double                 sysprof_document_loader_get_fraction   (SysprofDocumentLoader  *self);
-SYSPROF_AVAILABLE_IN_ALL
+SYSPROF_AVAILABLE_IN_48
+char                  *sysprof_document_loader_dup_message    (SysprofDocumentLoader  *self);
+SYSPROF_DEPRECATED_IN_48_FOR(sysprof_document_loader_dup_message)
 const char            *sysprof_document_loader_get_message    (SysprofDocumentLoader  *self);
 SYSPROF_AVAILABLE_IN_48
 GListModel            *sysprof_document_loader_list_tasks     (SysprofDocumentLoader  *self);

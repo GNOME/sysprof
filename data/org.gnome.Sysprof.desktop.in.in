@@ -10,5 +10,5 @@ Icon=@APP_ID@
 StartupNotify=true
 Terminal=false
 Type=Application
-Categories=GNOME;GTK;Development;X-GNOME-Utilities;
+Categories=GNOME;GTK;Development;Utility;
 MimeType=application/x-sysprof-capture;

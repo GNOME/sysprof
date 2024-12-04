@@ -72,6 +72,8 @@ sysprof_promise_resolve_fd (DexPromise *promise,
 {
   GValue gvalue = {SYSPROF_TYPE_FD, {{.v_pointer = &fd}, {.v_int = 0}}};
   dex_promise_resolve (promise, &gvalue);
+  if (fd > -1)
+    close (fd);
 }
 
 int

@@ -91,11 +91,11 @@
                 },
                 {
                     "type" : "patch",
-                    "path" : "build-aux/flatpak/polkit-build-Add-option-to-build-without-polkitd.patch"
+                    "path" : "polkit-build-Add-option-to-build-without-polkitd.patch"
                 },
                 {
                     "type" : "file",
-                    "path" : "build-aux/flatpak/polkit-autogen",
+                    "path" : "polkit-autogen",
                     "dest-filename" : "autogen.sh"
                 }
             ]

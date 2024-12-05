@@ -7,7 +7,7 @@ flatpak:
     GIT_SUBMODULE_STRATEGY: normal
 
     # Replace with your manifest path
-    MANIFEST_PATH: "org.gnome.Sysprof.Devel.json"
+    MANIFEST_PATH: "build-aux/org.gnome.Sysprof.Devel.json"
     RUNTIME_REPO: "https://nightly.gnome.org/gnome-nightly.flatpakrepo"
     # Replace with your application name, as written in the manifest
     FLATPAK_MODULE: "sysprof"

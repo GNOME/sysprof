@@ -153,9 +153,8 @@
             "builddir" : true,
             "sources" : [
                 {
-                    "type" : "git",
-                    "url" : "https://gitlab.gnome.org/GNOME/sysprof.git",
-                    "branch" : "master"
+                    "type" : "dir",
+                    "path" : "../"
                 }
             ]
         }

@@ -1,4 +1,14 @@
-include: 'https://gitlab.gnome.org/GNOME/citemplates/raw/master/flatpak/flatpak_ci_initiative.yml'
+include:
+  - project: "gnome/citemplates"
+    file: "flatpak/flatpak_ci_initiative.yml"
+  - component: "gitlab.gnome.org/GNOME/citemplates/release-service@master"
+    inputs:
+      dist-job-name: "flatpak"
+      tarball-artifact-path: "${TARBALL_ARTIFACT_PATH}"
+
+variables:
+  FLATPAK_MODULE: "sysprof"
+  TARBALL_ARTIFACT_PATH: ".flatpak-builder/build/${FLATPAK_MODULE}/_flatpak_build/meson-dist/${CI_PROJECT_NAME}-${CI_COMMIT_TAG}.tar.xz"
 
 flatpak:
   extends: .flatpak
@@ -6,11 +16,8 @@ flatpak:
   variables:
     GIT_SUBMODULE_STRATEGY: normal
 
-    # Replace with your manifest path
     MANIFEST_PATH: "org.gnome.Sysprof.Devel.json"
     RUNTIME_REPO: "https://nightly.gnome.org/gnome-nightly.flatpakrepo"
-    # Replace with your application name, as written in the manifest
-    FLATPAK_MODULE: "sysprof"
     APP_ID: "org.gnome.Sysprof.Devel"
     BUNDLE: "sysprof-git.flatpak"
 

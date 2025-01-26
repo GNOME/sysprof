@@ -147,6 +147,13 @@ sysprof_about (GSimpleAction *action,
   g_assert (variant == NULL);
 
   windows = gtk_application_get_windows (app);
+  
+  if (windows == NULL)
+    {
+      g_warning ("No windows found to show about dialog");
+    }
+  else
+    best_toplevel = windows->data;
 
   for (; windows != NULL; windows = windows->next)
     {

@@ -2476,8 +2476,8 @@ sysprof_document_dup_title (SysprofDocument *self)
 
   if ((date_time = g_date_time_new_from_iso8601 (self->header.capture_time, NULL)))
     {
-      date_time = g_date_time_to_local(date_time);
-      return g_date_time_format (date_time, _("Recording at %X %x"));
+      g_autoptr(GDateTime) local_date_time = g_date_time_to_local(date_time);
+      return g_date_time_format (local_date_time, _("Recording at %X %x"));
     }
 
   return g_strdup_printf (_("Recording at %s"), self->header.capture_time);
@@ -2495,8 +2495,8 @@ sysprof_document_dup_subtitle (SysprofDocument *self)
 
   if ((date_time = g_date_time_new_from_iso8601 (self->header.capture_time, NULL)))
     {
-      date_time = g_date_time_to_local(date_time);
-      return g_date_time_format (date_time, _("Recording at %X %x"));
+      g_autoptr(GDateTime) local_date_time = g_date_time_to_local(date_time);
+      return g_date_time_format (local_date_time, _("Recording at %X %x"));
     }
 
   return g_strdup_printf (_("Recording at %s"), self->header.capture_time);

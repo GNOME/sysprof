@@ -666,6 +666,10 @@
         </child>
       </object>
     </property>
+    <child internal-child="template">
+      <object class="SysprofRecordingTemplate" id="recording_template">
+      </object>
+    </child>
   </template>
   <menu id="primary_menu">
     <section>
@@ -695,8 +699,6 @@
       </item>
     </section>
   </menu>
-  <object class="SysprofRecordingTemplate" id="recording_template">
-  </object>
   <object class="GtkStringList" id="envvars">
   </object>
   <object class="GListStore" id="stack_sizes">

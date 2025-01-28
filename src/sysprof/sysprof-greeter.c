@@ -41,6 +41,7 @@ struct _SysprofGreeter
   AdwWindow                 parent_instance;
 
   GtkStringList            *envvars;
+  SysprofRecordingTemplate *recording_template;
 
   AdwViewStack             *view_stack;
   GtkListBox               *sidebar_list_box;
@@ -60,10 +61,35 @@ struct _SysprofGreeter
   AdwComboRow              *sample_user_stack_size;
   AdwExpanderRow           *user_stacks;
   GtkLabel                 *user_stacks_caption;
-  SysprofRecordingTemplate *recording_template;
 };
 
-G_DEFINE_FINAL_TYPE (SysprofGreeter, sysprof_greeter, ADW_TYPE_WINDOW)
+static GFile *
+get_state_file (void)
+{
+  return g_file_new_build_filename (g_get_user_data_dir (), APP_ID_S, "recording-template.json", NULL);
+}
+
+static GObject *
+sysprof_greeter_get_internal_child (GtkBuildable *buildable,
+                                    GtkBuilder   *builder,
+                                    const char   *name)
+{
+  SysprofGreeter *self = SYSPROF_GREETER (buildable);
+
+  if (g_strcmp0 (name, "template") == 0)
+    return G_OBJECT (self->recording_template);
+
+  return NULL;
+}
+
+static void
+buildable_iface_init (GtkBuildableIface *iface)
+{
+  iface->get_internal_child = sysprof_greeter_get_internal_child;
+}
+
+G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofGreeter, sysprof_greeter, ADW_TYPE_WINDOW,
+                               G_IMPLEMENT_INTERFACE (GTK_TYPE_BUILDABLE, buildable_iface_init))
 
 #define STRV_INIT(...) (const char * const[]){__VA_ARGS__,NULL}
 
@@ -179,6 +205,8 @@ sysprof_greeter_create_profiler (SysprofGreeter  *self,
                                  GError         **error)
 {
   g_autoptr(SysprofProfiler) profiler = NULL;
+  g_autoptr(GFile) state_file = NULL;
+  g_autoptr(GFile) dir = NULL;
   GtkStringObject *strobj;
   const char *str;
 
@@ -192,6 +220,17 @@ sysprof_greeter_create_profiler (SysprofGreeter  *self,
 
   if (!(profiler = sysprof_recording_template_apply (self->recording_template, error)))
     return NULL;
+
+  state_file = get_state_file ();
+  dir = g_file_get_parent (state_file);
+
+  if (!g_file_query_exists (dir, NULL))
+    {
+      const char *path = g_file_peek_path (dir);
+      g_mkdir_with_parents (path, 0750);
+    }
+
+  sysprof_recording_template_save (self->recording_template, state_file, NULL);
 
   return g_steal_pointer (&profiler);
 }
@@ -487,6 +526,7 @@ sysprof_greeter_dispose (GObject *object)
   gtk_widget_dispose_template (GTK_WIDGET (self), SYSPROF_TYPE_GREETER);
 
   g_clear_object (&self->envvars);
+  g_clear_object (&self->recording_template);
 
   G_OBJECT_CLASS (sysprof_greeter_parent_class)->dispose (object);
 }
@@ -513,7 +553,6 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_system_bus);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_system_logs);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_to_memory);
-  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, recording_template);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, sample_javascript_stacks);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, sample_native_stacks);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, sample_user_stack_size);
@@ -541,7 +580,11 @@ static void
 sysprof_greeter_init (SysprofGreeter *self)
 {
   g_autoptr(GListModel) power_profiles = sysprof_power_profiles_new ();
+  g_autoptr(GFile) state_file = get_state_file ();
   GtkListBoxRow *row;
+
+  if (!(self->recording_template = sysprof_recording_template_new_from_file (state_file, NULL)))
+    self->recording_template = sysprof_recording_template_new ();
 
   gtk_widget_init_template (GTK_WIDGET (self));
 

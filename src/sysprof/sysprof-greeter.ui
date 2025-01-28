@@ -674,12 +674,6 @@
   <menu id="primary_menu">
     <section>
       <item>
-        <attribute name="label" translatable="yes">Open Recording…</attribute>
-        <attribute name="action">win.select-file</attribute>
-      </item>
-    </section>
-    <section>
-      <item>
         <attribute name="label" translatable="yes">_Keyboard Shortcuts</attribute>
         <attribute name="action">app.show-help-overlay</attribute>
       </item>
@@ -690,12 +684,6 @@
       <item>
         <attribute name="label" translatable="yes">About Sysprof</attribute>
         <attribute name="action">app.about</attribute>
-      </item>
-    </section>
-    <section>
-      <item>
-        <attribute name="label" translatable="yes">Quit</attribute>
-        <attribute name="action">app.quit</attribute>
       </item>
     </section>
   </menu>

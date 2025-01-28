@@ -25,6 +25,7 @@
 #include <sysprof.h>
 
 #include "sysprof-application.h"
+#include "sysprof-recording-template.h"
 #include "sysprof-session.h"
 
 G_BEGIN_DECLS
@@ -33,14 +34,17 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (SysprofWindow, sysprof_window, SYSPROF, WINDOW, AdwApplicationWindow)
 
-GtkWidget       *sysprof_window_new          (SysprofApplication *app,
-                                              SysprofDocument    *document);
-void             sysprof_window_open_file    (GtkWindow          *transient_for);
-void             sysprof_window_open         (SysprofApplication *app,
-                                              GFile              *file);
-void             sysprof_window_open_fd      (SysprofApplication *app,
-                                              int                 fd);
-SysprofDocument *sysprof_window_get_document (SysprofWindow      *self);
-SysprofSession  *sysprof_window_get_session  (SysprofWindow      *self);
+GtkWidget       *sysprof_window_new          (SysprofApplication       *app,
+                                              SysprofDocument          *document);
+void             sysprof_window_open_file    (GtkWindow                *transient_for,
+                                              SysprofRecordingTemplate *template);
+void             sysprof_window_open         (SysprofApplication       *app,
+                                              SysprofRecordingTemplate *template,
+                                              GFile                    *file);
+void             sysprof_window_open_fd      (SysprofApplication       *app,
+                                              SysprofRecordingTemplate *template,
+                                              int                       fd);
+SysprofDocument *sysprof_window_get_document (SysprofWindow            *self);
+SysprofSession  *sysprof_window_get_session  (SysprofWindow            *self);
 
 G_END_DECLS

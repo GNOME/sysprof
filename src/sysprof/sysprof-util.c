@@ -66,3 +66,9 @@ _gtk_widget_hide_with_fade (GtkWidget *widget)
                                 g_memdup2 (&begin_time, sizeof begin_time),
                                 g_free);
 }
+
+GFile *
+_get_default_state_file (void)
+{
+  return g_file_new_build_filename (g_get_user_data_dir (), APP_ID_S, "recording-template.json", NULL);
+}

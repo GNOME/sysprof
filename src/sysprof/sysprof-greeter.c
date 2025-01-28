@@ -32,6 +32,7 @@
 #include "sysprof-recording-pad.h"
 #include "sysprof-recording-template.h"
 #include "sysprof-stack-size.h"
+#include "sysprof-util.h"
 #include "sysprof-window.h"
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureWriter, sysprof_capture_writer_unref)
@@ -62,12 +63,6 @@ struct _SysprofGreeter
   AdwExpanderRow           *user_stacks;
   GtkLabel                 *user_stacks_caption;
 };
-
-static GFile *
-get_state_file (void)
-{
-  return g_file_new_build_filename (g_get_user_data_dir (), APP_ID_S, "recording-template.json", NULL);
-}
 
 static GObject *
 sysprof_greeter_get_internal_child (GtkBuildable *buildable,
@@ -192,7 +187,7 @@ sysprof_greeter_record_cb (GObject      *object,
     }
   else
     {
-      GtkWidget *pad = sysprof_recording_pad_new (recording);
+      GtkWidget *pad = sysprof_recording_pad_new (recording, self->recording_template);
 
       gtk_window_present (GTK_WINDOW (pad));
     }
@@ -221,7 +216,7 @@ sysprof_greeter_create_profiler (SysprofGreeter  *self,
   if (!(profiler = sysprof_recording_template_apply (self->recording_template, error)))
     return NULL;
 
-  state_file = get_state_file ();
+  state_file = _get_default_state_file ();
   dir = g_file_get_parent (state_file);
 
   if (!g_file_query_exists (dir, NULL))
@@ -353,7 +348,9 @@ sysprof_greeter_select_file_action (GtkWidget  *widget,
                                     const char *action_name,
                                     GVariant   *param)
 {
-  sysprof_window_open_file (GTK_WINDOW (widget));
+  SysprofGreeter *self = SYSPROF_GREETER (widget);
+
+  sysprof_window_open_file (GTK_WINDOW (widget), self->recording_template);
 }
 
 static char *
@@ -580,7 +577,7 @@ static void
 sysprof_greeter_init (SysprofGreeter *self)
 {
   g_autoptr(GListModel) power_profiles = sysprof_power_profiles_new ();
-  g_autoptr(GFile) state_file = get_state_file ();
+  g_autoptr(GFile) state_file = _get_default_state_file ();
   GtkListBoxRow *row;
 
   if (!(self->recording_template = sysprof_recording_template_new_from_file (state_file, NULL)))

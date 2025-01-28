@@ -20,7 +20,11 @@
 
 #include "config.h"
 
+#include <fcntl.h>
+#include <errno.h>
+
 #include <glib/gi18n.h>
+#include <glib/gstdio.h>
 
 #include "sysprof-counters-section.h"
 #include "sysprof-cpu-section.h"
@@ -34,6 +38,7 @@
 #include "sysprof-memory-section.h"
 #include "sysprof-metadata-section.h"
 #include "sysprof-network-section.h"
+#include "sysprof-pair.h"
 #include "sysprof-processes-section.h"
 #include "sysprof-samples-section.h"
 #include "sysprof-sidebar.h"
@@ -133,7 +138,9 @@ sysprof_window_open_file_cb (GObject      *object,
                              gpointer      user_data)
 {
   GtkFileDialog *dialog = (GtkFileDialog *)object;
-  g_autoptr(GtkWindow) transient_for = user_data;
+  g_autoptr(SysprofRecordingTemplate) template = NULL;
+  g_autoptr(GtkWindow) transient_for = NULL;
+  g_autoptr(SysprofPair) pair = user_data;
   g_autoptr(GError) error = NULL;
   g_autoptr(GFile) file = NULL;
 
@@ -141,11 +148,19 @@ sysprof_window_open_file_cb (GObject      *object,
   g_assert (G_IS_ASYNC_RESULT (result));
   g_assert (!transient_for || GTK_IS_WINDOW (transient_for));
 
+  g_object_get (pair,
+                "first", &transient_for,
+                "second", &template,
+                NULL);
+
+  g_assert (!transient_for || GTK_IS_WIDGET (transient_for));
+  g_assert (!template || SYSPROF_IS_RECORDING_TEMPLATE (template));
+
   if ((file = gtk_file_dialog_open_finish (dialog, result, &error)))
     {
       if (g_file_is_native (file))
         {
-          sysprof_window_open (SYSPROF_APPLICATION_DEFAULT, file);
+          sysprof_window_open (SYSPROF_APPLICATION_DEFAULT, template, file);
 
           if (transient_for && !SYSPROF_IS_WINDOW (transient_for))
             gtk_window_destroy (transient_for);
@@ -168,7 +183,8 @@ sysprof_window_open_file_cb (GObject      *object,
 }
 
 void
-sysprof_window_open_file (GtkWindow *parent)
+sysprof_window_open_file (GtkWindow                *parent,
+                          SysprofRecordingTemplate *template)
 {
   g_autoptr(GtkFileDialog) dialog = NULL;
   g_autoptr(GtkFileFilter) filter = NULL;
@@ -192,7 +208,10 @@ sysprof_window_open_file (GtkWindow *parent)
                         parent,
                         NULL,
                         sysprof_window_open_file_cb,
-                        parent ? g_object_ref (parent) : NULL);
+                        g_object_new (SYSPROF_TYPE_PAIR,
+                                      "first", parent,
+                                      "second", template,
+                                      NULL));
 }
 
 static void
@@ -200,7 +219,12 @@ sysprof_window_open_capture_action (GtkWidget  *widget,
                                     const char *action_name,
                                     GVariant   *param)
 {
-  sysprof_window_open_file (GTK_WINDOW (widget));
+  g_autoptr(SysprofRecordingTemplate) template = NULL;
+
+  /* Open for default state file so we can apply settings */
+  template = sysprof_recording_template_new_from_file (NULL, NULL);
+
+  sysprof_window_open_file (GTK_WINDOW (widget), template);
 }
 
 static void
@@ -780,25 +804,47 @@ sysprof_window_create (SysprofApplication    *app,
 }
 
 void
-sysprof_window_open (SysprofApplication *app,
-                     GFile              *file)
+sysprof_window_open (SysprofApplication       *app,
+                     SysprofRecordingTemplate *template,
+                     GFile                    *file)
 {
   g_autoptr(SysprofDocumentLoader) loader = NULL;
+  g_autoptr(SysprofRecordingTemplate) alt_template = NULL;
+  g_autoptr(GError) error = NULL;
+  g_autofd int fd = -1;
   SysprofWindow *self;
+  const char *path;
 
   g_return_if_fail (SYSPROF_IS_APPLICATION (app));
+  g_return_if_fail (!template || SYSPROF_IS_RECORDING_TEMPLATE (template));
   g_return_if_fail (G_IS_FILE (file));
 
-  if (!g_file_is_native (file) ||
-      !(loader = sysprof_document_loader_new (g_file_peek_path (file))))
+  if (template == NULL)
+    template = alt_template = sysprof_recording_template_new ();
+
+  if (!g_file_is_native (file))
     {
       g_autofree char *uri = g_file_get_uri (file);
       g_warning ("Cannot open non-native file \"%s\"", uri);
       return;
     }
 
+  path = g_file_peek_path (file);
+
+  if (-1 == (fd = open (path, O_RDONLY)))
+    {
+      int errsv = errno;
+      g_critical ("Failed to open %s: %s", path, g_strerror (errsv));
+      return;
+    }
+
+  if (!(loader = sysprof_recording_template_create_loader (template, fd, &error)))
+    {
+      g_critical ("Failed to create loader: %s", error->message);
+      return;
+    }
+
   g_application_hold (G_APPLICATION (app));
-  sysprof_window_apply_loader_settings (loader);
   self = sysprof_window_create (app, loader);
   sysprof_document_loader_load_async (loader,
                                       NULL,
@@ -808,18 +854,25 @@ sysprof_window_open (SysprofApplication *app,
 }
 
 void
-sysprof_window_open_fd (SysprofApplication *app,
-                        int                 fd)
+sysprof_window_open_fd (SysprofApplication       *app,
+                        SysprofRecordingTemplate *template,
+                        int                       fd)
 {
+  g_autoptr(SysprofRecordingTemplate) alt_template = NULL;
   g_autoptr(SysprofDocumentLoader) loader = NULL;
   g_autoptr(GError) error = NULL;
   SysprofWindow *self;
 
   g_return_if_fail (SYSPROF_IS_APPLICATION (app));
+  g_return_if_fail (!template || SYSPROF_IS_RECORDING_TEMPLATE (template));
+  g_return_if_fail (fd > -1);
 
-  if (!(loader = sysprof_document_loader_new_for_fd (fd, &error)))
+  if (template == NULL)
+    template = alt_template = sysprof_recording_template_new ();
+
+  if (!(loader = sysprof_recording_template_create_loader (template, fd, &error)))
     {
-      g_critical ("Failed to dup FD: %s", error->message);
+      g_critical ("Failed to create loader: %s", error->message);
       return;
     }
 

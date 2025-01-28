@@ -23,6 +23,7 @@
 #include <json-glib/json-glib.h>
 
 #include "sysprof-recording-template.h"
+#include "sysprof-util.h"
 
 #define DEFAULT_STACK_SIZE (4096*4)
 
@@ -687,10 +688,14 @@ sysprof_recording_template_new_from_file (GFile   *file,
                                           GError **error)
 {
   g_autoptr(JsonParser) parser = NULL;
+  g_autoptr(GFile) state_file = NULL;
   SysprofRecordingTemplate *self;
   JsonNode *root;
 
-  g_return_val_if_fail (G_IS_FILE (file), NULL);
+  g_return_val_if_fail (!file || G_IS_FILE (file), NULL);
+
+  if (file == NULL)
+    file = state_file = _get_default_state_file ();
 
   parser = json_parser_new ();
 
@@ -742,4 +747,52 @@ sysprof_recording_template_save (SysprofRecordingTemplate  *self,
   json_generator_set_pretty (generator, TRUE);
 
   return json_generator_to_stream (generator, G_OUTPUT_STREAM (stream), NULL, error);
+}
+
+SysprofDocumentLoader *
+sysprof_recording_template_create_loader (SysprofRecordingTemplate  *self,
+                                          int                        fd,
+                                          GError                   **error)
+{
+  g_autoptr(SysprofDocumentLoader) loader = NULL;
+  g_autoptr(SysprofMultiSymbolizer) multi = NULL;
+  g_autoptr(SysprofElfSymbolizer) elf = NULL;
+
+  g_return_val_if_fail (SYSPROF_IS_RECORDING_TEMPLATE (self), NULL);
+
+  if (!(loader = sysprof_document_loader_new_for_fd (fd, error)))
+    return NULL;
+
+  multi = sysprof_multi_symbolizer_new ();
+
+  elf = SYSPROF_ELF_SYMBOLIZER (sysprof_elf_symbolizer_new ());
+  /* TODO: add extra-debug-directories property and use that to
+   *       call sysprof_elf_symbolizer_set_external_debug_dirs(elf,...)
+   */
+
+  /* Add in order of priority */
+  sysprof_multi_symbolizer_take (multi, sysprof_bundled_symbolizer_new ());
+  sysprof_multi_symbolizer_take (multi, sysprof_kallsyms_symbolizer_new ());
+  sysprof_multi_symbolizer_take (multi, SYSPROF_SYMBOLIZER (g_steal_pointer (&elf)));
+  sysprof_multi_symbolizer_take (multi, sysprof_jitmap_symbolizer_new ());
+
+  sysprof_document_loader_set_symbolizer (loader, SYSPROF_SYMBOLIZER (multi));
+
+#if HAVE_DEBUGINFOD
+#if 0
+  /* TODO: add enable-debuginfod property. */
+  if (self->enable_debuginfod)
+#endif
+    {
+      g_autoptr(SysprofSymbolizer) debuginfod = NULL;
+      g_autoptr(GError) debuginfod_error = NULL;
+
+      if (!(debuginfod = sysprof_debuginfod_symbolizer_new (&debuginfod_error)))
+        g_warning ("Failed to create debuginfod symbolizer: %s", debuginfod_error->message);
+      else
+        sysprof_multi_symbolizer_take (multi, g_steal_pointer (&debuginfod));
+    }
+#endif
+
+  return g_steal_pointer (&loader);
 }

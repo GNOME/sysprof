@@ -24,12 +24,15 @@
 
 #include <sysprof.h>
 
+#include "sysprof-recording-template.h"
+
 G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_RECORDING_PAD (sysprof_recording_pad_get_type())
 
 G_DECLARE_FINAL_TYPE (SysprofRecordingPad, sysprof_recording_pad, SYSPROF, RECORDING_PAD, AdwWindow)
 
-GtkWidget *sysprof_recording_pad_new (SysprofRecording *recording);
+GtkWidget *sysprof_recording_pad_new (SysprofRecording         *recording,
+                                      SysprofRecordingTemplate *template);
 
 G_END_DECLS

@@ -24,6 +24,7 @@
 
 G_BEGIN_DECLS
 
-void _gtk_widget_hide_with_fade (GtkWidget *widget);
+void   _gtk_widget_hide_with_fade (GtkWidget *widget);
+GFile *_get_default_state_file    (void);
 
 G_END_DECLS

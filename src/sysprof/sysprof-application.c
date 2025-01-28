@@ -24,6 +24,7 @@
 #include "sysprof-application.h"
 #include "sysprof-credits.h"
 #include "sysprof-greeter.h"
+#include "sysprof-recording-template.h"
 #include "sysprof-window.h"
 
 struct _SysprofApplication
@@ -67,12 +68,15 @@ sysprof_application_open (GApplication  *app,
                           int            n_files,
                           const char    *hint)
 {
+  g_autoptr(SysprofRecordingTemplate) template = NULL;
 
   g_assert (SYSPROF_IS_APPLICATION (app));
   g_assert (files != NULL || n_files == 0);
 
+  template = sysprof_recording_template_new_from_file (NULL, NULL);
+
   for (guint i = 0; i < n_files; i++)
-    sysprof_window_open (SYSPROF_APPLICATION (app), files[i]);
+    sysprof_window_open (SYSPROF_APPLICATION (app), template, files[i]);
 }
 
 static int
@@ -147,7 +151,7 @@ sysprof_about (GSimpleAction *action,
   g_assert (variant == NULL);
 
   windows = gtk_application_get_windows (app);
-  
+
   if (windows == NULL)
     {
       g_warning ("No windows found to show about dialog");

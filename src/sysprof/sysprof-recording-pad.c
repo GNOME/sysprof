@@ -29,18 +29,20 @@
 
 struct _SysprofRecordingPad
 {
-  AdwWindow         parent_instance;
+  AdwWindow                 parent_instance;
 
-  SysprofRecording *recording;
+  SysprofRecording         *recording;
+  SysprofRecordingTemplate *template;
 
-  GtkButton        *stop_button;
+  GtkButton                *stop_button;
 
-  guint             closed : 1;
+  guint                     closed : 1;
 };
 
 enum {
   PROP_0,
   PROP_RECORDING,
+  PROP_TEMPLATE,
   N_PROPS
 };
 
@@ -124,7 +126,7 @@ sysprof_recording_pad_wait_cb (GObject      *object,
   else if (-1 != (fd = sysprof_recording_dup_fd (self->recording)))
     {
       lseek (fd, 0, SEEK_SET);
-      sysprof_window_open_fd (SYSPROF_APPLICATION_DEFAULT, fd);
+      sysprof_window_open_fd (SYSPROF_APPLICATION_DEFAULT, self->template, fd);
     }
 
   if (!self->closed)
@@ -154,6 +156,7 @@ sysprof_recording_pad_dispose (GObject *object)
   SysprofRecordingPad *self = (SysprofRecordingPad *)object;
 
   g_clear_object (&self->recording);
+  g_clear_object (&self->template);
 
   G_OBJECT_CLASS (sysprof_recording_pad_parent_class)->dispose (object);
 }
@@ -170,6 +173,10 @@ sysprof_recording_pad_get_property (GObject    *object,
     {
     case PROP_RECORDING:
       g_value_set_object (value, self->recording);
+      break;
+
+    case PROP_TEMPLATE:
+      g_value_set_object (value, self->template);
       break;
 
     default:
@@ -189,6 +196,10 @@ sysprof_recording_pad_set_property (GObject      *object,
     {
     case PROP_RECORDING:
       self->recording = g_value_dup_object (value);
+      break;
+
+    case PROP_TEMPLATE:
+      self->template = g_value_dup_object (value);
       break;
 
     default:
@@ -215,6 +226,11 @@ sysprof_recording_pad_class_init (SysprofRecordingPadClass *klass)
                          SYSPROF_TYPE_RECORDING,
                          (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
 
+  properties [PROP_TEMPLATE] =
+    g_param_spec_object ("template", NULL, NULL,
+                         SYSPROF_TYPE_RECORDING_TEMPLATE,
+                         (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-recording-pad.ui");
@@ -232,12 +248,15 @@ sysprof_recording_pad_init (SysprofRecordingPad *self)
 }
 
 GtkWidget *
-sysprof_recording_pad_new (SysprofRecording *recording)
+sysprof_recording_pad_new (SysprofRecording         *recording,
+                           SysprofRecordingTemplate *template)
 {
   g_return_val_if_fail (SYSPROF_IS_RECORDING (recording), NULL);
+  g_return_val_if_fail (!template || SYSPROF_IS_RECORDING_TEMPLATE (template), NULL);
 
   return g_object_new (SYSPROF_TYPE_RECORDING_PAD,
                        "application", SYSPROF_APPLICATION_DEFAULT,
                        "recording", recording,
+                       "template", template,
                        NULL);
 }

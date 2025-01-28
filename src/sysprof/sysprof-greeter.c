@@ -59,6 +59,7 @@ struct _SysprofGreeter
   AdwComboRow              *power_combo;
   AdwComboRow              *sample_user_stack_size;
   AdwExpanderRow           *user_stacks;
+  GtkLabel                 *user_stacks_caption;
   SysprofRecordingTemplate *recording_template;
 };
 
@@ -518,6 +519,7 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, sample_user_stack_size);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, sidebar_list_box);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, user_stacks);
+  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, user_stacks_caption);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, view_stack);
 
   gtk_widget_class_bind_template_callback (widget_class, sidebar_row_activated_cb);
@@ -576,6 +578,7 @@ sysprof_greeter_init (SysprofGreeter *self)
 
 #if !defined(__x86_64__) && !defined(__i386__)
   gtk_widget_set_visible (GTK_WIDGET (self->user_stacks), FALSE);
+  gtk_widget_set_visible (GTK_WIDGET (self->user_stacks_caption), FALSE);
 #endif
 
   gtk_widget_grab_focus (GTK_WIDGET (self->record_to_memory));

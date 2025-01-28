@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#include <json-glib/json-glib.h>
+
 #include "sysprof-recording-template.h"
 
 #define DEFAULT_STACK_SIZE (4096*4)
@@ -679,3 +681,65 @@ sysprof_recording_template_apply (SysprofRecordingTemplate  *self,
 }
 
 G_DEFINE_QUARK (SysprofRecordingTemplateError, sysprof_recording_template_error)
+
+SysprofRecordingTemplate *
+sysprof_recording_template_new_from_file (GFile   *file,
+                                          GError **error)
+{
+  g_autoptr(JsonParser) parser = NULL;
+  SysprofRecordingTemplate *self;
+  JsonNode *root;
+
+  g_return_val_if_fail (G_IS_FILE (file), NULL);
+
+  parser = json_parser_new ();
+
+  if (g_file_is_native (file))
+    {
+      g_autofree char *path = g_file_get_path (file);
+
+      if (!json_parser_load_from_file (parser, path, error))
+        return NULL;
+    }
+  else
+    {
+      g_autoptr(GFileInputStream) stream = g_file_read (file, NULL, error);
+
+      if (stream == NULL)
+        return NULL;
+
+      if (!json_parser_load_from_stream (parser, G_INPUT_STREAM (stream), NULL, error))
+        return NULL;
+    }
+
+  root = json_parser_get_root (parser);
+
+  if (!(self = SYSPROF_RECORDING_TEMPLATE (json_gobject_deserialize (SYSPROF_TYPE_RECORDING_TEMPLATE, root))))
+    return NULL;
+
+  return g_steal_pointer (&self);
+}
+
+gboolean
+sysprof_recording_template_save (SysprofRecordingTemplate  *self,
+                                 GFile                     *file,
+                                 GError                   **error)
+{
+  g_autoptr(GFileOutputStream) stream = NULL;
+  g_autoptr(JsonGenerator) generator = NULL;
+  g_autoptr(JsonNode) root = NULL;
+
+  g_return_val_if_fail (SYSPROF_IS_RECORDING_TEMPLATE (self), FALSE);
+  g_return_val_if_fail (G_IS_FILE (file), FALSE);
+
+  if (!(stream = g_file_replace (file, NULL, FALSE, G_FILE_CREATE_REPLACE_DESTINATION, NULL, error)))
+    return FALSE;
+
+  root = json_gobject_serialize (G_OBJECT (self));
+  generator = json_generator_new ();
+
+  json_generator_set_root (generator, root);
+  json_generator_set_pretty (generator, TRUE);
+
+  return json_generator_to_stream (generator, G_OUTPUT_STREAM (stream), NULL, error);
+}

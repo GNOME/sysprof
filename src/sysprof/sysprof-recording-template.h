@@ -34,8 +34,13 @@ typedef enum
 
 G_DECLARE_FINAL_TYPE (SysprofRecordingTemplate, sysprof_recording_template, SYSPROF, RECORDING_TEMPLATE, GObject)
 
-GQuark           sysprof_recording_template_error_quark (void) G_GNUC_CONST;
-SysprofProfiler *sysprof_recording_template_apply       (SysprofRecordingTemplate  *self,
-                                                         GError                   **error);
+GQuark                    sysprof_recording_template_error_quark   (void) G_GNUC_CONST;
+SysprofProfiler          *sysprof_recording_template_apply         (SysprofRecordingTemplate  *self,
+                                                                    GError                   **error);
+SysprofRecordingTemplate *sysprof_recording_template_new_from_file (GFile                     *file,
+                                                                    GError                   **error);
+gboolean                  sysprof_recording_template_save          (SysprofRecordingTemplate  *self,
+                                                                    GFile                     *file,
+                                                                    GError                   **error);
 
 G_END_DECLS

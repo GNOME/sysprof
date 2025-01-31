@@ -619,6 +619,23 @@
                             </child>
                           </object>
                         </child>
+                        <child>
+                          <object class="AdwPreferencesGroup">
+                            <child>
+                              <object class="AdwActionRow">
+                                <property name="activatable-widget">debuginfod</property>
+                                <property name="title" translatable="yes">Debuginfod</property>
+                                <property name="subtitle" translatable="yes">Enable Debuginfod</property>
+                                <child type="suffix">
+                                  <object class="GtkSwitch" id="debuginfod">
+                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="debuginfod"/>
+                                    <property name="valign">center</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
                       </object>
                     </property>
                   </object>

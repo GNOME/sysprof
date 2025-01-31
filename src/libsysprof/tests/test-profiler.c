@@ -32,6 +32,7 @@ static gboolean memprof;
 static gboolean tracer;
 static gboolean gnome_shell;
 static gboolean bundle_symbols;
+// static gboolean debuginfod;
 static gboolean session_bus;
 static gboolean system_bus;
 static gboolean gjs;
@@ -45,7 +46,8 @@ static const GOptionEntry entries[] = {
   { "power-profile", 'p', 0, G_OPTION_ARG_STRING, &power_profile, "Use POWER_PROFILE for duration of recording", "power-saver|balanced|performance" },
   { "session-bus", 0, 0, G_OPTION_ARG_NONE, &session_bus, "Record D-Bus messages on the session bus" },
   { "system-bus", 0, 0, G_OPTION_ARG_NONE, &system_bus, "Record D-Bus messages on the system bus" },
-  { "bundle-symbols", 'b', 0, G_OPTION_ARG_STRING, &bundle_symbols, "Bundle synbols with the capture" },
+  { "bundle-symbols", 'b', 0, G_OPTION_ARG_STRING, &bundle_symbols, "Bundle symbols with the capture" },
+  // { "debuginfod", 'b', 0, G_OPTION_ARG_STRING, &debuginfod, "Enable debuginfod" },
   { 0 }
 };
 
@@ -191,6 +193,9 @@ main (int   argc,
 
   if (bundle_symbols)
     sysprof_profiler_add_instrument (profiler, sysprof_symbols_bundle_new ());
+
+  // if (debuginfod) /*TODO: this function has not been created anywhere yet*/
+  //   sysprof_profiler_add_instrument (profiler, sysprof_debuginfod_new());
 
   if (power_profile)
     sysprof_profiler_add_instrument (profiler, sysprof_power_profile_new (power_profile));

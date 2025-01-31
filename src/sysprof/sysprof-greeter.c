@@ -57,6 +57,7 @@ struct _SysprofGreeter
   GtkSwitch                *record_session_bus;
   GtkSwitch                *record_system_bus;
   GtkSwitch                *bundle_symbols;
+  GtkSwitch                *debuginfod;
   GtkButton                *record_to_memory;
   AdwComboRow              *power_combo;
   AdwComboRow              *sample_user_stack_size;
@@ -540,6 +541,7 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
 
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, app_environment);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, bundle_symbols);
+  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, debuginfod);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, envvars);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, power_combo);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_compositor);

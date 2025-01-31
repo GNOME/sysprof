@@ -40,6 +40,7 @@ struct _SysprofRecordingTemplate
 
   guint battery_charge : 1;
   guint bundle_symbols : 1;
+  guint debuginfod : 1;
   guint clear_environ : 1;
   guint cpu_usage : 1;
   guint disk_usage : 1;
@@ -63,6 +64,7 @@ enum {
   PROP_0,
   PROP_BATTERY_CHARGE,
   PROP_BUNDLE_SYMBOLS,
+  PROP_DEBUGINFOD,
   PROP_CLEAR_ENVIRON,
   PROP_COMMAND_LINE,
   PROP_CPU_USAGE,
@@ -121,6 +123,10 @@ sysprof_recording_template_get_property (GObject    *object,
 
     case PROP_BUNDLE_SYMBOLS:
       g_value_set_boolean (value, self->bundle_symbols);
+      break;
+    
+    case PROP_DEBUGINFOD:
+      g_value_set_boolean (value, self->debuginfod);
       break;
 
     case PROP_CLEAR_ENVIRON:
@@ -233,6 +239,10 @@ sysprof_recording_template_set_property (GObject      *object,
     case PROP_BUNDLE_SYMBOLS:
       self->bundle_symbols = g_value_get_boolean (value);
       break;
+    
+    case PROP_DEBUGINFOD:
+      self->debuginfod = g_value_get_boolean (value);
+      break;
 
     case PROP_CLEAR_ENVIRON:
       self->clear_environ = g_value_get_boolean (value);
@@ -344,6 +354,11 @@ sysprof_recording_template_class_init (SysprofRecordingTemplateClass *klass)
 
   properties[PROP_BUNDLE_SYMBOLS] =
     g_param_spec_boolean ("bundle-symbols", NULL, NULL,
+                          TRUE,
+                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+                      
+  properties[PROP_DEBUGINFOD] =
+    g_param_spec_boolean ("debuginfod", NULL, NULL,
                           TRUE,
                           (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
@@ -464,6 +479,7 @@ static void
 sysprof_recording_template_init (SysprofRecordingTemplate *self)
 {
   self->bundle_symbols = TRUE;
+  self->debuginfod = TRUE;
   self->cpu_usage = TRUE;
   self->disk_usage = TRUE;
   self->graphics_info = TRUE;
@@ -607,6 +623,9 @@ sysprof_recording_template_apply (SysprofRecordingTemplate  *self,
     sysprof_profiler_add_instrument (profiler, sysprof_battery_charge_new ());
 
   if (self->bundle_symbols)
+    sysprof_profiler_add_instrument (profiler, sysprof_symbols_bundle_new ());
+  
+  if (self->debuginfod) /*TODO: This just uses an a preexisting function. Write the real function*/
     sysprof_profiler_add_instrument (profiler, sysprof_symbols_bundle_new ());
 
   if (self->cpu_usage)

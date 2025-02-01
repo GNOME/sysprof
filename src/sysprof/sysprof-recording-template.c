@@ -625,8 +625,8 @@ sysprof_recording_template_apply (SysprofRecordingTemplate  *self,
   if (self->bundle_symbols)
     sysprof_profiler_add_instrument (profiler, sysprof_symbols_bundle_new ());
   
-  if (self->debuginfod) /*TODO: This just uses an a preexisting function. Write the real function*/
-    sysprof_profiler_add_instrument (profiler, sysprof_symbols_bundle_new ());
+  // if (self->debuginfod) /*TODO: This just uses an a preexisting function.*/
+  //   sysprof_profiler_add_instrument (profiler, this_should_be_a_handler_function());
 
   if (self->cpu_usage)
     sysprof_profiler_add_instrument (profiler, sysprof_cpu_usage_new ());
@@ -798,10 +798,7 @@ sysprof_recording_template_create_loader (SysprofRecordingTemplate  *self,
   sysprof_document_loader_set_symbolizer (loader, SYSPROF_SYMBOLIZER (multi));
 
 #if HAVE_DEBUGINFOD
-#if 0
-  /* TODO: add enable-debuginfod property. */
-  if (self->enable_debuginfod)
-#endif
+if (self->debuginfod)
     {
       g_autoptr(SysprofSymbolizer) debuginfod = NULL;
       g_autoptr(GError) debuginfod_error = NULL;

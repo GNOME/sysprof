@@ -35,7 +35,6 @@ struct _SysprofRecordingTemplate
   char *cwd;
   char *power_profile;
   char **environ;
-  char *debuginfod_external_urls;
 
   guint stack_size;
 
@@ -66,7 +65,6 @@ enum {
   PROP_BATTERY_CHARGE,
   PROP_BUNDLE_SYMBOLS,
   PROP_DEBUGINFOD,
-  PROP_DEBUGINFOD_EXTERNAL_URLS,
   PROP_CLEAR_ENVIRON,
   PROP_COMMAND_LINE,
   PROP_CPU_USAGE,
@@ -105,7 +103,6 @@ sysprof_recording_template_finalize (GObject *object)
   g_clear_pointer (&self->cwd, g_free);
   g_clear_pointer (&self->power_profile, g_free);
   g_clear_pointer (&self->environ, g_free);
-  g_clear_pointer (&self->debuginfod_external_urls, g_free);
 
   G_OBJECT_CLASS (sysprof_recording_template_parent_class)->finalize (object);
 }
@@ -130,10 +127,6 @@ sysprof_recording_template_get_property (GObject    *object,
     
     case PROP_DEBUGINFOD:
       g_value_set_boolean (value, self->debuginfod);
-      break;
-
-    case PROP_DEBUGINFOD_EXTERNAL_URLS:
-      g_value_set_string (value, self->debuginfod_external_urls);
       break;
 
     case PROP_CLEAR_ENVIRON:
@@ -249,10 +242,6 @@ sysprof_recording_template_set_property (GObject      *object,
     
     case PROP_DEBUGINFOD:
       self->debuginfod = g_value_get_boolean (value);
-      break;
-
-    case PROP_DEBUGINFOD_EXTERNAL_URLS:
-      g_set_str (&self->debuginfod_external_urls, g_value_get_string (value));
       break;
 
     case PROP_CLEAR_ENVIRON:
@@ -372,11 +361,6 @@ sysprof_recording_template_class_init (SysprofRecordingTemplateClass *klass)
     g_param_spec_boolean ("debuginfod", NULL, NULL,
                           TRUE,
                           (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
-              
-  properties[PROP_DEBUGINFOD_EXTERNAL_URLS] =
-    g_param_spec_string ("debuginfod-external-urls", NULL, NULL,
-                         NULL,
-                         (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   properties[PROP_CLEAR_ENVIRON] =
     g_param_spec_boolean ("clear-environ", NULL, NULL,
@@ -507,7 +491,6 @@ sysprof_recording_template_init (SysprofRecordingTemplate *self)
   self->system_log = TRUE;
   self->command_line = g_strdup ("");
   self->cwd = g_strdup("");
-  self->debuginfod_external_urls = g_strdup("");
   self->stack_size = DEFAULT_STACK_SIZE;
 }
 
@@ -641,6 +624,9 @@ sysprof_recording_template_apply (SysprofRecordingTemplate  *self,
 
   if (self->bundle_symbols)
     sysprof_profiler_add_instrument (profiler, sysprof_symbols_bundle_new ());
+  
+  // if (self->debuginfod) /*TODO: This just uses an a preexisting function.*/
+  //   sysprof_profiler_add_instrument (profiler, this_should_be_a_handler_function());
 
   if (self->cpu_usage)
     sysprof_profiler_add_instrument (profiler, sysprof_cpu_usage_new ());

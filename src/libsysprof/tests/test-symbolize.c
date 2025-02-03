@@ -7,6 +7,7 @@
 static GMainLoop *main_loop;
 static gboolean silent;
 static gboolean no_bundled;
+static gboolean debuginfod;
 static char **debug_dirs;
 static char *kallsyms_path;
 static const GOptionEntry entries[] = {
@@ -14,9 +15,9 @@ static const GOptionEntry entries[] = {
   { "silent", 's', 0, G_OPTION_ARG_NONE, &silent, "Do not print symbol information" },
   { "debug-dir", 'd', 0, G_OPTION_ARG_FILENAME_ARRAY, &debug_dirs, "Specify external debug directory, may be repeated" },
   { "kallsyms", 'k', 0, G_OPTION_ARG_FILENAME, &kallsyms_path, "Specify path to kallsyms for kernel symbolizing" },
+  { "debuginfod", 'D', 0, G_OPTION_ARG_NONE, &debuginfod, "Use debuginfod for automatically fetching debug symbols" },
   { 0 }
 };
-
 
 static void
 load_cb (GObject      *object,
@@ -162,6 +163,19 @@ main (int argc,
 
       sysprof_multi_symbolizer_take (multi, elf);
       sysprof_multi_symbolizer_take (multi, sysprof_jitmap_symbolizer_new ());
+
+#if HAVE_DEBUGINFOD
+      if (debuginfod)
+        {
+          g_autoptr(SysprofSymbolizer) debuginfod_symbolizer = NULL;
+          g_autoptr(GError) debuginfod_error = NULL;
+
+          if (!(debuginfod_symbolizer = sysprof_debuginfod_symbolizer_new (&debuginfod_error)))
+            g_warning ("Failed to create debuginfod symbolizer: %s", debuginfod_error->message);
+          else
+            sysprof_multi_symbolizer_take (multi, g_steal_pointer (&debuginfod_symbolizer));
+        }
+#endif
 
       sysprof_document_loader_set_symbolizer (loader, SYSPROF_SYMBOLIZER (multi));
     }

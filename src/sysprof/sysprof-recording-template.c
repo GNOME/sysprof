@@ -625,9 +625,6 @@ sysprof_recording_template_apply (SysprofRecordingTemplate  *self,
   if (self->bundle_symbols)
     sysprof_profiler_add_instrument (profiler, sysprof_symbols_bundle_new ());
   
-  // if (self->debuginfod) /*TODO: This just uses an a preexisting function.*/
-  //   sysprof_profiler_add_instrument (profiler, this_should_be_a_handler_function());
-
   if (self->cpu_usage)
     sysprof_profiler_add_instrument (profiler, sysprof_cpu_usage_new ());
 

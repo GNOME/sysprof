@@ -625,7 +625,7 @@
                               <object class="AdwActionRow">
                                 <property name="activatable-widget">debuginfod</property>
                                 <property name="title" translatable="yes">Debuginfod</property>
-                                <property name="subtitle" translatable="yes">Enable Debuginfod</property>
+                                <property name="subtitle" translatable="yes">Enable Debuginfod to automatically fetch debug symbols</property>
                                 <child type="suffix">
                                   <object class="GtkSwitch" id="debuginfod">
                                     <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="debuginfod"/>

@@ -36,6 +36,8 @@ SYSPROF_AVAILABLE_IN_ALL
 GType              sysprof_symbols_bundle_get_type (void) G_GNUC_CONST;
 SYSPROF_AVAILABLE_IN_ALL
 SysprofInstrument *sysprof_symbols_bundle_new      (void);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofInstrument *sysprof_symbols_bundle_new_without_debuginfod (void);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofSymbolsBundle, g_object_unref)
 

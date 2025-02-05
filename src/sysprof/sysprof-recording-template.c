@@ -795,16 +795,16 @@ sysprof_recording_template_create_loader (SysprofRecordingTemplate  *self,
   sysprof_document_loader_set_symbolizer (loader, SYSPROF_SYMBOLIZER (multi));
 
 #if HAVE_DEBUGINFOD
-if (self->debuginfod)
-    {
-      g_autoptr(SysprofSymbolizer) debuginfod = NULL;
-      g_autoptr(GError) debuginfod_error = NULL;
-
-      if (!(debuginfod = sysprof_debuginfod_symbolizer_new (&debuginfod_error)))
-        g_warning ("Failed to create debuginfod symbolizer: %s", debuginfod_error->message);
-      else
-        sysprof_multi_symbolizer_take (multi, g_steal_pointer (&debuginfod));
-    }
+  if (self->debuginfod)
+      {
+        g_autoptr(SysprofSymbolizer) debuginfod = NULL;
+        g_autoptr(GError) debuginfod_error = NULL;
+        
+        if (!(debuginfod = sysprof_debuginfod_symbolizer_new (&debuginfod_error)))
+          g_warning ("Failed to create debuginfod symbolizer: %s", debuginfod_error->message);
+        else
+          sysprof_multi_symbolizer_take (multi, g_steal_pointer (&debuginfod));
+      }
 #endif
 
   return g_steal_pointer (&loader);

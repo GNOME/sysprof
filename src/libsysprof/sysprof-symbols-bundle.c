@@ -36,6 +36,13 @@
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureReader, sysprof_capture_reader_unref)
 
+/*This global variable is probably not multithreading safe, 
+ *but this is the only way I can currently think of to make this work as intended.
+ *Although, it's written to only before any threads are spawned, so it should be fine. 
+ */
+
+static gboolean enable_debuginfod;
+
 struct _SysprofSymbolsBundle
 {
   SysprofInstrument parent_instance;
@@ -53,6 +60,7 @@ sysprof_symbols_bundle_augment_fiber (gpointer user_data)
 {
   g_autoptr(SysprofDocumentLoader) loader = NULL;
   g_autoptr(SysprofSymbolizer) elf = NULL;
+  g_autoptr(SysprofMultiSymbolizer) multi = NULL;
   g_autoptr(SysprofDocument) document = NULL;
   g_autoptr(GBytes) bytes = NULL;
   SysprofRecording *recording = user_data;
@@ -69,11 +77,24 @@ sysprof_symbols_bundle_augment_fiber (gpointer user_data)
     return dex_future_new_for_error (g_steal_pointer (&error));
   g_assert (SYSPROF_IS_DOCUMENT_LOADER (loader));
 
-  /* Only symbolize ELF symbols as the rest can be symbolized
-   * by the application without having to resort to decoding.
-   */
+  multi = sysprof_multi_symbolizer_new ();
+
   elf = sysprof_elf_symbolizer_new ();
-  sysprof_document_loader_set_symbolizer (loader, elf);
+  sysprof_multi_symbolizer_take (multi, SYSPROF_SYMBOLIZER (g_steal_pointer (&elf)));
+
+#if HAVE_DEBUGINFOD
+if (enable_debuginfod)
+    {
+      g_autoptr(SysprofSymbolizer) debuginfod = NULL;
+      g_autoptr(GError) debuginfod_error = NULL;
+      if (!(debuginfod = sysprof_debuginfod_symbolizer_new (&debuginfod_error)))
+        g_warning ("Failed to create debuginfod symbolizer: %s", debuginfod_error->message);
+      else
+        sysprof_multi_symbolizer_take (multi, g_steal_pointer (&debuginfod));
+    }
+#endif
+
+  sysprof_document_loader_set_symbolizer (loader, SYSPROF_SYMBOLIZER (multi));
 
   if (!(document = dex_await_object (_sysprof_document_loader_load (loader), &error)))
     return dex_future_new_for_error (g_steal_pointer (&error));
@@ -129,5 +150,13 @@ sysprof_symbols_bundle_init (SysprofSymbolsBundle *self)
 SysprofInstrument *
 sysprof_symbols_bundle_new (void)
 {
+  enable_debuginfod = TRUE;
+  return g_object_new (SYSPROF_TYPE_SYMBOLS_BUNDLE, NULL);
+}
+
+SysprofInstrument *
+sysprof_symbols_bundle_new_without_debuginfod (void)
+{
+  enable_debuginfod = FALSE;
   return g_object_new (SYSPROF_TYPE_SYMBOLS_BUNDLE, NULL);
 }

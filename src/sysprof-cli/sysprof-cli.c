@@ -46,6 +46,7 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureReader, sysprof_capture_reader_unre
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureWriter, sysprof_capture_writer_unref)
 
 static gboolean no_decode;
+static gboolean enable_debuginfod;
 static GMainLoop *main_loop;
 static SysprofRecording *active_recording;
 
@@ -337,6 +338,7 @@ main (int   argc,
     { "buffer-size", 0, 0, G_OPTION_ARG_INT, &n_buffer_pages, N_("The size of the buffer in pages (1 = 1 page)") },
     { "monitor-bus", 0, 0, G_OPTION_ARG_STRING_ARRAY, &monitor_bus, N_("Additional D-Bus address to monitor") },
     { "stack-size", 0, 0, G_OPTION_ARG_INT, &stack_size, N_("Stack size to copy for unwinding in user-space") },
+    { "no-debuginfod", 0, 0, G_OPTION_ARG_NONE, &enable_debuginfod, N_("Do not use debuginfod to resolve symbols") },
     { NULL }
   };
 
@@ -550,7 +552,12 @@ Examples:\n\
     sysprof_profiler_add_instrument (profiler, sysprof_disk_usage_new ());
 
   if (!no_decode)
-    sysprof_profiler_add_instrument (profiler, sysprof_symbols_bundle_new ());
+    {
+      if(enable_debuginfod)
+        sysprof_profiler_add_instrument (profiler, sysprof_symbols_bundle_new_without_debuginfod ());
+      else
+        sysprof_profiler_add_instrument (profiler, sysprof_symbols_bundle_new ());
+    }
 
   if (!no_cpu)
     sysprof_profiler_add_instrument (profiler, sysprof_cpu_usage_new ());

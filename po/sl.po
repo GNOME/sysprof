@@ -2,15 +2,15 @@
 # Copyright (C) 2016 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
 #
-# Martin Srebotnjak <miles@filmsi.net>, 2022,2024.
+# Martin Srebotnjak <miles@filmsi.net>, 2022,2024,2025.
 # Matej Urbančič <mateju@svn.gnome.org>, 2016–2023
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-11-05 14:01+0000\n"
-"PO-Revision-Date: 2024-11-07 08:50+0100\n"
+"POT-Creation-Date: 2025-02-07 06:26+0000\n"
+"PO-Revision-Date: 2025-02-07 12:09+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
@@ -23,9 +23,9 @@ msgstr ""
 "X-Generator: Poedit 2.2.1\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:6
-#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
-#: src/sysprof/sysprof-application.c:237
-#: src/sysprof/sysprof-recording-pad.ui:20 src/sysprof/sysprof-window.c:250
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:172
+#: src/sysprof/sysprof-application.c:248
+#: src/sysprof/sysprof-recording-pad.ui:20 src/sysprof/sysprof-window.c:274
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -180,14 +180,14 @@ msgstr "Analiziranje prekrivnih elementov datotečnega sistema"
 msgid "Processing counters"
 msgstr "Obdelovanje števcev"
 
-#: src/libsysprof/sysprof-document.c:2478
-#: src/libsysprof/sysprof-document.c:2494
+#: src/libsysprof/sysprof-document.c:2480
+#: src/libsysprof/sysprof-document.c:2499
 #, c-format
 msgid "Recording at %X %x"
 msgstr "Beleženje na %X %x"
 
-#: src/libsysprof/sysprof-document.c:2480
-#: src/libsysprof/sysprof-document.c:2496
+#: src/libsysprof/sysprof-document.c:2483
+#: src/libsysprof/sysprof-document.c:2502
 #, c-format
 msgid "Recording at %s"
 msgstr "Beleženje na %s"
@@ -200,20 +200,20 @@ msgstr "Sporočilo vodila D-Bus"
 msgid "Frame"
 msgstr "Okvir"
 
-#: src/libsysprof/sysprof-document-loader.c:474
+#: src/libsysprof/sysprof-document-loader.c:499
 msgid "Document loaded"
 msgstr "Dokument je naložen"
 
-#: src/libsysprof/sysprof-document-loader.c:505
+#: src/libsysprof/sysprof-document-loader.c:530
 msgid "Loading failed"
 msgstr "Nalaganje je spodletelo"
 
-#: src/libsysprof/sysprof-document-loader.c:517
+#: src/libsysprof/sysprof-document-loader.c:542
 #: src/libsysprof/sysprof-document-symbols.c:276
 msgid "Symbolizing stack traces"
 msgstr "Simbolne sledi sklada"
 
-#: src/libsysprof/sysprof-document-loader.c:586
+#: src/libsysprof/sysprof-document-loader.c:611
 msgid "Loading document"
 msgstr "Poteka nalaganje dokumenta"
 
@@ -221,7 +221,7 @@ msgstr "Poteka nalaganje dokumenta"
 msgid "Log"
 msgstr "Dnevnik"
 
-#: src/libsysprof/sysprof-document-mark.c:113
+#: src/libsysprof/sysprof-document-mark.c:134
 msgid "Mark"
 msgstr "Oznaka"
 
@@ -259,142 +259,146 @@ msgstr ""
 "Sledenje zahteva drstenje programa, izgrajenega z »-finstrument-functions«. "
 "Sledenje ne bo na voljo."
 
-#: src/sysprof-cli/sysprof-cli.c:114
+#: src/sysprof-cli/sysprof-cli.c:115
 msgid "--merge requires at least 2 filename arguments"
 msgstr "--merge zahteva vsaj dve imeni datotek kot argumenta"
 
-#: src/sysprof-cli/sysprof-cli.c:312
+#: src/sysprof-cli/sysprof-cli.c:313
 msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
 msgstr ""
 "Onemogoči omejevanja CPE-ja med profiliranjem [opuščeno za --power-profile]"
 
-#: src/sysprof-cli/sysprof-cli.c:313
+#: src/sysprof-cli/sysprof-cli.c:314
 msgid "Make sysprof specific to a task [Deprecated]"
 msgstr "Naj bo sysprof specifičen za opravilo [opuščeno]"
 
-#: src/sysprof-cli/sysprof-cli.c:313 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof-cli/sysprof-cli.c:314 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:181
 #: src/sysprof/sysprof-processes-section.ui:283
 #: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "PID"
 
-#: src/sysprof-cli/sysprof-cli.c:314
+#: src/sysprof-cli/sysprof-cli.c:315
 msgid "Run a command and profile the process"
 msgstr "Zaženite ukaz in profilirajte postopek"
 
-#: src/sysprof-cli/sysprof-cli.c:314
+#: src/sysprof-cli/sysprof-cli.c:315
 msgid "COMMAND"
 msgstr "UKAZ"
 
-#: src/sysprof-cli/sysprof-cli.c:315
+#: src/sysprof-cli/sysprof-cli.c:316
 msgid ""
 "Set environment variable for spawned process. Can be used multiple times."
 msgstr ""
 "Nastavite spremenljivko okolja za drstitveni proces. Lahko se uporablja "
 "večkrat."
 
-#: src/sysprof-cli/sysprof-cli.c:315
+#: src/sysprof-cli/sysprof-cli.c:316
 msgid "VAR=VALUE"
 msgstr "SPREMENLJIVKA=VREDNOST"
 
-#: src/sysprof-cli/sysprof-cli.c:316
+#: src/sysprof-cli/sysprof-cli.c:317
 msgid "Force overwrite the capture file"
 msgstr "Vsili prepis datoteke za zajem"
 
-#: src/sysprof-cli/sysprof-cli.c:317
+#: src/sysprof-cli/sysprof-cli.c:318
 msgid "Disable recording of battery statistics"
 msgstr "Onemogoči beleženje statistike baterije"
 
-#: src/sysprof-cli/sysprof-cli.c:318
+#: src/sysprof-cli/sysprof-cli.c:319
 msgid "Disable recording of CPU statistics"
 msgstr "Onemogoči beleženje statistike CPE"
 
-#: src/sysprof-cli/sysprof-cli.c:319
+#: src/sysprof-cli/sysprof-cli.c:320
 msgid "Disable recording of Disk statistics"
 msgstr "Onemogoči beleženje statistike diska"
 
-#: src/sysprof-cli/sysprof-cli.c:320
+#: src/sysprof-cli/sysprof-cli.c:321
 msgid "Do not record stacktraces using Linux perf"
 msgstr "Ne beleži sledi skladov z Linux perf"
 
-#: src/sysprof-cli/sysprof-cli.c:321
+#: src/sysprof-cli/sysprof-cli.c:322
 msgid "Do not append symbol name information from local machine"
 msgstr "Ne dodajaj podatkov o imenu simbola iz krajevne naprave"
 
-#: src/sysprof-cli/sysprof-cli.c:322
+#: src/sysprof-cli/sysprof-cli.c:323
 msgid "Disable recording of memory statistics"
 msgstr "Onemogoči beleženje statistike pomnilnika"
 
-#: src/sysprof-cli/sysprof-cli.c:323
+#: src/sysprof-cli/sysprof-cli.c:324
 msgid "Disable recording of network statistics"
 msgstr "Onemogoči beleženje statistike omrežja"
 
-#: src/sysprof-cli/sysprof-cli.c:324
+#: src/sysprof-cli/sysprof-cli.c:325
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr "Nastavi okolje SYSPROF_TRACE_FD za podproces"
 
-#: src/sysprof-cli/sysprof-cli.c:325
+#: src/sysprof-cli/sysprof-cli.c:326
 msgid "Track when processes are scheduled"
 msgstr "Spremljaj, kdaj so procesi načrtovani"
 
-#: src/sysprof-cli/sysprof-cli.c:326
+#: src/sysprof-cli/sysprof-cli.c:327
 msgid "Profile the D-Bus session bus"
 msgstr "Profiliraj vodilo seje D-Bus"
 
-#: src/sysprof-cli/sysprof-cli.c:327
+#: src/sysprof-cli/sysprof-cli.c:328
 msgid "Profile the D-Bus system bus"
 msgstr "Profiliraj sistemsko vodilo D-Bus"
 
-#: src/sysprof-cli/sysprof-cli.c:328
+#: src/sysprof-cli/sysprof-cli.c:329
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr "Nastavi okoljsko spremenljivko GJS_TRACE_FD za sledenje procesom GJS"
 
-#: src/sysprof-cli/sysprof-cli.c:329
+#: src/sysprof-cli/sysprof-cli.c:330
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr "Nastavi okoljsko spremenljivko GTK_TRACE_FD za sledenje programu GTK"
 
-#: src/sysprof-cli/sysprof-cli.c:330
+#: src/sysprof-cli/sysprof-cli.c:331
 msgid "Include RAPL energy statistics"
 msgstr "Vključi statistiko energije RAPL"
 
-#: src/sysprof-cli/sysprof-cli.c:331
+#: src/sysprof-cli/sysprof-cli.c:332
 msgid "Profile memory allocations and frees"
 msgstr "Dodeljevanje in sproščanje pomnilnika profila"
 
-#: src/sysprof-cli/sysprof-cli.c:332
+#: src/sysprof-cli/sysprof-cli.c:333
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr "Poveži se z org.gnome.Shell za statistiko profilnikov"
 
-#: src/sysprof-cli/sysprof-cli.c:333
+#: src/sysprof-cli/sysprof-cli.c:334
 msgid "Track performance of the applications main loop"
 msgstr "Spremljaj hitrost delovanja glavne zanke programov"
 
-#: src/sysprof-cli/sysprof-cli.c:335
+#: src/sysprof-cli/sysprof-cli.c:336
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr "Združi vse ponujene datoteke *.syscap in piši v stdout"
 
-#: src/sysprof-cli/sysprof-cli.c:336
+#: src/sysprof-cli/sysprof-cli.c:337
 msgid "Print the sysprof-cli version and exit"
 msgstr "Izpiši podatke o različici sysprof-cli in končaj"
 
-#: src/sysprof-cli/sysprof-cli.c:337
+#: src/sysprof-cli/sysprof-cli.c:338
 msgid "The size of the buffer in pages (1 = 1 page)"
 msgstr "Velikost medpomnilnika v straneh (1 = 1 stran)"
 
-#: src/sysprof-cli/sysprof-cli.c:338
+#: src/sysprof-cli/sysprof-cli.c:339
 msgid "Additional D-Bus address to monitor"
 msgstr "Dodatni naslov D-Bus za nadzor"
 
-#: src/sysprof-cli/sysprof-cli.c:339
+#: src/sysprof-cli/sysprof-cli.c:340
 msgid "Stack size to copy for unwinding in user-space"
 msgstr "Velikost sklada za kopiranje za sprostitev uporabniškega prostora"
 
-#: src/sysprof-cli/sysprof-cli.c:372
+#: src/sysprof-cli/sysprof-cli.c:341
+msgid "Do not use debuginfod to resolve symbols"
+msgstr "Ne uporabljaj debuginfod za razreševanje simbolov"
+
+#: src/sysprof-cli/sysprof-cli.c:374
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[DATOTEKA_ZAJEMA] [-- UKAZ ARGUMENTI] — Sysprof"
 
-#: src/sysprof-cli/sysprof-cli.c:375
+#: src/sysprof-cli/sysprof-cli.c:377
 msgid ""
 "\n"
 "Examples:\n"
@@ -424,12 +428,12 @@ msgstr ""
 "  # kjer je stack-size večkratnik page-size\n"
 "  sysprof-cli —stack-size=8192\n"
 
-#: src/sysprof-cli/sysprof-cli.c:415
+#: src/sysprof-cli/sysprof-cli.c:417
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Preveč argumentov je bilo posredovanih sysprof-cli:"
 
 #. Translators: %s is a file name.
-#: src/sysprof-cli/sysprof-cli.c:471
+#: src/sysprof-cli/sysprof-cli.c:473
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s obstaja. Uporabite --force za prepisovanje\n"
@@ -497,23 +501,6 @@ msgctxt "shortcut window"
 msgid "Quit"
 msgstr "Konča program"
 
-#: src/sysprof/gtk/menus.ui:6
-msgid "_Preferences"
-msgstr "_Možnosti"
-
-#: src/sysprof/gtk/menus.ui:10 src/sysprof/sysprof-greeter.ui:679
-#: src/sysprof/sysprof-window.ui:444
-msgid "_Keyboard Shortcuts"
-msgstr "_Tipkovne bližnjice‫"
-
-#: src/sysprof/gtk/menus.ui:14
-msgid "_Help"
-msgstr "Pomo_č"
-
-#: src/sysprof/gtk/menus.ui:18
-msgid "_About Sysprof"
-msgstr "_O programu"
-
 #: src/sysprof/sysprof-animation.c:1038
 #, c-format
 msgid "Failed to find property %s in %s"
@@ -524,15 +511,15 @@ msgstr "Iskanje lastnosti %s v %s je spodletelo"
 msgid "Failed to retrieve va_list value: %s"
 msgstr "Pridobivanje vrednosti va_list je spodletelo: %s"
 
-#: src/sysprof/sysprof-application.c:37
+#: src/sysprof/sysprof-application.c:38
 msgid "Show Sysprof version and exit"
 msgstr "Izpiši podatke o različici in končaj"
 
-#: src/sysprof/sysprof-application.c:170
+#: src/sysprof/sysprof-application.c:181
 msgid "A system profiler"
 msgstr "Sistemski profilirnik"
 
-#: src/sysprof/sysprof-application.c:171
+#: src/sysprof/sysprof-application.c:182
 msgid "translator-credits"
 msgstr ""
 "Matej Urbančič <mateju@src.gnome.org>\n"
@@ -720,58 +707,58 @@ msgstr "Datoteka"
 msgid "CPU"
 msgstr "CPE"
 
-#: src/sysprof/sysprof-greeter.c:105
+#: src/sysprof/sysprof-greeter.c:128
 msgid "Use KEY=VALUE to set an environment variable"
 msgstr "Uporabite KLJUČ=VREDNOST za nastavitev spremenljivke okolja"
 
-#: src/sysprof/sysprof-greeter.c:111
+#: src/sysprof/sysprof-greeter.c:134
 msgid "Keys may not start with a number"
 msgstr "Ključi se morda ne začnejo s številko"
 
-#: src/sysprof/sysprof-greeter.c:121
+#: src/sysprof/sysprof-greeter.c:144
 msgid "Keys may only contain alpha-numerics or underline."
 msgstr "Ključi lahko vsebujejo le alfanumerične znake in podčrtaje."
 
-#: src/sysprof/sysprof-greeter.c:270 src/sysprof/sysprof-window.c:160
+#: src/sysprof/sysprof-greeter.c:306 src/sysprof/sysprof-window.c:175
 msgid "Must Capture to Local File"
 msgstr "Obvezen zajem v krajevno datoteko"
 
-#: src/sysprof/sysprof-greeter.c:271 src/sysprof/sysprof-window.c:161
+#: src/sysprof/sysprof-greeter.c:307 src/sysprof/sysprof-window.c:176
 msgid "You must choose a local file to capture using Sysprof"
 msgstr ""
 "Izbrati morate krajevno datoteko, ki jo želite zajeti s programom Sysprof"
 
-#: src/sysprof/sysprof-greeter.c:272 src/sysprof/sysprof-recording-pad.c:117
-#: src/sysprof/sysprof-window.c:162 src/sysprof/sysprof-window.c:740
+#: src/sysprof/sysprof-greeter.c:308 src/sysprof/sysprof-recording-pad.c:119
+#: src/sysprof/sysprof-window.c:177 src/sysprof/sysprof-window.c:764
 msgid "Close"
 msgstr "Zapri"
 
-#: src/sysprof/sysprof-greeter.c:295
+#: src/sysprof/sysprof-greeter.c:331
 #, c-format
 msgid "System Capture from %s.syscap"
 msgstr "Zajem sistema iz %s.syscap"
 
-#: src/sysprof/sysprof-greeter.c:299
+#: src/sysprof/sysprof-greeter.c:335
 msgid "Record to File"
 msgstr "Posnemi v datoteko"
 
-#: src/sysprof/sysprof-greeter.c:300
+#: src/sysprof/sysprof-greeter.c:336
 msgid "Record"
 msgstr "Snemaj"
 
-#: src/sysprof/sysprof-greeter.c:447
+#: src/sysprof/sysprof-greeter.c:485
 msgid "No Change"
 msgstr "Ni sprememb"
 
-#: src/sysprof/sysprof-greeter.c:450
+#: src/sysprof/sysprof-greeter.c:488
 msgid "Balanced"
 msgstr "Uravnoteženo"
 
-#: src/sysprof/sysprof-greeter.c:453
+#: src/sysprof/sysprof-greeter.c:491
 msgid "Power Saver"
 msgstr "Varčevalni način"
 
-#: src/sysprof/sysprof-greeter.c:456
+#: src/sysprof/sysprof-greeter.c:494
 msgid "Performance"
 msgstr "Zmogljivost"
 
@@ -1055,33 +1042,39 @@ msgstr "Vključl simbole"
 msgid "Make recording shareable by symbolizing stack traces after recording"
 msgstr "Omogoči souporabo posnetka s simboliziranjem sledi sklada po beleženju"
 
-#: src/sysprof/sysprof-greeter.ui:644
+#: src/sysprof/sysprof-greeter.ui:627
+#| msgid "Debug"
+msgid "Debuginfod"
+msgstr "Debuginfod"
+
+#: src/sysprof/sysprof-greeter.ui:628
+msgid "Enable Debuginfod to automatically fetch debug symbols"
+msgstr ""
+"Omogoči Debuginfod za samodejno pridobivanje simbolov za odpravljanje napak"
+
+#: src/sysprof/sysprof-greeter.ui:661
 msgid "_Open File…"
 msgstr "_Odpri datoteko …"
 
-#: src/sysprof/sysprof-greeter.ui:651
+#: src/sysprof/sysprof-greeter.ui:668
 msgid "Record to _File…"
 msgstr "Posnemi v datoteko …"
 
-#: src/sysprof/sysprof-greeter.ui:658
+#: src/sysprof/sysprof-greeter.ui:675
 msgid "Record to _Memory"
 msgstr "_Beleži v pomnilnik"
 
-#: src/sysprof/sysprof-greeter.ui:673 src/sysprof/sysprof-window.ui:434
-msgid "Open Recording…"
-msgstr "Odpri posnetek …"
+#: src/sysprof/sysprof-greeter.ui:694 src/sysprof/sysprof-window.ui:444
+msgid "_Keyboard Shortcuts"
+msgstr "_Tipkovne bližnjice‫"
 
-#: src/sysprof/sysprof-greeter.ui:683 src/sysprof/sysprof-window.ui:448
+#: src/sysprof/sysprof-greeter.ui:698 src/sysprof/sysprof-window.ui:448
 msgid "Help"
 msgstr "Pomoč"
 
-#: src/sysprof/sysprof-greeter.ui:687 src/sysprof/sysprof-window.ui:452
+#: src/sysprof/sysprof-greeter.ui:702 src/sysprof/sysprof-window.ui:452
 msgid "About Sysprof"
 msgstr "O programu"
-
-#: src/sysprof/sysprof-greeter.ui:693
-msgid "Quit"
-msgstr "Izhod"
 
 #: src/sysprof/sysprof-logs-section.c:105
 msgid "Critical"
@@ -1294,16 +1287,16 @@ msgid "Process Table"
 msgstr "Razpredelnica opravil"
 
 #. translators: this expands to the number of events recorded by the profiler as an indicator of progress
-#: src/sysprof/sysprof-recording-pad.c:56
+#: src/sysprof/sysprof-recording-pad.c:58
 #, c-format
 msgid "%<PRIi64> events"
 msgstr "%<PRIi64> dogodkov"
 
-#: src/sysprof/sysprof-recording-pad.c:113
+#: src/sysprof/sysprof-recording-pad.c:115
 msgid "Recording Failed"
 msgstr "Snemanje ni uspelo"
 
-#: src/sysprof/sysprof-recording-pad.c:115
+#: src/sysprof/sysprof-recording-pad.c:117
 #, c-format
 msgid ""
 "Sysprof failed to record.\n"
@@ -1358,35 +1351,35 @@ msgstr "Globina"
 msgid "Hits"
 msgstr "Zadetki"
 
-#: src/sysprof/sysprof-window.c:178
+#: src/sysprof/sysprof-window.c:194
 msgid "Open Recording"
 msgstr "Odpri posnetek"
 
-#: src/sysprof/sysprof-window.c:179
+#: src/sysprof/sysprof-window.c:195
 msgid "Open"
 msgstr "Odpri"
 
-#: src/sysprof/sysprof-window.c:183
+#: src/sysprof/sysprof-window.c:199
 msgid "Sysprof Capture (*.syscap)"
 msgstr "Sysprof Capture (*.syscap)"
 
-#: src/sysprof/sysprof-window.c:475
+#: src/sysprof/sysprof-window.c:499
 msgid "Save to File"
 msgstr "Shrani v datoteko"
 
-#: src/sysprof/sysprof-window.c:476
+#: src/sysprof/sysprof-window.c:500
 msgid "Save"
 msgstr "Shrani"
 
-#: src/sysprof/sysprof-window.c:655
+#: src/sysprof/sysprof-window.c:679
 msgid "Loading…"
 msgstr "Poteka nalaganje ..."
 
-#: src/sysprof/sysprof-window.c:736
+#: src/sysprof/sysprof-window.c:760
 msgid "Invalid Document"
 msgstr "Neveljaven dokument"
 
-#: src/sysprof/sysprof-window.c:738
+#: src/sysprof/sysprof-window.c:762
 #, c-format
 msgid ""
 "The document could not be loaded. Please check that you have the correct "
@@ -1430,6 +1423,10 @@ msgstr "Shramba"
 #: src/sysprof/sysprof-window.ui:430
 msgid "_Record Again…"
 msgstr "_posnemi znova …"
+
+#: src/sysprof/sysprof-window.ui:434
+msgid "Open Recording…"
+msgstr "Odpri posnetek …"
 
 #: src/sysprof/sysprof-window.ui:438
 msgid "Save As…"

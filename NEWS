@@ -1,3 +1,23 @@
+Overview of changes in Sysprof 48.beta
+======================================
+
+ * Ensure local dbus-monitor is reaped after capturing
+ * Modernization for various GTK deprecations
+ * Add new symbolizer for debuginfod which is enabled by default
+ * Many performance improvements for capture loading
+ * Support for unwinding without frame-pointers on distributions
+   lacking -fno-omit-frame-pointer at the toolchain level. This
+   uses a new "sysprof-live-unwinder" elevated helper process
+   which takes data from perf and unwinds the stack as soon as
+   it can without capturing the perf data to disk.
+   Thank you to Red Hat and the tools team for enabling this
+   work for RHEL.
+ * The greeter now persists your settings and restores them the
+   next time you run Sysprof.
+ * Various graph drawing improvements.
+ * Fixes for time display in various formats.
+ * Translation updates.
+
 Overview of changes in Sysprof 47.0
 ===================================
 

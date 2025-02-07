@@ -30,22 +30,17 @@
 #include "sysprof-document-loader-private.h"
 #include "sysprof-document-private.h"
 
+#include "sysprof-debuginfod-symbolizer.h"
 #include "sysprof-instrument-private.h"
 #include "sysprof-recording-private.h"
 #include "sysprof-symbols-bundle.h"
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureReader, sysprof_capture_reader_unref)
 
-/*This global variable is probably not multithreading safe, 
- *but this is the only way I can currently think of to make this work as intended.
- *Although, it's written to only before any threads are spawned, so it should be fine. 
- */
-
-static gboolean enable_debuginfod;
-
 struct _SysprofSymbolsBundle
 {
   SysprofInstrument parent_instance;
+  guint enable_debuginfod : 1;
 };
 
 struct _SysprofSymbolsBundleClass
@@ -55,15 +50,36 @@ struct _SysprofSymbolsBundleClass
 
 G_DEFINE_FINAL_TYPE (SysprofSymbolsBundle, sysprof_symbols_bundle, SYSPROF_TYPE_INSTRUMENT)
 
+enum {
+  PROP_0,
+  PROP_ENABLE_DEBUGINFOD,
+  N_PROPS
+};
+
+static GParamSpec *properties[N_PROPS];
+
+typedef struct _Augment
+{
+  SysprofRecording *recording;
+  guint enable_debuginfod : 1;
+} Augment;
+
+static void
+augment_free (Augment *augment)
+{
+  g_clear_object (&augment->recording);
+  g_free (augment);
+}
+
 static DexFuture *
 sysprof_symbols_bundle_augment_fiber (gpointer user_data)
 {
+  Augment *augment = user_data;
+  SysprofRecording *recording = augment->recording;
   g_autoptr(SysprofDocumentLoader) loader = NULL;
-  g_autoptr(SysprofSymbolizer) elf = NULL;
   g_autoptr(SysprofMultiSymbolizer) multi = NULL;
   g_autoptr(SysprofDocument) document = NULL;
   g_autoptr(GBytes) bytes = NULL;
-  SysprofRecording *recording = user_data;
   g_autoptr(GError) error = NULL;
   g_autofd int fd = -1;
 
@@ -78,21 +94,18 @@ sysprof_symbols_bundle_augment_fiber (gpointer user_data)
   g_assert (SYSPROF_IS_DOCUMENT_LOADER (loader));
 
   multi = sysprof_multi_symbolizer_new ();
+  sysprof_multi_symbolizer_take (multi, sysprof_elf_symbolizer_new ());
 
-  elf = sysprof_elf_symbolizer_new ();
-  sysprof_multi_symbolizer_take (multi, SYSPROF_SYMBOLIZER (g_steal_pointer (&elf)));
-
-#if HAVE_DEBUGINFOD
-if (enable_debuginfod)
+  if (augment->enable_debuginfod)
     {
       g_autoptr(SysprofSymbolizer) debuginfod = NULL;
       g_autoptr(GError) debuginfod_error = NULL;
+
       if (!(debuginfod = sysprof_debuginfod_symbolizer_new (&debuginfod_error)))
         g_warning ("Failed to create debuginfod symbolizer: %s", debuginfod_error->message);
       else
         sysprof_multi_symbolizer_take (multi, g_steal_pointer (&debuginfod));
     }
-#endif
 
   sysprof_document_loader_set_symbolizer (loader, SYSPROF_SYMBOLIZER (multi));
 
@@ -116,21 +129,80 @@ static DexFuture *
 sysprof_symbols_bundle_augment (SysprofInstrument *instrument,
                                 SysprofRecording  *recording)
 {
-  g_assert (SYSPROF_IS_SYMBOLS_BUNDLE (instrument));
+  SysprofSymbolsBundle *self = (SysprofSymbolsBundle *)instrument;
+  Augment *state;
+
+  g_assert (SYSPROF_IS_SYMBOLS_BUNDLE (self));
   g_assert (SYSPROF_IS_RECORDING (recording));
+
+  state = g_new0 (Augment, 1);
+  state->recording = g_object_ref (recording);
+  state->enable_debuginfod = self->enable_debuginfod;
 
   return dex_scheduler_spawn (NULL, 0,
                               sysprof_symbols_bundle_augment_fiber,
-                              g_object_ref (recording),
-                              g_object_unref);
+                              state,
+                              (GDestroyNotify) augment_free);
+}
+
+static void
+sysprof_symbols_bundle_get_property (GObject    *object,
+                                     guint       prop_id,
+                                     GValue     *value,
+                                     GParamSpec *pspec)
+{
+  SysprofSymbolsBundle *self = SYSPROF_SYMBOLS_BUNDLE (object);
+
+  switch (prop_id)
+    {
+    case PROP_ENABLE_DEBUGINFOD:
+      g_value_set_boolean (value, sysprof_symbols_bundle_get_enable_debuginfod (self));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
+}
+
+static void
+sysprof_symbols_bundle_set_property (GObject      *object,
+                                     guint         prop_id,
+                                     const GValue *value,
+                                     GParamSpec   *pspec)
+{
+  SysprofSymbolsBundle *self = SYSPROF_SYMBOLS_BUNDLE (object);
+
+  switch (prop_id)
+    {
+    case PROP_ENABLE_DEBUGINFOD:
+      sysprof_symbols_bundle_set_enable_debuginfod (self, g_value_get_boolean (value));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
 }
 
 static void
 sysprof_symbols_bundle_class_init (SysprofSymbolsBundleClass *klass)
 {
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
   SysprofInstrumentClass *instrument_class = SYSPROF_INSTRUMENT_CLASS (klass);
 
+  object_class->get_property = sysprof_symbols_bundle_get_property;
+  object_class->set_property = sysprof_symbols_bundle_set_property;
+
   instrument_class->augment = sysprof_symbols_bundle_augment;
+
+  properties[PROP_ENABLE_DEBUGINFOD] =
+    g_param_spec_boolean ("enable-debuginfod", NULL, NULL,
+                          FALSE,
+                          (G_PARAM_READWRITE |
+                           G_PARAM_EXPLICIT_NOTIFY |
+                           G_PARAM_STATIC_STRINGS));
+
+  g_object_class_install_properties (object_class, N_PROPS, properties);
+
 }
 
 static void
@@ -150,13 +222,28 @@ sysprof_symbols_bundle_init (SysprofSymbolsBundle *self)
 SysprofInstrument *
 sysprof_symbols_bundle_new (void)
 {
-  enable_debuginfod = TRUE;
   return g_object_new (SYSPROF_TYPE_SYMBOLS_BUNDLE, NULL);
 }
 
-SysprofInstrument *
-sysprof_symbols_bundle_new_without_debuginfod (void)
+gboolean
+sysprof_symbols_bundle_get_enable_debuginfod (SysprofSymbolsBundle *self)
 {
-  enable_debuginfod = FALSE;
-  return g_object_new (SYSPROF_TYPE_SYMBOLS_BUNDLE, NULL);
+  g_return_val_if_fail (SYSPROF_IS_SYMBOLS_BUNDLE (self), FALSE);
+
+  return self->enable_debuginfod;
+}
+
+void
+sysprof_symbols_bundle_set_enable_debuginfod (SysprofSymbolsBundle *self,
+                                              gboolean              enable_debuginfod)
+{
+  g_return_if_fail (SYSPROF_IS_SYMBOLS_BUNDLE (self));
+
+  enable_debuginfod = !!enable_debuginfod;
+
+  if (enable_debuginfod != self->enable_debuginfod)
+    {
+      self->enable_debuginfod = enable_debuginfod;
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ENABLE_DEBUGINFOD]);
+    }
 }

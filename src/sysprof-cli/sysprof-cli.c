@@ -553,10 +553,9 @@ Examples:\n\
 
   if (!no_decode)
     {
-      if(enable_debuginfod)
-        sysprof_profiler_add_instrument (profiler, sysprof_symbols_bundle_new_without_debuginfod ());
-      else
-        sysprof_profiler_add_instrument (profiler, sysprof_symbols_bundle_new ());
+      SysprofInstrument *bundle = sysprof_symbols_bundle_new ();
+      sysprof_symbols_bundle_set_enable_debuginfod (SYSPROF_SYMBOLS_BUNDLE (bundle), enable_debuginfod);
+      sysprof_profiler_add_instrument (profiler, g_steal_pointer (&bundle));
     }
 
   if (!no_cpu)

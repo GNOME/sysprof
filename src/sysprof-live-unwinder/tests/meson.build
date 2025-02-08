@@ -11,9 +11,11 @@ sysprof_live_unwinder_testsuite_c_args = [
   '-DBUILDDIR="@0@"'.format(meson.current_build_dir()),
 ]
 
-sysprof_live_unwinder_testsuite = {
-  'test-live-unwinder' : {'skip': true},
-}
+sysprof_live_unwinder_testsuite = {}
+
+if host_machine.cpu_family() in ['x86', 'x86_64']
+  sysprof_live_unwinder_testsuite += {'test-live-unwinder' : {'skip': true}}
+endif
 
 sysprof_live_unwinder_testsuite_deps = [
   libsysprof_static_dep,

@@ -52,7 +52,7 @@ static GParamSpec *properties[N_PROPS];
 static char **
 sysprof_power_profile_list_required_policy (SysprofInstrument *instrument)
 {
-  static const char *required_policy[] = {"net.hadess.PowerProfiles.switch-profile", NULL};
+  static const char *required_policy[] = {"org.freedesktop.UPower.PowerProfiles.switch-profile", NULL};
 
   return g_strdupv ((char **)required_policy);
 }
@@ -73,12 +73,12 @@ restore_power_profile (char *power_profile)
         return;
 
       ret = g_dbus_connection_call_sync (bus,
-                                         "net.hadess.PowerProfiles",
-                                         "/net/hadess/PowerProfiles",
+                                         "org.freedesktop.UPower.PowerProfiles",
+                                         "/org/freedesktop/UPower/PowerProfiles",
                                          "org.freedesktop.DBus.Properties",
                                          "Set",
                                          g_variant_new ("(ssv)",
-                                                        "net.hadess.PowerProfiles",
+                                                        "org.freedesktop.UPower.PowerProfiles",
                                                         "ActiveProfile",
                                                         g_variant_new_string (power_profile)),
                                          NULL,
@@ -147,12 +147,12 @@ sysprof_power_profile_prepare_fiber (gpointer user_data)
     goto failure;
 
   if (!(ret = dex_await_variant (dex_dbus_connection_call (bus,
-                                                           "net.hadess.PowerProfiles",
-                                                           "/net/hadess/PowerProfiles",
+                                                           "org.freedesktop.UPower.PowerProfiles",
+                                                           "/org/freedesktop/UPower/PowerProfiles",
                                                            "org.freedesktop.DBus.Properties",
                                                            "Get",
                                                            g_variant_new ("(ss)",
-                                                                          "net.hadess.PowerProfiles",
+                                                                          "org.freedesktop.UPower.PowerProfiles",
                                                                           "ActiveProfile"),
                                                            G_VARIANT_TYPE ("(v)"),
                                                            G_DBUS_CALL_FLAGS_NONE,
@@ -168,12 +168,12 @@ sysprof_power_profile_prepare_fiber (gpointer user_data)
   if (g_strcmp0 (self->id, self->restore_id) != 0)
     {
       if (!(ret = dex_await_variant (dex_dbus_connection_call (bus,
-                                                               "net.hadess.PowerProfiles",
-                                                               "/net/hadess/PowerProfiles",
+                                                               "org.freedesktop.UPower.PowerProfiles",
+                                                               "/org/freedesktop/UPower/PowerProfiles",
                                                                "org.freedesktop.DBus.Properties",
                                                                "Set",
                                                                g_variant_new ("(ssv)",
-                                                                              "net.hadess.PowerProfiles",
+                                                                              "org.freedesktop.UPower.PowerProfiles",
                                                                               "ActiveProfile",
                                                                               g_variant_new_string (self->id)),
                                                                NULL,

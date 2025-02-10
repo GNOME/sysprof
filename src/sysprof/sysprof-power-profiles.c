@@ -50,12 +50,12 @@ sysprof_power_profiles_new (void)
     goto failure;
 
   result = g_dbus_connection_call_sync (bus,
-                                        "net.hadess.PowerProfiles",
-                                        "/net/hadess/PowerProfiles",
+                                        "org.freedesktop.UPower.PowerProfiles",
+                                        "/org/freedesktop/UPower/PowerProfiles",
                                         "org.freedesktop.DBus.Properties",
                                         "Get",
                                         g_variant_new ("(ss)",
-                                                       "net.hadess.PowerProfiles",
+                                                       "org.freedesktop.UPower.PowerProfiles",
                                                        "Profiles"),
                                         G_VARIANT_TYPE ("(v)"),
                                         G_DBUS_CALL_FLAGS_NONE,

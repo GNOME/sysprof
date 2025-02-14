@@ -636,6 +636,48 @@
                             </child>
                           </object>
                         </child>
+                        <child>
+                          <object class="AdwPreferencesGroup">
+                            <child>
+                              <object class="AdwActionRow">
+                                <property name="title" translatable="yes">Debug File Directories</property>
+                                <property name="subtitle" translatable="yes">Directories to search for debug files</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkListBox" id="debug_directories">
+                                <property name="margin-top">12</property>
+                                <property name="selection-mode">none</property>
+                                <property name="visible">false</property>
+                                <style>
+                                  <class name="boxed-list"/>
+                                </style>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkMenuButton">
+                                <property name="direction">left</property>
+                                <property name="margin-top">12</property>
+                                <property name="halign">end</property>
+                                <property name="child">
+                                  <object class="GtkLabel">
+                                    <property name="label" translatable="yes">Add _Directory</property>
+                                    <property name="use-underline">true</property>
+                                  </object>
+                                </property>
+                                <property name="popover">
+                                  <object class="SysprofEntryPopover">
+                                    <property name="title" translatable="yes">Add Directory</property>
+                                    <property name="button-text" translatable="yes">_Add</property>
+                                    <property name="width-request">400</property>
+                                    <signal name="changed" handler="on_debug_dir_entry_changed_cb" swapped="true" object="SysprofGreeter"/>
+                                    <signal name="activate" handler="on_debug_dir_entry_activate_cb" swapped="true" object="SysprofGreeter"/>
+                                  </object>
+                                </property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
                       </object>
                     </property>
                   </object>
@@ -705,6 +747,8 @@
     </section>
   </menu>
   <object class="GtkStringList" id="envvars">
+  </object>
+  <object class="GtkStringList" id="debugdirs">
   </object>
   <object class="GListStore" id="stack_sizes">
     <child>

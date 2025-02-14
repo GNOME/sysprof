@@ -42,12 +42,14 @@ struct _SysprofGreeter
   AdwWindow                 parent_instance;
 
   GtkStringList            *envvars;
+  GtkStringList            *debugdirs;
   SysprofRecordingTemplate *recording_template;
 
   AdwViewStack             *view_stack;
   GtkListBox               *sidebar_list_box;
   AdwPreferencesPage       *record_page;
   GtkListBox               *app_environment;
+  GtkListBox               *debug_directories;
   GtkSwitch                *sample_native_stacks;
   GtkSwitch                *sample_javascript_stacks;
   GtkSwitch                *record_disk_usage;
@@ -110,8 +112,68 @@ on_env_items_changed_cb (SysprofGreeter *self,
 }
 
 static void
+on_debug_dir_items_changed_cb (SysprofGreeter *self,
+                               guint           position,
+                               guint           removed,
+                               guint           added,
+                               GListModel     *model)
+{
+  g_assert (SYSPROF_IS_GREETER (self));
+  g_assert (G_IS_LIST_MODEL (model));
+
+  gtk_widget_set_visible (GTK_WIDGET (self->debug_directories),
+                          g_list_model_get_n_items (model) > 0);
+}                             
+
+static void
 on_env_entry_changed_cb (SysprofGreeter      *self,
                          SysprofEntryPopover *popover)
+{
+  const char *errstr = NULL;
+  gboolean valid = FALSE;
+  const char *text;
+  const char *eq;
+
+  g_assert (SYSPROF_IS_GREETER (self));
+  g_assert (SYSPROF_IS_ENTRY_POPOVER (popover));
+
+  text = sysprof_entry_popover_get_text (popover);
+  eq = strchr (text, '=');
+
+  if (!str_empty0 (text) && eq == NULL)
+    errstr = _("Use KEY=VALUE to set an environment variable");
+
+  if (eq != NULL && eq != text)
+    {
+      if (g_unichar_isdigit (g_utf8_get_char (text)))
+        {
+          errstr = _("Keys may not start with a number");
+          goto failure;
+
+        }
+      for (const char *iter = text; iter < eq; iter = g_utf8_next_char (iter))
+        {
+          gunichar ch = g_utf8_get_char (iter);
+
+          if (!g_unichar_isalnum (ch) && ch != '_')
+            {
+              errstr = _("Keys may only contain alpha-numerics or underline.");
+              goto failure;
+            }
+        }
+
+      if (g_ascii_isalpha (*text))
+        valid = TRUE;
+    }
+
+failure:
+  sysprof_entry_popover_set_ready (popover, valid);
+  sysprof_entry_popover_set_message (popover, errstr);
+}
+
+static void
+on_debug_dir_entry_changed_cb (SysprofGreeter      *self,
+                               SysprofEntryPopover *popover)
 {
   const char *errstr = NULL;
   gboolean valid = FALSE;
@@ -165,6 +227,19 @@ on_env_entry_activate_cb (SysprofGreeter      *self,
   g_assert (GTK_IS_STRING_LIST (self->envvars));
 
   gtk_string_list_append (self->envvars, text);
+  sysprof_entry_popover_set_text (popover, "");
+}
+
+static void
+on_debug_dir_entry_activate_cb (SysprofGreeter      *self,
+                                const char          *text,
+                                SysprofEntryPopover *popover)
+{
+  g_assert (SYSPROF_IS_GREETER (self));
+  g_assert (SYSPROF_IS_ENTRY_POPOVER (popover));
+  g_assert (GTK_IS_STRING_LIST (self->debugdirs));
+
+  gtk_string_list_append (self->debugdirs, text);
   sysprof_entry_popover_set_text (popover, "");
 }
 
@@ -453,6 +528,31 @@ delete_envvar_cb (SysprofGreeter *self,
     }
 }
 
+static void
+delete_debugdirs_cb (SysprofGreeter *self,
+                     GtkButton      *button)
+{
+  const char *debugdirs;
+  guint n_items;
+
+  g_assert (SYSPROF_IS_GREETER (self));
+  g_assert (GTK_IS_BUTTON (button));
+
+  debugdirs = g_object_get_data (G_OBJECT (button), "DEBUGDIR");
+  n_items = g_list_model_get_n_items (G_LIST_MODEL (self->debugdirs));
+
+  for (guint i = 0; i < n_items; i++)
+    {
+      g_autoptr(GtkStringObject) str = g_list_model_get_item (G_LIST_MODEL (self->debugdirs), i);
+
+      if (g_strcmp0 (debugdirs, gtk_string_object_get_string (str)) == 0)
+        {
+          gtk_string_list_remove (self->debugdirs, i);
+          break;
+        }
+    }
+}
+
 static GtkWidget *
 create_envvar_row_cb (gpointer item,
                       gpointer user_data)
@@ -487,6 +587,46 @@ create_envvar_row_cb (gpointer item,
   g_signal_connect_object (button,
                            "clicked",
                            G_CALLBACK (delete_envvar_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+  adw_action_row_add_suffix (row, GTK_WIDGET (button));
+
+  return GTK_WIDGET (row);
+}
+static GtkWidget *
+create_debugdirs_row_cb (gpointer item,
+                         gpointer user_data)
+{
+  SysprofGreeter *self = user_data;
+  GtkStringObject *obj = item;
+  const char *str;
+  g_autofree char *markup = NULL;
+  g_autofree char *escaped = NULL;
+  AdwActionRow *row;
+  GtkButton *button;
+
+  g_assert (SYSPROF_IS_GREETER (self));
+  g_assert (GTK_IS_STRING_OBJECT (obj));
+
+  str = gtk_string_object_get_string (obj);
+  escaped = g_markup_escape_text (str, -1);
+  markup = g_strdup_printf ("<tt>%s</tt>", escaped);
+  row = g_object_new (ADW_TYPE_ACTION_ROW,
+                      "title", markup,
+                      "title-selectable", TRUE,
+                      NULL);
+  button = g_object_new (GTK_TYPE_BUTTON,
+                         "icon-name", "list-remove-symbolic",
+                         "css-classes", STRV_INIT ("flat", "circular"),
+                         "valign", GTK_ALIGN_CENTER,
+                         NULL);
+  g_object_set_data_full (G_OBJECT (button),
+                          "DEBUGDIR",
+                          g_strdup (str),
+                          g_free);
+  g_signal_connect_object (button,
+                           "clicked",
+                           G_CALLBACK (delete_debugdirs_cb),
                            self,
                            G_CONNECT_SWAPPED);
   adw_action_row_add_suffix (row, GTK_WIDGET (button));
@@ -542,6 +682,7 @@ sysprof_greeter_dispose (GObject *object)
   gtk_widget_dispose_template (GTK_WIDGET (self), SYSPROF_TYPE_GREETER);
 
   g_clear_object (&self->envvars);
+  g_clear_object (&self->debugdirs);
   g_clear_object (&self->recording_template);
 
   G_OBJECT_CLASS (sysprof_greeter_parent_class)->dispose (object);
@@ -558,9 +699,11 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-greeter.ui");
 
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, app_environment);
+  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, debug_directories);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, bundle_symbols);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, debuginfod);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, envvars);
+  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, debugdirs);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, power_combo);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_compositor);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_disk_usage);
@@ -582,6 +725,8 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, get_file_path);
   gtk_widget_class_bind_template_callback (widget_class, on_env_entry_activate_cb);
   gtk_widget_class_bind_template_callback (widget_class, on_env_entry_changed_cb);
+  gtk_widget_class_bind_template_callback (widget_class, on_debug_dir_entry_changed_cb);
+  gtk_widget_class_bind_template_callback (widget_class, on_debug_dir_entry_activate_cb);
   gtk_widget_class_bind_template_callback (widget_class, translate_power_profile);
 
   gtk_widget_class_install_action (widget_class, "win.record-to-memory", NULL, sysprof_greeter_record_to_memory_action);
@@ -614,6 +759,13 @@ sysprof_greeter_init (SysprofGreeter *self)
                            G_CONNECT_SWAPPED);
   on_env_items_changed_cb (self, 0, 0, 0, G_LIST_MODEL (self->envvars));
 
+  g_signal_connect_object (self->debugdirs,
+                           "items-changed",
+                           G_CALLBACK (on_debug_dir_items_changed_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+  on_debug_dir_items_changed_cb (self, 0, 0, 0, G_LIST_MODEL (self->debugdirs));
+
   gtk_list_box_bind_model (self->sidebar_list_box,
                            G_LIST_MODEL (adw_view_stack_get_pages (self->view_stack)),
                            sysprof_greeter_create_sidebar_row,
@@ -622,7 +774,12 @@ sysprof_greeter_init (SysprofGreeter *self)
   gtk_list_box_bind_model (self->app_environment,
                            G_LIST_MODEL (self->envvars),
                            create_envvar_row_cb,
-                           self, NULL);
+                           self, NULL);             
+
+   gtk_list_box_bind_model (self->debug_directories,
+                            G_LIST_MODEL (self->debugdirs),
+                            create_debugdirs_row_cb,
+                            self, NULL);                           
 
   if (self->recording_template)
     {

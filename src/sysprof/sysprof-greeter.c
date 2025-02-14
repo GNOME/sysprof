@@ -175,42 +175,22 @@ static void
 on_debug_dir_entry_changed_cb (SysprofGreeter      *self,
                                SysprofEntryPopover *popover)
 {
-  const char *errstr = NULL;
-  gboolean valid = FALSE;
-  const char *text;
-  const char *eq;
+const char *errstr = NULL;
+gboolean valid = FALSE;
+const char *text;
 
-  g_assert (SYSPROF_IS_GREETER (self));
-  g_assert (SYSPROF_IS_ENTRY_POPOVER (popover));
+g_assert (SYSPROF_IS_GREETER (self));
+g_assert (SYSPROF_IS_ENTRY_POPOVER (popover));
 
-  text = sysprof_entry_popover_get_text (popover);
-  eq = strchr (text, '=');
+text = sysprof_entry_popover_get_text (popover);
 
-  if (!str_empty0 (text) && eq == NULL)
-    errstr = _("Use KEY=VALUE to set an environment variable");
-
-  if (eq != NULL && eq != text)
-    {
-      if (g_unichar_isdigit (g_utf8_get_char (text)))
-        {
-          errstr = _("Keys may not start with a number");
-          goto failure;
-
-        }
-      for (const char *iter = text; iter < eq; iter = g_utf8_next_char (iter))
-        {
-          gunichar ch = g_utf8_get_char (iter);
-
-          if (!g_unichar_isalnum (ch) && ch != '_')
-            {
-              errstr = _("Keys may only contain alpha-numerics or underline.");
-              goto failure;
-            }
-        }
-
-      if (g_ascii_isalpha (*text))
-        valid = TRUE;
-    }
+if (g_file_test (text, G_FILE_TEST_IS_DIR))
+  valid = TRUE;
+else
+  {
+    errstr = _("Directory does not exist");
+    goto failure;
+  }
 
 failure:
   sysprof_entry_popover_set_ready (popover, valid);

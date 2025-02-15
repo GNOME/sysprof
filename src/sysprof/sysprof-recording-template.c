@@ -35,6 +35,7 @@ struct _SysprofRecordingTemplate
   char *cwd;
   char *power_profile;
   char **environ;
+  char **debugdirs;
 
   guint stack_size;
 
@@ -65,6 +66,7 @@ enum {
   PROP_BATTERY_CHARGE,
   PROP_BUNDLE_SYMBOLS,
   PROP_DEBUGINFOD,
+  PROP_DEBUGDIRS,
   PROP_CLEAR_ENVIRON,
   PROP_COMMAND_LINE,
   PROP_CPU_USAGE,
@@ -103,6 +105,7 @@ sysprof_recording_template_finalize (GObject *object)
   g_clear_pointer (&self->cwd, g_free);
   g_clear_pointer (&self->power_profile, g_free);
   g_clear_pointer (&self->environ, g_free);
+  g_clear_pointer (&self->debugdirs, g_free);
 
   G_OBJECT_CLASS (sysprof_recording_template_parent_class)->finalize (object);
 }
@@ -155,6 +158,10 @@ sysprof_recording_template_get_property (GObject    *object,
 
     case PROP_ENVIRON:
       g_value_set_boxed (value, self->environ);
+      break;
+    
+    case PROP_DEBUGDIRS:
+      g_value_set_boxed (value, self->debugdirs);
       break;
 
     case PROP_FRAME_TIMINGS:
@@ -270,6 +277,11 @@ sysprof_recording_template_set_property (GObject      *object,
 
     case PROP_ENVIRON:
       g_clear_pointer (&self->environ, g_strfreev);
+      self->environ = g_value_dup_boxed (value);
+      break;
+    
+    case PROP_DEBUGDIRS:
+      g_clear_pointer (&self->debugdirs, g_strfreev);
       self->environ = g_value_dup_boxed (value);
       break;
 
@@ -394,6 +406,11 @@ sysprof_recording_template_class_init (SysprofRecordingTemplateClass *klass)
 
   properties[PROP_ENVIRON] =
     g_param_spec_boxed ("environ", NULL, NULL,
+                        G_TYPE_STRV,
+                        (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  
+  properties[PROP_DEBUGDIRS] =
+    g_param_spec_boxed ("debugdirs", NULL, NULL,
                         G_TYPE_STRV,
                         (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
@@ -783,9 +800,11 @@ sysprof_recording_template_create_loader (SysprofRecordingTemplate  *self,
   multi = sysprof_multi_symbolizer_new ();
 
   elf = SYSPROF_ELF_SYMBOLIZER (sysprof_elf_symbolizer_new ());
-  /* TODO: add extra-debug-directories property and use that to
-   *       call sysprof_elf_symbolizer_set_external_debug_dirs(elf,...)
-   */
+
+  if (self->debugdirs)
+    { 
+      sysprof_elf_symbolizer_set_external_debug_dirs (elf, (const char * const *)self->debugdirs);
+    }
 
   /* Add in order of priority */
   sysprof_multi_symbolizer_take (multi, sysprof_bundled_symbolizer_new ());

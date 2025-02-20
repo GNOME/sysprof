@@ -105,7 +105,7 @@ sysprof_recording_template_finalize (GObject *object)
   g_clear_pointer (&self->cwd, g_free);
   g_clear_pointer (&self->power_profile, g_free);
   g_clear_pointer (&self->environ, g_free);
-  g_clear_pointer (&self->debugdirs, g_free);
+  g_clear_pointer (&self->debugdirs, g_strfreev);
 
   G_OBJECT_CLASS (sysprof_recording_template_parent_class)->finalize (object);
 }
@@ -802,9 +802,7 @@ sysprof_recording_template_create_loader (SysprofRecordingTemplate  *self,
   elf = SYSPROF_ELF_SYMBOLIZER (sysprof_elf_symbolizer_new ());
 
   if (self->debugdirs)
-    { 
-      sysprof_elf_symbolizer_set_external_debug_dirs (elf, (const char * const *)self->debugdirs);
-    }
+    sysprof_elf_symbolizer_set_external_debug_dirs (elf, (const char * const *)self->debugdirs);
 
   /* Add in order of priority */
   sysprof_multi_symbolizer_take (multi, sysprof_bundled_symbolizer_new ());

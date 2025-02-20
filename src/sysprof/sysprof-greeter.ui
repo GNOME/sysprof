@@ -638,12 +638,8 @@
                         </child>
                         <child>
                           <object class="AdwPreferencesGroup">
-                            <child>
-                              <object class="AdwActionRow">
-                                <property name="title" translatable="yes">Debug File Directories</property>
-                                <property name="subtitle" translatable="yes">Directories to search for debug files</property>
-                              </object>
-                            </child>
+                            <property name="title" translatable="yes">Debug File Directories</property>
+                            <property name="description" translatable="yes">Directories to search for debug files</property>
                             <child>
                               <object class="GtkListBox" id="debug_directories">
                                 <property name="margin-top">12</property>
@@ -656,9 +652,13 @@
                             </child>
                             <child>
                               <object class="GtkMenuButton">
-                                <property name="direction">left</property>
+                                <style>
+                                  <class name="large-button"/>
+                                  <class name="pill"/>
+                                </style>
+                                <property name="direction">up</property>
                                 <property name="margin-top">12</property>
-                                <property name="halign">end</property>
+                                <property name="halign">center</property>
                                 <property name="child">
                                   <object class="GtkLabel">
                                     <property name="label" translatable="yes">Add _Directory</property>

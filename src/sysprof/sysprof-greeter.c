@@ -175,24 +175,18 @@ static void
 on_debug_dir_entry_changed_cb (SysprofGreeter      *self,
                                SysprofEntryPopover *popover)
 {
-const char *errstr = NULL;
-gboolean valid = FALSE;
-const char *text;
+  const char *errstr = NULL;
+  gboolean valid = FALSE;
+  const char *text;
 
-g_assert (SYSPROF_IS_GREETER (self));
-g_assert (SYSPROF_IS_ENTRY_POPOVER (popover));
+  g_assert (SYSPROF_IS_GREETER (self));
+  g_assert (SYSPROF_IS_ENTRY_POPOVER (popover));
 
-text = sysprof_entry_popover_get_text (popover);
+  text = sysprof_entry_popover_get_text (popover);
 
-if (g_file_test (text, G_FILE_TEST_IS_DIR))
-  valid = TRUE;
-else
-  {
+  if (!(valid = g_file_test (text, G_FILE_TEST_IS_DIR)))
     errstr = _("Directory does not exist");
-    goto failure;
-  }
 
-failure:
   sysprof_entry_popover_set_ready (popover, valid);
   sysprof_entry_popover_set_message (popover, errstr);
 }

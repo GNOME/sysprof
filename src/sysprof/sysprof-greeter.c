@@ -208,6 +208,23 @@ sysprof_greeter_create_profiler (SysprofGreeter  *self,
 
   g_assert (SYSPROF_IS_GREETER (self));
 
+  if (self->envvars)
+    {
+      guint n_items = g_list_model_get_n_items (G_LIST_MODEL (self->envvars));
+      g_autofree char **envvars = g_new0 (char *, n_items + 1);
+
+      for (guint i = 0; i < n_items; i++)
+        {
+          GtkStringObject *str_obj = g_list_model_get_item (G_LIST_MODEL (self->envvars), i);
+
+          envvars[i] = g_strdup (gtk_string_object_get_string (str_obj));
+        }
+
+      g_object_set (self->recording_template,
+                    "environ", envvars,
+                    NULL);
+    }
+
   if ((strobj = adw_combo_row_get_selected_item (self->power_combo)) &&
       (str = gtk_string_object_get_string (strobj)))
     g_object_set (self->recording_template,
@@ -605,6 +622,21 @@ sysprof_greeter_init (SysprofGreeter *self)
                            G_LIST_MODEL (self->envvars),
                            create_envvar_row_cb,
                            self, NULL);
+
+  if (self->recording_template)
+    {
+      g_auto(GStrv) environ = NULL;
+      g_object_get (self->recording_template,
+                    "environ", &environ,
+                    NULL);
+      if (environ)
+        {
+          for (guint i = 0; environ[i]; i++)
+            {
+              gtk_string_list_append (self->envvars, environ[i]);
+            }
+        }
+    }
 
   row = gtk_list_box_get_row_at_index (self->sidebar_list_box, 0);
   gtk_list_box_select_row (self->sidebar_list_box, row);

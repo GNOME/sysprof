@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
 "POT-Creation-Date: 2024-07-26 13:47+0000\n"
-"PO-Revision-Date: 2024-08-28 16:35+0200\n"
+"PO-Revision-Date: 2025-02-24 16:35+0200\n"
 "Last-Translator: maite guix <maite.guix@me.com>\n"
 "Language-Team: \n"
 "Language: ca\n"
@@ -63,7 +63,7 @@ msgstr "Accions"
 
 #: src/libsysprof/sysprof-category-summary.c:145
 msgid "Crash Handler"
-msgstr "Gestionador d'icidències"
+msgstr "Gestor de fallades"
 
 #: src/libsysprof/sysprof-category-summary.c:148
 msgid "Context Switches"
@@ -250,7 +250,7 @@ msgid ""
 "Tracing will not be available."
 msgstr ""
 "El rastreig requereix generar un programa compilat amb '-finstrument-"
-"functionsEl ratreig no estarà disponible."
+"functions. El rastreig no estarà disponible."
 
 #: src/sysprof-cli/sysprof-cli.c:112
 msgid "--merge requires at least 2 filename arguments"
@@ -377,7 +377,7 @@ msgstr "Imprimeix la versió del sysprof-cli i surt"
 
 #: src/sysprof-cli/sysprof-cli.c:332
 msgid "The size of the buffer in pages (1 = 1 page)"
-msgstr "La mida de la memòria intermèdia en pàgines (1 = 1 pàgines)"
+msgstr "La mida de la memòria intermèdia en pàgines (1 = 1 pàgina)"
 
 #: src/sysprof-cli/sysprof-cli.c:333
 msgid "Additional D-Bus address to monitor"

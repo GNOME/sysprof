@@ -282,7 +282,7 @@ sysprof_recording_template_set_property (GObject      *object,
     
     case PROP_DEBUGDIRS:
       g_clear_pointer (&self->debugdirs, g_strfreev);
-      self->environ = g_value_dup_boxed (value);
+      self->debugdirs = g_value_dup_boxed (value);
       break;
 
     case PROP_FRAME_TIMINGS:

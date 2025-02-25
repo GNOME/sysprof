@@ -254,6 +254,9 @@ sysprof_greeter_create_profiler (SysprofGreeter  *self,
   g_autoptr(GFile) dir = NULL;
   GtkStringObject *strobj;
   const char *str;
+  guint n_items;
+  g_autoptr(GStrvBuilder) builder = NULL;
+  g_autofree GStrv debugdirs = NULL;
 
   g_assert (SYSPROF_IS_GREETER (self));
 
@@ -280,6 +283,23 @@ sysprof_greeter_create_profiler (SysprofGreeter  *self,
     g_object_set (self->recording_template,
                   "power-profile", str,
                   NULL);
+
+  if ((n_items = g_list_model_get_n_items (G_LIST_MODEL (self->debugdirs))))
+    {
+      builder = g_strv_builder_new ();
+
+      for (guint i = 0; i < n_items; i++)
+        {
+          strobj = g_list_model_get_item (G_LIST_MODEL (self->debugdirs), i);
+          g_strv_builder_add (builder, gtk_string_object_get_string (strobj));
+        }
+
+      debugdirs = g_strv_builder_end (builder);
+
+      g_object_set (self->recording_template,
+                    "debugdirs", debugdirs,
+                    NULL);
+    }
 
   if (!(profiler = sysprof_recording_template_apply (self->recording_template, error)))
     return NULL;
@@ -506,20 +526,20 @@ static void
 delete_debugdirs_cb (SysprofGreeter *self,
                      GtkButton      *button)
 {
-  const char *debugdirs;
+  const char *debug_directory;
   guint n_items;
 
   g_assert (SYSPROF_IS_GREETER (self));
   g_assert (GTK_IS_BUTTON (button));
 
-  debugdirs = g_object_get_data (G_OBJECT (button), "DEBUGDIR");
+  debug_directory = g_object_get_data (G_OBJECT (button), "DEBUGDIR");
   n_items = g_list_model_get_n_items (G_LIST_MODEL (self->debugdirs));
 
   for (guint i = 0; i < n_items; i++)
     {
       g_autoptr(GtkStringObject) str = g_list_model_get_item (G_LIST_MODEL (self->debugdirs), i);
 
-      if (g_strcmp0 (debugdirs, gtk_string_object_get_string (str)) == 0)
+      if (g_strcmp0 (debug_directory, gtk_string_object_get_string (str)) == 0)
         {
           gtk_string_list_remove (self->debugdirs, i);
           break;

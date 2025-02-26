@@ -205,25 +205,25 @@ sysprof_greeter_create_profiler (SysprofGreeter  *self,
   g_autoptr(GFile) dir = NULL;
   GtkStringObject *strobj;
   const char *str;
+  guint envvars_n_items;
+  g_autoptr(GStrvBuilder) envvars_builder = NULL;
+  g_autofree GStrv envvars_list = NULL;
 
   g_assert (SYSPROF_IS_GREETER (self));
-
-  if (self->envvars)
-    {
-      guint n_items = g_list_model_get_n_items (G_LIST_MODEL (self->envvars));
-      g_autofree char **envvars = g_new0 (char *, n_items + 1);
-
-      for (guint i = 0; i < n_items; i++)
-        {
-          GtkStringObject *str_obj = g_list_model_get_item (G_LIST_MODEL (self->envvars), i);
-
-          envvars[i] = g_strdup (gtk_string_object_get_string (str_obj));
-        }
-
-      g_object_set (self->recording_template,
-                    "environ", envvars,
-                    NULL);
-    }
+  
+  if ((envvars_n_items = g_list_model_get_n_items (G_LIST_MODEL (self->envvars))))
+  {
+    envvars_builder = g_strv_builder_new ();
+    for (guint i = 0; i < envvars_n_items; i++)
+      {
+        strobj = g_list_model_get_item (G_LIST_MODEL (self->envvars), i);
+        g_strv_builder_add (envvars_builder, gtk_string_object_get_string (strobj));
+      }
+    envvars_list = g_strv_builder_end (envvars_builder);
+    g_object_set (self->recording_template,
+                  "environ", envvars_list,
+                  NULL);
+  }
 
   if ((strobj = adw_combo_row_get_selected_item (self->power_combo)) &&
       (str = gtk_string_object_get_string (strobj)))

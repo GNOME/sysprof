@@ -1,14 +1,14 @@
 # Korean translation for sysprof.
-# Copyright (C) 2021-2023 sysprof's authors
+# Copyright (C) 2021-2025 sysprof's authors
 # This file is distributed under the same license as the sysprof package.
-# Seong-ho Cho <shcho@gnome.org>, 2021-2024.
+# Seong-ho Cho <shcho@gnome.org>, 2021-2025.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-07-26 13:47+0000\n"
-"PO-Revision-Date: 2024-08-25 00:22+0900\n"
+"POT-Creation-Date: 2025-02-17 12:56+0000\n"
+"PO-Revision-Date: 2025-03-01 04:47+0900\n"
 "Last-Translator: Seong-ho Cho <shcho@gnome.org>\n"
 "Language-Team: Korean <gnome-kr@googlegroups.com>\n"
 "Language: ko\n"
@@ -16,12 +16,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.4.4\n"
+"X-Generator: Poedit 3.5\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:6
-#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
-#: src/sysprof/sysprof-application.c:237
-#: src/sysprof/sysprof-recording-pad.ui:18 src/sysprof/sysprof-window.c:243
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:172
+#: src/sysprof/sysprof-application.c:248
+#: src/sysprof/sysprof-recording-pad.ui:20 src/sysprof/sysprof-window.c:274
 msgid "Sysprof"
 msgstr "시스프롭"
 
@@ -73,7 +73,7 @@ msgid "CSS"
 msgstr "CSS"
 
 #: src/libsysprof/sysprof-category-summary.c:154
-#: src/sysprof/sysprof-greeter.ui:433 src/sysprof/sysprof-window.ui:317
+#: src/sysprof/sysprof-greeter.ui:468 src/sysprof/sysprof-window.ui:363
 msgid "Graphics"
 msgstr "그래픽"
 
@@ -133,6 +133,10 @@ msgstr "재현불가"
 msgid "Windowing"
 msgstr "윈도잉"
 
+#: src/libsysprof/sysprof-debuginfod-task.c:97
+msgid "Downloading Symbols…"
+msgstr "심볼 다운로드 중…"
+
 #: src/libsysprof/sysprof-document-allocation.c:151
 msgid "Allocation"
 msgstr "할당"
@@ -170,14 +174,14 @@ msgstr "파일 시스템 오버레이 분석 중"
 msgid "Processing counters"
 msgstr "처리 카운터"
 
-#: src/libsysprof/sysprof-document.c:2476
-#: src/libsysprof/sysprof-document.c:2492
+#: src/libsysprof/sysprof-document.c:2480
+#: src/libsysprof/sysprof-document.c:2499
 #, c-format
 msgid "Recording at %X %x"
 msgstr "%X %x에 기록하는 중"
 
-#: src/libsysprof/sysprof-document.c:2478
-#: src/libsysprof/sysprof-document.c:2494
+#: src/libsysprof/sysprof-document.c:2483
+#: src/libsysprof/sysprof-document.c:2502
 #, c-format
 msgid "Recording at %s"
 msgstr "%s 기록중"
@@ -190,20 +194,20 @@ msgstr "D-Bus 메시지"
 msgid "Frame"
 msgstr "프레임"
 
-#: src/libsysprof/sysprof-document-loader.c:435
+#: src/libsysprof/sysprof-document-loader.c:499
 msgid "Document loaded"
 msgstr "문서 불러옴"
 
-#: src/libsysprof/sysprof-document-loader.c:466
+#: src/libsysprof/sysprof-document-loader.c:530
 msgid "Loading failed"
 msgstr "불러오기 실패"
 
-#: src/libsysprof/sysprof-document-loader.c:478
-#: src/libsysprof/sysprof-document-symbols.c:217
+#: src/libsysprof/sysprof-document-loader.c:542
+#: src/libsysprof/sysprof-document-symbols.c:276
 msgid "Symbolizing stack traces"
 msgstr "스택 추적 심볼화 진행 중"
 
-#: src/libsysprof/sysprof-document-loader.c:547
+#: src/libsysprof/sysprof-document-loader.c:611
 msgid "Loading document"
 msgstr "문서 불러오는 중"
 
@@ -211,7 +215,7 @@ msgstr "문서 불러오는 중"
 msgid "Log"
 msgstr "로그"
 
-#: src/libsysprof/sysprof-document-mark.c:113
+#: src/libsysprof/sysprof-document-mark.c:134
 msgid "Mark"
 msgstr "마크"
 
@@ -249,137 +253,145 @@ msgstr ""
 "추적 기능은 ‘-finstrument-functions’ 옵션으로 프로그램을 컴파일해야합니다. 추"
 "적 기능을 사용할 수 없습니다."
 
-#: src/sysprof-cli/sysprof-cli.c:112
+#: src/sysprof-cli/sysprof-cli.c:115
 msgid "--merge requires at least 2 filename arguments"
 msgstr "--merge에 최소한 파일 이름 인자 2개가 필요합니다"
 
-#: src/sysprof-cli/sysprof-cli.c:307
+#: src/sysprof-cli/sysprof-cli.c:313
 msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
 msgstr ""
 "프로파일링을 진행하는 동안 CPU 스로틀링을 끕니다 [--power-profile의 오래된 기"
 "능]"
 
-#: src/sysprof-cli/sysprof-cli.c:308
+#: src/sysprof-cli/sysprof-cli.c:314
 msgid "Make sysprof specific to a task [Deprecated]"
 msgstr "시스프롭을 태스크에 맞춥니다[오래된 기능]"
 
-#: src/sysprof-cli/sysprof-cli.c:308 src/sysprof/sysprof-frame-utility.ui:109
-#: src/sysprof/sysprof-logs-section.ui:179
+#: src/sysprof-cli/sysprof-cli.c:314 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof/sysprof-logs-section.ui:181
 #: src/sysprof/sysprof-processes-section.ui:283
 #: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "<PID>"
 
-#: src/sysprof-cli/sysprof-cli.c:309
+#: src/sysprof-cli/sysprof-cli.c:315
 msgid "Run a command and profile the process"
 msgstr "명령을 실행하고 프로세스를 프로파일링합니다"
 
-#: src/sysprof-cli/sysprof-cli.c:309
+#: src/sysprof-cli/sysprof-cli.c:315
 msgid "COMMAND"
 msgstr "<명령>"
 
-#: src/sysprof-cli/sysprof-cli.c:310
+#: src/sysprof-cli/sysprof-cli.c:316
 msgid ""
 "Set environment variable for spawned process. Can be used multiple times."
 msgstr "실행 프로세스용 환경 변수를 설정합니다. 여러 번 사용할 수 있습니다."
 
-#: src/sysprof-cli/sysprof-cli.c:310
+#: src/sysprof-cli/sysprof-cli.c:316
 msgid "VAR=VALUE"
 msgstr "<변수>=<값>"
 
-#: src/sysprof-cli/sysprof-cli.c:311
+#: src/sysprof-cli/sysprof-cli.c:317
 msgid "Force overwrite the capture file"
 msgstr "캡쳐 파일을 강제로 덮어씁니다"
 
-#: src/sysprof-cli/sysprof-cli.c:312
+#: src/sysprof-cli/sysprof-cli.c:318
 msgid "Disable recording of battery statistics"
 msgstr "배터리 통계 기록을 끕니다"
 
-#: src/sysprof-cli/sysprof-cli.c:313
+#: src/sysprof-cli/sysprof-cli.c:319
 msgid "Disable recording of CPU statistics"
 msgstr "CPU 통계 기록을 끕니다"
 
-#: src/sysprof-cli/sysprof-cli.c:314
+#: src/sysprof-cli/sysprof-cli.c:320
 msgid "Disable recording of Disk statistics"
 msgstr "디스크 통계 기록을 끕니다"
 
-#: src/sysprof-cli/sysprof-cli.c:315
+#: src/sysprof-cli/sysprof-cli.c:321
 msgid "Do not record stacktraces using Linux perf"
 msgstr "리눅스 perf로 스택 추적을 기록하지 않습니다"
 
-#: src/sysprof-cli/sysprof-cli.c:316
+#: src/sysprof-cli/sysprof-cli.c:322
 msgid "Do not append symbol name information from local machine"
 msgstr "로컬 머신의 심볼 이름 정보를 붙이지 않습니다"
 
-#: src/sysprof-cli/sysprof-cli.c:317
+#: src/sysprof-cli/sysprof-cli.c:323
 msgid "Disable recording of memory statistics"
 msgstr "메모리 통계 기록을 끕니다"
 
-#: src/sysprof-cli/sysprof-cli.c:318
+#: src/sysprof-cli/sysprof-cli.c:324
 msgid "Disable recording of network statistics"
 msgstr "네트워크 통계 기록을 끕니다"
 
-#: src/sysprof-cli/sysprof-cli.c:319
+#: src/sysprof-cli/sysprof-cli.c:325
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr "하위 프로세스에 SYSPROF_TRACE_FD 환경 변수를 설정합니다"
 
-#: src/sysprof-cli/sysprof-cli.c:320
+#: src/sysprof-cli/sysprof-cli.c:326
 msgid "Track when processes are scheduled"
 msgstr "프로세스를 스케쥴링했을 경우 추적"
 
-#: src/sysprof-cli/sysprof-cli.c:321
+#: src/sysprof-cli/sysprof-cli.c:327
 msgid "Profile the D-Bus session bus"
 msgstr "D-Bus 세션 버스 프로파일링"
 
-#: src/sysprof-cli/sysprof-cli.c:322
+#: src/sysprof-cli/sysprof-cli.c:328
 msgid "Profile the D-Bus system bus"
 msgstr "D-Bus 시스템 버스 프로파일링"
 
-#: src/sysprof-cli/sysprof-cli.c:323
+#: src/sysprof-cli/sysprof-cli.c:329
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr "GJS 프로세스를 추적하도록 GJS_TRACE_FD 환경을 설정합니다"
 
-#: src/sysprof-cli/sysprof-cli.c:324
+#: src/sysprof-cli/sysprof-cli.c:330
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr "GTK 앱을 추적하도록 GTK_TRACE_FD 환경을 설정합니다"
 
-#: src/sysprof-cli/sysprof-cli.c:325
+#: src/sysprof-cli/sysprof-cli.c:331
 msgid "Include RAPL energy statistics"
 msgstr "RAPL 전력 통계 포함"
 
-#: src/sysprof-cli/sysprof-cli.c:326
+#: src/sysprof-cli/sysprof-cli.c:332
 msgid "Profile memory allocations and frees"
 msgstr "메모리 할당 및 해제 프로파일링"
 
-#: src/sysprof-cli/sysprof-cli.c:327
+#: src/sysprof-cli/sysprof-cli.c:333
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr "프로파일러 통계시 org.gnome.Shell에 연결"
 
-#: src/sysprof-cli/sysprof-cli.c:328
+#: src/sysprof-cli/sysprof-cli.c:334
 msgid "Track performance of the applications main loop"
 msgstr "앱 메인 루프의 성능을 추적합니다"
 
-#: src/sysprof-cli/sysprof-cli.c:330
+#: src/sysprof-cli/sysprof-cli.c:336
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr "제공한 *.syscap 파일을 병합하여 표준 출력에 기록합니다"
 
-#: src/sysprof-cli/sysprof-cli.c:331
+#: src/sysprof-cli/sysprof-cli.c:337
 msgid "Print the sysprof-cli version and exit"
 msgstr "sysprof-cli 버전을 출력하고 빠져나갑니다"
 
-#: src/sysprof-cli/sysprof-cli.c:332
+#: src/sysprof-cli/sysprof-cli.c:338
 msgid "The size of the buffer in pages (1 = 1 page)"
 msgstr "페이지당 버퍼 크기(1 = 1페이지)"
 
-#: src/sysprof-cli/sysprof-cli.c:333
+#: src/sysprof-cli/sysprof-cli.c:339
 msgid "Additional D-Bus address to monitor"
 msgstr "감시 관찰할 D-Bus 추가 주소"
 
-#: src/sysprof-cli/sysprof-cli.c:366
+#: src/sysprof-cli/sysprof-cli.c:340
+msgid "Stack size to copy for unwinding in user-space"
+msgstr "사용자 영역에서 되돌릴 복사 스택 크기"
+
+#: src/sysprof-cli/sysprof-cli.c:341
+msgid "Do not use debuginfod to resolve symbols"
+msgstr "심볼 해석에 debuginfod 사용하지 않음"
+
+#: src/sysprof-cli/sysprof-cli.c:374
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[<캡쳐_파일>] [-- <명령> <인자>] — Sysprof"
 
-#: src/sysprof-cli/sysprof-cli.c:369
+#: src/sysprof-cli/sysprof-cli.c:377
 msgid ""
 "\n"
 "Examples:\n"
@@ -390,6 +402,10 @@ msgid ""
 "\n"
 "  # Merge multiple syscap files into one\n"
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+"\n"
+"  # Unwind by capturing stack/register contents instead of frame-pointers\n"
+"  # where the stack-size is a multiple of page-size\n"
+"  sysprof-cli --stack-size=8192\n"
 msgstr ""
 "\n"
 "예제:\n"
@@ -400,13 +416,19 @@ msgstr ""
 "\n"
 "  # 여러 syscap 파일을 하나로 병합\n"
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+"\n"
+"  # 프레임 포인터 대신 스택 레지스터 컨텐츠를 캡쳐하여 되돌리기\n"
+"  # 스택 크기는 다중 페이지 크기이\n"
+"  sysprof-cli --stack-size=8192\n"
+"\n"
+"\n"
 
-#: src/sysprof-cli/sysprof-cli.c:405
+#: src/sysprof-cli/sysprof-cli.c:417
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "sysprof-cli에 너무 많은 인자 값을 전달했습니다:"
 
 #. Translators: %s is a file name.
-#: src/sysprof-cli/sysprof-cli.c:459
+#: src/sysprof-cli/sysprof-cli.c:473
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s이(가) 있습니다. 덮어쓰려면 --force 옵션을 사용하십시오\n"
@@ -474,23 +496,6 @@ msgctxt "shortcut window"
 msgid "Quit"
 msgstr "끝내기"
 
-#: src/sysprof/gtk/menus.ui:6
-msgid "_Preferences"
-msgstr "기본 설정(_P)"
-
-#: src/sysprof/gtk/menus.ui:10 src/sysprof/sysprof-greeter.ui:644
-#: src/sysprof/sysprof-window.ui:398
-msgid "_Keyboard Shortcuts"
-msgstr "키보드 바로 가기(_K)"
-
-#: src/sysprof/gtk/menus.ui:14
-msgid "_Help"
-msgstr "도움말(_H)"
-
-#: src/sysprof/gtk/menus.ui:18
-msgid "_About Sysprof"
-msgstr "시스프롭 정보(_A)"
-
 #: src/sysprof/sysprof-animation.c:1038
 #, c-format
 msgid "Failed to find property %s in %s"
@@ -501,15 +506,15 @@ msgstr "%2$s에서 %1$s 속성 찾기에 실패했습니다"
 msgid "Failed to retrieve va_list value: %s"
 msgstr "va_list 값 전달에 실패했습니다: %s"
 
-#: src/sysprof/sysprof-application.c:37
+#: src/sysprof/sysprof-application.c:38
 msgid "Show Sysprof version and exit"
 msgstr "시스프롭 버전을 나타내고 나갑니다"
 
-#: src/sysprof/sysprof-application.c:170
+#: src/sysprof/sysprof-application.c:181
 msgid "A system profiler"
 msgstr "시스템 프로파일러"
 
-#: src/sysprof/sysprof-application.c:171
+#: src/sysprof/sysprof-application.c:182
 msgid "translator-credits"
 msgstr "조성호 <shcho@gnome.org>, 2021"
 
@@ -564,7 +569,7 @@ msgstr "시간"
 
 #: src/sysprof/sysprof-cpu-section.ui:412
 #: src/sysprof/sysprof-energy-section.ui:382
-#: src/sysprof/sysprof-flame-graph.c:453
+#: src/sysprof/sysprof-flame-graph.c:458
 #: src/sysprof/sysprof-graphics-section.ui:293
 #: src/sysprof/sysprof-marks-section.ui:248
 #: src/sysprof/sysprof-network-section.ui:380
@@ -665,8 +670,8 @@ msgid "Filter Messages"
 msgstr "메시지 선별"
 
 #: src/sysprof/sysprof-dbus-utility.ui:13
-#: src/sysprof/sysprof-logs-section.c:104
-#: src/sysprof/sysprof-logs-section.ui:286
+#: src/sysprof/sysprof-logs-section.c:114
+#: src/sysprof/sysprof-logs-section.ui:290
 msgid "Message"
 msgstr "메시지"
 
@@ -682,7 +687,7 @@ msgstr "압축함"
 msgid "Filter Files"
 msgstr "파일 목록 선별"
 
-#: src/sysprof/sysprof-flame-graph.c:457
+#: src/sysprof/sysprof-flame-graph.c:462
 #: src/sysprof/sysprof-process-dialog.ui:177
 msgid "File"
 msgstr "파일"
@@ -691,61 +696,61 @@ msgstr "파일"
 #: src/sysprof/sysprof-logs-section.ui:143
 #: src/sysprof/sysprof-mark-table.ui:116
 #: src/sysprof/sysprof-traceables-utility.ui:81
-#: src/sysprof/sysprof-window.ui:297
+#: src/sysprof/sysprof-window.ui:343
 msgid "CPU"
 msgstr "CPU"
 
-#: src/sysprof/sysprof-greeter.c:102
+#: src/sysprof/sysprof-greeter.c:128
 msgid "Use KEY=VALUE to set an environment variable"
 msgstr "환경 변수를 설정하려면 키=값 형식을 사용하십시오"
 
-#: src/sysprof/sysprof-greeter.c:108
+#: src/sysprof/sysprof-greeter.c:134
 msgid "Keys may not start with a number"
 msgstr "숫자로 시작하는 키는 안됨"
 
-#: src/sysprof/sysprof-greeter.c:118
+#: src/sysprof/sysprof-greeter.c:144
 msgid "Keys may only contain alpha-numerics or underline."
 msgstr "키에는 영숫자 또는 밑줄 문자만 들어가야합니다."
 
-#: src/sysprof/sysprof-greeter.c:265 src/sysprof/sysprof-window.c:155
+#: src/sysprof/sysprof-greeter.c:306 src/sysprof/sysprof-window.c:175
 msgid "Must Capture to Local File"
 msgstr "로컬 파일을 캡쳐여야 함"
 
-#: src/sysprof/sysprof-greeter.c:266 src/sysprof/sysprof-window.c:156
+#: src/sysprof/sysprof-greeter.c:307 src/sysprof/sysprof-window.c:176
 msgid "You must choose a local file to capture using Sysprof"
 msgstr "시스프롭으로 캡쳐한 로컬 파일을 선택해야합니다"
 
-#: src/sysprof/sysprof-greeter.c:267 src/sysprof/sysprof-recording-pad.c:115
-#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:718
+#: src/sysprof/sysprof-greeter.c:308 src/sysprof/sysprof-recording-pad.c:119
+#: src/sysprof/sysprof-window.c:177 src/sysprof/sysprof-window.c:764
 msgid "Close"
 msgstr "닫기"
 
-#: src/sysprof/sysprof-greeter.c:288
+#: src/sysprof/sysprof-greeter.c:331
 #, c-format
 msgid "System Capture from %s.syscap"
 msgstr "%s.syscap의 시스템 캡쳐 정보"
 
-#: src/sysprof/sysprof-greeter.c:292
+#: src/sysprof/sysprof-greeter.c:335
 msgid "Record to File"
 msgstr "파일에 기록"
 
-#: src/sysprof/sysprof-greeter.c:293
+#: src/sysprof/sysprof-greeter.c:336
 msgid "Record"
 msgstr "기록"
 
-#: src/sysprof/sysprof-greeter.c:440
+#: src/sysprof/sysprof-greeter.c:485
 msgid "No Change"
 msgstr "변경 없음"
 
-#: src/sysprof/sysprof-greeter.c:443
+#: src/sysprof/sysprof-greeter.c:488
 msgid "Balanced"
 msgstr "균형"
 
-#: src/sysprof/sysprof-greeter.c:446
+#: src/sysprof/sysprof-greeter.c:491
 msgid "Power Saver"
 msgstr "전원 절약"
 
-#: src/sysprof/sysprof-greeter.c:449
+#: src/sysprof/sysprof-greeter.c:494
 msgid "Performance"
 msgstr "성능"
 
@@ -761,291 +766,319 @@ msgstr "자체 스택 샘플링"
 msgid "Record native stack traces using a sampling profiler"
 msgstr "샘플링 프로파일러로 자체 스택 추적 내용을 기록"
 
-#: src/sysprof/sysprof-greeter.ui:116
+#: src/sysprof/sysprof-greeter.ui:111
+msgid "Unwind Stacks in User Space"
+msgstr "사용자 영역에서 스택 되돌리기"
+
+#: src/sysprof/sysprof-greeter.ui:112
+msgid "Copy stack contents and registers for unwinding in user-space"
+msgstr "사용자 영역에서 되돌릴 스택 컨텐츠 및 레지스터 복사"
+
+#: src/sysprof/sysprof-greeter.ui:123
+msgid "Stack Size"
+msgstr "스택 크기"
+
+#: src/sysprof/sysprof-greeter.ui:124
+msgid "The number of bytes to copy from the stack"
+msgstr "스택에서 복사할 바이트 수"
+
+#: src/sysprof/sysprof-greeter.ui:135
+msgid ""
+"Unwinding in user-space has considerable overhead but may help in situations "
+"where frame-pointers are unavailable."
+msgstr ""
+"사용자 영역에서의 되돌리기는 오버헤드를 고려할 만합니다만 프레임 포인터를 활"
+"용할 수 없는 상황에서 도움을 줄 수 있습니다."
+
+#: src/sysprof/sysprof-greeter.ui:151
 msgid "Sample JavaScript Stacks"
 msgstr "자바스크립트 샘플링"
 
-#: src/sysprof/sysprof-greeter.ui:117
+#: src/sysprof/sysprof-greeter.ui:152
 msgid "Record JavaScript stack traces using a sampling profiler"
 msgstr "샘플링 프로파일러로 자바스크립트 스택 추적 내용을 기록"
 
-#: src/sysprof/sysprof-greeter.ui:128
+#: src/sysprof/sysprof-greeter.ui:163
 msgid ""
 "Sysprof must launch your application to record JavaScript stacks using GJS."
 msgstr ""
 "시스프롭에서 GJS를 사용하는 자바스크립트 스택을 기록하려면 프로그램을 실행해"
 "야합니다."
 
-#: src/sysprof/sysprof-greeter.ui:144
+#: src/sysprof/sysprof-greeter.ui:179
 msgid "Record Scheduler Details"
 msgstr "기록 스케쥴러 세부 정보"
 
-#: src/sysprof/sysprof-greeter.ui:145
+#: src/sysprof/sysprof-greeter.ui:180
 msgid "Track when processes are scheduled per CPU"
 msgstr "CPU당 프로세스를 스케츌했을 때 추적"
 
-#: src/sysprof/sysprof-greeter.ui:158
+#: src/sysprof/sysprof-greeter.ui:193
 msgid "Tracing"
 msgstr "추적"
 
-#: src/sysprof/sysprof-greeter.ui:162
+#: src/sysprof/sysprof-greeter.ui:197
 msgid "Trace Memory Allocations"
 msgstr "메모리 할당 추적"
 
-#: src/sysprof/sysprof-greeter.ui:163
+#: src/sysprof/sysprof-greeter.ui:198
 msgid "Record a stack trace when <tt>malloc</tt> or similar functions are used"
 msgstr "<tt>malloc</tt> 또는 유사 함수를 사용했을 경우 스택 추적 기록"
 
-#: src/sysprof/sysprof-greeter.ui:174
+#: src/sysprof/sysprof-greeter.ui:209
 msgid "Sysprof must launch your application to record memory allocations."
 msgstr "시스프롭에서 메모리 할당을 기록하려면 앱을 시작해야합니다."
 
-#: src/sysprof/sysprof-greeter.ui:192 src/sysprof/sysprof-greeter.ui:197
+#: src/sysprof/sysprof-greeter.ui:227 src/sysprof/sysprof-greeter.ui:232
 msgid "Application"
 msgstr "앱"
 
-#: src/sysprof/sysprof-greeter.ui:200
+#: src/sysprof/sysprof-greeter.ui:235
 #: src/sysprof/sysprof-processes-section.ui:317
 msgid "Command Line"
 msgstr "명령행"
 
-#: src/sysprof/sysprof-greeter.ui:206
+#: src/sysprof/sysprof-greeter.ui:241
 msgid "Working directory"
 msgstr "작업 디렉터리"
 
-#: src/sysprof/sysprof-greeter.ui:212
+#: src/sysprof/sysprof-greeter.ui:247
 msgid "The application will be run as a subprocess of Sysprof."
 msgstr "앱은 시스프롭의 하위 프로세스로 실행합니다."
 
-#: src/sysprof/sysprof-greeter.ui:225
+#: src/sysprof/sysprof-greeter.ui:260
 msgid "Environment"
 msgstr "환경"
 
-#: src/sysprof/sysprof-greeter.ui:229
+#: src/sysprof/sysprof-greeter.ui:264
 msgid "Clear Environment"
 msgstr "환경 정보 지우기"
 
-#: src/sysprof/sysprof-greeter.ui:230
+#: src/sysprof/sysprof-greeter.ui:265
 msgid "Clear the environment before launching application"
 msgstr "앱을 실행하기 전 환경 정보를 지웁니다"
 
-#: src/sysprof/sysprof-greeter.ui:256
+#: src/sysprof/sysprof-greeter.ui:291
 msgid "Add _Variable"
 msgstr "변수 추가(_V)"
 
-#: src/sysprof/sysprof-greeter.ui:262
+#: src/sysprof/sysprof-greeter.ui:297
 msgid "Add Variable"
 msgstr "변수 추가"
 
-#: src/sysprof/sysprof-greeter.ui:263
+#: src/sysprof/sysprof-greeter.ui:298
 msgid "_Add"
 msgstr "추가(_A)"
 
-#: src/sysprof/sysprof-greeter.ui:280 src/sysprof/sysprof-greeter.ui:285
+#: src/sysprof/sysprof-greeter.ui:315 src/sysprof/sysprof-greeter.ui:320
 msgid "Counters"
 msgstr "카운터"
 
-#: src/sysprof/sysprof-greeter.ui:289
+#: src/sysprof/sysprof-greeter.ui:324
 msgid "CPU Usage"
 msgstr "CPU 사용량"
 
-#: src/sysprof/sysprof-greeter.ui:290
+#: src/sysprof/sysprof-greeter.ui:325
 msgid "Record coarse-grained counters about CPU usage and frequency"
 msgstr "CPU 사용 및 주파수의 엉성한 카운터 정보 기록"
 
-#: src/sysprof/sysprof-greeter.ui:302
+#: src/sysprof/sysprof-greeter.ui:337
 msgid "Memory Usage"
 msgstr "메모리 사용량"
 
-#: src/sysprof/sysprof-greeter.ui:303
+#: src/sysprof/sysprof-greeter.ui:338
 msgid "Record coarse-grained counters about system memory usage"
 msgstr "시스템 메모리 사용량의 엉성한 카운터 정보 기록"
 
-#: src/sysprof/sysprof-greeter.ui:315
+#: src/sysprof/sysprof-greeter.ui:350
 msgid "Disk Usage"
 msgstr "디스크 사용량"
 
-#: src/sysprof/sysprof-greeter.ui:316
+#: src/sysprof/sysprof-greeter.ui:351
 msgid "Record coarse-grained counters about storage throughput"
 msgstr "저장장치 처리량의 엉성한 카운터 정보 기록"
 
-#: src/sysprof/sysprof-greeter.ui:328
+#: src/sysprof/sysprof-greeter.ui:363
 msgid "Network Usage"
 msgstr "네트워크 사용량"
 
-#: src/sysprof/sysprof-greeter.ui:329
+#: src/sysprof/sysprof-greeter.ui:364
 msgid "Record coarse-grained counters about network traffic"
 msgstr "네트워크 처리량의 엉성한 카운터 정보 기록"
 
-#: src/sysprof/sysprof-greeter.ui:345
+#: src/sysprof/sysprof-greeter.ui:380
 msgid "Energy Usage"
 msgstr "전력 사용"
 
-#: src/sysprof/sysprof-greeter.ui:346
+#: src/sysprof/sysprof-greeter.ui:381
 msgid "Record coarse-grained counters about energy usage in Watts"
 msgstr "와트 단위 사용 전력량의 엉성한 카운터 정보 기록"
 
-#: src/sysprof/sysprof-greeter.ui:358
+#: src/sysprof/sysprof-greeter.ui:393
 msgid "Battery Charge"
 msgstr "배터리 충전"
 
-#: src/sysprof/sysprof-greeter.ui:359
+#: src/sysprof/sysprof-greeter.ui:394
 msgid "Record coarse-grained counters about battery charge or discharge rates"
 msgstr "배터리 충전 또는 방전율의 엉성한 카운터 정보 기록"
 
-#: src/sysprof/sysprof-greeter.ui:377 src/sysprof/sysprof-greeter.ui:382
-#: src/sysprof/sysprof-window.ui:287
+#: src/sysprof/sysprof-greeter.ui:412 src/sysprof/sysprof-greeter.ui:417
+#: src/sysprof/sysprof-window.ui:333
 msgid "D-Bus"
 msgstr "D-Bus"
 
-#: src/sysprof/sysprof-greeter.ui:386
+#: src/sysprof/sysprof-greeter.ui:421
 msgid "Record System Bus"
 msgstr "시스템 버스 기록"
 
-#: src/sysprof/sysprof-greeter.ui:387
+#: src/sysprof/sysprof-greeter.ui:422
 msgid "Record messages on the D-Bus system bus"
 msgstr "D-Bus 시스템 버스 메시지 기록"
 
-#: src/sysprof/sysprof-greeter.ui:403
+#: src/sysprof/sysprof-greeter.ui:438
 msgid "Record Session Bus"
 msgstr "세션 버스 기록"
 
-#: src/sysprof/sysprof-greeter.ui:404
+#: src/sysprof/sysprof-greeter.ui:439
 msgid "Record messages on the D-Bus user session bus"
 msgstr "D-Bus 사용자 세션 버스 메시지 기록"
 
-#: src/sysprof/sysprof-greeter.ui:415
+#: src/sysprof/sysprof-greeter.ui:450
 msgid ""
 "The session bus may contain sensitive information such as keyboard usage and "
 "passwords."
 msgstr ""
 "세션 버스에 키보드 사용 정보 및 암호 등의 민감 정보가 들어있을 수 있습니다."
 
-#: src/sysprof/sysprof-greeter.ui:438
+#: src/sysprof/sysprof-greeter.ui:473
 msgid "Timings"
 msgstr "타이밍"
 
-#: src/sysprof/sysprof-greeter.ui:442
+#: src/sysprof/sysprof-greeter.ui:477
 msgid "Compositor Frame Timings"
 msgstr "합성 프레임 타이밍"
 
-#: src/sysprof/sysprof-greeter.ui:443
+#: src/sysprof/sysprof-greeter.ui:478
 msgid "Record frame-timing information from the GNOME Shell compositor"
 msgstr "그놈 셸 컴포지터의 프레임-타이밍 정보를 기록합니다"
 
-#: src/sysprof/sysprof-greeter.ui:454
+#: src/sysprof/sysprof-greeter.ui:489
 msgid ""
 "Applications launched by Sysprof will automatically collect GTK frame timing "
 "information."
 msgstr ""
 "시스프롭에서 실행하는 앱에서 자동으로 GTK 프레임 타이밍 정보를 수집합니다."
 
-#: src/sysprof/sysprof-greeter.ui:494
+#: src/sysprof/sysprof-greeter.ui:529
 msgid "Devices"
 msgstr "장치"
 
-#: src/sysprof/sysprof-greeter.ui:498
+#: src/sysprof/sysprof-greeter.ui:533
 msgid "Include GPU Information"
 msgstr "GPU 정보 포함"
 
-#: src/sysprof/sysprof-greeter.ui:499
+#: src/sysprof/sysprof-greeter.ui:534
 msgid "Records information about graphics hardware and drivers"
 msgstr "그래픽 하드웨어와 드라이버 정보 기록"
 
-#: src/sysprof/sysprof-greeter.ui:517
+#: src/sysprof/sysprof-greeter.ui:552
 msgid "System"
 msgstr "시스템"
 
-#: src/sysprof/sysprof-greeter.ui:522
+#: src/sysprof/sysprof-greeter.ui:557
 msgid "Power Profile"
 msgstr "전원 프로파일"
 
-#: src/sysprof/sysprof-greeter.ui:525
+#: src/sysprof/sysprof-greeter.ui:560
 msgid "Record with Power Profile"
 msgstr "전원 프로파일 기록"
 
-#: src/sysprof/sysprof-greeter.ui:526
+#: src/sysprof/sysprof-greeter.ui:561
 msgid "Switch to power profile while recording"
 msgstr "기록하는 동안 전원 프로파일로 전환"
 
-#: src/sysprof/sysprof-greeter.ui:536
+#: src/sysprof/sysprof-greeter.ui:571
 msgid "Details"
 msgstr "자세히"
 
-#: src/sysprof/sysprof-greeter.ui:540
+#: src/sysprof/sysprof-greeter.ui:575
 msgid "Record System Log"
 msgstr "시스템 로그 기록"
 
-#: src/sysprof/sysprof-greeter.ui:541
+#: src/sysprof/sysprof-greeter.ui:576
 msgid "Watch the system log for new messages and record them"
 msgstr "새 메시지의 시스템 로그를 감시하고 기록합니다"
 
-#: src/sysprof/sysprof-greeter.ui:557
+#: src/sysprof/sysprof-greeter.ui:592
 msgid "Include Hardware Information"
 msgstr "하드웨어 정보 포함"
 
-#: src/sysprof/sysprof-greeter.ui:558
+#: src/sysprof/sysprof-greeter.ui:593
 msgid "Records information about PCI and USB devices"
 msgstr "PCI와 USB 장치 정보 기록"
 
-#: src/sysprof/sysprof-greeter.ui:571
+#: src/sysprof/sysprof-greeter.ui:606
 msgid "Symbols"
 msgstr "심볼"
 
-#: src/sysprof/sysprof-greeter.ui:575
+#: src/sysprof/sysprof-greeter.ui:610
 msgid "Bundle Symbols"
 msgstr "심볼 포함"
 
-#: src/sysprof/sysprof-greeter.ui:576
+#: src/sysprof/sysprof-greeter.ui:611
 msgid "Make recording shareable by symbolizing stack traces after recording"
 msgstr ""
 "기록 후 스택 추적 내용의 심볼화 과정을 거쳐 기록 내용을 공유할 수 있게 합니다"
 
-#: src/sysprof/sysprof-greeter.ui:609
+#: src/sysprof/sysprof-greeter.ui:627
+msgid "Debuginfod"
+msgstr "debuginfod"
+
+#: src/sysprof/sysprof-greeter.ui:628
+msgid "Enable Debuginfod to automatically fetch debug symbols"
+msgstr "디버깅 심볼을 자동으로 가져올 debuginfod 사용"
+
+#: src/sysprof/sysprof-greeter.ui:661
 msgid "_Open File…"
 msgstr "파일 열기(_O)…"
 
-#: src/sysprof/sysprof-greeter.ui:616
+#: src/sysprof/sysprof-greeter.ui:668
 msgid "Record to _File…"
 msgstr "파일에 기록(_F)…"
 
-#: src/sysprof/sysprof-greeter.ui:623
+#: src/sysprof/sysprof-greeter.ui:675
 msgid "Record to _Memory"
 msgstr "메모리에 기록(_M)"
 
-#: src/sysprof/sysprof-greeter.ui:638 src/sysprof/sysprof-window.ui:388
-msgid "Open Recording…"
-msgstr "기록 열기…"
+#: src/sysprof/sysprof-greeter.ui:694 src/sysprof/sysprof-window.ui:444
+msgid "_Keyboard Shortcuts"
+msgstr "키보드 바로 가기(_K)"
 
-#: src/sysprof/sysprof-greeter.ui:648 src/sysprof/sysprof-window.ui:402
+#: src/sysprof/sysprof-greeter.ui:698 src/sysprof/sysprof-window.ui:448
 msgid "Help"
 msgstr "도움말"
 
-#: src/sysprof/sysprof-greeter.ui:652 src/sysprof/sysprof-window.ui:406
+#: src/sysprof/sysprof-greeter.ui:702 src/sysprof/sysprof-window.ui:452
 msgid "About Sysprof"
 msgstr "시스프롭 정보"
 
-#: src/sysprof/sysprof-greeter.ui:658
-msgid "Quit"
-msgstr "끝내기"
-
-#: src/sysprof/sysprof-logs-section.c:95
+#: src/sysprof/sysprof-logs-section.c:105
 msgid "Critical"
 msgstr "치명"
 
-#: src/sysprof/sysprof-logs-section.c:98
+#: src/sysprof/sysprof-logs-section.c:108
 msgid "Warning"
 msgstr "경고"
 
-#: src/sysprof/sysprof-logs-section.c:101
+#: src/sysprof/sysprof-logs-section.c:111
 msgid "Debug"
 msgstr "디버깅"
 
-#: src/sysprof/sysprof-logs-section.c:107
+#: src/sysprof/sysprof-logs-section.c:117
 msgid "Info"
 msgstr "정보"
 
-#: src/sysprof/sysprof-logs-section.c:110
+#: src/sysprof/sysprof-logs-section.c:120
 msgid "Error"
 msgstr "오류"
 
@@ -1053,11 +1086,11 @@ msgstr "오류"
 msgid "Logs"
 msgstr "로그"
 
-#: src/sysprof/sysprof-logs-section.ui:215
+#: src/sysprof/sysprof-logs-section.ui:219
 msgid "Severity"
 msgstr "심각도"
 
-#: src/sysprof/sysprof-logs-section.ui:251
+#: src/sysprof/sysprof-logs-section.ui:255
 msgid "Domain"
 msgstr "도메인"
 
@@ -1209,7 +1242,7 @@ msgstr "루트"
 
 #: src/sysprof/sysprof-process-dialog.ui:486
 msgid "Filesystem"
-msgstr "파일시스템"
+msgstr "파일 시스템"
 
 #: src/sysprof/sysprof-process-dialog.ui:520
 msgid "Options"
@@ -1240,15 +1273,16 @@ msgid "Process Table"
 msgstr "프로세스 표"
 
 #. translators: this expands to the number of events recorded by the profiler as an indicator of progress
-#: src/sysprof/sysprof-recording-pad.c:56
-msgid "%"
-msgstr "%"
+#: src/sysprof/sysprof-recording-pad.c:58
+#, c-format
+msgid "%<PRIi64> events"
+msgstr "%<PRIi64> 이벤트"
 
-#: src/sysprof/sysprof-recording-pad.c:111
+#: src/sysprof/sysprof-recording-pad.c:115
 msgid "Recording Failed"
 msgstr "기록 실패"
 
-#: src/sysprof/sysprof-recording-pad.c:113
+#: src/sysprof/sysprof-recording-pad.c:117
 #, c-format
 msgid ""
 "Sysprof failed to record.\n"
@@ -1259,7 +1293,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: src/sysprof/sysprof-recording-pad.ui:69
+#: src/sysprof/sysprof-recording-pad.ui:71
 msgid "Stop Recording"
 msgstr "기록 정지(_S)"
 
@@ -1267,31 +1301,31 @@ msgstr "기록 정지(_S)"
 msgid "Time Profiler"
 msgstr "시간 프로파일러"
 
-#: src/sysprof/sysprof-samples-section.ui:89 src/sysprof/sysprof-window.ui:419
+#: src/sysprof/sysprof-samples-section.ui:89 src/sysprof/sysprof-window.ui:465
 msgid "Callgraph"
 msgstr "호출그래프"
 
-#: src/sysprof/sysprof-samples-section.ui:172 src/sysprof/sysprof-window.ui:450
+#: src/sysprof/sysprof-samples-section.ui:172 src/sysprof/sysprof-window.ui:496
 msgid "Flamegraph"
 msgstr "화염그래프"
 
-#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:154
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:136
 msgid "Seek Backward"
 msgstr "후방 탐색"
 
-#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:164
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:146
 msgid "Zoom Out"
 msgstr "축소"
 
-#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:174
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:156
 msgid "Reset Zoom"
 msgstr "확대/축소 복귀"
 
-#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:184
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:166
 msgid "Zoom In"
 msgstr "확대"
 
-#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:194
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:176
 msgid "Seek Forward"
 msgstr "전방 탐색"
 
@@ -1303,35 +1337,35 @@ msgstr "깊이"
 msgid "Hits"
 msgstr "히트 수"
 
-#: src/sysprof/sysprof-window.c:171
+#: src/sysprof/sysprof-window.c:194
 msgid "Open Recording"
 msgstr "기록 열기"
 
-#: src/sysprof/sysprof-window.c:172
+#: src/sysprof/sysprof-window.c:195
 msgid "Open"
 msgstr "열기"
 
-#: src/sysprof/sysprof-window.c:176
+#: src/sysprof/sysprof-window.c:199
 msgid "Sysprof Capture (*.syscap)"
 msgstr "시스프롭 캡쳐 (*.syscap)"
 
-#: src/sysprof/sysprof-window.c:468
+#: src/sysprof/sysprof-window.c:499
 msgid "Save to File"
 msgstr "파일로 저장"
 
-#: src/sysprof/sysprof-window.c:469
+#: src/sysprof/sysprof-window.c:500
 msgid "Save"
 msgstr "저장"
 
-#: src/sysprof/sysprof-window.c:638
+#: src/sysprof/sysprof-window.c:679
 msgid "Loading…"
 msgstr "불러오는 중…"
 
-#: src/sysprof/sysprof-window.c:714
+#: src/sysprof/sysprof-window.c:760
 msgid "Invalid Document"
 msgstr "잘못된 문서"
 
-#: src/sysprof/sysprof-window.c:716
+#: src/sysprof/sysprof-window.c:762
 #, c-format
 msgid ""
 "The document could not be loaded. Please check that you have the correct "
@@ -1343,78 +1377,97 @@ msgstr ""
 "\n"
 "%s"
 
-#: src/sysprof/sysprof-window.ui:144
+#: src/sysprof/sysprof-window.ui:126
 msgid "Toggle Left Panel"
 msgstr "좌측 창 전환"
 
-#: src/sysprof/sysprof-window.ui:209
+#: src/sysprof/sysprof-window.ui:191
 msgid "Main Menu"
 msgstr "주 메뉴"
 
-#: src/sysprof/sysprof-window.ui:216
+#: src/sysprof/sysprof-window.ui:198
 msgid "View Options"
 msgstr "옵션 보기"
 
-#: src/sysprof/sysprof-window.ui:222
+#: src/sysprof/sysprof-window.ui:204
 msgid "Toggle Right Panel"
 msgstr "우측 창 전환"
 
-#: src/sysprof/sysprof-window.ui:307
+#: src/sysprof/sysprof-window.ui:353
 msgid "Energy"
 msgstr "전력"
 
-#: src/sysprof/sysprof-window.ui:327
+#: src/sysprof/sysprof-window.ui:373
 msgid "Network"
 msgstr "네트워크"
 
-#: src/sysprof/sysprof-window.ui:337
+#: src/sysprof/sysprof-window.ui:383
 msgid "Storage"
 msgstr "저장소"
 
-#: src/sysprof/sysprof-window.ui:384
+#: src/sysprof/sysprof-window.ui:430
 msgid "_Record Again…"
 msgstr "다시 기록(_R)…"
 
-#: src/sysprof/sysprof-window.ui:392
+#: src/sysprof/sysprof-window.ui:434
+msgid "Open Recording…"
+msgstr "기록 열기…"
+
+#: src/sysprof/sysprof-window.ui:438
 msgid "Save As…"
 msgstr "다른 이름으로 저장…"
 
-#: src/sysprof/sysprof-window.ui:412
+#: src/sysprof/sysprof-window.ui:458
 msgid "_Quit"
 msgstr "끝내기(_Q)"
 
-#: src/sysprof/sysprof-window.ui:421
+#: src/sysprof/sysprof-window.ui:467
 msgid "Categorize Frames"
 msgstr "프레임 분류화"
 
-#: src/sysprof/sysprof-window.ui:425
+#: src/sysprof/sysprof-window.ui:471
 msgid "Hide System Libraries"
 msgstr "시스템 라이브러리 숨기기"
 
-#: src/sysprof/sysprof-window.ui:429
+#: src/sysprof/sysprof-window.ui:475
 msgid "Include Threads"
 msgstr "스레드 포함"
 
-#: src/sysprof/sysprof-window.ui:433
+#: src/sysprof/sysprof-window.ui:479
 msgid "Bottom Up"
 msgstr "상향식"
 
-#: src/sysprof/sysprof-window.ui:437
+#: src/sysprof/sysprof-window.ui:483
 msgid "Ignore Kernel Processes"
 msgstr "커널 프로세스 무시"
 
-#: src/sysprof/sysprof-window.ui:441
+#: src/sysprof/sysprof-window.ui:487
 msgid "Ignore Process 0"
 msgstr "프로세스 0번 무시"
 
-#: src/sysprof/sysprof-window.ui:445
+#: src/sysprof/sysprof-window.ui:491
 msgid "Merge Similar Processes"
 msgstr "유사 프로세스 병합"
 
 #. translators: Left Heavy means to sort larger (heavier) stack frames before others, starting from the left
-#: src/sysprof/sysprof-window.ui:453
+#: src/sysprof/sysprof-window.ui:499
 msgid "Left Heavy"
 msgstr "좌측 편중"
+
+#~ msgid "_Preferences"
+#~ msgstr "기본 설정(_P)"
+
+#~ msgid "_Help"
+#~ msgstr "도움말(_H)"
+
+#~ msgid "_About Sysprof"
+#~ msgstr "시스프롭 정보(_A)"
+
+#~ msgid "Quit"
+#~ msgstr "끝내기"
+
+#~ msgid "%"
+#~ msgstr "%"
 
 #~ msgid "The GNOME Project"
 #~ msgstr "그놈 프로젝트"

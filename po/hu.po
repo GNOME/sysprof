@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2025-02-17 12:56+0000\n"
+"POT-Creation-Date: 2025-03-05 18:24+0000\n"
 "PO-Revision-Date: 2025-03-05 19:22+0100\n"
 "Last-Translator: Balázs Úr <ur.balazs at fsf dot hu>\n"
 "Language-Team: Hungarian <openscope at fsf dot hu>\n"
@@ -131,7 +131,7 @@ msgstr "Típusrendszer"
 
 #: src/libsysprof/sysprof-category-summary.c:193
 msgid "Unwindable"
-msgstr "Lebonthatatlan"
+msgstr "Lebontható"
 
 #: src/libsysprof/sysprof-category-summary.c:196
 msgid "Windowing"
@@ -400,17 +400,6 @@ msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[RÖGZÍTÉSI_FÁJL] [-- PARANCS ARGUMENTUMOK] – Sysprof"
 
 #: src/sysprof-cli/sysprof-cli.c:377
-#| msgid ""
-#| "\n"
-#| "Examples:\n"
-#| "\n"
-#| "  # Record gtk4-widget-factory using trace-fd to get application "
-#| "provided\n"
-#| "  # data as well as GTK and GNOME Shell data providers\n"
-#| "  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
-#| "\n"
-#| "  # Merge multiple syscap files into one\n"
-#| "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 msgid ""
 "\n"
 "Examples:\n"
@@ -796,11 +785,10 @@ msgstr "Vermek lebontása a felhasználói térben"
 #: src/sysprof/sysprof-greeter.ui:112
 msgid "Copy stack contents and registers for unwinding in user-space"
 msgstr ""
-"A veremtartalmak és regiszterek másolása a felhasználói térben történő"
-" lebontáshoz"
+"A veremtartalmak és regiszterek másolása a felhasználói térben történő "
+"lebontáshoz"
 
 #: src/sysprof/sysprof-greeter.ui:123
-#| msgid "Stack Trace"
 msgid "Stack Size"
 msgstr "Verem mérete"
 
@@ -813,8 +801,8 @@ msgid ""
 "Unwinding in user-space has considerable overhead but may help in situations "
 "where frame-pointers are unavailable."
 msgstr ""
-"A felhasználói térben történő lebontás jelentős többletköltséggel jár, de"
-" segíthet olyan helyzetekben, ahol a keretmutatók nem érhetők el."
+"A felhasználói térben történő lebontás jelentős többletköltséggel jár, de "
+"segíthet olyan helyzetekben, ahol a keretmutatók nem érhetők el."
 
 #: src/sysprof/sysprof-greeter.ui:151
 msgid "Sample JavaScript Stacks"
@@ -1074,14 +1062,14 @@ msgstr ""
 "után"
 
 #: src/sysprof/sysprof-greeter.ui:627
-#| msgid "Debug"
 msgid "Debuginfod"
 msgstr "Debuginfod"
 
 #: src/sysprof/sysprof-greeter.ui:628
 msgid "Enable Debuginfod to automatically fetch debug symbols"
 msgstr ""
-"A Debuginfod engedélyezése a hibakeresési szimbólumok automatikus letöltéséhez"
+"A Debuginfod engedélyezése a hibakeresési szimbólumok automatikus "
+"letöltéséhez"
 
 #: src/sysprof/sysprof-greeter.ui:661
 msgid "_Open File…"

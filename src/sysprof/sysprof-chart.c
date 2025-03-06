@@ -135,6 +135,7 @@ sysprof_chart_snapshot (GtkWidget   *widget,
 {
   SysprofChart *self = (SysprofChart *)widget;
   SysprofChartPrivate *priv = sysprof_chart_get_instance_private (self);
+  graphene_point_t child_origin;
 
   g_assert (SYSPROF_IS_CHART (self));
 
@@ -144,11 +145,20 @@ sysprof_chart_snapshot (GtkWidget   *widget,
     {
       GtkWidget *pick = gtk_widget_pick (widget, priv->motion_x, priv->motion_y, GTK_PICK_DEFAULT);
 
-      if (SYSPROF_IS_CHART_LAYER (pick))
-        sysprof_chart_layer_snapshot_motion (SYSPROF_CHART_LAYER (pick),
-                                             snapshot,
-                                             priv->motion_x,
-                                             priv->motion_y);
+      if (SYSPROF_IS_CHART_LAYER (pick) &&
+          gtk_widget_compute_point (pick, widget, &GRAPHENE_POINT_INIT (0, 0), &child_origin))
+        {
+          gtk_snapshot_translate (snapshot, &child_origin);
+
+          sysprof_chart_layer_snapshot_motion (SYSPROF_CHART_LAYER (pick),
+                                               snapshot,
+                                               priv->motion_x,
+                                               priv->motion_y);
+
+          child_origin.x *= -1;
+          child_origin.y *= -1;
+          gtk_snapshot_translate (snapshot, &child_origin);
+        }
     }
 }
 

@@ -9,16 +9,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2025-03-05 18:24+0000\n"
-"PO-Revision-Date: 2025-03-05 19:22+0100\n"
-"Last-Translator: Balázs Úr <ur.balazs at fsf dot hu>\n"
+"POT-Creation-Date: 2025-03-05 21:35+0000\n"
+"PO-Revision-Date: 2025-03-06 00:04+0100\n"
+"Last-Translator: Meskó Balázs <mesko.balazs@fsf.hu>\n"
 "Language-Team: Hungarian <openscope at fsf dot hu>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 23.08.5\n"
+"X-Generator: Poedit 3.5\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:6
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:172
@@ -115,7 +115,7 @@ msgstr "Zárolás"
 
 #: src/libsysprof/sysprof-category-summary.c:181
 msgid "Main Loop"
-msgstr "Fő hurok"
+msgstr "Fő ciklus"
 
 #: src/libsysprof/sysprof-category-summary.c:184
 msgid "Memory"
@@ -259,7 +259,7 @@ msgstr ""
 
 #: src/sysprof-cli/sysprof-cli.c:115
 msgid "--merge requires at least 2 filename arguments"
-msgstr "A --merge kapcsolóhoz legalább két fájlnév argumentum szükséges"
+msgstr "A --merge kapcsolóhoz legalább két fájlnévargumentum szükséges"
 
 #: src/sysprof-cli/sysprof-cli.c:313
 msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
@@ -311,11 +311,11 @@ msgstr "A processzorstatisztikák rögzítésének letiltása"
 
 #: src/sysprof-cli/sysprof-cli.c:320
 msgid "Disable recording of Disk statistics"
-msgstr "A Lemezstatisztikák rögzítésének letiltása"
+msgstr "A lemezstatisztikák rögzítésének letiltása"
 
 #: src/sysprof-cli/sysprof-cli.c:321
 msgid "Do not record stacktraces using Linux perf"
-msgstr "Ne rögzítse a veremkiíratásokat a Linuxos perf használatával"
+msgstr "Ne rögzítse a veremkiíratásokat a linuxos perf használatával"
 
 #: src/sysprof-cli/sysprof-cli.c:322
 msgid "Do not append symbol name information from local machine"
@@ -531,9 +531,10 @@ msgstr ""
 msgid "Functions"
 msgstr "Függvények"
 
+# Ez egy szűrőmező felirata
 #: src/sysprof/sysprof-callgraph-view.ui:71
 msgid "Filter Functions"
-msgstr "Szűrési függvények"
+msgstr "Függvények szűrése"
 
 #: src/sysprof/sysprof-callgraph-view.ui:94
 msgid "Callers"
@@ -934,10 +935,11 @@ msgstr "A hálózati forgalomra vonatkozó durva szemcsés számlálók rögzít
 msgid "Energy Usage"
 msgstr "Energiahasználat"
 
+# Mértékegységként kisbetűvel írjuk
 #: src/sysprof/sysprof-greeter.ui:381
 msgid "Record coarse-grained counters about energy usage in Watts"
 msgstr ""
-"A Wattban mért energiahasználatra vonatkozó durva szemcsés számlálók "
+"A wattban mért energiahasználatra vonatkozó durva szemcsés számlálók "
 "rögzítése"
 
 #: src/sysprof/sysprof-greeter.ui:393
@@ -985,7 +987,7 @@ msgstr "Időzítések"
 
 #: src/sysprof/sysprof-greeter.ui:477
 msgid "Compositor Frame Timings"
-msgstr "Kompozitáló képkocka időzítések"
+msgstr "Kompozitáló képkocka-időzítései"
 
 #: src/sysprof/sysprof-greeter.ui:478
 msgid "Record frame-timing information from the GNOME Shell compositor"
@@ -997,7 +999,7 @@ msgid ""
 "information."
 msgstr ""
 "A Sysprof által indított alkalmazások automatikusan összegyűjtik a GTK-"
-"képkocka időzítési információit."
+"képkockák időzítési információit."
 
 #: src/sysprof/sysprof-greeter.ui:529
 msgid "Devices"
@@ -1457,7 +1459,7 @@ msgstr "_Kilépés"
 
 #: src/sysprof/sysprof-window.ui:467
 msgid "Categorize Frames"
-msgstr "Képkockák kategorizálása"
+msgstr "Keretek kategorizálása"
 
 #: src/sysprof/sysprof-window.ui:471
 msgid "Hide System Libraries"

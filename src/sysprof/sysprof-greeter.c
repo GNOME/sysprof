@@ -207,16 +207,18 @@ sysprof_greeter_create_profiler (SysprofGreeter  *self,
   const char *str;
 
   g_assert (SYSPROF_IS_GREETER (self));
-  
+
   if (g_list_model_get_n_items (G_LIST_MODEL (self->envvars)))
     {
-      g_autoptr(GStrvBuilder) envvars_builder = g_strv_builder_new ();;
+      g_autoptr(GStrvBuilder) envvars_builder = NULL;
       g_auto(GStrv) envvars_list = NULL;
+      
+      envvars_builder = g_strv_builder_new ();
 
       for (guint i = 0; i < g_list_model_get_n_items (G_LIST_MODEL (self->envvars)); i++)
         {
-          strobj = g_list_model_get_item (G_LIST_MODEL (self->envvars), i);
-          g_strv_builder_add (envvars_builder, gtk_string_object_get_string (strobj));
+          g_autoptr(GtkStringObject) env_strobj = g_list_model_get_item (G_LIST_MODEL (self->envvars), i);
+          g_strv_builder_add (envvars_builder, gtk_string_object_get_string (env_strobj));
         }
       envvars_list = g_strv_builder_end (envvars_builder);
       g_object_set (self->recording_template,

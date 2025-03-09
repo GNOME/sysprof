@@ -1,15 +1,24 @@
 # Danish translation for sysprof.
-# Copyright (C) 2019, 2023-24 sysprof's COPYRIGHT HOLDER
+# Copyright (C) 2019, 2023-25 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
 # scootergrisen, 2019-2020.
 # Alan Mortensen <alanmortensen.am@gmail.com>, 2022-23.
-# Ask Hjorth Larsen <asklarsen@gmail.com>, 2023-24.
+# Ask Hjorth Larsen <asklarsen@gmail.com>, 2023-25.
+#
+#
+# Ordliste
+#   unwind (stack) -> vikle (stak) ud
+#   user space -> userspace
+#     https://en.wikipedia.org/wiki/User_space_and_kernel_space
+#     Er det bedre med "brugerrum"?  Mange vil nok ikke genkende det så nemt.
+#     Vi bruger jo dog "kerne" på dansk.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-07-26 13:47+0000\n"
-"PO-Revision-Date: 2024-09-10 00:13+0200\n"
+"POT-Creation-Date: 2025-02-17 12:56+0000\n"
+"PO-Revision-Date: 2025-03-09 02:24+0100\n"
 "Last-Translator: Ask Hjorth Larsen <asklarsen@gmail.com>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
 "Language: da\n"
@@ -20,9 +29,9 @@ msgstr ""
 "X-Generator: Poedit 3.0.1\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:6
-#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
-#: src/sysprof/sysprof-application.c:237
-#: src/sysprof/sysprof-recording-pad.ui:18 src/sysprof/sysprof-window.c:243
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:172
+#: src/sysprof/sysprof-application.c:248
+#: src/sysprof/sysprof-recording-pad.ui:20 src/sysprof/sysprof-window.c:274
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -77,7 +86,7 @@ msgid "CSS"
 msgstr "CSS"
 
 #: src/libsysprof/sysprof-category-summary.c:154
-#: src/sysprof/sysprof-greeter.ui:433 src/sysprof/sysprof-window.ui:317
+#: src/sysprof/sysprof-greeter.ui:468 src/sysprof/sysprof-window.ui:363
 msgid "Graphics"
 msgstr "Grafik"
 
@@ -132,11 +141,15 @@ msgstr "Typesystem"
 
 #: src/libsysprof/sysprof-category-summary.c:193
 msgid "Unwindable"
-msgstr "“Unwindable”"
+msgstr "Kan vikles ud"
 
 #: src/libsysprof/sysprof-category-summary.c:196
 msgid "Windowing"
 msgstr "Vinduessystem"
+
+#: src/libsysprof/sysprof-debuginfod-task.c:97
+msgid "Downloading Symbols…"
+msgstr "Henter symboler …"
 
 #: src/libsysprof/sysprof-document-allocation.c:151
 msgid "Allocation"
@@ -176,15 +189,15 @@ msgid "Processing counters"
 msgstr "Behandler tællere"
 
 # scootergrisen: tjek at det er oversat korrekt
-#: src/libsysprof/sysprof-document.c:2476
-#: src/libsysprof/sysprof-document.c:2492
+#: src/libsysprof/sysprof-document.c:2480
+#: src/libsysprof/sysprof-document.c:2499
 #, c-format
 msgid "Recording at %X %x"
 msgstr "Optagelse %X %x"
 
 # scootergrisen: tjek at det er oversat korrekt
-#: src/libsysprof/sysprof-document.c:2478
-#: src/libsysprof/sysprof-document.c:2494
+#: src/libsysprof/sysprof-document.c:2483
+#: src/libsysprof/sysprof-document.c:2502
 #, c-format
 msgid "Recording at %s"
 msgstr "Optagelse %s"
@@ -198,21 +211,21 @@ msgstr "D-Bus-meddelelse"
 msgid "Frame"
 msgstr "Frame"
 
-#: src/libsysprof/sysprof-document-loader.c:435
+#: src/libsysprof/sysprof-document-loader.c:499
 msgid "Document loaded"
 msgstr "Dokument indlæst"
 
-#: src/libsysprof/sysprof-document-loader.c:466
+#: src/libsysprof/sysprof-document-loader.c:530
 msgid "Loading failed"
 msgstr "Indlæsning mislykkedes"
 
 # Som jeg forstår det, handler det om, at symbolerne (navn på funktioner) findes frem i modsætning til f.eks. kun at have adresserne, hvor funktionerne var allokeret.
-#: src/libsysprof/sysprof-document-loader.c:478
-#: src/libsysprof/sysprof-document-symbols.c:217
+#: src/libsysprof/sysprof-document-loader.c:542
+#: src/libsysprof/sysprof-document-symbols.c:276
 msgid "Symbolizing stack traces"
 msgstr "Tilføjer symboler til stakspor"
 
-#: src/libsysprof/sysprof-document-loader.c:547
+#: src/libsysprof/sysprof-document-loader.c:611
 msgid "Loading document"
 msgstr "Indlæser dokument"
 
@@ -220,7 +233,7 @@ msgstr "Indlæser dokument"
 msgid "Log"
 msgstr "Log"
 
-#: src/libsysprof/sysprof-document-mark.c:113
+#: src/libsysprof/sysprof-document-mark.c:134
 msgid "Mark"
 msgstr "Mærkat"
 
@@ -259,137 +272,145 @@ msgstr ""
 "finstrument-functions”. Sporing vil ikke være tilgængelig."
 
 # scootergrisen: tjek oversættelsen af "filename arguments"
-#: src/sysprof-cli/sysprof-cli.c:112
+#: src/sysprof-cli/sysprof-cli.c:115
 msgid "--merge requires at least 2 filename arguments"
 msgstr "--merge kræver mindst 2 filnavnsargumenter"
 
-#: src/sysprof-cli/sysprof-cli.c:307
+#: src/sysprof-cli/sysprof-cli.c:313
 msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
 msgstr ""
 "Deaktivér justering af CPU-hastighed under profilering [forældet for --power-"
 "profile]"
 
-#: src/sysprof-cli/sysprof-cli.c:308
+#: src/sysprof-cli/sysprof-cli.c:314
 msgid "Make sysprof specific to a task [Deprecated]"
 msgstr "Gør sysprof specifik til en opgave [forældet]"
 
-#: src/sysprof-cli/sysprof-cli.c:308 src/sysprof/sysprof-frame-utility.ui:109
-#: src/sysprof/sysprof-logs-section.ui:179
+#: src/sysprof-cli/sysprof-cli.c:314 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof/sysprof-logs-section.ui:181
 #: src/sysprof/sysprof-processes-section.ui:283
 #: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "PID"
 
-#: src/sysprof-cli/sysprof-cli.c:309
+#: src/sysprof-cli/sysprof-cli.c:315
 msgid "Run a command and profile the process"
 msgstr "Kør en kommando og profilér processen"
 
-#: src/sysprof-cli/sysprof-cli.c:309
+#: src/sysprof-cli/sysprof-cli.c:315
 msgid "COMMAND"
 msgstr "KOMMANDO"
 
-#: src/sysprof-cli/sysprof-cli.c:310
+#: src/sysprof-cli/sysprof-cli.c:316
 msgid ""
 "Set environment variable for spawned process. Can be used multiple times."
 msgstr "Indstil miljøvariabel for startet proces. Kan bruges flere gange."
 
-#: src/sysprof-cli/sysprof-cli.c:310
+#: src/sysprof-cli/sysprof-cli.c:316
 msgid "VAR=VALUE"
 msgstr "VAR=VÆRDI"
 
-#: src/sysprof-cli/sysprof-cli.c:311
+#: src/sysprof-cli/sysprof-cli.c:317
 msgid "Force overwrite the capture file"
 msgstr "Tving overskrivning af optagelsesfilen"
 
-#: src/sysprof-cli/sysprof-cli.c:312
+#: src/sysprof-cli/sysprof-cli.c:318
 msgid "Disable recording of battery statistics"
 msgstr "Deaktivér optagelse af batteristatistik"
 
-#: src/sysprof-cli/sysprof-cli.c:313
+#: src/sysprof-cli/sysprof-cli.c:319
 msgid "Disable recording of CPU statistics"
 msgstr "Deaktivér optagelse af CPU-statistik"
 
-#: src/sysprof-cli/sysprof-cli.c:314
+#: src/sysprof-cli/sysprof-cli.c:320
 msgid "Disable recording of Disk statistics"
 msgstr "Deaktivér optagelse af diskstatistik"
 
-#: src/sysprof-cli/sysprof-cli.c:315
+#: src/sysprof-cli/sysprof-cli.c:321
 msgid "Do not record stacktraces using Linux perf"
 msgstr "Opret ikke stakspor med Linux perf"
 
-#: src/sysprof-cli/sysprof-cli.c:316
+#: src/sysprof-cli/sysprof-cli.c:322
 msgid "Do not append symbol name information from local machine"
 msgstr "Tilføj ikke information om symbolnavn fra lokal maskine"
 
-#: src/sysprof-cli/sysprof-cli.c:317
+#: src/sysprof-cli/sysprof-cli.c:323
 msgid "Disable recording of memory statistics"
 msgstr "Deaktivér optagelse af hukommelsesstatistik"
 
-#: src/sysprof-cli/sysprof-cli.c:318
+#: src/sysprof-cli/sysprof-cli.c:324
 msgid "Disable recording of network statistics"
 msgstr "Deaktivér optagelse af netværksstatistik"
 
-#: src/sysprof-cli/sysprof-cli.c:319
+#: src/sysprof-cli/sysprof-cli.c:325
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr "Indstil SYSPROF_TRACE_FD-miljø for underproces"
 
-#: src/sysprof-cli/sysprof-cli.c:320
+#: src/sysprof-cli/sysprof-cli.c:326
 msgid "Track when processes are scheduled"
 msgstr "Spor allokering af CPU-tid til processer"
 
-#: src/sysprof-cli/sysprof-cli.c:321
+#: src/sysprof-cli/sysprof-cli.c:327
 msgid "Profile the D-Bus session bus"
 msgstr "Profilér D-Bus-sessionsbussen"
 
-#: src/sysprof-cli/sysprof-cli.c:322
+#: src/sysprof-cli/sysprof-cli.c:328
 msgid "Profile the D-Bus system bus"
 msgstr "Profilér D-Bus-systembussen"
 
-#: src/sysprof-cli/sysprof-cli.c:323
+#: src/sysprof-cli/sysprof-cli.c:329
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr "Indstil GJS_TRACE_FD-miljø til sporing af GJS-processer"
 
-#: src/sysprof-cli/sysprof-cli.c:324
+#: src/sysprof-cli/sysprof-cli.c:330
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr "Indstil GTK_TRACE_FD-miljø til sporing af et GTK-program"
 
-#: src/sysprof-cli/sysprof-cli.c:325
+#: src/sysprof-cli/sysprof-cli.c:331
 msgid "Include RAPL energy statistics"
 msgstr "Medtag statistik om RAPL-energi"
 
-#: src/sysprof-cli/sysprof-cli.c:326
+#: src/sysprof-cli/sysprof-cli.c:332
 msgid "Profile memory allocations and frees"
 msgstr "Profilér hukommelsesallokeringer og -frigivelser"
 
-#: src/sysprof-cli/sysprof-cli.c:327
+#: src/sysprof-cli/sysprof-cli.c:333
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr "Opret forbindelse til org.gnome.Shell for statistik om profilering"
 
-#: src/sysprof-cli/sysprof-cli.c:328
+#: src/sysprof-cli/sysprof-cli.c:334
 msgid "Track performance of the applications main loop"
 msgstr "Spor ydelsen af programmets hovedløkke"
 
-#: src/sysprof-cli/sysprof-cli.c:330
+#: src/sysprof-cli/sysprof-cli.c:336
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr "Sammenføj alle angivne *.syscap-filer og skriv til stdout"
 
-#: src/sysprof-cli/sysprof-cli.c:331
+#: src/sysprof-cli/sysprof-cli.c:337
 msgid "Print the sysprof-cli version and exit"
 msgstr "Vis sysprof-cli-version og afslut"
 
-#: src/sysprof-cli/sysprof-cli.c:332
+#: src/sysprof-cli/sysprof-cli.c:338
 msgid "The size of the buffer in pages (1 = 1 page)"
 msgstr "Størrelsen af bufferen i sider (1 = 1 side)"
 
-#: src/sysprof-cli/sysprof-cli.c:333
+#: src/sysprof-cli/sysprof-cli.c:339
 msgid "Additional D-Bus address to monitor"
 msgstr "Yderligere D-Bus-adresser som skal overvåges"
 
-#: src/sysprof-cli/sysprof-cli.c:366
+#: src/sysprof-cli/sysprof-cli.c:340
+msgid "Stack size to copy for unwinding in user-space"
+msgstr "Størrelse af stak som skal kopieres for at vikle stakken ud i userspace"
+
+#: src/sysprof-cli/sysprof-cli.c:341
+msgid "Do not use debuginfod to resolve symbols"
+msgstr "Brug ikke debuginfod til at evaluere symboler"
+
+#: src/sysprof-cli/sysprof-cli.c:374
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[OPTAGELSESFIL] [-- KOMMANDO ARGUMENTER] — Sysprof"
 
-#: src/sysprof-cli/sysprof-cli.c:369
+#: src/sysprof-cli/sysprof-cli.c:377
 msgid ""
 "\n"
 "Examples:\n"
@@ -400,23 +421,31 @@ msgid ""
 "\n"
 "  # Merge multiple syscap files into one\n"
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+"\n"
+"  # Unwind by capturing stack/register contents instead of frame-pointers\n"
+"  # where the stack-size is a multiple of page-size\n"
+"  sysprof-cli --stack-size=8192\n"
 msgstr ""
 "\n"
 "Eksempler:\n"
 "\n"
-"  # Optag gtk4-widget-factory med trace-fd for at få data som programmet\n"
+"  # Optag gtk4-widget-factory med trace-fd for at få data, som programmet\n"
 "  # har leveret samt GTK- og GNOME Shell-dataleverandører\n"
 "  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
 "\n"
 "  # Sammenføj flere syscap-filer i én\n"
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+"\n"
+"  # Vikl stak ud ved at indfange stak-/registerindhold frem for framepointere,\n"
+"  # når stakstørrelsen er et multiplum af sidestørrelsen\n"
+"  sysprof-cli --stack-size=8192\n"
 
-#: src/sysprof-cli/sysprof-cli.c:405
+#: src/sysprof-cli/sysprof-cli.c:417
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Der blev givet for mange argumenter til sysprof-cli:"
 
 #. Translators: %s is a file name.
-#: src/sysprof-cli/sysprof-cli.c:459
+#: src/sysprof-cli/sysprof-cli.c:473
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s findes. Brug --force til at overskrive\n"
@@ -484,23 +513,6 @@ msgctxt "shortcut window"
 msgid "Quit"
 msgstr "Afslut"
 
-#: src/sysprof/gtk/menus.ui:6
-msgid "_Preferences"
-msgstr "_Indstillinger"
-
-#: src/sysprof/gtk/menus.ui:10 src/sysprof/sysprof-greeter.ui:644
-#: src/sysprof/sysprof-window.ui:398
-msgid "_Keyboard Shortcuts"
-msgstr "_Tastaturgenveje"
-
-#: src/sysprof/gtk/menus.ui:14
-msgid "_Help"
-msgstr "_Hjælp"
-
-#: src/sysprof/gtk/menus.ui:18
-msgid "_About Sysprof"
-msgstr "_Om Sysprof"
-
 #: src/sysprof/sysprof-animation.c:1038
 #, c-format
 msgid "Failed to find property %s in %s"
@@ -511,15 +523,15 @@ msgstr "Kunne ikke find egenskaben %s i %s"
 msgid "Failed to retrieve va_list value: %s"
 msgstr "Kunne ikke hente værdien af va_list: %s"
 
-#: src/sysprof/sysprof-application.c:37
+#: src/sysprof/sysprof-application.c:38
 msgid "Show Sysprof version and exit"
 msgstr "Vis sysprof-version og afslut"
 
-#: src/sysprof/sysprof-application.c:170
+#: src/sysprof/sysprof-application.c:181
 msgid "A system profiler"
 msgstr "En systemprofilering"
 
-#: src/sysprof/sysprof-application.c:171
+#: src/sysprof/sysprof-application.c:182
 msgid "translator-credits"
 msgstr ""
 "scootergrisen\n"
@@ -581,7 +593,7 @@ msgstr "Tidspunkt"
 
 #: src/sysprof/sysprof-cpu-section.ui:412
 #: src/sysprof/sysprof-energy-section.ui:382
-#: src/sysprof/sysprof-flame-graph.c:453
+#: src/sysprof/sysprof-flame-graph.c:458
 #: src/sysprof/sysprof-graphics-section.ui:293
 #: src/sysprof/sysprof-marks-section.ui:248
 #: src/sysprof/sysprof-network-section.ui:380
@@ -682,8 +694,8 @@ msgid "Filter Messages"
 msgstr "Filtrér meddelelser"
 
 #: src/sysprof/sysprof-dbus-utility.ui:13
-#: src/sysprof/sysprof-logs-section.c:104
-#: src/sysprof/sysprof-logs-section.ui:286
+#: src/sysprof/sysprof-logs-section.c:114
+#: src/sysprof/sysprof-logs-section.ui:290
 msgid "Message"
 msgstr "Meddelelse"
 
@@ -699,7 +711,7 @@ msgstr "Komprimeret"
 msgid "Filter Files"
 msgstr "Filtrér filer"
 
-#: src/sysprof/sysprof-flame-graph.c:457
+#: src/sysprof/sysprof-flame-graph.c:462
 #: src/sysprof/sysprof-process-dialog.ui:177
 msgid "File"
 msgstr "Fil"
@@ -708,61 +720,61 @@ msgstr "Fil"
 #: src/sysprof/sysprof-logs-section.ui:143
 #: src/sysprof/sysprof-mark-table.ui:116
 #: src/sysprof/sysprof-traceables-utility.ui:81
-#: src/sysprof/sysprof-window.ui:297
+#: src/sysprof/sysprof-window.ui:343
 msgid "CPU"
 msgstr "CPU"
 
-#: src/sysprof/sysprof-greeter.c:102
+#: src/sysprof/sysprof-greeter.c:128
 msgid "Use KEY=VALUE to set an environment variable"
 msgstr "Brug NØGLE=VÆRDI til at sætte miljøvariable"
 
-#: src/sysprof/sysprof-greeter.c:108
+#: src/sysprof/sysprof-greeter.c:134
 msgid "Keys may not start with a number"
 msgstr "Nøgler må ikke starte med tal"
 
-#: src/sysprof/sysprof-greeter.c:118
+#: src/sysprof/sysprof-greeter.c:144
 msgid "Keys may only contain alpha-numerics or underline."
 msgstr "Nøgler må kun indeholde alfanumeriske tegn og bundstreg."
 
-#: src/sysprof/sysprof-greeter.c:265 src/sysprof/sysprof-window.c:155
+#: src/sysprof/sysprof-greeter.c:306 src/sysprof/sysprof-window.c:175
 msgid "Must Capture to Local File"
 msgstr "Skal optage til lokal fil"
 
-#: src/sysprof/sysprof-greeter.c:266 src/sysprof/sysprof-window.c:156
+#: src/sysprof/sysprof-greeter.c:307 src/sysprof/sysprof-window.c:176
 msgid "You must choose a local file to capture using Sysprof"
 msgstr "Du skal vælge en lokal fil for at optage med Sysprof"
 
-#: src/sysprof/sysprof-greeter.c:267 src/sysprof/sysprof-recording-pad.c:115
-#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:718
+#: src/sysprof/sysprof-greeter.c:308 src/sysprof/sysprof-recording-pad.c:119
+#: src/sysprof/sysprof-window.c:177 src/sysprof/sysprof-window.c:764
 msgid "Close"
 msgstr "Luk"
 
-#: src/sysprof/sysprof-greeter.c:288
+#: src/sysprof/sysprof-greeter.c:331
 #, c-format
 msgid "System Capture from %s.syscap"
 msgstr "Systemoptagelse fra %s.syscap"
 
-#: src/sysprof/sysprof-greeter.c:292
+#: src/sysprof/sysprof-greeter.c:335
 msgid "Record to File"
 msgstr "Optag til fil"
 
-#: src/sysprof/sysprof-greeter.c:293
+#: src/sysprof/sysprof-greeter.c:336
 msgid "Record"
 msgstr "Optag"
 
-#: src/sysprof/sysprof-greeter.c:440
+#: src/sysprof/sysprof-greeter.c:485
 msgid "No Change"
 msgstr "Ingen ændring"
 
-#: src/sysprof/sysprof-greeter.c:443
+#: src/sysprof/sysprof-greeter.c:488
 msgid "Balanced"
 msgstr "Balanceret"
 
-#: src/sysprof/sysprof-greeter.c:446
+#: src/sysprof/sysprof-greeter.c:491
 msgid "Power Saver"
 msgstr "Strømbesparelse"
 
-#: src/sysprof/sysprof-greeter.c:449
+#: src/sysprof/sysprof-greeter.c:494
 msgid "Performance"
 msgstr "Ydelse"
 
@@ -778,162 +790,184 @@ msgstr "Platformspecifik sampling af stakke"
 msgid "Record native stack traces using a sampling profiler"
 msgstr "Optag platformspecifikke stakspor ved samplebaseret profilering"
 
-#: src/sysprof/sysprof-greeter.ui:116
+#: src/sysprof/sysprof-greeter.ui:111
+msgid "Unwind Stacks in User Space"
+msgstr "Vikl stakke ud i userspace"
+
+#: src/sysprof/sysprof-greeter.ui:112
+msgid "Copy stack contents and registers for unwinding in user-space"
+msgstr "Kopiér indhold af stak og registre for at vikle stakken ud i userspace"
+
+#: src/sysprof/sysprof-greeter.ui:123
+msgid "Stack Size"
+msgstr "Stakstørrelse"
+
+#: src/sysprof/sysprof-greeter.ui:124
+msgid "The number of bytes to copy from the stack"
+msgstr "Antal byte som skal kopieres fra stakken"
+
+#: src/sysprof/sysprof-greeter.ui:135
+msgid ""
+"Unwinding in user-space has considerable overhead but may help in situations "
+"where frame-pointers are unavailable."
+msgstr "Det indebærer et betydeligt effektivitetstab at vikle stakken ud i userspace, men det kan være nyttigt, når framepointere er utilgængelige."
+
+#: src/sysprof/sysprof-greeter.ui:151
 msgid "Sample JavaScript Stacks"
 msgstr "Sampl JavaScript-stakke"
 
-#: src/sysprof/sysprof-greeter.ui:117
+#: src/sysprof/sysprof-greeter.ui:152
 msgid "Record JavaScript stack traces using a sampling profiler"
 msgstr "Optag JavaScript-stakspor ved samplebaseret profilering"
 
-#: src/sysprof/sysprof-greeter.ui:128
+#: src/sysprof/sysprof-greeter.ui:163
 msgid ""
 "Sysprof must launch your application to record JavaScript stacks using GJS."
 msgstr ""
 "Sysprof skal køre dit program for at kunne optage JavaScript-stakke ved "
 "hjælp af GJS."
 
-#: src/sysprof/sysprof-greeter.ui:144
+#: src/sysprof/sysprof-greeter.ui:179
 msgid "Record Scheduler Details"
 msgstr "Optag detaljer om cpu-allokering"
 
 # Findes også i gnome-builder
-#: src/sysprof/sysprof-greeter.ui:145
+#: src/sysprof/sysprof-greeter.ui:180
 msgid "Track when processes are scheduled per CPU"
 msgstr "Se, hvornår processer afvikles af hver cpu"
 
-#: src/sysprof/sysprof-greeter.ui:158
+#: src/sysprof/sysprof-greeter.ui:193
 msgid "Tracing"
 msgstr "Sporing (tracing)"
 
-#: src/sysprof/sysprof-greeter.ui:162
+#: src/sysprof/sysprof-greeter.ui:197
 msgid "Trace Memory Allocations"
 msgstr "Spor hukommelsesallokeringer"
 
-#: src/sysprof/sysprof-greeter.ui:163
+#: src/sysprof/sysprof-greeter.ui:198
 msgid "Record a stack trace when <tt>malloc</tt> or similar functions are used"
 msgstr "Optag stakspor ved kald af <tt>malloc</tt> eller lignende funktioner"
 
-#: src/sysprof/sysprof-greeter.ui:174
+#: src/sysprof/sysprof-greeter.ui:209
 msgid "Sysprof must launch your application to record memory allocations."
 msgstr ""
 "Sysprof skal starte dit program for at kunne optage hukommelsesallokeringer."
 
-#: src/sysprof/sysprof-greeter.ui:192 src/sysprof/sysprof-greeter.ui:197
+#: src/sysprof/sysprof-greeter.ui:227 src/sysprof/sysprof-greeter.ui:232
 msgid "Application"
 msgstr "Program"
 
-#: src/sysprof/sysprof-greeter.ui:200
+#: src/sysprof/sysprof-greeter.ui:235
 #: src/sysprof/sysprof-processes-section.ui:317
 msgid "Command Line"
 msgstr "Kommandolinje"
 
-#: src/sysprof/sysprof-greeter.ui:206
+#: src/sysprof/sysprof-greeter.ui:241
 msgid "Working directory"
 msgstr "Arbejdsmappe"
 
-#: src/sysprof/sysprof-greeter.ui:212
+#: src/sysprof/sysprof-greeter.ui:247
 msgid "The application will be run as a subprocess of Sysprof."
 msgstr "Programmet køres som underproces af Sysprof."
 
-#: src/sysprof/sysprof-greeter.ui:225
+#: src/sysprof/sysprof-greeter.ui:260
 msgid "Environment"
 msgstr "Miljø"
 
-#: src/sysprof/sysprof-greeter.ui:229
+#: src/sysprof/sysprof-greeter.ui:264
 msgid "Clear Environment"
 msgstr "Ryd miljø"
 
-#: src/sysprof/sysprof-greeter.ui:230
+#: src/sysprof/sysprof-greeter.ui:265
 msgid "Clear the environment before launching application"
 msgstr "Ryd miljøet, før programmet startes"
 
-#: src/sysprof/sysprof-greeter.ui:256
+#: src/sysprof/sysprof-greeter.ui:291
 msgid "Add _Variable"
 msgstr "Tilføj _variabel"
 
-#: src/sysprof/sysprof-greeter.ui:262
+#: src/sysprof/sysprof-greeter.ui:297
 msgid "Add Variable"
 msgstr "Tilføj variabel"
 
-#: src/sysprof/sysprof-greeter.ui:263
+#: src/sysprof/sysprof-greeter.ui:298
 msgid "_Add"
 msgstr "_Tilføj"
 
-#: src/sysprof/sysprof-greeter.ui:280 src/sysprof/sysprof-greeter.ui:285
+#: src/sysprof/sysprof-greeter.ui:315 src/sysprof/sysprof-greeter.ui:320
 msgid "Counters"
 msgstr "Tællere"
 
-#: src/sysprof/sysprof-greeter.ui:289
+#: src/sysprof/sysprof-greeter.ui:324
 msgid "CPU Usage"
 msgstr "CPU-forbrug"
 
-#: src/sysprof/sysprof-greeter.ui:290
+#: src/sysprof/sysprof-greeter.ui:325
 msgid "Record coarse-grained counters about CPU usage and frequency"
 msgstr "Optag grovkornede data om CPU-forbrug og -frekvens"
 
-#: src/sysprof/sysprof-greeter.ui:302
+#: src/sysprof/sysprof-greeter.ui:337
 msgid "Memory Usage"
 msgstr "Hukommelsesforbrug"
 
-#: src/sysprof/sysprof-greeter.ui:303
+#: src/sysprof/sysprof-greeter.ui:338
 msgid "Record coarse-grained counters about system memory usage"
 msgstr "Optag grovkornede data om systemhukommelsesforbrug"
 
-#: src/sysprof/sysprof-greeter.ui:315
+#: src/sysprof/sysprof-greeter.ui:350
 msgid "Disk Usage"
 msgstr "Diskforbrug"
 
-#: src/sysprof/sysprof-greeter.ui:316
+#: src/sysprof/sysprof-greeter.ui:351
 msgid "Record coarse-grained counters about storage throughput"
 msgstr "Optag grovkornede data om ydelse og brugsintensitet af lager"
 
-#: src/sysprof/sysprof-greeter.ui:328
+#: src/sysprof/sysprof-greeter.ui:363
 msgid "Network Usage"
 msgstr "Netværksforbrug"
 
-#: src/sysprof/sysprof-greeter.ui:329
+#: src/sysprof/sysprof-greeter.ui:364
 msgid "Record coarse-grained counters about network traffic"
 msgstr "Optag grovkornede data om netværkstrafik"
 
-#: src/sysprof/sysprof-greeter.ui:345
+#: src/sysprof/sysprof-greeter.ui:380
 msgid "Energy Usage"
 msgstr "Energiforbrug"
 
-#: src/sysprof/sysprof-greeter.ui:346
+#: src/sysprof/sysprof-greeter.ui:381
 msgid "Record coarse-grained counters about energy usage in Watts"
 msgstr "Optag grovkornede data om energiforbrug i watt"
 
-#: src/sysprof/sysprof-greeter.ui:358
+#: src/sysprof/sysprof-greeter.ui:393
 msgid "Battery Charge"
 msgstr "Batteriopladning"
 
-#: src/sysprof/sysprof-greeter.ui:359
+#: src/sysprof/sysprof-greeter.ui:394
 msgid "Record coarse-grained counters about battery charge or discharge rates"
 msgstr "Optag grovkornede data om batteriopladnings- og -afladningshastigheder"
 
-#: src/sysprof/sysprof-greeter.ui:377 src/sysprof/sysprof-greeter.ui:382
-#: src/sysprof/sysprof-window.ui:287
+#: src/sysprof/sysprof-greeter.ui:412 src/sysprof/sysprof-greeter.ui:417
+#: src/sysprof/sysprof-window.ui:333
 msgid "D-Bus"
 msgstr "D-Bus"
 
-#: src/sysprof/sysprof-greeter.ui:386
+#: src/sysprof/sysprof-greeter.ui:421
 msgid "Record System Bus"
 msgstr "Optag systembussen"
 
-#: src/sysprof/sysprof-greeter.ui:387
+#: src/sysprof/sysprof-greeter.ui:422
 msgid "Record messages on the D-Bus system bus"
 msgstr "Optag meddelelser på systembussen D-Bus"
 
-#: src/sysprof/sysprof-greeter.ui:403
+#: src/sysprof/sysprof-greeter.ui:438
 msgid "Record Session Bus"
 msgstr "Optag sessionsbus"
 
-#: src/sysprof/sysprof-greeter.ui:404
+#: src/sysprof/sysprof-greeter.ui:439
 msgid "Record messages on the D-Bus user session bus"
 msgstr "Optag meddelelser på D-Bus-brugersessionsbussen"
 
-#: src/sysprof/sysprof-greeter.ui:415
+#: src/sysprof/sysprof-greeter.ui:450
 msgid ""
 "The session bus may contain sensitive information such as keyboard usage and "
 "passwords."
@@ -941,19 +975,19 @@ msgstr ""
 "Sessionsbussen kan indeholde private data som f.eks. tastaturbrug og "
 "adgangskoder."
 
-#: src/sysprof/sysprof-greeter.ui:438
+#: src/sysprof/sysprof-greeter.ui:473
 msgid "Timings"
 msgstr "Timinger"
 
-#: src/sysprof/sysprof-greeter.ui:442
+#: src/sysprof/sysprof-greeter.ui:477
 msgid "Compositor Frame Timings"
 msgstr "Timinger for compositor-frames"
 
-#: src/sysprof/sysprof-greeter.ui:443
+#: src/sysprof/sysprof-greeter.ui:478
 msgid "Record frame-timing information from the GNOME Shell compositor"
 msgstr "Optag data om frametider fra GNOME Shell compositor"
 
-#: src/sysprof/sysprof-greeter.ui:454
+#: src/sysprof/sysprof-greeter.ui:489
 msgid ""
 "Applications launched by Sysprof will automatically collect GTK frame timing "
 "information."
@@ -961,114 +995,118 @@ msgstr ""
 "Programmer, som startes af Sysprof, vil automatisk indsamle "
 "timinginformationer om GTK-frames."
 
-#: src/sysprof/sysprof-greeter.ui:494
+#: src/sysprof/sysprof-greeter.ui:529
 msgid "Devices"
 msgstr "Enheder"
 
-#: src/sysprof/sysprof-greeter.ui:498
+#: src/sysprof/sysprof-greeter.ui:533
 msgid "Include GPU Information"
 msgstr "Inkludér GPU-information"
 
-#: src/sysprof/sysprof-greeter.ui:499
+#: src/sysprof/sysprof-greeter.ui:534
 msgid "Records information about graphics hardware and drivers"
 msgstr "Optager informationer om grafikhardware og -drivere"
 
-#: src/sysprof/sysprof-greeter.ui:517
+#: src/sysprof/sysprof-greeter.ui:552
 msgid "System"
 msgstr "System"
 
-#: src/sysprof/sysprof-greeter.ui:522
+#: src/sysprof/sysprof-greeter.ui:557
 msgid "Power Profile"
 msgstr "Strømprofil"
 
-#: src/sysprof/sysprof-greeter.ui:525
+#: src/sysprof/sysprof-greeter.ui:560
 msgid "Record with Power Profile"
 msgstr "Optag med strømprofil"
 
-#: src/sysprof/sysprof-greeter.ui:526
+#: src/sysprof/sysprof-greeter.ui:561
 msgid "Switch to power profile while recording"
 msgstr "Skift til strømprofil ved optagelse"
 
-#: src/sysprof/sysprof-greeter.ui:536
+#: src/sysprof/sysprof-greeter.ui:571
 msgid "Details"
 msgstr "Detaljer"
 
-#: src/sysprof/sysprof-greeter.ui:540
+#: src/sysprof/sysprof-greeter.ui:575
 msgid "Record System Log"
 msgstr "Optag systemloggen"
 
-#: src/sysprof/sysprof-greeter.ui:541
+#: src/sysprof/sysprof-greeter.ui:576
 msgid "Watch the system log for new messages and record them"
 msgstr "Overvåg systemloggen og optag nye meddelelser i den"
 
-#: src/sysprof/sysprof-greeter.ui:557
+#: src/sysprof/sysprof-greeter.ui:592
 msgid "Include Hardware Information"
 msgstr "Inkludér hardwareinformation"
 
-#: src/sysprof/sysprof-greeter.ui:558
+#: src/sysprof/sysprof-greeter.ui:593
 msgid "Records information about PCI and USB devices"
 msgstr "Optager information om PCI- og USB-enheder"
 
-#: src/sysprof/sysprof-greeter.ui:571
+#: src/sysprof/sysprof-greeter.ui:606
 msgid "Symbols"
 msgstr "Symboler"
 
-#: src/sysprof/sysprof-greeter.ui:575
+#: src/sysprof/sysprof-greeter.ui:610
 msgid "Bundle Symbols"
 msgstr "Inkludér symboler"
 
-#: src/sysprof/sysprof-greeter.ui:576
+#: src/sysprof/sysprof-greeter.ui:611
 msgid "Make recording shareable by symbolizing stack traces after recording"
 msgstr ""
 "Gør optagelsen overførbar ved at inkludere symboler i stakspor efter "
 "optagelse"
 
-#: src/sysprof/sysprof-greeter.ui:609
+#: src/sysprof/sysprof-greeter.ui:627
+msgid "Debuginfod"
+msgstr "Debuginfod"
+
+#: src/sysprof/sysprof-greeter.ui:628
+msgid "Enable Debuginfod to automatically fetch debug symbols"
+msgstr "Slå Debuginfod til for automatisk at hente fejlsøgningssymboler"
+
+#: src/sysprof/sysprof-greeter.ui:661
 msgid "_Open File…"
 msgstr "_Åbn fil …"
 
-#: src/sysprof/sysprof-greeter.ui:616
+#: src/sysprof/sysprof-greeter.ui:668
 msgid "Record to _File…"
 msgstr "Optag til _fil …"
 
-#: src/sysprof/sysprof-greeter.ui:623
+#: src/sysprof/sysprof-greeter.ui:675
 msgid "Record to _Memory"
 msgstr "Optag til _hukommelsen"
 
-#: src/sysprof/sysprof-greeter.ui:638 src/sysprof/sysprof-window.ui:388
-msgid "Open Recording…"
-msgstr "Åbn optagelse …"
+#: src/sysprof/sysprof-greeter.ui:694 src/sysprof/sysprof-window.ui:444
+msgid "_Keyboard Shortcuts"
+msgstr "_Tastaturgenveje"
 
-#: src/sysprof/sysprof-greeter.ui:648 src/sysprof/sysprof-window.ui:402
+#: src/sysprof/sysprof-greeter.ui:698 src/sysprof/sysprof-window.ui:448
 msgid "Help"
 msgstr "Hjælp"
 
-#: src/sysprof/sysprof-greeter.ui:652 src/sysprof/sysprof-window.ui:406
+#: src/sysprof/sysprof-greeter.ui:702 src/sysprof/sysprof-window.ui:452
 msgid "About Sysprof"
 msgstr "Om Sysprof"
 
-#: src/sysprof/sysprof-greeter.ui:658
-msgid "Quit"
-msgstr "Afslut"
-
-#: src/sysprof/sysprof-logs-section.c:95
+#: src/sysprof/sysprof-logs-section.c:105
 msgid "Critical"
 msgstr "Kritisk"
 
-#: src/sysprof/sysprof-logs-section.c:98
+#: src/sysprof/sysprof-logs-section.c:108
 msgid "Warning"
 msgstr "Advarsel"
 
 # scootergrisen: måske "Fejlsøg"
-#: src/sysprof/sysprof-logs-section.c:101
+#: src/sysprof/sysprof-logs-section.c:111
 msgid "Debug"
 msgstr "Fejlret"
 
-#: src/sysprof/sysprof-logs-section.c:107
+#: src/sysprof/sysprof-logs-section.c:117
 msgid "Info"
 msgstr "Info"
 
-#: src/sysprof/sysprof-logs-section.c:110
+#: src/sysprof/sysprof-logs-section.c:120
 msgid "Error"
 msgstr "Fejl"
 
@@ -1076,11 +1114,11 @@ msgstr "Fejl"
 msgid "Logs"
 msgstr "Logge"
 
-#: src/sysprof/sysprof-logs-section.ui:215
+#: src/sysprof/sysprof-logs-section.ui:219
 msgid "Severity"
 msgstr "Alvorlighed"
 
-#: src/sysprof/sysprof-logs-section.ui:251
+#: src/sysprof/sysprof-logs-section.ui:255
 msgid "Domain"
 msgstr "Domæne"
 
@@ -1264,15 +1302,16 @@ msgid "Process Table"
 msgstr "Procestabel"
 
 #. translators: this expands to the number of events recorded by the profiler as an indicator of progress
-#: src/sysprof/sysprof-recording-pad.c:56
-msgid "%"
-msgstr "%"
+#: src/sysprof/sysprof-recording-pad.c:58
+#, c-format
+msgid "%<PRIi64> events"
+msgstr "%<PRIi64>-begivenheder"
 
-#: src/sysprof/sysprof-recording-pad.c:111
+#: src/sysprof/sysprof-recording-pad.c:115
 msgid "Recording Failed"
 msgstr "Optagelse mislykkedes"
 
-#: src/sysprof/sysprof-recording-pad.c:113
+#: src/sysprof/sysprof-recording-pad.c:117
 #, c-format
 msgid ""
 "Sysprof failed to record.\n"
@@ -1283,7 +1322,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: src/sysprof/sysprof-recording-pad.ui:69
+#: src/sysprof/sysprof-recording-pad.ui:71
 msgid "Stop Recording"
 msgstr "Stop optagelse"
 
@@ -1291,32 +1330,32 @@ msgstr "Stop optagelse"
 msgid "Time Profiler"
 msgstr "Tidsprofilering"
 
-#: src/sysprof/sysprof-samples-section.ui:89 src/sysprof/sysprof-window.ui:419
+#: src/sysprof/sysprof-samples-section.ui:89 src/sysprof/sysprof-window.ui:465
 msgid "Callgraph"
 msgstr "Funktionskaldsgraf"
 
 # https://www.brendangregg.com/FlameGraphs/cpuflamegraphs.html#FlameGraph
-#: src/sysprof/sysprof-samples-section.ui:172 src/sysprof/sysprof-window.ui:450
+#: src/sysprof/sysprof-samples-section.ui:172 src/sysprof/sysprof-window.ui:496
 msgid "Flamegraph"
 msgstr "“Flammegraf”"
 
-#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:154
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:136
 msgid "Seek Backward"
 msgstr "Søg baglæns"
 
-#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:164
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:146
 msgid "Zoom Out"
 msgstr "Zoom ud"
 
-#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:174
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:156
 msgid "Reset Zoom"
 msgstr "Nulstil zoom"
 
-#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:184
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:166
 msgid "Zoom In"
 msgstr "Zoom ind"
 
-#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:194
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:176
 msgid "Seek Forward"
 msgstr "Søg fremad"
 
@@ -1328,35 +1367,35 @@ msgstr "Dybde"
 msgid "Hits"
 msgstr "Træffere"
 
-#: src/sysprof/sysprof-window.c:171
+#: src/sysprof/sysprof-window.c:194
 msgid "Open Recording"
 msgstr "Åbn optagelse"
 
-#: src/sysprof/sysprof-window.c:172
+#: src/sysprof/sysprof-window.c:195
 msgid "Open"
 msgstr "Åbn"
 
-#: src/sysprof/sysprof-window.c:176
+#: src/sysprof/sysprof-window.c:199
 msgid "Sysprof Capture (*.syscap)"
 msgstr "Sysprof-optagelse (*.syscap)"
 
-#: src/sysprof/sysprof-window.c:468
+#: src/sysprof/sysprof-window.c:499
 msgid "Save to File"
 msgstr "Gem til fil"
 
-#: src/sysprof/sysprof-window.c:469
+#: src/sysprof/sysprof-window.c:500
 msgid "Save"
 msgstr "Gem"
 
-#: src/sysprof/sysprof-window.c:638
+#: src/sysprof/sysprof-window.c:679
 msgid "Loading…"
 msgstr "Indlæser …"
 
-#: src/sysprof/sysprof-window.c:714
+#: src/sysprof/sysprof-window.c:760
 msgid "Invalid Document"
 msgstr "Ugyldigt dokument"
 
-#: src/sysprof/sysprof-window.c:716
+#: src/sysprof/sysprof-window.c:762
 #, c-format
 msgid ""
 "The document could not be loaded. Please check that you have the correct "
@@ -1369,79 +1408,98 @@ msgstr ""
 "\n"
 "%s"
 
-#: src/sysprof/sysprof-window.ui:144
+#: src/sysprof/sysprof-window.ui:126
 msgid "Toggle Left Panel"
 msgstr "Slå venstre panel til/fra"
 
-#: src/sysprof/sysprof-window.ui:209
+#: src/sysprof/sysprof-window.ui:191
 msgid "Main Menu"
 msgstr "Hovedmenu"
 
-#: src/sysprof/sysprof-window.ui:216
+#: src/sysprof/sysprof-window.ui:198
 msgid "View Options"
 msgstr "Visningsindstillinger"
 
-#: src/sysprof/sysprof-window.ui:222
+#: src/sysprof/sysprof-window.ui:204
 msgid "Toggle Right Panel"
 msgstr "Slå højre panel til/fra"
 
-#: src/sysprof/sysprof-window.ui:307
+#: src/sysprof/sysprof-window.ui:353
 msgid "Energy"
 msgstr "Energi"
 
-#: src/sysprof/sysprof-window.ui:327
+#: src/sysprof/sysprof-window.ui:373
 msgid "Network"
 msgstr "Netværk"
 
-#: src/sysprof/sysprof-window.ui:337
+#: src/sysprof/sysprof-window.ui:383
 msgid "Storage"
 msgstr "Lager"
 
-#: src/sysprof/sysprof-window.ui:384
+#: src/sysprof/sysprof-window.ui:430
 msgid "_Record Again…"
 msgstr "_Optag igen …"
 
-#: src/sysprof/sysprof-window.ui:392
+#: src/sysprof/sysprof-window.ui:434
+msgid "Open Recording…"
+msgstr "Åbn optagelse …"
+
+#: src/sysprof/sysprof-window.ui:438
 msgid "Save As…"
 msgstr "Gem som …"
 
-#: src/sysprof/sysprof-window.ui:412
+#: src/sysprof/sysprof-window.ui:458
 msgid "_Quit"
 msgstr "_Afslut"
 
-#: src/sysprof/sysprof-window.ui:421
+#: src/sysprof/sysprof-window.ui:467
 msgid "Categorize Frames"
 msgstr "Kategorisér frames"
 
-#: src/sysprof/sysprof-window.ui:425
+#: src/sysprof/sysprof-window.ui:471
 msgid "Hide System Libraries"
 msgstr "Skjul systembiblioteker"
 
-#: src/sysprof/sysprof-window.ui:429
+#: src/sysprof/sysprof-window.ui:475
 msgid "Include Threads"
 msgstr "Inkludér tråde"
 
-#: src/sysprof/sysprof-window.ui:433
+#: src/sysprof/sysprof-window.ui:479
 msgid "Bottom Up"
 msgstr "Bunden opad"
 
-#: src/sysprof/sysprof-window.ui:437
+#: src/sysprof/sysprof-window.ui:483
 msgid "Ignore Kernel Processes"
 msgstr "Ignorér kerneprocesser"
 
-#: src/sysprof/sysprof-window.ui:441
+#: src/sysprof/sysprof-window.ui:487
 msgid "Ignore Process 0"
 msgstr "Ignorér proces 0"
 
-#: src/sysprof/sysprof-window.ui:445
+#: src/sysprof/sysprof-window.ui:491
 msgid "Merge Similar Processes"
 msgstr "Sammenflet lignende processer"
 
 # Svært at gennemskue betydningen her
 #. translators: Left Heavy means to sort larger (heavier) stack frames before others, starting from the left
-#: src/sysprof/sysprof-window.ui:453
+#: src/sysprof/sysprof-window.ui:499
 msgid "Left Heavy"
 msgstr "Tung venstre"
+
+#~ msgid "_Preferences"
+#~ msgstr "_Indstillinger"
+
+#~ msgid "_Help"
+#~ msgstr "_Hjælp"
+
+#~ msgid "_About Sysprof"
+#~ msgstr "_Om Sysprof"
+
+#~ msgid "Quit"
+#~ msgstr "Afslut"
+
+#~ msgid "%"
+#~ msgstr "%"
 
 #~ msgid "The GNOME Project"
 #~ msgstr "GNOME-projektet"

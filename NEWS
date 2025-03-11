@@ -1,3 +1,11 @@
+Overview of changes in Sysprof 48.rc
+====================================
+
+ * Fix drawing of Y-reversed data point markers
+ * Make greeter save environment variables to state file for reuse
+ * Use D-Bus power profiles bus name rather than legacy D-Bus bus name
+ * Translation updates
+
 Overview of changes in Sysprof 48.beta
 ======================================
 

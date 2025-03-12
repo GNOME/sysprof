@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2025-02-27 02:05+0000\n"
-"PO-Revision-Date: 2025-03-06 22:11+0100\n"
+"POT-Creation-Date: 2025-03-09 17:28+0000\n"
+"PO-Revision-Date: 2025-03-10 19:26+0100\n"
 "Last-Translator: maite guix <maite.guix@me.com>\n"
 "Language-Team: \n"
 "Language: ca\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.2\n"
+"X-Generator: Poedit 3.2.2\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:6
 #: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:172
@@ -389,7 +389,7 @@ msgstr "Adreça addicional del D-Bus per fer el seguiment"
 
 #: src/sysprof-cli/sysprof-cli.c:340
 msgid "Stack size to copy for unwinding in user-space"
-msgstr ""
+msgstr "Mida de la pila a copiar per a desconnectar a l'espai d'usuari"
 
 #: src/sysprof-cli/sysprof-cli.c:341
 msgid "Do not use debuginfod to resolve symbols"
@@ -721,45 +721,45 @@ msgstr "És possible que les claus no comencin amb un número"
 msgid "Keys may only contain alpha-numerics or underline."
 msgstr "Les claus només poden contenir alfanumèrics o subratllats."
 
-#: src/sysprof/sysprof-greeter.c:306 src/sysprof/sysprof-window.c:175
+#: src/sysprof/sysprof-greeter.c:324 src/sysprof/sysprof-window.c:175
 msgid "Must Capture to Local File"
 msgstr "S'ha de capturar al fitxer local"
 
-#: src/sysprof/sysprof-greeter.c:307 src/sysprof/sysprof-window.c:176
+#: src/sysprof/sysprof-greeter.c:325 src/sysprof/sysprof-window.c:176
 msgid "You must choose a local file to capture using Sysprof"
 msgstr "S'ha de capturar al fitxer local utilitzant Sysprof"
 
-#: src/sysprof/sysprof-greeter.c:308 src/sysprof/sysprof-recording-pad.c:119
+#: src/sysprof/sysprof-greeter.c:326 src/sysprof/sysprof-recording-pad.c:119
 #: src/sysprof/sysprof-window.c:177 src/sysprof/sysprof-window.c:764
 msgid "Close"
 msgstr "Tanca"
 
-#: src/sysprof/sysprof-greeter.c:331
+#: src/sysprof/sysprof-greeter.c:349
 #, c-format
 msgid "System Capture from %s.syscap"
 msgstr "Captura del sistema des de %s.syscap"
 
-#: src/sysprof/sysprof-greeter.c:335
+#: src/sysprof/sysprof-greeter.c:353
 msgid "Record to File"
 msgstr "Registre al fitxer"
 
-#: src/sysprof/sysprof-greeter.c:336
+#: src/sysprof/sysprof-greeter.c:354
 msgid "Record"
 msgstr "Enregistra"
 
-#: src/sysprof/sysprof-greeter.c:485
+#: src/sysprof/sysprof-greeter.c:503
 msgid "No Change"
 msgstr "Cap canvi"
 
-#: src/sysprof/sysprof-greeter.c:488
+#: src/sysprof/sysprof-greeter.c:506
 msgid "Balanced"
 msgstr "Equilibrat"
 
-#: src/sysprof/sysprof-greeter.c:491
+#: src/sysprof/sysprof-greeter.c:509
 msgid "Power Saver"
 msgstr "Estalvi d'energia"
 
-#: src/sysprof/sysprof-greeter.c:494
+#: src/sysprof/sysprof-greeter.c:512
 msgid "Performance"
 msgstr "Prestació (rendiment)"
 
@@ -778,11 +778,13 @@ msgstr ""
 
 #: src/sysprof/sysprof-greeter.ui:111
 msgid "Unwind Stacks in User Space"
-msgstr ""
+msgstr "Desconnecta les piles a l'espai d'usuari"
 
 #: src/sysprof/sysprof-greeter.ui:112
 msgid "Copy stack contents and registers for unwinding in user-space"
 msgstr ""
+"Copia el contingut de la pila i els registres per a desconnectar a l'espai "
+"d'usuari"
 
 #: src/sysprof/sysprof-greeter.ui:123
 msgid "Stack Size"
@@ -797,6 +799,9 @@ msgid ""
 "Unwinding in user-space has considerable overhead but may help in situations "
 "where frame-pointers are unavailable."
 msgstr ""
+"La desconnexió en l'espai d'usuari té una sobrecàrrega considerable, però "
+"pot ajudar en situacions en què els punters de fotograma no estan "
+"disponibles."
 
 #: src/sysprof/sysprof-greeter.ui:151
 msgid "Sample JavaScript Stacks"
@@ -1055,7 +1060,6 @@ msgstr ""
 "després de la gravació"
 
 #: src/sysprof/sysprof-greeter.ui:627
-#| msgid "Debug"
 msgid "Debuginfod"
 msgstr "Debuginfod"
 

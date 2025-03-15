@@ -46,7 +46,7 @@
   </provides>
 
   <releases>
-    <release version="47.0" date="2024-09-13"/>
+    <release version="48.0" date="2025-03-15"/>
   </releases>
 
   <metadata_license>CC0-1.0</metadata_license>

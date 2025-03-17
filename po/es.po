@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2025-02-17 12:56+0000\n"
-"PO-Revision-Date: 2025-03-05 17:02+0100\n"
+"POT-Creation-Date: 2025-03-11 13:40+0000\n"
+"PO-Revision-Date: 2025-03-17 10:47+0100\n"
 "Last-Translator: Daniel Mustieles García <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
 "Language: es_ES\n"
@@ -402,18 +402,6 @@ msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[ARCHIVO_CAPTURA] [-- ARGUMENTOS COMANDO] — Sysprof"
 
 #: src/sysprof-cli/sysprof-cli.c:377
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "Examples:\n"
-#| "\n"
-#| "  # Record gtk4-widget-factory using trace-fd to get application "
-#| "provided\n"
-#| "  # data as well as GTK and GNOME Shell data providers\n"
-#| "  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
-#| "\n"
-#| "  # Merge multiple syscap files into one\n"
-#| "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 msgid ""
 "\n"
 "Examples:\n"
@@ -440,6 +428,11 @@ msgstr ""
 "\n"
 "  # Unir varios archivos syscap en uno solo\n"
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+"\n"
+"  # Unwind capturando contenido de la pila/registro en lugar de punteros de "
+"marcos\n"
+"  # cuando el tamaño de la pila es múltiplo del tamaño de página\n"
+"  sysprof-cli --stack-size=8192\n"
 
 #: src/sysprof-cli/sysprof-cli.c:417
 msgid "Too many arguments were passed to sysprof-cli:"
@@ -731,45 +724,45 @@ msgid "Keys may only contain alpha-numerics or underline."
 msgstr ""
 "Las claves sólo deben contener caracteres alfanuméricos o guiones bajos"
 
-#: src/sysprof/sysprof-greeter.c:306 src/sysprof/sysprof-window.c:175
+#: src/sysprof/sysprof-greeter.c:324 src/sysprof/sysprof-window.c:175
 msgid "Must Capture to Local File"
 msgstr "Se debe capturar a un archivo local"
 
-#: src/sysprof/sysprof-greeter.c:307 src/sysprof/sysprof-window.c:176
+#: src/sysprof/sysprof-greeter.c:325 src/sysprof/sysprof-window.c:176
 msgid "You must choose a local file to capture using Sysprof"
 msgstr "Debe elegir un arcihvo local para capturar usando Sysprof"
 
-#: src/sysprof/sysprof-greeter.c:308 src/sysprof/sysprof-recording-pad.c:119
+#: src/sysprof/sysprof-greeter.c:326 src/sysprof/sysprof-recording-pad.c:119
 #: src/sysprof/sysprof-window.c:177 src/sysprof/sysprof-window.c:764
 msgid "Close"
 msgstr "Cerrar"
 
-#: src/sysprof/sysprof-greeter.c:331
+#: src/sysprof/sysprof-greeter.c:349
 #, c-format
 msgid "System Capture from %s.syscap"
 msgstr "Captura del sistema desde %s.syscap"
 
-#: src/sysprof/sysprof-greeter.c:335
+#: src/sysprof/sysprof-greeter.c:353
 msgid "Record to File"
 msgstr "Grabar a un archivo"
 
-#: src/sysprof/sysprof-greeter.c:336
+#: src/sysprof/sysprof-greeter.c:354
 msgid "Record"
 msgstr "Grabar"
 
-#: src/sysprof/sysprof-greeter.c:485
+#: src/sysprof/sysprof-greeter.c:503
 msgid "No Change"
 msgstr "Sin cambios"
 
-#: src/sysprof/sysprof-greeter.c:488
+#: src/sysprof/sysprof-greeter.c:506
 msgid "Balanced"
 msgstr "Balanceado"
 
-#: src/sysprof/sysprof-greeter.c:491
+#: src/sysprof/sysprof-greeter.c:509
 msgid "Power Saver"
 msgstr "Ahorro de energía"
 
-#: src/sysprof/sysprof-greeter.c:494
+#: src/sysprof/sysprof-greeter.c:512
 msgid "Performance"
 msgstr "Rendimiento"
 

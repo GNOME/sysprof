@@ -160,11 +160,17 @@ find_section (ElfParser *parser,
 {
     guint i;
 
+    if (name == NULL)
+        return NULL;
+
     for (i = 0; i < parser->n_sections; ++i)
     {
         Section *section = parser->sections[i];
 
-        if (strcmp (section->name, name) == 0 && section->type == type)
+        if (section->name == NULL || section->type != type)
+            continue;
+
+        if (strcmp (section->name, name) == 0)
             return section;
     }
 

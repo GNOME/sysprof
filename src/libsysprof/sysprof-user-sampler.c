@@ -25,7 +25,9 @@
 #include <sys/ioctl.h>
 #include <sys/eventfd.h>
 
-#include <asm/perf_regs.h>
+#ifdef HAVE_PERF_REGS_H
+# include <asm/perf_regs.h>
+#endif
 
 #include <glib/gstdio.h>
 

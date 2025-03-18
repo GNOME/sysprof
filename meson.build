@@ -109,6 +109,10 @@ config_h.set10('HAVE_POLKIT_AGENT', polkit_agent_dep.found())
 polkit_dep = dependency('polkit-gobject-1', version: polkit_req_version, required: false)
 config_h.set10('HAVE_POLKIT', polkit_dep.found())
 
+if cc.has_header('asm/perf_regs.h')
+  config_h.set10('HAVE_PERF_REGS_H', true)
+endif
+
 if need_libsysprof
   libunwind_dep = dependency('libunwind-generic', required: true)
   config_h.set('ENABLE_LIBUNWIND', libunwind_dep.found())

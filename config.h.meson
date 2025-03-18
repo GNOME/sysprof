@@ -20,6 +20,8 @@
 
 #mesondefine HAVE_PERF_CLOCKID
 
+#mesondefine HAVE_PERF_REGS_H
+
 #mesondefine HAVE_POLKIT
 
 #mesondefine HAVE_POLKIT_AGENT

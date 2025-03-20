@@ -123,7 +123,7 @@ on_debug_dir_items_changed_cb (SysprofGreeter *self,
 
   gtk_widget_set_visible (GTK_WIDGET (self->debug_directories),
                           g_list_model_get_n_items (model) > 0);
-}                             
+}
 
 static void
 on_env_entry_changed_cb (SysprofGreeter      *self,
@@ -256,7 +256,7 @@ sysprof_greeter_create_profiler (SysprofGreeter  *self,
   const char *str;
   guint n_items;
   g_autoptr(GStrvBuilder) builder = NULL;
-  g_autofree GStrv debugdirs = NULL;
+  g_auto(GStrv) debugdirs = NULL;
 
   g_assert (SYSPROF_IS_GREETER (self));
 
@@ -768,12 +768,12 @@ sysprof_greeter_init (SysprofGreeter *self)
   gtk_list_box_bind_model (self->app_environment,
                            G_LIST_MODEL (self->envvars),
                            create_envvar_row_cb,
-                           self, NULL);             
+                           self, NULL);
 
    gtk_list_box_bind_model (self->debug_directories,
                             G_LIST_MODEL (self->debugdirs),
                             create_debugdirs_row_cb,
-                            self, NULL);                           
+                            self, NULL);
 
   if (self->recording_template)
     {

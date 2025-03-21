@@ -304,6 +304,7 @@ main (int   argc,
   gboolean scheduler_details = FALSE;
   gboolean system_bus = FALSE;
   gboolean session_bus = FALSE;
+  gboolean no_sysprofd = FALSE;
   int stack_size = 0;
   int pid = -1;
   int fd;
@@ -339,6 +340,7 @@ main (int   argc,
     { "monitor-bus", 0, 0, G_OPTION_ARG_STRING_ARRAY, &monitor_bus, N_("Additional D-Bus address to monitor") },
     { "stack-size", 0, 0, G_OPTION_ARG_INT, &stack_size, N_("Stack size to copy for unwinding in user-space") },
     { "no-debuginfod", 0, 0, G_OPTION_ARG_NONE, &enable_debuginfod, N_("Do not use debuginfod to resolve symbols") },
+    { "no-sysprofd", 0, 0, G_OPTION_ARG_NONE, &no_sysprofd, N_("Do not use Sysprofd to acquire privileges") },
     { NULL }
   };
 
@@ -457,6 +459,7 @@ Examples:\n\
     }
 
   profiler = sysprof_profiler_new ();
+  sysprof_profiler_set_acquire_privileges (profiler, !no_sysprofd);
 
   if (argc == 2)
     filename = argv[1];

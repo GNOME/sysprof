@@ -159,6 +159,8 @@ libsysprof_private_sources = [
   'sysprof-util.c',
   'timsort/gtktimsort.c',
 
+  '../sysprofd/helpers.c',
+
   gnome.gdbus_codegen('ipc-unwinder',
              sources: '../sysprofd/org.gnome.Sysprof3.Unwinder.xml',
     interface_prefix: 'org.gnome.Sysprof3.',

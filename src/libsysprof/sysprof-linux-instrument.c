@@ -29,11 +29,16 @@
 
 #include "line-reader-private.h"
 
+#include "../sysprofd/helpers.h"
+
+#define PROCESS_INFO_KEYS "pid,maps,mountinfo,cmdline,comm,cgroup"
+
 struct _SysprofLinuxInstrument
 {
-  SysprofInstrument parent_instance;
-  SysprofRecording *recording;
-  GHashTable *seen;
+  SysprofInstrument  parent_instance;
+  GDBusConnection   *connection;
+  SysprofRecording  *recording;
+  GHashTable        *seen;
 };
 
 G_DEFINE_FINAL_TYPE (SysprofLinuxInstrument, sysprof_linux_instrument, SYSPROF_TYPE_INSTRUMENT)
@@ -44,6 +49,15 @@ sysprof_linux_instrument_list_required_policy (SysprofInstrument *instrument)
   static const char *policy[] = {"org.gnome.sysprof3.profile", NULL};
 
   return g_strdupv ((char **)policy);
+}
+
+static void
+sysprof_linux_instrument_set_connection (SysprofInstrument *instrument,
+                                         GDBusConnection   *connection)
+{
+  SysprofLinuxInstrument *self = SYSPROF_LINUX_INSTRUMENT (instrument);
+
+  g_set_object (&self->connection, connection);
 }
 
 static void
@@ -237,11 +251,35 @@ add_process_info (SysprofLinuxInstrument *self,
   return dex_future_new_for_boolean (TRUE);
 }
 
+static void
+get_process_info_task (gpointer data)
+{
+  g_autoptr(DexPromise) promise = data;
+  g_autoptr(GVariant) info = NULL;
+
+  if (!(info = helpers_get_process_info (PROCESS_INFO_KEYS)))
+    dex_promise_reject (promise,
+                        g_error_new (G_IO_ERROR,
+                                     G_IO_ERROR_PERMISSION_DENIED,
+                                     "Failed to load process info"));
+  else
+    dex_promise_resolve_variant (promise, g_steal_pointer (&info));
+}
+
+static DexFuture *
+get_process_info (void)
+{
+  DexPromise *promise = dex_promise_new ();
+  dex_scheduler_push (dex_thread_pool_scheduler_get_default (),
+                      get_process_info_task,
+                      dex_ref (promise));
+  return DEX_FUTURE (g_steal_pointer (&promise));
+}
+
 static DexFuture *
 sysprof_linux_instrument_prepare_fiber (gpointer user_data)
 {
   SysprofLinuxInstrument *self = user_data;
-  g_autoptr(GDBusConnection) bus = NULL;
   g_autoptr(GVariant) process_info_reply = NULL;
   g_autoptr(GVariant) process_info = NULL;
   g_autoptr(GError) error = NULL;
@@ -259,28 +297,37 @@ sysprof_linux_instrument_prepare_fiber (gpointer user_data)
                   &error))
     return dex_future_new_for_error (g_steal_pointer (&error));
 
-  /* We need access to the bus to call various sysprofd API directly */
-  if (!(bus = dex_await_object (dex_bus_get (G_BUS_TYPE_SYSTEM), &error)))
-    return dex_future_new_for_error (g_steal_pointer (&error));
-
-  /* We also want to get a bunch of info on user processes so that we can add
-   * records about them to the recording.
-   */
   at_time = SYSPROF_CAPTURE_CURRENT_TIME;
-  if (!(process_info_reply = dex_await_variant (dex_dbus_connection_call (bus,
-                                                                          "org.gnome.Sysprof3",
-                                                                          "/org/gnome/Sysprof3",
-                                                                          "org.gnome.Sysprof3.Service",
-                                                                          "GetProcessInfo",
-                                                                          g_variant_new ("(s)", "pid,maps,mountinfo,cmdline,comm,cgroup"),
-                                                                          G_VARIANT_TYPE ("(aa{sv})"),
-                                                                          G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION,
-                                                                          G_MAXINT),
-                                                &error)))
-    return dex_future_new_for_error (g_steal_pointer (&error));
 
-  /* Add process records for each of the processes discovered */
-  process_info = g_variant_get_child_value (process_info_reply, 0);
+  if (self->connection != NULL)
+    {
+      /* We also want to get a bunch of info on user processes so that we can add
+       * records about them to the recording.
+       */
+      if (!(process_info_reply = dex_await_variant (dex_dbus_connection_call (self->connection,
+                                                                              "org.gnome.Sysprof3",
+                                                                              "/org/gnome/Sysprof3",
+                                                                              "org.gnome.Sysprof3.Service",
+                                                                              "GetProcessInfo",
+                                                                              g_variant_new ("(s)", PROCESS_INFO_KEYS),
+                                                                              G_VARIANT_TYPE ("(aa{sv})"),
+                                                                              G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION,
+                                                                              G_MAXINT),
+                                                    &error)))
+        return dex_future_new_for_error (g_steal_pointer (&error));
+
+      /* Add process records for each of the processes discovered */
+      process_info = g_variant_get_child_value (process_info_reply, 0);
+    }
+  else
+    {
+      /* Load process info using same mechanism as sysprofd */
+      if (!(process_info = dex_await_variant (get_process_info (), &error)))
+        return dex_future_new_for_error (g_steal_pointer (&error));
+    }
+
+  g_assert (process_info != NULL);
+
   dex_await (add_process_info (self, self->recording, process_info, at_time), NULL);
 
   return dex_future_new_for_boolean (TRUE);
@@ -454,6 +501,7 @@ sysprof_linux_instrument_dispose (GObject *object)
 {
   SysprofLinuxInstrument *self = (SysprofLinuxInstrument *)object;
 
+  g_clear_object (&self->connection);
   g_clear_object (&self->recording);
   g_hash_table_remove_all (self->seen);
 
@@ -482,6 +530,7 @@ sysprof_linux_instrument_class_init (SysprofLinuxInstrumentClass *klass)
   instrument_class->list_required_policy = sysprof_linux_instrument_list_required_policy;
   instrument_class->prepare = sysprof_linux_instrument_prepare;
   instrument_class->process_started = sysprof_linux_instrument_process_started;
+  instrument_class->set_connection = sysprof_linux_instrument_set_connection;
 }
 
 static void

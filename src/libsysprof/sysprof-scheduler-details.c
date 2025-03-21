@@ -24,6 +24,7 @@
 #include "sysprof-perf-event-stream-private.h"
 #include "sysprof-scheduler-details.h"
 #include "sysprof-recording-private.h"
+#include "sysprof-util-private.h"
 
 #include "line-reader-private.h"
 
@@ -31,6 +32,7 @@ struct _SysprofSchedulerDetails
 {
   SysprofInstrument  parent_instance;
 
+  GDBusConnection   *connection;
   SysprofRecording  *recording;
   DexFuture         *cancellable;
   GPtrArray         *streams;
@@ -193,9 +195,8 @@ static DexFuture *
 sysprof_scheduler_details_prepare_fiber (gpointer user_data)
 {
   SysprofSchedulerDetails *self = user_data;
-  g_autoptr(GDBusConnection) bus = NULL;
   g_autoptr(GPtrArray) futures = NULL;
-  g_autoptr(GVariant) format_reply = NULL;
+  g_autoptr(GBytes) format_bytes = NULL;
   g_autoptr(GError) error = NULL;
   g_autofree char *format = NULL;
   int n_cpu;
@@ -203,22 +204,13 @@ sysprof_scheduler_details_prepare_fiber (gpointer user_data)
   g_assert (SYSPROF_IS_SCHEDULER_DETAILS (self));
   g_assert (SYSPROF_IS_RECORDING (self->recording));
 
-  if (!(bus = dex_await_object (dex_bus_get (G_BUS_TYPE_SYSTEM), &error)))
+  if (!(format_bytes = dex_await_boxed (sysprof_get_proc_file_bytes (self->connection,
+                                                                     "/sys/kernel/debug/tracing/events/sched/sched_switch/format"),
+                                        &error)))
     goto handle_error;
 
-  if (!(format_reply = dex_await_variant (dex_dbus_connection_call (bus,
-                                                                    "org.gnome.Sysprof3",
-                                                                    "/org/gnome/Sysprof3",
-                                                                    "org.gnome.Sysprof3.Service",
-                                                                    "GetProcFile",
-                                                                    g_variant_new ("(^ay)", "/sys/kernel/debug/tracing/events/sched/sched_switch/format"),
-                                                                    G_VARIANT_TYPE ("(ay)"),
-                                                                    G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION,
-                                                                    G_MAXINT),
-                                          &error)))
-    goto handle_error;
-
-  g_variant_get (format_reply, "(^ay)", &format);
+  format = g_strndup (g_bytes_get_data (format_bytes, NULL),
+                      g_bytes_get_size (format_bytes));
 
   if (!sysprof_scheduler_details_parse_format (self, format))
     {
@@ -255,7 +247,7 @@ sysprof_scheduler_details_prepare_fiber (gpointer user_data)
       attr.size = sizeof attr;
 
       g_ptr_array_add (futures,
-                       sysprof_perf_event_stream_new (bus,
+                       sysprof_perf_event_stream_new (self->connection,
                                                       &attr,
                                                       cpu,
                                                       -1,
@@ -362,6 +354,15 @@ sysprof_scheduler_details_record (SysprofInstrument *instrument,
 }
 
 static void
+sysprof_scheduler_details_set_connection (SysprofInstrument *instrument,
+                                          GDBusConnection   *connection)
+{
+  SysprofSchedulerDetails *self = SYSPROF_SCHEDULER_DETAILS (instrument);
+
+  g_set_object (&self->connection, connection);
+}
+
+static void
 sysprof_scheduler_details_dispose (GObject *object)
 {
   SysprofSchedulerDetails *self = (SysprofSchedulerDetails *)object;
@@ -377,6 +378,7 @@ sysprof_scheduler_details_dispose (GObject *object)
       g_clear_pointer (&self->streams, g_ptr_array_unref);
     }
 
+  g_clear_object (&self->connection);
   g_clear_object (&self->recording);
   g_clear_pointer (&self->last_switch_times, g_free);
   dex_clear (&self->cancellable);
@@ -394,6 +396,7 @@ sysprof_scheduler_details_class_init (SysprofSchedulerDetailsClass *klass)
 
   instrument_class->prepare = sysprof_scheduler_details_prepare;
   instrument_class->record = sysprof_scheduler_details_record;
+  instrument_class->set_connection = sysprof_scheduler_details_set_connection;
 }
 
 static void

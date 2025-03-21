@@ -36,24 +36,29 @@ SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofProfiler, sysprof_profiler, SYSPROF, PROFILER, GObject)
 
 SYSPROF_AVAILABLE_IN_ALL
-SysprofProfiler  *sysprof_profiler_new             (void);
+SysprofProfiler  *sysprof_profiler_new                    (void);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofSpawnable *sysprof_profiler_get_spawnable   (SysprofProfiler      *self);
+SysprofSpawnable *sysprof_profiler_get_spawnable          (SysprofProfiler       *self);
 SYSPROF_AVAILABLE_IN_ALL
-void              sysprof_profiler_set_spawnable   (SysprofProfiler      *self,
-                                                    SysprofSpawnable     *spawnable);
+void              sysprof_profiler_set_spawnable          (SysprofProfiler       *self,
+                                                           SysprofSpawnable      *spawnable);
 SYSPROF_AVAILABLE_IN_ALL
-void              sysprof_profiler_add_instrument  (SysprofProfiler      *self,
-                                                    SysprofInstrument    *instrument);
+void              sysprof_profiler_add_instrument         (SysprofProfiler       *self,
+                                                           SysprofInstrument     *instrument);
 SYSPROF_AVAILABLE_IN_ALL
-void              sysprof_profiler_record_async    (SysprofProfiler      *self,
-                                                    SysprofCaptureWriter *writer,
-                                                    GCancellable         *cancellable,
-                                                    GAsyncReadyCallback   callback,
-                                                    gpointer              user_data);
+void              sysprof_profiler_record_async           (SysprofProfiler       *self,
+                                                           SysprofCaptureWriter  *writer,
+                                                           GCancellable          *cancellable,
+                                                           GAsyncReadyCallback    callback,
+                                                           gpointer               user_data);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofRecording *sysprof_profiler_record_finish   (SysprofProfiler      *self,
-                                                    GAsyncResult         *result,
-                                                    GError              **error);
+SysprofRecording *sysprof_profiler_record_finish          (SysprofProfiler       *self,
+                                                           GAsyncResult          *result,
+                                                           GError               **error);
+G_GNUC_INTERNAL
+gboolean          sysprof_profiler_get_acquire_privileges (SysprofProfiler       *self);
+G_GNUC_INTERNAL
+void              sysprof_profiler_set_acquire_privileges (SysprofProfiler       *self,
+                                                           gboolean               acquire_privileges);
 
 G_END_DECLS

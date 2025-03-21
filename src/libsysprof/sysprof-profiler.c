@@ -33,10 +33,12 @@ struct _SysprofProfiler
   GObject           parent_instance;
   GPtrArray        *instruments;
   SysprofSpawnable *spawnable;
+  guint             acquire_privileges : 1;
 };
 
 enum {
   PROP_0,
+  PROP_ACQUIRE_PRIVILEGES,
   PROP_SPAWNABLE,
   N_PROPS
 };
@@ -66,6 +68,10 @@ sysprof_profiler_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_ACQUIRE_PRIVILEGES:
+      g_value_set_boolean (value, sysprof_profiler_get_acquire_privileges (self));
+      break;
+
     case PROP_SPAWNABLE:
       g_value_set_object (value, sysprof_profiler_get_spawnable (self));
       break;
@@ -85,6 +91,10 @@ sysprof_profiler_set_property (GObject      *object,
 
   switch (prop_id)
     {
+    case PROP_ACQUIRE_PRIVILEGES:
+      sysprof_profiler_set_acquire_privileges (self, g_value_get_boolean (value));
+      break;
+
     case PROP_SPAWNABLE:
       sysprof_profiler_set_spawnable (self, g_value_get_object (value));
       break;
@@ -103,6 +113,13 @@ sysprof_profiler_class_init (SysprofProfilerClass *klass)
   object_class->get_property = sysprof_profiler_get_property;
   object_class->set_property = sysprof_profiler_set_property;
 
+  properties[PROP_ACQUIRE_PRIVILEGES] =
+    g_param_spec_boolean ("acquire-privileges", NULL, NULL,
+                          TRUE,
+                          (G_PARAM_READWRITE |
+                           G_PARAM_EXPLICIT_NOTIFY |
+                           G_PARAM_STATIC_STRINGS));
+
   properties [PROP_SPAWNABLE] =
     g_param_spec_object ("spawnable", NULL, NULL,
                          SYSPROF_TYPE_SPAWNABLE,
@@ -114,6 +131,7 @@ sysprof_profiler_class_init (SysprofProfilerClass *klass)
 static void
 sysprof_profiler_init (SysprofProfiler *self)
 {
+  self->acquire_privileges = TRUE;
   self->instruments = g_ptr_array_new_with_free_func (g_object_unref);
 
 #ifdef __linux__
@@ -169,7 +187,8 @@ sysprof_profiler_record_async (SysprofProfiler      *self,
   recording = _sysprof_recording_new (writer,
                                       self->spawnable,
                                       (SysprofInstrument **)self->instruments->pdata,
-                                      self->instruments->len);
+                                      self->instruments->len,
+                                      self->acquire_privileges);
 
   g_task_return_pointer (task, g_object_ref (recording), g_object_unref);
 
@@ -224,4 +243,37 @@ sysprof_profiler_set_spawnable (SysprofProfiler  *self,
 
   if (g_set_object (&self->spawnable, spawnable))
     g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_SPAWNABLE]);
+}
+
+gboolean
+sysprof_profiler_get_acquire_privileges (SysprofProfiler *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_PROFILER (self), FALSE);
+
+  return self->acquire_privileges;
+}
+
+/**
+ * sysprof_profiler_set_acquire_privileges:
+ * @self: a [class@Sysprof.Profiler]
+ *
+ * Sets if the the profiler should automatically acquire privileges using
+ * D-Bus, Policy-Kit, and sysprofd.
+ *
+ * Set to false if you want to profile only from what the current process
+ * can see. Generally that means your user needs perf capabilities.
+ */
+void
+sysprof_profiler_set_acquire_privileges (SysprofProfiler *self,
+                                         gboolean         acquire_privileges)
+{
+  g_return_if_fail (SYSPROF_IS_PROFILER (self));
+
+  acquire_privileges = !!acquire_privileges;
+
+  if (self->acquire_privileges != acquire_privileges)
+    {
+      self->acquire_privileges = acquire_privileges;
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ACQUIRE_PRIVILEGES]);
+    }
 }

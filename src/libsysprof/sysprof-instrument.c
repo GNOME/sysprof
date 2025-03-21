@@ -310,3 +310,19 @@ _sysprof_instruments_process_started (GPtrArray        *instruments,
 
   return dex_future_allv ((DexFuture **)futures->pdata, futures->len);
 }
+
+void
+_sysprof_instruments_set_connection (GPtrArray       *instruments,
+                                     GDBusConnection *connection)
+{
+  g_return_if_fail (instruments != NULL);
+  g_return_if_fail (!connection || G_IS_DBUS_CONNECTION (connection));
+
+  for (guint i = 0; i < instruments->len; i++)
+    {
+      SysprofInstrument *instrument = g_ptr_array_index (instruments, i);
+
+      if (SYSPROF_INSTRUMENT_GET_CLASS (instrument)->set_connection)
+        SYSPROF_INSTRUMENT_GET_CLASS (instrument)->set_connection (instrument, connection);
+    }
+}

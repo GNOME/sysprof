@@ -156,6 +156,7 @@ libsysprof_private_sources = [
   'sysprof-process-info.c',
   'sysprof-strings.c',
   'sysprof-symbol-cache.c',
+  'sysprof-util.c',
   'timsort/gtktimsort.c',
 
   gnome.gdbus_codegen('ipc-unwinder',

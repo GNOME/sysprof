@@ -40,9 +40,7 @@
 #include "config.h"
 
 #include <errno.h>
-#include <glib/gstdio.h>
-#include <gio/gio.h>
-#include <gio/gunixfdlist.h>
+#include <linux/perf_event.h>
 #ifdef HAVE_STDATOMIC_H
 # include <stdatomic.h>
 #endif
@@ -51,6 +49,10 @@
 #include <sys/mman.h>
 #include <sys/syscall.h>
 #include <unistd.h>
+
+#include <glib/gstdio.h>
+#include <gio/gio.h>
+#include <gio/gunixfdlist.h>
 
 #include "sysprof-perf-event-stream-private.h"
 
@@ -79,8 +81,6 @@ struct _SysprofPerfEventStream
   gpointer callback_data;
   GDestroyNotify callback_data_destroy;
 
-  DexPromise *promise;
-
   int perf_fd;
 
   struct perf_event_mmap_page *map;
@@ -108,6 +108,16 @@ enum {
 G_DEFINE_FINAL_TYPE (SysprofPerfEventStream, sysprof_perf_event_stream, G_TYPE_OBJECT)
 
 static GParamSpec *properties [N_PROPS];
+
+static int
+_perf_event_open (const struct perf_event_attr *attr,
+                  pid_t                         pid,
+                  int                           cpu,
+                  int                           group_fd,
+                  unsigned long                 flags)
+{
+  return syscall (SYS_perf_event_open, attr, pid, cpu, group_fd, flags);
+}
 
 GVariant *
 _sysprof_perf_event_attr_to_variant (const struct perf_event_attr *attr)
@@ -339,8 +349,6 @@ sysprof_perf_event_stream_finalize (GObject *object)
 
   self->callback = NULL;
 
-  dex_clear (&self->promise);
-
   g_clear_object (&self->connection);
 
   if (self->source != NULL)
@@ -351,6 +359,7 @@ sysprof_perf_event_stream_finalize (GObject *object)
     }
 
   g_clear_fd (&self->perf_fd, NULL);
+  g_clear_fd (&self->group_fd, NULL);
 
   if (self->map != NULL && self->map_size > 0)
     {
@@ -401,65 +410,102 @@ static void
 sysprof_perf_event_stream_init (SysprofPerfEventStream *self)
 {
   self->perf_fd = -1;
+  self->group_fd = -1;
   self->self_pid = getpid ();
 }
 
-static void
-sysprof_perf_event_stream_new_cb (GObject      *object,
-                                  GAsyncResult *result,
-                                  gpointer      user_data)
+static DexFuture *
+sysprof_perf_event_stream_new_fiber (gpointer data)
 {
-  GDBusConnection *connection = (GDBusConnection *)object;
-  g_autoptr(SysprofPerfEventStream) self = user_data;
-  g_autoptr(GUnixFDList) fd_list = NULL;
-  g_autoptr(GVariant) ret = NULL;
-  g_autoptr(GError) error = NULL;
+  SysprofPerfEventStream *self = data;
+  g_autofd int perf_fd = -1;
+  gsize map_size;
+  guint8 *map;
 
-  g_assert (G_IS_DBUS_CONNECTION (connection));
-  g_assert (G_IS_ASYNC_RESULT (result));
   g_assert (SYSPROF_IS_PERF_EVENT_STREAM (self));
 
-  if ((ret = g_dbus_connection_call_with_unix_fd_list_finish (connection, &fd_list, result, &error)))
+  if (self->connection != NULL)
     {
+      g_autoptr(GUnixFDList) fd_list = NULL;
+      g_autoptr(GUnixFDList) out_fd_list = NULL;
+      g_autoptr(GVariant) options = _sysprof_perf_event_attr_to_variant (&self->attr);
+      g_autoptr(DexFuture) future = NULL;
+      g_autoptr(GVariant) reply = NULL;
+      g_autoptr(GError) error = NULL;
+      int group_fd_handle = -1;
       int handle;
-      int fd;
 
-      g_variant_get (ret, "(h)", &handle);
-
-      if (-1 != (fd = g_unix_fd_list_get (fd_list, handle, &error)))
+      if (self->group_fd > -1)
         {
-          gsize map_size;
-          guint8 *map;
+          fd_list = g_unix_fd_list_new ();
+          group_fd_handle = g_unix_fd_list_append (fd_list, self->group_fd, NULL);
+        }
 
-          self->perf_fd = fd;
+      future = dex_dbus_connection_call_with_unix_fd_list (self->connection,
+                                                           "org.gnome.Sysprof3",
+                                                           "/org/gnome/Sysprof3",
+                                                           "org.gnome.Sysprof3.Service",
+                                                           "PerfEventOpen",
+                                                           g_variant_new ("(@a{sv}iiht)",
+                                                                          options,
+                                                                          -1,
+                                                                          self->cpu,
+                                                                          group_fd_handle,
+                                                                          self->flags),
+                                                           G_VARIANT_TYPE ("(h)"),
+                                                           G_DBUS_CALL_FLAGS_NONE,
+                                                           G_MAXUINT,
+                                                           fd_list);
 
-          map_size = N_PAGES * sysprof_getpagesize () + sysprof_getpagesize ();
-          map = mmap (NULL, map_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+      if (!dex_await (dex_ref (future), &error))
+        return dex_future_new_for_error (g_steal_pointer (&error));
 
-          if ((gpointer)map == MAP_FAILED)
-            {
-              int errsv = errno;
-              g_set_error_literal (&error,
-                                   G_IO_ERROR,
-                                   g_io_error_from_errno (errsv),
-                                   g_strerror (errsv));
-            }
-          else
-            {
-              self->map_size = map_size;
-              self->map = (gpointer)map;
-              self->map_data = map + sysprof_getpagesize ();
-              self->tail = 0;
-            }
+      g_assert (DEX_IS_FUTURE_SET (future));
+
+      if (!(out_fd_list = dex_await_object (dex_ref (dex_future_set_get_future_at (DEX_FUTURE_SET (future), 1)), &error)) ||
+          !(reply = dex_await_variant (dex_ref (dex_future_set_get_future_at (DEX_FUTURE_SET (future), 0)), &error)))
+        return dex_future_new_for_error (g_steal_pointer (&error));
+
+      g_variant_get (reply, "(h)", &handle);
+
+      if (-1 == (perf_fd = g_unix_fd_list_get (out_fd_list, handle, &error)))
+        return dex_future_new_for_error (g_steal_pointer (&error));
+    }
+  else
+    {
+      perf_fd = _perf_event_open (&self->attr, -1, self->cpu, self->group_fd, self->flags);
+
+      if (perf_fd < 0)
+        {
+          int errsv = errno;
+          return dex_future_new_reject (G_IO_ERROR,
+                                        g_io_error_from_errno (errsv),
+                                        "%s", g_strerror (errsv));
         }
     }
 
-  if (error != NULL)
-    dex_promise_reject (self->promise, g_steal_pointer (&error));
-  else
-    dex_promise_resolve_object (self->promise, g_object_ref (self));
+  g_assert (self->perf_fd == -1);
+  g_assert (perf_fd > -1);
 
-  dex_clear (&self->promise);
+  self->perf_fd = g_steal_fd (&perf_fd);
+
+  map_size = N_PAGES * sysprof_getpagesize () + sysprof_getpagesize ();
+  map = mmap (NULL, map_size, PROT_READ | PROT_WRITE, MAP_SHARED, self->perf_fd, 0);
+
+  if ((gpointer)map == MAP_FAILED)
+    {
+      int errsv = errno;
+      return dex_future_new_reject (G_IO_ERROR,
+                                    g_io_error_from_errno (errsv),
+                                    "%s", g_strerror (errsv));
+    }
+
+  self->map_size = map_size;
+  self->map = (gpointer)map;
+  self->map_data = map + sysprof_getpagesize ();
+  self->tail = 0;
+
+  return dex_future_new_take_object (g_object_ref (self));
 }
 
 DexFuture *
@@ -474,29 +520,22 @@ sysprof_perf_event_stream_new (GDBusConnection          *connection,
 {
   SysprofPerfEventSource *source;
   g_autoptr(SysprofPerfEventStream) self = NULL;
-  g_autoptr(GUnixFDList) fd_list = NULL;
-  g_autoptr(DexPromise) promise = NULL;
-  g_autoptr(GVariant) options = NULL;
   g_autofree char *name = NULL;
-  int group_fd_handle = -1;
 
-  g_return_val_if_fail (G_IS_DBUS_CONNECTION (connection), NULL);
+  g_return_val_if_fail (!connection || G_IS_DBUS_CONNECTION (connection), NULL);
   g_return_val_if_fail (attr != NULL, NULL);
   g_return_val_if_fail (cpu > -1, NULL);
   g_return_val_if_fail (group_fd >= -1, NULL);
 
-  promise = dex_promise_new ();
-
   self = g_object_new (SYSPROF_TYPE_PERF_EVENT_STREAM, NULL);
-  self->connection = g_object_ref (connection);
+  self->connection = connection ? g_object_ref (connection) : NULL;
   self->attr = *attr;
   self->cpu = cpu;
-  self->group_fd = group_fd;
+  self->group_fd = group_fd > -1 ? dup (group_fd) : -1;
   self->flags = flags;
   self->callback = callback;
   self->callback_data = callback_data;
   self->callback_data_destroy = callback_data_destroy;
-  self->promise = dex_ref (promise);
 
   source = (SysprofPerfEventSource *)
     g_source_new (&source_funcs, sizeof (SysprofPerfEventSource));
@@ -511,34 +550,10 @@ sysprof_perf_event_stream_new (GDBusConnection          *connection,
   g_source_set_name (self->source, name);
   g_source_attach (self->source, NULL);
 
-  if (group_fd > -1)
-    {
-      fd_list = g_unix_fd_list_new ();
-      group_fd_handle = g_unix_fd_list_append (fd_list, group_fd, NULL);
-    }
-
-  options = _sysprof_perf_event_attr_to_variant (attr);
-
-  g_dbus_connection_call_with_unix_fd_list (connection,
-                                            "org.gnome.Sysprof3",
-                                            "/org/gnome/Sysprof3",
-                                            "org.gnome.Sysprof3.Service",
-                                            "PerfEventOpen",
-                                            g_variant_new ("(@a{sv}iiht)",
-                                                           options,
-                                                           -1,
-                                                           cpu,
-                                                           group_fd_handle,
-                                                           flags),
-                                            G_VARIANT_TYPE ("(h)"),
-                                            G_DBUS_CALL_FLAGS_NONE,
-                                            G_MAXUINT,
-                                            fd_list,
-                                            dex_promise_get_cancellable (promise),
-                                            sysprof_perf_event_stream_new_cb,
-                                            g_object_ref (self));
-
-  return DEX_FUTURE (g_steal_pointer (&promise));
+  return dex_scheduler_spawn (NULL, 0,
+                              sysprof_perf_event_stream_new_fiber,
+                              g_object_ref (self),
+                              g_object_unref);
 }
 
 gboolean

@@ -27,6 +27,7 @@
 #include <libdex.h>
 
 #include "sysprof-recording-private.h"
+#include "sysprof-util-private.h"
 
 enum {
   PROP_0,
@@ -99,6 +100,7 @@ static DexFuture *
 sysprof_recording_fiber (gpointer user_data)
 {
   SysprofRecording *self = user_data;
+  g_autoptr(GDBusConnection) connection = NULL;
   g_autoptr(GCancellable) cancellable = NULL;
   g_autoptr(DexFuture) record = NULL;
   g_autoptr(DexFuture) monitor = NULL;
@@ -115,12 +117,24 @@ sysprof_recording_fiber (gpointer user_data)
 
   cancellable = g_cancellable_new ();
 
-  /* First ensure that all our required policy have been acquired on
-   * the bus so that we don't need to individually acquire them from
-   * each of the instruments after the recording starts.
-   */
-  if (!dex_await (_sysprof_instruments_acquire_policy (self->instruments, self), &error))
-    return dex_future_new_for_error (g_steal_pointer (&error));
+  if (self->use_sysprofd)
+    {
+      /* Get our D-Bus system connection if we're using sysprofd. */
+      if (!(connection = dex_await_object (dex_bus_get (G_BUS_TYPE_SYSTEM), NULL)))
+        return dex_future_new_for_error (g_steal_pointer (&error));
+
+      /* Let every instrument know what bus we're using so that they can
+       * automatically enable/disable sysprofd/policy-kit integration.
+       */
+      _sysprof_instruments_set_connection (self->instruments, connection);
+
+      /* First ensure that all our required policy have been acquired on
+       * the bus so that we don't need to individually acquire them from
+       * each of the instruments after the recording starts.
+       */
+      if (!dex_await (_sysprof_instruments_acquire_policy (self->instruments, self), &error))
+        return dex_future_new_for_error (g_steal_pointer (&error));
+    }
 
   /* Now allow instruments to prepare for the recording */
   if (!dex_await (_sysprof_instruments_prepare (self->instruments, self), &error))
@@ -420,7 +434,8 @@ SysprofRecording *
 _sysprof_recording_new (SysprofCaptureWriter  *writer,
                         SysprofSpawnable      *spawnable,
                         SysprofInstrument    **instruments,
-                        guint                  n_instruments)
+                        guint                  n_instruments,
+                        gboolean               use_sysprofd)
 {
   SysprofRecording *self;
 
@@ -428,6 +443,7 @@ _sysprof_recording_new (SysprofCaptureWriter  *writer,
 
   self = g_object_new (SYSPROF_TYPE_RECORDING, NULL);
   self->writer = sysprof_capture_writer_ref (writer);
+  self->use_sysprofd = !!use_sysprofd;
 
   g_set_object (&self->spawnable, spawnable);
 
@@ -517,6 +533,7 @@ typedef struct _AddFile
   SysprofCaptureWriter *writer;
   char *path;
   guint compress : 1;
+  guint use_sysprofd : 1;
 } AddFile;
 
 static void
@@ -572,25 +589,18 @@ sysprof_recording_add_file_fiber (gpointer user_data)
   if (g_file_has_prefix (file, proc))
     {
       g_autoptr(GDBusConnection) connection = NULL;
-      g_autoptr(GVariant) reply = NULL;
       g_autoptr(GBytes) input_bytes = NULL;
 
-      if (!(connection = dex_await_object (dex_bus_get (G_BUS_TYPE_SYSTEM), &error)))
+      if (add_file->use_sysprofd)
+        {
+          /* Only use D-Bus if sysprofd use is requested */
+          if (!(connection = dex_await_object (dex_bus_get (G_BUS_TYPE_SYSTEM), &error)))
+            return dex_future_new_for_error (g_steal_pointer (&error));
+        }
+
+      if (!(input_bytes = dex_await_boxed (sysprof_get_proc_file_bytes (connection, g_file_get_path (file)), &error)))
         return dex_future_new_for_error (g_steal_pointer (&error));
 
-      if (!(reply = dex_await_variant (dex_dbus_connection_call (connection,
-                                                                 "org.gnome.Sysprof3",
-                                                                 "/org/gnome/Sysprof3",
-                                                                 "org.gnome.Sysprof3.Service",
-                                                                 "GetProcFile",
-                                                                 g_variant_new ("(^ay)", g_file_get_path (file)),
-                                                                 G_VARIANT_TYPE ("(ay)"),
-                                                                 G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION,
-                                                                 G_MAXINT),
-                                       &error)))
-        return dex_future_new_for_error (g_steal_pointer (&error));
-
-      input_bytes = g_variant_get_data_as_bytes (reply);
       input = g_memory_input_stream_new_from_bytes (input_bytes);
     }
   else
@@ -662,6 +672,7 @@ _sysprof_recording_add_file (SysprofRecording *self,
   add_file->writer = sysprof_capture_writer_ref (self->writer);
   add_file->path = g_strdup (path);
   add_file->compress = !!compress;
+  add_file->use_sysprofd = self->use_sysprofd;
 
   return dex_scheduler_spawn (NULL, 0,
                               sysprof_recording_add_file_fiber,

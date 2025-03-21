@@ -79,12 +79,18 @@ struct _SysprofRecording
 
   /* The process we have spawned, if any */
   GSubprocess *subprocess;
+
+  /* If we should preauth or otherwise use sysprofd to access
+   * privileges when setting up the recording.
+   */
+  guint use_sysprofd : 1;
 };
 
 SysprofRecording     *_sysprof_recording_new           (SysprofCaptureWriter  *writer,
                                                         SysprofSpawnable      *spawnable,
                                                         SysprofInstrument    **instruments,
-                                                        guint                  n_instruments);
+                                                        guint                  n_instruments,
+                                                        gboolean               use_sysprofd);
 void                  _sysprof_recording_start         (SysprofRecording      *self);
 SysprofSpawnable     *_sysprof_recording_get_spawnable (SysprofRecording      *self);
 DexFuture            *_sysprof_recording_add_file      (SysprofRecording      *self,

@@ -651,29 +651,16 @@
                               </object>
                             </child>
                             <child>
-                              <object class="GtkMenuButton">
+                              <object class="GtkButton">
                                 <style>
                                   <class name="large-button"/>
                                   <class name="pill"/>
                                 </style>
-                                <property name="direction">up</property>
                                 <property name="margin-top">12</property>
                                 <property name="halign">center</property>
-                                <property name="child">
-                                  <object class="GtkLabel">
-                                    <property name="label" translatable="yes">Add _Directory</property>
-                                    <property name="use-underline">true</property>
-                                  </object>
-                                </property>
-                                <property name="popover">
-                                  <object class="SysprofEntryPopover">
-                                    <property name="title" translatable="yes">Add Directory</property>
-                                    <property name="button-text" translatable="yes">_Add</property>
-                                    <property name="width-request">400</property>
-                                    <signal name="changed" handler="on_debug_dir_entry_changed_cb" swapped="true" object="SysprofGreeter"/>
-                                    <signal name="activate" handler="on_debug_dir_entry_activate_cb" swapped="true" object="SysprofGreeter"/>
-                                  </object>
-                                </property>
+                                <property name="label" translatable="yes">Add _Directory</property>
+                                <property name="use-underline">true</property>
+                                <property name="action-name">system.select-debug-directory</property>
                               </object>
                             </child>
                           </object>

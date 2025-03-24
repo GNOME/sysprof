@@ -509,6 +509,7 @@ sysprof_recording_template_init (SysprofRecordingTemplate *self)
   self->command_line = g_strdup ("");
   self->cwd = g_strdup("");
   self->environ = g_strdupv((char * []) { NULL });
+  self->debugdirs = g_strdupv((char * []) { NULL });
   self->stack_size = DEFAULT_STACK_SIZE;
 }
 

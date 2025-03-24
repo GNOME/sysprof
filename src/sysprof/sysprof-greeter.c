@@ -172,26 +172,6 @@ failure:
 }
 
 static void
-on_debug_dir_entry_changed_cb (SysprofGreeter      *self,
-                               SysprofEntryPopover *popover)
-{
-  const char *errstr = NULL;
-  gboolean valid = FALSE;
-  const char *text;
-
-  g_assert (SYSPROF_IS_GREETER (self));
-  g_assert (SYSPROF_IS_ENTRY_POPOVER (popover));
-
-  text = sysprof_entry_popover_get_text (popover);
-
-  if (!(valid = g_file_test (text, G_FILE_TEST_IS_DIR)))
-    errstr = _("Directory does not exist");
-
-  sysprof_entry_popover_set_ready (popover, valid);
-  sysprof_entry_popover_set_message (popover, errstr);
-}
-
-static void
 on_env_entry_activate_cb (SysprofGreeter      *self,
                           const char          *text,
                           SysprofEntryPopover *popover)
@@ -201,19 +181,6 @@ on_env_entry_activate_cb (SysprofGreeter      *self,
   g_assert (GTK_IS_STRING_LIST (self->envvars));
 
   gtk_string_list_append (self->envvars, text);
-  sysprof_entry_popover_set_text (popover, "");
-}
-
-static void
-on_debug_dir_entry_activate_cb (SysprofGreeter      *self,
-                                const char          *text,
-                                SysprofEntryPopover *popover)
-{
-  g_assert (SYSPROF_IS_GREETER (self));
-  g_assert (SYSPROF_IS_ENTRY_POPOVER (popover));
-  g_assert (GTK_IS_STRING_LIST (self->debugdirs));
-
-  gtk_string_list_append (self->debugdirs, text);
   sysprof_entry_popover_set_text (popover, "");
 }
 
@@ -264,7 +231,7 @@ sysprof_greeter_create_profiler (SysprofGreeter  *self,
     {
       g_autoptr(GStrvBuilder) envvars_builder = NULL;
       g_auto(GStrv) envvars_list = NULL;
-      
+
       envvars_builder = g_strv_builder_new ();
 
       for (guint i = 0; i < g_list_model_get_n_items (G_LIST_MODEL (self->envvars)); i++)
@@ -385,19 +352,79 @@ sysprof_greeter_choose_file_for_record_cb (GObject      *object,
         }
       else
         {
+          AdwDialog *alert_dialog;
+
+          alert_dialog = adw_alert_dialog_new (_("Must Capture to Local File"), NULL);
+          adw_alert_dialog_format_body (ADW_ALERT_DIALOG (alert_dialog),
+                                        _("You must choose a local file to capture using Sysprof"));
+          adw_alert_dialog_add_responses (ADW_ALERT_DIALOG (alert_dialog),
+                                          "close", _("Close"),
+                                          NULL);
+          adw_alert_dialog_set_close_response (ADW_ALERT_DIALOG (alert_dialog), "cancel");
+          adw_alert_dialog_choose (ADW_ALERT_DIALOG (alert_dialog), GTK_WIDGET (self),
+                                   NULL, (GAsyncReadyCallback) sysprof_greeter_choose_file_for_record_cb, self);
+        }
+    }
+}
+
+static void
+sysprof_greeter_choose_folder_for_debug_dir (GObject      *object,
+                                             GAsyncResult *result,
+                                             gpointer      user_data)
+{
+  GtkFileDialog *dialog = (GtkFileDialog *)object;
+  g_autoptr(SysprofGreeter) self = user_data;
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GFile) file = NULL;
+
+  g_assert (GTK_IS_FILE_DIALOG (dialog));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (SYSPROF_IS_GREETER (self));
+  g_assert (GTK_IS_STRING_LIST (self->debugdirs));
+
+  if ((file = gtk_file_dialog_select_folder_finish (dialog, result, &error)))
+    {
+      if (g_file_is_native (file))
+        {
+          const char *path = g_file_peek_path (file);
+          gtk_string_list_append (self->debugdirs, path);
+        }
+      else
+        {
           GtkWidget *message;
 
           G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 
           message = adw_message_dialog_new (NULL,
-                                            _("Must Capture to Local File"),
-                                            _("You must choose a local file to capture using Sysprof"));
+                                          _("Must Select Local Folder"),
+                                          _("You must choose a local folder to add as a debug directory"));
           adw_message_dialog_add_response (ADW_MESSAGE_DIALOG (message), "close", _("Close"));
           gtk_window_present (GTK_WINDOW (message));
 
           G_GNUC_END_IGNORE_DEPRECATIONS
         }
     }
+}
+
+static void
+sysprof_greeter_select_debug_directory (GtkWidget  *widget,
+                                        const char *action_name,
+                                        GVariant   *param)
+{
+  SysprofGreeter *self = (SysprofGreeter *)widget;
+  g_autoptr(GtkFileDialog) dialog = NULL;
+
+  g_assert (SYSPROF_IS_GREETER (self));
+
+  dialog = gtk_file_dialog_new ();
+  gtk_file_dialog_set_title (dialog, _("Add debug directory"));
+  gtk_file_dialog_set_accept_label (dialog, _("Add _Directory"));
+  gtk_file_dialog_set_modal (dialog, TRUE);
+  gtk_file_dialog_select_folder (dialog,
+                                 GTK_WINDOW (self),
+                                 NULL,
+                                 sysprof_greeter_choose_folder_for_debug_dir,
+                                 g_object_ref (self));
 }
 
 static void
@@ -719,10 +746,9 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, get_file_path);
   gtk_widget_class_bind_template_callback (widget_class, on_env_entry_activate_cb);
   gtk_widget_class_bind_template_callback (widget_class, on_env_entry_changed_cb);
-  gtk_widget_class_bind_template_callback (widget_class, on_debug_dir_entry_changed_cb);
-  gtk_widget_class_bind_template_callback (widget_class, on_debug_dir_entry_activate_cb);
   gtk_widget_class_bind_template_callback (widget_class, translate_power_profile);
 
+  gtk_widget_class_install_action (widget_class, "system.select-debug-directory", NULL, sysprof_greeter_select_debug_directory);
   gtk_widget_class_install_action (widget_class, "win.record-to-memory", NULL, sysprof_greeter_record_to_memory_action);
   gtk_widget_class_install_action (widget_class, "win.record-to-file", NULL, sysprof_greeter_record_to_file_action);
   gtk_widget_class_install_action (widget_class, "win.select-file", NULL, sysprof_greeter_select_file_action);
@@ -751,6 +777,7 @@ sysprof_greeter_init (SysprofGreeter *self)
                            G_CALLBACK (on_env_items_changed_cb),
                            self,
                            G_CONNECT_SWAPPED);
+
   on_env_items_changed_cb (self, 0, 0, 0, G_LIST_MODEL (self->envvars));
 
   g_signal_connect_object (self->debugdirs,
@@ -758,6 +785,7 @@ sysprof_greeter_init (SysprofGreeter *self)
                            G_CALLBACK (on_debug_dir_items_changed_cb),
                            self,
                            G_CONNECT_SWAPPED);
+
   on_debug_dir_items_changed_cb (self, 0, 0, 0, G_LIST_MODEL (self->debugdirs));
 
   gtk_list_box_bind_model (self->sidebar_list_box,
@@ -784,7 +812,20 @@ sysprof_greeter_init (SysprofGreeter *self)
       if (environ)
         {
           for (guint i = 0; environ[i]; i++)
-            gtk_string_list_append (self->envvars, environ[i]);            
+            gtk_string_list_append (self->envvars, environ[i]);
+        }
+    }
+
+  if (self->recording_template)
+    {
+      g_auto(GStrv) debug_directory_list = NULL;
+      g_object_get (self->recording_template,
+                    "debugdirs", &debug_directory_list,
+                    NULL);
+      if (debug_directory_list)
+        {
+          for (guint i = 0; debug_directory_list[i]; i++)
+            gtk_string_list_append (self->debugdirs, debug_directory_list[i]);
         }
     }
 

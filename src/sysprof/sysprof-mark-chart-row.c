@@ -50,6 +50,27 @@ G_DEFINE_FINAL_TYPE (SysprofMarkChartRow, sysprof_mark_chart_row, GTK_TYPE_WIDGE
 
 static GParamSpec *properties [N_PROPS];
 
+static void
+filter_by_mark_action (GtkWidget  *widget,
+                       const char *action_name,
+                       GVariant   *parameter)
+{
+  SysprofMarkChartRow *self = (SysprofMarkChartRow *)widget;
+  SysprofMarkCatalog *catalog;
+  SysprofSession *session;
+
+  g_assert (SYSPROF_IS_MARK_CHART_ROW (self));
+
+  if (self->item == NULL ||
+      !(session = sysprof_mark_chart_item_get_session (self->item)))
+    return;
+
+  catalog = sysprof_mark_chart_item_get_catalog (self->item);
+  g_assert (SYSPROF_IS_MARK_CATALOG (catalog));
+
+  sysprof_session_filter_by_mark (session, catalog);
+}
+
 static gboolean
 sysprof_mark_chart_row_activate_layer_item_cb (SysprofMarkChartRow *self,
                                                SysprofChartLayer   *layer,
@@ -204,6 +225,8 @@ sysprof_mark_chart_row_class_init (SysprofMarkChartRowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofMarkChartRow, layer);
   gtk_widget_class_bind_template_callback (widget_class, sysprof_mark_chart_row_activate_layer_item_cb);
   gtk_widget_class_bind_template_callback (widget_class, sysprof_mark_chart_row_button_pressed_cb);
+
+  gtk_widget_class_install_action (widget_class, "markchartrow.filter-by-mark", NULL, filter_by_mark_action);
 
   g_type_ensure (SYSPROF_TYPE_CHART);
   g_type_ensure (SYSPROF_TYPE_TIME_SERIES_ITEM);

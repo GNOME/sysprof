@@ -31,6 +31,7 @@ sysprof_sources = [
   'sysprof-mark-chart-item.c',
   'sysprof-mark-chart-row.c',
   'sysprof-mark-chart.c',
+  'sysprof-mark-filter.c',
   'sysprof-mark-table.c',
   'sysprof-marks-section.c',
   'sysprof-memory-callgraph-view.c',
@@ -90,6 +91,7 @@ sysprof_deps = [
   dependency('libadwaita-1', version: '>= 1.6.0'),
   dependency('libpanel-1', version: '>= 1.4'),
 
+  libtree_static_dep,
   libsysprof_static_dep,
 ]
 

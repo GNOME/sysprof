@@ -1,6 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="SysprofMarkChartRow" parent="GtkWidget">
+
+    <menu id="context_menu">
+      <section>
+        <item>
+          <attribute name="label" translatable="yes">Set as Filter</attribute>
+          <attribute name="action">markchartrow.filter-by-mark</attribute>
+        </item>
+      </section>
+    </menu>
+
+    <child>
+      <object class="GtkGestureClick">
+        <property name="button">0</property>
+        <property name="exclusive">true</property>
+        <signal name="pressed" handler="sysprof_mark_chart_row_button_pressed_cb" swapped="yes" />
+      </object>
+    </child>
+
     <child>
       <object class="GtkBox">
 

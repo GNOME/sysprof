@@ -31,6 +31,9 @@ struct _SysprofMarkChartRow
 {
   GtkWidget             parent_instance;
 
+  GMenuModel           *context_menu;
+  GtkWidget            *context_menu_popover;
+
   SysprofMarkChartItem *item;
 
   SysprofChart         *chart;
@@ -77,6 +80,49 @@ sysprof_mark_chart_row_activate_layer_item_cb (SysprofMarkChartRow *self,
     }
 
   return FALSE;
+}
+
+static void
+sysprof_mark_chart_row_button_pressed_cb (SysprofMarkChartRow *self,
+                                          int                  n_press,
+                                          double               x,
+                                          double               y,
+                                          GtkGestureClick     *gesture)
+{
+  GdkEventSequence *current;
+  GdkEvent *event;
+
+  g_assert (SYSPROF_IS_MARK_CHART_ROW (self));
+  g_assert (GTK_IS_GESTURE_CLICK (gesture));
+
+  current = gtk_gesture_single_get_current_sequence (GTK_GESTURE_SINGLE (gesture));
+  event = gtk_gesture_get_last_event (GTK_GESTURE (gesture), current);
+
+  if (!gdk_event_triggers_context_menu (event))
+    return;
+
+  if (!self->context_menu_popover)
+    {
+      self->context_menu_popover = gtk_popover_menu_new_from_model (self->context_menu);
+      gtk_popover_set_position (GTK_POPOVER (self->context_menu_popover), GTK_POS_BOTTOM);
+      gtk_popover_set_has_arrow (GTK_POPOVER (self->context_menu_popover), FALSE);
+      gtk_widget_set_halign (self->context_menu_popover, GTK_ALIGN_START);
+      gtk_widget_set_parent (GTK_WIDGET (self->context_menu_popover), GTK_WIDGET (self));
+    }
+
+  if (x != -1 && y != -1)
+    {
+      GdkRectangle rect = { x, y, 1, 1 };
+      gtk_popover_set_pointing_to (GTK_POPOVER (self->context_menu_popover), &rect);
+    }
+  else
+    {
+      gtk_popover_set_pointing_to (GTK_POPOVER (self->context_menu_popover), NULL);
+    }
+
+  gtk_popover_popup (GTK_POPOVER (self->context_menu_popover));
+
+  gtk_gesture_set_state (GTK_GESTURE (gesture), GTK_EVENT_SEQUENCE_CLAIMED);
 }
 
 static void
@@ -154,8 +200,10 @@ sysprof_mark_chart_row_class_init (SysprofMarkChartRowClass *klass)
   gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-mark-chart-row.ui");
   gtk_widget_class_bind_template_child (widget_class, SysprofMarkChartRow, chart);
+  gtk_widget_class_bind_template_child (widget_class, SysprofMarkChartRow, context_menu);
   gtk_widget_class_bind_template_child (widget_class, SysprofMarkChartRow, layer);
   gtk_widget_class_bind_template_callback (widget_class, sysprof_mark_chart_row_activate_layer_item_cb);
+  gtk_widget_class_bind_template_callback (widget_class, sysprof_mark_chart_row_button_pressed_cb);
 
   g_type_ensure (SYSPROF_TYPE_CHART);
   g_type_ensure (SYSPROF_TYPE_TIME_SERIES_ITEM);

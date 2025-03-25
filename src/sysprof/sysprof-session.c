@@ -22,6 +22,7 @@
 
 #include <glib/gi18n.h>
 
+#include "sysprof-mark-filter.h"
 #include "sysprof-session-private.h"
 #include "sysprof-value-axis.h"
 
@@ -486,6 +487,24 @@ sysprof_session_zoom_to_selection (SysprofSession *self)
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_VISIBLE_TIME]);
 
   sysprof_session_update_axis (self);
+}
+
+void
+sysprof_session_filter_by_mark (SysprofSession     *self,
+                                SysprofMarkCatalog *catalog)
+{
+  g_return_if_fail (SYSPROF_IS_SESSION (self));
+  g_return_if_fail (catalog == NULL || SYSPROF_IS_MARK_CATALOG (catalog));
+
+  while (g_list_model_get_n_items (G_LIST_MODEL (self->filter)) > 0)
+    gtk_multi_filter_remove (GTK_MULTI_FILTER (self->filter), 0);
+
+  if (catalog)
+    {
+      g_autoptr(SysprofMarkFilter) mark_filter = sysprof_mark_filter_new (self->document, catalog);
+
+      gtk_multi_filter_append (GTK_MULTI_FILTER (self->filter), GTK_FILTER (g_steal_pointer (&mark_filter)));
+    }
 }
 
 static char *

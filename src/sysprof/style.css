@@ -96,3 +96,17 @@ popover.tasks listview row {
 popover.tasks listview row label.heading {
   padding-bottom: 3px;
 }
+
+sessionfilters row {
+  padding: 3px 0;
+}
+
+sessionfilters row:hover {
+  background: none;
+}
+
+sessionfilters row button {
+  min-width: 0;
+  min-height: 0;
+  padding: 3px;
+}

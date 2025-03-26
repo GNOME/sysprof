@@ -127,6 +127,36 @@
                           </object>
                         </child>
                         <child type="start">
+                          <object class="GtkMenuButton">
+                            <property name="visible">false</property>
+                            <property name="icon-name">funnel-outline-symbolic</property>
+                            <property name="tooltip-text" translatable="yes">View Filters</property>
+                            <property name="popover">
+                              <object class="GtkPopover">
+                                <style>
+                                  <class name="menu" />
+                                </style>
+                                <property name="child">
+                                  <object class="SysprofSessionFiltersWidget">
+                                    <binding name="session">
+                                      <lookup name="session">SysprofWindow</lookup>
+                                    </binding>
+                                  </object>
+                                </property>
+                              </object>
+                            </property>
+                            <binding name="visible">
+                              <closure type="gboolean" function="n_filters_to_button_visibility">
+                                <lookup name="n-items" type="GtkMultiFilter">
+                                  <lookup name="filter" type="SysprofSession">
+                                    <lookup name="session">SysprofWindow</lookup>
+                                  </lookup>
+                                </lookup>
+                              </closure>
+                            </binding>
+                          </object>
+                        </child>
+                        <child type="start">
                           <object class="GtkBox">
                             <property name="margin-start">6</property>
                             <property name="margin-end">6</property>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofSessionFiltersWidget" parent="GtkWidget">
+
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+
+        <child>
+          <object class="GtkScrolledWindow">
+            <property name="hscrollbar-policy">never</property>
+            <property name="max-content-height">400</property>
+            <property name="propagate-natural-height">true</property>
+
+            <child>
+              <object class="GtkListView">
+                <property name="margin-start">6</property>
+                <property name="margin-end">6</property>
+                <property name="margin-top">6</property>
+                <property name="model">
+                  <object class="GtkNoSelection">
+                    <binding name="model">
+                      <lookup name="filter">
+                        <lookup name="session">SysprofSessionFiltersWidget</lookup>
+                      </lookup>
+                    </binding>
+                  </object>
+                </property>
+
+                <property name="factory">
+                  <object class="GtkBuilderListItemFactory">
+                    <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="activatable">false</property>
+    <property name="child">
+      <object class="GtkBox">
+
+        <child>
+          <object class="GtkImage">
+            <property name="pixel-size">12</property>
+            <binding name="icon-name">
+              <closure type="gchararray" function="filter_to_icon_name">
+                <lookup name="item">GtkListItem</lookup>
+              </closure>
+            </binding>
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkLabel">
+            <property name="xalign">0</property>
+            <property name="hexpand">true</property>
+            <binding name="label">
+              <closure type="gchararray" function="filter_to_string">
+                <lookup name="item">GtkListItem</lookup>
+              </closure>
+            </binding>
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkButton">
+            <property name="icon-name">window-close-symbolic</property>
+            <property name="action-name">sessionfilters.remove-filter</property>
+            <binding name="action-target">
+              <closure type="GVariant" function="item_to_action_target">
+                <lookup name="item">GtkListItem</lookup>
+                <lookup name="position">GtkListItem</lookup>
+              </closure>
+            </binding>
+            <style>
+              <class name="flat" />
+              <class name="circular" />
+            </style>
+          </object>
+        </child>
+
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                    </property>
+                  </object>
+                </property>
+              </object>
+            </child>
+
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkSeparator" />
+        </child>
+
+        <child>
+          <object class="GtkButton">
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-bottom">6</property>
+            <property name="label" translatable="yes">Clear All Filters</property>
+            <signal name="clicked" handler="clear_all_filters" swapped="yes" />
+          </object>
+        </child>
+
+      </object>
+    </child>
+
+  </template>
+</interface>

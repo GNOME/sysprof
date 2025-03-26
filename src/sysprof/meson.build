@@ -52,6 +52,7 @@ sysprof_sources = [
   'sysprof-scheduler.c',
   'sysprof-section.c',
   'sysprof-series.c',
+  'sysprof-session-filters-widget.c',
   'sysprof-session-model-item.c',
   'sysprof-session-model.c',
   'sysprof-session.c',

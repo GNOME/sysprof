@@ -8,6 +8,7 @@
     <file preprocess="xml-stripblanks">icons/scalable/actions/empty-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/energy-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/flamegraph-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/actions/funnel-outline-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/graphics-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/mark-chart-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/mark-table-symbolic.svg</file>
@@ -50,6 +51,7 @@
     <file preprocess="xml-stripblanks">sysprof-processes-section.ui</file>
     <file preprocess="xml-stripblanks">sysprof-recording-pad.ui</file>
     <file preprocess="xml-stripblanks">sysprof-samples-section.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-session-filters-widget.ui</file>
     <file preprocess="xml-stripblanks">sysprof-sidebar.ui</file>
     <file preprocess="xml-stripblanks">sysprof-storage-section.ui</file>
     <file preprocess="xml-stripblanks">sysprof-task-row.ui</file>

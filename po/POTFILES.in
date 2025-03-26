@@ -46,6 +46,7 @@ src/sysprof/sysprof-processes-section.ui
 src/sysprof/sysprof-recording-pad.c
 src/sysprof/sysprof-recording-pad.ui
 src/sysprof/sysprof-samples-section.ui
+src/sysprof/sysprof-session-filters-widget.ui
 src/sysprof/sysprof-sidebar.ui
 src/sysprof/sysprof-storage-section.ui
 src/sysprof/sysprof-traceables-utility.ui

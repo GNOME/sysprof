@@ -44,19 +44,28 @@
                           <object class="SysprofSampledModel">
                             <property name="max-items">5000</property>
                             <property name="model">
-                              <object class="SysprofTimeFilterModel">
-                                <binding name="time-span">
-                                  <lookup name="visible-time" type="SysprofSession">
+                              <object class="GtkFilterListModel">
+                                <binding name="filter">
+                                  <lookup name="filter">
                                     <lookup name="session">SysprofSamplesSection</lookup>
                                   </lookup>
                                 </binding>
-                                <binding name="model">
-                                  <lookup name="samples" type="SysprofDocument">
-                                    <lookup name="document" type="SysprofSession">
-                                      <lookup name="session">SysprofSamplesSection</lookup>
-                                    </lookup>
-                                  </lookup>
-                                </binding>
+                                <property name="model">
+                                  <object class="SysprofTimeFilterModel">
+                                    <binding name="time-span">
+                                      <lookup name="visible-time" type="SysprofSession">
+                                        <lookup name="session">SysprofSamplesSection</lookup>
+                                      </lookup>
+                                    </binding>
+                                    <binding name="model">
+                                      <lookup name="samples" type="SysprofDocument">
+                                        <lookup name="document" type="SysprofSession">
+                                          <lookup name="session">SysprofSamplesSection</lookup>
+                                        </lookup>
+                                      </lookup>
+                                    </binding>
+                                  </object>
+                                </property>
                               </object>
                             </property>
                           </object>

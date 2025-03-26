@@ -44,5 +44,7 @@ SysprofAxis           *sysprof_session_get_selected_time_axis (SysprofSession   
 void                   sysprof_session_select_time            (SysprofSession        *self,
                                                                const SysprofTimeSpan *time_span);
 void                   sysprof_session_zoom_to_selection      (SysprofSession        *self);
+void                   sysprof_session_filter_by_mark         (SysprofSession        *self,
+                                                               SysprofMarkCatalog    *catalog);
 
 G_END_DECLS

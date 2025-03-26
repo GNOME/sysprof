@@ -1,28 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="SysprofMarkChartRow" parent="GtkWidget">
+
+    <menu id="context_menu">
+      <section>
+        <item>
+          <attribute name="label" translatable="yes">Set as Filter</attribute>
+          <attribute name="action">markchartrow.filter-by-mark</attribute>
+        </item>
+      </section>
+    </menu>
+
     <child>
-      <object class="SysprofChart" id="chart">
-        <signal name="activate-layer-item" handler="sysprof_mark_chart_row_activate_layer_item_cb" swapped="true"/>
-        <property name="hexpand">true</property>
-        <property name="vexpand">false</property>
+      <object class="GtkGestureClick">
+        <property name="button">0</property>
+        <property name="exclusive">true</property>
+        <signal name="pressed" handler="sysprof_mark_chart_row_button_pressed_cb" swapped="yes" />
+      </object>
+    </child>
+
+    <child>
+      <object class="GtkBox">
+
         <child>
-          <object class="SysprofTimeSpanLayer" id="layer">
-            <binding name="axis">
-              <lookup name="selected-time-axis" type="SysprofSession">
-                <lookup name="session" type="SysprofMarkChartItem">
+          <object class="GtkInscription">
+            <property name="xalign">1</property>
+            <property name="nat-chars">30</property>
+            <property name="min-chars">30</property>
+            <property name="margin-end">8</property>
+            <property name="text-overflow">ellipsize-end</property>
+            <binding name="text">
+              <lookup name="name" type="SysprofMarkCatalog">
+                <lookup name="catalog" type="SysprofMarkChartItem">
                   <lookup name="item">SysprofMarkChartRow</lookup>
                 </lookup>
               </lookup>
             </binding>
-            <binding name="series">
-              <lookup name="series" type="SysprofMarkChartItem">
-                <lookup name="item">SysprofMarkChartRow</lookup>
-              </lookup>
-            </binding>
           </object>
         </child>
+
+        <child>
+          <object class="SysprofChart" id="chart">
+            <signal name="activate-layer-item" handler="sysprof_mark_chart_row_activate_layer_item_cb" swapped="true"/>
+            <property name="hexpand">true</property>
+            <property name="vexpand">false</property>
+            <child>
+              <object class="SysprofTimeSpanLayer" id="layer">
+                <binding name="axis">
+                  <lookup name="selected-time-axis" type="SysprofSession">
+                    <lookup name="session" type="SysprofMarkChartItem">
+                      <lookup name="item">SysprofMarkChartRow</lookup>
+                    </lookup>
+                  </lookup>
+                </binding>
+                <binding name="series">
+                  <lookup name="series" type="SysprofMarkChartItem">
+                    <lookup name="item">SysprofMarkChartRow</lookup>
+                  </lookup>
+                </binding>
+              </object>
+            </child>
+          </object>
+        </child>
+
       </object>
     </child>
+
   </template>
 </interface>

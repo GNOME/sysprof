@@ -41,6 +41,7 @@
 #include "sysprof-pair.h"
 #include "sysprof-processes-section.h"
 #include "sysprof-samples-section.h"
+#include "sysprof-session-filters-widget.h"
 #include "sysprof-sidebar.h"
 #include "sysprof-storage-section.h"
 #include "sysprof-task-row.h"
@@ -326,6 +327,13 @@ main_view_notify_sidebar (SysprofWindow       *self,
     adw_overlay_split_view_set_show_sidebar (main_view, FALSE);
 
   gtk_widget_set_sensitive (GTK_WIDGET (self->show_right_sidebar), sidebar != NULL);
+}
+
+static gboolean
+n_filters_to_button_visibility (SysprofWindow *self,
+                                unsigned int   n_filters)
+{
+  return n_filters > 0;
 }
 
 static void
@@ -617,6 +625,7 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, stack_title);
 
   gtk_widget_class_bind_template_callback (widget_class, main_view_notify_sidebar);
+  gtk_widget_class_bind_template_callback (widget_class, n_filters_to_button_visibility);
 
   gtk_widget_class_install_action (widget_class, "win.open-capture", NULL, sysprof_window_open_capture_action);
   gtk_widget_class_install_action (widget_class, "win.record-capture", NULL, sysprof_window_record_capture_action);
@@ -649,6 +658,7 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   g_type_ensure (SYSPROF_TYPE_NETWORK_SECTION);
   g_type_ensure (SYSPROF_TYPE_PROCESSES_SECTION);
   g_type_ensure (SYSPROF_TYPE_SAMPLES_SECTION);
+  g_type_ensure (SYSPROF_TYPE_SESSION_FILTERS_WIDGET);
   g_type_ensure (SYSPROF_TYPE_STORAGE_SECTION);
   g_type_ensure (SYSPROF_TYPE_SESSION);
   g_type_ensure (SYSPROF_TYPE_SYMBOL);

@@ -42,19 +42,26 @@ static const GOptionEntry option_entries[] = {
 static void
 sysprof_application_activate (GApplication *app)
 {
+  const GList *windows;
   GtkWidget *greeter;
 
   g_assert (GTK_IS_APPLICATION (app));
 
-  for (const GList *iter = gtk_application_get_windows (GTK_APPLICATION (app));
-       iter != NULL;
-       iter = iter->next)
+  windows = gtk_application_get_windows (GTK_APPLICATION (app));
+
+  for (const GList *iter = windows; iter != NULL; iter = iter->next)
     {
       if (SYSPROF_IS_WINDOW (iter->data))
         {
           gtk_window_present (iter->data);
           return;
         }
+    }
+
+  if (windows)
+    {
+      gtk_window_present (windows->data);
+      return;
     }
 
   greeter = sysprof_greeter_new ();

@@ -42,25 +42,16 @@ static const GOptionEntry option_entries[] = {
 static void
 sysprof_application_activate (GApplication *app)
 {
-  const GList *windows;
+  GtkWindow *window;
   GtkWidget *greeter;
 
   g_assert (GTK_IS_APPLICATION (app));
 
-  windows = gtk_application_get_windows (GTK_APPLICATION (app));
+  window = gtk_application_get_active_window (GTK_APPLICATION (app));
 
-  for (const GList *iter = windows; iter != NULL; iter = iter->next)
+  if (window)
     {
-      if (SYSPROF_IS_WINDOW (iter->data))
-        {
-          gtk_window_present (iter->data);
-          return;
-        }
-    }
-
-  if (windows)
-    {
-      gtk_window_present (windows->data);
+      gtk_window_present (window);
       return;
     }
 
@@ -180,32 +171,21 @@ sysprof_about (GSimpleAction *action,
                gpointer       user_data)
 {
   GtkApplication *app = user_data;
-  GtkWindow *best_toplevel = NULL;
-  const GList *windows;
+  GtkWindow *window = NULL;
 
   g_assert (G_IS_APPLICATION (app));
   g_assert (G_IS_SIMPLE_ACTION (action));
   g_assert (variant == NULL);
 
-  windows = gtk_application_get_windows (app);
+  window = gtk_application_get_active_window (GTK_APPLICATION (app));
 
-  if (windows == NULL)
+  if (window == NULL)
     {
       g_warning ("No windows found to show about dialog");
-    }
-  else
-    best_toplevel = windows->data;
-
-  for (; windows != NULL; windows = windows->next)
-    {
-      if (SYSPROF_IS_WINDOW (windows->data))
-        {
-          best_toplevel = windows->data;
-          break;
-        }
+      return;
     }
 
-  adw_show_about_dialog (GTK_WIDGET (best_toplevel),
+  adw_show_about_dialog (GTK_WIDGET (window),
                          "application-name", _("Sysprof"),
                          "application-icon", APP_ID_S,
                          "version", "GNOME " PACKAGE_VERSION,

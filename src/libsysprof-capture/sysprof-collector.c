@@ -424,7 +424,7 @@ sysprof_collector_get (void)
 #else
     self->tid = self->pid;
 #endif
-    self->next_counter_id = ((unsigned)self->pid << 16);
+    self->next_counter_id = (((unsigned)self->pid << 16) >> 8);
 
     pthread_mutex_lock (&control_fd_lock);
 

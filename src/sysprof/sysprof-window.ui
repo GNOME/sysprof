@@ -29,7 +29,7 @@
         <child>
           <object class="GtkShortcut">
             <property name="trigger">&lt;ctrl&gt;n</property>
-            <property name="action">action(win.record-capture)</property>
+            <property name="action">action(app.new-window)</property>
           </object>
         </child>
         <child>
@@ -458,7 +458,7 @@
     <section>
       <item>
         <attribute name="label" translatable="yes">_Record Again…</attribute>
-        <attribute name="action">win.record-capture</attribute>
+        <attribute name="action">app.new-window</attribute>
       </item>
       <item>
         <attribute name="label" translatable="yes">Open Recording…</attribute>

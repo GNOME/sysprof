@@ -131,6 +131,36 @@ sysprof_application_class_init (SysprofApplicationClass *klass)
 }
 
 static void
+sysprof_new_window (GSimpleAction *action,
+                    GVariant      *variant,
+                    gpointer       user_data)
+{
+  const GList *windows;
+  GApplication *app = user_data;
+  GtkWindow *window;
+  GtkWidget *greeter;
+
+  g_assert (G_IS_APPLICATION (app));
+  g_assert (G_IS_SIMPLE_ACTION (action));
+  g_assert (variant == NULL);
+
+  windows = gtk_application_get_windows (GTK_APPLICATION (app));
+
+  for (const GList *iter = windows; iter != NULL; iter = iter->next)
+    {
+      if (SYSPROF_IS_GREETER (iter->data))
+        {
+          gtk_window_present (iter->data);
+          return;
+        }
+    }
+
+  greeter = sysprof_greeter_new ();
+  gtk_application_add_window (GTK_APPLICATION (app), GTK_WINDOW (greeter));
+  gtk_window_present (GTK_WINDOW (greeter));
+}
+
+static void
 sysprof_quit (GSimpleAction *action,
               GVariant      *variant,
               gpointer       user_data)
@@ -240,6 +270,7 @@ static void
 sysprof_application_init (SysprofApplication *self)
 {
   static const GActionEntry actions[] = {
+    { "new-window", sysprof_new_window },
     { "about", sysprof_about },
     { "show-help-overlay", sysprof_show_help_overlay },
     { "help",  sysprof_help },

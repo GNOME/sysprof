@@ -113,8 +113,6 @@ sysprof_window_update_action_state (SysprofWindow *self)
 
   if (self->session == NULL)
     {
-      gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.open-capture", FALSE);
-      gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.record-capture", FALSE);
       gtk_widget_action_set_enabled (GTK_WIDGET (self), "session.zoom-one", FALSE);
       gtk_widget_action_set_enabled (GTK_WIDGET (self), "session.zoom-out", FALSE);
       gtk_widget_action_set_enabled (GTK_WIDGET (self), "session.zoom-in", FALSE);
@@ -124,8 +122,6 @@ sysprof_window_update_action_state (SysprofWindow *self)
     }
   else
     {
-      gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.open-capture", TRUE);
-      gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.record-capture", TRUE);
       gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.save-capture", TRUE);
       gtk_widget_action_set_enabled (GTK_WIDGET (self), "session.zoom-in", TRUE);
 
@@ -226,24 +222,6 @@ sysprof_window_open_capture_action (GtkWidget  *widget,
   template = sysprof_recording_template_new_from_file (NULL, NULL);
 
   sysprof_window_open_file (GTK_WINDOW (widget), template);
-}
-
-static void
-sysprof_window_record_capture_action (GtkWidget  *widget,
-                                      const char *action_name,
-                                      GVariant   *param)
-{
-  SysprofWindow *self = (SysprofWindow *)widget;
-  SysprofGreeter *greeter;
-
-  g_assert (SYSPROF_IS_WINDOW (self));
-
-  greeter = g_object_new (SYSPROF_TYPE_GREETER,
-                          "transient-for", self,
-                          NULL);
-  gtk_application_add_window (GTK_APPLICATION (SYSPROF_APPLICATION_DEFAULT),
-                              GTK_WINDOW (greeter));
-  gtk_window_present (GTK_WINDOW (greeter));
 }
 
 static void
@@ -628,7 +606,6 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, n_filters_to_button_visibility);
 
   gtk_widget_class_install_action (widget_class, "win.open-capture", NULL, sysprof_window_open_capture_action);
-  gtk_widget_class_install_action (widget_class, "win.record-capture", NULL, sysprof_window_record_capture_action);
   gtk_widget_class_install_action (widget_class, "session.zoom-one", NULL, sysprof_window_session_zoom_one);
   gtk_widget_class_install_action (widget_class, "session.zoom-out", NULL, sysprof_window_session_zoom_out);
   gtk_widget_class_install_action (widget_class, "session.zoom-in", NULL, sysprof_window_session_zoom_in);

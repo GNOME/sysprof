@@ -188,7 +188,7 @@ sysprof_about (GSimpleAction *action,
   adw_show_about_dialog (GTK_WIDGET (window),
                          "application-name", _("Sysprof"),
                          "application-icon", APP_ID_S,
-                         "version", "GNOME " PACKAGE_VERSION,
+                         "version", PACKAGE_VERSION,
                          "copyright", "Copyright 2004-2009 Søren Sandmann Pedersen\n"
                                       "Copyright 2016-2023 Christian Hergert",
                          "issue-url", "https://gitlab.gnome.org/GNOME/sysprof/-/issues/new",

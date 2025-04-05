@@ -35,6 +35,7 @@ struct _SysprofApplication
 G_DEFINE_TYPE (SysprofApplication, sysprof_application, ADW_TYPE_APPLICATION)
 
 static const GOptionEntry option_entries[] = {
+  { "greeter", 'g', 0, G_OPTION_ARG_NONE, NULL, N_("Start a new recording") },
   { "version", 0, 0, G_OPTION_ARG_NONE, NULL, N_("Show Sysprof version and exit") },
   { 0 }
 };
@@ -78,6 +79,46 @@ sysprof_application_open (GApplication  *app,
 }
 
 static int
+sysprof_application_command_line (GApplication            *app,
+                                  GApplicationCommandLine *command_line)
+{
+  g_auto(GStrv) argv = NULL;
+  g_autoptr(GPtrArray) files = NULL;
+  GVariantDict *options;
+  int argc;
+  gboolean greeter = FALSE;
+
+  g_assert (SYSPROF_IS_APPLICATION (app));
+  g_assert (G_IS_APPLICATION_COMMAND_LINE (command_line));
+
+  argv = g_application_command_line_get_arguments (command_line, &argc);
+  options = g_application_command_line_get_options_dict (command_line);
+  files = g_ptr_array_new_with_free_func (g_object_unref);
+
+  for (int i = 1; i < argc; i++)
+    {
+      const char *filename = argv[i];
+      g_autoptr(GFile) file = NULL;
+      file = g_application_command_line_create_file_for_arg (command_line, filename);
+      g_ptr_array_add (files, g_steal_pointer (&file));
+    }
+
+  if (files->len > 0)
+    g_application_open (app,
+                        (GFile **)(gpointer)files->pdata,
+                        files->len,
+                        NULL);
+
+  if (g_variant_dict_lookup (options, "greeter", "b", &greeter) && greeter)
+    g_action_group_activate_action (G_ACTION_GROUP (app), "new-window", NULL);
+
+  if (files->len == 0 && !greeter)
+    g_application_activate (app);
+
+  return EXIT_SUCCESS;
+}
+
+static int
 sysprof_application_handle_local_options (GApplication *app,
                                           GVariantDict *options)
 {
@@ -116,6 +157,7 @@ sysprof_application_class_init (SysprofApplicationClass *klass)
 
   app_class->open = sysprof_application_open;
   app_class->activate = sysprof_application_activate;
+  app_class->command_line = sysprof_application_command_line;
   app_class->handle_local_options = sysprof_application_handle_local_options;
 
   gtk_app_class->window_added = sysprof_application_window_added;
@@ -282,6 +324,6 @@ sysprof_application_new (void)
   return g_object_new (SYSPROF_TYPE_APPLICATION,
                        "application-id", APP_ID_S,
                        "resource-base-path", "/org/gnome/sysprof",
-                       "flags", G_APPLICATION_HANDLES_OPEN,
+                       "flags", G_APPLICATION_HANDLES_COMMAND_LINE | G_APPLICATION_HANDLES_OPEN,
                        NULL);
 }

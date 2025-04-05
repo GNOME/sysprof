@@ -12,3 +12,8 @@ Terminal=false
 Type=Application
 Categories=GNOME;GTK;Development;Utility;
 MimeType=application/x-sysprof-capture;
+Actions=new-window;
+
+[Desktop Action new-window]
+Exec=sysprof --greeter
+Name=Start New Recording

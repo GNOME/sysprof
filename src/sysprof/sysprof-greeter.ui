@@ -94,16 +94,11 @@
                           <object class="AdwPreferencesGroup">
                             <property name="title" translatable="yes">Sampling</property>
                             <child>
-                              <object class="AdwActionRow" id="first_row">
+                              <object class="AdwSwitchRow" id="sample_native_stacks">
                                 <property name="activatable-widget">sample_native_stacks</property>
                                 <property name="title" translatable="yes">Sample Native Stacks</property>
                                 <property name="subtitle" translatable="yes">Record native stack traces using a sampling profiler</property>
-                                <child type="suffix">
-                                  <object class="GtkSwitch" id="sample_native_stacks">
-                                    <property name="valign">center</property>
-                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="native-stacks"/>
-                                  </object>
-                                </child>
+                                <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="native-stacks"/>
                               </object>
                             </child>
                             <child>
@@ -146,16 +141,11 @@
                         <child>
                           <object class="AdwPreferencesGroup">
                             <child>
-                              <object class="AdwActionRow">
+                              <object class="AdwSwitchRow" id="sample_javascript_stacks">
                                 <property name="activatable-widget">sample_javascript_stacks</property>
                                 <property name="title" translatable="yes">Sample JavaScript Stacks</property>
                                 <property name="subtitle" translatable="yes">Record JavaScript stack traces using a sampling profiler</property>
-                                <child type="suffix">
-                                  <object class="GtkSwitch" id="sample_javascript_stacks">
-                                    <property name="valign">center</property>
-                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="javascript-stacks"/>
-                                  </object>
-                                </child>
+                                <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="javascript-stacks"/>
                               </object>
                             </child>
                             <child>
@@ -174,16 +164,11 @@
                         <child>
                           <object class="AdwPreferencesGroup">
                             <child>
-                              <object class="AdwActionRow">
+                              <object class="AdwSwitchRow" id="include_scheduler_details">
                                 <property name="activatable-widget">include_scheduler_details</property>
                                 <property name="title" translatable="yes">Record Scheduler Details</property>
                                 <property name="subtitle" translatable="yes">Track when processes are scheduled per CPU</property>
-                                <child type="suffix">
-                                  <object class="GtkSwitch" id="include_scheduler_details">
-                                    <property name="valign">center</property>
-                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="scheduler-details"/>
-                                  </object>
-                                </child>
+                                <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="scheduler-details"/>
                               </object>
                             </child>
                           </object>
@@ -192,16 +177,11 @@
                           <object class="AdwPreferencesGroup">
                             <property name="title" translatable="yes">Tracing</property>
                             <child>
-                              <object class="AdwActionRow">
+                              <object class="AdwSwitchRow" id="trace_malloc">
                                 <property name="activatable-widget">trace_malloc</property>
                                 <property name="title" translatable="yes">Trace Memory Allocations</property>
-                                <property name="subtitle" translatable="yes">Record a stack trace when &lt;tt&gt;malloc&lt;/tt&gt; or similar functions are used</property>
-                                <child type="suffix">
-                                  <object class="GtkSwitch" id="trace_malloc">
-                                    <property name="valign">center</property>
-                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="memory-allocations"/>
-                                  </object>
-                                </child>
+                                <property name="subtitle" translatable="yes">Record a stack trace when malloc or similar functions are used</property>
+                                <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="memory-allocations"/>
                               </object>
                             </child>
                             <child>
@@ -259,16 +239,11 @@
                           <object class="AdwPreferencesGroup">
                             <property name="title" translatable="yes">Environment</property>
                             <child>
-                              <object class="AdwActionRow">
+                              <object class="AdwSwitchRow" id="clear_environment">
                                 <property name="activatable-widget">clear_environment</property>
                                 <property name="title" translatable="yes">Clear Environment</property>
                                 <property name="subtitle" translatable="yes">Clear the environment before launching application</property>
-                                <child type="suffix">
-                                  <object class="GtkSwitch" id="clear_environment">
-                                    <property name="valign">center</property>
-                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="clear-environ"/>
-                                  </object>
-                                </child>
+                                <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="clear-environ"/>
                               </object>
                             </child>
                             <child>
@@ -319,55 +294,35 @@
                           <object class="AdwPreferencesGroup">
                             <property name="title" translatable="yes">Counters</property>
                             <child>
-                              <object class="AdwActionRow">
+                              <object class="AdwSwitchRow" id="record_cpu_usage">
                                 <property name="activatable-widget">record_cpu_usage</property>
                                 <property name="title" translatable="yes">CPU Usage</property>
                                 <property name="subtitle" translatable="yes">Record coarse-grained counters about CPU usage and frequency</property>
-                                <child type="suffix">
-                                  <object class="GtkSwitch" id="record_cpu_usage">
-                                    <property name="valign">center</property>
-                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="cpu-usage"/>
-                                  </object>
-                                </child>
+                                <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="cpu-usage"/>
                               </object>
                             </child>
                             <child>
-                              <object class="AdwActionRow">
-                                <property name="activatable-widget">record_memory_counters</property>
-                                <property name="title" translatable="yes">Memory Usage</property>
-                                <property name="subtitle" translatable="yes">Record coarse-grained counters about system memory usage</property>
-                                <child type="suffix">
-                                  <object class="GtkSwitch" id="record_memory_counters">
-                                    <property name="valign">center</property>
-                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="memory-usage"/>
-                                  </object>
-                                </child>
-                              </object>
+                             <object class="AdwSwitchRow" id="record_memory_counters">
+                              <property name="activatable-widget">record_memory_counters</property>
+                              <property name="title" translatable="yes">Memory Usage</property>
+                              <property name="subtitle" translatable="yes">Record coarse-grained counters about system memory usage</property>
+                              <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="memory-usage"/>
+                             </object>
                             </child>
                             <child>
-                              <object class="AdwActionRow">
+                              <object class="AdwSwitchRow" id="record_disk_usage">
                                 <property name="activatable-widget">record_disk_usage</property>
                                 <property name="title" translatable="yes">Disk Usage</property>
                                 <property name="subtitle" translatable="yes">Record coarse-grained counters about storage throughput</property>
-                                <child type="suffix">
-                                  <object class="GtkSwitch" id="record_disk_usage">
-                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="disk-usage"/>
-                                    <property name="valign">center</property>
-                                  </object>
-                                </child>
+                                <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="disk-usage"/>
                               </object>
                             </child>
                             <child>
-                              <object class="AdwActionRow">
+                              <object class="AdwSwitchRow" id="record_network_usage">
                                 <property name="activatable-widget">record_network_usage</property>
                                 <property name="title" translatable="yes">Network Usage</property>
                                 <property name="subtitle" translatable="yes">Record coarse-grained counters about network traffic</property>
-                                <child type="suffix">
-                                  <object class="GtkSwitch" id="record_network_usage">
-                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="network-usage"/>
-                                    <property name="valign">center</property>
-                                  </object>
-                                </child>
+                                <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="network-usage"/>
                               </object>
                             </child>
                           </object>
@@ -375,29 +330,19 @@
                         <child>
                           <object class="AdwPreferencesGroup">
                             <child>
-                              <object class="AdwActionRow">
+                              <object class="AdwSwitchRow" id="record_energy_usage">
                                 <property name="activatable-widget">record_energy_usage</property>
                                 <property name="title" translatable="yes">Energy Usage</property>
                                 <property name="subtitle" translatable="yes">Record coarse-grained counters about energy usage in Watts</property>
-                                <child type="suffix">
-                                  <object class="GtkSwitch" id="record_energy_usage">
-                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="energy-usage"/>
-                                    <property name="valign">center</property>
-                                  </object>
-                                </child>
+                                <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="energy-usage"/>
                               </object>
                             </child>
                             <child>
-                              <object class="AdwActionRow">
+                              <object class="AdwSwitchRow" id="record_battery_charge">
                                 <property name="activatable-widget">record_battery_charge</property>
                                 <property name="title" translatable="yes">Battery Charge</property>
                                 <property name="subtitle" translatable="yes">Record coarse-grained counters about battery charge or discharge rates</property>
-                                <child type="suffix">
-                                  <object class="GtkSwitch" id="record_battery_charge">
-                                    <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="battery-charge"/>
-                                    <property name="valign">center</property>
-                                  </object>
-                                </child>
+                                <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="battery-charge"/>
                               </object>
                             </child>
                           </object>

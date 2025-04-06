@@ -95,7 +95,6 @@
                             <property name="title" translatable="yes">Sampling</property>
                             <child>
                               <object class="AdwSwitchRow" id="sample_native_stacks">
-                                <property name="activatable-widget">sample_native_stacks</property>
                                 <property name="title" translatable="yes">Sample Native Stacks</property>
                                 <property name="subtitle" translatable="yes">Record native stack traces using a sampling profiler</property>
                                 <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="native-stacks"/>
@@ -142,7 +141,6 @@
                           <object class="AdwPreferencesGroup">
                             <child>
                               <object class="AdwSwitchRow" id="sample_javascript_stacks">
-                                <property name="activatable-widget">sample_javascript_stacks</property>
                                 <property name="title" translatable="yes">Sample JavaScript Stacks</property>
                                 <property name="subtitle" translatable="yes">Record JavaScript stack traces using a sampling profiler</property>
                                 <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="javascript-stacks"/>
@@ -165,7 +163,6 @@
                           <object class="AdwPreferencesGroup">
                             <child>
                               <object class="AdwSwitchRow" id="include_scheduler_details">
-                                <property name="activatable-widget">include_scheduler_details</property>
                                 <property name="title" translatable="yes">Record Scheduler Details</property>
                                 <property name="subtitle" translatable="yes">Track when processes are scheduled per CPU</property>
                                 <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="scheduler-details"/>
@@ -178,7 +175,6 @@
                             <property name="title" translatable="yes">Tracing</property>
                             <child>
                               <object class="AdwSwitchRow" id="trace_malloc">
-                                <property name="activatable-widget">trace_malloc</property>
                                 <property name="title" translatable="yes">Trace Memory Allocations</property>
                                 <property name="subtitle" translatable="yes">Record a stack trace when malloc or similar functions are used</property>
                                 <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="memory-allocations"/>
@@ -240,7 +236,6 @@
                             <property name="title" translatable="yes">Environment</property>
                             <child>
                               <object class="AdwSwitchRow" id="clear_environment">
-                                <property name="activatable-widget">clear_environment</property>
                                 <property name="title" translatable="yes">Clear Environment</property>
                                 <property name="subtitle" translatable="yes">Clear the environment before launching application</property>
                                 <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="clear-environ"/>
@@ -295,7 +290,6 @@
                             <property name="title" translatable="yes">Counters</property>
                             <child>
                               <object class="AdwSwitchRow" id="record_cpu_usage">
-                                <property name="activatable-widget">record_cpu_usage</property>
                                 <property name="title" translatable="yes">CPU Usage</property>
                                 <property name="subtitle" translatable="yes">Record coarse-grained counters about CPU usage and frequency</property>
                                 <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="cpu-usage"/>
@@ -303,7 +297,6 @@
                             </child>
                             <child>
                              <object class="AdwSwitchRow" id="record_memory_counters">
-                              <property name="activatable-widget">record_memory_counters</property>
                               <property name="title" translatable="yes">Memory Usage</property>
                               <property name="subtitle" translatable="yes">Record coarse-grained counters about system memory usage</property>
                               <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="memory-usage"/>
@@ -311,7 +304,6 @@
                             </child>
                             <child>
                               <object class="AdwSwitchRow" id="record_disk_usage">
-                                <property name="activatable-widget">record_disk_usage</property>
                                 <property name="title" translatable="yes">Disk Usage</property>
                                 <property name="subtitle" translatable="yes">Record coarse-grained counters about storage throughput</property>
                                 <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="disk-usage"/>
@@ -319,7 +311,6 @@
                             </child>
                             <child>
                               <object class="AdwSwitchRow" id="record_network_usage">
-                                <property name="activatable-widget">record_network_usage</property>
                                 <property name="title" translatable="yes">Network Usage</property>
                                 <property name="subtitle" translatable="yes">Record coarse-grained counters about network traffic</property>
                                 <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="network-usage"/>
@@ -331,7 +322,6 @@
                           <object class="AdwPreferencesGroup">
                             <child>
                               <object class="AdwSwitchRow" id="record_energy_usage">
-                                <property name="activatable-widget">record_energy_usage</property>
                                 <property name="title" translatable="yes">Energy Usage</property>
                                 <property name="subtitle" translatable="yes">Record coarse-grained counters about energy usage in Watts</property>
                                 <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="energy-usage"/>
@@ -339,7 +329,6 @@
                             </child>
                             <child>
                               <object class="AdwSwitchRow" id="record_battery_charge">
-                                <property name="activatable-widget">record_battery_charge</property>
                                 <property name="title" translatable="yes">Battery Charge</property>
                                 <property name="subtitle" translatable="yes">Record coarse-grained counters about battery charge or discharge rates</property>
                                 <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="battery-charge"/>

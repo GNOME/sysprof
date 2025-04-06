@@ -1,0 +1,1482 @@
+# Uzbek (Latin) translation for sysprof.
+# Copyright (C) 2025 sysprof's COPYRIGHT HOLDER
+# This file is distributed under the same license as the sysprof package.
+# Baxrom Raxmatov <magdiyevbahrom@gmail.com>,  2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sysprof sysprof-48\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
+"POT-Creation-Date: 2025-03-21 19:23+0000\n"
+"PO-Revision-Date: 2025-04-06 22:20+0500\n"
+"Last-Translator: \n"
+"Language-Team: Uzbek (Latin) <uz@li.org>\n"
+"Language: uz\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.6\n"
+
+#: data/org.gnome.Sysprof.appdata.xml.in.in:6
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:172
+#: src/sysprof/sysprof-application.c:248
+#: src/sysprof/sysprof-recording-pad.ui:20 src/sysprof/sysprof-window.c:274
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#: data/org.gnome.Sysprof.appdata.xml.in.in:7
+msgid "Profile an application or entire system"
+msgstr "Ilova yoki butun tizimni profillash"
+
+#. developer_name tag deprecated with Appstream 1.0
+#: data/org.gnome.Sysprof.appdata.xml.in.in:11
+msgid "Christian Hergert"
+msgstr "Kristian Gergert"
+
+#: data/org.gnome.Sysprof.appdata.xml.in.in:17
+msgid ""
+"Sysprof allows you to profile applications to aid in debugging and "
+"optimization."
+msgstr ""
+"Sysprof nosozliklarni tuzatish va optimallashtirishda yordam berish uchun "
+"ilovalarni profillash imkonini beradi."
+
+#: data/org.gnome.Sysprof.desktop.in.in:5 src/sysprof/sysprof-greeter.ui:89
+msgid "Profiler"
+msgstr "Profiler"
+
+#: data/org.gnome.Sysprof.desktop.in.in:6
+msgid "Profile an application or entire system."
+msgstr "Ilova yoki butun tizimni profillash."
+
+#: src/libsysprof/sysprof-category-summary.c:136
+msgid "Uncategorized"
+msgstr "Kategoriyasiz"
+
+#: src/libsysprof/sysprof-category-summary.c:139
+msgid "Accessibility"
+msgstr "Foydalanish imkoniyati"
+
+#: src/libsysprof/sysprof-category-summary.c:142
+msgid "Actions"
+msgstr "Amallar"
+
+#: src/libsysprof/sysprof-category-summary.c:145
+msgid "Crash Handler"
+msgstr "Crash Handler"
+
+#: src/libsysprof/sysprof-category-summary.c:148
+msgid "Context Switches"
+msgstr "Kontekst kalitlari"
+
+#: src/libsysprof/sysprof-category-summary.c:151
+msgid "CSS"
+msgstr "CSS"
+
+#: src/libsysprof/sysprof-category-summary.c:154
+#: src/sysprof/sysprof-greeter.ui:468 src/sysprof/sysprof-window.ui:363
+msgid "Graphics"
+msgstr "Grafika"
+
+#: src/libsysprof/sysprof-category-summary.c:157
+msgid "Icons"
+msgstr "Belgilar"
+
+#: src/libsysprof/sysprof-category-summary.c:160
+msgid "Input"
+msgstr "MIME usuli"
+
+#: src/libsysprof/sysprof-category-summary.c:163
+msgid "IO"
+msgstr "IO"
+
+#: src/libsysprof/sysprof-category-summary.c:166
+msgid "IPC"
+msgstr "IPC"
+
+#: src/libsysprof/sysprof-category-summary.c:169
+msgid "JavaScript"
+msgstr "JavaScript"
+
+#: src/libsysprof/sysprof-category-summary.c:172
+msgid "Kernel"
+msgstr "Yadro"
+
+#: src/libsysprof/sysprof-category-summary.c:175
+msgid "Layout"
+msgstr "Andoza"
+
+#: src/libsysprof/sysprof-category-summary.c:178
+msgid "Locking"
+msgstr "Qulflash"
+
+#: src/libsysprof/sysprof-category-summary.c:181
+msgid "Main Loop"
+msgstr "Asosiy tsikl"
+
+#: src/libsysprof/sysprof-category-summary.c:184
+msgid "Memory"
+msgstr "Xotira"
+
+#: src/libsysprof/sysprof-category-summary.c:187
+msgid "Paint"
+msgstr "Bo'yoq"
+
+#: src/libsysprof/sysprof-category-summary.c:190
+msgid "Type System"
+msgstr "Tizim turi"
+
+#: src/libsysprof/sysprof-category-summary.c:193
+msgid "Unwindable"
+msgstr "Yechish mumkin emas"
+
+#: src/libsysprof/sysprof-category-summary.c:196
+msgid "Windowing"
+msgstr "Derazalash"
+
+#: src/libsysprof/sysprof-debuginfod-task.c:97
+msgid "Downloading Symbols…"
+msgstr "Belgilar yuklab olinmoqda…"
+
+#: src/libsysprof/sysprof-document-allocation.c:151
+msgid "Allocation"
+msgstr "Ajratish"
+
+#: src/libsysprof/sysprof-document.c:570
+msgid "Unknown Process"
+msgstr "Noma'lum jarayon"
+
+#: src/libsysprof/sysprof-document.c:1251
+#: src/libsysprof/sysprof-document.c:1287
+msgid "Indexing capture data frames"
+msgstr "Ma'lumotlarni yozib olish ramkalarini indekslash"
+
+#: src/libsysprof/sysprof-document.c:1473
+msgid "Discovering file system mounts"
+msgstr "Fayl tizimi ulanishlarini kashf qilish"
+
+#: src/libsysprof/sysprof-document.c:1476
+msgid "Discovering process mount namespaces"
+msgstr "Jarayonni o'rnatish nom maydonlarini kashf qilish"
+
+#: src/libsysprof/sysprof-document.c:1479
+msgid "Analyzing process address layouts"
+msgstr "Jarayonning manzil sxemalarini tahlil qilish"
+
+#: src/libsysprof/sysprof-document.c:1482
+msgid "Analyzing process command line"
+msgstr "Jarayon buyruq qatorini tahlil qilish"
+
+#: src/libsysprof/sysprof-document.c:1485
+msgid "Analyzing file system overlays"
+msgstr "Fayl tizimining qoplamalarini tahlil qilish"
+
+#: src/libsysprof/sysprof-document.c:1488
+msgid "Processing counters"
+msgstr "Hisoblagichlarni qayta ishlash"
+
+#: src/libsysprof/sysprof-document.c:2480
+#: src/libsysprof/sysprof-document.c:2499
+#, c-format
+msgid "Recording at %X %x"
+msgstr "Yozilmoqda: %X %x"
+
+#: src/libsysprof/sysprof-document.c:2483
+#: src/libsysprof/sysprof-document.c:2502
+#, c-format
+msgid "Recording at %s"
+msgstr "Yozilmoqda: %s"
+
+#: src/libsysprof/sysprof-document-dbus-message.c:152
+msgid "D-Bus Message"
+msgstr "D-avtobus xabari"
+
+#: src/libsysprof/sysprof-document-frame.c:139
+msgid "Frame"
+msgstr "Romka"
+
+#: src/libsysprof/sysprof-document-loader.c:499
+msgid "Document loaded"
+msgstr "Hujjat yuklandi"
+
+#: src/libsysprof/sysprof-document-loader.c:530
+msgid "Loading failed"
+msgstr "Yuklashda xatolik"
+
+#: src/libsysprof/sysprof-document-loader.c:542
+#: src/libsysprof/sysprof-document-symbols.c:276
+msgid "Symbolizing stack traces"
+msgstr "Stek izlarini ramziylashtirish"
+
+#: src/libsysprof/sysprof-document-loader.c:611
+msgid "Loading document"
+msgstr "Hujjat yuklanmoqda"
+
+#: src/libsysprof/sysprof-document-log.c:85
+msgid "Log"
+msgstr "Log jurnali"
+
+#: src/libsysprof/sysprof-document-mark.c:134
+msgid "Mark"
+msgstr "Mark"
+
+#: src/libsysprof/sysprof-document-process.c:293
+#, c-format
+msgid "%s [Process %d]"
+msgstr "%s [Jarayon %d]"
+
+#: src/libsysprof/sysprof-document-process.c:295
+#, c-format
+msgid "Process %d"
+msgstr "Jarayon: %d"
+
+#: src/libsysprof/sysprof-document-sample.c:136
+msgid "Sample"
+msgstr "Namuna"
+
+#: src/libsysprof/sysprof-system-logs.c:171
+msgid "System Logs"
+msgstr "Tizim jurnallari"
+
+#: src/libsysprof/sysprof-system-logs.c:172
+msgid "Recording system logs is not supported on your platform."
+msgstr "Tizim jurnallarini yozib olish platformangizda qo‘llab-quvvatlanmaydi."
+
+#: src/libsysprof/sysprof-tracer.c:65
+msgid "Tracer"
+msgstr "Tracer"
+
+#: src/libsysprof/sysprof-tracer.c:66
+msgid ""
+"Tracing requires spawning a program compiled with ‘-finstrument-functions’. "
+"Tracing will not be available."
+msgstr ""
+"Kuzatuv “-finstrument-funksiyalari” bilan tuzilgan dasturni yaratishni talab "
+"qiladi. Kuzatuv mavjud bo'lmaydi."
+
+#: src/sysprof-cli/sysprof-cli.c:115
+msgid "--merge requires at least 2 filename arguments"
+msgstr "--merge kamida 2 ta fayl nomi argumentini talab qiladi"
+
+#: src/sysprof-cli/sysprof-cli.c:314
+msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
+msgstr ""
+"Profil yaratishda protsessorni o'chirishni o'chirib qo'ying [--power-profili "
+"uchun eskirgan]"
+
+#: src/sysprof-cli/sysprof-cli.c:315
+msgid "Make sysprof specific to a task [Deprecated]"
+msgstr "Sysprofni vazifaga xos qilish [Eskirgan]"
+
+#: src/sysprof-cli/sysprof-cli.c:315 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof/sysprof-logs-section.ui:181
+#: src/sysprof/sysprof-processes-section.ui:283
+#: src/sysprof/sysprof-traceables-utility.ui:52
+msgid "PID"
+msgstr "PID (JID)"
+
+#: src/sysprof-cli/sysprof-cli.c:316
+msgid "Run a command and profile the process"
+msgstr "Buyruqni ishga tushiring va jarayonni profilga kiriting"
+
+#: src/sysprof-cli/sysprof-cli.c:316
+msgid "COMMAND"
+msgstr "COMMAND"
+
+#: src/sysprof-cli/sysprof-cli.c:317
+msgid ""
+"Set environment variable for spawned process. Can be used multiple times."
+msgstr ""
+"Yaratilgan jarayon uchun muhit o'zgaruvchisini o'rnating. Bir necha marta "
+"foydalanish mumkin."
+
+#: src/sysprof-cli/sysprof-cli.c:317
+msgid "VAR=VALUE"
+msgstr "VAR=VALUE"
+
+#: src/sysprof-cli/sysprof-cli.c:318
+msgid "Force overwrite the capture file"
+msgstr "Suratga olish faylini majburan qayta yozish"
+
+#: src/sysprof-cli/sysprof-cli.c:319
+msgid "Disable recording of battery statistics"
+msgstr "Batareya statistikasini yozib olishni o'chirib qo'ying"
+
+#: src/sysprof-cli/sysprof-cli.c:320
+msgid "Disable recording of CPU statistics"
+msgstr "CPU statistikasini yozib olishni o'chirib qo'ying"
+
+#: src/sysprof-cli/sysprof-cli.c:321
+msgid "Disable recording of Disk statistics"
+msgstr "Disk statistikasini yozib olishni o'chirib qo'ying"
+
+#: src/sysprof-cli/sysprof-cli.c:322
+msgid "Do not record stacktraces using Linux perf"
+msgstr "Linux perf yordamida stacktracelarni yozmang"
+
+#: src/sysprof-cli/sysprof-cli.c:323
+msgid "Do not append symbol name information from local machine"
+msgstr "Mahalliy mashinadan belgi nomi ma'lumotlarini qo'shmang"
+
+#: src/sysprof-cli/sysprof-cli.c:324
+msgid "Disable recording of memory statistics"
+msgstr "Xotira statistikasini yozib olishni o'chiring"
+
+#: src/sysprof-cli/sysprof-cli.c:325
+msgid "Disable recording of network statistics"
+msgstr "Tarmoq statistikasini yozib olishni o'chirib qo'ying"
+
+#: src/sysprof-cli/sysprof-cli.c:326
+msgid "Set SYSPROF_TRACE_FD environment for subprocess"
+msgstr "Subprocess uchun SYSPROF_TRACE_FD muhitini o'rnating"
+
+#: src/sysprof-cli/sysprof-cli.c:327
+msgid "Track when processes are scheduled"
+msgstr "Jarayonlar qachon rejalashtirilganligini kuzatib boring"
+
+#: src/sysprof-cli/sysprof-cli.c:328
+msgid "Profile the D-Bus session bus"
+msgstr "D-Bus seans avtobusining profilini o'rnating"
+
+#: src/sysprof-cli/sysprof-cli.c:329
+msgid "Profile the D-Bus system bus"
+msgstr "D-Bus tizim avtobusini profillang"
+
+#: src/sysprof-cli/sysprof-cli.c:330
+msgid "Set GJS_TRACE_FD environment to trace GJS processes"
+msgstr "GJS jarayonlarini kuzatish uchun GJS_TRACE_FD muhitini sozlang"
+
+#: src/sysprof-cli/sysprof-cli.c:331
+msgid "Set GTK_TRACE_FD environment to trace a GTK application"
+msgstr "GTK ilovasini kuzatish uchun GTK_TRACE_FD muhitini sozlang"
+
+#: src/sysprof-cli/sysprof-cli.c:332
+msgid "Include RAPL energy statistics"
+msgstr "RAPL energiya statistikasini qo'shing"
+
+#: src/sysprof-cli/sysprof-cli.c:333
+msgid "Profile memory allocations and frees"
+msgstr "Profil xotirasini ajratish va bo'shatish"
+
+#: src/sysprof-cli/sysprof-cli.c:334
+msgid "Connect to org.gnome.Shell for profiler statistics"
+msgstr "Profiler statistikasi uchun org.gnome.Shell ga ulaning"
+
+#: src/sysprof-cli/sysprof-cli.c:335
+msgid "Track performance of the applications main loop"
+msgstr "Ilovalarning asosiy tsiklining ishlashini kuzatib boring"
+
+#: src/sysprof-cli/sysprof-cli.c:337
+msgid "Merge all provided *.syscap files and write to stdout"
+msgstr ""
+"Barcha taqdim etilgan *.syscap fayllarini birlashtiring va stdout-ga yozing"
+
+#: src/sysprof-cli/sysprof-cli.c:338
+msgid "Print the sysprof-cli version and exit"
+msgstr "Sysprof-cli versiyasini chop eting va chiqing"
+
+#: src/sysprof-cli/sysprof-cli.c:339
+msgid "The size of the buffer in pages (1 = 1 page)"
+msgstr "Sahifalardagi bufer hajmi (1 = 1 sahifa)"
+
+#: src/sysprof-cli/sysprof-cli.c:340
+msgid "Additional D-Bus address to monitor"
+msgstr "Monitoring uchun qo'shimcha D-Bus manzili"
+
+#: src/sysprof-cli/sysprof-cli.c:341
+msgid "Stack size to copy for unwinding in user-space"
+msgstr "Foydalanuvchi maydonida ochish uchun nusxa ko'chirish uchun stek hajmi"
+
+#: src/sysprof-cli/sysprof-cli.c:342
+msgid "Do not use debuginfod to resolve symbols"
+msgstr "Belgilarni hal qilish uchun debuginfod ishlatmang"
+
+#: src/sysprof-cli/sysprof-cli.c:376
+msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
+msgstr "[CAPTURE_FILE] [-- ARGS COMMAND] — Sysprof"
+
+#: src/sysprof-cli/sysprof-cli.c:379
+msgid ""
+"\n"
+"Examples:\n"
+"\n"
+"  # Record gtk4-widget-factory using trace-fd to get application provided\n"
+"  # data as well as GTK and GNOME Shell data providers\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"  # Merge multiple syscap files into one\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+"\n"
+"  # Unwind by capturing stack/register contents instead of frame-pointers\n"
+"  # where the stack-size is a multiple of page-size\n"
+"  sysprof-cli --stack-size=8192\n"
+msgstr ""
+"\n"
+"Misollar:\n"
+"\n"
+"  # Taqdim etilgan ilovani olish uchun trace-fd yordamida gtk4-vidjet-"
+"fabrikasini yozib oling\n"
+"  # ma'lumotlar, shuningdek, GTK va GNOME Shell ma'lumotlar provayderlari\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"  # Bir nechta tizim fayllarini bittasiga birlashtiring\n"
+"  sysprof-cli --birlashtirish a.syscap b.syscap > c.syscap\n"
+"\n"
+"  # Kadr ko'rsatkichlari o'rniga stek/ro'yxatdan o'tish tarkibini yozib "
+"olish orqali dam oling\n"
+"  # bu erda stek o'lchami sahifa o'lchamining ko'pligi\n"
+"  sysprof-cli --stack-size = 8192\n"
+
+#: src/sysprof-cli/sysprof-cli.c:419
+msgid "Too many arguments were passed to sysprof-cli:"
+msgstr "Sysprof-cli ga juda ko'p argumentlar uzatildi:"
+
+#. Translators: %s is a file name.
+#: src/sysprof-cli/sysprof-cli.c:476
+#, c-format
+msgid "%s exists. Use --force to overwrite\n"
+msgstr "%s mavjud. Qayta yozish uchun --force tugmasidan foydalaning\n"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:13
+msgid "Profile the system"
+msgstr "Tizimni profillash"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:14
+msgid "Authentication is required to profile the system."
+msgstr "Tizim profilini aniqlash uchun autentifikatsiya talab qilinadi."
+
+#: src/sysprof/gtk/help-overlay.ui:11
+msgctxt "shortcut window"
+msgid "Recording View"
+msgstr "Yozib olish ko'rinishi"
+
+#: src/sysprof/gtk/help-overlay.ui:14
+msgctxt "shortcut window"
+msgid "Start New Recording"
+msgstr "Yangi yozishni boshlang"
+
+#: src/sysprof/gtk/help-overlay.ui:20
+msgctxt "shortcut window"
+msgid "Save As"
+msgstr "Boshqacha saqlash"
+
+#: src/sysprof/gtk/help-overlay.ui:26
+msgctxt "shortcut window"
+msgid "Toggle Visibility of Main Sidebar"
+msgstr "Asosiy yon panelning ko'rinishini o'zgartirish"
+
+#: src/sysprof/gtk/help-overlay.ui:32
+msgctxt "shortcut window"
+msgid "Toggle Visibility of Stack Trace Sidebar"
+msgstr "Stack Trace Yon panelining ko'rinishini o'zgartirish"
+
+#: src/sysprof/gtk/help-overlay.ui:40
+msgctxt "shortcut window"
+msgid "General"
+msgstr "Umumiy"
+
+#: src/sysprof/gtk/help-overlay.ui:43
+msgctxt "shortcut window"
+msgid "Open Recording"
+msgstr "Yozuvni oching"
+
+#: src/sysprof/gtk/help-overlay.ui:49
+msgctxt "shortcut window"
+msgid "Close Window"
+msgstr "Oynani yopish"
+
+#: src/sysprof/gtk/help-overlay.ui:56
+msgctxt "shortcut window"
+msgid "Show Help"
+msgstr "Yordamni koʼrsatish"
+
+#: src/sysprof/gtk/help-overlay.ui:62
+msgctxt "shortcut window"
+msgid "Show keyboard shortcuts"
+msgstr "Klaviatura yorliqlarini ko’rsatish"
+
+#: src/sysprof/gtk/help-overlay.ui:68
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "Chiqish"
+
+#: src/sysprof/sysprof-animation.c:1038
+#, c-format
+msgid "Failed to find property %s in %s"
+msgstr "%s ichida %s xususiyati topilmadi"
+
+#: src/sysprof/sysprof-animation.c:1047
+#, c-format
+msgid "Failed to retrieve va_list value: %s"
+msgstr "va_list qiymatini olinmadi: %s"
+
+#: src/sysprof/sysprof-application.c:38
+msgid "Show Sysprof version and exit"
+msgstr "Sysprof versiyasini ko'rsating va chiqing"
+
+#: src/sysprof/sysprof-application.c:181
+msgid "A system profiler"
+msgstr "Tizim profili"
+
+#: src/sysprof/sysprof-application.c:182
+msgid "translator-credits"
+msgstr "Baxrom Raxmatov <magdiyevbahrom@gmail.com>"
+
+#: src/sysprof/sysprof-callgraph-view.ui:22
+msgid "Functions"
+msgstr "Funksiyalar"
+
+#: src/sysprof/sysprof-callgraph-view.ui:71
+msgid "Filter Functions"
+msgstr "Filtr funksiyalari"
+
+#: src/sysprof/sysprof-callgraph-view.ui:94
+msgid "Callers"
+msgstr "Qo'ng'iroq qiluvchilar"
+
+#: src/sysprof/sysprof-callgraph-view.ui:146
+msgid "Descendants"
+msgstr "Avlodlar"
+
+#: src/sysprof/sysprof-counters-section.ui:26
+#: src/sysprof/sysprof-cpu-section.ui:169
+#: src/sysprof/sysprof-energy-section.ui:177
+#: src/sysprof/sysprof-graphics-section.ui:88
+#: src/sysprof/sysprof-network-section.ui:86
+#: src/sysprof/sysprof-storage-section.ui:86
+msgid "Counters Chart"
+msgstr "Hisoblagichlar jadvali"
+
+#: src/sysprof/sysprof-counters-section.ui:40
+#: src/sysprof/sysprof-cpu-section.ui:323
+#: src/sysprof/sysprof-energy-section.ui:312
+#: src/sysprof/sysprof-graphics-section.ui:223
+#: src/sysprof/sysprof-network-section.ui:291
+#: src/sysprof/sysprof-storage-section.ui:291
+msgid "Counters Table"
+msgstr "Hisoblagichlar jadvali"
+
+#: src/sysprof/sysprof-cpu-section.ui:378
+#: src/sysprof/sysprof-dbus-section.ui:171
+#: src/sysprof/sysprof-energy-section.ui:348
+#: src/sysprof/sysprof-frame-utility.ui:49
+#: src/sysprof/sysprof-graphics-section.ui:259
+#: src/sysprof/sysprof-logs-section.ui:110
+#: src/sysprof/sysprof-metadata-section.ui:38
+#: src/sysprof/sysprof-network-section.ui:346
+#: src/sysprof/sysprof-process-dialog.ui:64
+#: src/sysprof/sysprof-processes-section.ui:215
+#: src/sysprof/sysprof-storage-section.ui:346
+#: src/sysprof/sysprof-traceables-utility.ui:23
+msgid "Time"
+msgstr "Vaqt"
+
+#: src/sysprof/sysprof-cpu-section.ui:412
+#: src/sysprof/sysprof-energy-section.ui:382
+#: src/sysprof/sysprof-flame-graph.c:458
+#: src/sysprof/sysprof-graphics-section.ui:293
+#: src/sysprof/sysprof-marks-section.ui:248
+#: src/sysprof/sysprof-network-section.ui:380
+#: src/sysprof/sysprof-storage-section.ui:380
+msgid "Category"
+msgstr "Bo'lim"
+
+#: src/sysprof/sysprof-cpu-section.ui:450
+#: src/sysprof/sysprof-energy-section.ui:420
+#: src/sysprof/sysprof-graphics-section.ui:331
+#: src/sysprof/sysprof-marks-section.ui:282
+#: src/sysprof/sysprof-network-section.ui:418
+#: src/sysprof/sysprof-storage-section.ui:418
+msgid "Name"
+msgstr "Ism"
+
+#: src/sysprof/sysprof-cpu-section.ui:488
+#: src/sysprof/sysprof-energy-section.ui:458
+#: src/sysprof/sysprof-graphics-section.ui:369
+#: src/sysprof/sysprof-metadata-section.ui:105
+#: src/sysprof/sysprof-network-section.ui:456
+#: src/sysprof/sysprof-storage-section.ui:456
+msgid "Value"
+msgstr "Qiymat"
+
+#: src/sysprof/sysprof-cpu-section.ui:529
+msgid "CPU Info"
+msgstr "CPU haqida ma'lumot"
+
+#: src/sysprof/sysprof-cpu-section.ui:560
+#: src/sysprof/sysprof-process-dialog.ui:248
+msgid "ID"
+msgstr "ID"
+
+#: src/sysprof/sysprof-cpu-section.ui:595
+msgid "Core"
+msgstr "Yadro"
+
+#: src/sysprof/sysprof-cpu-section.ui:630
+msgid "Model Name"
+msgstr "Model nomi"
+
+#: src/sysprof/sysprof-dbus-section.ui:205
+msgid "Bus"
+msgstr "Bus"
+
+#: src/sysprof/sysprof-dbus-section.ui:244
+msgid "Serial"
+msgstr "Seriyali port uskunasiga kirish"
+
+#: src/sysprof/sysprof-dbus-section.ui:281
+msgid "Reply"
+msgstr "Javob berish"
+
+#: src/sysprof/sysprof-dbus-section.ui:318
+msgid "Flags"
+msgstr "Bayroqlar"
+
+#: src/sysprof/sysprof-dbus-section.ui:347
+#: src/sysprof/sysprof-files-section.ui:122
+#: src/sysprof/sysprof-memory-callgraph-view.ui:68
+msgid "Size"
+msgstr "O'lcham"
+
+#: src/sysprof/sysprof-dbus-section.ui:383
+#: src/sysprof/sysprof-frame-utility.ui:20
+#: src/sysprof/sysprof-mark-table.ui:221
+msgid "Type"
+msgstr "Turi"
+
+#: src/sysprof/sysprof-dbus-section.ui:412
+msgid "Sender"
+msgstr "Yuboruvchi"
+
+#: src/sysprof/sysprof-dbus-section.ui:446
+msgid "Destination"
+msgstr "Manzil"
+
+#: src/sysprof/sysprof-dbus-section.ui:480
+#: src/sysprof/sysprof-files-section.ui:53
+msgid "Path"
+msgstr "Yo'l"
+
+#: src/sysprof/sysprof-dbus-section.ui:514
+msgid "Interface"
+msgstr "Interfeys"
+
+#: src/sysprof/sysprof-dbus-section.ui:548
+msgid "Member"
+msgstr "A'zo"
+
+#: src/sysprof/sysprof-dbus-section.ui:582
+msgid "Signature"
+msgstr "Imzo"
+
+#: src/sysprof/sysprof-dbus-section.ui:626
+msgid "Filter Messages"
+msgstr "Xabarlarni filtrlash"
+
+#: src/sysprof/sysprof-dbus-utility.ui:13
+#: src/sysprof/sysprof-logs-section.c:114
+#: src/sysprof/sysprof-logs-section.ui:290
+msgid "Message"
+msgstr "Xabar"
+
+#: src/sysprof/sysprof-files-section.ui:4
+msgid "Files"
+msgstr "Fayllar"
+
+#: src/sysprof/sysprof-files-section.ui:88
+msgid "Compressed"
+msgstr "Siqilgan maʼlumotlar notoʻgʻri"
+
+#: src/sysprof/sysprof-files-section.ui:165
+msgid "Filter Files"
+msgstr "Fayllarni filtrlash"
+
+#: src/sysprof/sysprof-flame-graph.c:462
+#: src/sysprof/sysprof-process-dialog.ui:177
+msgid "File"
+msgstr "Fayl"
+
+#: src/sysprof/sysprof-frame-utility.ui:80
+#: src/sysprof/sysprof-logs-section.ui:143
+#: src/sysprof/sysprof-mark-table.ui:116
+#: src/sysprof/sysprof-traceables-utility.ui:81
+#: src/sysprof/sysprof-window.ui:343
+msgid "CPU"
+msgstr "CPU"
+
+#: src/sysprof/sysprof-greeter.c:128
+msgid "Use KEY=VALUE to set an environment variable"
+msgstr "Muhit o'zgaruvchisini o'rnatish uchun KEY=VALUE dan foydalaning"
+
+#: src/sysprof/sysprof-greeter.c:134
+msgid "Keys may not start with a number"
+msgstr "Tugmalar raqam bilan boshlanmasligi mumkin"
+
+#: src/sysprof/sysprof-greeter.c:144
+msgid "Keys may only contain alpha-numerics or underline."
+msgstr ""
+"Tugmalar faqat alfa-raqam yoki tagiga chizilgan belgilarni o'z ichiga olishi "
+"mumkin."
+
+#: src/sysprof/sysprof-greeter.c:324 src/sysprof/sysprof-window.c:175
+msgid "Must Capture to Local File"
+msgstr "Mahalliy faylga yozib olish kerak"
+
+#: src/sysprof/sysprof-greeter.c:325 src/sysprof/sysprof-window.c:176
+msgid "You must choose a local file to capture using Sysprof"
+msgstr "Sysprof yordamida yozib olish uchun mahalliy faylni tanlashingiz kerak"
+
+#: src/sysprof/sysprof-greeter.c:326 src/sysprof/sysprof-recording-pad.c:119
+#: src/sysprof/sysprof-window.c:177 src/sysprof/sysprof-window.c:764
+msgid "Close"
+msgstr "Yopish"
+
+#: src/sysprof/sysprof-greeter.c:349
+#, c-format
+msgid "System Capture from %s.syscap"
+msgstr "%s.syscap dan tizim tasviri"
+
+#: src/sysprof/sysprof-greeter.c:353
+msgid "Record to File"
+msgstr "Faylga yozib oling"
+
+#: src/sysprof/sysprof-greeter.c:354
+msgid "Record"
+msgstr "Yozib olish"
+
+#: src/sysprof/sysprof-greeter.c:503
+msgid "No Change"
+msgstr "O'zgarish yo'q"
+
+#: src/sysprof/sysprof-greeter.c:506
+msgid "Balanced"
+msgstr "Balanslangan"
+
+#: src/sysprof/sysprof-greeter.c:509
+msgid "Power Saver"
+msgstr "Quvvat tejash"
+
+#: src/sysprof/sysprof-greeter.c:512
+msgid "Performance"
+msgstr "Ishlash"
+
+#: src/sysprof/sysprof-greeter.ui:95
+msgid "Sampling"
+msgstr "Namuna olish"
+
+#: src/sysprof/sysprof-greeter.ui:99
+msgid "Sample Native Stacks"
+msgstr "Namuna Native Stacks"
+
+#: src/sysprof/sysprof-greeter.ui:100
+msgid "Record native stack traces using a sampling profiler"
+msgstr "Namuna olish profili yordamida mahalliy stek izlarini yozib oling"
+
+#: src/sysprof/sysprof-greeter.ui:111
+msgid "Unwind Stacks in User Space"
+msgstr "Foydalanuvchi maydonida steklarni bo'shatish"
+
+#: src/sysprof/sysprof-greeter.ui:112
+msgid "Copy stack contents and registers for unwinding in user-space"
+msgstr ""
+"Foydalanuvchi maydonida ochish uchun stek tarkibini va registrlarni nusxalash"
+
+#: src/sysprof/sysprof-greeter.ui:123
+msgid "Stack Size"
+msgstr "Stak hajmi"
+
+#: src/sysprof/sysprof-greeter.ui:124
+msgid "The number of bytes to copy from the stack"
+msgstr "Stakdan nusxa ko'chirish uchun baytlar soni"
+
+#: src/sysprof/sysprof-greeter.ui:135
+msgid ""
+"Unwinding in user-space has considerable overhead but may help in situations "
+"where frame-pointers are unavailable."
+msgstr ""
+"Foydalanuvchi bo'shlig'ida bo'shatish katta yukni talab qiladi, ammo ramka "
+"ko'rsatgichlari mavjud bo'lmagan holatlarda yordam berishi mumkin."
+
+#: src/sysprof/sysprof-greeter.ui:151
+msgid "Sample JavaScript Stacks"
+msgstr "Namuna JavaScript steklari"
+
+#: src/sysprof/sysprof-greeter.ui:152
+msgid "Record JavaScript stack traces using a sampling profiler"
+msgstr "Namuna olish profili yordamida JavaScript stek izlarini yozib oling"
+
+#: src/sysprof/sysprof-greeter.ui:163
+msgid ""
+"Sysprof must launch your application to record JavaScript stacks using GJS."
+msgstr ""
+"GJS yordamida JavaScript steklarini yozib olish uchun Sysprof ilovangizni "
+"ishga tushirishi kerak."
+
+#: src/sysprof/sysprof-greeter.ui:179
+msgid "Record Scheduler Details"
+msgstr "Yozuv rejalashtiruvchisi tafsilotlari"
+
+#: src/sysprof/sysprof-greeter.ui:180
+msgid "Track when processes are scheduled per CPU"
+msgstr ""
+"Har bir protsessor uchun jarayonlar qachon rejalashtirilganligini kuzatib "
+"boring"
+
+#: src/sysprof/sysprof-greeter.ui:193
+msgid "Tracing"
+msgstr "Kuzatish"
+
+#: src/sysprof/sysprof-greeter.ui:197
+msgid "Trace Memory Allocations"
+msgstr "Xotirani taqsimlash"
+
+#: src/sysprof/sysprof-greeter.ui:198
+msgid "Record a stack trace when <tt>malloc</tt> or similar functions are used"
+msgstr ""
+"<tt>Malloc</tt> yoki shunga o'xshash funktsiyalardan foydalanilganda stek "
+"izini yozib oling"
+
+#: src/sysprof/sysprof-greeter.ui:209
+msgid "Sysprof must launch your application to record memory allocations."
+msgstr ""
+"Sysprof xotira ajratmalarini yozib olish uchun ilovangizni ishga tushirishi "
+"kerak."
+
+#: src/sysprof/sysprof-greeter.ui:227 src/sysprof/sysprof-greeter.ui:232
+msgid "Application"
+msgstr "Ilovani o'rnating (ilova identifikatori yordamida)"
+
+#: src/sysprof/sysprof-greeter.ui:235
+#: src/sysprof/sysprof-processes-section.ui:317
+msgid "Command Line"
+msgstr "Terminal"
+
+#: src/sysprof/sysprof-greeter.ui:241
+msgid "Working directory"
+msgstr "Ishchi katalog"
+
+#: src/sysprof/sysprof-greeter.ui:247
+msgid "The application will be run as a subprocess of Sysprof."
+msgstr "Ilova Sysprofning quyi jarayoni sifatida ishga tushiriladi."
+
+#: src/sysprof/sysprof-greeter.ui:260
+msgid "Environment"
+msgstr "Atrof-muhit"
+
+#: src/sysprof/sysprof-greeter.ui:264
+msgid "Clear Environment"
+msgstr "Atrof-muhitni tozalash"
+
+#: src/sysprof/sysprof-greeter.ui:265
+msgid "Clear the environment before launching application"
+msgstr "Ilovani ishga tushirishdan oldin atrof-muhitni tozalang"
+
+#: src/sysprof/sysprof-greeter.ui:291
+msgid "Add _Variable"
+msgstr "_Variable qo'shing"
+
+#: src/sysprof/sysprof-greeter.ui:297
+msgid "Add Variable"
+msgstr "O'zgaruvchini qo'shish"
+
+#: src/sysprof/sysprof-greeter.ui:298
+msgid "_Add"
+msgstr "_Qo’shish"
+
+#: src/sysprof/sysprof-greeter.ui:315 src/sysprof/sysprof-greeter.ui:320
+msgid "Counters"
+msgstr "Hisoblagichlar"
+
+#: src/sysprof/sysprof-greeter.ui:324
+msgid "CPU Usage"
+msgstr "CPU foydalanish"
+
+#: src/sysprof/sysprof-greeter.ui:325
+msgid "Record coarse-grained counters about CPU usage and frequency"
+msgstr ""
+"CPU ishlatilishi va chastotasi haqida qo'pol hisoblagichlarni yozib oling"
+
+#: src/sysprof/sysprof-greeter.ui:337
+msgid "Memory Usage"
+msgstr "Xotiradan foydalanish"
+
+#: src/sysprof/sysprof-greeter.ui:338
+msgid "Record coarse-grained counters about system memory usage"
+msgstr ""
+"Tizim xotirasidan foydalanish haqida qo'pol hisoblagichlarni yozib oling"
+
+#: src/sysprof/sysprof-greeter.ui:350
+msgid "Disk Usage"
+msgstr "Diskdan foydalanish"
+
+#: src/sysprof/sysprof-greeter.ui:351
+msgid "Record coarse-grained counters about storage throughput"
+msgstr ""
+"Saqlash o'tkazuvchanligi haqida qo'pol donali hisoblagichlarni yozib oling"
+
+#: src/sysprof/sysprof-greeter.ui:363
+msgid "Network Usage"
+msgstr "Tarmoqdan foydalanish"
+
+#: src/sysprof/sysprof-greeter.ui:364
+msgid "Record coarse-grained counters about network traffic"
+msgstr "Tarmoq trafigi haqida qo'pol donali hisoblagichlarni yozib oling"
+
+#: src/sysprof/sysprof-greeter.ui:380
+msgid "Energy Usage"
+msgstr "Energiya iste'moli"
+
+#: src/sysprof/sysprof-greeter.ui:381
+msgid "Record coarse-grained counters about energy usage in Watts"
+msgstr "Quvvat iste'moli haqida qo'pol hisoblagichlarni vattlarda yozib oling"
+
+#: src/sysprof/sysprof-greeter.ui:393
+msgid "Battery Charge"
+msgstr "Batareyani zaryadlash"
+
+#: src/sysprof/sysprof-greeter.ui:394
+msgid "Record coarse-grained counters about battery charge or discharge rates"
+msgstr ""
+"Batareyaning zaryadlash yoki zaryadsizlanish tezligi haqida qo'pol "
+"hisoblagichlarni yozib oling"
+
+#: src/sysprof/sysprof-greeter.ui:412 src/sysprof/sysprof-greeter.ui:417
+#: src/sysprof/sysprof-window.ui:333
+msgid "D-Bus"
+msgstr "D-Bus ob'ekt yo'llari massivi"
+
+#: src/sysprof/sysprof-greeter.ui:421
+msgid "Record System Bus"
+msgstr "Tizim avtobusini yozib oling"
+
+#: src/sysprof/sysprof-greeter.ui:422
+msgid "Record messages on the D-Bus system bus"
+msgstr "D-Bus tizim avtobusida xabarlarni yozib oling"
+
+#: src/sysprof/sysprof-greeter.ui:438
+msgid "Record Session Bus"
+msgstr "Seans avtobusini yozib oling"
+
+#: src/sysprof/sysprof-greeter.ui:439
+msgid "Record messages on the D-Bus user session bus"
+msgstr "D-Bus foydalanuvchi seans avtobusida xabarlarni yozib oling"
+
+#: src/sysprof/sysprof-greeter.ui:450
+msgid ""
+"The session bus may contain sensitive information such as keyboard usage and "
+"passwords."
+msgstr ""
+"Seans avtobusida klaviaturadan foydalanish va parollar kabi nozik "
+"ma'lumotlar bo'lishi mumkin."
+
+#: src/sysprof/sysprof-greeter.ui:473
+msgid "Timings"
+msgstr "Vaqtlar"
+
+#: src/sysprof/sysprof-greeter.ui:477
+msgid "Compositor Frame Timings"
+msgstr "Kompozitor ramka vaqtlari"
+
+#: src/sysprof/sysprof-greeter.ui:478
+msgid "Record frame-timing information from the GNOME Shell compositor"
+msgstr ""
+"GNOME Shell kompozitoridan kadrlar vaqti haqidagi ma'lumotlarni yozib oling"
+
+#: src/sysprof/sysprof-greeter.ui:489
+msgid ""
+"Applications launched by Sysprof will automatically collect GTK frame timing "
+"information."
+msgstr ""
+"Sysprof tomonidan ishga tushirilgan ilovalar avtomatik ravishda GTK ramka "
+"vaqti ma'lumotlarini to'playdi."
+
+#: src/sysprof/sysprof-greeter.ui:529
+msgid "Devices"
+msgstr "Olinadigan qurilmalarning ma'lumotlarning doimiylik chegarasi"
+
+#: src/sysprof/sysprof-greeter.ui:533
+msgid "Include GPU Information"
+msgstr "GPU ma'lumotlarini qo'shing"
+
+#: src/sysprof/sysprof-greeter.ui:534
+msgid "Records information about graphics hardware and drivers"
+msgstr "Grafik apparat va drayverlar haqidagi ma'lumotlarni yozib oladi"
+
+#: src/sysprof/sysprof-greeter.ui:552
+msgid "System"
+msgstr "Sistema"
+
+#: src/sysprof/sysprof-greeter.ui:557
+msgid "Power Profile"
+msgstr "Quvvat profili"
+
+#: src/sysprof/sysprof-greeter.ui:560
+msgid "Record with Power Profile"
+msgstr "Quvvat profili bilan yozib oling"
+
+#: src/sysprof/sysprof-greeter.ui:561
+msgid "Switch to power profile while recording"
+msgstr "Yozish paytida quvvat rejimiga o'ting"
+
+#: src/sysprof/sysprof-greeter.ui:571
+msgid "Details"
+msgstr "Tafsilotlar"
+
+#: src/sysprof/sysprof-greeter.ui:575
+msgid "Record System Log"
+msgstr "Tizim jurnalini yozib oling"
+
+#: src/sysprof/sysprof-greeter.ui:576
+msgid "Watch the system log for new messages and record them"
+msgstr ""
+"Yangi xabarlar uchun tizim jurnalini tomosha qiling va ularni yozib oling"
+
+#: src/sysprof/sysprof-greeter.ui:592
+msgid "Include Hardware Information"
+msgstr "Uskuna ma'lumotlarini qo'shing"
+
+#: src/sysprof/sysprof-greeter.ui:593
+msgid "Records information about PCI and USB devices"
+msgstr "PCI va USB qurilmalari haqidagi ma'lumotlarni yozib oladi"
+
+#: src/sysprof/sysprof-greeter.ui:606
+msgid "Symbols"
+msgstr "Belgilar"
+
+#: src/sysprof/sysprof-greeter.ui:610
+msgid "Bundle Symbols"
+msgstr "To'plam belgilari"
+
+#: src/sysprof/sysprof-greeter.ui:611
+msgid "Make recording shareable by symbolizing stack traces after recording"
+msgstr ""
+"Yozib olingandan keyin stek izlarini ramziy qilib, yozuvni baham ko'rish "
+"mumkin bo'lsin"
+
+#: src/sysprof/sysprof-greeter.ui:627
+msgid "Debuginfod"
+msgstr "Nosozliklarni tuzatish"
+
+#: src/sysprof/sysprof-greeter.ui:628
+msgid "Enable Debuginfod to automatically fetch debug symbols"
+msgstr ""
+"Nosozliklarni tuzatish belgilarini avtomatik ravishda olish uchun "
+"Debuginfodni yoqing"
+
+#: src/sysprof/sysprof-greeter.ui:661
+msgid "_Open File…"
+msgstr "_Faylni ochish…"
+
+#: src/sysprof/sysprof-greeter.ui:668
+msgid "Record to _File…"
+msgstr "_Faylga yozib olish…"
+
+#: src/sysprof/sysprof-greeter.ui:675
+msgid "Record to _Memory"
+msgstr "_Xotiraga yozib oling"
+
+#: src/sysprof/sysprof-greeter.ui:694 src/sysprof/sysprof-window.ui:444
+msgid "_Keyboard Shortcuts"
+msgstr "_Klaviatura yorliqlari"
+
+#: src/sysprof/sysprof-greeter.ui:698 src/sysprof/sysprof-window.ui:448
+msgid "Help"
+msgstr "Yordam"
+
+#: src/sysprof/sysprof-greeter.ui:702 src/sysprof/sysprof-window.ui:452
+msgid "About Sysprof"
+msgstr "Sysprof haqida"
+
+#: src/sysprof/sysprof-logs-section.c:105
+msgid "Critical"
+msgstr "Tanqidiy"
+
+#: src/sysprof/sysprof-logs-section.c:108
+msgid "Warning"
+msgstr "Ogohlantirish"
+
+#: src/sysprof/sysprof-logs-section.c:111
+msgid "Debug"
+msgstr "Xatoliklarni ko'rish"
+
+#: src/sysprof/sysprof-logs-section.c:117
+msgid "Info"
+msgstr "Ma'lumot"
+
+#: src/sysprof/sysprof-logs-section.c:120
+msgid "Error"
+msgstr "Xatolik"
+
+#: src/sysprof/sysprof-logs-section.ui:4 src/sysprof/sysprof-logs-section.ui:30
+msgid "Logs"
+msgstr "Loglar"
+
+#: src/sysprof/sysprof-logs-section.ui:219
+msgid "Severity"
+msgstr "Dolzarblik"
+
+#: src/sysprof/sysprof-logs-section.ui:255
+msgid "Domain"
+msgstr "DOMAIN"
+
+#: src/sysprof/sysprof-marks-section.ui:4
+msgid "Marks"
+msgstr "Belgilar"
+
+#: src/sysprof/sysprof-marks-section.ui:78
+msgid "Mark Chart"
+msgstr "Belgilar jadvali"
+
+#: src/sysprof/sysprof-marks-section.ui:92
+msgid "Mark Table"
+msgstr "Jadvalni belgilang"
+
+#: src/sysprof/sysprof-marks-section.ui:105
+msgid "Mark Waterfall"
+msgstr "Mark sharsharasi"
+
+#: src/sysprof/sysprof-marks-section.ui:212
+msgid "Summary"
+msgstr "Qisqacha"
+
+#: src/sysprof/sysprof-marks-section.ui:317
+msgid "Minimum"
+msgstr "Minimum"
+
+#: src/sysprof/sysprof-marks-section.ui:351
+msgid "Maximum"
+msgstr "Maksimal"
+
+#: src/sysprof/sysprof-marks-section.ui:385
+msgid "Average"
+msgstr "O'rtacha"
+
+#: src/sysprof/sysprof-marks-section.ui:419
+msgid "Median"
+msgstr "Median"
+
+#: src/sysprof/sysprof-mark-table.ui:47
+msgid "Start"
+msgstr "Boshlash"
+
+#: src/sysprof/sysprof-mark-table.ui:81
+#: src/sysprof/sysprof-processes-section.ui:249
+msgid "Duration"
+msgstr "Davomiyligi"
+
+#: src/sysprof/sysprof-mark-table.ui:151
+msgid "Process"
+msgstr "Jarayon"
+
+#: src/sysprof/sysprof-mark-table.ui:186
+msgid "Group"
+msgstr "Guruh"
+
+#: src/sysprof/sysprof-mark-table.ui:256
+msgid "Description"
+msgstr "Ta'rif"
+
+#: src/sysprof/sysprof-memory-callgraph-view.ui:8
+#: src/sysprof/sysprof-memory-callgraph-view.ui:105
+#: src/sysprof/sysprof-memory-callgraph-view.ui:172
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:8
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:105
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:172
+msgid "Self"
+msgstr "O'zini-o’zi"
+
+#: src/sysprof/sysprof-memory-callgraph-view.ui:38
+#: src/sysprof/sysprof-memory-callgraph-view.ui:135
+#: src/sysprof/sysprof-memory-callgraph-view.ui:202
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:38
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:135
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:202
+msgid "Total"
+msgstr "Jami"
+
+#: src/sysprof/sysprof-memory-section.ui:4
+msgid "Memory Allocations"
+msgstr "Xotirani taqsimlash"
+
+#: src/sysprof/sysprof-memory-section.ui:29
+#: src/sysprof/sysprof-samples-section.ui:29
+msgid "Stack Traces"
+msgstr "Stack izlari"
+
+#: src/sysprof/sysprof-memory-section.ui:88
+msgid "Allocations"
+msgstr "Ajratishlar"
+
+#: src/sysprof/sysprof-memory-section.ui:144
+msgid "Leaks"
+msgstr "Oqish"
+
+#: src/sysprof/sysprof-memory-section.ui:212
+#: src/sysprof/sysprof-samples-section.ui:207
+#: src/sysprof/sysprof-traceables-utility.ui:162
+msgid "Stack Trace"
+msgstr "Stack Trace"
+
+#: src/sysprof/sysprof-metadata-section.ui:4
+msgid "Metadata"
+msgstr "Meta ma'lumotlar"
+
+#: src/sysprof/sysprof-metadata-section.ui:71
+msgid "Key"
+msgstr "Kalit"
+
+#: src/sysprof/sysprof-process-dialog.ui:35
+msgid "Address Layout"
+msgstr "Manzil tartibi"
+
+#: src/sysprof/sysprof-process-dialog.ui:97
+msgid "Start Address"
+msgstr "Boshlash manzili"
+
+#: src/sysprof/sysprof-process-dialog.ui:137
+msgid "End Address"
+msgstr "Yakuniy manzil"
+
+#: src/sysprof/sysprof-process-dialog.ui:219
+msgid "Mounts"
+msgstr "Tog'lar"
+
+#: src/sysprof/sysprof-process-dialog.ui:282
+msgid "Parent"
+msgstr "Ota-ona"
+
+#: src/sysprof/sysprof-process-dialog.ui:316
+msgid "Major"
+msgstr "Katta"
+
+#: src/sysprof/sysprof-process-dialog.ui:350
+msgid "Minor"
+msgstr "Kichik"
+
+#: src/sysprof/sysprof-process-dialog.ui:384
+msgid "Mount Point"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:418
+msgid "Mount Source"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:452
+msgid "Root"
+msgstr "Ildiz"
+
+#: src/sysprof/sysprof-process-dialog.ui:486
+msgid "Filesystem"
+msgstr "Fayl tizimi"
+
+#: src/sysprof/sysprof-process-dialog.ui:520
+msgid "Options"
+msgstr "Sozlamalar"
+
+#: src/sysprof/sysprof-process-dialog.ui:562
+msgid "Threads"
+msgstr "Sredlar"
+
+#: src/sysprof/sysprof-process-dialog.ui:591
+msgid "Thread ID"
+msgstr "Sred identifikatori"
+
+#: src/sysprof/sysprof-process-dialog.ui:625
+msgid "Main Thread"
+msgstr "Asosiy Sred"
+
+#: src/sysprof/sysprof-processes-section.ui:4
+msgid "Processes"
+msgstr "Jarayonlar"
+
+#: src/sysprof/sysprof-processes-section.ui:73
+msgid "Process Chart"
+msgstr "Jarayon diagrammasi"
+
+#: src/sysprof/sysprof-processes-section.ui:174
+msgid "Process Table"
+msgstr "Jarayon jadvali"
+
+#. translators: this expands to the number of events recorded by the profiler as an indicator of progress
+#: src/sysprof/sysprof-recording-pad.c:58
+#, c-format
+msgid "%<PRIi64> events"
+msgstr "%<PRIi64> voqealar"
+
+#: src/sysprof/sysprof-recording-pad.c:115
+msgid "Recording Failed"
+msgstr "Yozib bo‘lmadi"
+
+#: src/sysprof/sysprof-recording-pad.c:117
+#, c-format
+msgid ""
+"Sysprof failed to record.\n"
+"\n"
+"%s"
+msgstr ""
+"Sysprof yozib bo'lmadi.\n"
+"\n"
+"%s"
+
+#: src/sysprof/sysprof-recording-pad.ui:71
+msgid "Stop Recording"
+msgstr "Yozishni to‘xtating"
+
+#: src/sysprof/sysprof-samples-section.ui:4
+msgid "Time Profiler"
+msgstr "Vaqt profili"
+
+#: src/sysprof/sysprof-samples-section.ui:89 src/sysprof/sysprof-window.ui:465
+msgid "Callgraph"
+msgstr "Callgraph"
+
+#: src/sysprof/sysprof-samples-section.ui:172 src/sysprof/sysprof-window.ui:496
+msgid "Flamegraph"
+msgstr "Flamegraf"
+
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:136
+msgid "Seek Backward"
+msgstr "Orqaga qarab izlash"
+
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:146
+msgid "Zoom Out"
+msgstr "Kichraytirish"
+
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:156
+msgid "Reset Zoom"
+msgstr "Masshtabni tiklash"
+
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:166
+msgid "Zoom In"
+msgstr "Kattalashtirish"
+
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:176
+msgid "Seek Forward"
+msgstr "Oldinga intiling"
+
+#: src/sysprof/sysprof-traceables-utility.ui:109
+msgid "Depth"
+msgstr "Chuqurlik"
+
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:68
+msgid "Hits"
+msgstr "Xitlar"
+
+#: src/sysprof/sysprof-window.c:194
+msgid "Open Recording"
+msgstr "Yozuvni oching"
+
+#: src/sysprof/sysprof-window.c:195
+msgid "Open"
+msgstr "Oching"
+
+#: src/sysprof/sysprof-window.c:199
+#, fuzzy
+msgid "Sysprof Capture (*.syscap)"
+msgstr "Sysprof Capture (*.syscap)"
+
+#: src/sysprof/sysprof-window.c:499
+msgid "Save to File"
+msgstr "Faylga saqlash"
+
+#: src/sysprof/sysprof-window.c:500
+msgid "Save"
+msgstr "Saqlash"
+
+#: src/sysprof/sysprof-window.c:679
+msgid "Loading…"
+msgstr "Yuklanmoqda…"
+
+#: src/sysprof/sysprof-window.c:760
+msgid "Invalid Document"
+msgstr "Yaroqsiz hujjat"
+
+#: src/sysprof/sysprof-window.c:762
+#, c-format
+msgid ""
+"The document could not be loaded. Please check that you have the correct "
+"capture file.\n"
+"\n"
+"%s"
+msgstr ""
+"Hujjatni yuklab bo‘lmadi. Iltimos, sizda to'g'ri suratga olish fayli "
+"mavjudligini tekshiring.\n"
+"\n"
+"%s"
+
+#: src/sysprof/sysprof-window.ui:126
+msgid "Toggle Left Panel"
+msgstr "Chap panelni almashtirish"
+
+#: src/sysprof/sysprof-window.ui:191
+msgid "Main Menu"
+msgstr "Asosiy menyu"
+
+#: src/sysprof/sysprof-window.ui:198
+msgid "View Options"
+msgstr "Ko‘rish parametrlari"
+
+#: src/sysprof/sysprof-window.ui:204
+msgid "Toggle Right Panel"
+msgstr "O'ng panelni almashtirish"
+
+#: src/sysprof/sysprof-window.ui:353
+msgid "Energy"
+msgstr "Energiya"
+
+#: src/sysprof/sysprof-window.ui:373
+msgid "Network"
+msgstr "Tarmoq"
+
+#: src/sysprof/sysprof-window.ui:383
+msgid "Storage"
+msgstr "Saqlash"
+
+#: src/sysprof/sysprof-window.ui:430
+msgid "_Record Again…"
+msgstr "_Yana yozib olish…"
+
+#: src/sysprof/sysprof-window.ui:434
+msgid "Open Recording…"
+msgstr "Yozishni ochish…"
+
+#: src/sysprof/sysprof-window.ui:438
+msgid "Save As…"
+msgstr "Boshqacha saqlash…"
+
+#: src/sysprof/sysprof-window.ui:458
+msgid "_Quit"
+msgstr "_Chetish"
+
+#: src/sysprof/sysprof-window.ui:467
+msgid "Categorize Frames"
+msgstr "Ramkalarni turkumlash"
+
+#: src/sysprof/sysprof-window.ui:471
+msgid "Hide System Libraries"
+msgstr "Tizim kutubxonalarini yashirish"
+
+#: src/sysprof/sysprof-window.ui:475
+msgid "Include Threads"
+msgstr "Mavzularni qo'shish"
+
+#: src/sysprof/sysprof-window.ui:479
+msgid "Bottom Up"
+msgstr "Ostin-ustin"
+
+#: src/sysprof/sysprof-window.ui:483
+msgid "Ignore Kernel Processes"
+msgstr "Yadro jarayonlariga e'tibor bermang"
+
+#: src/sysprof/sysprof-window.ui:487
+msgid "Ignore Process 0"
+msgstr "0 jarayoniga e'tibor bermaslik"
+
+#: src/sysprof/sysprof-window.ui:491
+msgid "Merge Similar Processes"
+msgstr "Shu kabi jarayonlarni birlashtirish"
+
+#. translators: Left Heavy means to sort larger (heavier) stack frames before others, starting from the left
+#: src/sysprof/sysprof-window.ui:499
+msgid "Left Heavy"
+msgstr "Chap og'ir"

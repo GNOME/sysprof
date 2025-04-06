@@ -2755,6 +2755,7 @@ sysprof_document_save_async (SysprofDocument     *self,
 {
   g_autoptr(GTask) task = NULL;
   g_autoptr(GBytes) bytes = NULL;
+  g_autofree char *basename = NULL;
 
   g_return_if_fail (SYSPROF_IS_DOCUMENT (self));
   g_return_if_fail (G_IS_FILE (file));
@@ -2763,6 +2764,9 @@ sysprof_document_save_async (SysprofDocument     *self,
   task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_source_tag (task, sysprof_document_save_async);
   sysprof_document_mark_busy_for_task (self, task);
+
+  basename = g_file_get_basename (file);
+  _sysprof_document_set_title (self, basename);
 
   bytes = g_mapped_file_get_bytes (self->mapped_file);
 

@@ -128,7 +128,6 @@ sysprof_new_window (GSimpleAction *action,
 {
   const GList *windows;
   GApplication *app = user_data;
-  GtkWindow *window;
   GtkWidget *greeter;
 
   g_assert (G_IS_APPLICATION (app));

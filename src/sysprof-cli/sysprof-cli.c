@@ -38,6 +38,10 @@
 # include <polkitagent/polkitagent.h>
 #endif
 
+#if HAVE_LIBSYSTEMD
+# include <systemd/sd-daemon.h>
+#endif
+
 #include "sysprof-capture-util-private.h"
 
 #define DEFAULT_BUFFER_SIZE (1024L * 1024L * 8L /* 8mb */)
@@ -624,6 +628,11 @@ Examples:\n\
   g_unix_signal_add (SIGTERM, sigint_handler, main_loop);
 
   g_printerr ("Recording, press ^C to exit\n");
+
+#if HAVE_LIBSYSTEMD
+  if (command == NULL && child_argv == NULL)
+    sd_notify (TRUE, "READY=1");
+#endif
 
   g_main_loop_run (main_loop);
 

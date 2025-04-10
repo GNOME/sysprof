@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=@app_id@
+Exec=@bindir@/sysprof --gapplication-service
+

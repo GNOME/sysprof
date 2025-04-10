@@ -41,5 +41,17 @@ if get_option('gtk') and get_option('libsysprof')
       install_dir: join_paths(datadir, 'applications')
   )
 
+  # D-Bus service file.
+  dbusconf = configuration_data()
+  dbusconf.set('app_id', app_id)
+  dbusconf.set('bindir', join_paths(get_option('prefix'), get_option('bindir')))
+  configure_file(
+            input: 'org.gnome.Sysprof.service.in',
+           output: '@0@.service'.format(app_id),
+    configuration: dbusconf,
+          install: true,
+      install_dir: join_paths(get_option('datadir'), 'dbus-1', 'services'),
+  )
+
   subdir('icons')
 endif

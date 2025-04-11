@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2025-04-07 21:25+0000\n"
-"PO-Revision-Date: 2025-04-08 09:11+0200\n"
+"POT-Creation-Date: 2025-04-10 18:38+0000\n"
+"PO-Revision-Date: 2025-04-12 00:44+0200\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
@@ -23,8 +23,8 @@ msgstr ""
 "X-Generator: Poedit 2.2.1\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:6
-#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:188
-#: src/sysprof/sysprof-application.c:265
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:230
+#: src/sysprof/sysprof-application.c:307
 #: src/sysprof/sysprof-recording-pad.ui:20 src/sysprof/sysprof-window.c:253
 msgid "Sysprof"
 msgstr "Sysprof"
@@ -53,6 +53,10 @@ msgstr "Profiler"
 #: data/org.gnome.Sysprof.desktop.in.in:6
 msgid "Profile an application or entire system."
 msgstr "Profilirajte program ali celotni sistem."
+
+#: data/org.gnome.Sysprof.desktop.in.in:21
+msgid "Start New Recording"
+msgstr "Začni novo snemanje"
 
 #: src/libsysprof/sysprof-category-summary.c:136
 msgid "Uncategorized"
@@ -516,14 +520,18 @@ msgid "Failed to retrieve va_list value: %s"
 msgstr "Pridobivanje vrednosti va_list je spodletelo: %s"
 
 #: src/sysprof/sysprof-application.c:38
+msgid "Start a new recording"
+msgstr "Začne novo snemanje"
+
+#: src/sysprof/sysprof-application.c:39
 msgid "Show Sysprof version and exit"
 msgstr "Izpiši podatke o različici in končaj"
 
-#: src/sysprof/sysprof-application.c:197
+#: src/sysprof/sysprof-application.c:239
 msgid "A system profiler"
 msgstr "Sistemski profilirnik"
 
-#: src/sysprof/sysprof-application.c:198
+#: src/sysprof/sysprof-application.c:240
 msgid "translator-credits"
 msgstr ""
 "Matej Urbančič <mateju@src.gnome.org>\n"

@@ -54,6 +54,9 @@ main (int argc,
 
   dex_init ();
 
+  /* Setup thread pool scheduler at startup */
+  (void)dex_thread_pool_scheduler_get_default ();
+
   app = sysprof_application_new ();
   ret = g_application_run (G_APPLICATION (app), argc, argv);
 

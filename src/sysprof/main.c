@@ -26,6 +26,8 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 
+#include <libdex.h>
+
 #include <sysprof-capture.h>
 
 #include "sysprof-application.h"
@@ -49,6 +51,8 @@ main (int argc,
   textdomain (GETTEXT_PACKAGE);
 
   g_set_prgname ("sysprof");
+
+  dex_init ();
 
   app = sysprof_application_new ();
   ret = g_application_run (G_APPLICATION (app), argc, argv);

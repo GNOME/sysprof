@@ -46,7 +46,7 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureReader, sysprof_capture_reader_unre
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureWriter, sysprof_capture_writer_unref)
 
 static gboolean no_decode;
-static gboolean enable_debuginfod;
+static gboolean disable_debuginfod;
 static GMainLoop *main_loop;
 static SysprofRecording *active_recording;
 
@@ -339,7 +339,7 @@ main (int   argc,
     { "buffer-size", 0, 0, G_OPTION_ARG_INT, &n_buffer_pages, N_("The size of the buffer in pages (1 = 1 page)") },
     { "monitor-bus", 0, 0, G_OPTION_ARG_STRING_ARRAY, &monitor_bus, N_("Additional D-Bus address to monitor") },
     { "stack-size", 0, 0, G_OPTION_ARG_INT, &stack_size, N_("Stack size to copy for unwinding in user-space") },
-    { "no-debuginfod", 0, 0, G_OPTION_ARG_NONE, &enable_debuginfod, N_("Do not use debuginfod to resolve symbols") },
+    { "no-debuginfod", 0, 0, G_OPTION_ARG_NONE, &disable_debuginfod, N_("Do not use debuginfod to resolve symbols") },
     { "no-sysprofd", 0, 0, G_OPTION_ARG_NONE, &no_sysprofd, "Do not use Sysprofd to acquire privileges" },
     { NULL }
   };
@@ -557,7 +557,7 @@ Examples:\n\
   if (!no_decode)
     {
       SysprofInstrument *bundle = sysprof_symbols_bundle_new ();
-      sysprof_symbols_bundle_set_enable_debuginfod (SYSPROF_SYMBOLS_BUNDLE (bundle), enable_debuginfod);
+      sysprof_symbols_bundle_set_enable_debuginfod (SYSPROF_SYMBOLS_BUNDLE (bundle), !disable_debuginfod);
       sysprof_profiler_add_instrument (profiler, g_steal_pointer (&bundle));
     }
 

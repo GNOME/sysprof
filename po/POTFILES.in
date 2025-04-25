@@ -36,6 +36,7 @@ src/sysprof/sysprof-greeter.ui
 src/sysprof/sysprof-logs-section.c
 src/sysprof/sysprof-logs-section.ui
 src/sysprof/sysprof-marks-section.ui
+src/sysprof/sysprof-mark-chart-row.ui
 src/sysprof/sysprof-mark-table.ui
 src/sysprof/sysprof-memory-callgraph-view.ui
 src/sysprof/sysprof-memory-section.ui

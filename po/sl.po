@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2025-04-10 18:38+0000\n"
-"PO-Revision-Date: 2025-04-12 00:44+0200\n"
+"POT-Creation-Date: 2025-04-25 20:39+0000\n"
+"PO-Revision-Date: 2025-04-27 10:06+0200\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
@@ -1180,6 +1180,10 @@ msgstr "Povprečje"
 #: src/sysprof/sysprof-marks-section.ui:419
 msgid "Median"
 msgstr "Srednja vrednost"
+
+#: src/sysprof/sysprof-mark-chart-row.ui:8
+msgid "Set as Filter"
+msgstr "Nastavi kot filter"
 
 #: src/sysprof/sysprof-mark-table.ui:47
 msgid "Start"

@@ -336,6 +336,7 @@ sysprof_elf_loader_annotate (SysprofElfLoader      *self,
           g_autofree char *directory_name = NULL;
           g_autofree char *debug_path = NULL;
           g_autofree char *short_debug_path = NULL;
+          g_autofree char *shorter_debug_path = NULL;
           const char *short_directory_name;
           const char *debug_dir = self->debug_dirs[i];
           const char *build_id;
@@ -356,6 +357,12 @@ sysprof_elf_loader_annotate (SysprofElfLoader      *self,
           short_directory_name = skip_common_prefix (directory_name, debug_dir);
           short_debug_path = g_build_filename (debug_dir, short_directory_name, debug_link, NULL);
           if ((debug_link_elf = sysprof_elf_loader_load (self, mount_namespace, short_debug_path, build_id, 0, NULL)))
+            {
+              sysprof_elf_set_debug_link_elf (elf, get_deepest_debuglink (debug_link_elf));
+              return;
+            }
+          shorter_debug_path = g_build_filename (directory_name, ".debug", debug_link, NULL);
+          if ((debug_link_elf = sysprof_elf_loader_load (self, mount_namespace, shorter_debug_path, build_id, 0, NULL)))
             {
               sysprof_elf_set_debug_link_elf (elf, get_deepest_debuglink (debug_link_elf));
               return;

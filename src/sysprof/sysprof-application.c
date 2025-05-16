@@ -32,13 +32,21 @@ struct _SysprofApplication
   AdwApplication parent_instance;
 };
 
-G_DEFINE_TYPE (SysprofApplication, sysprof_application, ADW_TYPE_APPLICATION)
+G_DEFINE_FINAL_TYPE (SysprofApplication, sysprof_application, ADW_TYPE_APPLICATION)
 
 static const GOptionEntry option_entries[] = {
   { "greeter", 'g', 0, G_OPTION_ARG_NONE, NULL, N_("Start a new recording") },
   { "version", 0, 0, G_OPTION_ARG_NONE, NULL, N_("Show Sysprof version and exit") },
   { 0 }
 };
+
+enum {
+  PROP_0,
+  PROP_DESCENDANT_MENU,
+  N_PROPS
+};
+
+static GParamSpec *properties[N_PROPS];
 
 static void
 sysprof_application_activate (GApplication *app)
@@ -150,10 +158,32 @@ sysprof_application_window_added (GtkApplication *application,
 }
 
 static void
+sysprof_application_get_property (GObject    *object,
+                                  guint       prop_id,
+                                  GValue     *value,
+                                  GParamSpec *pspec)
+{
+  SysprofApplication *self = SYSPROF_APPLICATION (object);
+
+  switch (prop_id)
+    {
+    case PROP_DESCENDANT_MENU:
+      g_value_set_object (value, gtk_application_get_menu_by_id (GTK_APPLICATION (self), "descendant_menu"));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
+}
+
+static void
 sysprof_application_class_init (SysprofApplicationClass *klass)
 {
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GApplicationClass *app_class = G_APPLICATION_CLASS (klass);
   GtkApplicationClass *gtk_app_class = GTK_APPLICATION_CLASS (klass);
+
+  object_class->get_property = sysprof_application_get_property;
 
   app_class->open = sysprof_application_open;
   app_class->activate = sysprof_application_activate;
@@ -161,6 +191,14 @@ sysprof_application_class_init (SysprofApplicationClass *klass)
   app_class->handle_local_options = sysprof_application_handle_local_options;
 
   gtk_app_class->window_added = sysprof_application_window_added;
+
+  properties[PROP_DESCENDANT_MENU] =
+    g_param_spec_object ("descendant-menu", NULL, NULL,
+                         G_TYPE_MENU_MODEL,
+                         (G_PARAM_READABLE|
+                          G_PARAM_STATIC_STRINGS));
+
+  g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
 static void

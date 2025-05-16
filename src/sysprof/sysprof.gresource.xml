@@ -59,6 +59,7 @@
     <file preprocess="xml-stripblanks">sysprof-traceables-utility.ui</file>
     <file preprocess="xml-stripblanks">sysprof-weighted-callgraph-view.ui</file>
     <file preprocess="xml-stripblanks">sysprof-window.ui</file>
+    <file preprocess="xml-stripblanks">gtk/menus.ui</file>
     <file>style.css</file>
   </gresource>
 </gresources>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <menu id="descendant_menu">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">Make Function Root</attribute>
+        <attribute name="action">callgraph.make-descendant-root</attribute>
+      </item>
+    </section>
+    <section>
+      <attribute name="label" translatable="yes">Options</attribute>
+      <item>
+        <attribute name="label" translatable="yes">Categorize Frames</attribute>
+        <attribute name="action">win.callgraph.categorize-frames</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Hide System Libraries</attribute>
+        <attribute name="action">win.callgraph.hide-system-libraries</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Include Threads</attribute>
+        <attribute name="action">win.callgraph.include-threads</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Bottom Up</attribute>
+        <attribute name="action">win.callgraph.bottom-up</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Ignore Kernel Processes</attribute>
+        <attribute name="action">win.callgraph.ignore-kernel-processes</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Ignore Process 0</attribute>
+        <attribute name="action">win.callgraph.ignore-process-0</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Merge Similar Processes</attribute>
+        <attribute name="action">win.callgraph.merge-similar-processes</attribute>
+      </item>
+    </section>
+  </menu>
+</interface>

@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2025-04-25 20:39+0000\n"
-"PO-Revision-Date: 2025-04-27 10:06+0200\n"
+"POT-Creation-Date: 2025-05-16 22:01+0000\n"
+"PO-Revision-Date: 2025-05-18 11:03+0200\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
@@ -23,8 +23,8 @@ msgstr ""
 "X-Generator: Poedit 2.2.1\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:6
-#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:230
-#: src/sysprof/sysprof-application.c:307
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:268
+#: src/sysprof/sysprof-application.c:345
 #: src/sysprof/sysprof-recording-pad.ui:20 src/sysprof/sysprof-window.c:253
 msgid "Sysprof"
 msgstr "Sysprof"
@@ -509,6 +509,43 @@ msgctxt "shortcut window"
 msgid "Quit"
 msgstr "Konča program"
 
+#: src/sysprof/gtk/menus.ui:6
+#, fuzzy
+msgid "Make Function Root"
+msgstr "Naredi funkcijo root"
+
+#: src/sysprof/gtk/menus.ui:11 src/sysprof/sysprof-process-dialog.ui:520
+msgid "Options"
+msgstr "Možnosti"
+
+#: src/sysprof/gtk/menus.ui:13 src/sysprof/sysprof-window.ui:497
+msgid "Categorize Frames"
+msgstr "Kategoriziraj okvirje"
+
+#: src/sysprof/gtk/menus.ui:17 src/sysprof/sysprof-window.ui:501
+msgid "Hide System Libraries"
+msgstr "Skrij sistemske knjižnice"
+
+#: src/sysprof/gtk/menus.ui:21 src/sysprof/sysprof-window.ui:505
+msgid "Include Threads"
+msgstr "Vključi niti"
+
+#: src/sysprof/gtk/menus.ui:25 src/sysprof/sysprof-window.ui:509
+msgid "Bottom Up"
+msgstr "Od spodaj navzgor"
+
+#: src/sysprof/gtk/menus.ui:29 src/sysprof/sysprof-window.ui:513
+msgid "Ignore Kernel Processes"
+msgstr "Prezri procese jedra"
+
+#: src/sysprof/gtk/menus.ui:33 src/sysprof/sysprof-window.ui:517
+msgid "Ignore Process 0"
+msgstr "Prezri proces 0"
+
+#: src/sysprof/gtk/menus.ui:37 src/sysprof/sysprof-window.ui:521
+msgid "Merge Similar Processes"
+msgstr "Združi podobne procese"
+
 #: src/sysprof/sysprof-animation.c:1038
 #, c-format
 msgid "Failed to find property %s in %s"
@@ -527,11 +564,11 @@ msgstr "Začne novo snemanje"
 msgid "Show Sysprof version and exit"
 msgstr "Izpiši podatke o različici in končaj"
 
-#: src/sysprof/sysprof-application.c:239
+#: src/sysprof/sysprof-application.c:277
 msgid "A system profiler"
 msgstr "Sistemski profilirnik"
 
-#: src/sysprof/sysprof-application.c:240
+#: src/sysprof/sysprof-application.c:278
 msgid "translator-credits"
 msgstr ""
 "Matej Urbančič <mateju@src.gnome.org>\n"
@@ -1299,10 +1336,6 @@ msgstr "Koren"
 msgid "Filesystem"
 msgstr "Datotečni sistem"
 
-#: src/sysprof/sysprof-process-dialog.ui:520
-msgid "Options"
-msgstr "Možnosti"
-
 #: src/sysprof/sysprof-process-dialog.ui:562
 msgid "Threads"
 msgstr "Niti"
@@ -1484,34 +1517,6 @@ msgstr "Shrani kot …"
 #: src/sysprof/sysprof-window.ui:488
 msgid "_Quit"
 msgstr "_Izhod"
-
-#: src/sysprof/sysprof-window.ui:497
-msgid "Categorize Frames"
-msgstr "Kategoriziraj okvirje"
-
-#: src/sysprof/sysprof-window.ui:501
-msgid "Hide System Libraries"
-msgstr "Skrij sistemske knjižnice"
-
-#: src/sysprof/sysprof-window.ui:505
-msgid "Include Threads"
-msgstr "Vključi niti"
-
-#: src/sysprof/sysprof-window.ui:509
-msgid "Bottom Up"
-msgstr "Od spodaj navzgor"
-
-#: src/sysprof/sysprof-window.ui:513
-msgid "Ignore Kernel Processes"
-msgstr "Prezri procese jedra"
-
-#: src/sysprof/sysprof-window.ui:517
-msgid "Ignore Process 0"
-msgstr "Prezri proces 0"
-
-#: src/sysprof/sysprof-window.ui:521
-msgid "Merge Similar Processes"
-msgstr "Združi podobne procese"
 
 #. translators: Left Heavy means to sort larger (heavier) stack frames before others, starting from the left
 #: src/sysprof/sysprof-window.ui:529

@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2025-05-16 22:01+0000\n"
-"PO-Revision-Date: 2025-05-18 11:03+0200\n"
+"POT-Creation-Date: 2025-05-18 09:04+0000\n"
+"PO-Revision-Date: 2025-05-24 21:36+0200\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
@@ -510,7 +510,6 @@ msgid "Quit"
 msgstr "Konča program"
 
 #: src/sysprof/gtk/menus.ui:6
-#, fuzzy
 msgid "Make Function Root"
 msgstr "Naredi funkcijo root"
 

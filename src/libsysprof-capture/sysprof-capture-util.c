@@ -74,6 +74,7 @@
 static void *_sysprof_io_sync_lock = SRWLOCK_INIT;
 #endif
 
+#ifndef __linux__
 size_t
 (_sysprof_getpagesize) (void)
 {
@@ -234,6 +235,7 @@ ssize_t
   errno = 0;
   return total;
 }
+#endif /* #ifndef __linux__ */
 
 size_t
 (_sysprof_strlcpy) (char       *dest,

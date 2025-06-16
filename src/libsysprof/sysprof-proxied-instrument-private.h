@@ -31,6 +31,7 @@ struct _SysprofProxiedInstrument
   GBusType bus_type;
   char *bus_name;
   char *object_path;
+  GVariant *options;
   guint call_stop_first : 1;
 };
 

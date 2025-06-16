@@ -25,7 +25,6 @@
 #include "sysprof-proxied-instrument-private.h"
 #include "sysprof-recording-private.h"
 
-
 enum {
   PROP_0,
   PROP_BUS_TYPE,
@@ -44,6 +43,7 @@ typedef struct _Record
   DexFuture *cancellable;
   char *bus_name;
   char *object_path;
+  GVariant *options;
   GBusType bus_type;
   guint call_stop_first : 1;
 } Record;
@@ -55,6 +55,7 @@ record_free (Record *record)
   dex_clear (&record->cancellable);
   g_clear_pointer (&record->bus_name, g_free);
   g_clear_pointer (&record->object_path, g_free);
+  g_clear_pointer (&record->options, g_variant_unref);
   g_free (record);
 }
 
@@ -68,7 +69,6 @@ sysprof_proxied_instrument_record_fiber (gpointer user_data)
   g_autoptr(GUnixFDList) fd_list = NULL;
   g_autoptr(DexFuture) started = NULL;
   g_autoptr(GError) error = NULL;
-  GVariantDict options = G_VARIANT_DICT_INIT (NULL);
   g_autofd int proxy_fd = -1;
   int handle;
 
@@ -117,7 +117,7 @@ sysprof_proxied_instrument_record_fiber (gpointer user_data)
                                                               "org.gnome.Sysprof3.Profiler",
                                                               "Start",
                                                               g_variant_new ("(@a{sv}h)",
-                                                                             g_variant_dict_end (&options),
+                                                                             record->options,
                                                                              handle),
                                                               G_VARIANT_TYPE ("()"),
                                                               G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION,
@@ -168,6 +168,13 @@ sysprof_proxied_instrument_record_fiber (gpointer user_data)
   return dex_future_new_for_boolean (TRUE);
 }
 
+static GVariant *
+create_empty_dictionary (void)
+{
+  GVariantDict dict = G_VARIANT_DICT_INIT (NULL);
+  return g_variant_take_ref (g_variant_dict_end (&dict));
+}
+
 static DexFuture *
 sysprof_proxied_instrument_record (SysprofInstrument *instrument,
                                    SysprofRecording  *recording,
@@ -188,6 +195,11 @@ sysprof_proxied_instrument_record (SysprofInstrument *instrument,
   record->bus_type = self->bus_type;
   record->call_stop_first = self->call_stop_first;
 
+  if (self->options != NULL)
+    record->options = g_variant_ref (self->options);
+  else
+    record->options = create_empty_dictionary ();
+
   return dex_scheduler_spawn (NULL, 0,
                               sysprof_proxied_instrument_record_fiber,
                               record,
@@ -201,6 +213,7 @@ sysprof_proxied_instrument_finalize (GObject *object)
 
   g_clear_pointer (&self->bus_name, g_free);
   g_clear_pointer (&self->object_path, g_free);
+  g_clear_pointer (&self->options, g_variant_unref);
 
   G_OBJECT_CLASS (sysprof_proxied_instrument_parent_class)->finalize (object);
 }
@@ -296,18 +309,35 @@ sysprof_proxied_instrument_init (SysprofProxiedInstrument *self)
 }
 
 SysprofInstrument *
-sysprof_proxied_instrument_new (GBusType    bus_type,
-                                const char *bus_name,
-                                const char *object_path)
+sysprof_proxied_instrument_new_with_options (GBusType    bus_type,
+                                             const char *bus_name,
+                                             const char *object_path,
+                                             GVariant   *options)
 {
+  SysprofProxiedInstrument *self;
+
   g_return_val_if_fail (bus_type == G_BUS_TYPE_SYSTEM ||
                         bus_type == G_BUS_TYPE_SESSION, NULL);
   g_return_val_if_fail (bus_name != NULL, NULL);
   g_return_val_if_fail (object_path != NULL, NULL);
+  g_return_val_if_fail (options == NULL || g_variant_is_of_type (options, G_VARIANT_TYPE_VARDICT), NULL);
 
-  return g_object_new (SYSPROF_TYPE_PROXIED_INSTRUMENT,
+  self = g_object_new (SYSPROF_TYPE_PROXIED_INSTRUMENT,
                        "bus-type", bus_type,
                        "bus-name", bus_name,
                        "object-path", object_path,
                        NULL);
+
+  if (options != NULL)
+    self->options = g_variant_ref_sink (options);
+
+  return SYSPROF_INSTRUMENT (self);
+}
+
+SysprofInstrument *
+sysprof_proxied_instrument_new (GBusType    bus_type,
+                                const char *bus_name,
+                                const char *object_path)
+{
+  return sysprof_proxied_instrument_new_with_options (bus_type, bus_name, object_path, NULL);
 }

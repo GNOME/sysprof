@@ -37,9 +37,14 @@ typedef struct _SysprofProxiedInstrumentClass SysprofProxiedInstrumentClass;
 SYSPROF_AVAILABLE_IN_ALL
 GType              sysprof_proxied_instrument_get_type (void) G_GNUC_CONST;
 SYSPROF_AVAILABLE_IN_ALL
-SysprofInstrument *sysprof_proxied_instrument_new      (GBusType    bus_type,
-                                                        const char *bus_name,
-                                                        const char *object_path);
+SysprofInstrument *sysprof_proxied_instrument_new              (GBusType    bus_type,
+                                                                const char *bus_name,
+                                                                const char *object_path);
+SYSPROF_AVAILABLE_IN_49
+SysprofInstrument *sysprof_proxied_instrument_new_with_options (GBusType    bus_type,
+                                                                const char *bus_name,
+                                                                const char *object_path,
+                                                                GVariant   *options);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofProxiedInstrument, g_object_unref)
 

@@ -35,6 +35,8 @@ sysprof_sources = [
   'sysprof-mark-filter.c',
   'sysprof-mark-table.c',
   'sysprof-marks-section.c',
+  'sysprof-marks-section-model.c',
+  'sysprof-marks-section-model-item.c',
   'sysprof-memory-callgraph-view.c',
   'sysprof-memory-section.c',
   'sysprof-metadata-section.c',

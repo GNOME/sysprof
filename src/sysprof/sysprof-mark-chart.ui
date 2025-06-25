@@ -13,6 +13,19 @@
                 <style>
                   <class name="data-table"/>
                 </style>
+                <property name="model">
+                  <object class="GtkNoSelection">
+                    <property name="model">
+                      <object class="GtkMapListModel" id="map">
+                        <binding name="model">
+                          <lookup name="mark-catalog" type="SysprofMarksSectionModel">
+                            <lookup name="marks-section-model">SysprofMarkChart</lookup>
+                          </lookup>
+                        </binding>
+                      </object>
+                    </property>
+                  </object>
+                </property>
                 <property name="header-factory">
                   <object class="GtkBuilderListItemFactory">
                     <property name="bytes"><![CDATA[

@@ -22,7 +22,7 @@
 
 #include <gtk/gtk.h>
 
-#include "sysprof-session.h"
+#include "sysprof-marks-section-model.h"
 
 G_BEGIN_DECLS
 
@@ -30,9 +30,9 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (SysprofMarkChart, sysprof_mark_chart, SYSPROF, MARK_CHART, GtkWidget)
 
-GtkWidget      *sysprof_mark_chart_new         (void);
-SysprofSession *sysprof_mark_chart_get_session (SysprofMarkChart *self);
-void            sysprof_mark_chart_set_session (SysprofMarkChart *self,
-                                                SysprofSession   *session);
+GtkWidget                *sysprof_mark_chart_new                     (void);
+SysprofMarksSectionModel *sysprof_mark_chart_get_marks_section_model (SysprofMarkChart         *self);
+void                      sysprof_mark_chart_set_marks_section_model (SysprofMarkChart         *self,
+                                                                      SysprofMarksSectionModel *model);
 
 G_END_DECLS

@@ -45,13 +45,7 @@
                                     <lookup name="session">SysprofMarksSection</lookup>
                                   </lookup>
                                 </binding>
-                                <binding name="model">
-                                  <lookup name="marks" type="SysprofDocument">
-                                    <lookup name="document" type="SysprofSession">
-                                      <lookup name="session">SysprofMarksSection</lookup>
-                                    </lookup>
-                                  </lookup>
-                                </binding>
+                                <property name="model">section_model</property>
                               </object>
                             </property>
                           </object>
@@ -122,13 +116,7 @@
                                         <lookup name="session">SysprofMarksSection</lookup>
                                       </lookup>
                                     </binding>
-                                    <binding name="model">
-                                      <lookup name="marks" type="SysprofDocument">
-                                        <lookup name="document" type="SysprofSession">
-                                          <lookup name="session">SysprofMarksSection</lookup>
-                                        </lookup>
-                                      </lookup>
-                                    </binding>
+                                    <property name="model">section_model</property>
                                   </object>
                                 </property>
                               </object>
@@ -465,4 +453,10 @@
       </object>
     </child>
   </template>
+
+  <object class="SysprofMarksSectionModel" id="section_model">
+    <binding name="session">
+      <lookup name="session">SysprofMarksSection</lookup>
+    </binding>
+  </object>
 </interface>

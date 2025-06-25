@@ -24,6 +24,8 @@
 #include "sysprof-mark-chart.h"
 #include "sysprof-mark-table.h"
 #include "sysprof-marks-section.h"
+#include "sysprof-marks-section-model.h"
+#include "sysprof-marks-section-model-item.h"
 #include "sysprof-sampled-model.h"
 #include "sysprof-session-model.h"
 #include "sysprof-session-model-item.h"
@@ -93,6 +95,7 @@ sysprof_marks_section_class_init (SysprofMarksSectionClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofMarksSection, mark_table);
   gtk_widget_class_bind_template_child (widget_class, SysprofMarksSection, median_column);
   gtk_widget_class_bind_template_child (widget_class, SysprofMarksSection, summary_column_view);
+  gtk_widget_class_bind_template_child (widget_class, SysprofMarksSection, section_model);
   gtk_widget_class_bind_template_callback (widget_class, format_mark_label);
   gtk_widget_class_bind_template_callback (widget_class, format_number);
 
@@ -101,6 +104,7 @@ sysprof_marks_section_class_init (SysprofMarksSectionClass *klass)
   g_type_ensure (SYSPROF_TYPE_MARK_CATALOG);
   g_type_ensure (SYSPROF_TYPE_MARK_CHART);
   g_type_ensure (SYSPROF_TYPE_MARK_TABLE);
+  g_type_ensure (SYSPROF_TYPE_MARKS_SECTION_MODEL);
   g_type_ensure (SYSPROF_TYPE_SAMPLED_MODEL);
   g_type_ensure (SYSPROF_TYPE_SESSION_MODEL);
   g_type_ensure (SYSPROF_TYPE_SESSION_MODEL_ITEM);

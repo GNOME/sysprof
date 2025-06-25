@@ -21,6 +21,7 @@
 
 #include "sysprof-marks-section-model.h"
 
+#include "sysprof-expression-map-model.h"
 #include "sysprof-marks-section-model-item.h"
 
 struct _SysprofMarksSectionModel
@@ -115,18 +116,22 @@ sysprof_marks_section_model_disconnect (SysprofMarksSectionModel *self)
 }
 
 static gpointer
-map_func (gpointer item,
-          gpointer user_data)
+map_func (gpointer item)
 {
-  g_autoptr(SysprofMarksSectionModelItem) ret = NULL;
+  return sysprof_marks_section_model_item_new (item);
+}
 
-  ret = sysprof_marks_section_model_item_new (item);
-  g_object_unref (item);
+static inline GListModel *
+create_filter_model (GListModel *model,
+                     GtkFilter  *filter)
+{
+  g_autoptr(GtkFilterListModel) filter_model = NULL;
 
-  // FIXME: this leaks the item
-  g_object_ref (ret);
+  filter_model = gtk_filter_list_model_new (model, filter);
+  gtk_filter_list_model_set_watch_items (filter_model, TRUE);
+  gtk_filter_list_model_set_incremental (filter_model, TRUE);
 
-  return g_steal_pointer (&ret);
+  return G_LIST_MODEL (g_steal_pointer (&filter_model));
 }
 
 static void
@@ -140,9 +145,10 @@ sysprof_marks_section_model_connect (SysprofMarksSectionModel *self)
 
   document = sysprof_session_get_document (self->session);
 
-#define MAP(_model) (G_LIST_MODEL (gtk_map_list_model_new (G_LIST_MODEL ((_model)), map_func, NULL, NULL)))
+#define MAP(_model) (G_LIST_MODEL (sysprof_expression_map_model_new (G_LIST_MODEL ((_model)), \
+                                                                     GTK_EXPRESSION (gtk_closure_expression_new (G_TYPE_OBJECT, g_cclosure_new (G_CALLBACK (map_func), NULL, NULL), 0, NULL)))))
 #define FLATTEN(_model) (G_LIST_MODEL (gtk_flatten_list_model_new (G_LIST_MODEL ((_model)))))
-#define FILTER(_model, _filter) (G_LIST_MODEL (gtk_filter_list_model_new (G_LIST_MODEL ((_model)), GTK_FILTER ((_filter)))))
+#define FILTER(_model, _filter) (create_filter_model (G_LIST_MODEL (_model), GTK_FILTER (_filter)))
 #define SORT(_model, _sorter) (G_LIST_MODEL (gtk_sort_list_model_new (G_LIST_MODEL ((_model)), GTK_SORTER ((_sorter)))))
 
   self->groups = MAP (sysprof_document_catalog_marks (document));
@@ -159,7 +165,7 @@ sysprof_marks_section_model_connect (SysprofMarksSectionModel *self)
 
   /* Filter SysprofMarksSectionModelItem<SysprofMarkCatalogs> based on the visible property */
   expression = gtk_property_expression_new (SYSPROF_TYPE_MARKS_SECTION_MODEL_ITEM, NULL, "visible");
-  self->filtered_catalog = MAP (FLATTEN (FILTER (g_object_ref (self->filtered_groups), gtk_bool_filter_new (g_steal_pointer (&expression)))));
+  self->filtered_catalog = FILTER (g_object_ref (self->catalog), gtk_bool_filter_new (g_steal_pointer (&expression)));
 
   expression = gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_MARK, NULL, "time");
   self->filtered_marks = SORT (FLATTEN (g_object_ref (self->filtered_catalog)),

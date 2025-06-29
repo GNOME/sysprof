@@ -2,15 +2,15 @@
 # Copyright (C) 2019 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
 # Florentina Mușat <florentina.musat.28@gmail.com>, 2019.
+# Antonio Marin <gnmer.6qxyg@slmail.me>, 2025.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-32\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2024-08-04 18:14+0000\n"
-"PO-Revision-Date: 2024-08-23 08:04+0300\n"
-"Last-Translator: Florentina Mușat <florentina [dot] musat [dot] 28 [at] "
-"gmail [dot] com>\n"
+"POT-Creation-Date: 2025-06-29 00:43+0000\n"
+"PO-Revision-Date: 2025-06-29 15:09+0200\n"
+"Last-Translator: Antonio Marin <gnmer.6qxyg@slmail.me>\n"
 "Language-Team: Romanian <gnomero-list@lists.sourceforge.net>\n"
 "Language: ro\n"
 "MIME-Version: 1.0\n"
@@ -18,18 +18,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
 "20)) ? 1 : 2);\n"
-"X-Generator: Poedit 3.4.4\n"
+"X-Generator: Gtranslator 48.0\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:6
-#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:161
-#: src/sysprof/sysprof-application.c:237
-#: src/sysprof/sysprof-recording-pad.ui:18 src/sysprof/sysprof-window.c:243
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:268
+#: src/sysprof/sysprof-application.c:345
+#: src/sysprof/sysprof-recording-pad.ui:20 src/sysprof/sysprof-window.c:253
 msgid "Sysprof"
 msgstr "Sysprof"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:7
 msgid "Profile an application or entire system"
-msgstr "Profilează o aplicație sau un întreg sistem"
+msgstr "Analizează performanța unei aplicații sau a întregului sistem"
 
 #. developer_name tag deprecated with Appstream 1.0
 #: data/org.gnome.Sysprof.appdata.xml.in.in:11
@@ -41,16 +41,20 @@ msgid ""
 "Sysprof allows you to profile applications to aid in debugging and "
 "optimization."
 msgstr ""
-"Sysprof vă permite să profilați aplicații pentru a vă ajuta la depanare și "
-"optimizare."
+"Sysprof permite analizarea performanței aplicațiilor pentru a ajuta la "
+"depanare și optimizare."
 
 #: data/org.gnome.Sysprof.desktop.in.in:5 src/sysprof/sysprof-greeter.ui:89
 msgid "Profiler"
-msgstr "Profiler"
+msgstr "Analizator de performanță"
 
 #: data/org.gnome.Sysprof.desktop.in.in:6
 msgid "Profile an application or entire system."
-msgstr "Profilează o aplicație sau un sistem întreg."
+msgstr "Analizează performanța unei aplicații sau a întregului sistem."
+
+#: data/org.gnome.Sysprof.desktop.in.in:21
+msgid "Start New Recording"
+msgstr "Începe o înregistrare nouă"
 
 #: src/libsysprof/sysprof-category-summary.c:136
 msgid "Uncategorized"
@@ -66,7 +70,7 @@ msgstr "Acțiuni"
 
 #: src/libsysprof/sysprof-category-summary.c:145
 msgid "Crash Handler"
-msgstr "Operator de căderi"
+msgstr "Gestionar de opriri anormale"
 
 #: src/libsysprof/sysprof-category-summary.c:148
 msgid "Context Switches"
@@ -77,7 +81,7 @@ msgid "CSS"
 msgstr "CSS"
 
 #: src/libsysprof/sysprof-category-summary.c:154
-#: src/sysprof/sysprof-greeter.ui:433 src/sysprof/sysprof-window.ui:317
+#: src/sysprof/sysprof-greeter.ui:402 src/sysprof/sysprof-window.ui:393
 msgid "Graphics"
 msgstr "Grafică"
 
@@ -127,7 +131,7 @@ msgstr "Pictează"
 
 #: src/libsysprof/sysprof-category-summary.c:190
 msgid "Type System"
-msgstr "Sistem de tip"
+msgstr "Sistem de tipuri"
 
 #: src/libsysprof/sysprof-category-summary.c:193
 msgid "Unwindable"
@@ -136,6 +140,10 @@ msgstr "Derulabil"
 #: src/libsysprof/sysprof-category-summary.c:196
 msgid "Windowing"
 msgstr "Ferestre"
+
+#: src/libsysprof/sysprof-debuginfod-task.c:97
+msgid "Downloading Symbols…"
+msgstr "Descărcare simboluri…"
 
 #: src/libsysprof/sysprof-document-allocation.c:151
 msgid "Allocation"
@@ -148,7 +156,7 @@ msgstr "Proces necunoscut"
 #: src/libsysprof/sysprof-document.c:1251
 #: src/libsysprof/sysprof-document.c:1287
 msgid "Indexing capture data frames"
-msgstr "Se indexează cadrele de dată ale capturii"
+msgstr "Se indexează datele înregistrate"
 
 #: src/libsysprof/sysprof-document.c:1473
 msgid "Discovering file system mounts"
@@ -174,14 +182,14 @@ msgstr "Se analizează suprapunerile sistemului de fișiere"
 msgid "Processing counters"
 msgstr "Se procesează contoarele"
 
-#: src/libsysprof/sysprof-document.c:2476
-#: src/libsysprof/sysprof-document.c:2492
+#: src/libsysprof/sysprof-document.c:2480
+#: src/libsysprof/sysprof-document.c:2499
 #, c-format
 msgid "Recording at %X %x"
 msgstr "Se înregistrează la %X %x"
 
-#: src/libsysprof/sysprof-document.c:2478
-#: src/libsysprof/sysprof-document.c:2494
+#: src/libsysprof/sysprof-document.c:2483
+#: src/libsysprof/sysprof-document.c:2502
 #, c-format
 msgid "Recording at %s"
 msgstr "Se înregistrează la %s"
@@ -194,28 +202,28 @@ msgstr "Mesaj D-Bus"
 msgid "Frame"
 msgstr "Cadru"
 
-#: src/libsysprof/sysprof-document-loader.c:435
+#: src/libsysprof/sysprof-document-loader.c:499
 msgid "Document loaded"
 msgstr "Document încărcat"
 
-#: src/libsysprof/sysprof-document-loader.c:466
+#: src/libsysprof/sysprof-document-loader.c:530
 msgid "Loading failed"
 msgstr "Încărcarea a eșuat"
 
-#: src/libsysprof/sysprof-document-loader.c:478
-#: src/libsysprof/sysprof-document-symbols.c:217
+#: src/libsysprof/sysprof-document-loader.c:542
+#: src/libsysprof/sysprof-document-symbols.c:276
 msgid "Symbolizing stack traces"
 msgstr "Simbolizează urmele de stivă"
 
-#: src/libsysprof/sysprof-document-loader.c:547
+#: src/libsysprof/sysprof-document-loader.c:611
 msgid "Loading document"
 msgstr "Se încarcă documentul"
 
 #: src/libsysprof/sysprof-document-log.c:85
 msgid "Log"
-msgstr "Istoric"
+msgstr "Jurnal"
 
-#: src/libsysprof/sysprof-document-mark.c:113
+#: src/libsysprof/sysprof-document-mark.c:134
 msgid "Mark"
 msgstr "Semn"
 
@@ -235,158 +243,171 @@ msgstr "Mostră"
 
 #: src/libsysprof/sysprof-system-logs.c:171
 msgid "System Logs"
-msgstr "Istoric de sistem"
+msgstr "Jurnal de sistem"
 
 #: src/libsysprof/sysprof-system-logs.c:172
 msgid "Recording system logs is not supported on your platform."
 msgstr ""
-"Înregistrarea istoricului sistemului nu este suportată pe această platformă."
+"Înregistrarea jurnalului sistemului nu este implementată pe această "
+"platformă."
 
 #: src/libsysprof/sysprof-tracer.c:65
 msgid "Tracer"
-msgstr "Trasor"
+msgstr "Instrument de urmărire"
 
 #: src/libsysprof/sysprof-tracer.c:66
 msgid ""
 "Tracing requires spawning a program compiled with ‘-finstrument-functions’. "
 "Tracing will not be available."
 msgstr ""
-"Trasarea necesită generarea unui program compilat cu „-finstrument-"
-"functions”. Trasarea nu va fi disponibilă."
+"Urmărirea necesită generarea unui program compilat cu „-finstrument-"
+"functions”. Urmărirea nu va fi disponibilă."
 
-#: src/sysprof-cli/sysprof-cli.c:112
+#: src/sysprof-cli/sysprof-cli.c:119
 msgid "--merge requires at least 2 filename arguments"
 msgstr "--merge necesită cel puțin 2 argumente de nume de fișier"
 
-#: src/sysprof-cli/sysprof-cli.c:307
+#: src/sysprof-cli/sysprof-cli.c:318
 msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
 msgstr ""
-"Dezactivează accelerarea CPU în timpul profilării [Depășit pentru --power-"
+"Dezactivează accelerarea CPU în timpul analizării [Depășit pentru --power-"
 "profile]"
 
-#: src/sysprof-cli/sysprof-cli.c:308
+#: src/sysprof-cli/sysprof-cli.c:319
 msgid "Make sysprof specific to a task [Deprecated]"
 msgstr "Face sysprof specific la o sarcină [depășit]"
 
-#: src/sysprof-cli/sysprof-cli.c:308 src/sysprof/sysprof-frame-utility.ui:109
-#: src/sysprof/sysprof-logs-section.ui:179
+#: src/sysprof-cli/sysprof-cli.c:319 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof/sysprof-logs-section.ui:181
 #: src/sysprof/sysprof-processes-section.ui:283
 #: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "PID"
 
-#: src/sysprof-cli/sysprof-cli.c:309
+#: src/sysprof-cli/sysprof-cli.c:320
 msgid "Run a command and profile the process"
-msgstr "Rulează o comandă și profilează procesul"
+msgstr "Execută o comandă și analizează procesul"
 
-#: src/sysprof-cli/sysprof-cli.c:309
+#: src/sysprof-cli/sysprof-cli.c:320
 msgid "COMMAND"
 msgstr "COMANDĂ"
 
-#: src/sysprof-cli/sysprof-cli.c:310
+#: src/sysprof-cli/sysprof-cli.c:321
 msgid ""
 "Set environment variable for spawned process. Can be used multiple times."
 msgstr ""
 "Stabilește variabila de mediu pentru procesul creat. Poate fi utilizat de "
 "mai multe ori."
 
-#: src/sysprof-cli/sysprof-cli.c:310
+#: src/sysprof-cli/sysprof-cli.c:321
 msgid "VAR=VALUE"
 msgstr "VAR=VALOARE"
 
-#: src/sysprof-cli/sysprof-cli.c:311
+#: src/sysprof-cli/sysprof-cli.c:322
 msgid "Force overwrite the capture file"
-msgstr "Forțează suprascrierea fișierului de captură"
+msgstr "Forțează suprascrierea înregistrării"
 
-#: src/sysprof-cli/sysprof-cli.c:312
+#: src/sysprof-cli/sysprof-cli.c:323
 msgid "Disable recording of battery statistics"
 msgstr "Dezactivează înregistrarea statisticilor de baterie"
 
-#: src/sysprof-cli/sysprof-cli.c:313
+#: src/sysprof-cli/sysprof-cli.c:324
 msgid "Disable recording of CPU statistics"
 msgstr "Dezactivează înregistrarea statisticilor CPU"
 
-#: src/sysprof-cli/sysprof-cli.c:314
+#: src/sysprof-cli/sysprof-cli.c:325
 msgid "Disable recording of Disk statistics"
 msgstr "Dezactivează înregistrarea statisticilor de disc"
 
-#: src/sysprof-cli/sysprof-cli.c:315
+#: src/sysprof-cli/sysprof-cli.c:326
 msgid "Do not record stacktraces using Linux perf"
 msgstr "Nu înregistra urmele de stivă utilizând perf Linux"
 
-#: src/sysprof-cli/sysprof-cli.c:316
+#: src/sysprof-cli/sysprof-cli.c:327
 msgid "Do not append symbol name information from local machine"
-msgstr "Nu atașa informațiile de nume de simbol de la mașina locală"
+msgstr "Nu atașa informațiile de nume de simbol de la aparatul local"
 
-#: src/sysprof-cli/sysprof-cli.c:317
+#: src/sysprof-cli/sysprof-cli.c:328
 msgid "Disable recording of memory statistics"
 msgstr "Dezactivează înregistrarea statisticilor memoriei"
 
-#: src/sysprof-cli/sysprof-cli.c:318
+#: src/sysprof-cli/sysprof-cli.c:329
 msgid "Disable recording of network statistics"
 msgstr "Dezactivează înregistrarea statisticilor de rețea"
 
-#: src/sysprof-cli/sysprof-cli.c:319
+#: src/sysprof-cli/sysprof-cli.c:330
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr "Stabilește mediul SYSPROF_TRACE_FD pentru subproces"
 
-#: src/sysprof-cli/sysprof-cli.c:320
+#: src/sysprof-cli/sysprof-cli.c:331
 msgid "Track when processes are scheduled"
 msgstr "Urmărește când procesele sunt programate"
 
-#: src/sysprof-cli/sysprof-cli.c:321
+#: src/sysprof-cli/sysprof-cli.c:332
 msgid "Profile the D-Bus session bus"
-msgstr "Profilează magistrala de sesiune D-Bus"
+msgstr "Analizează magistrala de sesiune D-Bus"
 
-#: src/sysprof-cli/sysprof-cli.c:322
+#: src/sysprof-cli/sysprof-cli.c:333
 msgid "Profile the D-Bus system bus"
-msgstr "Profilează magistrala de sistem D-Bus"
+msgstr "Analizează magistrala de sistem D-Bus"
 
-#: src/sysprof-cli/sysprof-cli.c:323
+#: src/sysprof-cli/sysprof-cli.c:334
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr "Stabilește mediul GJS_TRACE_FD pentru a urmări procesele GJS"
 
-#: src/sysprof-cli/sysprof-cli.c:324
+#: src/sysprof-cli/sysprof-cli.c:335
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr "Stabilește mediul GTK_TRACE_FD pentru a urmări o aplicație GTK"
 
-#: src/sysprof-cli/sysprof-cli.c:325
+#: src/sysprof-cli/sysprof-cli.c:336
 msgid "Include RAPL energy statistics"
 msgstr "Include statisticile de energie RAPL"
 
-#: src/sysprof-cli/sysprof-cli.c:326
+#: src/sysprof-cli/sysprof-cli.c:337
 msgid "Profile memory allocations and frees"
-msgstr "Profilează alocările de memorie și eliberările"
+msgstr "Analizează alocările de memorie și eliberările"
 
-#: src/sysprof-cli/sysprof-cli.c:327
+#: src/sysprof-cli/sysprof-cli.c:338
 msgid "Connect to org.gnome.Shell for profiler statistics"
-msgstr "Conectează la org.gnome.Shell pentru statistici de profiler"
+msgstr "Conectează la org.gnome.Shell pentru statistici de analiză"
 
-#: src/sysprof-cli/sysprof-cli.c:328
+#: src/sysprof-cli/sysprof-cli.c:339
 msgid "Track performance of the applications main loop"
 msgstr "Urmărește performanța a buclei principale a aplicației"
 
-#: src/sysprof-cli/sysprof-cli.c:330
+#: src/sysprof-cli/sysprof-cli.c:341
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr "Fuzionează toate fișierele *.syscap furnizate și scrie la stdout"
 
-#: src/sysprof-cli/sysprof-cli.c:331
+#: src/sysprof-cli/sysprof-cli.c:342
 msgid "Print the sysprof-cli version and exit"
 msgstr "Tipărește versiunea sysprof-cli și ieși"
 
-#: src/sysprof-cli/sysprof-cli.c:332
+#: src/sysprof-cli/sysprof-cli.c:343
 msgid "The size of the buffer in pages (1 = 1 page)"
 msgstr "Dimensiunea memoriei intermediare în pagini (1 = 1 pagină)"
 
-#: src/sysprof-cli/sysprof-cli.c:333
+#: src/sysprof-cli/sysprof-cli.c:344
 msgid "Additional D-Bus address to monitor"
 msgstr "Adresa D-Bus adițională de monitorizat"
 
-#: src/sysprof-cli/sysprof-cli.c:366
-msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
-msgstr "[FIȘIER_CAPTURĂ] [-- COMANDĂ ARGUMENTE] — Sysprof"
+#: src/sysprof-cli/sysprof-cli.c:345
+msgid "Stack size to copy for unwinding in user-space"
+msgstr "Mărimea stivei pentru copiere la derularea în spațiul utilizatorului"
 
-#: src/sysprof-cli/sysprof-cli.c:369
+#: src/sysprof-cli/sysprof-cli.c:346
+msgid "Do not use debuginfod to resolve symbols"
+msgstr "Nu utiliza debuginfod pentru a localiza simbolurile"
+
+#: src/sysprof-cli/sysprof-cli.c:347
+msgid "Do not use Sysprofd to acquire privileges"
+msgstr "Nu utiliza Sysprofd pentru a obține privilegii"
+
+#: src/sysprof-cli/sysprof-cli.c:380
+msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
+msgstr "[FIȘIERUL_ÎNREGISTRĂRII] [-- COMANDĂ ARGUMENTE] — Sysprof"
+
+#: src/sysprof-cli/sysprof-cli.c:383
 msgid ""
 "\n"
 "Examples:\n"
@@ -397,40 +418,49 @@ msgid ""
 "\n"
 "  # Merge multiple syscap files into one\n"
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+"\n"
+"  # Unwind by capturing stack/register contents instead of frame-pointers\n"
+"  # where the stack-size is a multiple of page-size\n"
+"  sysprof-cli --stack-size=8192\n"
 msgstr ""
 "\n"
 "Exemple:\n"
 "\n"
-"  # Înregistrează gtk4-widget-factory utilizând trace-fd pentru a obține "
-"datele furnizate de\n"
-"  # aplicație precum și furnizori de date GTK și GNOME Shell\n"
+"  # Înregistrează gtk4-widget-factory utilizând trace-fd pentru a obține\n"
+"  # datele furnizate de aplicație precum și furnizorii de date GTK și\n"
+"  # GNOME Shell\n"
 "  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
 "\n"
-"  # Fuzionează fișiere syscap multiple într-un singur fișier\n"
+"  # Unește mai multe fișiere syscap într-un singur fișier\n"
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+"\n"
+"  # Derulează captând conținutul stivei/registrelor în loc de\n"
+"  # înregistrările stivelor, atunci când mărimea stivei este\n"
+"  # un multiplu al mărimii paginii\n"
+"  sysprof-cli --stack-size=8192\n"
 
-#: src/sysprof-cli/sysprof-cli.c:405
+#: src/sysprof-cli/sysprof-cli.c:423
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Prea multe argumente au fost trimise la sysprof-cli:"
 
 #. Translators: %s is a file name.
-#: src/sysprof-cli/sysprof-cli.c:459
+#: src/sysprof-cli/sysprof-cli.c:480
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
-msgstr "%s există. Utilizați --force pentru a suprascrie\n"
+msgstr "%s există. Folosește --force pentru a suprascrie\n"
 
 #: src/sysprofd/org.gnome.sysprof3.policy.in:13
 msgid "Profile the system"
-msgstr "Profilează sistemul"
+msgstr "Analizează sistemul"
 
 #: src/sysprofd/org.gnome.sysprof3.policy.in:14
 msgid "Authentication is required to profile the system."
-msgstr "Autentificarea este necesară pentru a profila sistemul."
+msgstr "Autentificarea este necesară pentru analizarea sistemului."
 
 #: src/sysprof/gtk/help-overlay.ui:11
 msgctxt "shortcut window"
 msgid "Recording View"
-msgstr "Vizualizare înregistrării"
+msgstr "Arată înregistrarea"
 
 #: src/sysprof/gtk/help-overlay.ui:14
 msgctxt "shortcut window"
@@ -445,12 +475,12 @@ msgstr "Salvează ca"
 #: src/sysprof/gtk/help-overlay.ui:26
 msgctxt "shortcut window"
 msgid "Toggle Visibility of Main Sidebar"
-msgstr "Comută vizibilitatea barei laterale principale"
+msgstr "Arată/Ascunde Panoul lateral principal"
 
 #: src/sysprof/gtk/help-overlay.ui:32
 msgctxt "shortcut window"
 msgid "Toggle Visibility of Stack Trace Sidebar"
-msgstr "Comută vizibilitatea barei laterale cu urme de stivă"
+msgstr "Arată/Ascunde Panoul cu detalii despre eroare"
 
 #: src/sysprof/gtk/help-overlay.ui:40
 msgctxt "shortcut window"
@@ -475,29 +505,48 @@ msgstr "Arată ajutorul"
 #: src/sysprof/gtk/help-overlay.ui:62
 msgctxt "shortcut window"
 msgid "Show keyboard shortcuts"
-msgstr "Arată scurtături de tastatură"
+msgstr "Arată scurtăturile"
 
 #: src/sysprof/gtk/help-overlay.ui:68
 msgctxt "shortcut window"
 msgid "Quit"
-msgstr "Ieșire"
+msgstr "Închide"
 
 #: src/sysprof/gtk/menus.ui:6
-msgid "_Preferences"
-msgstr "_Preferințe"
+msgid "Make Function Root"
+msgstr "Creează o funcție principală"
 
-#: src/sysprof/gtk/menus.ui:10 src/sysprof/sysprof-greeter.ui:644
-#: src/sysprof/sysprof-window.ui:398
-msgid "_Keyboard Shortcuts"
-msgstr "Scurtături de _tastatură"
+#: src/sysprof/gtk/menus.ui:11 src/sysprof/sysprof-process-dialog.ui:520
+msgid "Options"
+msgstr "Opțiuni"
 
-#: src/sysprof/gtk/menus.ui:14
-msgid "_Help"
-msgstr "_Ajutor"
+#: src/sysprof/gtk/menus.ui:13 src/sysprof/sysprof-window.ui:497
+msgid "Categorize Frames"
+msgstr "Clasifică cadrele"
 
-#: src/sysprof/gtk/menus.ui:18
-msgid "_About Sysprof"
-msgstr "_Despre Sysprof"
+#: src/sysprof/gtk/menus.ui:17 src/sysprof/sysprof-window.ui:501
+msgid "Hide System Libraries"
+msgstr "Ascunde bibliotecile de sistem"
+
+#: src/sysprof/gtk/menus.ui:21 src/sysprof/sysprof-window.ui:505
+msgid "Include Threads"
+msgstr "Include firele de execuție"
+
+#: src/sysprof/gtk/menus.ui:25 src/sysprof/sysprof-window.ui:509
+msgid "Bottom Up"
+msgstr "De jos în sus"
+
+#: src/sysprof/gtk/menus.ui:29 src/sysprof/sysprof-window.ui:513
+msgid "Ignore Kernel Processes"
+msgstr "Ignoră procesele nucleului"
+
+#: src/sysprof/gtk/menus.ui:33 src/sysprof/sysprof-window.ui:517
+msgid "Ignore Process 0"
+msgstr "Ignoră procesul 0"
+
+#: src/sysprof/gtk/menus.ui:37 src/sysprof/sysprof-window.ui:521
+msgid "Merge Similar Processes"
+msgstr "Integrează procesele similare"
 
 #: src/sysprof/sysprof-animation.c:1038
 #, c-format
@@ -509,19 +558,24 @@ msgstr "Nu s-a putut găsi proprietatea %s în %s"
 msgid "Failed to retrieve va_list value: %s"
 msgstr "Nu s-a putut prelua valoarea va_list: %s"
 
-#: src/sysprof/sysprof-application.c:37
+#: src/sysprof/sysprof-application.c:38
+msgid "Start a new recording"
+msgstr "Începe o înregistrare nouă"
+
+#: src/sysprof/sysprof-application.c:39
 msgid "Show Sysprof version and exit"
-msgstr "Arată versiunea Sysprof și ieși"
+msgstr "Arată versiunea Sysprof și închide"
 
-#: src/sysprof/sysprof-application.c:170
+#: src/sysprof/sysprof-application.c:277
 msgid "A system profiler"
-msgstr "Un profiler de sistem"
+msgstr "Un analizator de sistem"
 
-#: src/sysprof/sysprof-application.c:171
+#: src/sysprof/sysprof-application.c:278
 msgid "translator-credits"
 msgstr ""
 "Florentina Mușat <florentina [dot] musat [dot] 28 [at] gmail [dot] com>, "
-"2019-2020, 2023-2024"
+"2019-2020, 2023-2024\n"
+"Antonio Marin <gnmer.6qxyg@slmail.me>, 2025"
 
 #: src/sysprof/sysprof-callgraph-view.ui:22
 msgid "Functions"
@@ -570,11 +624,11 @@ msgstr "Tabelă de contoare"
 #: src/sysprof/sysprof-storage-section.ui:346
 #: src/sysprof/sysprof-traceables-utility.ui:23
 msgid "Time"
-msgstr "Oră"
+msgstr "Timp"
 
 #: src/sysprof/sysprof-cpu-section.ui:412
 #: src/sysprof/sysprof-energy-section.ui:382
-#: src/sysprof/sysprof-flame-graph.c:453
+#: src/sysprof/sysprof-flame-graph.c:458
 #: src/sysprof/sysprof-graphics-section.ui:293
 #: src/sysprof/sysprof-marks-section.ui:248
 #: src/sysprof/sysprof-network-section.ui:380
@@ -637,7 +691,7 @@ msgstr "Fanioane"
 #: src/sysprof/sysprof-files-section.ui:122
 #: src/sysprof/sysprof-memory-callgraph-view.ui:68
 msgid "Size"
-msgstr "Dimensiune"
+msgstr "Mărime"
 
 #: src/sysprof/sysprof-dbus-section.ui:383
 #: src/sysprof/sysprof-frame-utility.ui:20
@@ -675,8 +729,8 @@ msgid "Filter Messages"
 msgstr "Filtrează mesajele"
 
 #: src/sysprof/sysprof-dbus-utility.ui:13
-#: src/sysprof/sysprof-logs-section.c:104
-#: src/sysprof/sysprof-logs-section.ui:286
+#: src/sysprof/sysprof-logs-section.c:114
+#: src/sysprof/sysprof-logs-section.ui:290
 msgid "Message"
 msgstr "Mesaj"
 
@@ -692,7 +746,7 @@ msgstr "Comprimat"
 msgid "Filter Files"
 msgstr "Filtrează fișierele"
 
-#: src/sysprof/sysprof-flame-graph.c:457
+#: src/sysprof/sysprof-flame-graph.c:462
 #: src/sysprof/sysprof-process-dialog.ui:177
 msgid "File"
 msgstr "Fișier"
@@ -701,61 +755,79 @@ msgstr "Fișier"
 #: src/sysprof/sysprof-logs-section.ui:143
 #: src/sysprof/sysprof-mark-table.ui:116
 #: src/sysprof/sysprof-traceables-utility.ui:81
-#: src/sysprof/sysprof-window.ui:297
+#: src/sysprof/sysprof-window.ui:373
 msgid "CPU"
 msgstr "CPU"
 
-#: src/sysprof/sysprof-greeter.c:102
+#: src/sysprof/sysprof-greeter.c:144
 msgid "Use KEY=VALUE to set an environment variable"
-msgstr "Utilizați CHEIE=VALOARE pentru a stabili variabila de mediu"
+msgstr "Folosește CHEIE=VALOARE pentru a stabili variabila de mediu"
 
-#: src/sysprof/sysprof-greeter.c:108
+#: src/sysprof/sysprof-greeter.c:150
 msgid "Keys may not start with a number"
 msgstr "Cheile nu pot începe cu un număr"
 
-#: src/sysprof/sysprof-greeter.c:118
+#: src/sysprof/sysprof-greeter.c:160
 msgid "Keys may only contain alpha-numerics or underline."
-msgstr "Cheile pot conține doar alfa-numerice sau liniuța de subliniere."
+msgstr "Cheile pot conține doar litere și cifre sau liniuța joasă."
 
-#: src/sysprof/sysprof-greeter.c:265 src/sysprof/sysprof-window.c:155
+#: src/sysprof/sysprof-greeter.c:357 src/sysprof/sysprof-window.c:172
 msgid "Must Capture to Local File"
-msgstr "Trebuie să captureze un fișier local"
+msgstr "Înregistrează numai într-un fișier local"
 
-#: src/sysprof/sysprof-greeter.c:266 src/sysprof/sysprof-window.c:156
+#: src/sysprof/sysprof-greeter.c:359 src/sysprof/sysprof-window.c:173
 msgid "You must choose a local file to capture using Sysprof"
-msgstr "Trebuie să alegeți un fișier local de capturat utilizând Sysprof"
+msgstr ""
+"Trebuie ales un fișier local pentru a înregistra datele folosind Sysprof"
 
-#: src/sysprof/sysprof-greeter.c:267 src/sysprof/sysprof-recording-pad.c:115
-#: src/sysprof/sysprof-window.c:157 src/sysprof/sysprof-window.c:718
+#: src/sysprof/sysprof-greeter.c:361 src/sysprof/sysprof-greeter.c:401
+#: src/sysprof/sysprof-recording-pad.c:119 src/sysprof/sysprof-window.c:174
+#: src/sysprof/sysprof-window.c:751
 msgid "Close"
 msgstr "Închide"
 
-#: src/sysprof/sysprof-greeter.c:288
+#: src/sysprof/sysprof-greeter.c:399
+msgid "Must Select Local Folder"
+msgstr "Trebuie ales dosarul local"
+
+#: src/sysprof/sysprof-greeter.c:400
+msgid "You must choose a local folder to add as a debug directory"
+msgstr "Trebuie ales un dosar local pentru a-l adăuga ca dosar de depanare"
+
+#: src/sysprof/sysprof-greeter.c:420
+msgid "Add debug directory"
+msgstr "Adaugă dosarul de depanare"
+
+#: src/sysprof/sysprof-greeter.c:421 src/sysprof/sysprof-greeter.ui:595
+msgid "Add _Directory"
+msgstr "Adaugă _dosarul"
+
+#: src/sysprof/sysprof-greeter.c:445
 #, c-format
 msgid "System Capture from %s.syscap"
-msgstr "Captură de sistem de la %s.syscap"
+msgstr "Înregistrare de sistem din %s.syscap"
 
-#: src/sysprof/sysprof-greeter.c:292
+#: src/sysprof/sysprof-greeter.c:449
 msgid "Record to File"
 msgstr "Înregistrează în fișier"
 
-#: src/sysprof/sysprof-greeter.c:293
+#: src/sysprof/sysprof-greeter.c:450
 msgid "Record"
 msgstr "Înregistrează"
 
-#: src/sysprof/sysprof-greeter.c:440
+#: src/sysprof/sysprof-greeter.c:664
 msgid "No Change"
 msgstr "Nicio schimbare"
 
-#: src/sysprof/sysprof-greeter.c:443
+#: src/sysprof/sysprof-greeter.c:667
 msgid "Balanced"
 msgstr "Echilibrat"
 
-#: src/sysprof/sysprof-greeter.c:446
+#: src/sysprof/sysprof-greeter.c:670
 msgid "Power Saver"
 msgstr "Economizor de energie"
 
-#: src/sysprof/sysprof-greeter.c:449
+#: src/sysprof/sysprof-greeter.c:673
 msgid "Performance"
 msgstr "Performanță"
 
@@ -763,183 +835,209 @@ msgstr "Performanță"
 msgid "Sampling"
 msgstr "Eșantionare"
 
-#: src/sysprof/sysprof-greeter.ui:99
+#: src/sysprof/sysprof-greeter.ui:98
 msgid "Sample Native Stacks"
 msgstr "Stive Native mostră"
 
-#: src/sysprof/sysprof-greeter.ui:100
+#: src/sysprof/sysprof-greeter.ui:99
 msgid "Record native stack traces using a sampling profiler"
 msgstr ""
-"Înregistrează trasări de stivă native utilizând un profilator de mostră"
+"Înregistrează trasări de stivă native utilizând un analizator de mostră"
 
-#: src/sysprof/sysprof-greeter.ui:116
+#: src/sysprof/sysprof-greeter.ui:105
+msgid "Unwind Stacks in User Space"
+msgstr "Derulează stivele în spațiul utilizatorului"
+
+#: src/sysprof/sysprof-greeter.ui:106
+msgid "Copy stack contents and registers for unwinding in user-space"
+msgstr ""
+"Copiază conținutul stivei și registrele pentru derularea în spațiul "
+"utilizatorului"
+
+#: src/sysprof/sysprof-greeter.ui:117
+msgid "Stack Size"
+msgstr "Mărime stivă"
+
+#: src/sysprof/sysprof-greeter.ui:118
+msgid "The number of bytes to copy from the stack"
+msgstr "Numărul de octeți de copiat din stivă"
+
+#: src/sysprof/sysprof-greeter.ui:129
+msgid ""
+"Unwinding in user-space has considerable overhead but may help in situations "
+"where frame-pointers are unavailable."
+msgstr ""
+"Derularea în spațiul utilizatorului este costisitoare, dar poate ajuta în "
+"situațiile în care înregistrările stivelor nu sunt disponibile."
+
+#: src/sysprof/sysprof-greeter.ui:144
 msgid "Sample JavaScript Stacks"
 msgstr "Stive JavasScript mostră"
 
-#: src/sysprof/sysprof-greeter.ui:117
+#: src/sysprof/sysprof-greeter.ui:145
 msgid "Record JavaScript stack traces using a sampling profiler"
 msgstr ""
-"Înregistrează trasări de stivă JavaScript utilizând un profilator de mostră"
+"Înregistrează trasări de stivă JavaScript utilizând un analizator de mostră"
 
-#: src/sysprof/sysprof-greeter.ui:128
+#: src/sysprof/sysprof-greeter.ui:151
 msgid ""
 "Sysprof must launch your application to record JavaScript stacks using GJS."
 msgstr ""
 "Sysprof trebuie să lanseze aplicația pentru a înregistra stivele JavaScript "
 "utilizând GJS."
 
-#: src/sysprof/sysprof-greeter.ui:144
+#: src/sysprof/sysprof-greeter.ui:166
 msgid "Record Scheduler Details"
 msgstr "Înregistrează detaliile programatorului"
 
-#: src/sysprof/sysprof-greeter.ui:145
+#: src/sysprof/sysprof-greeter.ui:167
 msgid "Track when processes are scheduled per CPU"
 msgstr "Urmărește când procesele sunt programate per CPU"
 
-#: src/sysprof/sysprof-greeter.ui:158
+#: src/sysprof/sysprof-greeter.ui:175
 msgid "Tracing"
 msgstr "Urmărire"
 
-#: src/sysprof/sysprof-greeter.ui:162
+#: src/sysprof/sysprof-greeter.ui:178
 msgid "Trace Memory Allocations"
-msgstr "Trasează alocările memoriei"
+msgstr "Urmărește alocarea memoriei"
 
-#: src/sysprof/sysprof-greeter.ui:163
-msgid "Record a stack trace when <tt>malloc</tt> or similar functions are used"
+#: src/sysprof/sysprof-greeter.ui:179
+msgid "Record a stack trace when malloc or similar functions are used"
 msgstr ""
-"Înregistrează o urmă de stivă când<tt>malloc</tt> sau alte funcții similare "
-"sunt utilizate"
+"Înregistrează o urmă a stivei când sunt utilizate funcții de tip malloc sau "
+"similare"
 
-#: src/sysprof/sysprof-greeter.ui:174
+#: src/sysprof/sysprof-greeter.ui:185
 msgid "Sysprof must launch your application to record memory allocations."
 msgstr ""
 "Sysprof trebuie să lanseze aplicația pentru a înregistra alocările de "
 "memorie."
 
-#: src/sysprof/sysprof-greeter.ui:192 src/sysprof/sysprof-greeter.ui:197
+#: src/sysprof/sysprof-greeter.ui:203 src/sysprof/sysprof-greeter.ui:208
 msgid "Application"
 msgstr "Aplicație"
 
-#: src/sysprof/sysprof-greeter.ui:200
+#: src/sysprof/sysprof-greeter.ui:211
 #: src/sysprof/sysprof-processes-section.ui:317
 msgid "Command Line"
 msgstr "Linie de comandă"
 
-#: src/sysprof/sysprof-greeter.ui:206
+#: src/sysprof/sysprof-greeter.ui:217
 msgid "Working directory"
 msgstr "Directorul de lucru"
 
-#: src/sysprof/sysprof-greeter.ui:212
+#: src/sysprof/sysprof-greeter.ui:223
 msgid "The application will be run as a subprocess of Sysprof."
 msgstr "Aplicația va fi rulată ca un subproces al Sysprof."
 
-#: src/sysprof/sysprof-greeter.ui:225
+#: src/sysprof/sysprof-greeter.ui:236
 msgid "Environment"
 msgstr "Mediu"
 
-#: src/sysprof/sysprof-greeter.ui:229
+#: src/sysprof/sysprof-greeter.ui:239
 msgid "Clear Environment"
 msgstr "Curăță mediul"
 
-#: src/sysprof/sysprof-greeter.ui:230
+#: src/sysprof/sysprof-greeter.ui:240
 msgid "Clear the environment before launching application"
 msgstr "Curăță mediul înainte de lansarea aplicației"
 
-#: src/sysprof/sysprof-greeter.ui:256
+#: src/sysprof/sysprof-greeter.ui:261
 msgid "Add _Variable"
 msgstr "Adaugă o _variabilă"
 
-#: src/sysprof/sysprof-greeter.ui:262
+#: src/sysprof/sysprof-greeter.ui:267
 msgid "Add Variable"
 msgstr "Adaugă o variabilă"
 
-#: src/sysprof/sysprof-greeter.ui:263
+#: src/sysprof/sysprof-greeter.ui:268
 msgid "_Add"
 msgstr "_Adaugă"
 
-#: src/sysprof/sysprof-greeter.ui:280 src/sysprof/sysprof-greeter.ui:285
+#: src/sysprof/sysprof-greeter.ui:285 src/sysprof/sysprof-greeter.ui:290
 msgid "Counters"
 msgstr "Contoare"
 
-#: src/sysprof/sysprof-greeter.ui:289
+#: src/sysprof/sysprof-greeter.ui:293
 msgid "CPU Usage"
 msgstr "Utilizare CPU"
 
-#: src/sysprof/sysprof-greeter.ui:290
+#: src/sysprof/sysprof-greeter.ui:294
 msgid "Record coarse-grained counters about CPU usage and frequency"
 msgstr ""
 "Înregistrează contoare cu granulație grosieră despre utilizarea CPU și "
 "frecvența"
 
-#: src/sysprof/sysprof-greeter.ui:302
+#: src/sysprof/sysprof-greeter.ui:300
 msgid "Memory Usage"
 msgstr "Utilizare memorie"
 
-#: src/sysprof/sysprof-greeter.ui:303
+#: src/sysprof/sysprof-greeter.ui:301
 msgid "Record coarse-grained counters about system memory usage"
 msgstr ""
 "Înregistrează contoare cu granulație grosieră despre utilizarea memoriei "
 "sistemului"
 
-#: src/sysprof/sysprof-greeter.ui:315
+#: src/sysprof/sysprof-greeter.ui:307
 msgid "Disk Usage"
 msgstr "Utilizare disc"
 
-#: src/sysprof/sysprof-greeter.ui:316
+#: src/sysprof/sysprof-greeter.ui:308
 msgid "Record coarse-grained counters about storage throughput"
 msgstr ""
 "Înregistrează contoare cu granulație grosieră despre debitul de stocare"
 
-#: src/sysprof/sysprof-greeter.ui:328
+#: src/sysprof/sysprof-greeter.ui:314
 msgid "Network Usage"
 msgstr "Utilizare rețea"
 
-#: src/sysprof/sysprof-greeter.ui:329
+#: src/sysprof/sysprof-greeter.ui:315
 msgid "Record coarse-grained counters about network traffic"
 msgstr "Înregistrează contoare cu granulație grosieră despre traficul de rețea"
 
-#: src/sysprof/sysprof-greeter.ui:345
+#: src/sysprof/sysprof-greeter.ui:325
 msgid "Energy Usage"
 msgstr "Utilizare de energie"
 
-#: src/sysprof/sysprof-greeter.ui:346
+#: src/sysprof/sysprof-greeter.ui:326
 msgid "Record coarse-grained counters about energy usage in Watts"
 msgstr ""
 "Înregistrează contoare cu granulație grosieră despre consumul de energie în "
 "wați"
 
-#: src/sysprof/sysprof-greeter.ui:358
+#: src/sysprof/sysprof-greeter.ui:332
 msgid "Battery Charge"
 msgstr "Încărcare baterie"
 
-#: src/sysprof/sysprof-greeter.ui:359
+#: src/sysprof/sysprof-greeter.ui:333
 msgid "Record coarse-grained counters about battery charge or discharge rates"
 msgstr ""
 "Înregistrează contoare cu granulație grosieră despre ratele de încărcare sau "
 "descărcare a bateriei"
 
-#: src/sysprof/sysprof-greeter.ui:377 src/sysprof/sysprof-greeter.ui:382
-#: src/sysprof/sysprof-window.ui:287
+#: src/sysprof/sysprof-greeter.ui:346 src/sysprof/sysprof-greeter.ui:351
+#: src/sysprof/sysprof-window.ui:363
 msgid "D-Bus"
 msgstr "D-Bus"
 
-#: src/sysprof/sysprof-greeter.ui:386
+#: src/sysprof/sysprof-greeter.ui:355
 msgid "Record System Bus"
 msgstr "Înregistrează magistrala sistemului"
 
-#: src/sysprof/sysprof-greeter.ui:387
+#: src/sysprof/sysprof-greeter.ui:356
 msgid "Record messages on the D-Bus system bus"
 msgstr "Înregistrează mesaje pe magistrala de sistem D-Bus"
 
-#: src/sysprof/sysprof-greeter.ui:403
+#: src/sysprof/sysprof-greeter.ui:372
 msgid "Record Session Bus"
 msgstr "Înregistrează magistrala sesiunii"
 
-#: src/sysprof/sysprof-greeter.ui:404
+#: src/sysprof/sysprof-greeter.ui:373
 msgid "Record messages on the D-Bus user session bus"
 msgstr "Înregistrează mesaje pe magistrala de sesiune a utilizatorului D-Bus"
 
-#: src/sysprof/sysprof-greeter.ui:415
+#: src/sysprof/sysprof-greeter.ui:384
 msgid ""
 "The session bus may contain sensitive information such as keyboard usage and "
 "passwords."
@@ -947,21 +1045,21 @@ msgstr ""
 "Magistrala de sesiune poate conține informații sensibile cum ar fi "
 "utilizarea tastaturii și parole."
 
-#: src/sysprof/sysprof-greeter.ui:438
+#: src/sysprof/sysprof-greeter.ui:407
 msgid "Timings"
 msgstr "Temporizări"
 
-#: src/sysprof/sysprof-greeter.ui:442
+#: src/sysprof/sysprof-greeter.ui:411
 msgid "Compositor Frame Timings"
 msgstr "Sincronizări de cadre ale compozitorului"
 
-#: src/sysprof/sysprof-greeter.ui:443
+#: src/sysprof/sysprof-greeter.ui:412
 msgid "Record frame-timing information from the GNOME Shell compositor"
 msgstr ""
 "Înregistrează informațiile de sincronizare a cadrelor din compozitorul GNOME "
 "Shell"
 
-#: src/sysprof/sysprof-greeter.ui:454
+#: src/sysprof/sysprof-greeter.ui:423
 msgid ""
 "Applications launched by Sysprof will automatically collect GTK frame timing "
 "information."
@@ -969,113 +1067,125 @@ msgstr ""
 "Aplicațiile lansate de Sysprof vor colecta automat informații de "
 "sincronizare a cadrelor GTK."
 
-#: src/sysprof/sysprof-greeter.ui:494
+#: src/sysprof/sysprof-greeter.ui:463
 msgid "Devices"
 msgstr "Dispozitive"
 
-#: src/sysprof/sysprof-greeter.ui:498
+#: src/sysprof/sysprof-greeter.ui:467
 msgid "Include GPU Information"
 msgstr "Include informațiile GPU"
 
-#: src/sysprof/sysprof-greeter.ui:499
+#: src/sysprof/sysprof-greeter.ui:468
 msgid "Records information about graphics hardware and drivers"
 msgstr "Înregistrează informații despre hardware-ul și driverele grafice"
 
-#: src/sysprof/sysprof-greeter.ui:517
+#: src/sysprof/sysprof-greeter.ui:486
 msgid "System"
 msgstr "Sistem"
 
-#: src/sysprof/sysprof-greeter.ui:522
+#: src/sysprof/sysprof-greeter.ui:491
 msgid "Power Profile"
-msgstr "Profil de putere"
+msgstr "Profil energetic"
 
-#: src/sysprof/sysprof-greeter.ui:525
+#: src/sysprof/sysprof-greeter.ui:494
 msgid "Record with Power Profile"
-msgstr "Înregistrează cu profilul de putere"
+msgstr "Înregistrează cu profilul energetic"
 
-#: src/sysprof/sysprof-greeter.ui:526
+#: src/sysprof/sysprof-greeter.ui:495
 msgid "Switch to power profile while recording"
-msgstr "Comută la profilul de putere în timpul înregistrării"
+msgstr "Comută la profilul energetic în timpul înregistrării"
 
-#: src/sysprof/sysprof-greeter.ui:536
+#: src/sysprof/sysprof-greeter.ui:505
 msgid "Details"
 msgstr "Detalii"
 
-#: src/sysprof/sysprof-greeter.ui:540
+#: src/sysprof/sysprof-greeter.ui:509
 msgid "Record System Log"
 msgstr "Înregistrează jurnalul de sistem"
 
-#: src/sysprof/sysprof-greeter.ui:541
+#: src/sysprof/sysprof-greeter.ui:510
 msgid "Watch the system log for new messages and record them"
 msgstr "Urmărește istoricul de sistem pentru mesaje noi și înregistrează-le"
 
-#: src/sysprof/sysprof-greeter.ui:557
+#: src/sysprof/sysprof-greeter.ui:526
 msgid "Include Hardware Information"
 msgstr "Include informațiile hardware"
 
-#: src/sysprof/sysprof-greeter.ui:558
+#: src/sysprof/sysprof-greeter.ui:527
 msgid "Records information about PCI and USB devices"
 msgstr "Înregistrează informații despre dispozitivele PCI și USB"
 
-#: src/sysprof/sysprof-greeter.ui:571
+#: src/sysprof/sysprof-greeter.ui:540
 msgid "Symbols"
 msgstr "Simboluri"
 
-#: src/sysprof/sysprof-greeter.ui:575
+#: src/sysprof/sysprof-greeter.ui:544
 msgid "Bundle Symbols"
 msgstr "Simboluri grupate"
 
-#: src/sysprof/sysprof-greeter.ui:576
+#: src/sysprof/sysprof-greeter.ui:545
 msgid "Make recording shareable by symbolizing stack traces after recording"
 msgstr ""
 "Face înregistrarea partajabilă prin transformarea în simboluri a urmelor de "
 "stivă după înregistrare"
 
-#: src/sysprof/sysprof-greeter.ui:609
+#: src/sysprof/sysprof-greeter.ui:561
+msgid "Debuginfod"
+msgstr "Debuginfod"
+
+#: src/sysprof/sysprof-greeter.ui:562
+msgid "Enable Debuginfod to automatically fetch debug symbols"
+msgstr "Activează Debuginfod pentru a descărca automat informații de depanare"
+
+#: src/sysprof/sysprof-greeter.ui:575
+msgid "Debug File Directories"
+msgstr "Dosare cu fișiere de depanare"
+
+#: src/sysprof/sysprof-greeter.ui:576
+msgid "Directories to search for debug files"
+msgstr "Dosare în care să fie căutate fișierele de depanare"
+
+#: src/sysprof/sysprof-greeter.ui:624
 msgid "_Open File…"
 msgstr "D_eschide fișierul…"
 
-#: src/sysprof/sysprof-greeter.ui:616
+#: src/sysprof/sysprof-greeter.ui:631
 msgid "Record to _File…"
 msgstr "Înregistrare în _fișier…"
 
-#: src/sysprof/sysprof-greeter.ui:623
+#: src/sysprof/sysprof-greeter.ui:638
 msgid "Record to _Memory"
 msgstr "Înregistrează în _memorie"
 
-#: src/sysprof/sysprof-greeter.ui:638 src/sysprof/sysprof-window.ui:388
-msgid "Open Recording…"
-msgstr "Deschide înregistrarea…"
+#: src/sysprof/sysprof-greeter.ui:657 src/sysprof/sysprof-window.ui:474
+msgid "_Keyboard Shortcuts"
+msgstr "Scurtături de _tastatură"
 
-#: src/sysprof/sysprof-greeter.ui:648 src/sysprof/sysprof-window.ui:402
+#: src/sysprof/sysprof-greeter.ui:661 src/sysprof/sysprof-window.ui:478
 msgid "Help"
 msgstr "Ajutor"
 
-#: src/sysprof/sysprof-greeter.ui:652 src/sysprof/sysprof-window.ui:406
+#: src/sysprof/sysprof-greeter.ui:665 src/sysprof/sysprof-window.ui:482
 msgid "About Sysprof"
 msgstr "Despre Sysprof"
 
-#: src/sysprof/sysprof-greeter.ui:658
-msgid "Quit"
-msgstr "Ieșire"
-
-#: src/sysprof/sysprof-logs-section.c:95
+#: src/sysprof/sysprof-logs-section.c:105
 msgid "Critical"
 msgstr "Critic"
 
-#: src/sysprof/sysprof-logs-section.c:98
+#: src/sysprof/sysprof-logs-section.c:108
 msgid "Warning"
 msgstr "Avertisment"
 
-#: src/sysprof/sysprof-logs-section.c:101
+#: src/sysprof/sysprof-logs-section.c:111
 msgid "Debug"
 msgstr "Depanare"
 
-#: src/sysprof/sysprof-logs-section.c:107
+#: src/sysprof/sysprof-logs-section.c:117
 msgid "Info"
 msgstr "Informații"
 
-#: src/sysprof/sysprof-logs-section.c:110
+#: src/sysprof/sysprof-logs-section.c:120
 msgid "Error"
 msgstr "Eroare"
 
@@ -1083,11 +1193,11 @@ msgstr "Eroare"
 msgid "Logs"
 msgstr "Înregistrări"
 
-#: src/sysprof/sysprof-logs-section.ui:215
+#: src/sysprof/sysprof-logs-section.ui:219
 msgid "Severity"
 msgstr "Severitate"
 
-#: src/sysprof/sysprof-logs-section.ui:251
+#: src/sysprof/sysprof-logs-section.ui:255
 msgid "Domain"
 msgstr "Domeniu"
 
@@ -1127,6 +1237,10 @@ msgstr "Media"
 msgid "Median"
 msgstr "Median"
 
+#: src/sysprof/sysprof-mark-chart-row.ui:8
+msgid "Set as Filter"
+msgstr "Stabilește ca filtru"
+
 #: src/sysprof/sysprof-mark-table.ui:47
 msgid "Start"
 msgstr "Începe"
@@ -1134,7 +1248,7 @@ msgstr "Începe"
 #: src/sysprof/sysprof-mark-table.ui:81
 #: src/sysprof/sysprof-processes-section.ui:249
 msgid "Duration"
-msgstr "Durată"
+msgstr "Durata"
 
 #: src/sysprof/sysprof-mark-table.ui:151
 msgid "Process"
@@ -1184,14 +1298,14 @@ msgid "Leaks"
 msgstr "Scurgeri"
 
 #: src/sysprof/sysprof-memory-section.ui:212
-#: src/sysprof/sysprof-samples-section.ui:207
+#: src/sysprof/sysprof-samples-section.ui:216
 #: src/sysprof/sysprof-traceables-utility.ui:162
 msgid "Stack Trace"
 msgstr "Urmă de stivă"
 
 #: src/sysprof/sysprof-metadata-section.ui:4
 msgid "Metadata"
-msgstr "Date meta"
+msgstr "Metadate"
 
 #: src/sysprof/sysprof-metadata-section.ui:71
 msgid "Key"
@@ -1215,7 +1329,7 @@ msgstr "Montări"
 
 #: src/sysprof/sysprof-process-dialog.ui:282
 msgid "Parent"
-msgstr "Superior"
+msgstr "Părinte"
 
 #: src/sysprof/sysprof-process-dialog.ui:316
 msgid "Major"
@@ -1240,10 +1354,6 @@ msgstr "Root"
 #: src/sysprof/sysprof-process-dialog.ui:486
 msgid "Filesystem"
 msgstr "Sistem de fișiere"
-
-#: src/sysprof/sysprof-process-dialog.ui:520
-msgid "Options"
-msgstr "Opțiuni"
 
 #: src/sysprof/sysprof-process-dialog.ui:562
 msgid "Threads"
@@ -1270,15 +1380,16 @@ msgid "Process Table"
 msgstr "Procesează tabela"
 
 #. translators: this expands to the number of events recorded by the profiler as an indicator of progress
-#: src/sysprof/sysprof-recording-pad.c:56
-msgid "%"
-msgstr "%"
+#: src/sysprof/sysprof-recording-pad.c:58
+#, c-format
+msgid "%<PRIi64> events"
+msgstr "%<PRIi64> evenimente"
 
-#: src/sysprof/sysprof-recording-pad.c:111
+#: src/sysprof/sysprof-recording-pad.c:115
 msgid "Recording Failed"
 msgstr "Înregistrarea eșuat"
 
-#: src/sysprof/sysprof-recording-pad.c:113
+#: src/sysprof/sysprof-recording-pad.c:117
 #, c-format
 msgid ""
 "Sysprof failed to record.\n"
@@ -1289,39 +1400,43 @@ msgstr ""
 "\n"
 "%s"
 
-#: src/sysprof/sysprof-recording-pad.ui:69
+#: src/sysprof/sysprof-recording-pad.ui:71
 msgid "Stop Recording"
 msgstr "Oprește înregistrarea"
 
 #: src/sysprof/sysprof-samples-section.ui:4
 msgid "Time Profiler"
-msgstr "Profiler de timp"
+msgstr "Analizator de timp"
 
-#: src/sysprof/sysprof-samples-section.ui:89 src/sysprof/sysprof-window.ui:419
+#: src/sysprof/sysprof-samples-section.ui:98 src/sysprof/sysprof-window.ui:495
 msgid "Callgraph"
-msgstr "Graf de apelări"
+msgstr "Grafic de apelări"
 
-#: src/sysprof/sysprof-samples-section.ui:172 src/sysprof/sysprof-window.ui:450
+#: src/sysprof/sysprof-samples-section.ui:181 src/sysprof/sysprof-window.ui:526
 msgid "Flamegraph"
 msgstr "Grafic cu flăcări"
 
-#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:154
+#: src/sysprof/sysprof-session-filters-widget.ui:103
+msgid "Clear All Filters"
+msgstr "Șterge toate filtrele"
+
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:166
 msgid "Seek Backward"
 msgstr "Caută înapoi"
 
-#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:164
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:176
 msgid "Zoom Out"
 msgstr "Micșorează"
 
-#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:174
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:186
 msgid "Reset Zoom"
-msgstr "Restabilește focalizarea"
+msgstr "Mărime normală"
 
-#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:184
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:196
 msgid "Zoom In"
 msgstr "Mărește"
 
-#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:194
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:206
 msgid "Seek Forward"
 msgstr "Caută înainte"
 
@@ -1331,37 +1446,37 @@ msgstr "Adâncime"
 
 #: src/sysprof/sysprof-weighted-callgraph-view.ui:68
 msgid "Hits"
-msgstr "Hit-uri"
+msgstr "Apeluri"
 
-#: src/sysprof/sysprof-window.c:171
+#: src/sysprof/sysprof-window.c:191
 msgid "Open Recording"
 msgstr "Deschide înregistrarea"
 
-#: src/sysprof/sysprof-window.c:172
+#: src/sysprof/sysprof-window.c:192
 msgid "Open"
 msgstr "Deschide"
 
-#: src/sysprof/sysprof-window.c:176
+#: src/sysprof/sysprof-window.c:196
 msgid "Sysprof Capture (*.syscap)"
-msgstr "Captură Sysprof (*.syscap)"
+msgstr "Înregistrare Sysprof (*.syscap)"
 
-#: src/sysprof/sysprof-window.c:468
+#: src/sysprof/sysprof-window.c:485
 msgid "Save to File"
 msgstr "Salvează în fișier"
 
-#: src/sysprof/sysprof-window.c:469
+#: src/sysprof/sysprof-window.c:486
 msgid "Save"
 msgstr "Salvează"
 
-#: src/sysprof/sysprof-window.c:638
+#: src/sysprof/sysprof-window.c:666
 msgid "Loading…"
 msgstr "Se încarcă…"
 
-#: src/sysprof/sysprof-window.c:714
+#: src/sysprof/sysprof-window.c:747
 msgid "Invalid Document"
-msgstr "Document nevalid"
+msgstr "Document greșit"
 
-#: src/sysprof/sysprof-window.c:716
+#: src/sysprof/sysprof-window.c:749
 #, c-format
 msgid ""
 "The document could not be loaded. Please check that you have the correct "
@@ -1369,598 +1484,60 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Nu s-a putut încărca documentul. Verificați că aveți fișierul de captură "
+"Nu s-a putut încărca documentul. Trebuie verificat dacă este fișierul "
 "corect.\n"
 "\n"
 "%s"
 
-#: src/sysprof/sysprof-window.ui:144
+#: src/sysprof/sysprof-window.ui:126
 msgid "Toggle Left Panel"
-msgstr "Comută panoul din stânga"
+msgstr "Arată/Ascunde panoul din stânga"
 
-#: src/sysprof/sysprof-window.ui:209
+#: src/sysprof/sysprof-window.ui:133
+msgid "View Filters"
+msgstr "Arată filtrele"
+
+#: src/sysprof/sysprof-window.ui:221
 msgid "Main Menu"
-msgstr "Meniu principal"
+msgstr "Opțiuni principale"
 
-#: src/sysprof/sysprof-window.ui:216
+#: src/sysprof/sysprof-window.ui:228
 msgid "View Options"
-msgstr "Vizualizează opțiunile"
+msgstr "Arată opțiunile"
 
-#: src/sysprof/sysprof-window.ui:222
+#: src/sysprof/sysprof-window.ui:234
 msgid "Toggle Right Panel"
-msgstr "Comută panoul din dreapta"
+msgstr "Arată/Ascunde panoul din dreapta"
 
-#: src/sysprof/sysprof-window.ui:307
+#: src/sysprof/sysprof-window.ui:383
 msgid "Energy"
 msgstr "Energie"
 
-#: src/sysprof/sysprof-window.ui:327
+#: src/sysprof/sysprof-window.ui:403
 msgid "Network"
 msgstr "Rețea"
 
-#: src/sysprof/sysprof-window.ui:337
+#: src/sysprof/sysprof-window.ui:413
 msgid "Storage"
 msgstr "Stocare"
 
-#: src/sysprof/sysprof-window.ui:384
+#: src/sysprof/sysprof-window.ui:460
 msgid "_Record Again…"
 msgstr "În_registrează din nou…"
 
-#: src/sysprof/sysprof-window.ui:392
+#: src/sysprof/sysprof-window.ui:464
+msgid "Open Recording…"
+msgstr "Deschide înregistrarea…"
+
+#: src/sysprof/sysprof-window.ui:468
 msgid "Save As…"
 msgstr "Salvează ca…"
 
-#: src/sysprof/sysprof-window.ui:412
+#: src/sysprof/sysprof-window.ui:488
 msgid "_Quit"
-msgstr "_Ieșire"
-
-#: src/sysprof/sysprof-window.ui:421
-msgid "Categorize Frames"
-msgstr "Clasifică cadrele"
-
-#: src/sysprof/sysprof-window.ui:425
-msgid "Hide System Libraries"
-msgstr "Ascunde bibliotecile de sistem"
-
-#: src/sysprof/sysprof-window.ui:429
-msgid "Include Threads"
-msgstr "Include firele de execuție"
-
-#: src/sysprof/sysprof-window.ui:433
-msgid "Bottom Up"
-msgstr "De jos în sus"
-
-#: src/sysprof/sysprof-window.ui:437
-msgid "Ignore Kernel Processes"
-msgstr "Ignoră procesele nucleului"
-
-#: src/sysprof/sysprof-window.ui:441
-msgid "Ignore Process 0"
-msgstr "Ignoră procesul 0"
-
-#: src/sysprof/sysprof-window.ui:445
-msgid "Merge Similar Processes"
-msgstr "Integrează procesele similare"
+msgstr "Înch_ide"
 
 #. translators: Left Heavy means to sort larger (heavier) stack frames before others, starting from the left
-#: src/sysprof/sysprof-window.ui:453
+#: src/sysprof/sysprof-window.ui:529
 msgid "Left Heavy"
 msgstr "Super stânga"
-
-#~ msgid "The GNOME Project"
-#~ msgstr "Proiectul GNOME"
-
-#~ msgid "Hold the performance profile for the duration of the recording"
-#~ msgstr "Menține profilul de performanță pentru durata înregistrării"
-
-#~ msgid ""
-#~ "This feature is only supported when launching a GJS-based application."
-#~ msgstr ""
-#~ "Această funcționalitate este suportată doar la lansarea unei aplicații "
-#~ "bazate pe GJS."
-
-#~ msgid "System Memory Usage"
-#~ msgstr "Utilizare memorie a sistemului"
-
-#~ msgid "Memory tracing is only supported when launching an application."
-#~ msgstr "Trasarea memoriei este suportată doar la lansarea unei aplicații."
-
-#~ msgid "Display &amp; Graphics"
-#~ msgstr "Afișaj &amp; grafică"
-
-#~ msgid "Detect Application Hangs"
-#~ msgstr "Detectează blocările aplicației"
-
-#~ msgid "Detect hangs in the application main loop"
-#~ msgstr "Detectează blocări în bucla principală a aplicației"
-
-#~ msgid ""
-#~ "Hang detection is only supported when launching a GTK-based application."
-#~ msgstr ""
-#~ "Detectarea de blocări este suportată doar la lansarea unei aplicații "
-#~ "bazate pe GTK."
-
-#~ msgid "D-Bus Profiler"
-#~ msgstr "Profiler D-Bus"
-
-#~ msgid "Recent"
-#~ msgstr "Recente"
-
-#~ msgid "Capture File"
-#~ msgstr "Fișier de captură"
-
-#~ msgid "Ignore Bundled Symbols"
-#~ msgstr "Ignoră simbolurile grupate"
-
-#~ msgid "Do not use embedded symbols that were resolved on the capture system"
-#~ msgstr ""
-#~ "Nu utiliza simbolurile încorporate care au fost rezolvate pe sistemul de "
-#~ "captură"
-
-#~ msgid "Override Kernel Symbols"
-#~ msgstr "Suprascrie simbolurile nucleului"
-
-#~ msgid ""
-#~ "Specify a “kallsyms” file overriding what is bundled with a recording"
-#~ msgstr ""
-#~ "Specificați un fișier „kallsyms” care suprascrie ce este grupat cu o "
-#~ "înregistrare"
-
-#~ msgid "Symbol Directories"
-#~ msgstr "Directoare de simboluri"
-
-#~ msgid "Additional symbol directories to use when symbolizing stack traces."
-#~ msgstr ""
-#~ "Directoare de simboluri adiționale de utilizat când se simbolizează "
-#~ "urmele de stivă."
-
-#~ msgid "Add Symbol Directory"
-#~ msgstr "Adaugă directorul de simboluri"
-
-#~ msgid "Preferences"
-#~ msgstr "Preferințe"
-
-#~ msgid "Window size (width and height)."
-#~ msgstr "Dimensiune fereastră (lățime și înălțime)."
-
-#~ msgid "Window position"
-#~ msgstr "Poziție fereastră"
-
-#~ msgid "Window position (x and y)."
-#~ msgstr "Poziție fereastră (x și y)."
-
-#~ msgid "Window maximized"
-#~ msgstr "Fereastră maximizată"
-
-#~ msgid "Window maximized state"
-#~ msgstr "Stare fereastră maximizată"
-
-#~ msgid "Last Spawn Program"
-#~ msgstr "Ultimul program de creare"
-
-#~ msgid ""
-#~ "The last spawned program, which will be set in the UI upon restart of the "
-#~ "application."
-#~ msgstr ""
-#~ "Ultimul program creat, care va fi stabilit în UI după repornirea "
-#~ "aplicației."
-
-#~ msgid "Last Spawn Inherit Environment"
-#~ msgstr "Ultimul mediu moștenitor de creare"
-
-#~ msgid "If the last spawned environment inherits the parent environment."
-#~ msgstr "Dacă ultimul mediu creat moștenește mediul superiorului."
-
-#~ msgid "Last Spawn Environment"
-#~ msgstr "Ultimul mediu de creare"
-
-#~ msgid ""
-#~ "The last spawned environment, which will be set in the UI upon restart of "
-#~ "the application."
-#~ msgstr ""
-#~ "Ultimul mediu creat, care va fi stabilit în UI după repornirea aplicației."
-
-#~ msgid "Sysprof was unable to generate a callgraph from the system capture."
-#~ msgstr ""
-#~ "Sysprof nu a putut să genereze un graf de apelări din captura sistemului."
-
-#, c-format
-#~ msgid "Sysprof failed to find field “%s”."
-#~ msgstr "Sysprof nu a găsit câmpul „%s”."
-
-#, c-format
-#~ msgid "Sysprof failed to get perf_event ID."
-#~ msgstr "Sysprof nu a reușit să obțină ID-ul perf_event."
-
-#, c-format
-#~ msgid "An error occurred while attempting to access performance counters"
-#~ msgstr ""
-#~ "A apărut o eroare în timpul încercării de a accesa contoarele de "
-#~ "performanță"
-
-#~ msgid "Battery Charge (All)"
-#~ msgstr "Încărcare baterie (toate)"
-
-#~ msgid "Battery"
-#~ msgstr "Baterie"
-
-#~ msgid "Stack Traces (In Kernel)"
-#~ msgstr "Urme de stivă (în nucleu)"
-
-#~ msgid "Stack Traces (In User)"
-#~ msgstr "Urme de stivă (în utilizator)"
-
-#~ msgid "Generating Callgraph"
-#~ msgstr "Se generează graful de apelare"
-
-#~ msgid "Sysprof is busy creating the selected callgraph."
-#~ msgstr "Sysprof este ocupat în crearea grafului de apel selectat."
-
-#~ msgid "Not Enough Samples"
-#~ msgstr "Nu există destule mostre"
-
-#~ msgid "More samples are necessary to display a callgraph."
-#~ msgstr "Mai multe mostre sunt necesare pentru a afișa un graf de apelare."
-
-#~ msgid "CPU Frequency"
-#~ msgstr "Frecvență CPU"
-
-#~ msgid "CPU Frequency (All)"
-#~ msgstr "Frecvență CPU (Toate)"
-
-#~ msgid "CPU Usage (All)"
-#~ msgstr "Utilizare CPU (Toate)"
-
-#~ msgid "Memory Capture"
-#~ msgstr "Captură de memorie"
-
-#, c-format
-#~ msgid "%0.4lf seconds"
-#~ msgstr "%0.4lf secunde"
-
-#~ msgid "Filename"
-#~ msgstr "Nume fișier"
-
-#~ msgid "CPU Model"
-#~ msgstr "Model CPU"
-
-#~ msgid "Samples Captured"
-#~ msgstr "Mostre capturate"
-
-#~ msgid "Forks Captured"
-#~ msgstr "Fork-uri capturate"
-
-#~ msgid "Allocations Captured"
-#~ msgstr "Alocări capturate"
-
-#~ msgid "Min"
-#~ msgstr "Min"
-
-#~ msgid "Max"
-#~ msgstr "Max"
-
-#~ msgid "Avg"
-#~ msgstr "Medie"
-
-#~ msgid "Disk"
-#~ msgstr "Disc"
-
-#~ msgid "Writes"
-#~ msgstr "Scrieri"
-
-#~ msgid "New Recording"
-#~ msgstr "Înregistrare nouă"
-
-#~ msgid "The recording could not be opened"
-#~ msgstr "Înregistrarea nu a putut fi deschisă"
-
-#~ msgid "Save Recording"
-#~ msgstr "Salvează înregistrarea"
-
-#~ msgid "Cancel"
-#~ msgstr "Anulează"
-
-#~ msgid "New variable…"
-#~ msgstr "Variabilă nouă…"
-
-#~ msgid "Ouch, that hurt!"
-#~ msgstr "Au, asta a durut!"
-
-#~ msgid ""
-#~ "Something unexpectedly went wrong while trying to profile your system."
-#~ msgstr "Ceva neașteptat a mers greșit în timpul profilării sistemului."
-
-#~ msgid "End"
-#~ msgstr "Sfârșit"
-
-#~ msgid "No Timings Available"
-#~ msgstr "Nu există temporizări disponibile"
-
-#~ msgid "No timing data was found for the current selection"
-#~ msgstr "Nu au fost găsite date de temporizare pentru selecția curentă"
-
-#~ msgid "Track Allocations"
-#~ msgstr "Alocări de pistă"
-
-#, c-format
-#~ msgid "> %s to %s"
-#~ msgstr "> %s la %s"
-
-#~ msgid "Temporary Allocations"
-#~ msgstr "Alocări temporare"
-
-#~ msgid "Analyzing Memory Allocations"
-#~ msgstr "Se analizează alocările memoriei"
-
-#~ msgid "GNOME Shell"
-#~ msgstr "Shell GNOME"
-
-#~ msgid "Profilers"
-#~ msgstr "Profilatoare"
-
-#~ msgid ""
-#~ "Track application memory allocations (Sysprof must launch target "
-#~ "application)"
-#~ msgstr ""
-#~ "Urmărește alocările de memorie ale aplicației (Ssyprof trebuie să lanseze "
-#~ "aplicația țintă)"
-
-#~ msgid "Track slow operations on your applications main loop"
-#~ msgstr "Urmărește operațiile lente pe bucla principală a aplicațiilor"
-
-#~ msgid ""
-#~ "Include all applications and operating system kernel in callgraph. This "
-#~ "may not be possible on some system configurations."
-#~ msgstr ""
-#~ "Include toate aplicațiile și nucleul sistemului de operare în graful de "
-#~ "apelare. Acest lucru poate să nu fie posibil pe anumite configurații de "
-#~ "sistem."
-
-#~ msgid "Enable to launch a program of your choosing before profiling."
-#~ msgstr ""
-#~ "Activează pentru a lansa un program la alegerea dumneavoastră înaintea "
-#~ "profilării."
-
-#~ msgid "Inherit Environment"
-#~ msgstr "Moștenire mediu"
-
-#~ msgid ""
-#~ "Enable to ensure your application shares the display, message-bus, and "
-#~ "other desktop environment settings."
-#~ msgstr ""
-#~ "Activează pentru a vă asigura că aplicația partajează afișajul, "
-#~ "magistrala de mesaje, și alte configurări de mediu de desktop."
-
-#~ msgid "Allow CPU Throttling"
-#~ msgstr "Permite throttling de CPU"
-
-#~ msgid ""
-#~ "If disabled, your CPU will be placed in performance mode. It will be "
-#~ "restored after profiling."
-#~ msgstr ""
-#~ "Dacă este dezactivat, CPU-ul va fi plasat în modul performanță. Acesta va "
-#~ "fi restaura după profilare."
-
-#~ msgid "_Record"
-#~ msgstr "În_registrează"
-
-#~ msgid "Energy Usage (All)"
-#~ msgstr "Utilizare de energie (Toate)"
-
-#~ msgid ""
-#~ "Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to "
-#~ "record?"
-#~ msgstr ""
-#~ "Știați că puteți utiliza <a href=\"help:sysprof\">sysprof-cli</a> pentru "
-#~ "a înregistra?"
-
-#~ msgid "Events"
-#~ msgstr "Evenimente"
-
-#~ msgid "Select for more details"
-#~ msgstr "Selectează pentru mai multe detalii"
-
-#~ msgid "Instruments"
-#~ msgstr "Instrumente"
-
-#~ msgid "Open a perf event stream"
-#~ msgstr "Deschide un flux de eveniment perf"
-
-#~ msgid "Authentication is required to access system performance counters."
-#~ msgstr ""
-#~ "Este necesară autentificarea pentru a accesa contoarele de performanță "
-#~ "ale sistemului."
-
-#~ msgid "Get a list of kernel symbols and their address"
-#~ msgstr "Obține o listă cu toate simbolurile nucleului și adresele acestora"
-
-#~ msgid "Authentication is required to access Linux kernel information."
-#~ msgstr ""
-#~ "Este necesară autentificarea pentru a accesa informațiile nucleului Linux."
-
-#~ msgctxt "shortcut window"
-#~ msgid "Sysprof Shortcuts"
-#~ msgstr "Scurtături Sysprof"
-
-#~ msgctxt "shortcut window"
-#~ msgid "Save Recording"
-#~ msgstr "Salvează înregistrarea"
-
-#~ msgctxt "shortcut window"
-#~ msgid "Saves the current recording"
-#~ msgstr "Salvează înregistrarea curentă"
-
-#~ msgctxt "shortcut window"
-#~ msgid "Opens a previously saved recording"
-#~ msgstr "Deschide o înregistrare salvată anterior"
-
-#~ msgctxt "shortcut window"
-#~ msgid "Recording"
-#~ msgstr "Înregistrare"
-
-#~ msgctxt "shortcut window"
-#~ msgid "Record again"
-#~ msgstr "Înregistrează din nou"
-
-#~ msgctxt "shortcut window"
-#~ msgid "Stop recording"
-#~ msgstr "Oprește înregistrarea"
-
-#~ msgctxt "shortcut window"
-#~ msgid "Callgraph"
-#~ msgstr "Graf de apelări"
-
-#~ msgctxt "shortcut window"
-#~ msgid "Expand function"
-#~ msgstr "Extinde funcția"
-
-#~ msgctxt "shortcut window"
-#~ msgid "Shows the direct descendants of the callgraph function"
-#~ msgstr "Arată descendenții direcți ai funcției callgraph"
-
-#~ msgctxt "shortcut window"
-#~ msgid "Collapse function"
-#~ msgstr "Contractă funcția"
-
-#~ msgctxt "shortcut window"
-#~ msgid "Hides all callgraph descendants below the selected function"
-#~ msgstr "Ascunde toți descendenții callgraph sub funcția selectată"
-
-#~ msgctxt "shortcut window"
-#~ msgid "Jump into function"
-#~ msgstr "Intră în funcție"
-
-#~ msgctxt "shortcut window"
-#~ msgid "Selects the function or file as the top of the callgraph"
-#~ msgstr ""
-#~ "Selectează funcția sau fișierul ca și capătul de sus al grafului de "
-#~ "apelări"
-
-#~ msgctxt "shortcut window"
-#~ msgid "Visualizers"
-#~ msgstr "Vizualizatori"
-
-#~ msgid "New Tab"
-#~ msgstr "Filă nouă"
-
-#~ msgid "Save Recording…"
-#~ msgstr "Salvează înregistrarea…"
-
-#~ msgid "Learn more about Sysprof"
-#~ msgstr "Aflați mai multe despre Sysprof"
-
-#~ msgid "All Files"
-#~ msgstr "Toate fișierele"
-
-#~ msgid "_Open"
-#~ msgstr "_Deschide"
-
-#~ msgid "Open Recording… (Ctrl+O)"
-#~ msgstr "Deschide înregistrarea… (Ctrl+O)"
-
-#~ msgid "Stopping profiler. Press twice more ^C to force exit."
-#~ msgstr ""
-#~ "Se oprește profilatorul. Apăsați încă de două ori ^C pentru a forța "
-#~ "ieșirea."
-
-#~ msgid "Profiler stopped."
-#~ msgstr "Profilatorul s-a oprit."
-
-#~ msgid "Connect to the system bus"
-#~ msgstr "Conectează la magistrala sistemului"
-
-#~ msgid "Connect to the given D-Bus address"
-#~ msgstr "Conectează la adresa D-Bus dată"
-
-#~ msgid "Destination D-Bus name to invoke method on"
-#~ msgstr "Numele D-Bus de destinație pe care se invocă metoda"
-
-#~ msgid "Object path to invoke method on"
-#~ msgstr "Calea de obiect pe care se invocă metoda"
-
-#~ msgid "/org/gnome/Sysprof3/Profiler"
-#~ msgstr "/org/gnome/Sysprof3/Profiler"
-
-#~ msgid "Timeout in seconds"
-#~ msgstr "Limită de timp în secunde"
-
-#~ msgid "Overwrite FILENAME if it exists"
-#~ msgstr "Suprascrie NUMEFIȘIER dacă există"
-
-#~ msgid "--dest=BUS_NAME [FILENAME] - connect to an embedded sysprof profiler"
-#~ msgstr ""
-#~ "--dest=NUME_MAGISTRALĂ [NUMEFIȘIER] - conectează la un profilator sysprof "
-#~ "încorporat"
-
-#~ msgid "Cumulative"
-#~ msgstr "Cumulativ"
-
-#~ msgid "Welcome to Sysprof"
-#~ msgstr "Bine ați venit la Sysprof"
-
-#~ msgid "Start profiling your system with the <b>Record</b> button above"
-#~ msgstr ""
-#~ "Începeți să profilați sistemul cu butonul <b>Înregistrează</b> de deasupra"
-
-#~ msgid "Search"
-#~ msgstr "Caută"
-
-#~ msgid "00:00"
-#~ msgstr "00:00"
-
-#~ msgid ""
-#~ "Sysprof requires authorization to access your computers performance "
-#~ "counters."
-#~ msgstr ""
-#~ "Sysprof necesită autorizare pentru a accesa contoarele de performanță ale "
-#~ "calculatorului."
-
-#~ msgid "FPS"
-#~ msgstr "FPS"
-
-#~ msgid "The command line arguments provided are invalid"
-#~ msgstr "Argumentele liniei de comandă furnizate nu sunt valide"
-
-#~ msgid "Not running"
-#~ msgstr "Nu rulează"
-
-#~ msgid "_Close"
-#~ msgstr "În_chide"
-
-#~ msgid "Zoom out (Ctrl+-)"
-#~ msgstr "Micșorează (Ctrl+-)"
-
-#~ msgid "Reset zoom level (Ctrl+0)"
-#~ msgstr "Restabilește nivelul focalizării (Ctrl+0)"
-
-#~ msgid "Zoom in (Ctrl++)"
-#~ msgstr "Mărește (Ctrl++)"
-
-#~ msgctxt "menu label"
-#~ msgid "Open Capture…"
-#~ msgstr "Deschide captura…"
-
-#~ msgid "Screenshot"
-#~ msgstr "Captură de ecran"
-
-#~ msgid "%s — %s"
-#~ msgstr "%s — %s"
-
-#~ msgid "Stop"
-#~ msgstr "Oprește"
-
-#~ msgid "Building profile…"
-#~ msgstr "Se generează profilul…"
-
-#~ msgid "Stopping…"
-#~ msgstr "Se oprește…"
-
-#~ msgid "Save Capture As…"
-#~ msgstr "Salvează captura ca…"
-
-#~ msgid "An error occurred while attempting to save your capture: %s"
-#~ msgstr "A apărut o eroare în timpul încercării de salvare a capturii: %s"
-
-#~ msgid "The file “%s” could not be opened. Only local files are supported."
-#~ msgstr ""
-#~ "Fișierul „%s” nu a putut fi deschis. Doar fișierele locale sunt suportate."

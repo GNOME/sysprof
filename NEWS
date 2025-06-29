@@ -1,3 +1,15 @@
+Overview of changes in Sysprof 49.alpha
+=======================================
+
+ * Various improvements to the greeter window
+ * New filtering for various types of marks
+ * Instrument improvements
+ * Ability to avoid using sysprofd in some specific use cases
+ * Desktop file/action integration improvements
+ * mmap fixes for HPPA architecture
+ * Improve ELF loader search directories
+ * Translation updates
+
 Overview of changes in Sysprof 48.0
 ===================================
 

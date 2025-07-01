@@ -30,6 +30,7 @@
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
 
+#include <libdex.h>
 #include <sysprof.h>
 
 #if HAVE_POLKIT_AGENT
@@ -349,6 +350,7 @@ main (int   argc,
   };
 
   sysprof_clock_init ();
+  dex_init ();
 
   g_unix_signal_add (SIGINT, sigint_handler, main_loop);
   g_unix_signal_add (SIGTERM, sigint_handler, main_loop);

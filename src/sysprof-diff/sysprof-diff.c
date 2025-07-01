@@ -268,6 +268,7 @@ main (int   argc,
   g_autoptr(GError) error = NULL;
   const char *copy[3];
 
+  sysprof_clock_init ();
   dex_init ();
 
   g_set_prgname ("sysprof-diff");

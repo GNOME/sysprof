@@ -465,6 +465,7 @@ main (int   argc,
   g_autoptr(GOptionContext) context = NULL;
   g_autoptr(GError) error = NULL;
 
+  sysprof_clock_init ();
   dex_init ();
 
   g_set_prgname ("sysprof-cat");

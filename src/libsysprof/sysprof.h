@@ -60,6 +60,8 @@ G_BEGIN_DECLS
 # include "sysprof-document-task.h"
 # include "sysprof-document-traceable.h"
 # include "sysprof-document.h"
+# include "sysprof-ebpf-cpu-usage.h"
+# include "sysprof-ebpf-program.h"
 # include "sysprof-elf-symbolizer.h"
 # include "sysprof-energy-usage.h"
 # include "sysprof-enums.h"

@@ -1,7 +1,7 @@
 # List of source files containing translatable strings.
 # Please keep this file sorted alphabetically.
-data/org.gnome.Sysprof.appdata.xml.in.in
 data/org.gnome.Sysprof.desktop.in.in
+data/org.gnome.Sysprof.metainfo.xml.in.in
 src/libsysprof/sysprof-category-summary.c
 src/libsysprof/sysprof-debuginfod-task.c
 src/libsysprof/sysprof-document-allocation.c

@@ -3,14 +3,14 @@ if get_option('gtk') and get_option('libsysprof')
     install_dir: join_paths(datadir, 'mime/packages')
   )
 
-  appdata_in = configure_file(
-            input: 'org.gnome.Sysprof.appdata.xml.in.in',
-           output: 'org.gnome.Sysprof.appdata.xml.in',
+  metainfo_in = configure_file(
+            input: 'org.gnome.Sysprof.metainfo.xml.in.in',
+           output: 'org.gnome.Sysprof.metainfo.xml.in',
     configuration: config_h,
   )
-  appdata_file = i18n.merge_file(
-            input: appdata_in,
-           output: '@0@.appdata.xml'.format(app_id),
+  metainfo_file = i18n.merge_file(
+            input: metainfo_in,
+           output: '@0@.metainfo.xml'.format(app_id),
            po_dir: podir,
           install: true,
       install_dir: join_paths(datadir, 'metainfo')
@@ -19,11 +19,11 @@ if get_option('gtk') and get_option('libsysprof')
   appstreamcli = find_program('appstreamcli', required: false)
   if appstreamcli.found()
     test(
-      'validate-appdata', appstreamcli,
+      'validate-metainfo', appstreamcli,
       args: [
-        'validate', '--no-net', '--explain', appdata_file
+        'validate', '--no-net', '--explain', metainfo_file
       ],
-      depends: appdata_file,
+      depends: metainfo_file,
     )
   endif
 

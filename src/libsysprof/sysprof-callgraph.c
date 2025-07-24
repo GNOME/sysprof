@@ -651,6 +651,9 @@ _sysprof_callgraph_get_symbol_augment (SysprofCallgraph *self,
   return NULL;
 }
 
+/**
+ * sysprof_callgraph_node_parent: (skip)
+ */
 SysprofCallgraphNode *
 sysprof_callgraph_node_parent (SysprofCallgraphNode *node)
 {
@@ -664,7 +667,7 @@ sysprof_callgraph_node_parent (SysprofCallgraphNode *node)
  *
  * Gets a list of #SysprofSymbol that call @symbol.
  *
- * Returns: (trasfer full): a #GListModel of #SysprofCallgraphSymbol
+ * Returns: (transfer full): a #GListModel of #SysprofCallgraphSymbol
  */
 GListModel *
 sysprof_callgraph_list_callers (SysprofCallgraph *self,
@@ -689,7 +692,7 @@ sysprof_callgraph_list_callers (SysprofCallgraph *self,
  * Gets a list of all the #SysprofTraceable within the callgraph
  * that contain @symbol.
  *
- * Returns: (transfer full): a #GListModel of #SysprofTraceable
+ * Returns: (transfer full): a #GListModel of #SysprofDocumentTraceable
  */
 GListModel *
 sysprof_callgraph_list_traceables_for_symbol (SysprofCallgraph *self,
@@ -706,6 +709,11 @@ sysprof_callgraph_list_traceables_for_symbol (SysprofCallgraph *self,
   return G_LIST_MODEL (g_list_store_new (SYSPROF_TYPE_DOCUMENT_TRACEABLE));
 }
 
+/**
+ * sysprof_callgraph_list_traceables_for_symbols_matching:
+ *
+ * Returns: (transfer full): a [iface@Gio.ListModel] of [iface@Sysprof.DocumentTraceable]
+ */
 GListModel *
 sysprof_callgraph_list_traceables_for_symbols_matching (SysprofCallgraph *self,
                                                         const char       *pattern)
@@ -793,6 +801,11 @@ sysprof_callgraph_descendants_async (SysprofCallgraph    *self,
   g_task_run_in_thread (task, sysprof_callgraph_descendants_worker);
 }
 
+/**
+ * sysprof_callgraph_descendants_finish:
+ *
+ * Returns: (transfer full):
+ */
 GListModel *
 sysprof_callgraph_descendants_finish (SysprofCallgraph  *self,
                                       GAsyncResult      *result,
@@ -1008,6 +1021,12 @@ sysprof_callgraph_list_traceables_for_node_async (SysprofCallgraph     *self,
   g_task_run_in_thread (task, filter_by_prefix_worker);
 }
 
+/**
+ * sysprof_callgraph_list_traceables_for_node_finish:
+ * @self: a [class@Sysprof.Callgraph]
+ *
+ * Returns: (transfer full):
+ */
 GListModel *
 sysprof_callgraph_list_traceables_for_node_finish (SysprofCallgraph  *self,
                                                    GAsyncResult      *result,

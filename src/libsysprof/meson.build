@@ -278,3 +278,18 @@ install_headers(libsysprof_public_headers, subdir: sysprof_header_subdir)
 if get_option('tests')
   subdir('tests')
 endif
+
+if get_option('introspection').enabled()
+  libsysprof_gir = gnome.generate_gir(libsysprof,
+                sources: [libsysprof_capture_sources, libsysprof_capture_headers,
+                          libsysprof_public_sources, libsysprof_public_headers],
+                 header: 'sysprof.h',
+        export_packages: 'sysprof-@0@'.format(soname_major_version),
+              nsversion: '@0@'.format(soname_major_version),
+              namespace: 'Sysprof',
+          symbol_prefix: 'sysprof',
+      identifier_prefix: 'Sysprof',
+               includes: ['Gio-2.0', 'Dex-1'],
+                install: true,
+  )
+endif

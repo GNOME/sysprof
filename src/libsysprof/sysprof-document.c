@@ -2107,11 +2107,11 @@ sysprof_document_callgraph_cb (GObject      *object,
  * @traceables: a list model of traceables for the callgraph
  * @augment_size: the size of data to reserve for augmentation in
  *   the callgraph.
- * @augment_func: (nullable) (scope notified): an optional callback
+ * @augment_func: (nullable) (scope notified) (closure augment_func_data):
+ *   an optional callback
  *   to be executed for each node in the callgraph traces to augment
  *   as the callgraph is generated.
- * @augment_func_data: (closure augment_func) (nullable): the closure
- *   data for @augment_func
+ * @augment_func_data: (nullable): the closure data for @augment_func
  * @augment_func_data_destroy: (destroy augment_func) (nullable): the
  *   destroy callback for @augment_func_data.
  * @cancellable: (nullable): a #GCancellable or %NULL

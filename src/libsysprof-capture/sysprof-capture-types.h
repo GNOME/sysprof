@@ -84,7 +84,10 @@ SYSPROF_BEGIN_DECLS
 
 #define SYSPROF_CAPTURE_ADDRESS_FORMAT "0x%016" PRIx64
 
+#ifndef __GI_SCANNER__
 SYSPROF_STATIC_ASSERT (sizeof (void *) == sizeof (uintptr_t), "UINTPTR_MAX can’t be used to determine sizeof(void*) at compile time");
+#endif
+
 #if UINTPTR_MAX == 0xFFFFFFFFFFFFFFFFu
 # define SYSPROF_CAPTURE_JITMAP_MARK    SYSPROF_UINT64_CONSTANT(0xE000000000000000)
 #elif UINTPTR_MAX == 0xFFFFFFFF
@@ -383,6 +386,7 @@ SYSPROF_ALIGNED_END(1);
 
 #define SYSPROF_CAPTURE_DBUS_FLAGS_MESSAGE_TOO_LARGE (1<<0)
 
+#ifndef __GI_SCANNER__
 SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureFileHeader) == 256, "SysprofCaptureFileHeader changed size");
 SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureFrame) == 24, "SysprofCaptureFrame changed size");
 SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureMap) == 56, "SysprofCaptureMap changed size");
@@ -420,6 +424,7 @@ sysprof_capture_address_compare (SysprofCaptureAddress a,
   else
     return 0;
 }
+#endif
 
 /**
  * SysprofBacktraceFunc:

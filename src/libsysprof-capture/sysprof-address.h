@@ -67,8 +67,10 @@ SYSPROF_BEGIN_DECLS
 
 typedef uint64_t SysprofAddress;
 
+#ifndef __GI_SCANNER__
 SYSPROF_STATIC_ASSERT (sizeof (SysprofAddress) >= sizeof (void *),
                        "Address space is too big");
+#endif
 
 typedef enum
 {
@@ -87,6 +89,7 @@ bool         sysprof_address_is_context_switch (SysprofAddress         address,
 SYSPROF_AVAILABLE_IN_ALL
 const char  *sysprof_address_context_to_string (SysprofAddressContext  context);
 
+#ifndef __GI_SCANNER__
 static inline int
 sysprof_address_compare (SysprofAddress a,
                          SysprofAddress b)
@@ -98,5 +101,6 @@ sysprof_address_compare (SysprofAddress a,
   else
     return 1;
 }
+#endif
 
 SYSPROF_END_DECLS

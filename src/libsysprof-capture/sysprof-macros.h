@@ -95,7 +95,11 @@
 #else
 #define SYSPROF_BEGIN_DECLS
 #define SYSPROF_END_DECLS
-#define SYSPROF_RESTRICT restrict
+# ifndef __GI_SCANNER__
+#  define SYSPROF_RESTRICT restrict
+# else
+#  define SYSPROF_RESTRICT /* nothing */
+# endif
 #endif
 
 #if defined (__GNUC__)

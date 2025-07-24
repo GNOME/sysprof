@@ -212,7 +212,6 @@ sysprof_symbols_bundle_init (SysprofSymbolsBundle *self)
 
 /**
  * sysprof_symbols_bundle_new:
- * @self: a #SysprofSymbolsBundle
  *
  * Creates a new instrment that will decode symbols at the end of a recording
  * and attach them to the recording.

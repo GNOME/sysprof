@@ -106,13 +106,13 @@ sysprof_document_jitmap_get_size (SysprofDocumentJitmap *self)
 /**
  * sysprof_document_jitmap_get_mapping:
  * @self: a #SysprofDocumentJitmap
- * @nth: the index of the mapping
+ * @position: the index of the mapping
  * @address: (out): a location for the address
  *
- * Gets the @nth mapping and returns it as @address and the return value
+ * Gets the @position mapping and returns it as @address and the return value
  * of this function.
  *
- * Returns: (nullable): the name of the symbol, or %NULL if @nth is
+ * Returns: (nullable): the name of the symbol, or %NULL if @position is
  *   out of bounds.
  */
 const char *

@@ -51,3 +51,8 @@ option('tests', type: 'boolean')
 option('examples', type: 'boolean')
 
 option('debuginfod', type: 'feature')
+
+option('introspection', type: 'feature', value: 'disabled',
+       description: 'Enable introspection for libsysprof')
+option('docs', type: 'boolean', value: false,
+       description: 'Build documentation for libsysprof')

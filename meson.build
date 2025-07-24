@@ -276,6 +276,10 @@ configure_file(
   configuration: config_h
 )
 
+if get_option('docs')
+  subdir('doc')
+endif
+
 if get_option('gtk') and gnome.found()
   gnome.post_install(
       gtk_update_icon_cache: true,

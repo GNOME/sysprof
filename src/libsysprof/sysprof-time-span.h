@@ -41,6 +41,7 @@ SysprofTimeSpan *sysprof_time_span_copy     (const SysprofTimeSpan *self);
 SYSPROF_AVAILABLE_IN_ALL
 void             sysprof_time_span_free     (SysprofTimeSpan       *self);
 
+#ifndef __GI_SCANNER__
 static inline gint64
 sysprof_time_span_duration (SysprofTimeSpan time_span)
 {
@@ -142,5 +143,6 @@ sysprof_time_span_equal (const SysprofTimeSpan *a,
 
   return memcmp (a, b, sizeof *a) == 0;
 }
+#endif
 
 G_END_DECLS

@@ -61,42 +61,27 @@
         },
         {
             "name" : "polkit",
+            "buildsystem": "meson",
             "config-opts" : [
-                "--disable-polkitd",
-                "--disable-man-pages",
-                "--disable-introspection",
-                "--disable-examples",
-                "--disable-gtk-doc",
-                "--disable-libelogind",
-                "--disable-libsystemd-login",
-                "--disable-test",
-                "--with-systemdsystemunitdir=no",
-                "--with-authdb=dummy",
-                "--with-authfw=none"
+                "-Dlibs-only=true",
+                "-Dintrospection=false",
+                "-Dauthfw=shadow"
             ],
-            "rm-configure" : true,
             "cleanup" : [
                 "/bin/*",
-                "/etc/pam.d",
                 "/etc/dbus-1",
+                "/etc/pam.d",
+                "/include",
+                "/lib/pkgconfig",
+                "/lib/polkit-1",
                 "/share/dbus-1/system-services/*",
-                "/share/polkit-1/actions/*",
-                "/lib/polkit-1"
+                "/share/polkit-1"
             ],
             "sources" : [
                 {
                     "type" : "archive",
-                    "url" : "https://www.freedesktop.org/software/polkit/releases/polkit-0.116.tar.gz",
-                    "sha256" : "88170c9e711e8db305a12fdb8234fac5706c61969b94e084d0f117d8ec5d34b1"
-                },
-                {
-                    "type" : "patch",
-                    "path" : "build-aux/flatpak/polkit-build-Add-option-to-build-without-polkitd.patch"
-                },
-                {
-                    "type" : "file",
-                    "path" : "build-aux/flatpak/polkit-autogen",
-                    "dest-filename" : "autogen.sh"
+                    "url" : "https://github.com/polkit-org/polkit/archive/refs/tags/126.tar.gz",
+                    "sha256" : "2814a7281989f6baa9e57bd33bbc5e148827e2721ccef22aaf28ab2b376068e8"
                 }
             ]
         },

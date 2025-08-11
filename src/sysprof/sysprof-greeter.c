@@ -805,14 +805,14 @@ sysprof_greeter_init (SysprofGreeter *self)
 
   if (self->recording_template)
     {
-      g_auto(GStrv) environ = NULL;
+      g_auto(GStrv) environ_ = NULL;
       g_object_get (self->recording_template,
-                    "environ", &environ,
+                    "environ", &environ_,
                     NULL);
-      if (environ)
+      if (environ_)
         {
-          for (guint i = 0; environ[i]; i++)
-            gtk_string_list_append (self->envvars, environ[i]);
+          for (guint i = 0; environ_[i]; i++)
+            gtk_string_list_append (self->envvars, environ_[i]);
         }
     }
 

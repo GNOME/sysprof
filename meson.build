@@ -254,7 +254,7 @@ int main(void) {
   config_h.set10('HAVE_STDATOMIC_H', true)
 endif
 
-if need_glib
+if need_glib or need_libsysprof
   subdir('contrib')
 endif
 

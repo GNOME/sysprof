@@ -40,9 +40,39 @@ struct _SysprofMarksSection
   SysprofMarkTable    *mark_table;
   GtkColumnView       *summary_column_view;
   GtkColumnViewColumn *median_column;
+  SysprofMarksSectionModel *section_model;
 };
 
 G_DEFINE_FINAL_TYPE (SysprofMarksSection, sysprof_marks_section, SYSPROF_TYPE_SECTION)
+
+static void
+toggle_group_action (GtkWidget  *widget,
+                     const char *action_name,
+                     GVariant   *parameters)
+{
+  SysprofMarksSection *self = (SysprofMarksSection *)widget;
+  GListModel *catalogs;
+  unsigned int n_catalogs = 0;
+  gboolean visible;
+  const char *group;
+
+  g_assert (SYSPROF_IS_MARKS_SECTION (self));
+
+  g_variant_get (parameters, "(&sb)", &group, &visible);
+
+  catalogs = sysprof_marks_section_model_get_mark_catalog (self->section_model);
+  n_catalogs = g_list_model_get_n_items (catalogs);
+  for (size_t i = 0; i < n_catalogs; i++)
+    {
+      g_autoptr(SysprofMarksSectionModelItem) item = g_list_model_get_item (catalogs, i);
+      SysprofMarkCatalog *catalog = sysprof_marks_section_model_item_get_item (item);
+
+      g_assert (SYSPROF_IS_MARK_CATALOG (catalog));
+
+      if (g_strcmp0 (sysprof_mark_catalog_get_group (catalog), group) == 0)
+        sysprof_marks_section_model_item_set_visible (item, visible);
+    }
+}
 
 static char *
 format_mark_label (gpointer             unused,
@@ -98,6 +128,8 @@ sysprof_marks_section_class_init (SysprofMarksSectionClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofMarksSection, section_model);
   gtk_widget_class_bind_template_callback (widget_class, format_mark_label);
   gtk_widget_class_bind_template_callback (widget_class, format_number);
+
+  gtk_widget_class_install_action (widget_class, "markssection.toggle-group", "(sb)", toggle_group_action);
 
   g_type_ensure (SYSPROF_TYPE_CHART);
   g_type_ensure (SYSPROF_TYPE_DOCUMENT_MARK);

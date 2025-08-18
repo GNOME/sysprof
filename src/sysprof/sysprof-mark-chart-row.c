@@ -50,6 +50,13 @@ G_DEFINE_FINAL_TYPE (SysprofMarkChartRow, sysprof_mark_chart_row, GTK_TYPE_WIDGE
 
 static GParamSpec *properties [N_PROPS];
 
+static double
+opacity_from_item_visibility (gpointer unused,
+                              gboolean visible)
+{
+  return visible ? 1.0 : 0.33;
+}
+
 static void
 filter_by_mark_action (GtkWidget  *widget,
                        const char *action_name,
@@ -242,6 +249,7 @@ sysprof_mark_chart_row_class_init (SysprofMarkChartRowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofMarkChartRow, layer);
   gtk_widget_class_bind_template_callback (widget_class, sysprof_mark_chart_row_activate_layer_item_cb);
   gtk_widget_class_bind_template_callback (widget_class, sysprof_mark_chart_row_button_pressed_cb);
+  gtk_widget_class_bind_template_callback (widget_class, opacity_from_item_visibility);
 
   gtk_widget_class_install_action (widget_class, "markchartrow.toggle-catalog", NULL, toggle_catalog_action);
   gtk_widget_class_install_action (widget_class, "markchartrow.filter-by-mark", NULL, filter_by_mark_action);

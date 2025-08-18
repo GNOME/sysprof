@@ -52,6 +52,26 @@ G_DEFINE_FINAL_TYPE (SysprofMarkChart, sysprof_mark_chart, GTK_TYPE_WIDGET)
 
 static GParamSpec *properties [N_PROPS];
 
+static void
+toggle_group_button_clicked_cb (GtkButton     *button,
+                                GtkListHeader *header)
+{
+  SysprofMarkChartItem *item = gtk_list_header_get_item (header);
+  SysprofMarkCatalog *catalog = sysprof_mark_chart_item_get_catalog (item);
+  gboolean visible = !GPOINTER_TO_INT (g_object_get_data (G_OBJECT (button), "hidden"));
+  gboolean next = !visible;
+
+  gtk_widget_activate_action (GTK_WIDGET (button),
+                              "markssection.toggle-group",
+                              "(sb)",
+                              sysprof_mark_catalog_get_group (catalog),
+                              next);
+
+  gtk_button_set_icon_name (button, next ? "eye-open-negative-filled-symbolic" : "eye-not-looking-symbolic");
+
+  g_object_set_data (G_OBJECT (button), "hidden", GINT_TO_POINTER (!next));
+}
+
 static gpointer
 map_func (gpointer item,
           gpointer user_data)
@@ -158,6 +178,7 @@ sysprof_mark_chart_class_init (SysprofMarkChartClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofMarkChart, box);
   gtk_widget_class_bind_template_child (widget_class, SysprofMarkChart, list_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofMarkChart, map);
+  gtk_widget_class_bind_template_callback (widget_class, toggle_group_button_clicked_cb);
 
   g_resources_register (sysprof_get_resource ());
 

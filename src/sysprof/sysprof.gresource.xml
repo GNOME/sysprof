@@ -7,6 +7,8 @@
     <file preprocess="xml-stripblanks">icons/scalable/actions/document-properties-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/empty-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/energy-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/actions/eye-not-looking-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/actions/eye-open-negative-filled-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/flamegraph-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/funnel-outline-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/graphics-symbolic.svg</file>

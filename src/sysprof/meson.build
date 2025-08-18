@@ -20,6 +20,7 @@ sysprof_sources = [
   'sysprof-duplex-layer.c',
   'sysprof-energy-section.c',
   'sysprof-entry-popover.c',
+  'sysprof-expression-map-model.c',
   'sysprof-files-section.c',
   'sysprof-flame-graph.c',
   'sysprof-frame-source.c',

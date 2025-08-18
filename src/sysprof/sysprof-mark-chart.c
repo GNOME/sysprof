@@ -77,15 +77,12 @@ map_func (gpointer item,
           gpointer user_data)
 {
   SysprofMarkChart *self = SYSPROF_MARK_CHART (user_data);
-  SysprofMarkCatalog *catalog;
   SysprofSession *session;
   gpointer ret;
 
   session = sysprof_marks_section_model_get_session (self->model);
-  catalog = sysprof_marks_section_model_item_get_item (item);
-  g_assert (SYSPROF_IS_MARK_CATALOG (catalog));
 
-  ret = sysprof_mark_chart_item_new (session, catalog);
+  ret = sysprof_mark_chart_item_new (session, item);
   g_object_bind_property (self, "max-items", ret, "max-items", G_BINDING_SYNC_CREATE);
   g_object_unref (item);
 

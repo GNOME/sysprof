@@ -24,6 +24,7 @@
 
 #include "sysprof-session.h"
 #include "sysprof-time-series.h"
+#include "sysprof-marks-section-model-item.h"
 
 G_BEGIN_DECLS
 
@@ -31,10 +32,11 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (SysprofMarkChartItem, sysprof_mark_chart_item, SYSPROF, MARK_CHART_ITEM, GObject)
 
-SysprofMarkChartItem *sysprof_mark_chart_item_new         (SysprofSession        *session,
-                                                           SysprofMarkCatalog    *catalog);
-SysprofMarkCatalog   *sysprof_mark_chart_item_get_catalog (SysprofMarkChartItem  *self);
-SysprofSession       *sysprof_mark_chart_item_get_session (SysprofMarkChartItem  *self);
-SysprofTimeSeries    *sysprof_mark_chart_item_get_series  (SysprofMarkChartItem  *self);
+SysprofMarkChartItem         *sysprof_mark_chart_item_new            (SysprofSession               *session,
+                                                                      SysprofMarksSectionModelItem *item);
+SysprofMarksSectionModelItem *sysprof_mark_chart_item_get_model_item (SysprofMarkChartItem         *self);
+SysprofMarkCatalog           *sysprof_mark_chart_item_get_catalog    (SysprofMarkChartItem         *self);
+SysprofSession               *sysprof_mark_chart_item_get_session    (SysprofMarkChartItem         *self);
+SysprofTimeSeries            *sysprof_mark_chart_item_get_series     (SysprofMarkChartItem         *self);
 
 G_END_DECLS

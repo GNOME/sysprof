@@ -21,22 +21,25 @@
 #include "config.h"
 
 #include "sysprof-mark-chart-item-private.h"
+#include "sysprof-marks-section-model-item.h"
 #include "sysprof-sampled-model.h"
 #include "sysprof-time-filter-model.h"
 
 struct _SysprofMarkChartItem
 {
-  GObject                 parent_instance;
-  SysprofSession         *session;
-  SysprofMarkCatalog     *catalog;
-  SysprofTimeFilterModel *filtered;
-  SysprofSampledModel    *sampled;
-  SysprofSeries          *series;
-  guint                   max_items;
+  GObject                       parent_instance;
+  SysprofSession               *session;
+  SysprofMarksSectionModelItem *item;
+  SysprofMarkCatalog           *catalog;
+  SysprofTimeFilterModel       *filtered;
+  SysprofSampledModel          *sampled;
+  SysprofSeries                *series;
+  guint                         max_items;
 };
 
 enum {
   PROP_0,
+  PROP_ITEM,
   PROP_MAX_ITEMS,
   PROP_SESSION,
   PROP_CATALOG,
@@ -55,8 +58,11 @@ sysprof_mark_chart_item_constructed (GObject *object)
 
   G_OBJECT_CLASS (sysprof_mark_chart_item_parent_class)->constructed (object);
 
-  if (self->catalog == NULL || self->session == NULL)
+  if (self->item == NULL || self->session == NULL)
     g_return_if_reached ();
+
+  self->catalog = sysprof_marks_section_model_item_get_item (self->item);
+  g_assert (SYSPROF_IS_MARK_CATALOG (self->catalog));
 
   sysprof_sampled_model_set_model (self->sampled, G_LIST_MODEL (self->catalog));
 
@@ -71,7 +77,7 @@ sysprof_mark_chart_item_dispose (GObject *object)
   SysprofMarkChartItem *self = (SysprofMarkChartItem *)object;
 
   g_clear_object (&self->session);
-  g_clear_object (&self->catalog);
+  g_clear_object (&self->item);
   g_clear_object (&self->filtered);
   g_clear_object (&self->sampled);
   g_clear_object (&self->series);
@@ -91,6 +97,10 @@ sysprof_mark_chart_item_get_property (GObject    *object,
     {
     case PROP_CATALOG:
       g_value_set_object (value, sysprof_mark_chart_item_get_catalog (self));
+      break;
+
+    case PROP_ITEM:
+      g_value_set_object (value, sysprof_mark_chart_item_get_model_item (self));
       break;
 
     case PROP_MAX_ITEMS:
@@ -120,8 +130,8 @@ sysprof_mark_chart_item_set_property (GObject      *object,
 
   switch (prop_id)
     {
-    case PROP_CATALOG:
-      self->catalog = g_value_dup_object (value);
+    case PROP_ITEM:
+      self->item = g_value_dup_object (value);
       break;
 
     case PROP_SESSION:
@@ -148,10 +158,15 @@ sysprof_mark_chart_item_class_init (SysprofMarkChartItemClass *klass)
   object_class->get_property = sysprof_mark_chart_item_get_property;
   object_class->set_property = sysprof_mark_chart_item_set_property;
 
+  properties[PROP_ITEM] =
+    g_param_spec_object ("item", NULL, NULL,
+                         SYSPROF_TYPE_MARKS_SECTION_MODEL_ITEM,
+                         (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+
   properties[PROP_CATALOG] =
     g_param_spec_object ("catalog", NULL, NULL,
                          SYSPROF_TYPE_MARK_CATALOG,
-                         (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   properties[PROP_MAX_ITEMS] =
     g_param_spec_uint ("max-items", NULL, NULL,
@@ -191,16 +206,22 @@ sysprof_mark_chart_item_init (SysprofMarkChartItem *self)
 }
 
 SysprofMarkChartItem *
-sysprof_mark_chart_item_new (SysprofSession     *session,
-                             SysprofMarkCatalog *catalog)
+sysprof_mark_chart_item_new (SysprofSession               *session,
+                             SysprofMarksSectionModelItem *item)
 {
   g_return_val_if_fail (SYSPROF_IS_SESSION (session), NULL);
-  g_return_val_if_fail (SYSPROF_IS_MARK_CATALOG (catalog), NULL);
+  g_return_val_if_fail (SYSPROF_IS_MARKS_SECTION_MODEL_ITEM (item), NULL);
 
   return g_object_new (SYSPROF_TYPE_MARK_CHART_ITEM,
                        "session", session,
-                       "catalog", catalog,
+                       "item", item,
                        NULL);
+}
+
+SysprofMarksSectionModelItem *
+sysprof_mark_chart_item_get_model_item (SysprofMarkChartItem *self)
+{
+  return self->item;
 }
 
 SysprofMarkCatalog *

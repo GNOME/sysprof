@@ -5,6 +5,10 @@
     <menu id="context_menu">
       <section>
         <item>
+          <attribute name="label" translatable="yes">Toggle marks</attribute>
+          <attribute name="action">markchartrow.toggle-catalog</attribute>
+        </item>
+        <item>
           <attribute name="label" translatable="yes">Set as Filter</attribute>
           <attribute name="action">markchartrow.filter-by-mark</attribute>
         </item>

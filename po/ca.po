@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
 "POT-Creation-Date: 2025-03-09 17:28+0000\n"
-"PO-Revision-Date: 2025-03-10 19:26+0100\n"
+"PO-Revision-Date: 2025-08-23 19:26+0100\n"
 "Last-Translator: maite guix <maite.guix@me.com>\n"
 "Language-Team: \n"
 "Language: ca\n"
@@ -169,7 +169,7 @@ msgstr "Anàlisi de la línia d'ordres del procés"
 
 #: src/libsysprof/sysprof-document.c:1485
 msgid "Analyzing file system overlays"
-msgstr "Analyzing file system overlays"
+msgstr "S'estan analitzant les superposicions del sistema de fitxers"
 
 #: src/libsysprof/sysprof-document.c:1488
 msgid "Processing counters"
@@ -201,7 +201,7 @@ msgstr "S'ha carregat el document"
 
 #: src/libsysprof/sysprof-document-loader.c:530
 msgid "Loading failed"
-msgstr "Ha fallat la carrega"
+msgstr "Ha fallat la càrrega"
 
 #: src/libsysprof/sysprof-document-loader.c:542
 #: src/libsysprof/sysprof-document-symbols.c:276
@@ -262,7 +262,7 @@ msgstr "--merge (fusió) requereix com a mínim 2 arguments de nom de fitxer"
 
 #: src/sysprof-cli/sysprof-cli.c:313
 msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
-msgstr "Desactiveu l'acceleració de la CPU durant el perfil"
+msgstr "Desactiveu l'acceleració de la CPU durant l'anàlisi del rendiment [Obsolet per a --power-profile]"
 
 #: src/sysprof-cli/sysprof-cli.c:314
 msgid "Make sysprof specific to a task [Deprecated]"
@@ -727,7 +727,7 @@ msgstr "S'ha de capturar al fitxer local"
 
 #: src/sysprof/sysprof-greeter.c:325 src/sysprof/sysprof-window.c:176
 msgid "You must choose a local file to capture using Sysprof"
-msgstr "S'ha de capturar al fitxer local utilitzant Sysprof"
+msgstr "Heu d'escollir un fitxer local per a capturar utilitzant Sysprof"
 
 #: src/sysprof/sysprof-greeter.c:326 src/sysprof/sysprof-recording-pad.c:119
 #: src/sysprof/sysprof-window.c:177 src/sysprof/sysprof-window.c:764
@@ -873,8 +873,7 @@ msgstr "Neteja l'entorn"
 #: src/sysprof/sysprof-greeter.ui:265
 msgid "Clear the environment before launching application"
 msgstr ""
-"Netegeu l'entorn abans d'iniciar l'aplicacióEstableix la variable d'entorn "
-"del GTK_TRACE_FD per a seguir una aplicació GTK"
+"Netegeu l'entorn abans d'iniciar l'aplicació"
 
 #: src/sysprof/sysprof-greeter.ui:291
 msgid "Add _Variable"
@@ -1158,7 +1157,7 @@ msgstr "Promig"
 
 #: src/sysprof/sysprof-marks-section.ui:419
 msgid "Median"
-msgstr "Mitjana"
+msgstr "Mediana"
 
 #: src/sysprof/sysprof-mark-table.ui:47
 msgid "Start"
@@ -1210,7 +1209,7 @@ msgstr "Traces de la pila"
 
 #: src/sysprof/sysprof-memory-section.ui:88
 msgid "Allocations"
-msgstr "Totes les assignacions"
+msgstr "Assignacions"
 
 #: src/sysprof/sysprof-memory-section.ui:144
 msgid "Leaks"
@@ -1401,7 +1400,7 @@ msgid ""
 "%s"
 msgstr ""
 "No s'ha pogut carregar el document. Si us plau, comproveu que teniu el "
-"correctefitxer de captura.\n"
+"fitxer correcte de captura.\n"
 "\n"
 "%s"
 

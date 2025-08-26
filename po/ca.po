@@ -1,15 +1,15 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# Jordi Mas i Hernàndez <jmas@softcatala.org>, 2021
+# Jordi Mas i Hernàndez <jmas@softcatala.org>, 2021, 2025
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
 "POT-Creation-Date: 2025-03-09 17:28+0000\n"
-"PO-Revision-Date: 2025-08-23 19:26+0100\n"
-"Last-Translator: maite guix <maite.guix@me.com>\n"
+"PO-Revision-Date: 2025-08-26 19:26+0100\n"
+"Last-Translator: Jordi Mas i Hernàndez <jmas@softcatala.org>\n"
 "Language-Team: \n"
 "Language: ca\n"
 "MIME-Version: 1.0\n"
@@ -236,7 +236,7 @@ msgstr "Mostra"
 
 #: src/libsysprof/sysprof-system-logs.c:171
 msgid "System Logs"
-msgstr "Sistema de registres"
+msgstr "Registres del sistema"
 
 #: src/libsysprof/sysprof-system-logs.c:172
 msgid "Recording system logs is not supported on your platform."
@@ -741,7 +741,7 @@ msgstr "Captura del sistema des de %s.syscap"
 
 #: src/sysprof/sysprof-greeter.c:353
 msgid "Record to File"
-msgstr "Registre al fitxer"
+msgstr "Enregistra al fitxer"
 
 #: src/sysprof/sysprof-greeter.c:354
 msgid "Record"
@@ -816,7 +816,7 @@ msgstr ""
 msgid ""
 "Sysprof must launch your application to record JavaScript stacks using GJS."
 msgstr ""
-"Sysprof ha d'iniciar la vostra aplicació per gravar les piles de JavaScript "
+"Sysprof ha d'iniciar la vostra aplicació per a enregistrar les piles de JavaScript "
 "mitjançant GJS."
 
 #: src/sysprof/sysprof-greeter.ui:179
@@ -843,7 +843,7 @@ msgstr ""
 
 #: src/sysprof/sysprof-greeter.ui:209
 msgid "Sysprof must launch your application to record memory allocations."
-msgstr "Sysprof està ocupat analitzant les assignacions de memòria."
+msgstr "El Sysprof ha de llançar la vostra aplicació per a enregistrar les assignacions de memòria."
 
 #: src/sysprof/sysprof-greeter.ui:227 src/sysprof/sysprof-greeter.ui:232
 msgid "Application"

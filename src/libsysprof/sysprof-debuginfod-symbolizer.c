@@ -53,7 +53,49 @@ struct _SysprofDebuginfodSymbolizerClass
   SysprofSymbolizerClass parent_class;
 };
 
-G_DEFINE_FINAL_TYPE (SysprofDebuginfodSymbolizer, sysprof_debuginfod_symbolizer, SYSPROF_TYPE_SYMBOLIZER)
+static gboolean
+sysprof_debuginfod_symbolizer_initable_init (GInitable     *initable,
+                                             GCancellable  *cancellable,
+                                             GError       **error)
+{
+#if HAVE_DEBUGINFOD
+  SysprofDebuginfodSymbolizer *self = SYSPROF_DEBUGINFOD_SYMBOLIZER (initable);
+  debuginfod_client *client;
+
+  /* Don't even allow creating a SysprofDebuginfodSymbolizer instance unless we
+   * can create a new debuginfod_client. This ensures that even if an application
+   * does `g_initable_new(SYSPROF_TYPE_DEBUGINFOD_SYMBOLIZER, NULL, error, NULL)`
+   * they will get `NULL` back instead of a misconfigured instance.
+   */
+  if (!(client = debuginfod_begin ()))
+    {
+      g_set_error_literal (error,
+                           G_IO_ERROR,
+                           g_io_error_from_errno (ENOTSUP),
+                           g_strerror (ENOTSUP));
+      return FALSE;
+    }
+
+  self->client = client;
+
+  return TRUE;
+#else
+  g_set_error_literal (error,
+                       G_IO_ERROR,
+                       g_io_error_from_errno (ENOTSUP),
+                       g_strerror (ENOTSUP));
+  return FALSE;
+#endif
+}
+
+static void
+initable_init (GInitableIface *iface)
+{
+  iface->init = sysprof_debuginfod_symbolizer_initable_init;
+}
+
+G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofDebuginfodSymbolizer, sysprof_debuginfod_symbolizer, SYSPROF_TYPE_SYMBOLIZER,
+                               G_IMPLEMENT_INTERFACE (G_TYPE_INITABLE, initable_init))
 
 static SysprofSymbol *
 sysprof_debuginfod_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
@@ -195,44 +237,12 @@ sysprof_debuginfod_symbolizer_finalize (GObject *object)
   G_OBJECT_CLASS (sysprof_debuginfod_symbolizer_parent_class)->finalize (object);
 }
 
-static GObject *
-sysprof_debuginfod_symbolizer_constructor (GType                  type,
-                                           guint                  n_construct_params,
-                                           GObjectConstructParam *construct_properties)
-{
-#if HAVE_DEBUGINFOD
-  debuginfod_client *client;
-  GObject *object;
-
-  g_assert (type == SYSPROF_TYPE_DEBUGINFOD_SYMBOLIZER);
-
-  /* Don't even allow creating a SysprofDebuginfodSymbolizer instance unless we
-   * can create a new debuginfod_client. This ensures that even if an application
-   * does `g_object_new(SYSPROF_TYPE_DEBUGINFOD_SYMBOLIZER, NULL)` they will get
-   * `NULL` back instead of a misconfigured instance.
-   */
-  if (!(client = debuginfod_begin ()))
-    return NULL;
-
-  object = G_OBJECT_CLASS (sysprof_debuginfod_symbolizer_parent_class)
-      ->constructor (type, n_construct_params, construct_properties);
-
-  SYSPROF_DEBUGINFOD_SYMBOLIZER (object)->client = client;
-
-  return object;
-#else
-  errno = ENOTSUP;
-  return NULL;
-#endif
-}
-
 static void
 sysprof_debuginfod_symbolizer_class_init (SysprofDebuginfodSymbolizerClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   SysprofSymbolizerClass *symbolizer_class = SYSPROF_SYMBOLIZER_CLASS (klass);
 
-  object_class->constructor = sysprof_debuginfod_symbolizer_constructor;
   object_class->dispose = sysprof_debuginfod_symbolizer_dispose;
   object_class->finalize = sysprof_debuginfod_symbolizer_finalize;
 
@@ -255,15 +265,8 @@ sysprof_debuginfod_symbolizer_new (GError **error)
 {
   SysprofSymbolizer *self;
 
-  if (!(self = g_object_new (SYSPROF_TYPE_DEBUGINFOD_SYMBOLIZER, NULL)))
-    {
-      int errsv = errno;
-      g_set_error_literal (error,
-                           G_IO_ERROR,
-                           g_io_error_from_errno (errsv),
-                           g_strerror (errsv));
-      return NULL;
-    }
+  if (!(self = g_initable_new (SYSPROF_TYPE_DEBUGINFOD_SYMBOLIZER, NULL, error, NULL)))
+    return NULL;
 
   return self;
 }

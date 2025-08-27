@@ -48,6 +48,11 @@ libsysprof_capture_deps = [
   dependency('threads'),
 ]
 
+libsysprof_capture_link_args = []
+if cc.has_link_argument('-Wl,-z,nodelete')
+  libsysprof_capture_link_args += ['-Wl,-z,nodelete']
+endif
+
 libsysprof_capture = static_library(
   'sysprof-capture-@0@'.format(libsysprof_capture_api_version),
   (libsysprof_capture_sources +
@@ -55,6 +60,7 @@ libsysprof_capture = static_library(
 
            dependencies: libsysprof_capture_deps,
                  c_args: [ '-DSYSPROF_CAPTURE_COMPILATION' ],
+              link_args: libsysprof_capture_link_args,
                 install: install_static,
   gnu_symbol_visibility: 'hidden',
                     pic: true,
@@ -66,6 +72,7 @@ libsysprof_capture_dep = declare_dependency(
            link_whole: libsysprof_capture,
          dependencies: libsysprof_capture_deps,
   include_directories: libsysprof_capture_include_dirs,
+            link_args: libsysprof_capture_link_args,
 )
 meson.override_dependency('sysprof-capture-@0@'.format(libsysprof_capture_api_version), libsysprof_capture_dep)
 
@@ -75,6 +82,7 @@ if install_static
         subdirs: [ sysprof_header_subdir ],
     description: 'The static capture library for tools that generate profiling capture data',
       variables: [ 'datadir=' + datadir_for_pc_file ],
+    libraries: libsysprof_capture_link_args,
     libraries_private: libsysprof_capture_deps,
   )
 endif

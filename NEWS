@@ -1,3 +1,15 @@
+Overview of changes in Sysprof 48.1
+===================================
+
+ * Round mapped ring buffer the shared memory boundary on hppa.
+ * Try to talk to perf with direct syscalls in the absence of
+   a D-Bus connection.
+ * Add --no-sysprofd command line option to sysprof-cli
+ * Properly parse --no-debuginfod in sysprof-cli.
+ * Fix an uninitialized memory issue when using counters with
+   the collector API of libsysprof-capture.
+ * Translation updates.
+
 Overview of changes in Sysprof 48.0
 ===================================
 

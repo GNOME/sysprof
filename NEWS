@@ -1,3 +1,15 @@
+Overview of changes in Sysprof 49.rc
+====================================
+
+ * Ensure libdex is initialized in various tools.
+ * Add support for building introspection and documentation. This really
+   is just used for developers of Sysprof, so it is unlikely that
+   distributions will want to install this.
+ * Make debuginfod symbolizer work with recent GObject changes.
+ * Fix warnings when building with Clang
+ * Use app metadata instead of appinfo
+ * Translation updates
+
 Overview of changes in Sysprof 49.alpha
 =======================================
 

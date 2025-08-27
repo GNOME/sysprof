@@ -47,7 +47,7 @@ need_libsysprof = (need_gtk or
 
 dex_req = '0.9'
 glib_req = '2.76.0'
-gtk_req = '4.15'
+gtk_req = '4.19.4'
 polkit_req = '0.105'
 
 dex_req_version = '>= @0@'.format(dex_req)

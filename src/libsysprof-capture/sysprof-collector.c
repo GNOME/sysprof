@@ -872,6 +872,11 @@ sysprof_collector_set_counters (const unsigned int               *counters_ids,
         set->padding2 = 0;
         set->n_values = n_groups;
 
+        /* Zero all groups upfront as we might not populate them fully, and a
+         * single aligned memset is faster than zeroing the leftover values.
+         */
+        memset (set->values, 0, n_groups * sizeof (SysprofCaptureCounterValues));
+
         for (i = 0, group = 0, field = 0; i < n_counters; i++)
           {
             set->values[group].ids[field] = counters_ids[i];

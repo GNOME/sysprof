@@ -8,6 +8,7 @@ Overview of changes in Sysprof 49.rc
  * Make debuginfod symbolizer work with recent GObject changes.
  * Fix warnings when building with Clang
  * Use app metadata instead of appinfo
+ * Ensure counters clear ring buffer before writing new values
  * Translation updates
 
 Overview of changes in Sysprof 49.alpha

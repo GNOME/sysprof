@@ -73,7 +73,7 @@
                 <property name="icon-name">mark-chart-symbolic</property>
                 <property name="child">
                   <object class="SysprofMarkChart" id="mark_chart">
-                    <property name="max-items">5000</property>
+                    <property name="max-items">1000</property>
                     <property name="marks-section-model">section_model</property>
                   </object>
                 </property>

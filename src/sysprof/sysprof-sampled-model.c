@@ -287,8 +287,7 @@ sysprof_sampled_model_set_model (SysprofSampledModel *self,
 
   new_n_items = g_list_model_get_n_items (G_LIST_MODEL (self));
 
-  if (new_n_items != old_n_items)
-    g_list_model_items_changed (G_LIST_MODEL (self), 0, old_n_items, new_n_items);
+  g_list_model_items_changed (G_LIST_MODEL (self), 0, old_n_items, new_n_items);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_MODEL]);
 }

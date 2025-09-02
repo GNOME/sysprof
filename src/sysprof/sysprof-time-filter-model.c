@@ -30,6 +30,7 @@ struct _SysprofTimeFilterModel
   GtkExpression     *expression;
   GtkSliceListModel *slice;
   SysprofTimeSpan    time_span;
+  GSignalGroup      *signal_group;
   guint              inclusive : 1;
 };
 
@@ -92,6 +93,7 @@ sysprof_time_filter_model_finalize (GObject *object)
 {
   SysprofTimeFilterModel *self = (SysprofTimeFilterModel *)object;
 
+  g_clear_object (&self->signal_group);
   g_clear_object (&self->slice);
   g_clear_pointer (&self->expression, gtk_expression_unref);
 
@@ -201,6 +203,12 @@ sysprof_time_filter_model_class_init (SysprofTimeFilterModelClass *klass)
 static void
 sysprof_time_filter_model_init (SysprofTimeFilterModel *self)
 {
+  self->signal_group = g_signal_group_new (G_TYPE_LIST_MODEL);
+  g_signal_group_connect_swapped (self->signal_group,
+                                  "items-changed",
+                                  G_CALLBACK (sysprof_time_filter_model_update),
+                                  self);
+
   self->expression = gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_FRAME, NULL, "time");
   self->inclusive = TRUE;
 
@@ -446,6 +454,7 @@ sysprof_time_filter_model_set_model (SysprofTimeFilterModel *self,
   if (model == sysprof_time_filter_model_get_model (self))
     return;
 
+  g_signal_group_set_target (self->signal_group, model);
   gtk_slice_list_model_set_model (self->slice, model);
   sysprof_time_filter_model_update (self);
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_MODEL]);

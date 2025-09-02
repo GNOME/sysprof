@@ -64,7 +64,7 @@ sysprof_mark_chart_item_constructed (GObject *object)
   self->catalog = sysprof_marks_section_model_item_get_item (self->item);
   g_assert (SYSPROF_IS_MARK_CATALOG (self->catalog));
 
-  sysprof_sampled_model_set_model (self->sampled, G_LIST_MODEL (self->catalog));
+  sysprof_time_filter_model_set_model (self->filtered, G_LIST_MODEL (self->catalog));
 
   g_object_bind_property (self->session, "selected-time",
                           self->filtered, "time-span",
@@ -193,13 +193,11 @@ sysprof_mark_chart_item_init (SysprofMarkChartItem *self)
   self->max_items = 1000;
 
   self->filtered = sysprof_time_filter_model_new (NULL, NULL);
-  self->sampled = sysprof_sampled_model_new (NULL, self->max_items);
-
-  sysprof_time_filter_model_set_model (self->filtered,
-                                       G_LIST_MODEL (self->sampled));
+  self->sampled = sysprof_sampled_model_new (g_object_ref (G_LIST_MODEL (self->filtered)),
+                                             self->max_items);
 
   self->series = sysprof_time_series_new (NULL,
-                                          g_object_ref (G_LIST_MODEL (self->filtered)),
+                                          g_object_ref (G_LIST_MODEL (self->sampled)),
                                           gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_MARK, NULL, "time"),
                                           gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_MARK, NULL, "end-time"),
                                           gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_MARK, NULL, "message"));

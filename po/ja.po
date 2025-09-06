@@ -1,0 +1,1519 @@
+# Japanese translation for sysprof.
+# Copyright (C) 2025 sysprof's COPYRIGHT HOLDER
+# This file is distributed under the same license as the sysprof package.
+# Makoto Sakaguchi <ycco34vx@gmail.com>,  2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sysprof master\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
+"POT-Creation-Date: 2025-08-28 03:17+0000\n"
+"PO-Revision-Date: 2025-08-28 13:40+0900\n"
+"Last-Translator: Makoto Sakaguchi <ycco34vx@gmail.com>\n"
+"Language-Team: Japanese <gnome-translation@gnome.gr.jp>\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 3.7\n"
+
+#: data/org.gnome.Sysprof.desktop.in.in:3
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:6
+#: src/sysprof/sysprof-application.c:268 src/sysprof/sysprof-application.c:345
+#: src/sysprof/sysprof-recording-pad.ui:20 src/sysprof/sysprof-window.c:253
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-greeter.ui:89
+msgid "Profiler"
+msgstr "プロファイラー"
+
+#: data/org.gnome.Sysprof.desktop.in.in:5
+msgid "Profile an application or entire system."
+msgstr "アプリケーションまたはシステム全体をプロファイルする。"
+
+#: data/org.gnome.Sysprof.desktop.in.in:20
+msgid "Start New Recording"
+msgstr "新しい記録を開始"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:7
+msgid "Profile an application or entire system"
+msgstr "アプリケーションまたはシステム全体をプロファイルする"
+
+#. developer_name tag deprecated with Appstream 1.0
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:11
+msgid "Christian Hergert"
+msgstr "Christian Hergert"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:17
+msgid ""
+"Sysprof allows you to profile applications to aid in debugging and "
+"optimization."
+msgstr ""
+"Sysprof では、デバッグと最適化を支援するためにアプリケーションをプロファイル"
+"できます。"
+
+#: src/libsysprof/sysprof-category-summary.c:136
+msgid "Uncategorized"
+msgstr "未分類"
+
+#: src/libsysprof/sysprof-category-summary.c:139
+msgid "Accessibility"
+msgstr "アクセシビリティ"
+
+#: src/libsysprof/sysprof-category-summary.c:142
+msgid "Actions"
+msgstr "アクション"
+
+#: src/libsysprof/sysprof-category-summary.c:145
+msgid "Crash Handler"
+msgstr "クラッシュハンドラー"
+
+#: src/libsysprof/sysprof-category-summary.c:148
+msgid "Context Switches"
+msgstr "コンテキストスイッチ"
+
+#: src/libsysprof/sysprof-category-summary.c:151
+msgid "CSS"
+msgstr "CSS"
+
+#: src/libsysprof/sysprof-category-summary.c:154
+#: src/sysprof/sysprof-greeter.ui:402 src/sysprof/sysprof-window.ui:393
+msgid "Graphics"
+msgstr "グラフィック"
+
+#: src/libsysprof/sysprof-category-summary.c:157
+msgid "Icons"
+msgstr "アイコン"
+
+#: src/libsysprof/sysprof-category-summary.c:160
+msgid "Input"
+msgstr "入力"
+
+#: src/libsysprof/sysprof-category-summary.c:163
+msgid "IO"
+msgstr "IO"
+
+#: src/libsysprof/sysprof-category-summary.c:166
+msgid "IPC"
+msgstr "IPC"
+
+#: src/libsysprof/sysprof-category-summary.c:169
+msgid "JavaScript"
+msgstr "JavaScript"
+
+#: src/libsysprof/sysprof-category-summary.c:172
+msgid "Kernel"
+msgstr "カーネル"
+
+#: src/libsysprof/sysprof-category-summary.c:175
+msgid "Layout"
+msgstr "レイアウト"
+
+#: src/libsysprof/sysprof-category-summary.c:178
+msgid "Locking"
+msgstr "ロック"
+
+#: src/libsysprof/sysprof-category-summary.c:181
+msgid "Main Loop"
+msgstr "メインループ"
+
+#: src/libsysprof/sysprof-category-summary.c:184
+msgid "Memory"
+msgstr "メモリ"
+
+#: src/libsysprof/sysprof-category-summary.c:187
+msgid "Paint"
+msgstr "描画"
+
+#: src/libsysprof/sysprof-category-summary.c:190
+msgid "Type System"
+msgstr "型システム"
+
+#: src/libsysprof/sysprof-category-summary.c:193
+msgid "Unwindable"
+msgstr "アンワインド可能"
+
+#: src/libsysprof/sysprof-category-summary.c:196
+msgid "Windowing"
+msgstr "ウィンドウ処理"
+
+#: src/libsysprof/sysprof-debuginfod-task.c:97
+msgid "Downloading Symbols…"
+msgstr "シンボルをダウンロード中…"
+
+#: src/libsysprof/sysprof-document-allocation.c:151
+msgid "Allocation"
+msgstr "割り当て"
+
+#: src/libsysprof/sysprof-document.c:570
+msgid "Unknown Process"
+msgstr "不明なプロセス"
+
+#: src/libsysprof/sysprof-document.c:1251
+#: src/libsysprof/sysprof-document.c:1287
+msgid "Indexing capture data frames"
+msgstr "キャプチャデータフレームのインデックス化"
+
+#: src/libsysprof/sysprof-document.c:1473
+msgid "Discovering file system mounts"
+msgstr "ファイルシステムマウントの検出"
+
+#: src/libsysprof/sysprof-document.c:1476
+msgid "Discovering process mount namespaces"
+msgstr "プロセスマウント名前空間の検出"
+
+#: src/libsysprof/sysprof-document.c:1479
+msgid "Analyzing process address layouts"
+msgstr "プロセスアドレス配置の解析"
+
+#: src/libsysprof/sysprof-document.c:1482
+msgid "Analyzing process command line"
+msgstr "プロセスコマンドラインの解析"
+
+#: src/libsysprof/sysprof-document.c:1485
+msgid "Analyzing file system overlays"
+msgstr "ファイルシステムオーバーレイの解析"
+
+#: src/libsysprof/sysprof-document.c:1488
+msgid "Processing counters"
+msgstr "カウンタの処理"
+
+#: src/libsysprof/sysprof-document.c:2480
+#: src/libsysprof/sysprof-document.c:2499
+#, c-format
+msgid "Recording at %X %x"
+msgstr "%X %x で記録中"
+
+#: src/libsysprof/sysprof-document.c:2483
+#: src/libsysprof/sysprof-document.c:2502
+#, c-format
+msgid "Recording at %s"
+msgstr "%s で記録中"
+
+#: src/libsysprof/sysprof-document-dbus-message.c:152
+msgid "D-Bus Message"
+msgstr "D-Bus メッセージ"
+
+#: src/libsysprof/sysprof-document-frame.c:139
+msgid "Frame"
+msgstr "フレーム"
+
+#: src/libsysprof/sysprof-document-loader.c:499
+msgid "Document loaded"
+msgstr "ドキュメントが読み込まれました"
+
+#: src/libsysprof/sysprof-document-loader.c:530
+msgid "Loading failed"
+msgstr "読み込み失敗"
+
+#: src/libsysprof/sysprof-document-loader.c:542
+#: src/libsysprof/sysprof-document-symbols.c:276
+msgid "Symbolizing stack traces"
+msgstr "スタックトレースのシンボル化"
+
+#: src/libsysprof/sysprof-document-loader.c:611
+msgid "Loading document"
+msgstr "ドキュメントを読み込み中"
+
+#: src/libsysprof/sysprof-document-log.c:85
+msgid "Log"
+msgstr "ログ"
+
+#: src/libsysprof/sysprof-document-mark.c:134
+msgid "Mark"
+msgstr "マーク"
+
+#: src/libsysprof/sysprof-document-process.c:293
+#, c-format
+msgid "%s [Process %d]"
+msgstr "%s [プロセス %d]"
+
+#: src/libsysprof/sysprof-document-process.c:295
+#, c-format
+msgid "Process %d"
+msgstr "プロセス %d"
+
+#: src/libsysprof/sysprof-document-sample.c:136
+msgid "Sample"
+msgstr "サンプル"
+
+#: src/libsysprof/sysprof-system-logs.c:171
+msgid "System Logs"
+msgstr "システムログ"
+
+#: src/libsysprof/sysprof-system-logs.c:172
+msgid "Recording system logs is not supported on your platform."
+msgstr "お使いのプラットフォームでは、システムログの記録に対応していません。"
+
+#: src/libsysprof/sysprof-tracer.c:65
+msgid "Tracer"
+msgstr "トレーサー"
+
+#: src/libsysprof/sysprof-tracer.c:66
+msgid ""
+"Tracing requires spawning a program compiled with ‘-finstrument-functions’. "
+"Tracing will not be available."
+msgstr ""
+"トレースを実行するには、‘-finstrument-functions’ でコンパイルされたプログラム"
+"を起動する必要があります。トレースは利用できません。"
+
+#: src/sysprof-cli/sysprof-cli.c:120
+msgid "--merge requires at least 2 filename arguments"
+msgstr "--merge には少なくとも2つのファイル名引数が必要です"
+
+#: src/sysprof-cli/sysprof-cli.c:319
+msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
+msgstr ""
+"プロファイリング中にCPUスロットリングを無効にする [--power-profile により非推"
+"奨]"
+
+#: src/sysprof-cli/sysprof-cli.c:320
+msgid "Make sysprof specific to a task [Deprecated]"
+msgstr "sysprof を特定のタスクに限定する [非推奨]"
+
+#: src/sysprof-cli/sysprof-cli.c:320 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof/sysprof-logs-section.ui:181
+#: src/sysprof/sysprof-processes-section.ui:283
+#: src/sysprof/sysprof-traceables-utility.ui:52
+msgid "PID"
+msgstr "PID"
+
+#: src/sysprof-cli/sysprof-cli.c:321
+msgid "Run a command and profile the process"
+msgstr "コマンドを実行してプロセスをプロファイリングする"
+
+#: src/sysprof-cli/sysprof-cli.c:321
+msgid "COMMAND"
+msgstr "COMMAND"
+
+#: src/sysprof-cli/sysprof-cli.c:322
+msgid ""
+"Set environment variable for spawned process. Can be used multiple times."
+msgstr "起動するプロセスの環境変数を設定します。複数回使用可能です。"
+
+#: src/sysprof-cli/sysprof-cli.c:322
+msgid "VAR=VALUE"
+msgstr "VAR=VALUE"
+
+#: src/sysprof-cli/sysprof-cli.c:323
+msgid "Force overwrite the capture file"
+msgstr "キャプチャファイルを強制的に上書きする"
+
+#: src/sysprof-cli/sysprof-cli.c:324
+msgid "Disable recording of battery statistics"
+msgstr "バッテリー統計の記録を無効にする"
+
+#: src/sysprof-cli/sysprof-cli.c:325
+msgid "Disable recording of CPU statistics"
+msgstr "CPU 統計の記録を無効にする"
+
+#: src/sysprof-cli/sysprof-cli.c:326
+msgid "Disable recording of Disk statistics"
+msgstr "ディスク統計の記録を無効にする"
+
+#: src/sysprof-cli/sysprof-cli.c:327
+msgid "Do not record stacktraces using Linux perf"
+msgstr "Linux perf を使用したスタックトレースを記録しない"
+
+#: src/sysprof-cli/sysprof-cli.c:328
+msgid "Do not append symbol name information from local machine"
+msgstr "ローカルマシンからシンボル名情報を追加しない"
+
+#: src/sysprof-cli/sysprof-cli.c:329
+msgid "Disable recording of memory statistics"
+msgstr "メモリ統計の記録を無効にする"
+
+#: src/sysprof-cli/sysprof-cli.c:330
+msgid "Disable recording of network statistics"
+msgstr "ネットワーク統計の記録を無効にする"
+
+#: src/sysprof-cli/sysprof-cli.c:331
+msgid "Set SYSPROF_TRACE_FD environment for subprocess"
+msgstr "サブプロセスに SYSPROF_TRACE_FD 環境変数を設定する"
+
+#: src/sysprof-cli/sysprof-cli.c:332
+msgid "Track when processes are scheduled"
+msgstr "プロセスのスケジューリングを追跡する"
+
+#: src/sysprof-cli/sysprof-cli.c:333
+msgid "Profile the D-Bus session bus"
+msgstr "D-Bus セッションバスをプロファイルする"
+
+#: src/sysprof-cli/sysprof-cli.c:334
+msgid "Profile the D-Bus system bus"
+msgstr "D-Bus システムバスをプロファイルする"
+
+#: src/sysprof-cli/sysprof-cli.c:335
+msgid "Set GJS_TRACE_FD environment to trace GJS processes"
+msgstr "GJS プロセス追跡用の GJS_TRACE_FD 環境変数を設定する"
+
+#: src/sysprof-cli/sysprof-cli.c:336
+msgid "Set GTK_TRACE_FD environment to trace a GTK application"
+msgstr "GTK アプリケーション追跡用の GTK_TRACE_FD 環境変数を設定する"
+
+#: src/sysprof-cli/sysprof-cli.c:337
+msgid "Include RAPL energy statistics"
+msgstr "RAPL エネルギー統計情報を含める"
+
+#: src/sysprof-cli/sysprof-cli.c:338
+msgid "Profile memory allocations and frees"
+msgstr "メモリ割り当てと解放をプロファイルする"
+
+#: src/sysprof-cli/sysprof-cli.c:339
+msgid "Connect to org.gnome.Shell for profiler statistics"
+msgstr "org.gnome.Shell に接続してプロファイラー統計を取得する"
+
+#: src/sysprof-cli/sysprof-cli.c:340
+msgid "Track performance of the applications main loop"
+msgstr "アプリケーションのメインループのパフォーマンスを追跡する"
+
+#: src/sysprof-cli/sysprof-cli.c:342
+msgid "Merge all provided *.syscap files and write to stdout"
+msgstr "提供されたすべての *.syscap ファイルをマージして標準出力に書き出す"
+
+#: src/sysprof-cli/sysprof-cli.c:343
+msgid "Print the sysprof-cli version and exit"
+msgstr "sysprof-cli のバージョンを表示して終了する"
+
+#: src/sysprof-cli/sysprof-cli.c:344
+msgid "The size of the buffer in pages (1 = 1 page)"
+msgstr "バッファーサイズ (ページ単位、1 = 1 ページ)"
+
+#: src/sysprof-cli/sysprof-cli.c:345
+msgid "Additional D-Bus address to monitor"
+msgstr "監視する追加の D-Bus アドレス"
+
+#: src/sysprof-cli/sysprof-cli.c:346
+msgid "Stack size to copy for unwinding in user-space"
+msgstr "ユーザー空間でのアンワインド用にコピーするスタックサイズ"
+
+#: src/sysprof-cli/sysprof-cli.c:347
+msgid "Do not use debuginfod to resolve symbols"
+msgstr "シンボル解決に debuginfod を使用しない"
+
+#: src/sysprof-cli/sysprof-cli.c:348
+msgid "Do not use Sysprofd to acquire privileges"
+msgstr "権限取得に Sysprofd を使用しない"
+
+#: src/sysprof-cli/sysprof-cli.c:382
+msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
+msgstr "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
+
+#: src/sysprof-cli/sysprof-cli.c:385
+msgid ""
+"\n"
+"Examples:\n"
+"\n"
+"  # Record gtk4-widget-factory using trace-fd to get application provided\n"
+"  # data as well as GTK and GNOME Shell data providers\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"  # Merge multiple syscap files into one\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+"\n"
+"  # Unwind by capturing stack/register contents instead of frame-pointers\n"
+"  # where the stack-size is a multiple of page-size\n"
+"  sysprof-cli --stack-size=8192\n"
+msgstr ""
+"\n"
+"例:\n"
+"\n"
+"  # trace-fdを使用してgtk4-widget-factoryを記録し、アプリケーション提供\n"
+"  # データおよびGTKとGNOME Shellのデータプロバイダーを取得\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"  # 複数のsyscapファイルを1つにマージ\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+"\n"
+"  # フレームポインターではなくスタック/レジスター内容をキャプチャして\n"
+"  # アンワインドを実行（スタックサイズはページサイズの倍数）\n"
+"  sysprof-cli --stack-size=8192\n"
+
+#: src/sysprof-cli/sysprof-cli.c:425
+msgid "Too many arguments were passed to sysprof-cli:"
+msgstr "sysprof-cli に渡された引数が多すぎます:"
+
+#. Translators: %s is a file name.
+#: src/sysprof-cli/sysprof-cli.c:482
+#, c-format
+msgid "%s exists. Use --force to overwrite\n"
+msgstr "%s が存在します。上書きするには --force を使用してください\n"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:13
+msgid "Profile the system"
+msgstr "システムをプロファイルする"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:14
+msgid "Authentication is required to profile the system."
+msgstr "システムをプロファイルするには認証が必要です。"
+
+#: src/sysprof/gtk/help-overlay.ui:11
+msgctxt "shortcut window"
+msgid "Recording View"
+msgstr "記録ビュー"
+
+#: src/sysprof/gtk/help-overlay.ui:14
+msgctxt "shortcut window"
+msgid "Start New Recording"
+msgstr "新しい記録を開始"
+
+#: src/sysprof/gtk/help-overlay.ui:20
+msgctxt "shortcut window"
+msgid "Save As"
+msgstr "名前を付けて保存する"
+
+#: src/sysprof/gtk/help-overlay.ui:26
+msgctxt "shortcut window"
+msgid "Toggle Visibility of Main Sidebar"
+msgstr "メインサイドバーの表示/非表示を切り替え"
+
+#: src/sysprof/gtk/help-overlay.ui:32
+msgctxt "shortcut window"
+msgid "Toggle Visibility of Stack Trace Sidebar"
+msgstr "スタックトレースサイドバーの表示/非表示を切り替え"
+
+#: src/sysprof/gtk/help-overlay.ui:40
+msgctxt "shortcut window"
+msgid "General"
+msgstr "全般"
+
+#: src/sysprof/gtk/help-overlay.ui:43
+msgctxt "shortcut window"
+msgid "Open Recording"
+msgstr "記録を開く"
+
+#: src/sysprof/gtk/help-overlay.ui:49
+msgctxt "shortcut window"
+msgid "Close Window"
+msgstr "ウィンドウを閉じる"
+
+#: src/sysprof/gtk/help-overlay.ui:56
+msgctxt "shortcut window"
+msgid "Show Help"
+msgstr "ヘルプを表示する"
+
+#: src/sysprof/gtk/help-overlay.ui:62
+msgctxt "shortcut window"
+msgid "Show keyboard shortcuts"
+msgstr "キーボードショートカットを表示する"
+
+#: src/sysprof/gtk/help-overlay.ui:68
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "終了する"
+
+#: src/sysprof/gtk/menus.ui:6
+msgid "Make Function Root"
+msgstr "関数をルートにする"
+
+#: src/sysprof/gtk/menus.ui:11 src/sysprof/sysprof-process-dialog.ui:520
+msgid "Options"
+msgstr "オプション"
+
+#: src/sysprof/gtk/menus.ui:13 src/sysprof/sysprof-window.ui:497
+msgid "Categorize Frames"
+msgstr "フレームを分類する"
+
+#: src/sysprof/gtk/menus.ui:17 src/sysprof/sysprof-window.ui:501
+msgid "Hide System Libraries"
+msgstr "システムライブラリを隠す"
+
+#: src/sysprof/gtk/menus.ui:21 src/sysprof/sysprof-window.ui:505
+msgid "Include Threads"
+msgstr "スレッドを含める"
+
+#: src/sysprof/gtk/menus.ui:25 src/sysprof/sysprof-window.ui:509
+msgid "Bottom Up"
+msgstr "ボトムアップ"
+
+#: src/sysprof/gtk/menus.ui:29 src/sysprof/sysprof-window.ui:513
+msgid "Ignore Kernel Processes"
+msgstr "カーネルプロセスを無視する"
+
+#: src/sysprof/gtk/menus.ui:33 src/sysprof/sysprof-window.ui:517
+msgid "Ignore Process 0"
+msgstr "プロセス 0 を無視する"
+
+#: src/sysprof/gtk/menus.ui:37 src/sysprof/sysprof-window.ui:521
+msgid "Merge Similar Processes"
+msgstr "類似プロセスを統合する"
+
+#: src/sysprof/sysprof-animation.c:1038
+#, c-format
+msgid "Failed to find property %s in %s"
+msgstr "%2$s 内にプロパティ %1$s が見つかりません"
+
+#: src/sysprof/sysprof-animation.c:1047
+#, c-format
+msgid "Failed to retrieve va_list value: %s"
+msgstr "va_list 値の取得に失敗しました: %s"
+
+#: src/sysprof/sysprof-application.c:38
+msgid "Start a new recording"
+msgstr "新しい記録を開始"
+
+#: src/sysprof/sysprof-application.c:39
+msgid "Show Sysprof version and exit"
+msgstr "バージョン情報を表示して終了"
+
+#: src/sysprof/sysprof-application.c:277
+msgid "A system profiler"
+msgstr "システムプロファイラー"
+
+#: src/sysprof/sysprof-application.c:278
+msgid "translator-credits"
+msgstr ""
+"Japanese Translation Team https://l10n.gnome.org/teams/ja/\n"
+"Makoto Sakaguchi <ycco34vx@gmail.com>"
+
+#: src/sysprof/sysprof-callgraph-view.ui:22
+msgid "Functions"
+msgstr "関数"
+
+#: src/sysprof/sysprof-callgraph-view.ui:71
+msgid "Filter Functions"
+msgstr "関数をフィルタ"
+
+#: src/sysprof/sysprof-callgraph-view.ui:94
+msgid "Callers"
+msgstr "呼び出し元"
+
+#: src/sysprof/sysprof-callgraph-view.ui:146
+msgid "Descendants"
+msgstr "呼び出し先"
+
+#: src/sysprof/sysprof-counters-section.ui:26
+#: src/sysprof/sysprof-cpu-section.ui:169
+#: src/sysprof/sysprof-energy-section.ui:177
+#: src/sysprof/sysprof-graphics-section.ui:88
+#: src/sysprof/sysprof-network-section.ui:86
+#: src/sysprof/sysprof-storage-section.ui:86
+msgid "Counters Chart"
+msgstr "カウンターチャート"
+
+#: src/sysprof/sysprof-counters-section.ui:40
+#: src/sysprof/sysprof-cpu-section.ui:323
+#: src/sysprof/sysprof-energy-section.ui:312
+#: src/sysprof/sysprof-graphics-section.ui:223
+#: src/sysprof/sysprof-network-section.ui:291
+#: src/sysprof/sysprof-storage-section.ui:291
+msgid "Counters Table"
+msgstr "カウンターテーブル"
+
+#: src/sysprof/sysprof-cpu-section.ui:378
+#: src/sysprof/sysprof-dbus-section.ui:171
+#: src/sysprof/sysprof-energy-section.ui:348
+#: src/sysprof/sysprof-frame-utility.ui:49
+#: src/sysprof/sysprof-graphics-section.ui:259
+#: src/sysprof/sysprof-logs-section.ui:110
+#: src/sysprof/sysprof-metadata-section.ui:38
+#: src/sysprof/sysprof-network-section.ui:346
+#: src/sysprof/sysprof-process-dialog.ui:64
+#: src/sysprof/sysprof-processes-section.ui:215
+#: src/sysprof/sysprof-storage-section.ui:346
+#: src/sysprof/sysprof-traceables-utility.ui:23
+msgid "Time"
+msgstr "時間"
+
+#: src/sysprof/sysprof-cpu-section.ui:412
+#: src/sysprof/sysprof-energy-section.ui:382
+#: src/sysprof/sysprof-flame-graph.c:458
+#: src/sysprof/sysprof-graphics-section.ui:293
+#: src/sysprof/sysprof-marks-section.ui:234
+#: src/sysprof/sysprof-network-section.ui:380
+#: src/sysprof/sysprof-storage-section.ui:380
+msgid "Category"
+msgstr "カテゴリ"
+
+#: src/sysprof/sysprof-cpu-section.ui:450
+#: src/sysprof/sysprof-energy-section.ui:420
+#: src/sysprof/sysprof-graphics-section.ui:331
+#: src/sysprof/sysprof-marks-section.ui:268
+#: src/sysprof/sysprof-network-section.ui:418
+#: src/sysprof/sysprof-storage-section.ui:418
+msgid "Name"
+msgstr "名前"
+
+#: src/sysprof/sysprof-cpu-section.ui:488
+#: src/sysprof/sysprof-energy-section.ui:458
+#: src/sysprof/sysprof-graphics-section.ui:369
+#: src/sysprof/sysprof-metadata-section.ui:105
+#: src/sysprof/sysprof-network-section.ui:456
+#: src/sysprof/sysprof-storage-section.ui:456
+msgid "Value"
+msgstr "値"
+
+#: src/sysprof/sysprof-cpu-section.ui:529
+msgid "CPU Info"
+msgstr "CPU 情報"
+
+#: src/sysprof/sysprof-cpu-section.ui:560
+#: src/sysprof/sysprof-process-dialog.ui:248
+msgid "ID"
+msgstr "ID"
+
+#: src/sysprof/sysprof-cpu-section.ui:595
+msgid "Core"
+msgstr "コア"
+
+#: src/sysprof/sysprof-cpu-section.ui:630
+msgid "Model Name"
+msgstr "モデル名"
+
+#: src/sysprof/sysprof-dbus-section.ui:205
+msgid "Bus"
+msgstr "バス"
+
+#: src/sysprof/sysprof-dbus-section.ui:244
+msgid "Serial"
+msgstr "シリアル"
+
+#: src/sysprof/sysprof-dbus-section.ui:281
+msgid "Reply"
+msgstr "応答"
+
+#: src/sysprof/sysprof-dbus-section.ui:318
+msgid "Flags"
+msgstr "フラグ"
+
+#: src/sysprof/sysprof-dbus-section.ui:347
+#: src/sysprof/sysprof-files-section.ui:122
+#: src/sysprof/sysprof-memory-callgraph-view.ui:68
+msgid "Size"
+msgstr "サイズ"
+
+#: src/sysprof/sysprof-dbus-section.ui:383
+#: src/sysprof/sysprof-frame-utility.ui:20
+#: src/sysprof/sysprof-mark-table.ui:221
+msgid "Type"
+msgstr "種類"
+
+#: src/sysprof/sysprof-dbus-section.ui:412
+msgid "Sender"
+msgstr "送信元"
+
+#: src/sysprof/sysprof-dbus-section.ui:446
+msgid "Destination"
+msgstr "宛先"
+
+#: src/sysprof/sysprof-dbus-section.ui:480
+#: src/sysprof/sysprof-files-section.ui:53
+msgid "Path"
+msgstr "パス"
+
+#: src/sysprof/sysprof-dbus-section.ui:514
+msgid "Interface"
+msgstr "インターフェース"
+
+#: src/sysprof/sysprof-dbus-section.ui:548
+msgid "Member"
+msgstr "メンバー"
+
+#: src/sysprof/sysprof-dbus-section.ui:582
+msgid "Signature"
+msgstr "シグネチャ"
+
+#: src/sysprof/sysprof-dbus-section.ui:626
+msgid "Filter Messages"
+msgstr "メッセージをフィルタ"
+
+#: src/sysprof/sysprof-dbus-utility.ui:13
+#: src/sysprof/sysprof-logs-section.c:114
+#: src/sysprof/sysprof-logs-section.ui:290
+msgid "Message"
+msgstr "メッセージ"
+
+#: src/sysprof/sysprof-files-section.ui:4
+msgid "Files"
+msgstr "ファイル"
+
+#: src/sysprof/sysprof-files-section.ui:88
+msgid "Compressed"
+msgstr "圧縮済み"
+
+#: src/sysprof/sysprof-files-section.ui:165
+msgid "Filter Files"
+msgstr "ファイルをフィルタ"
+
+#: src/sysprof/sysprof-flame-graph.c:462
+#: src/sysprof/sysprof-process-dialog.ui:177
+msgid "File"
+msgstr "ファイル"
+
+#: src/sysprof/sysprof-frame-utility.ui:80
+#: src/sysprof/sysprof-logs-section.ui:143
+#: src/sysprof/sysprof-mark-table.ui:116
+#: src/sysprof/sysprof-traceables-utility.ui:81
+#: src/sysprof/sysprof-window.ui:373
+msgid "CPU"
+msgstr "CPU"
+
+#: src/sysprof/sysprof-greeter.c:144
+msgid "Use KEY=VALUE to set an environment variable"
+msgstr "環境変数の設定には、KEY=VALUE形式を使用"
+
+#: src/sysprof/sysprof-greeter.c:150
+msgid "Keys may not start with a number"
+msgstr "キーは数字で始めることはできません"
+
+#: src/sysprof/sysprof-greeter.c:160
+msgid "Keys may only contain alpha-numerics or underline."
+msgstr "キーには英数字またはアンダースコア以外の文字を含めることはできません。"
+
+#: src/sysprof/sysprof-greeter.c:357 src/sysprof/sysprof-window.c:172
+msgid "Must Capture to Local File"
+msgstr "ローカルファイルに取り込む必要があります"
+
+#: src/sysprof/sysprof-greeter.c:359 src/sysprof/sysprof-window.c:173
+msgid "You must choose a local file to capture using Sysprof"
+msgstr "Sysprof を使用して取り込むローカルファイルを選択してください"
+
+#: src/sysprof/sysprof-greeter.c:361 src/sysprof/sysprof-greeter.c:401
+#: src/sysprof/sysprof-recording-pad.c:119 src/sysprof/sysprof-window.c:174
+#: src/sysprof/sysprof-window.c:751
+msgid "Close"
+msgstr "閉じる"
+
+#: src/sysprof/sysprof-greeter.c:399
+msgid "Must Select Local Folder"
+msgstr "ローカルフォルダーを選択してください"
+
+#: src/sysprof/sysprof-greeter.c:400
+msgid "You must choose a local folder to add as a debug directory"
+msgstr ""
+"デバッグディレクトリーとして追加するローカルフォルダーを選択してください"
+
+#: src/sysprof/sysprof-greeter.c:420
+msgid "Add debug directory"
+msgstr "デバッグディレクトリを追加"
+
+#: src/sysprof/sysprof-greeter.c:421 src/sysprof/sysprof-greeter.ui:595
+msgid "Add _Directory"
+msgstr "ディレクトリを追加(_D)"
+
+#: src/sysprof/sysprof-greeter.c:445
+#, c-format
+msgid "System Capture from %s.syscap"
+msgstr "%s.syscap からのシステムキャプチャ"
+
+#: src/sysprof/sysprof-greeter.c:449
+msgid "Record to File"
+msgstr "ファイルに記録"
+
+#: src/sysprof/sysprof-greeter.c:450
+msgid "Record"
+msgstr "記録"
+
+#: src/sysprof/sysprof-greeter.c:664
+msgid "No Change"
+msgstr "変更なし"
+
+#: src/sysprof/sysprof-greeter.c:667
+msgid "Balanced"
+msgstr "バランス"
+
+#: src/sysprof/sysprof-greeter.c:670
+msgid "Power Saver"
+msgstr "省電力"
+
+#: src/sysprof/sysprof-greeter.c:673
+msgid "Performance"
+msgstr "パフォーマンス"
+
+#: src/sysprof/sysprof-greeter.ui:95
+msgid "Sampling"
+msgstr "サンプリング"
+
+#: src/sysprof/sysprof-greeter.ui:98
+msgid "Sample Native Stacks"
+msgstr "ネイティブスタックをサンプリング"
+
+#: src/sysprof/sysprof-greeter.ui:99
+msgid "Record native stack traces using a sampling profiler"
+msgstr "サンプリングプロファイラーを使用してネイティブスタックトレースを記録"
+
+#: src/sysprof/sysprof-greeter.ui:105
+msgid "Unwind Stacks in User Space"
+msgstr "ユーザー空間でのスタック展開"
+
+#: src/sysprof/sysprof-greeter.ui:106
+msgid "Copy stack contents and registers for unwinding in user-space"
+msgstr "ユーザー空間での展開のためにスタックの内容とレジスターをコピー"
+
+#: src/sysprof/sysprof-greeter.ui:117
+msgid "Stack Size"
+msgstr "スタックサイズ"
+
+#: src/sysprof/sysprof-greeter.ui:118
+msgid "The number of bytes to copy from the stack"
+msgstr "スタックからコピーするバイト数"
+
+#: src/sysprof/sysprof-greeter.ui:129
+msgid ""
+"Unwinding in user-space has considerable overhead but may help in situations "
+"where frame-pointers are unavailable."
+msgstr ""
+"ユーザー空間でのスタック展開はかなりのオーバーヘッドがありますが、フレームポ"
+"インターが利用できない場合に役立つ場合があります。"
+
+#: src/sysprof/sysprof-greeter.ui:144
+msgid "Sample JavaScript Stacks"
+msgstr "JavaScript スタックのサンプル"
+
+#: src/sysprof/sysprof-greeter.ui:145
+msgid "Record JavaScript stack traces using a sampling profiler"
+msgstr "サンプリングプロファイラーを使用して JavaScript スタックトレースを記録"
+
+#: src/sysprof/sysprof-greeter.ui:151
+msgid ""
+"Sysprof must launch your application to record JavaScript stacks using GJS."
+msgstr ""
+"GJS を使用して JavaScript スタックを記録するには、Sysprof がアプリケーション"
+"を起動する必要があります。"
+
+#: src/sysprof/sysprof-greeter.ui:166
+msgid "Record Scheduler Details"
+msgstr "スケジューラーの詳細を記録"
+
+#: src/sysprof/sysprof-greeter.ui:167
+msgid "Track when processes are scheduled per CPU"
+msgstr "プロセスが CPU ごとにスケジュールされる時を追跡"
+
+#: src/sysprof/sysprof-greeter.ui:175
+msgid "Tracing"
+msgstr "トレーシング"
+
+#: src/sysprof/sysprof-greeter.ui:178
+msgid "Trace Memory Allocations"
+msgstr "メモリー割り当てをトレース"
+
+#: src/sysprof/sysprof-greeter.ui:179
+msgid "Record a stack trace when malloc or similar functions are used"
+msgstr "malloc や類似関数が使用される際のスタックトレースを記録"
+
+#: src/sysprof/sysprof-greeter.ui:185
+msgid "Sysprof must launch your application to record memory allocations."
+msgstr ""
+"メモリー割り当てを記録するには、Sysprof がアプリケーションを起動する必要があ"
+"ります。"
+
+#: src/sysprof/sysprof-greeter.ui:203 src/sysprof/sysprof-greeter.ui:208
+msgid "Application"
+msgstr "アプリケーション"
+
+#: src/sysprof/sysprof-greeter.ui:211
+#: src/sysprof/sysprof-processes-section.ui:317
+msgid "Command Line"
+msgstr "コマンドライン"
+
+#: src/sysprof/sysprof-greeter.ui:217
+msgid "Working directory"
+msgstr "作業ディレクトリ"
+
+#: src/sysprof/sysprof-greeter.ui:223
+msgid "The application will be run as a subprocess of Sysprof."
+msgstr "アプリケーションは Sysprof のサブプロセスとして実行されます。"
+
+#: src/sysprof/sysprof-greeter.ui:236
+msgid "Environment"
+msgstr "環境"
+
+#: src/sysprof/sysprof-greeter.ui:239
+msgid "Clear Environment"
+msgstr "環境をクリア"
+
+#: src/sysprof/sysprof-greeter.ui:240
+msgid "Clear the environment before launching application"
+msgstr "アプリケーション起動前に環境をクリア"
+
+#: src/sysprof/sysprof-greeter.ui:261
+msgid "Add _Variable"
+msgstr "変数を追加(_V)"
+
+#: src/sysprof/sysprof-greeter.ui:267
+msgid "Add Variable"
+msgstr "変数を追加"
+
+#: src/sysprof/sysprof-greeter.ui:268
+msgid "_Add"
+msgstr "追加(_A)"
+
+#: src/sysprof/sysprof-greeter.ui:285 src/sysprof/sysprof-greeter.ui:290
+msgid "Counters"
+msgstr "カウンター"
+
+#: src/sysprof/sysprof-greeter.ui:293
+msgid "CPU Usage"
+msgstr "CPU 使用率"
+
+#: src/sysprof/sysprof-greeter.ui:294
+msgid "Record coarse-grained counters about CPU usage and frequency"
+msgstr "CPU 使用率と周波数についての粗粒度カウンターを記録する"
+
+#: src/sysprof/sysprof-greeter.ui:300
+msgid "Memory Usage"
+msgstr "メモリー使用量"
+
+#: src/sysprof/sysprof-greeter.ui:301
+msgid "Record coarse-grained counters about system memory usage"
+msgstr ">システムメモリー使用量についての粗粒度カウンターを記録する"
+
+#: src/sysprof/sysprof-greeter.ui:307
+msgid "Disk Usage"
+msgstr "ディスク使用量"
+
+#: src/sysprof/sysprof-greeter.ui:308
+msgid "Record coarse-grained counters about storage throughput"
+msgstr "ストレージスループットについての粗粒度カウンターを記録する"
+
+#: src/sysprof/sysprof-greeter.ui:314
+msgid "Network Usage"
+msgstr "ネットワーク使用量"
+
+#: src/sysprof/sysprof-greeter.ui:315
+msgid "Record coarse-grained counters about network traffic"
+msgstr "ネットワークトラフィックについての粗粒度カウンターを記録する"
+
+#: src/sysprof/sysprof-greeter.ui:325
+msgid "Energy Usage"
+msgstr "電力使用量"
+
+#: src/sysprof/sysprof-greeter.ui:326
+msgid "Record coarse-grained counters about energy usage in Watts"
+msgstr "電力使用量についての粗粒度カウンターをワット単位で記録する"
+
+#: src/sysprof/sysprof-greeter.ui:332
+msgid "Battery Charge"
+msgstr "バッテリー残量"
+
+#: src/sysprof/sysprof-greeter.ui:333
+msgid "Record coarse-grained counters about battery charge or discharge rates"
+msgstr "バッテリーの充電および放電レートについての粗粒度カウンターを記録する"
+
+#: src/sysprof/sysprof-greeter.ui:346 src/sysprof/sysprof-greeter.ui:351
+#: src/sysprof/sysprof-window.ui:363
+msgid "D-Bus"
+msgstr "D-Bus"
+
+#: src/sysprof/sysprof-greeter.ui:355
+msgid "Record System Bus"
+msgstr "システムバスを記録"
+
+#: src/sysprof/sysprof-greeter.ui:356
+msgid "Record messages on the D-Bus system bus"
+msgstr "D-Bus システムバスのメッセージを記録する"
+
+#: src/sysprof/sysprof-greeter.ui:372
+msgid "Record Session Bus"
+msgstr "セッションバスを記録"
+
+#: src/sysprof/sysprof-greeter.ui:373
+msgid "Record messages on the D-Bus user session bus"
+msgstr "D-Bus ユーザーセッションバスのメッセージを記録する"
+
+#: src/sysprof/sysprof-greeter.ui:384
+msgid ""
+"The session bus may contain sensitive information such as keyboard usage and "
+"passwords."
+msgstr ""
+"セッションバスにはキーボード使用やパスワードなど機密情報が含まれる可能性があ"
+"ります。"
+
+#: src/sysprof/sysprof-greeter.ui:407
+msgid "Timings"
+msgstr "タイミング"
+
+#: src/sysprof/sysprof-greeter.ui:411
+msgid "Compositor Frame Timings"
+msgstr "コンポジターフレームタイミング"
+
+#: src/sysprof/sysprof-greeter.ui:412
+msgid "Record frame-timing information from the GNOME Shell compositor"
+msgstr "GNOME Shell コンポジターからフレームタイミング情報を記録する"
+
+#: src/sysprof/sysprof-greeter.ui:423
+msgid ""
+"Applications launched by Sysprof will automatically collect GTK frame timing "
+"information."
+msgstr ""
+"Sysprof によって起動されたアプリケーションは、自動的に GTK フレームタイミング"
+"情報を収集します。"
+
+#: src/sysprof/sysprof-greeter.ui:463
+msgid "Devices"
+msgstr "デバイス"
+
+#: src/sysprof/sysprof-greeter.ui:467
+msgid "Include GPU Information"
+msgstr "GPU 情報を含める"
+
+#: src/sysprof/sysprof-greeter.ui:468
+msgid "Records information about graphics hardware and drivers"
+msgstr "グラフィックハードウェアとドライバーについての情報を記録する"
+
+#: src/sysprof/sysprof-greeter.ui:486
+msgid "System"
+msgstr "システム"
+
+#: src/sysprof/sysprof-greeter.ui:491
+msgid "Power Profile"
+msgstr "電源プロファイル"
+
+#: src/sysprof/sysprof-greeter.ui:494
+msgid "Record with Power Profile"
+msgstr "電源プロファイルで記録する"
+
+#: src/sysprof/sysprof-greeter.ui:495
+msgid "Switch to power profile while recording"
+msgstr "記録中に電源プロファイルに切り替え"
+
+#: src/sysprof/sysprof-greeter.ui:505
+msgid "Details"
+msgstr "詳細"
+
+#: src/sysprof/sysprof-greeter.ui:509
+msgid "Record System Log"
+msgstr "システムログを記録"
+
+#: src/sysprof/sysprof-greeter.ui:510
+msgid "Watch the system log for new messages and record them"
+msgstr "システムログの新しいメッセージを監視して記録する"
+
+#: src/sysprof/sysprof-greeter.ui:526
+msgid "Include Hardware Information"
+msgstr "ハードウェア情報を含める"
+
+#: src/sysprof/sysprof-greeter.ui:527
+msgid "Records information about PCI and USB devices"
+msgstr "PCI と USB デバイスについての情報を記録する"
+
+#: src/sysprof/sysprof-greeter.ui:540
+msgid "Symbols"
+msgstr "シンボル"
+
+#: src/sysprof/sysprof-greeter.ui:544
+msgid "Bundle Symbols"
+msgstr "シンボルをバンドル"
+
+#: src/sysprof/sysprof-greeter.ui:545
+msgid "Make recording shareable by symbolizing stack traces after recording"
+msgstr "記録後にスタックトレースをシンボル化して記録を共有可能にする"
+
+#: src/sysprof/sysprof-greeter.ui:561
+msgid "Debuginfod"
+msgstr "Debuginfod"
+
+#: src/sysprof/sysprof-greeter.ui:562
+msgid "Enable Debuginfod to automatically fetch debug symbols"
+msgstr "Debuginfod を有効にしてデバッグシンボルを自動取得する"
+
+#: src/sysprof/sysprof-greeter.ui:575
+msgid "Debug File Directories"
+msgstr "デバッグファイルディレクトリ"
+
+#: src/sysprof/sysprof-greeter.ui:576
+msgid "Directories to search for debug files"
+msgstr "デバッグファイルを検索するディレクトリ"
+
+#: src/sysprof/sysprof-greeter.ui:624
+msgid "_Open File…"
+msgstr "ファイルを開く(_O)…"
+
+#: src/sysprof/sysprof-greeter.ui:631
+msgid "Record to _File…"
+msgstr "ファイルに記録(_F)…"
+
+#: src/sysprof/sysprof-greeter.ui:638
+msgid "Record to _Memory"
+msgstr "メモリに記録(_M)"
+
+#: src/sysprof/sysprof-greeter.ui:657 src/sysprof/sysprof-window.ui:474
+msgid "_Keyboard Shortcuts"
+msgstr "キーボードショートカット(_K)"
+
+#: src/sysprof/sysprof-greeter.ui:661 src/sysprof/sysprof-window.ui:478
+msgid "Help"
+msgstr "ヘルプ"
+
+#: src/sysprof/sysprof-greeter.ui:665 src/sysprof/sysprof-window.ui:482
+msgid "About Sysprof"
+msgstr "Sysprof について"
+
+#: src/sysprof/sysprof-logs-section.c:105
+msgid "Critical"
+msgstr "重要"
+
+#: src/sysprof/sysprof-logs-section.c:108
+msgid "Warning"
+msgstr "警告"
+
+#: src/sysprof/sysprof-logs-section.c:111
+msgid "Debug"
+msgstr "デバッグ"
+
+#: src/sysprof/sysprof-logs-section.c:117
+msgid "Info"
+msgstr "情報"
+
+#: src/sysprof/sysprof-logs-section.c:120
+msgid "Error"
+msgstr "エラー"
+
+#: src/sysprof/sysprof-logs-section.ui:4 src/sysprof/sysprof-logs-section.ui:30
+msgid "Logs"
+msgstr "ログ"
+
+#: src/sysprof/sysprof-logs-section.ui:219
+msgid "Severity"
+msgstr "重大度"
+
+#: src/sysprof/sysprof-logs-section.ui:255
+msgid "Domain"
+msgstr "ドメイン"
+
+#: src/sysprof/sysprof-marks-section.ui:4
+msgid "Marks"
+msgstr "マーク"
+
+#: src/sysprof/sysprof-marks-section.ui:72
+msgid "Mark Chart"
+msgstr "マークチャート"
+
+#: src/sysprof/sysprof-marks-section.ui:84
+msgid "Mark Table"
+msgstr "マークテーブル"
+
+#: src/sysprof/sysprof-marks-section.ui:97
+msgid "Mark Waterfall"
+msgstr "マークウォーターフォール"
+
+#: src/sysprof/sysprof-marks-section.ui:198
+msgid "Summary"
+msgstr "概要"
+
+#: src/sysprof/sysprof-marks-section.ui:303
+msgid "Minimum"
+msgstr "最小"
+
+#: src/sysprof/sysprof-marks-section.ui:337
+msgid "Maximum"
+msgstr "最大"
+
+#: src/sysprof/sysprof-marks-section.ui:371
+msgid "Average"
+msgstr "平均"
+
+#: src/sysprof/sysprof-marks-section.ui:405
+msgid "Median"
+msgstr "中央値"
+
+#: src/sysprof/sysprof-mark-chart-row.ui:8
+msgid "Toggle marks"
+msgstr "マークの切り替え"
+
+#: src/sysprof/sysprof-mark-chart-row.ui:12
+msgid "Set as Filter"
+msgstr "フィルターとして設定"
+
+#: src/sysprof/sysprof-mark-table.ui:47
+msgid "Start"
+msgstr "開始"
+
+#: src/sysprof/sysprof-mark-table.ui:81
+#: src/sysprof/sysprof-processes-section.ui:249
+msgid "Duration"
+msgstr "期間"
+
+#: src/sysprof/sysprof-mark-table.ui:151
+msgid "Process"
+msgstr "プロセス"
+
+#: src/sysprof/sysprof-mark-table.ui:186
+msgid "Group"
+msgstr "グループ"
+
+#: src/sysprof/sysprof-mark-table.ui:256
+msgid "Description"
+msgstr "説明"
+
+#: src/sysprof/sysprof-memory-callgraph-view.ui:8
+#: src/sysprof/sysprof-memory-callgraph-view.ui:105
+#: src/sysprof/sysprof-memory-callgraph-view.ui:172
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:8
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:105
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:172
+msgid "Self"
+msgstr "Self"
+
+#: src/sysprof/sysprof-memory-callgraph-view.ui:38
+#: src/sysprof/sysprof-memory-callgraph-view.ui:135
+#: src/sysprof/sysprof-memory-callgraph-view.ui:202
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:38
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:135
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:202
+msgid "Total"
+msgstr "合計"
+
+#: src/sysprof/sysprof-memory-section.ui:4
+msgid "Memory Allocations"
+msgstr "メモリ割り当て"
+
+#: src/sysprof/sysprof-memory-section.ui:29
+#: src/sysprof/sysprof-samples-section.ui:29
+msgid "Stack Traces"
+msgstr "スタックトレース"
+
+#: src/sysprof/sysprof-memory-section.ui:88
+msgid "Allocations"
+msgstr "割り当て"
+
+#: src/sysprof/sysprof-memory-section.ui:144
+msgid "Leaks"
+msgstr "リーク"
+
+#: src/sysprof/sysprof-memory-section.ui:212
+#: src/sysprof/sysprof-samples-section.ui:216
+#: src/sysprof/sysprof-traceables-utility.ui:162
+msgid "Stack Trace"
+msgstr "スタックトレース"
+
+#: src/sysprof/sysprof-metadata-section.ui:4
+msgid "Metadata"
+msgstr "メタデータ"
+
+#: src/sysprof/sysprof-metadata-section.ui:71
+msgid "Key"
+msgstr "キー"
+
+#: src/sysprof/sysprof-process-dialog.ui:35
+msgid "Address Layout"
+msgstr "アドレスレイアウト"
+
+#: src/sysprof/sysprof-process-dialog.ui:97
+msgid "Start Address"
+msgstr "開始アドレス"
+
+#: src/sysprof/sysprof-process-dialog.ui:137
+msgid "End Address"
+msgstr "終了アドレス"
+
+#: src/sysprof/sysprof-process-dialog.ui:219
+msgid "Mounts"
+msgstr "マウント"
+
+#: src/sysprof/sysprof-process-dialog.ui:282
+msgid "Parent"
+msgstr "親"
+
+#: src/sysprof/sysprof-process-dialog.ui:316
+msgid "Major"
+msgstr "メジャー"
+
+#: src/sysprof/sysprof-process-dialog.ui:350
+msgid "Minor"
+msgstr "マイナー"
+
+#: src/sysprof/sysprof-process-dialog.ui:384
+msgid "Mount Point"
+msgstr "マウントポイント"
+
+#: src/sysprof/sysprof-process-dialog.ui:418
+msgid "Mount Source"
+msgstr "マウント元"
+
+#: src/sysprof/sysprof-process-dialog.ui:452
+msgid "Root"
+msgstr "ルート"
+
+#: src/sysprof/sysprof-process-dialog.ui:486
+msgid "Filesystem"
+msgstr "ファイルシステム"
+
+#: src/sysprof/sysprof-process-dialog.ui:562
+msgid "Threads"
+msgstr "スレッド"
+
+#: src/sysprof/sysprof-process-dialog.ui:591
+msgid "Thread ID"
+msgstr "スレッド ID"
+
+#: src/sysprof/sysprof-process-dialog.ui:625
+msgid "Main Thread"
+msgstr "メインスレッド"
+
+#: src/sysprof/sysprof-processes-section.ui:4
+msgid "Processes"
+msgstr "プロセス"
+
+#: src/sysprof/sysprof-processes-section.ui:73
+msgid "Process Chart"
+msgstr "プロセスチャート"
+
+#: src/sysprof/sysprof-processes-section.ui:174
+msgid "Process Table"
+msgstr "プロセステーブル"
+
+#. translators: this expands to the number of events recorded by the profiler as an indicator of progress
+#: src/sysprof/sysprof-recording-pad.c:58
+#, c-format
+msgid "%<PRIi64> events"
+msgstr "%<PRIi64> イベント"
+
+#: src/sysprof/sysprof-recording-pad.c:115
+msgid "Recording Failed"
+msgstr "記録できませんでした"
+
+#: src/sysprof/sysprof-recording-pad.c:117
+#, c-format
+msgid ""
+"Sysprof failed to record.\n"
+"\n"
+"%s"
+msgstr ""
+"Sysprof で記録できませんでした。\n"
+"\n"
+"%s"
+
+#: src/sysprof/sysprof-recording-pad.ui:71
+msgid "Stop Recording"
+msgstr "記録を停止"
+
+#: src/sysprof/sysprof-samples-section.ui:4
+msgid "Time Profiler"
+msgstr "タイムプロファイラ"
+
+#: src/sysprof/sysprof-samples-section.ui:98 src/sysprof/sysprof-window.ui:495
+msgid "Callgraph"
+msgstr "コールグラフ"
+
+#: src/sysprof/sysprof-samples-section.ui:181 src/sysprof/sysprof-window.ui:526
+msgid "Flamegraph"
+msgstr "フレームグラフ"
+
+#: src/sysprof/sysprof-session-filters-widget.ui:103
+msgid "Clear All Filters"
+msgstr "すべてのフィルターを削除"
+
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:166
+msgid "Seek Backward"
+msgstr "後退"
+
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:176
+msgid "Zoom Out"
+msgstr "縮小"
+
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:186
+msgid "Reset Zoom"
+msgstr "ズームをリセット"
+
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:196
+msgid "Zoom In"
+msgstr "拡大"
+
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:206
+msgid "Seek Forward"
+msgstr "前進"
+
+#: src/sysprof/sysprof-traceables-utility.ui:109
+msgid "Depth"
+msgstr "深さ"
+
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:68
+msgid "Hits"
+msgstr "ヒット"
+
+#: src/sysprof/sysprof-window.c:191
+msgid "Open Recording"
+msgstr "記録を開く"
+
+#: src/sysprof/sysprof-window.c:192
+msgid "Open"
+msgstr "開く"
+
+#: src/sysprof/sysprof-window.c:196
+msgid "Sysprof Capture (*.syscap)"
+msgstr "Sysprof キャプチャ (*.syscap)"
+
+#: src/sysprof/sysprof-window.c:485
+msgid "Save to File"
+msgstr "ファイルに保存"
+
+#: src/sysprof/sysprof-window.c:486
+msgid "Save"
+msgstr "保存"
+
+#: src/sysprof/sysprof-window.c:666
+msgid "Loading…"
+msgstr "読み込み中…"
+
+#: src/sysprof/sysprof-window.c:747
+msgid "Invalid Document"
+msgstr "無効なドキュメント"
+
+#: src/sysprof/sysprof-window.c:749
+#, c-format
+msgid ""
+"The document could not be loaded. Please check that you have the correct "
+"capture file.\n"
+"\n"
+"%s"
+msgstr ""
+"ファイルを読み込めませんでした。正しいキャプチャファイルを選択しているか確認"
+"してください。\n"
+"\n"
+"%s"
+
+#: src/sysprof/sysprof-window.ui:126
+msgid "Toggle Left Panel"
+msgstr "左パネルの切り替え"
+
+#: src/sysprof/sysprof-window.ui:133
+msgid "View Filters"
+msgstr "フィルタを表示"
+
+#: src/sysprof/sysprof-window.ui:221
+msgid "Main Menu"
+msgstr "メインメニュー"
+
+#: src/sysprof/sysprof-window.ui:228
+msgid "View Options"
+msgstr "オプションを表示"
+
+#: src/sysprof/sysprof-window.ui:234
+msgid "Toggle Right Panel"
+msgstr "右パネルの切り替え"
+
+#: src/sysprof/sysprof-window.ui:383
+msgid "Energy"
+msgstr "エネルギー"
+
+#: src/sysprof/sysprof-window.ui:403
+msgid "Network"
+msgstr "ネットワーク"
+
+#: src/sysprof/sysprof-window.ui:413
+msgid "Storage"
+msgstr "ストレージ"
+
+#: src/sysprof/sysprof-window.ui:460
+msgid "_Record Again…"
+msgstr "再記録(_R)…"
+
+#: src/sysprof/sysprof-window.ui:464
+msgid "Open Recording…"
+msgstr "記録を開く…"
+
+#: src/sysprof/sysprof-window.ui:468
+msgid "Save As…"
+msgstr "名前を付けて保存…"
+
+#: src/sysprof/sysprof-window.ui:488
+msgid "_Quit"
+msgstr "終了(_Q)"
+
+#. translators: Left Heavy means to sort larger (heavier) stack frames before others, starting from the left
+#: src/sysprof/sysprof-window.ui:529
+msgid "Left Heavy"
+msgstr "左優先"

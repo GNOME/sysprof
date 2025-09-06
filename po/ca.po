@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
 "POT-Creation-Date: 2025-03-09 17:28+0000\n"
-"PO-Revision-Date: 2025-08-26 19:26+0100\n"
+"PO-Revision-Date: 2025-09-06 19:26+0100\n"
 "Last-Translator: Jordi Mas i Hernàndez <jmas@softcatala.org>\n"
 "Language-Team: \n"
 "Language: ca\n"
@@ -1317,7 +1317,10 @@ msgid ""
 "Sysprof failed to record.\n"
 "\n"
 "%s"
-msgstr "Sysprof no ha pogut analitzar el desplaçament per a «%s»"
+msgstr ""
+"No s'ha pogut enregistrar el Sysprof.\n"
+"\n"
+"%s"
 
 #: src/sysprof/sysprof-recording-pad.ui:71
 msgid "Stop Recording"
@@ -1325,7 +1328,7 @@ msgstr "Atura l'enregistrament"
 
 #: src/sysprof/sysprof-samples-section.ui:4
 msgid "Time Profiler"
-msgstr "Analitzador de rendiment"
+msgstr "Analitzador de temps"
 
 #: src/sysprof/sysprof-samples-section.ui:89 src/sysprof/sysprof-window.ui:465
 msgid "Callgraph"
@@ -1333,7 +1336,7 @@ msgstr "Gràfic de trucades"
 
 #: src/sysprof/sysprof-samples-section.ui:172 src/sysprof/sysprof-window.ui:496
 msgid "Flamegraph"
-msgstr "Gràfic de trucades"
+msgstr "Gràfic de flames"
 
 #: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:136
 msgid "Seek Backward"
@@ -1373,11 +1376,11 @@ msgstr "Obre"
 
 #: src/sysprof/sysprof-window.c:199
 msgid "Sysprof Capture (*.syscap)"
-msgstr "Captures del Sysprof (*.syscap)"
+msgstr "Captura del Sysprof (*.syscap)"
 
 #: src/sysprof/sysprof-window.c:499
 msgid "Save to File"
-msgstr "Desa l'arxiu"
+msgstr "Desa al fitxer"
 
 #: src/sysprof/sysprof-window.c:500
 msgid "Save"

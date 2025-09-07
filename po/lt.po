@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-48\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2025-02-17 12:56+0000\n"
-"PO-Revision-Date: 2025-03-02 22:30+0200\n"
+"POT-Creation-Date: 2025-09-07 00:53+0000\n"
+"PO-Revision-Date: 2025-09-07 21:18+0300\n"
 "Last-Translator: \n"
 "Language-Team: Lithuanian <gnome-lt@lists.akl.lt>\n"
 "Language: lt\n"
@@ -17,38 +17,42 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "(n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.7\n"
 
-#: data/org.gnome.Sysprof.appdata.xml.in.in:6
-#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:172
-#: src/sysprof/sysprof-application.c:248
-#: src/sysprof/sysprof-recording-pad.ui:20 src/sysprof/sysprof-window.c:274
+#: data/org.gnome.Sysprof.desktop.in.in:3
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:6
+#: src/sysprof/sysprof-application.c:268 src/sysprof/sysprof-application.c:345
+#: src/sysprof/sysprof-recording-pad.ui:20 src/sysprof/sysprof-window.c:253
 msgid "Sysprof"
 msgstr "Sysprof"
 
-#: data/org.gnome.Sysprof.appdata.xml.in.in:7
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-greeter.ui:89
+msgid "Profiler"
+msgstr "Profiliatorius"
+
+#: data/org.gnome.Sysprof.desktop.in.in:5
+msgid "Profile an application or entire system."
+msgstr "Profiliuokite programą ar visą sistemą."
+
+#: data/org.gnome.Sysprof.desktop.in.in:20
+msgid "Start New Recording"
+msgstr "Pradeda naują įrašymą"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:7
 msgid "Profile an application or entire system"
 msgstr "Profiliuokite programą ar visą sistemą"
 
 #. developer_name tag deprecated with Appstream 1.0
-#: data/org.gnome.Sysprof.appdata.xml.in.in:11
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:11
 msgid "Christian Hergert"
 msgstr "Christian Hergert"
 
-#: data/org.gnome.Sysprof.appdata.xml.in.in:17
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:17
 msgid ""
 "Sysprof allows you to profile applications to aid in debugging and "
 "optimization."
 msgstr ""
 "Sysprof leidžia profiliuoti programas ir padeda jas derinti bei optimizuoti."
-
-#: data/org.gnome.Sysprof.desktop.in.in:5 src/sysprof/sysprof-greeter.ui:89
-msgid "Profiler"
-msgstr "Profiliatorius"
-
-#: data/org.gnome.Sysprof.desktop.in.in:6
-msgid "Profile an application or entire system."
-msgstr "Profiliuokite programą ar visą sistemą."
 
 #: src/libsysprof/sysprof-category-summary.c:136
 msgid "Uncategorized"
@@ -75,7 +79,7 @@ msgid "CSS"
 msgstr "CSS"
 
 #: src/libsysprof/sysprof-category-summary.c:154
-#: src/sysprof/sysprof-greeter.ui:468 src/sysprof/sysprof-window.ui:363
+#: src/sysprof/sysprof-greeter.ui:402 src/sysprof/sysprof-window.ui:393
 msgid "Graphics"
 msgstr "Grafika"
 
@@ -255,145 +259,149 @@ msgstr ""
 "Sekimui reikia paleisti programą, sukompiliuotą su „-finstrument-functions“. "
 "Sekimas neveiks."
 
-#: src/sysprof-cli/sysprof-cli.c:115
+#: src/sysprof-cli/sysprof-cli.c:120
 msgid "--merge requires at least 2 filename arguments"
 msgstr "--merge reikalauja bent 2 failų pavadinimų"
 
-#: src/sysprof-cli/sysprof-cli.c:313
+#: src/sysprof-cli/sysprof-cli.c:319
 msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
 msgstr "Išjungti CPU ribotuvą profiliuojant [pasenęs, naudoti --power-profile]"
 
-#: src/sysprof-cli/sysprof-cli.c:314
+#: src/sysprof-cli/sysprof-cli.c:320
 msgid "Make sysprof specific to a task [Deprecated]"
 msgstr "Padaryti sysprof specifiniu užduočiai [pasenęs]"
 
-#: src/sysprof-cli/sysprof-cli.c:314 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof-cli/sysprof-cli.c:320 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:181
 #: src/sysprof/sysprof-processes-section.ui:283
 #: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "PID"
 
-#: src/sysprof-cli/sysprof-cli.c:315
+#: src/sysprof-cli/sysprof-cli.c:321
 msgid "Run a command and profile the process"
 msgstr "Vykdyti komandą ir profiliuoti procesą"
 
-#: src/sysprof-cli/sysprof-cli.c:315
+#: src/sysprof-cli/sysprof-cli.c:321
 msgid "COMMAND"
 msgstr "KOMANDA"
 
-#: src/sysprof-cli/sysprof-cli.c:316
+#: src/sysprof-cli/sysprof-cli.c:322
 msgid ""
 "Set environment variable for spawned process. Can be used multiple times."
 msgstr ""
 "Nustatyti aplinkos kintamąjį paleistam procesui. Galima naudoti kelis kartus."
 
-#: src/sysprof-cli/sysprof-cli.c:316
+#: src/sysprof-cli/sysprof-cli.c:322
 msgid "VAR=VALUE"
 msgstr "KINT=VERTĖ"
 
-#: src/sysprof-cli/sysprof-cli.c:317
+#: src/sysprof-cli/sysprof-cli.c:323
 msgid "Force overwrite the capture file"
 msgstr "Priverstinai perrašyti surinkimų failą"
 
-#: src/sysprof-cli/sysprof-cli.c:318
+#: src/sysprof-cli/sysprof-cli.c:324
 msgid "Disable recording of battery statistics"
 msgstr "Išjungti baterijos statistikos įrašymą"
 
-#: src/sysprof-cli/sysprof-cli.c:319
+#: src/sysprof-cli/sysprof-cli.c:325
 msgid "Disable recording of CPU statistics"
 msgstr "Išjungti CPU statistikos įrašymą"
 
-#: src/sysprof-cli/sysprof-cli.c:320
+#: src/sysprof-cli/sysprof-cli.c:326
 msgid "Disable recording of Disk statistics"
 msgstr "Išjungti disko statistikos įrašymą"
 
-#: src/sysprof-cli/sysprof-cli.c:321
+#: src/sysprof-cli/sysprof-cli.c:327
 msgid "Do not record stacktraces using Linux perf"
 msgstr "Neįrašyti steko pėdsakų naudojant linux perf"
 
-#: src/sysprof-cli/sysprof-cli.c:322
+#: src/sysprof-cli/sysprof-cli.c:328
 msgid "Do not append symbol name information from local machine"
 msgstr "Nepridėti simbolių informacijos iš vietinio kompiuterio"
 
-#: src/sysprof-cli/sysprof-cli.c:323
+#: src/sysprof-cli/sysprof-cli.c:329
 msgid "Disable recording of memory statistics"
 msgstr "Išjungti atminties statistikos įrašymą"
 
-#: src/sysprof-cli/sysprof-cli.c:324
+#: src/sysprof-cli/sysprof-cli.c:330
 msgid "Disable recording of network statistics"
 msgstr "Išjungti tinklo statistikos įrašymą"
 
-#: src/sysprof-cli/sysprof-cli.c:325
+#: src/sysprof-cli/sysprof-cli.c:331
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr "Nustatyti SYSPROF_TRACE_FD aplinką vaikiniam procesui"
 
-#: src/sysprof-cli/sysprof-cli.c:326
+#: src/sysprof-cli/sysprof-cli.c:332
 msgid "Track when processes are scheduled"
 msgstr "Sekti, kada procesai suplanuojami"
 
-#: src/sysprof-cli/sysprof-cli.c:327
+#: src/sysprof-cli/sysprof-cli.c:333
 msgid "Profile the D-Bus session bus"
 msgstr "Profiliuoti D-Bus seanso magistralę"
 
-#: src/sysprof-cli/sysprof-cli.c:328
+#: src/sysprof-cli/sysprof-cli.c:334
 msgid "Profile the D-Bus system bus"
 msgstr "Profiliuoti D-Bus sisteminę magistralę"
 
-#: src/sysprof-cli/sysprof-cli.c:329
+#: src/sysprof-cli/sysprof-cli.c:335
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr "Nustatyti GJS_TRACE_FD aplinką vaikiniam GJS procesui profiliuoti"
 
-#: src/sysprof-cli/sysprof-cli.c:330
+#: src/sysprof-cli/sysprof-cli.c:336
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr "Nustatyti GTK_TRACE_FD aplinką GTK programai profiliuoti"
 
-#: src/sysprof-cli/sysprof-cli.c:331
+#: src/sysprof-cli/sysprof-cli.c:337
 msgid "Include RAPL energy statistics"
 msgstr "Įtraukti RAPL energijos statistiką"
 
-#: src/sysprof-cli/sysprof-cli.c:332
+#: src/sysprof-cli/sysprof-cli.c:338
 msgid "Profile memory allocations and frees"
 msgstr "Profiliuoti atminties išskyrimus bei atlaisvinimus"
 
-#: src/sysprof-cli/sysprof-cli.c:333
+#: src/sysprof-cli/sysprof-cli.c:339
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr "Prisijungti prie org.gnome.Shell profiliatoriaus statistikai"
 
-#: src/sysprof-cli/sysprof-cli.c:334
+#: src/sysprof-cli/sysprof-cli.c:340
 msgid "Track performance of the applications main loop"
 msgstr "Sekti programų pagrindinio ciklo našumą"
 
-#: src/sysprof-cli/sysprof-cli.c:336
+#: src/sysprof-cli/sysprof-cli.c:342
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr ""
 "Sulieti visus pateiktus *.syscap failus ir išvesti į standartinę išvestį"
 
-#: src/sysprof-cli/sysprof-cli.c:337
+#: src/sysprof-cli/sysprof-cli.c:343
 msgid "Print the sysprof-cli version and exit"
 msgstr "Parašyti sysprof-cli versiją ir išeiti"
 
-#: src/sysprof-cli/sysprof-cli.c:338
+#: src/sysprof-cli/sysprof-cli.c:344
 msgid "The size of the buffer in pages (1 = 1 page)"
 msgstr "Buferio dydis puslapiais (1 = 1 puslapis)"
 
-#: src/sysprof-cli/sysprof-cli.c:339
+#: src/sysprof-cli/sysprof-cli.c:345
 msgid "Additional D-Bus address to monitor"
 msgstr "Papildomi stebimi D-Bus adresai"
 
-#: src/sysprof-cli/sysprof-cli.c:340
+#: src/sysprof-cli/sysprof-cli.c:346
 msgid "Stack size to copy for unwinding in user-space"
 msgstr "Kopijuojamas steko dydis išanalizavimui naudotojo lygyje"
 
-#: src/sysprof-cli/sysprof-cli.c:341
+#: src/sysprof-cli/sysprof-cli.c:347
 msgid "Do not use debuginfod to resolve symbols"
 msgstr "Nenaudoti debuginfod simbolių gavimui"
 
-#: src/sysprof-cli/sysprof-cli.c:374
+#: src/sysprof-cli/sysprof-cli.c:348
+msgid "Do not use Sysprofd to acquire privileges"
+msgstr "Nenaudokite Sysprofd leidimams gauti"
+
+#: src/sysprof-cli/sysprof-cli.c:382
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[SURINKIMO_FAILAS] [--KOMANDA ARG] — Sysprof"
 
-#: src/sysprof-cli/sysprof-cli.c:377
+#: src/sysprof-cli/sysprof-cli.c:385
 msgid ""
 "\n"
 "Examples:\n"
@@ -424,12 +432,12 @@ msgstr ""
 "  # kur steko dydis yra puslapių skaičiaus kartotinis\n"
 "  sysprof-cli --stack-size=8192\n"
 
-#: src/sysprof-cli/sysprof-cli.c:417
+#: src/sysprof-cli/sysprof-cli.c:425
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Perduota per daug argumentų sysprof-cli:"
 
 #. Translators: %s is a file name.
-#: src/sysprof-cli/sysprof-cli.c:473
+#: src/sysprof-cli/sysprof-cli.c:482
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s nau yra. Naudokite --foce perrašymui\n"
@@ -497,6 +505,42 @@ msgctxt "shortcut window"
 msgid "Quit"
 msgstr "Išeiti"
 
+#: src/sysprof/gtk/menus.ui:6
+msgid "Make Function Root"
+msgstr "Padaryti funkciją šaknimi"
+
+#: src/sysprof/gtk/menus.ui:11 src/sysprof/sysprof-process-dialog.ui:520
+msgid "Options"
+msgstr "Parametrai"
+
+#: src/sysprof/gtk/menus.ui:13 src/sysprof/sysprof-window.ui:497
+msgid "Categorize Frames"
+msgstr "Kategorizuoti kadrus"
+
+#: src/sysprof/gtk/menus.ui:17 src/sysprof/sysprof-window.ui:501
+msgid "Hide System Libraries"
+msgstr "Slėpti sistemo bibliotekas"
+
+#: src/sysprof/gtk/menus.ui:21 src/sysprof/sysprof-window.ui:505
+msgid "Include Threads"
+msgstr "Įtraukti gijas"
+
+#: src/sysprof/gtk/menus.ui:25 src/sysprof/sysprof-window.ui:509
+msgid "Bottom Up"
+msgstr "Iš apačios į viršų"
+
+#: src/sysprof/gtk/menus.ui:29 src/sysprof/sysprof-window.ui:513
+msgid "Ignore Kernel Processes"
+msgstr "Nepaisyti branduolio procesų"
+
+#: src/sysprof/gtk/menus.ui:33 src/sysprof/sysprof-window.ui:517
+msgid "Ignore Process 0"
+msgstr "Nepaisyti proceso 0"
+
+#: src/sysprof/gtk/menus.ui:37 src/sysprof/sysprof-window.ui:521
+msgid "Merge Similar Processes"
+msgstr "Apjungti panašius procesus"
+
 #: src/sysprof/sysprof-animation.c:1038
 #, c-format
 msgid "Failed to find property %s in %s"
@@ -508,18 +552,22 @@ msgid "Failed to retrieve va_list value: %s"
 msgstr "Nepavyko gauti va_list vertės: %s"
 
 #: src/sysprof/sysprof-application.c:38
+msgid "Start a new recording"
+msgstr "Pradeda naują įrašymą"
+
+#: src/sysprof/sysprof-application.c:39
 msgid "Show Sysprof version and exit"
 msgstr "Parodyti Sysprof versiją ir išeiti"
 
-#: src/sysprof/sysprof-application.c:181
+#: src/sysprof/sysprof-application.c:277
 msgid "A system profiler"
 msgstr "Sistemos profiliatorius"
 
-#: src/sysprof/sysprof-application.c:182
+#: src/sysprof/sysprof-application.c:278
 msgid "translator-credits"
 msgstr ""
 "Išvertė:\n"
-"Aurimas Černius <aurisc4@gmail.com>"
+"Aurimas Černius <aurimas.cernius@mailo.com>"
 
 #: src/sysprof/sysprof-callgraph-view.ui:22
 msgid "Functions"
@@ -574,7 +622,7 @@ msgstr "Laikas"
 #: src/sysprof/sysprof-energy-section.ui:382
 #: src/sysprof/sysprof-flame-graph.c:458
 #: src/sysprof/sysprof-graphics-section.ui:293
-#: src/sysprof/sysprof-marks-section.ui:248
+#: src/sysprof/sysprof-marks-section.ui:234
 #: src/sysprof/sysprof-network-section.ui:380
 #: src/sysprof/sysprof-storage-section.ui:380
 msgid "Category"
@@ -583,7 +631,7 @@ msgstr "Kategorija"
 #: src/sysprof/sysprof-cpu-section.ui:450
 #: src/sysprof/sysprof-energy-section.ui:420
 #: src/sysprof/sysprof-graphics-section.ui:331
-#: src/sysprof/sysprof-marks-section.ui:282
+#: src/sysprof/sysprof-marks-section.ui:268
 #: src/sysprof/sysprof-network-section.ui:418
 #: src/sysprof/sysprof-storage-section.ui:418
 msgid "Name"
@@ -699,61 +747,78 @@ msgstr "Failas"
 #: src/sysprof/sysprof-logs-section.ui:143
 #: src/sysprof/sysprof-mark-table.ui:116
 #: src/sysprof/sysprof-traceables-utility.ui:81
-#: src/sysprof/sysprof-window.ui:343
+#: src/sysprof/sysprof-window.ui:373
 msgid "CPU"
 msgstr "CPU"
 
-#: src/sysprof/sysprof-greeter.c:128
+#: src/sysprof/sysprof-greeter.c:144
 msgid "Use KEY=VALUE to set an environment variable"
 msgstr "Naudokite RAKTAS=VERTĖ aplinkos kintamajam nustatyti"
 
-#: src/sysprof/sysprof-greeter.c:134
+#: src/sysprof/sysprof-greeter.c:150
 msgid "Keys may not start with a number"
 msgstr "Raktai negali prasidėti skaitmeniu"
 
-#: src/sysprof/sysprof-greeter.c:144
+#: src/sysprof/sysprof-greeter.c:160
 msgid "Keys may only contain alpha-numerics or underline."
 msgstr "Raktai gali susidėti tik iš raidžių, skaitmenų bei pabraukimų."
 
-#: src/sysprof/sysprof-greeter.c:306 src/sysprof/sysprof-window.c:175
+#: src/sysprof/sysprof-greeter.c:357 src/sysprof/sysprof-window.c:172
 msgid "Must Capture to Local File"
 msgstr "Privaloma surinkti į vietinį failą"
 
-#: src/sysprof/sysprof-greeter.c:307 src/sysprof/sysprof-window.c:176
+#: src/sysprof/sysprof-greeter.c:359 src/sysprof/sysprof-window.c:173
 msgid "You must choose a local file to capture using Sysprof"
 msgstr "Turite pasirinkti vietinį failą, į kurį surinkti naudojant Sysprof"
 
-#: src/sysprof/sysprof-greeter.c:308 src/sysprof/sysprof-recording-pad.c:119
-#: src/sysprof/sysprof-window.c:177 src/sysprof/sysprof-window.c:764
+#: src/sysprof/sysprof-greeter.c:361 src/sysprof/sysprof-greeter.c:401
+#: src/sysprof/sysprof-recording-pad.c:119 src/sysprof/sysprof-window.c:174
+#: src/sysprof/sysprof-window.c:751
 msgid "Close"
 msgstr "Užverti"
 
-#: src/sysprof/sysprof-greeter.c:331
+#: src/sysprof/sysprof-greeter.c:399
+msgid "Must Select Local Folder"
+msgstr "Privaloma surinkti į vietinį aplanką"
+
+#: src/sysprof/sysprof-greeter.c:400
+msgid "You must choose a local folder to add as a debug directory"
+msgstr "Turite pasirinkti vietinį aplanką pridėjimui kaip derinimo katalogo"
+
+#: src/sysprof/sysprof-greeter.c:420
+msgid "Add debug directory"
+msgstr "Pridėti derinimo katalogą"
+
+#: src/sysprof/sysprof-greeter.c:421 src/sysprof/sysprof-greeter.ui:595
+msgid "Add _Directory"
+msgstr "Pridėti _katalogą"
+
+#: src/sysprof/sysprof-greeter.c:445
 #, c-format
 msgid "System Capture from %s.syscap"
 msgstr "Sistemos surinkimas iš %s.syscap"
 
-#: src/sysprof/sysprof-greeter.c:335
+#: src/sysprof/sysprof-greeter.c:449
 msgid "Record to File"
 msgstr "Įrašyti į failą"
 
-#: src/sysprof/sysprof-greeter.c:336
+#: src/sysprof/sysprof-greeter.c:450
 msgid "Record"
 msgstr "Įrašyti"
 
-#: src/sysprof/sysprof-greeter.c:485
+#: src/sysprof/sysprof-greeter.c:664
 msgid "No Change"
 msgstr "Nepasikeitė"
 
-#: src/sysprof/sysprof-greeter.c:488
+#: src/sysprof/sysprof-greeter.c:667
 msgid "Balanced"
 msgstr "Balansuotas"
 
-#: src/sysprof/sysprof-greeter.c:491
+#: src/sysprof/sysprof-greeter.c:670
 msgid "Power Saver"
 msgstr "Energijos taupymo"
 
-#: src/sysprof/sysprof-greeter.c:494
+#: src/sysprof/sysprof-greeter.c:673
 msgid "Performance"
 msgstr "Našumas"
 
@@ -761,31 +826,31 @@ msgstr "Našumas"
 msgid "Sampling"
 msgstr "Imami mėginiai"
 
-#: src/sysprof/sysprof-greeter.ui:99
+#: src/sysprof/sysprof-greeter.ui:98
 msgid "Sample Native Stacks"
 msgstr "Imti savojo kodo steko mėginius"
 
-#: src/sysprof/sysprof-greeter.ui:100
+#: src/sysprof/sysprof-greeter.ui:99
 msgid "Record native stack traces using a sampling profiler"
 msgstr "Įrašyti savojo kodo steko pėdsakus naudojant mėginių profiliatorių"
 
-#: src/sysprof/sysprof-greeter.ui:111
+#: src/sysprof/sysprof-greeter.ui:105
 msgid "Unwind Stacks in User Space"
 msgstr "Išanalizuoti stekus naudotojo lygyje"
 
-#: src/sysprof/sysprof-greeter.ui:112
+#: src/sysprof/sysprof-greeter.ui:106
 msgid "Copy stack contents and registers for unwinding in user-space"
 msgstr "Kopijuoti steko turinį bei registrus išanalizavimui naudotojo lygyje"
 
-#: src/sysprof/sysprof-greeter.ui:123
+#: src/sysprof/sysprof-greeter.ui:117
 msgid "Stack Size"
 msgstr "Steko dydis"
 
-#: src/sysprof/sysprof-greeter.ui:124
+#: src/sysprof/sysprof-greeter.ui:118
 msgid "The number of bytes to copy from the stack"
 msgstr "Baitų skaičius nukopijavimui iš steko"
 
-#: src/sysprof/sysprof-greeter.ui:135
+#: src/sysprof/sysprof-greeter.ui:129
 msgid ""
 "Unwinding in user-space has considerable overhead but may help in situations "
 "where frame-pointers are unavailable."
@@ -793,163 +858,162 @@ msgstr ""
 "Išanalizavimas naudotojo lygyje turi reikšmingus kaštus, bet gali padėti "
 "situacijose, kai rėmelių rodyklių nėra."
 
-#: src/sysprof/sysprof-greeter.ui:151
+#: src/sysprof/sysprof-greeter.ui:144
 msgid "Sample JavaScript Stacks"
 msgstr "Imti JavaScript stekų mėginius"
 
-#: src/sysprof/sysprof-greeter.ui:152
+#: src/sysprof/sysprof-greeter.ui:145
 msgid "Record JavaScript stack traces using a sampling profiler"
 msgstr "Įrašyti JavaScript steko pėdsakus naudojant mėginių profiliatorių"
 
-#: src/sysprof/sysprof-greeter.ui:163
+#: src/sysprof/sysprof-greeter.ui:151
 msgid ""
 "Sysprof must launch your application to record JavaScript stacks using GJS."
 msgstr ""
 "Sysprof turi paleisti jūsų programą, kad įrašytų JavaScript stekus naudojant "
 "GJS."
 
-#: src/sysprof/sysprof-greeter.ui:179
+#: src/sysprof/sysprof-greeter.ui:166
 msgid "Record Scheduler Details"
 msgstr "Įrašyti planuotojo informaciją"
 
-#: src/sysprof/sysprof-greeter.ui:180
+#: src/sysprof/sysprof-greeter.ui:167
 msgid "Track when processes are scheduled per CPU"
 msgstr "Sekti, kada procesai yra suplanuoti pagal CPU"
 
-#: src/sysprof/sysprof-greeter.ui:193
+#: src/sysprof/sysprof-greeter.ui:175
 msgid "Tracing"
 msgstr "Sekimas"
 
-#: src/sysprof/sysprof-greeter.ui:197
+#: src/sysprof/sysprof-greeter.ui:178
 msgid "Trace Memory Allocations"
 msgstr "Sekti atminties išskyrimus"
 
-#: src/sysprof/sysprof-greeter.ui:198
-msgid "Record a stack trace when <tt>malloc</tt> or similar functions are used"
-msgstr ""
-"Įrašyti steko pėdsaką, kai naudojama <tt>malloc</tt> ar panašios funkcijos"
+#: src/sysprof/sysprof-greeter.ui:179
+msgid "Record a stack trace when malloc or similar functions are used"
+msgstr "Įrašyti steko pėdsaką, kai naudojama malloc ar panašios funkcijos"
 
-#: src/sysprof/sysprof-greeter.ui:209
+#: src/sysprof/sysprof-greeter.ui:185
 msgid "Sysprof must launch your application to record memory allocations."
 msgstr "Sysprof turi paleisti jūsų programą, kad įrašytų atminties išskyrimus."
 
-#: src/sysprof/sysprof-greeter.ui:227 src/sysprof/sysprof-greeter.ui:232
+#: src/sysprof/sysprof-greeter.ui:203 src/sysprof/sysprof-greeter.ui:208
 msgid "Application"
 msgstr "Programa"
 
-#: src/sysprof/sysprof-greeter.ui:235
+#: src/sysprof/sysprof-greeter.ui:211
 #: src/sysprof/sysprof-processes-section.ui:317
 msgid "Command Line"
 msgstr "Komandų eilutė"
 
-#: src/sysprof/sysprof-greeter.ui:241
+#: src/sysprof/sysprof-greeter.ui:217
 msgid "Working directory"
 msgstr "Darbinis katalogas"
 
-#: src/sysprof/sysprof-greeter.ui:247
+#: src/sysprof/sysprof-greeter.ui:223
 msgid "The application will be run as a subprocess of Sysprof."
 msgstr "Programa bus paleista kaip Sysprof vaikinis procesas."
 
-#: src/sysprof/sysprof-greeter.ui:260
+#: src/sysprof/sysprof-greeter.ui:236
 msgid "Environment"
 msgstr "Aplinka"
 
-#: src/sysprof/sysprof-greeter.ui:264
+#: src/sysprof/sysprof-greeter.ui:239
 msgid "Clear Environment"
 msgstr "Išvalyti aplinką"
 
-#: src/sysprof/sysprof-greeter.ui:265
+#: src/sysprof/sysprof-greeter.ui:240
 msgid "Clear the environment before launching application"
 msgstr "Išvalyti aplinką prie paleidžiant programą"
 
-#: src/sysprof/sysprof-greeter.ui:291
+#: src/sysprof/sysprof-greeter.ui:261
 msgid "Add _Variable"
 msgstr "Pridėti _kintamąjį"
 
-#: src/sysprof/sysprof-greeter.ui:297
+#: src/sysprof/sysprof-greeter.ui:267
 msgid "Add Variable"
 msgstr "Pridėti kintamąjį"
 
-#: src/sysprof/sysprof-greeter.ui:298
+#: src/sysprof/sysprof-greeter.ui:268
 msgid "_Add"
 msgstr "_Pridėti"
 
-#: src/sysprof/sysprof-greeter.ui:315 src/sysprof/sysprof-greeter.ui:320
+#: src/sysprof/sysprof-greeter.ui:285 src/sysprof/sysprof-greeter.ui:290
 msgid "Counters"
 msgstr "Skaitikliai"
 
-#: src/sysprof/sysprof-greeter.ui:324
+#: src/sysprof/sysprof-greeter.ui:293
 msgid "CPU Usage"
 msgstr "CPU naudojimas"
 
-#: src/sysprof/sysprof-greeter.ui:325
+#: src/sysprof/sysprof-greeter.ui:294
 msgid "Record coarse-grained counters about CPU usage and frequency"
 msgstr "Įrašyti apytikslius skaitiklius apie CPU naudojimą ir dažnį"
 
-#: src/sysprof/sysprof-greeter.ui:337
+#: src/sysprof/sysprof-greeter.ui:300
 msgid "Memory Usage"
 msgstr "Atminties naudojimas"
 
-#: src/sysprof/sysprof-greeter.ui:338
+#: src/sysprof/sysprof-greeter.ui:301
 msgid "Record coarse-grained counters about system memory usage"
 msgstr "Įrašyti apytikslius skaitiklius apie sistemos atminties naudojimą"
 
-#: src/sysprof/sysprof-greeter.ui:350
+#: src/sysprof/sysprof-greeter.ui:307
 msgid "Disk Usage"
 msgstr "Disko naudojimas"
 
-#: src/sysprof/sysprof-greeter.ui:351
+#: src/sysprof/sysprof-greeter.ui:308
 msgid "Record coarse-grained counters about storage throughput"
 msgstr "Įrašyti apytikslius skaitiklius apie saugyklos pralaidumą"
 
-#: src/sysprof/sysprof-greeter.ui:363
+#: src/sysprof/sysprof-greeter.ui:314
 msgid "Network Usage"
 msgstr "Tinklo naudojimas"
 
-#: src/sysprof/sysprof-greeter.ui:364
+#: src/sysprof/sysprof-greeter.ui:315
 msgid "Record coarse-grained counters about network traffic"
 msgstr "Įrašyti apytikslius skaitiklius apie tinklo srautą"
 
-#: src/sysprof/sysprof-greeter.ui:380
+#: src/sysprof/sysprof-greeter.ui:325
 msgid "Energy Usage"
 msgstr "Energijos sąnaudos"
 
-#: src/sysprof/sysprof-greeter.ui:381
+#: src/sysprof/sysprof-greeter.ui:326
 msgid "Record coarse-grained counters about energy usage in Watts"
 msgstr "Įrašyti apytikslius skaitiklius apie energijos naudojimą vatais"
 
-#: src/sysprof/sysprof-greeter.ui:393
+#: src/sysprof/sysprof-greeter.ui:332
 msgid "Battery Charge"
 msgstr "Baterijos įkrova"
 
-#: src/sysprof/sysprof-greeter.ui:394
+#: src/sysprof/sysprof-greeter.ui:333
 msgid "Record coarse-grained counters about battery charge or discharge rates"
 msgstr ""
 "Įrašyti apytikslius skaitiklius apie apie baterijos įkrovos ar iškrovos "
 "dažnius"
 
-#: src/sysprof/sysprof-greeter.ui:412 src/sysprof/sysprof-greeter.ui:417
-#: src/sysprof/sysprof-window.ui:333
+#: src/sysprof/sysprof-greeter.ui:346 src/sysprof/sysprof-greeter.ui:351
+#: src/sysprof/sysprof-window.ui:363
 msgid "D-Bus"
 msgstr "D-Bus"
 
-#: src/sysprof/sysprof-greeter.ui:421
+#: src/sysprof/sysprof-greeter.ui:355
 msgid "Record System Bus"
 msgstr "Įrašyti sisteminę magistralę"
 
-#: src/sysprof/sysprof-greeter.ui:422
+#: src/sysprof/sysprof-greeter.ui:356
 msgid "Record messages on the D-Bus system bus"
 msgstr "Įrašyti pranešimus sisteminėje D-Bus magistralėje"
 
-#: src/sysprof/sysprof-greeter.ui:438
+#: src/sysprof/sysprof-greeter.ui:372
 msgid "Record Session Bus"
 msgstr "Įrašyti seanso magistralę"
 
-#: src/sysprof/sysprof-greeter.ui:439
+#: src/sysprof/sysprof-greeter.ui:373
 msgid "Record messages on the D-Bus user session bus"
 msgstr "Įrašyti pranešimus D-Bus naudotojo seanso magistralėje"
 
-#: src/sysprof/sysprof-greeter.ui:450
+#: src/sysprof/sysprof-greeter.ui:384
 msgid ""
 "The session bus may contain sensitive information such as keyboard usage and "
 "passwords."
@@ -957,114 +1021,122 @@ msgstr ""
 "Seanso magistralė galė turėti jautrios informacijos, tokios kaip klaviatūros "
 "naudojimas ar slaptažodžiai."
 
-#: src/sysprof/sysprof-greeter.ui:473
+#: src/sysprof/sysprof-greeter.ui:407
 msgid "Timings"
 msgstr "Laikai"
 
-#: src/sysprof/sysprof-greeter.ui:477
+#: src/sysprof/sysprof-greeter.ui:411
 msgid "Compositor Frame Timings"
 msgstr "Komponuotojo kadrų dažniai"
 
-#: src/sysprof/sysprof-greeter.ui:478
+#: src/sysprof/sysprof-greeter.ui:412
 msgid "Record frame-timing information from the GNOME Shell compositor"
 msgstr "Įrašyti kandų dažnių informaciją iš GNOME apvalkalo komponatoriaus"
 
-#: src/sysprof/sysprof-greeter.ui:489
+#: src/sysprof/sysprof-greeter.ui:423
 msgid ""
 "Applications launched by Sysprof will automatically collect GTK frame timing "
 "information."
 msgstr ""
 "Sysprof paleistos programos automatiškai surenka GTK kadrų laikų informaciją."
 
-#: src/sysprof/sysprof-greeter.ui:529
+#: src/sysprof/sysprof-greeter.ui:463
 msgid "Devices"
 msgstr "Įrenginiai"
 
-#: src/sysprof/sysprof-greeter.ui:533
+#: src/sysprof/sysprof-greeter.ui:467
 msgid "Include GPU Information"
 msgstr "Įtraukti GPU informaciją"
 
-#: src/sysprof/sysprof-greeter.ui:534
+#: src/sysprof/sysprof-greeter.ui:468
 msgid "Records information about graphics hardware and drivers"
 msgstr "Įrašo informaciją apie grafikos aparatūrą bei tvarkykles"
 
-#: src/sysprof/sysprof-greeter.ui:552
+#: src/sysprof/sysprof-greeter.ui:486
 msgid "System"
 msgstr "Sistema"
 
-#: src/sysprof/sysprof-greeter.ui:557
+#: src/sysprof/sysprof-greeter.ui:491
 msgid "Power Profile"
 msgstr "Galingas profiliavimas"
 
-#: src/sysprof/sysprof-greeter.ui:560
+#: src/sysprof/sysprof-greeter.ui:494
 msgid "Record with Power Profile"
 msgstr "Įrašyti naudojant galingą profiliatorių"
 
-#: src/sysprof/sysprof-greeter.ui:561
+#: src/sysprof/sysprof-greeter.ui:495
 msgid "Switch to power profile while recording"
 msgstr "Perjungti į galingą profiliatorų įrašant"
 
-#: src/sysprof/sysprof-greeter.ui:571
+#: src/sysprof/sysprof-greeter.ui:505
 msgid "Details"
 msgstr "Detalės"
 
-#: src/sysprof/sysprof-greeter.ui:575
+#: src/sysprof/sysprof-greeter.ui:509
 msgid "Record System Log"
 msgstr "Įrašyti sistemos žurnalą"
 
-#: src/sysprof/sysprof-greeter.ui:576
+#: src/sysprof/sysprof-greeter.ui:510
 msgid "Watch the system log for new messages and record them"
 msgstr "Stebėti sistemos žurnalą ir įrašyti naujus pranešimus"
 
-#: src/sysprof/sysprof-greeter.ui:592
+#: src/sysprof/sysprof-greeter.ui:526
 msgid "Include Hardware Information"
 msgstr "Įtraukti aparatūros informaciją"
 
-#: src/sysprof/sysprof-greeter.ui:593
+#: src/sysprof/sysprof-greeter.ui:527
 msgid "Records information about PCI and USB devices"
 msgstr "Įrašo informaciją apie PCI ir USB įrenginius"
 
-#: src/sysprof/sysprof-greeter.ui:606
+#: src/sysprof/sysprof-greeter.ui:540
 msgid "Symbols"
 msgstr "Simboliai"
 
-#: src/sysprof/sysprof-greeter.ui:610
+#: src/sysprof/sysprof-greeter.ui:544
 msgid "Bundle Symbols"
 msgstr "Supakuoti simbolius"
 
-#: src/sysprof/sysprof-greeter.ui:611
+#: src/sysprof/sysprof-greeter.ui:545
 msgid "Make recording shareable by symbolizing stack traces after recording"
 msgstr "Padaryti įrašą bendrinamą simbolizuojant steko pėdsakus po įrašymo"
 
-#: src/sysprof/sysprof-greeter.ui:627
+#: src/sysprof/sysprof-greeter.ui:561
 msgid "Debuginfod"
 msgstr "Debuginfod"
 
-#: src/sysprof/sysprof-greeter.ui:628
+#: src/sysprof/sysprof-greeter.ui:562
 msgid "Enable Debuginfod to automatically fetch debug symbols"
 msgstr "Įjungti Debuginfod automatiniam derinimo simbolių gavimui"
 
-#: src/sysprof/sysprof-greeter.ui:661
+#: src/sysprof/sysprof-greeter.ui:575
+msgid "Debug File Directories"
+msgstr "Derinti failų katalogus"
+
+#: src/sysprof/sysprof-greeter.ui:576
+msgid "Directories to search for debug files"
+msgstr "Katalogai, kuriuose ieškoti derinimo failų"
+
+#: src/sysprof/sysprof-greeter.ui:624
 msgid "_Open File…"
 msgstr "_Atverti failą…"
 
-#: src/sysprof/sysprof-greeter.ui:668
+#: src/sysprof/sysprof-greeter.ui:631
 msgid "Record to _File…"
 msgstr "Įrašyti į failą…"
 
-#: src/sysprof/sysprof-greeter.ui:675
+#: src/sysprof/sysprof-greeter.ui:638
 msgid "Record to _Memory"
 msgstr "Įrašyti į _atmintį"
 
-#: src/sysprof/sysprof-greeter.ui:694 src/sysprof/sysprof-window.ui:444
+#: src/sysprof/sysprof-greeter.ui:657 src/sysprof/sysprof-window.ui:474
 msgid "_Keyboard Shortcuts"
 msgstr "_Klaviatūros trumpiniai"
 
-#: src/sysprof/sysprof-greeter.ui:698 src/sysprof/sysprof-window.ui:448
+#: src/sysprof/sysprof-greeter.ui:661 src/sysprof/sysprof-window.ui:478
 msgid "Help"
 msgstr "Žinynas"
 
-#: src/sysprof/sysprof-greeter.ui:702 src/sysprof/sysprof-window.ui:452
+#: src/sysprof/sysprof-greeter.ui:665 src/sysprof/sysprof-window.ui:482
 msgid "About Sysprof"
 msgstr "Apie Sysprof"
 
@@ -1104,37 +1176,45 @@ msgstr "Domenas"
 msgid "Marks"
 msgstr "Žymos"
 
-#: src/sysprof/sysprof-marks-section.ui:78
+#: src/sysprof/sysprof-marks-section.ui:72
 msgid "Mark Chart"
 msgstr "Pažymėti diagramą"
 
-#: src/sysprof/sysprof-marks-section.ui:92
+#: src/sysprof/sysprof-marks-section.ui:84
 msgid "Mark Table"
 msgstr "Pažymėti lentelę"
 
-#: src/sysprof/sysprof-marks-section.ui:105
+#: src/sysprof/sysprof-marks-section.ui:97
 msgid "Mark Waterfall"
 msgstr "Pažymėti kritimą"
 
-#: src/sysprof/sysprof-marks-section.ui:212
+#: src/sysprof/sysprof-marks-section.ui:198
 msgid "Summary"
 msgstr "Suvestinė"
 
-#: src/sysprof/sysprof-marks-section.ui:317
+#: src/sysprof/sysprof-marks-section.ui:303
 msgid "Minimum"
 msgstr "Mažiausia"
 
-#: src/sysprof/sysprof-marks-section.ui:351
+#: src/sysprof/sysprof-marks-section.ui:337
 msgid "Maximum"
 msgstr "Didžiausia"
 
-#: src/sysprof/sysprof-marks-section.ui:385
+#: src/sysprof/sysprof-marks-section.ui:371
 msgid "Average"
 msgstr "Vidutinė"
 
-#: src/sysprof/sysprof-marks-section.ui:419
+#: src/sysprof/sysprof-marks-section.ui:405
 msgid "Median"
 msgstr "Mediana"
+
+#: src/sysprof/sysprof-mark-chart-row.ui:8
+msgid "Toggle marks"
+msgstr "Perjungti žymeles"
+
+#: src/sysprof/sysprof-mark-chart-row.ui:12
+msgid "Set as Filter"
+msgstr "Nustatyti kaip filtrą"
 
 #: src/sysprof/sysprof-mark-table.ui:47
 msgid "Start"
@@ -1193,7 +1273,7 @@ msgid "Leaks"
 msgstr "Praradimai"
 
 #: src/sysprof/sysprof-memory-section.ui:212
-#: src/sysprof/sysprof-samples-section.ui:207
+#: src/sysprof/sysprof-samples-section.ui:216
 #: src/sysprof/sysprof-traceables-utility.ui:162
 msgid "Stack Trace"
 msgstr "Steko pėdsakas"
@@ -1250,10 +1330,6 @@ msgstr "Šaknis"
 msgid "Filesystem"
 msgstr "Failų sistema"
 
-#: src/sysprof/sysprof-process-dialog.ui:520
-msgid "Options"
-msgstr "Parametrai"
-
 #: src/sysprof/sysprof-process-dialog.ui:562
 msgid "Threads"
 msgstr "Gijos"
@@ -1307,31 +1383,35 @@ msgstr "Stabdyti įrašymą"
 msgid "Time Profiler"
 msgstr "Laiko profiliatorius"
 
-#: src/sysprof/sysprof-samples-section.ui:89 src/sysprof/sysprof-window.ui:465
+#: src/sysprof/sysprof-samples-section.ui:98 src/sysprof/sysprof-window.ui:495
 msgid "Callgraph"
 msgstr "Kvietimo grafas"
 
-#: src/sysprof/sysprof-samples-section.ui:172 src/sysprof/sysprof-window.ui:496
+#: src/sysprof/sysprof-samples-section.ui:181 src/sysprof/sysprof-window.ui:526
 msgid "Flamegraph"
 msgstr "Karštasis grafas"
 
-#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:136
+#: src/sysprof/sysprof-session-filters-widget.ui:103
+msgid "Clear All Filters"
+msgstr "Išvalyti visus filtrus"
+
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:166
 msgid "Seek Backward"
 msgstr "Eiti atgal"
 
-#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:146
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:176
 msgid "Zoom Out"
 msgstr "Atitolinti"
 
-#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:156
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:186
 msgid "Reset Zoom"
 msgstr "Atstatyti mastelį"
 
-#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:166
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:196
 msgid "Zoom In"
 msgstr "Priartinti"
 
-#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:176
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:206
 msgid "Seek Forward"
 msgstr "Eiti pirmyn"
 
@@ -1343,35 +1423,35 @@ msgstr "Gylis"
 msgid "Hits"
 msgstr "Patekimai"
 
-#: src/sysprof/sysprof-window.c:194
+#: src/sysprof/sysprof-window.c:191
 msgid "Open Recording"
 msgstr "Atverti įrašą"
 
-#: src/sysprof/sysprof-window.c:195
+#: src/sysprof/sysprof-window.c:192
 msgid "Open"
 msgstr "Atverti"
 
-#: src/sysprof/sysprof-window.c:199
+#: src/sysprof/sysprof-window.c:196
 msgid "Sysprof Capture (*.syscap)"
 msgstr "Sysprof surinkimas (*.syscap)"
 
-#: src/sysprof/sysprof-window.c:499
+#: src/sysprof/sysprof-window.c:485
 msgid "Save to File"
 msgstr "Įrašyti į failą"
 
-#: src/sysprof/sysprof-window.c:500
+#: src/sysprof/sysprof-window.c:486
 msgid "Save"
 msgstr "Įrašyti"
 
-#: src/sysprof/sysprof-window.c:679
+#: src/sysprof/sysprof-window.c:666
 msgid "Loading…"
 msgstr "Įkeliama…"
 
-#: src/sysprof/sysprof-window.c:760
+#: src/sysprof/sysprof-window.c:747
 msgid "Invalid Document"
 msgstr "Netinkamas dokumentas"
 
-#: src/sysprof/sysprof-window.c:762
+#: src/sysprof/sysprof-window.c:749
 #, c-format
 msgid ""
 "The document could not be loaded. Please check that you have the correct "
@@ -1388,76 +1468,52 @@ msgstr ""
 msgid "Toggle Left Panel"
 msgstr "Perjungti kairįjį skydelį"
 
-#: src/sysprof/sysprof-window.ui:191
+#: src/sysprof/sysprof-window.ui:133
+msgid "View Filters"
+msgstr "Rodyti filtrus"
+
+#: src/sysprof/sysprof-window.ui:221
 msgid "Main Menu"
 msgstr "Pagrindinis meniu"
 
-#: src/sysprof/sysprof-window.ui:198
+#: src/sysprof/sysprof-window.ui:228
 msgid "View Options"
 msgstr "Rodyti parametrus"
 
-#: src/sysprof/sysprof-window.ui:204
+#: src/sysprof/sysprof-window.ui:234
 msgid "Toggle Right Panel"
 msgstr "Perjungti dešinį skydelį"
 
-#: src/sysprof/sysprof-window.ui:353
+#: src/sysprof/sysprof-window.ui:383
 msgid "Energy"
 msgstr "Energija"
 
-#: src/sysprof/sysprof-window.ui:373
+#: src/sysprof/sysprof-window.ui:403
 msgid "Network"
 msgstr "Tinklas"
 
-#: src/sysprof/sysprof-window.ui:383
+#: src/sysprof/sysprof-window.ui:413
 msgid "Storage"
 msgstr "Saugykla"
 
-#: src/sysprof/sysprof-window.ui:430
+#: src/sysprof/sysprof-window.ui:460
 msgid "_Record Again…"
 msgstr "Į_rašyti dar kartą…"
 
-#: src/sysprof/sysprof-window.ui:434
+#: src/sysprof/sysprof-window.ui:464
 msgid "Open Recording…"
 msgstr "Atverti įrašą…"
 
-#: src/sysprof/sysprof-window.ui:438
+#: src/sysprof/sysprof-window.ui:468
 msgid "Save As…"
 msgstr "Įrašyti taip…"
 
-#: src/sysprof/sysprof-window.ui:458
+#: src/sysprof/sysprof-window.ui:488
 msgid "_Quit"
 msgstr "_Išeiti"
 
-#: src/sysprof/sysprof-window.ui:467
-msgid "Categorize Frames"
-msgstr "Kategorizuoti kadrus"
-
-#: src/sysprof/sysprof-window.ui:471
-msgid "Hide System Libraries"
-msgstr "Slėpti sistemo bibliotekas"
-
-#: src/sysprof/sysprof-window.ui:475
-msgid "Include Threads"
-msgstr "Įtraukti gijas"
-
-#: src/sysprof/sysprof-window.ui:479
-msgid "Bottom Up"
-msgstr "Iš apačios į viršų"
-
-#: src/sysprof/sysprof-window.ui:483
-msgid "Ignore Kernel Processes"
-msgstr "Nepaisyti branduolio procesų"
-
-#: src/sysprof/sysprof-window.ui:487
-msgid "Ignore Process 0"
-msgstr "Nepaisyti proceso 0"
-
-#: src/sysprof/sysprof-window.ui:491
-msgid "Merge Similar Processes"
-msgstr "Apjungti panašius procesus"
-
 #. translators: Left Heavy means to sort larger (heavier) stack frames before others, starting from the left
-#: src/sysprof/sysprof-window.ui:499
+#: src/sysprof/sysprof-window.ui:529
 msgid "Left Heavy"
 msgstr "Koncentruota kairėje"
 

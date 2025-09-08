@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2025-08-30 16:31+0000\n"
-"PO-Revision-Date: 2025-08-30 23:32+0200\n"
+"POT-Creation-Date: 2025-09-07 18:19+0000\n"
+"PO-Revision-Date: 2025-09-08 08:52+0200\n"
 "Last-Translator: Fran Dieguez <fran.dieguez@gnome.org>\n"
 "Language-Team: Galician <proxecto@trasno.gal>\n"
 "Language: gl\n"
@@ -519,7 +519,7 @@ msgstr "Saír"
 
 #: src/sysprof/gtk/menus.ui:6
 msgid "Make Function Root"
-msgstr ""
+msgstr "Facer a función raíz"
 
 #: src/sysprof/gtk/menus.ui:11 src/sysprof/sysprof-process-dialog.ui:520
 msgid "Options"

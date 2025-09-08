@@ -9,52 +9,52 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2025-05-16 22:01+0000\n"
-"PO-Revision-Date: 2025-06-11 08:00+0300\n"
-"Last-Translator: Emin Tufan Çetin <etcetin@gmail.com>\n"
+"POT-Creation-Date: 2025-08-28 03:17+0000\n"
+"PO-Revision-Date: 2025-08-28 13:43+0300\n"
+"Last-Translator: Sabri Ünal <yakushabb@gmail.com>\n"
 "Language-Team: Turkish <takim@gnome.org.tr>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.6\n"
 
-#: data/org.gnome.Sysprof.appdata.xml.in.in:6
-#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:268
-#: src/sysprof/sysprof-application.c:345
+#: data/org.gnome.Sysprof.desktop.in.in:3
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:6
+#: src/sysprof/sysprof-application.c:268 src/sysprof/sysprof-application.c:345
 #: src/sysprof/sysprof-recording-pad.ui:20 src/sysprof/sysprof-window.c:253
 msgid "Sysprof"
 msgstr "Sysprof"
 
-#: data/org.gnome.Sysprof.appdata.xml.in.in:7
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-greeter.ui:89
+msgid "Profiler"
+msgstr "Profilleyici"
+
+#: data/org.gnome.Sysprof.desktop.in.in:5
+msgid "Profile an application or entire system."
+msgstr "Uygulamayı ya da tüm sistemi profille."
+
+#: data/org.gnome.Sysprof.desktop.in.in:20
+msgid "Start New Recording"
+msgstr "Yeni Kayıt Başlat"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:7
 msgid "Profile an application or entire system"
 msgstr "Uygulamayı ya da tüm sistemi profille"
 
 #. developer_name tag deprecated with Appstream 1.0
-#: data/org.gnome.Sysprof.appdata.xml.in.in:11
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:11
 msgid "Christian Hergert"
 msgstr "Christian Hergert"
 
-#: data/org.gnome.Sysprof.appdata.xml.in.in:17
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:17
 msgid ""
 "Sysprof allows you to profile applications to aid in debugging and "
 "optimization."
 msgstr ""
 "Sysprof, hata ayıklama ve eniyilemeye yardımcı olmak için uygulamaları "
 "profillemenizi sağlar."
-
-#: data/org.gnome.Sysprof.desktop.in.in:5 src/sysprof/sysprof-greeter.ui:89
-msgid "Profiler"
-msgstr "Profilleyici"
-
-#: data/org.gnome.Sysprof.desktop.in.in:6
-msgid "Profile an application or entire system."
-msgstr "Uygulamayı ya da tüm sistemi profille."
-
-#: data/org.gnome.Sysprof.desktop.in.in:21
-msgid "Start New Recording"
-msgstr "Yeni Kayıt Başlat"
 
 #: src/libsysprof/sysprof-category-summary.c:136
 msgid "Uncategorized"
@@ -261,151 +261,151 @@ msgstr ""
 "İzleme, ‘-finstrument-functions’ ile derlenmiş bir programın oluşturulmasını "
 "gerektirir. İzleme kullanılamayacak."
 
-#: src/sysprof-cli/sysprof-cli.c:119
+#: src/sysprof-cli/sysprof-cli.c:120
 msgid "--merge requires at least 2 filename arguments"
 msgstr "--merge en az 2 dosya adı argümanı gerektirir"
 
-#: src/sysprof-cli/sysprof-cli.c:318
+#: src/sysprof-cli/sysprof-cli.c:319
 msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
 msgstr ""
 "Profillerken işlemci kısıtlamayı devre dışı bırak [--power-profile için "
 "kullanımdan kaldırıldı]"
 
-#: src/sysprof-cli/sysprof-cli.c:319
+#: src/sysprof-cli/sysprof-cli.c:320
 msgid "Make sysprof specific to a task [Deprecated]"
 msgstr "Sysprof’u göreve özel yap [kullanımdan kaldırıldı]"
 
-#: src/sysprof-cli/sysprof-cli.c:319 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof-cli/sysprof-cli.c:320 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:181
 #: src/sysprof/sysprof-processes-section.ui:283
 #: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "PID"
 
-#: src/sysprof-cli/sysprof-cli.c:320
+#: src/sysprof-cli/sysprof-cli.c:321
 msgid "Run a command and profile the process"
 msgstr "Komut çalıştır ve süreci profille"
 
-#: src/sysprof-cli/sysprof-cli.c:320
+#: src/sysprof-cli/sysprof-cli.c:321
 msgid "COMMAND"
 msgstr "KOMUT"
 
-#: src/sysprof-cli/sysprof-cli.c:321
+#: src/sysprof-cli/sysprof-cli.c:322
 msgid ""
 "Set environment variable for spawned process. Can be used multiple times."
 msgstr ""
 "Ortaya çıkan süreç için ortam değişkenini ayarla. Birden çok kez "
 "kullanılabilir."
 
-#: src/sysprof-cli/sysprof-cli.c:321
+#: src/sysprof-cli/sysprof-cli.c:322
 msgid "VAR=VALUE"
 msgstr "DEĞİŞKEN=DEĞER"
 
-#: src/sysprof-cli/sysprof-cli.c:322
+#: src/sysprof-cli/sysprof-cli.c:323
 msgid "Force overwrite the capture file"
 msgstr "Yakalama dosyasının üzerine yazmaya zorla"
 
-#: src/sysprof-cli/sysprof-cli.c:323
+#: src/sysprof-cli/sysprof-cli.c:324
 msgid "Disable recording of battery statistics"
 msgstr "Pil istatistiklerinin kaydını devre dışı bırak"
 
-#: src/sysprof-cli/sysprof-cli.c:324
+#: src/sysprof-cli/sysprof-cli.c:325
 msgid "Disable recording of CPU statistics"
 msgstr "İşlemci istatistiklerinin kaydını devre dışı bırak"
 
-#: src/sysprof-cli/sysprof-cli.c:325
+#: src/sysprof-cli/sysprof-cli.c:326
 msgid "Disable recording of Disk statistics"
 msgstr "Disk istatistiklerinin kaydını devre dışı bırak"
 
-#: src/sysprof-cli/sysprof-cli.c:326
+#: src/sysprof-cli/sysprof-cli.c:327
 msgid "Do not record stacktraces using Linux perf"
 msgstr "Yığın izlerini Linux perf kullanarak kaydetme"
 
-#: src/sysprof-cli/sysprof-cli.c:327
+#: src/sysprof-cli/sysprof-cli.c:328
 msgid "Do not append symbol name information from local machine"
 msgstr "Yerel makineden simge adı bilgilerini ekleme"
 
-#: src/sysprof-cli/sysprof-cli.c:328
+#: src/sysprof-cli/sysprof-cli.c:329
 msgid "Disable recording of memory statistics"
 msgstr "Bellek istatistiklerinin kaydını devre dışı bırak"
 
-#: src/sysprof-cli/sysprof-cli.c:329
+#: src/sysprof-cli/sysprof-cli.c:330
 msgid "Disable recording of network statistics"
 msgstr "Ağ istatistiklerinin kaydını devre dışı bırak"
 
-#: src/sysprof-cli/sysprof-cli.c:330
+#: src/sysprof-cli/sysprof-cli.c:331
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr "Alt süreç için SYSPROF_TRACE_FD ortamını ayarla"
 
-#: src/sysprof-cli/sysprof-cli.c:331
+#: src/sysprof-cli/sysprof-cli.c:332
 msgid "Track when processes are scheduled"
 msgstr "İşlemlerin ne zaman zamanlandığını izle"
 
-#: src/sysprof-cli/sysprof-cli.c:332
+#: src/sysprof-cli/sysprof-cli.c:333
 msgid "Profile the D-Bus session bus"
 msgstr "D-Bus oturum veri yolunu profille"
 
-#: src/sysprof-cli/sysprof-cli.c:333
+#: src/sysprof-cli/sysprof-cli.c:334
 msgid "Profile the D-Bus system bus"
 msgstr "D-Bus sistem veri yolunu profille"
 
-#: src/sysprof-cli/sysprof-cli.c:334
+#: src/sysprof-cli/sysprof-cli.c:335
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr "GJS süreçlerini izlemek için GJS_TRACE_FD ortamını ayarla"
 
-#: src/sysprof-cli/sysprof-cli.c:335
+#: src/sysprof-cli/sysprof-cli.c:336
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr "GTK uygulamasını izlemek için GTK_TRACE_FD ortamını ayarla"
 
-#: src/sysprof-cli/sysprof-cli.c:336
+#: src/sysprof-cli/sysprof-cli.c:337
 msgid "Include RAPL energy statistics"
 msgstr "RAPL enerji istatistiklerini içer"
 
-#: src/sysprof-cli/sysprof-cli.c:337
+#: src/sysprof-cli/sysprof-cli.c:338
 msgid "Profile memory allocations and frees"
 msgstr "Bellek ayırmaları ve boşaltmaları profille"
 
-#: src/sysprof-cli/sysprof-cli.c:338
+#: src/sysprof-cli/sysprof-cli.c:339
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr "Profilleyici istatistikleri için org.gnome.Shell’e bağlan"
 
-#: src/sysprof-cli/sysprof-cli.c:339
+#: src/sysprof-cli/sysprof-cli.c:340
 msgid "Track performance of the applications main loop"
 msgstr "Uygulama ana döngüsünün başarımını izle"
 
-#: src/sysprof-cli/sysprof-cli.c:341
+#: src/sysprof-cli/sysprof-cli.c:342
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr "Sağlanan tüm *.syscap dosyalarını birleştir ve stdout’a yaz"
 
-#: src/sysprof-cli/sysprof-cli.c:342
+#: src/sysprof-cli/sysprof-cli.c:343
 msgid "Print the sysprof-cli version and exit"
 msgstr "sysprof-cli sürümünü yazdır ve çık"
 
-#: src/sysprof-cli/sysprof-cli.c:343
+#: src/sysprof-cli/sysprof-cli.c:344
 msgid "The size of the buffer in pages (1 = 1 page)"
 msgstr "Sayfa türünden tampon boyutu (1 = 1 sayfa)"
 
-#: src/sysprof-cli/sysprof-cli.c:344
+#: src/sysprof-cli/sysprof-cli.c:345
 msgid "Additional D-Bus address to monitor"
 msgstr "Gözlenecek ek D-Bus adresi"
 
-#: src/sysprof-cli/sysprof-cli.c:345
+#: src/sysprof-cli/sysprof-cli.c:346
 msgid "Stack size to copy for unwinding in user-space"
 msgstr "Kullanıcı uzayında çözme için kopyalanacak yığın boyutu"
 
-#: src/sysprof-cli/sysprof-cli.c:346
+#: src/sysprof-cli/sysprof-cli.c:347
 msgid "Do not use debuginfod to resolve symbols"
 msgstr "Simgeleri çözümlemek için debuginfod kullanma"
 
-#: src/sysprof-cli/sysprof-cli.c:347
+#: src/sysprof-cli/sysprof-cli.c:348
 msgid "Do not use Sysprofd to acquire privileges"
 msgstr "Ayrıcalıkları edinmek için Sysprofd kullanma"
 
-#: src/sysprof-cli/sysprof-cli.c:380
+#: src/sysprof-cli/sysprof-cli.c:382
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[YAKALAMA_DOSYASI] [-- KOMUT ARGÜMANLARI] — Sysprof"
 
-#: src/sysprof-cli/sysprof-cli.c:383
+#: src/sysprof-cli/sysprof-cli.c:385
 msgid ""
 "\n"
 "Examples:\n"
@@ -438,12 +438,12 @@ msgstr ""
 "  sysprof-cli --stack-size=8192\n"
 "\n"
 
-#: src/sysprof-cli/sysprof-cli.c:423
+#: src/sysprof-cli/sysprof-cli.c:425
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "sysprof-cli’ye çok fazla argüman iletildi:"
 
 #. Translators: %s is a file name.
-#: src/sysprof-cli/sysprof-cli.c:480
+#: src/sysprof-cli/sysprof-cli.c:482
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s var. Üzerine yazmak için --force kullan\n"
@@ -628,7 +628,7 @@ msgstr "Saat"
 #: src/sysprof/sysprof-energy-section.ui:382
 #: src/sysprof/sysprof-flame-graph.c:458
 #: src/sysprof/sysprof-graphics-section.ui:293
-#: src/sysprof/sysprof-marks-section.ui:248
+#: src/sysprof/sysprof-marks-section.ui:234
 #: src/sysprof/sysprof-network-section.ui:380
 #: src/sysprof/sysprof-storage-section.ui:380
 msgid "Category"
@@ -637,7 +637,7 @@ msgstr "Kategori"
 #: src/sysprof/sysprof-cpu-section.ui:450
 #: src/sysprof/sysprof-energy-section.ui:420
 #: src/sysprof/sysprof-graphics-section.ui:331
-#: src/sysprof/sysprof-marks-section.ui:282
+#: src/sysprof/sysprof-marks-section.ui:268
 #: src/sysprof/sysprof-network-section.ui:418
 #: src/sysprof/sysprof-storage-section.ui:418
 msgid "Name"
@@ -1183,39 +1183,43 @@ msgstr "Etki Alanı"
 msgid "Marks"
 msgstr "İmler"
 
-#: src/sysprof/sysprof-marks-section.ui:78
+#: src/sysprof/sysprof-marks-section.ui:72
 msgid "Mark Chart"
 msgstr "Çizelgeyi İmle"
 
-#: src/sysprof/sysprof-marks-section.ui:92
+#: src/sysprof/sysprof-marks-section.ui:84
 msgid "Mark Table"
 msgstr "Tabloyu İmle"
 
-#: src/sysprof/sysprof-marks-section.ui:105
+#: src/sysprof/sysprof-marks-section.ui:97
 msgid "Mark Waterfall"
 msgstr "Şelaleyi İmle"
 
-#: src/sysprof/sysprof-marks-section.ui:212
+#: src/sysprof/sysprof-marks-section.ui:198
 msgid "Summary"
 msgstr "Özet"
 
-#: src/sysprof/sysprof-marks-section.ui:317
+#: src/sysprof/sysprof-marks-section.ui:303
 msgid "Minimum"
 msgstr "En Düşük"
 
-#: src/sysprof/sysprof-marks-section.ui:351
+#: src/sysprof/sysprof-marks-section.ui:337
 msgid "Maximum"
 msgstr "En Yüksek"
 
-#: src/sysprof/sysprof-marks-section.ui:385
+#: src/sysprof/sysprof-marks-section.ui:371
 msgid "Average"
 msgstr "Ortalama"
 
-#: src/sysprof/sysprof-marks-section.ui:419
+#: src/sysprof/sysprof-marks-section.ui:405
 msgid "Median"
 msgstr "Ortanca"
 
 #: src/sysprof/sysprof-mark-chart-row.ui:8
+msgid "Toggle marks"
+msgstr "İmleri aç/kapat"
+
+#: src/sysprof/sysprof-mark-chart-row.ui:12
 msgid "Set as Filter"
 msgstr "Süzgeç Olarak Kaydet"
 

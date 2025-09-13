@@ -1,3 +1,10 @@
+Overview of changes in Sysprof 49.0
+===================================
+
+ * Disable unloading of libraries linking libsysprof-capture as it
+   uses TLS in intrusive ways
+ * Translation updates
+
 Overview of changes in Sysprof 49.rc
 ====================================
 

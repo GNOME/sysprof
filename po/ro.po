@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-32\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2025-05-10 22:32+0000\n"
-"PO-Revision-Date: 2025-06-29 12:23+0200\n"
+"POT-Creation-Date: 2025-09-10 23:29+0000\n"
+"PO-Revision-Date: 2025-09-15 17:49+0200\n"
 "Last-Translator: Antonio Marin <gnmer.6qxyg@slmail.me>\n"
 "Language-Team: Romanian <gnomero-list@lists.sourceforge.net>\n"
 "Language: ro\n"
@@ -21,7 +21,7 @@ msgstr ""
 "X-Generator: Gtranslator 48.0\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:6
-#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:172
+#: data/org.gnome.Sysprof.desktop.in.in:3 src/sysprof/sysprof-application.c:172
 #: src/sysprof/sysprof-application.c:248
 #: src/sysprof/sysprof-recording-pad.ui:20 src/sysprof/sysprof-window.c:274
 msgid "Sysprof"
@@ -44,11 +44,11 @@ msgstr ""
 "Sysprof permite analizarea performanței aplicațiilor pentru a ajuta la "
 "depanare și optimizare."
 
-#: data/org.gnome.Sysprof.desktop.in.in:5 src/sysprof/sysprof-greeter.ui:89
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-greeter.ui:89
 msgid "Profiler"
 msgstr "Analizator de performanță"
 
-#: data/org.gnome.Sysprof.desktop.in.in:6
+#: data/org.gnome.Sysprof.desktop.in.in:5
 msgid "Profile an application or entire system."
 msgstr "Analizează performanța unei aplicații sau a întregului sistem."
 
@@ -221,7 +221,7 @@ msgstr "Jurnal"
 
 #: src/libsysprof/sysprof-document-mark.c:134
 msgid "Mark"
-msgstr "Semn"
+msgstr "Reper"
 
 #: src/libsysprof/sysprof-document-process.c:293
 #, c-format
@@ -1130,19 +1130,19 @@ msgstr "Domeniu"
 
 #: src/sysprof/sysprof-marks-section.ui:4
 msgid "Marks"
-msgstr "Semne"
+msgstr "Repere"
 
 #: src/sysprof/sysprof-marks-section.ui:78
 msgid "Mark Chart"
-msgstr "Grafic de semne"
+msgstr "Grafic de repere"
 
 #: src/sysprof/sysprof-marks-section.ui:92
 msgid "Mark Table"
-msgstr "Marchează tabela"
+msgstr "Tabel de repere"
 
 #: src/sysprof/sysprof-marks-section.ui:105
 msgid "Mark Waterfall"
-msgstr "Marchează cascada"
+msgstr "Reprezentare secvențială de repere"
 
 #: src/sysprof/sysprof-marks-section.ui:212
 msgid "Summary"

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-32\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2025-06-29 00:43+0000\n"
-"PO-Revision-Date: 2025-06-29 15:09+0200\n"
+"POT-Creation-Date: 2025-09-13 19:45+0000\n"
+"PO-Revision-Date: 2025-09-15 17:49+0200\n"
 "Last-Translator: Antonio Marin <gnmer.6qxyg@slmail.me>\n"
 "Language-Team: Romanian <gnomero-list@lists.sourceforge.net>\n"
 "Language: ro\n"
@@ -20,41 +20,41 @@ msgstr ""
 "20)) ? 1 : 2);\n"
 "X-Generator: Gtranslator 48.0\n"
 
-#: data/org.gnome.Sysprof.appdata.xml.in.in:6
-#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:268
-#: src/sysprof/sysprof-application.c:345
+#: data/org.gnome.Sysprof.desktop.in.in:3
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:6
+#: src/sysprof/sysprof-application.c:268 src/sysprof/sysprof-application.c:345
 #: src/sysprof/sysprof-recording-pad.ui:20 src/sysprof/sysprof-window.c:253
 msgid "Sysprof"
 msgstr "Sysprof"
 
-#: data/org.gnome.Sysprof.appdata.xml.in.in:7
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-greeter.ui:89
+msgid "Profiler"
+msgstr "Analizator de performanță"
+
+#: data/org.gnome.Sysprof.desktop.in.in:5
+msgid "Profile an application or entire system."
+msgstr "Analizează performanța unei aplicații sau a întregului sistem."
+
+#: data/org.gnome.Sysprof.desktop.in.in:20
+msgid "Start New Recording"
+msgstr "Începe o înregistrare nouă"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:7
 msgid "Profile an application or entire system"
 msgstr "Analizează performanța unei aplicații sau a întregului sistem"
 
 #. developer_name tag deprecated with Appstream 1.0
-#: data/org.gnome.Sysprof.appdata.xml.in.in:11
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:11
 msgid "Christian Hergert"
 msgstr "Christian Hergert"
 
-#: data/org.gnome.Sysprof.appdata.xml.in.in:17
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:17
 msgid ""
 "Sysprof allows you to profile applications to aid in debugging and "
 "optimization."
 msgstr ""
 "Sysprof permite analizarea performanței aplicațiilor pentru a ajuta la "
 "depanare și optimizare."
-
-#: data/org.gnome.Sysprof.desktop.in.in:5 src/sysprof/sysprof-greeter.ui:89
-msgid "Profiler"
-msgstr "Analizator de performanță"
-
-#: data/org.gnome.Sysprof.desktop.in.in:6
-msgid "Profile an application or entire system."
-msgstr "Analizează performanța unei aplicații sau a întregului sistem."
-
-#: data/org.gnome.Sysprof.desktop.in.in:21
-msgid "Start New Recording"
-msgstr "Începe o înregistrare nouă"
 
 #: src/libsysprof/sysprof-category-summary.c:136
 msgid "Uncategorized"
@@ -225,7 +225,7 @@ msgstr "Jurnal"
 
 #: src/libsysprof/sysprof-document-mark.c:134
 msgid "Mark"
-msgstr "Semn"
+msgstr "Reper"
 
 #: src/libsysprof/sysprof-document-process.c:293
 #, c-format
@@ -263,151 +263,151 @@ msgstr ""
 "Urmărirea necesită generarea unui program compilat cu „-finstrument-"
 "functions”. Urmărirea nu va fi disponibilă."
 
-#: src/sysprof-cli/sysprof-cli.c:119
+#: src/sysprof-cli/sysprof-cli.c:120
 msgid "--merge requires at least 2 filename arguments"
 msgstr "--merge necesită cel puțin 2 argumente de nume de fișier"
 
-#: src/sysprof-cli/sysprof-cli.c:318
+#: src/sysprof-cli/sysprof-cli.c:319
 msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
 msgstr ""
 "Dezactivează accelerarea CPU în timpul analizării [Depășit pentru --power-"
 "profile]"
 
-#: src/sysprof-cli/sysprof-cli.c:319
+#: src/sysprof-cli/sysprof-cli.c:320
 msgid "Make sysprof specific to a task [Deprecated]"
 msgstr "Face sysprof specific la o sarcină [depășit]"
 
-#: src/sysprof-cli/sysprof-cli.c:319 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof-cli/sysprof-cli.c:320 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:181
 #: src/sysprof/sysprof-processes-section.ui:283
 #: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "PID"
 
-#: src/sysprof-cli/sysprof-cli.c:320
+#: src/sysprof-cli/sysprof-cli.c:321
 msgid "Run a command and profile the process"
 msgstr "Execută o comandă și analizează procesul"
 
-#: src/sysprof-cli/sysprof-cli.c:320
+#: src/sysprof-cli/sysprof-cli.c:321
 msgid "COMMAND"
 msgstr "COMANDĂ"
 
-#: src/sysprof-cli/sysprof-cli.c:321
+#: src/sysprof-cli/sysprof-cli.c:322
 msgid ""
 "Set environment variable for spawned process. Can be used multiple times."
 msgstr ""
 "Stabilește variabila de mediu pentru procesul creat. Poate fi utilizat de "
 "mai multe ori."
 
-#: src/sysprof-cli/sysprof-cli.c:321
+#: src/sysprof-cli/sysprof-cli.c:322
 msgid "VAR=VALUE"
 msgstr "VAR=VALOARE"
 
-#: src/sysprof-cli/sysprof-cli.c:322
+#: src/sysprof-cli/sysprof-cli.c:323
 msgid "Force overwrite the capture file"
 msgstr "Forțează suprascrierea înregistrării"
 
-#: src/sysprof-cli/sysprof-cli.c:323
+#: src/sysprof-cli/sysprof-cli.c:324
 msgid "Disable recording of battery statistics"
 msgstr "Dezactivează înregistrarea statisticilor de baterie"
 
-#: src/sysprof-cli/sysprof-cli.c:324
+#: src/sysprof-cli/sysprof-cli.c:325
 msgid "Disable recording of CPU statistics"
 msgstr "Dezactivează înregistrarea statisticilor CPU"
 
-#: src/sysprof-cli/sysprof-cli.c:325
+#: src/sysprof-cli/sysprof-cli.c:326
 msgid "Disable recording of Disk statistics"
 msgstr "Dezactivează înregistrarea statisticilor de disc"
 
-#: src/sysprof-cli/sysprof-cli.c:326
+#: src/sysprof-cli/sysprof-cli.c:327
 msgid "Do not record stacktraces using Linux perf"
 msgstr "Nu înregistra urmele de stivă utilizând perf Linux"
 
-#: src/sysprof-cli/sysprof-cli.c:327
+#: src/sysprof-cli/sysprof-cli.c:328
 msgid "Do not append symbol name information from local machine"
 msgstr "Nu atașa informațiile de nume de simbol de la aparatul local"
 
-#: src/sysprof-cli/sysprof-cli.c:328
+#: src/sysprof-cli/sysprof-cli.c:329
 msgid "Disable recording of memory statistics"
 msgstr "Dezactivează înregistrarea statisticilor memoriei"
 
-#: src/sysprof-cli/sysprof-cli.c:329
+#: src/sysprof-cli/sysprof-cli.c:330
 msgid "Disable recording of network statistics"
 msgstr "Dezactivează înregistrarea statisticilor de rețea"
 
-#: src/sysprof-cli/sysprof-cli.c:330
+#: src/sysprof-cli/sysprof-cli.c:331
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr "Stabilește mediul SYSPROF_TRACE_FD pentru subproces"
 
-#: src/sysprof-cli/sysprof-cli.c:331
+#: src/sysprof-cli/sysprof-cli.c:332
 msgid "Track when processes are scheduled"
 msgstr "Urmărește când procesele sunt programate"
 
-#: src/sysprof-cli/sysprof-cli.c:332
+#: src/sysprof-cli/sysprof-cli.c:333
 msgid "Profile the D-Bus session bus"
 msgstr "Analizează magistrala de sesiune D-Bus"
 
-#: src/sysprof-cli/sysprof-cli.c:333
+#: src/sysprof-cli/sysprof-cli.c:334
 msgid "Profile the D-Bus system bus"
 msgstr "Analizează magistrala de sistem D-Bus"
 
-#: src/sysprof-cli/sysprof-cli.c:334
+#: src/sysprof-cli/sysprof-cli.c:335
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr "Stabilește mediul GJS_TRACE_FD pentru a urmări procesele GJS"
 
-#: src/sysprof-cli/sysprof-cli.c:335
+#: src/sysprof-cli/sysprof-cli.c:336
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr "Stabilește mediul GTK_TRACE_FD pentru a urmări o aplicație GTK"
 
-#: src/sysprof-cli/sysprof-cli.c:336
+#: src/sysprof-cli/sysprof-cli.c:337
 msgid "Include RAPL energy statistics"
 msgstr "Include statisticile de energie RAPL"
 
-#: src/sysprof-cli/sysprof-cli.c:337
+#: src/sysprof-cli/sysprof-cli.c:338
 msgid "Profile memory allocations and frees"
 msgstr "Analizează alocările de memorie și eliberările"
 
-#: src/sysprof-cli/sysprof-cli.c:338
+#: src/sysprof-cli/sysprof-cli.c:339
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr "Conectează la org.gnome.Shell pentru statistici de analiză"
 
-#: src/sysprof-cli/sysprof-cli.c:339
+#: src/sysprof-cli/sysprof-cli.c:340
 msgid "Track performance of the applications main loop"
 msgstr "Urmărește performanța a buclei principale a aplicației"
 
-#: src/sysprof-cli/sysprof-cli.c:341
+#: src/sysprof-cli/sysprof-cli.c:342
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr "Fuzionează toate fișierele *.syscap furnizate și scrie la stdout"
 
-#: src/sysprof-cli/sysprof-cli.c:342
+#: src/sysprof-cli/sysprof-cli.c:343
 msgid "Print the sysprof-cli version and exit"
 msgstr "Tipărește versiunea sysprof-cli și ieși"
 
-#: src/sysprof-cli/sysprof-cli.c:343
+#: src/sysprof-cli/sysprof-cli.c:344
 msgid "The size of the buffer in pages (1 = 1 page)"
 msgstr "Dimensiunea memoriei intermediare în pagini (1 = 1 pagină)"
 
-#: src/sysprof-cli/sysprof-cli.c:344
+#: src/sysprof-cli/sysprof-cli.c:345
 msgid "Additional D-Bus address to monitor"
 msgstr "Adresa D-Bus adițională de monitorizat"
 
-#: src/sysprof-cli/sysprof-cli.c:345
+#: src/sysprof-cli/sysprof-cli.c:346
 msgid "Stack size to copy for unwinding in user-space"
 msgstr "Mărimea stivei pentru copiere la derularea în spațiul utilizatorului"
 
-#: src/sysprof-cli/sysprof-cli.c:346
+#: src/sysprof-cli/sysprof-cli.c:347
 msgid "Do not use debuginfod to resolve symbols"
 msgstr "Nu utiliza debuginfod pentru a localiza simbolurile"
 
-#: src/sysprof-cli/sysprof-cli.c:347
+#: src/sysprof-cli/sysprof-cli.c:348
 msgid "Do not use Sysprofd to acquire privileges"
 msgstr "Nu utiliza Sysprofd pentru a obține privilegii"
 
-#: src/sysprof-cli/sysprof-cli.c:380
+#: src/sysprof-cli/sysprof-cli.c:382
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[FIȘIERUL_ÎNREGISTRĂRII] [-- COMANDĂ ARGUMENTE] — Sysprof"
 
-#: src/sysprof-cli/sysprof-cli.c:383
+#: src/sysprof-cli/sysprof-cli.c:385
 msgid ""
 "\n"
 "Examples:\n"
@@ -439,12 +439,12 @@ msgstr ""
 "  # un multiplu al mărimii paginii\n"
 "  sysprof-cli --stack-size=8192\n"
 
-#: src/sysprof-cli/sysprof-cli.c:423
+#: src/sysprof-cli/sysprof-cli.c:425
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Prea multe argumente au fost trimise la sysprof-cli:"
 
 #. Translators: %s is a file name.
-#: src/sysprof-cli/sysprof-cli.c:480
+#: src/sysprof-cli/sysprof-cli.c:482
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s există. Folosește --force pentru a suprascrie\n"
@@ -630,7 +630,7 @@ msgstr "Timp"
 #: src/sysprof/sysprof-energy-section.ui:382
 #: src/sysprof/sysprof-flame-graph.c:458
 #: src/sysprof/sysprof-graphics-section.ui:293
-#: src/sysprof/sysprof-marks-section.ui:248
+#: src/sysprof/sysprof-marks-section.ui:234
 #: src/sysprof/sysprof-network-section.ui:380
 #: src/sysprof/sysprof-storage-section.ui:380
 msgid "Category"
@@ -639,7 +639,7 @@ msgstr "Categorie"
 #: src/sysprof/sysprof-cpu-section.ui:450
 #: src/sysprof/sysprof-energy-section.ui:420
 #: src/sysprof/sysprof-graphics-section.ui:331
-#: src/sysprof/sysprof-marks-section.ui:282
+#: src/sysprof/sysprof-marks-section.ui:268
 #: src/sysprof/sysprof-network-section.ui:418
 #: src/sysprof/sysprof-storage-section.ui:418
 msgid "Name"
@@ -1203,41 +1203,45 @@ msgstr "Domeniu"
 
 #: src/sysprof/sysprof-marks-section.ui:4
 msgid "Marks"
-msgstr "Semne"
+msgstr "Repere"
 
-#: src/sysprof/sysprof-marks-section.ui:78
+#: src/sysprof/sysprof-marks-section.ui:72
 msgid "Mark Chart"
-msgstr "Grafic de semne"
+msgstr "Grafic de repere"
 
-#: src/sysprof/sysprof-marks-section.ui:92
+#: src/sysprof/sysprof-marks-section.ui:84
 msgid "Mark Table"
-msgstr "Marchează tabela"
+msgstr "Tabel de repere"
 
-#: src/sysprof/sysprof-marks-section.ui:105
+#: src/sysprof/sysprof-marks-section.ui:97
 msgid "Mark Waterfall"
-msgstr "Marchează cascada"
+msgstr "Reprezentare secvențială de repere"
 
-#: src/sysprof/sysprof-marks-section.ui:212
+#: src/sysprof/sysprof-marks-section.ui:198
 msgid "Summary"
 msgstr "Rezumat"
 
-#: src/sysprof/sysprof-marks-section.ui:317
+#: src/sysprof/sysprof-marks-section.ui:303
 msgid "Minimum"
 msgstr "Minim"
 
-#: src/sysprof/sysprof-marks-section.ui:351
+#: src/sysprof/sysprof-marks-section.ui:337
 msgid "Maximum"
 msgstr "Maxim"
 
-#: src/sysprof/sysprof-marks-section.ui:385
+#: src/sysprof/sysprof-marks-section.ui:371
 msgid "Average"
 msgstr "Media"
 
-#: src/sysprof/sysprof-marks-section.ui:419
+#: src/sysprof/sysprof-marks-section.ui:405
 msgid "Median"
 msgstr "Median"
 
 #: src/sysprof/sysprof-mark-chart-row.ui:8
+msgid "Toggle marks"
+msgstr "Comutator Repere"
+
+#: src/sysprof/sysprof-mark-chart-row.ui:12
 msgid "Set as Filter"
 msgstr "Stabilește ca filtru"
 

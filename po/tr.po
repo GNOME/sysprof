@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2025-08-28 03:17+0000\n"
+"POT-Creation-Date: 2025-09-17 12:03+0000\n"
 "PO-Revision-Date: 2025-08-28 13:43+0300\n"
 "Last-Translator: Sabri Ünal <yakushabb@gmail.com>\n"
 "Language-Team: Turkish <takim@gnome.org.tr>\n"
@@ -934,7 +934,7 @@ msgstr "Uygulamayı başlatmadan önce ortamı temizle"
 
 #: src/sysprof/sysprof-greeter.ui:261
 msgid "Add _Variable"
-msgstr "Değişken Ekle"
+msgstr "_Değişken Ekle"
 
 #: src/sysprof/sysprof-greeter.ui:267
 msgid "Add Variable"
@@ -1516,7 +1516,7 @@ msgstr "Farklı Kaydet…"
 
 #: src/sysprof/sysprof-window.ui:488
 msgid "_Quit"
-msgstr "_Çık"
+msgstr "Çı_k"
 
 #. translators: Left Heavy means to sort larger (heavier) stack frames before others, starting from the left
 #: src/sysprof/sysprof-window.ui:529

@@ -798,9 +798,7 @@ sysprof_window_open (SysprofApplication       *app,
   g_autoptr(SysprofDocumentLoader) loader = NULL;
   g_autoptr(SysprofRecordingTemplate) alt_template = NULL;
   g_autoptr(GError) error = NULL;
-  g_autofd int fd = -1;
   SysprofWindow *self;
-  const char *path;
 
   g_return_if_fail (SYSPROF_IS_APPLICATION (app));
   g_return_if_fail (!template || SYSPROF_IS_RECORDING_TEMPLATE (template));
@@ -816,16 +814,7 @@ sysprof_window_open (SysprofApplication       *app,
       return;
     }
 
-  path = g_file_peek_path (file);
-
-  if (-1 == (fd = open (path, O_RDONLY)))
-    {
-      int errsv = errno;
-      g_critical ("Failed to open %s: %s", path, g_strerror (errsv));
-      return;
-    }
-
-  if (!(loader = sysprof_recording_template_create_loader (template, fd, &error)))
+  if (!(loader = sysprof_recording_template_create_loader (template, file, &error)))
     {
       g_critical ("Failed to create loader: %s", error->message);
       return;
@@ -857,7 +846,7 @@ sysprof_window_open_fd (SysprofApplication       *app,
   if (template == NULL)
     template = alt_template = sysprof_recording_template_new ();
 
-  if (!(loader = sysprof_recording_template_create_loader (template, fd, &error)))
+  if (!(loader = sysprof_recording_template_create_loader_for_fd (template, fd, &error)))
     {
       g_critical ("Failed to create loader: %s", error->message);
       return;

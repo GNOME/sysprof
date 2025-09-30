@@ -784,19 +784,15 @@ sysprof_recording_template_save (SysprofRecordingTemplate  *self,
   return json_generator_to_stream (generator, G_OUTPUT_STREAM (stream), NULL, error);
 }
 
-SysprofDocumentLoader *
-sysprof_recording_template_create_loader_for_fd (SysprofRecordingTemplate  *self,
-                                                 int                        fd,
-                                                 GError                   **error)
+static SysprofDocumentLoader *
+sysprof_recording_template_setup_loader (SysprofRecordingTemplate *self,
+                                         SysprofDocumentLoader    *loader)
 {
-  g_autoptr(SysprofDocumentLoader) loader = NULL;
   g_autoptr(SysprofMultiSymbolizer) multi = NULL;
   g_autoptr(SysprofElfSymbolizer) elf = NULL;
 
-  g_return_val_if_fail (SYSPROF_IS_RECORDING_TEMPLATE (self), NULL);
-
-  if (!(loader = sysprof_document_loader_new_for_fd (fd, error)))
-    return NULL;
+  g_assert (SYSPROF_IS_RECORDING_TEMPLATE (self));
+  g_assert (SYSPROF_IS_DOCUMENT_LOADER (self));
 
   multi = sysprof_multi_symbolizer_new ();
 
@@ -818,13 +814,30 @@ sysprof_recording_template_create_loader_for_fd (SysprofRecordingTemplate  *self
       {
         g_autoptr(SysprofSymbolizer) debuginfod = NULL;
         g_autoptr(GError) debuginfod_error = NULL;
-        
+
         if (!(debuginfod = sysprof_debuginfod_symbolizer_new (&debuginfod_error)))
           g_warning ("Failed to create debuginfod symbolizer: %s", debuginfod_error->message);
         else
           sysprof_multi_symbolizer_take (multi, g_steal_pointer (&debuginfod));
       }
 #endif
+
+  return g_steal_pointer (&loader);
+}
+
+SysprofDocumentLoader *
+sysprof_recording_template_create_loader_for_fd (SysprofRecordingTemplate  *self,
+                                                 int                        fd,
+                                                 GError                   **error)
+{
+  g_autoptr(SysprofDocumentLoader) loader = NULL;
+
+  g_return_val_if_fail (SYSPROF_IS_RECORDING_TEMPLATE (self), NULL);
+
+  if (!(loader = sysprof_document_loader_new_for_fd (fd, error)))
+    return NULL;
+
+  sysprof_recording_template_setup_loader (self, loader);
 
   return g_steal_pointer (&loader);
 }

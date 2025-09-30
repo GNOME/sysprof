@@ -43,6 +43,9 @@ SysprofRecordingTemplate *sysprof_recording_template_new_from_file        (GFile
 gboolean                  sysprof_recording_template_save                 (SysprofRecordingTemplate  *self,
                                                                            GFile                     *file,
                                                                            GError                   **error);
+SysprofDocumentLoader    *sysprof_recording_template_create_loader        (SysprofRecordingTemplate  *self,
+                                                                           GFile                     *file,
+                                                                           GError                   **error);
 SysprofDocumentLoader    *sysprof_recording_template_create_loader_for_fd (SysprofRecordingTemplate  *self,
                                                                            int                        fd,
                                                                            GError                   **error);

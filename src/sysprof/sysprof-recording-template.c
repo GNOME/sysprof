@@ -826,6 +826,24 @@ sysprof_recording_template_setup_loader (SysprofRecordingTemplate *self,
 }
 
 SysprofDocumentLoader *
+sysprof_recording_template_create_loader (SysprofRecordingTemplate  *self,
+                                          GFile                     *file,
+                                          GError                   **error)
+{
+  g_autoptr(SysprofDocumentLoader) loader = NULL;
+
+  g_return_val_if_fail (SYSPROF_IS_RECORDING_TEMPLATE (self), NULL);
+  g_return_val_if_fail (G_IS_FILE (file), NULL);
+
+  if (!(loader = sysprof_document_loader_new (g_file_peek_path (file))))
+    return NULL;
+
+  sysprof_recording_template_setup_loader (self, loader);
+
+  return g_steal_pointer (&loader);
+}
+
+SysprofDocumentLoader *
 sysprof_recording_template_create_loader_for_fd (SysprofRecordingTemplate  *self,
                                                  int                        fd,
                                                  GError                   **error)

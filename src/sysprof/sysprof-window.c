@@ -825,7 +825,7 @@ sysprof_window_open (SysprofApplication       *app,
       return;
     }
 
-  if (!(loader = sysprof_recording_template_create_loader (template, fd, &error)))
+  if (!(loader = sysprof_recording_template_create_loader_for_fd (template, fd, &error)))
     {
       g_critical ("Failed to create loader: %s", error->message);
       return;
@@ -857,7 +857,7 @@ sysprof_window_open_fd (SysprofApplication       *app,
   if (template == NULL)
     template = alt_template = sysprof_recording_template_new ();
 
-  if (!(loader = sysprof_recording_template_create_loader (template, fd, &error)))
+  if (!(loader = sysprof_recording_template_create_loader_for_fd (template, fd, &error)))
     {
       g_critical ("Failed to create loader: %s", error->message);
       return;

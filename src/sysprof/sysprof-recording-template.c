@@ -785,9 +785,9 @@ sysprof_recording_template_save (SysprofRecordingTemplate  *self,
 }
 
 SysprofDocumentLoader *
-sysprof_recording_template_create_loader (SysprofRecordingTemplate  *self,
-                                          int                        fd,
-                                          GError                   **error)
+sysprof_recording_template_create_loader_for_fd (SysprofRecordingTemplate  *self,
+                                                 int                        fd,
+                                                 GError                   **error)
 {
   g_autoptr(SysprofDocumentLoader) loader = NULL;
   g_autoptr(SysprofMultiSymbolizer) multi = NULL;

@@ -792,7 +792,7 @@ sysprof_recording_template_setup_loader (SysprofRecordingTemplate *self,
   g_autoptr(SysprofElfSymbolizer) elf = NULL;
 
   g_assert (SYSPROF_IS_RECORDING_TEMPLATE (self));
-  g_assert (SYSPROF_IS_DOCUMENT_LOADER (self));
+  g_assert (SYSPROF_IS_DOCUMENT_LOADER (loader));
 
   multi = sysprof_multi_symbolizer_new ();
 

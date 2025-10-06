@@ -784,7 +784,7 @@ sysprof_recording_template_save (SysprofRecordingTemplate  *self,
   return json_generator_to_stream (generator, G_OUTPUT_STREAM (stream), NULL, error);
 }
 
-static SysprofDocumentLoader *
+static void
 sysprof_recording_template_setup_loader (SysprofRecordingTemplate *self,
                                          SysprofDocumentLoader    *loader)
 {
@@ -821,8 +821,6 @@ sysprof_recording_template_setup_loader (SysprofRecordingTemplate *self,
           sysprof_multi_symbolizer_take (multi, g_steal_pointer (&debuginfod));
       }
 #endif
-
-  return g_steal_pointer (&loader);
 }
 
 SysprofDocumentLoader *

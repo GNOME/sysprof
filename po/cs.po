@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2025-09-04 10:11+0000\n"
-"PO-Revision-Date: 2025-09-04 15:38+0200\n"
+"POT-Creation-Date: 2025-10-11 03:03+0000\n"
+"PO-Revision-Date: 2025-10-18 00:32+0200\n"
 "Last-Translator: Daniel Rusek <mail@asciiwolf.com>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
@@ -136,7 +136,6 @@ msgid "Unwindable"
 msgstr ""
 
 #: src/libsysprof/sysprof-category-summary.c:196
-#| msgid "Window size"
 msgid "Windowing"
 msgstr ""
 
@@ -185,13 +184,13 @@ msgstr ""
 #: src/libsysprof/sysprof-document.c:2499
 #, c-format
 msgid "Recording at %X %x"
-msgstr ""
+msgstr "Záznam v %X %x"
 
 #: src/libsysprof/sysprof-document.c:2483
 #: src/libsysprof/sysprof-document.c:2502
 #, c-format
 msgid "Recording at %s"
-msgstr ""
+msgstr "Záznam v %s"
 
 #: src/libsysprof/sysprof-document-dbus-message.c:152
 msgid "D-Bus Message"
@@ -259,6 +258,7 @@ msgid ""
 msgstr ""
 
 #: src/sysprof-cli/sysprof-cli.c:120
+#, c-format
 msgid "--merge requires at least 2 filename arguments"
 msgstr ""
 
@@ -416,6 +416,7 @@ msgid ""
 msgstr ""
 
 #: src/sysprof-cli/sysprof-cli.c:425
+#, c-format
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Do sysprof-cli bylo předáno příliš mnoho argumentů:"
 
@@ -502,7 +503,7 @@ msgstr ""
 
 #: src/sysprof/gtk/menus.ui:17 src/sysprof/sysprof-window.ui:501
 msgid "Hide System Libraries"
-msgstr ""
+msgstr "Skrýt systémové knihovny"
 
 #: src/sysprof/gtk/menus.ui:21 src/sysprof/sysprof-window.ui:505
 msgid "Include Threads"
@@ -772,7 +773,7 @@ msgstr "Přidat ladicí adresář"
 
 #: src/sysprof/sysprof-greeter.c:421 src/sysprof/sysprof-greeter.ui:595
 msgid "Add _Directory"
-msgstr ""
+msgstr "Přidat a_dresář"
 
 #: src/sysprof/sysprof-greeter.c:445
 #, c-format
@@ -805,7 +806,7 @@ msgstr "Vysoký výkon"
 
 #: src/sysprof/sysprof-greeter.ui:95
 msgid "Sampling"
-msgstr ""
+msgstr "Vzorkování"
 
 #: src/sysprof/sysprof-greeter.ui:98
 msgid "Sample Native Stacks"
@@ -825,7 +826,7 @@ msgstr ""
 
 #: src/sysprof/sysprof-greeter.ui:117
 msgid "Stack Size"
-msgstr ""
+msgstr "Velikost zásobníku"
 
 #: src/sysprof/sysprof-greeter.ui:118
 msgid "The number of bytes to copy from the stack"
@@ -917,7 +918,7 @@ msgstr "Přid_at"
 
 #: src/sysprof/sysprof-greeter.ui:285 src/sysprof/sysprof-greeter.ui:290
 msgid "Counters"
-msgstr ""
+msgstr "Čítače"
 
 #: src/sysprof/sysprof-greeter.ui:293
 msgid "CPU Usage"
@@ -1174,11 +1175,11 @@ msgstr ""
 
 #: src/sysprof/sysprof-marks-section.ui:371
 msgid "Average"
-msgstr ""
+msgstr "Průměr"
 
 #: src/sysprof/sysprof-marks-section.ui:405
 msgid "Median"
-msgstr ""
+msgstr "Medián"
 
 #: src/sysprof/sysprof-mark-chart-row.ui:8
 msgid "Toggle marks"
@@ -1248,7 +1249,7 @@ msgstr ""
 #: src/sysprof/sysprof-samples-section.ui:216
 #: src/sysprof/sysprof-traceables-utility.ui:162
 msgid "Stack Trace"
-msgstr ""
+msgstr "Trasování zásobníku"
 
 #: src/sysprof/sysprof-metadata-section.ui:4
 msgid "Metadata"
@@ -1260,15 +1261,15 @@ msgstr "Klíč"
 
 #: src/sysprof/sysprof-process-dialog.ui:35
 msgid "Address Layout"
-msgstr ""
+msgstr "Rozvržení adresy"
 
 #: src/sysprof/sysprof-process-dialog.ui:97
 msgid "Start Address"
-msgstr ""
+msgstr "Počáteční adresa"
 
 #: src/sysprof/sysprof-process-dialog.ui:137
 msgid "End Address"
-msgstr ""
+msgstr "Koncová adresa"
 
 #: src/sysprof/sysprof-process-dialog.ui:219
 msgid "Mounts"
@@ -1330,7 +1331,7 @@ msgstr "Tabulka procesu"
 #: src/sysprof/sysprof-recording-pad.c:58
 #, c-format
 msgid "%<PRIi64> events"
-msgstr ""
+msgstr "%<PRIi64> událostí"
 
 #: src/sysprof/sysprof-recording-pad.c:115
 msgid "Recording Failed"
@@ -1338,12 +1339,14 @@ msgstr "Záznam selhal"
 
 #: src/sysprof/sysprof-recording-pad.c:117
 #, c-format
-#| msgid "Sysprof failed to parse offset for “%s”."
 msgid ""
 "Sysprof failed to record.\n"
 "\n"
 "%s"
 msgstr ""
+"Sysprof selhal v zaznamenání.\n"
+"\n"
+"%s"
 
 #: src/sysprof/sysprof-recording-pad.ui:71
 msgid "Stop Recording"
@@ -1358,8 +1361,6 @@ msgid "Callgraph"
 msgstr "Graf volání"
 
 #: src/sysprof/sysprof-samples-section.ui:181 src/sysprof/sysprof-window.ui:526
-#| msgctxt "shortcut window"
-#| msgid "Callgraph"
 msgid "Flamegraph"
 msgstr ""
 
@@ -1369,7 +1370,7 @@ msgstr "Vyčistit všechny filtry"
 
 #: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:166
 msgid "Seek Backward"
-msgstr ""
+msgstr "Posunout zpět"
 
 #: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:176
 msgid "Zoom Out"
@@ -1385,7 +1386,7 @@ msgstr "Přiblížit"
 
 #: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:206
 msgid "Seek Forward"
-msgstr ""
+msgstr "Posunout vpřed"
 
 #: src/sysprof/sysprof-traceables-utility.ui:109
 msgid "Depth"
@@ -1393,7 +1394,7 @@ msgstr "Hloubka"
 
 #: src/sysprof/sysprof-weighted-callgraph-view.ui:68
 msgid "Hits"
-msgstr ""
+msgstr "Průchody"
 
 #: src/sysprof/sysprof-window.c:191
 msgid "Open Recording"
@@ -1431,6 +1432,10 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"Dokument se nepodařilo načíst. Zkontrolujte prosím, zda máte správný soubor "
+"se záznamem.\n"
+"\n"
+"%s"
 
 #: src/sysprof/sysprof-window.ui:126
 msgid "Toggle Left Panel"

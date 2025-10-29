@@ -2,31 +2,68 @@
 # Copyright (C) 2021 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 # Translators:
 # Ma. Teresa Guix <maite.guix@gmail.com>, 2021
 # Benny Beat <bennybeat@gmail.com>, 2021
 # Jordi Mas i Hernàndez <jmas@softcatala.org>, 2021
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
-"POT-Creation-Date: 2021-10-15 17:33+0000\n"
-"PO-Revision-Date: 2021-10-19 05:50+0000\n"
+"POT-Creation-Date: 2025-10-28 22:21+0000\n"
+"PO-Revision-Date: 2025-10-29 16:18+0100\n"
 "Last-Translator: Benny Beat <bennybeat@gmail.com>, 2021\n"
-"Language-Team: Catalan (https://www.transifex.com/softcatala/teams/62837/ca/)\n"
+"Language-Team: Catalan (https://www.transifex.com/softcatala/teams/62837/"
+"ca/)\n"
+"Language: ca\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ca\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.6\n"
 
 #. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
 msgctxt "_"
 msgid "translator-credits"
 msgstr ""
-"Benet (BennyBeat) R. i Camps, benet@softcatala.org, 2021\n"
-"Maite Guix, maite.guix@me.com, 2021"
+"Benet (BennyBeat) R. i Camps <benet@softcatala.org>, 2021\n"
+"Maite Guix <maite.guix@me.com>, 2021\n"
+"Victor Dargallo <victordargallo@disroot.org>, 2025"
+
+#. (itstool) path: info/title
+#: C/index.page:7
+msgctxt "link:trail"
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#. (itstool) path: info/title
+#: C/index.page:8
+msgctxt "link"
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#. (itstool) path: info/title
+#: C/index.page:9
+msgctxt "text"
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#. (itstool) path: page/title
+#: C/index.page:15
+msgid "<_:media-1/> Sysprof"
+msgstr "<_:media-1/> Sysprof"
+
+#. (itstool) path: section/title
+#. (itstool) path: page/title
+#: C/index.page:21 C/profiling.page:8
+msgid "Profiling"
+msgstr "Utilitzar l'analitzador de rendiment"
+
+#. (itstool) path: section/title
+#: C/index.page:25
+msgid "Frequently Asked Questions"
+msgstr "Preguntes més freqüents"
 
 #. (itstool) path: credit/name
 #: C/introduction.page:15
@@ -74,200 +111,166 @@ msgid ""
 "or system while it runs. That information can be explored to gain insight "
 "into how the application could be changed to perform better."
 msgstr ""
-"Un analitzador de rendiment és una aplicació que registra informació sobre una aplicació o"
-" sistema mentre s'executa. Aquesta informació es pot explorar per a obtenir "
-"informació sobre com es podria canviar l'aplicació per a obtenir un millor "
-"rendiment."
+"Un analitzador de rendiment és una aplicació que registra informació sobre "
+"una aplicació o sistema mentre s'executa. Aquesta informació es pot explorar "
+"per a obtenir informació sobre com es podria canviar l'aplicació per a "
+"obtenir un millor rendiment."
 
 #. (itstool) path: section/p
 #: C/introduction.page:42
 msgid ""
 "Two common categories of software profilers exist, commonly referred to as "
 "either tracing or sampling profilers. What is meant by tracing profiler is "
-"that every function call executed by the program is known to the profiler. A"
-" sampling profiler works by inspecting the state of the program on a regular"
-" frequency and therefore does not see every function call executed by the "
+"that every function call executed by the program is known to the profiler. A "
+"sampling profiler works by inspecting the state of the program on a regular "
+"frequency and therefore does not see every function call executed by the "
 "program."
 msgstr ""
-"Existeixen dues categories habituals d'analitzadors de rendiment de programari, coneguts "
-"habitualment com a analitzadors de rendiment de seguiment o mostreig. El que s'entén per "
-"analitzador de rendiment de seguiment és que totes les trucades de funció executades pel "
-"programa són conegudes per l'analitzador. Un analitzador de rendiment de mostreig funciona "
-"inspeccionant l'estat del programa amb una freqüència regular i, per tant, "
-"no veu totes les crides de funcions executades pel programa."
+"Existeixen dues categories habituals d'analitzadors de rendiment de "
+"programari, coneguts habitualment com a analitzadors de rendiment de "
+"seguiment o mostreig. El que s'entén per analitzador de rendiment de "
+"seguiment és que totes les trucades de funció executades pel programa són "
+"conegudes per l'analitzador. Un analitzador de rendiment de mostreig "
+"funciona inspeccionant l'estat del programa amb una freqüència regular i, "
+"per tant, no veu totes les crides de funcions executades pel programa."
 
 #. (itstool) path: section/p
 #: C/introduction.page:49
 msgid ""
 "Both tracing and sampling profilers have their advantages. A notable "
-"advantage of a sampling profiler is that the overhead is much less than that"
-" of a tracing profiler, making it easier to use for software that requires "
+"advantage of a sampling profiler is that the overhead is much less than that "
+"of a tracing profiler, making it easier to use for software that requires "
 "interactivity."
 msgstr ""
-"Tant els analitzadors de rendiment de seguiment com els de mostreig tenen els seus "
-"avantatges. Un avantatge notable d'un analitzador de rendiment de mostreig és que la "
-"despesa general és molt inferior a la d'un analitzador de rendiment de seguiment, cosa que"
-" facilita l'ús per a programes que requereixen interactivitat."
+"Tant els analitzadors de rendiment de seguiment com els de mostreig tenen "
+"els seus avantatges. Un avantatge notable d'un analitzador de rendiment de "
+"mostreig és que la despesa general és molt inferior a la d'un analitzador de "
+"rendiment de seguiment, cosa que facilita l'ús per a programes que "
+"requereixen interactivitat."
 
 #. (itstool) path: section/p
 #: C/introduction.page:54
 msgid "<app>Sysprof</app> is a sampling profiler."
 msgstr "El <app>Sysprof</app> és un analitzador de rendiment de mostreig."
 
-#. (itstool) path: page/title
 #. (itstool) path: section/title
-#: C/profiling.page:6 C/index.page:15
-msgid "Profiling"
-msgstr "Utilitzar l'analitzador de rendiment"
-
-#. (itstool) path: section/title
-#: C/profiling.page:12
+#: C/profiling.page:10
 msgid "How to profile your system"
 msgstr "Com analitzar el rendiment el sistema"
 
 #. (itstool) path: section/p
-#: C/profiling.page:13
+#: C/profiling.page:11
 msgid ""
 "When <app>Sysprof</app> profiles your system, it records stack information "
 "for all applications executing, including the Linux kernel. This can "
-"sometimes be confusing if you only want to look at a single process. If your"
-" application does not interact much with the host system, you may have more "
+"sometimes be confusing if you only want to look at a single process. If your "
+"application does not interact much with the host system, you may have more "
 "success by using <app>Sysprof</app> to <link href=\"profiling#new-process-"
 "profiling\">spawn a new process</link>."
 msgstr ""
 "Quan el <app>Sysprof</app> perfila el sistema, registra la informació de la "
 "pila per a totes les aplicacions que s'executen, inclòs el nucli Linux. De "
 "vegades, això pot resultar confús si només voleu examinar un sol procés. Si "
-"la vostra aplicació no interactua gaire amb el sistema amfitrió, és possible"
-" que tingueu més èxit en utilitzar el <app>Sysprof</app> per a <link "
+"la vostra aplicació no interactua gaire amb el sistema amfitrió, és possible "
+"que tingueu més èxit en utilitzar el <app>Sysprof</app> per a <link "
 "href=\"profiling#new-process-profiling\">generar un procés nou</link>."
 
 #. (itstool) path: section/p
-#: C/profiling.page:20
+#: C/profiling.page:18
 msgid ""
 "To profile your entire system, ensure the target button is set to <em>All "
 "Processes</em> and click <em>Record</em>."
 msgstr ""
-"Per a analitzar el rendiment de tot el sistema, assegureu-vos que el botó de destinació s'ha "
-"definit a <em>Tots els processos</em> i feu clic a <em>Enregistra</em>."
+"Per a analitzar el rendiment de tot el sistema, assegureu-vos que el botó de "
+"destinació s'ha definit a <em>Tots els processos</em> i feu clic a "
+"<em>Enregistra</em>."
 
 #. (itstool) path: section/p
-#: C/profiling.page:23
+#: C/profiling.page:21
 msgid ""
 "At this point, you may be asked to <em>authorize</em> access to profile the "
 "system. This is required as the Linux kernel's perf implementation requires "
 "root to perform whole-system profiling."
 msgstr ""
-"Aleshores, se us pot demanar que <em>autoritzeu</em> l'accés per a analitzar el rendiment "
-"del sistema. Això és necessari, atès que la implementació del nucli Linux de «perf» "
-"requereix permisos de superusuari per a analitzar el rendiment de tot el sistema."
+"Aleshores, se us pot demanar que <em>autoritzeu</em> l'accés per a analitzar "
+"el rendiment del sistema. Això és necessari, atès que la implementació del "
+"nucli Linux de «perf» requereix permisos de superusuari per a analitzar el "
+"rendiment de tot el sistema."
 
 #. (itstool) path: section/p
-#: C/profiling.page:27
+#: C/profiling.page:25
 msgid ""
-"During the profiling session, you will see the number of seconds the profile"
-" has been active. Clicking the <em>Record</em> button again will stop the "
+"During the profiling session, you will see the number of seconds the profile "
+"has been active. Clicking the <em>Record</em> button again will stop the "
 "profiling session. Afterwhich, the callgraph will be displayed."
 msgstr ""
-"Durant la sessió d'anàlisis del rendiment, se us mostrarà la quantitat de segons que "
-" l'analitzador de rendiment ha estat actiu. En tornar a fer clic al botó <em>Enregistra</em>, "
-"s'aturarà la sessió de l'analitzador de rendiment, per a mostrar el callgraph."
+"Durant la sessió d'anàlisis del rendiment, se us mostrarà la quantitat de "
+"segons que  l'analitzador de rendiment ha estat actiu. En tornar a fer clic "
+"al botó <em>Enregistra</em>, s'aturarà la sessió de l'analitzador de "
+"rendiment, per a mostrar el callgraph."
 
 #. (itstool) path: note/p
-#: C/profiling.page:33
+#: C/profiling.page:31
 msgid ""
 "If you find that the <app>sysprof</app> application is showing up in your "
-"profiling callgraph, you might consider recording the profiling session with"
-" <cmd>sysprof-cli</cmd>. This is a command line program that will capture "
+"profiling callgraph, you might consider recording the profiling session with "
+"<cmd>sysprof-cli</cmd>. This is a command line program that will capture "
 "your profiling session to disk to be viewed at a later time."
 msgstr ""
-"Si l'aplicació <app>sysprof</app> apareix al callgraph de "
-"l'analitzador de rendiment, és recomanable que deseu la sessió de l'analitzador de rendiment amb <cmd"
-">sysprof-cli</cmd>. És un programa de la línia d'ordres que capturarà la "
-"sessió de l'analitzador de rendiment al disc per a veure-la posteriorment."
+"Si l'aplicació <app>sysprof</app> apareix al callgraph de l'analitzador de "
+"rendiment, és recomanable que deseu la sessió de l'analitzador de rendiment "
+"amb <cmd>sysprof-cli</cmd>. És un programa de la línia d'ordres que "
+"capturarà la sessió de l'analitzador de rendiment al disc per a veure-la "
+"posteriorment."
 
 #. (itstool) path: section/p
-#: C/profiling.page:39 C/profiling.page:62
+#: C/profiling.page:37
 msgid ""
-"See <link href=\"profiling#interpreting-results\">interpreting "
-"results</link> for more guidance."
+"See <link href=\"profiling#interpreting-results\">interpreting results</"
+"link> for more guidance."
 msgstr ""
 "Veieu <link href=\"profiling#interpreting-results\">interpretant els "
 "resultats</link> per a més informació."
 
 #. (itstool) path: section/title
-#: C/profiling.page:48
-msgid "Profile an existing process"
-msgstr "Analitzar el rendiment d'un procés existent"
-
-#. (itstool) path: section/p
-#: C/profiling.page:49
-msgid ""
-"With <app>Sysprof</app>, you can profile one or more existing processes on "
-"your system. First, select the <em>profiling target</em> button next to the "
-"<em>Record</em> button. Select <em>Existing Process</em> in the popover that"
-" is displayed. Next, select as many processes as you'd like to profile. "
-"Processes selected for profiling will have a checkmark next to their name."
-msgstr ""
-"Amb el <app>Sysprof</app> podeu analitzar el rendiment d'un o més processos existents al "
-"sistema. Trieu primer l'<em>objectiu de l'analitzador de rendiment</em>, al costat del botó"
-" <em>Enregistra</em>. Seleccioneu <em>Procés existent</em> a la finestra "
-"emergent que es mostra. A continuació, marqueu els processos que voleu "
-"analitzar el rendiment. Aquests quedaran amb una marca de selecció al costat del seu nom."
-
-#. (itstool) path: section/p
-#: C/profiling.page:56
-msgid ""
-"After selecting your target processes, click the <em>Record</em> button to "
-"start profiling."
-msgstr ""
-"Després de seleccionar els processos de destinació, feu clic al botó "
-"<em>Enregistra</em> per a començar."
-
-#. (itstool) path: section/p
-#: C/profiling.page:59
-msgid ""
-"When you have completed, click the <em>Record</em> button again to stop "
-"profiling."
-msgstr ""
-"En acabar, torneu a fer clic al botó <em>Enregistra</em> per a finalitzar."
-
-#. (itstool) path: section/title
-#: C/profiling.page:71
+#: C/profiling.page:46
 msgid "Profile a new process"
 msgstr "Analitzar el rendiment d'un procés nou"
 
 #. (itstool) path: section/p
-#: C/profiling.page:73
+#: C/profiling.page:48
 msgid ""
 "Often times, you may need to spawn a new process to profile. First, select "
-"the <em>profiling target</em> button next to the <em>Record</em> button. "
-"Next, select <em>New Process</em> and fill out the necessary information to "
-"spawn the process."
+"the <em>Application</em> button next at the top of the recording window. "
+"Fill in your command and working directory, and optionally specify any "
+"environment variables you need. Your process will be started when recording "
+"begins."
 msgstr ""
-"Sovint, és possible que hàgeu de generar un nou procés per a analitzar el rendiment. "
-"Primer, seleccioneu el botó <em>analitzar el rendiment de l'objectiu</em>, al costat del "
-"botó <em>Enregistra</em>. Tot seguit, seleccioneu <em>Procés nou</em> i empleneu la "
-"informació necessària per a generar el procés."
+"Sovint, és possible que hàgeu de generar un nou procés per a analitzar el "
+"rendiment. Primer, seleccioneu el botó <em>Aplicació</em> que hi ha a la "
+"part superior de la finestra d'enregistrament. Empleneu la vostra ordre i el "
+"vostre directori de treball, i opcionalment especifiqueu qualsevol variable "
+"d'entorn que necessiteu. El vostre procés s'iniciarà quan comenci "
+"l'enregistrament."
 
 #. (itstool) path: note/p
-#: C/profiling.page:79
+#: C/profiling.page:55
 msgid ""
 "If you are spawning a process that requires access to your current display, "
 "such as a GTK+ application, you will want to make sure <em>Inherit current "
 "environment</em> is set."
 msgstr ""
-"Quan genereu un procés que requereix accés a la pantalla actual, com ara una"
-" aplicació GTK+, assegureu-vos que s'ha configurat <em>Hereta l'entorn "
+"Quan genereu un procés que requereix accés a la pantalla actual, com ara una "
+"aplicació GTK+, assegureu-vos que s'ha configurat <em>Hereta l'entorn "
 "actual</em>."
 
 #. (itstool) path: section/title
-#: C/profiling.page:90
+#: C/profiling.page:66
 msgid "Profiling with the sysprof-cli command line tool"
 msgstr "Analitzar el rendiment amb l'eina de línia d'ordres sysprof-cli"
 
 #. (itstool) path: section/p
-#: C/profiling.page:92
+#: C/profiling.page:68
 msgid ""
 "For minimal overhead, you might consider using the <cmd>sysprof-cli</cmd> "
 "command line tool. When run without any arguments, it will record your "
@@ -281,62 +284,53 @@ msgstr ""
 "callgraph."
 
 #. (itstool) path: section/p
-#: C/profiling.page:97
+#: C/profiling.page:73
 msgid ""
-"You can also attach to an existing process using <cmd>sysprof-cli -p "
-"pid</cmd>."
+"If you would like to spawn a new process, use <cmd>sysprof-cli -- 'command'</"
+"cmd> to specify a command to be launched. The command will inherit the "
+"current environment."
 msgstr ""
-"També us podeu connectar a un procés existent mitjançant <cmd>sysprof-cli -p"
-" pid</cmd>."
-
-#. (itstool) path: section/p
-#: C/profiling.page:100
-msgid ""
-"If you would like to spawn a new process, use <cmd>sysprof-cli -c "
-"'command'</cmd> to specify a command to be launched. The command will "
-"inherit the current environment."
-msgstr ""
-"Si voleu generar un procés nou, utilitzeu <cmd>sysprof-cli -c "
-"'command'</cmd> per a especificar una ordre que s'iniciarà. L'ordre heretarà "
-"l'entorn actual."
+"Si voleu generar un procés nou, utilitzeu <cmd>sysprof-cli -- 'command'</"
+"cmd> per a especificar una ordre que s'iniciarà. L'ordre heretarà l'entorn "
+"actual."
 
 #. (itstool) path: section/title
-#: C/profiling.page:110
+#: C/profiling.page:83
 msgid "Interpreting results"
 msgstr "Interpretació de resultats"
 
 #. (itstool) path: section/p
-#: C/profiling.page:112
+#: C/profiling.page:85
 msgid ""
 "The profiling results in <app>Sysprof</app> are split into three sections. "
 "On the top left is a list of all the functions profiled. They are sorted by "
 "how often they were called during the recording."
 msgstr ""
-"Els resultats de l'analitzador de rendiment a <app>Sysprof</app> es divideixen en tres "
-"seccions. A la part superior esquerra hi ha una llista de totes les funcions"
-" perfilades. Estan ordenats segons la freqüència amb què es van cridar "
-"durant l'enregistrament."
+"Els resultats de l'analitzador de rendiment a <app>Sysprof</app> es "
+"divideixen en tres seccions. A la part superior esquerra hi ha una llista de "
+"totes les funcions perfilades. Estan ordenats segons la freqüència amb què "
+"es van cridar durant l'enregistrament."
 
 #. (itstool) path: note/p
-#: C/profiling.page:117
+#: C/profiling.page:90
 msgid ""
 "It is important to note that the amount of time spent in each function is "
 "not captured. That would require a tracing profiler to accurately record. "
 "The percentage is calculated by determining how often that function showed "
 "up in the current stacktrace when a sample was recorded."
 msgstr ""
-"És important tenir en compte que la quantitat de temps dedicat a cada funció"
-" no es captura. Això requeriria un analitzador de rendiment de seguiment per a enregistrar "
-"amb precisió. El percentatge es calcula determinant la freqüència amb què es"
-" va mostrar aquesta funció al seguiment de pila actual quan es va "
-"enregistrar una mostra."
+"És important tenir en compte que la quantitat de temps dedicat a cada funció "
+"no es captura. Això requeriria un analitzador de rendiment de seguiment per "
+"a enregistrar amb precisió. El percentatge es calcula determinant la "
+"freqüència amb què es va mostrar aquesta funció al seguiment de pila actual "
+"quan es va enregistrar una mostra."
 
 #. (itstool) path: section/p
-#: C/profiling.page:123
+#: C/profiling.page:96
 msgid ""
 "After selecting a function from the functions list, all of the recorded "
-"callers of that function will be displayed on the bottom left. They are also"
-" sorted by the percentage of samples that included that function in the "
+"callers of that function will be displayed on the bottom left. They are also "
+"sorted by the percentage of samples that included that function in the "
 "stacktrace."
 msgstr ""
 "Després de seleccionar una funció de la llista de funcions, es mostraran a "
@@ -345,33 +339,24 @@ msgstr ""
 "seguiment de pila."
 
 #. (itstool) path: section/p
-#: C/profiling.page:128
+#: C/profiling.page:101
 msgid ""
 "On the right, are all of the decendants of a selected function. You can "
 "select a function either from the functions list, or the callers list."
 msgstr ""
-"A la dreta, es mostren tots els descendents d'una funció seleccionada. Podeu"
-" seleccionar una funció de la llista de funcions o de la llista de crides."
-
-#. (itstool) path: section/p
-#: C/profiling.page:131
-msgid ""
-"You can jump into a function by activating a row in the tree of descendants "
-"with a double-click or by pressing <key>Enter</key> or <key>Spacebar</key>."
-msgstr ""
-"Podeu accedir a una funció activant una fila a l'arbre dels descendents amb "
-"un doble clic o prement <key>Retorn</key> o l'<key>Espai</key>."
+"A la dreta, es mostren tots els descendents d'una funció seleccionada. Podeu "
+"seleccionar una funció de la llista de funcions o de la llista de crides."
 
 #. (itstool) path: note/p
-#: C/profiling.page:135
+#: C/profiling.page:105
 msgid ""
-"If you see <em>- - kernel - -</em> in your results, that means that the "
-"application transitioned into or from the Linux kernel. There can be many "
-"reasons for this such as a <em>syscall</em> or <em>signal</em>."
+"If you see <em>- - Context Switch - -</em> in your results, that means that "
+"the application transitioned into or from the Linux kernel. There can be "
+"many reasons for this such as a <em>syscall</em> or <em>signal</em>."
 msgstr ""
-"Si veieu <em>--nucli--</em> als vostres resultats, vol dir que l'aplicació "
-"ha passat al nucli o des del nucli Linux. Pot haver-hi molts motius, com ara"
-" <em>crida al sistema</em> o <em>senyal</em>."
+"Si veieu <em>- - Canvi de context - -</em> als vostres resultats, vol dir "
+"que l'aplicació ha passat al nucli o des del nucli Linux. Pot haver-hi molts "
+"motius, com ara una <em>crida al sistema</em> o <em>senyal</em>."
 
 #. (itstool) path: page/title
 #: C/faq.page:9
@@ -386,13 +371,13 @@ msgstr "Què significa «Al fitxer [monticle]»?"
 #. (itstool) path: section/p
 #: C/faq.page:14
 msgid ""
-"This means that sysprof believes a function was called from somewhere in the"
-" program's heap (where <code>malloc</code> allocates memory) rather than the"
-" code section (where executable code normally lives.) There are several "
+"This means that sysprof believes a function was called from somewhere in the "
+"program's heap (where <code>malloc</code> allocates memory) rather than the "
+"code section (where executable code normally lives.) There are several "
 "possible explanations."
 msgstr ""
-"Això indica que el sysprof creu que es va cridar una funció des d'algun lloc"
-" del monticle del programa (on <code>malloc</code> assigna memòria) en "
+"Això indica que el sysprof creu que es va cridar una funció des d'algun lloc "
+"del monticle del programa (on <code>malloc</code> assigna memòria) en "
 "comptes de la secció de codi (on hi és normalment el codi executable). "
 "Diverses causes són possibles."
 
@@ -450,12 +435,70 @@ msgstr ""
 "optimitzat, utilitzeu aquests indicadors: 1<code>-ggdb -fno-omit-frame-"
 "pointer -O0</code>"
 
-#. (itstool) path: page/title
-#: C/index.page:12
-msgid "Sysprof"
-msgstr "Sysprof"
+#. (itstool) path: p/link
+#: C/legal.xml:5
+msgid "Creative Commons Attribution-ShareAlike 4.0 International"
+msgstr "Creative Commons Reconeixement-CompartirIgual 4.0 Internacional"
 
-#. (itstool) path: section/title
-#: C/index.page:19
-msgid "Frequently Asked Questions"
-msgstr "Preguntes més freqüents"
+#. (itstool) path: license/p
+#: C/legal.xml:4
+msgid "This work is licensed under a <_:link-1/> license."
+msgstr "Aquesta obra està sota una llicència <_:link-1/>."
+
+#. (itstool) path: license/p
+#: C/legal.xml:8
+msgid ""
+"As a special exception, the copyright holders give you permission to copy, "
+"modify, and distribute the example code contained in this documentation "
+"under the terms of your choosing, without restriction."
+msgstr ""
+"Com a excepció especial, els titulars dels drets d'autor us donen permís per "
+"copiar, modificar i distribuir el codi d'exemple contingut en aquesta "
+"documentació sota els termes que trieu, sense restriccions."
+
+#~ msgid "Profile an existing process"
+#~ msgstr "Analitzar el rendiment d'un procés existent"
+
+#~ msgid ""
+#~ "With <app>Sysprof</app>, you can profile one or more existing processes "
+#~ "on your system. First, select the <em>profiling target</em> button next "
+#~ "to the <em>Record</em> button. Select <em>Existing Process</em> in the "
+#~ "popover that is displayed. Next, select as many processes as you'd like "
+#~ "to profile. Processes selected for profiling will have a checkmark next "
+#~ "to their name."
+#~ msgstr ""
+#~ "Amb el <app>Sysprof</app> podeu analitzar el rendiment d'un o més "
+#~ "processos existents al sistema. Trieu primer l'<em>objectiu de "
+#~ "l'analitzador de rendiment</em>, al costat del botó <em>Enregistra</em>. "
+#~ "Seleccioneu <em>Procés existent</em> a la finestra emergent que es "
+#~ "mostra. A continuació, marqueu els processos que voleu analitzar el "
+#~ "rendiment. Aquests quedaran amb una marca de selecció al costat del seu "
+#~ "nom."
+
+#~ msgid ""
+#~ "After selecting your target processes, click the <em>Record</em> button "
+#~ "to start profiling."
+#~ msgstr ""
+#~ "Després de seleccionar els processos de destinació, feu clic al botó "
+#~ "<em>Enregistra</em> per a començar."
+
+#~ msgid ""
+#~ "When you have completed, click the <em>Record</em> button again to stop "
+#~ "profiling."
+#~ msgstr ""
+#~ "En acabar, torneu a fer clic al botó <em>Enregistra</em> per a finalitzar."
+
+#~ msgid ""
+#~ "You can also attach to an existing process using <cmd>sysprof-cli -p pid</"
+#~ "cmd>."
+#~ msgstr ""
+#~ "També us podeu connectar a un procés existent mitjançant <cmd>sysprof-cli "
+#~ "-p pid</cmd>."
+
+#~ msgid ""
+#~ "You can jump into a function by activating a row in the tree of "
+#~ "descendants with a double-click or by pressing <key>Enter</key> or "
+#~ "<key>Spacebar</key>."
+#~ msgstr ""
+#~ "Podeu accedir a una funció activant una fila a l'arbre dels descendents "
+#~ "amb un doble clic o prement <key>Retorn</key> o l'<key>Espai</key>."

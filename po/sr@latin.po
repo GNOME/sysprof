@@ -1,0 +1,2075 @@
+# Serbian translation for sysprof.
+# Copyright © 2016 sysprof's COPYRIGHT HOLDER
+# This file is distributed under the same license as the sysprof package.
+# Miroslav Nikolić <miroslavnikolic@rocketmail.com>, 2016-2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sysprof master\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
+"POT-Creation-Date: 2025-10-29 21:10+0000\n"
+"PO-Revision-Date: 2025-11-09 22:18+0100\n"
+"Last-Translator: Miroslav Nikolić <miroslavnikolic@rocketmail.com>\n"
+"Language-Team: Serbian <gnome-sr@googlegroups.org>\n"
+"Language: sr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=n==1? 3 : n%10==1 && n%100!=11 ? 0 : "
+"n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2\n"
+"X-Project-Style: gnome\n"
+"X-Generator: Gtranslator 48.0\n"
+
+#: data/org.gnome.Sysprof.desktop.in.in:3
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:6
+#: src/sysprof/sysprof-application.c:268 src/sysprof/sysprof-application.c:345
+#: src/sysprof/sysprof-recording-pad.ui:20 src/sysprof/sysprof-window.c:253
+msgid "Sysprof"
+msgstr "Profilator sistema"
+
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-greeter.ui:89
+msgid "Profiler"
+msgstr "Profilator"
+
+#: data/org.gnome.Sysprof.desktop.in.in:5
+msgid "Profile an application or entire system."
+msgstr "Profilišite neki program ili čitav sistem."
+
+#: data/org.gnome.Sysprof.desktop.in.in:20
+msgid "Start New Recording"
+msgstr "Započni novo snimanje"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:7
+msgid "Profile an application or entire system"
+msgstr "Profilišite neki program ili čitav sistem"
+
+#. developer_name tag deprecated with Appstream 1.0
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:11
+msgid "Christian Hergert"
+msgstr "Kristijan Hergert (Christian Hergert)"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:17
+msgid ""
+"Sysprof allows you to profile applications to aid in debugging and "
+"optimization."
+msgstr ""
+"Profilator sistema vam omogućava da profilišete programe za pomoć u "
+"pročišćavanju i optimizaciji."
+
+#: src/libsysprof/sysprof-category-summary.c:136
+msgid "Uncategorized"
+msgstr "Nekategorizovano"
+
+#: src/libsysprof/sysprof-category-summary.c:139
+msgid "Accessibility"
+msgstr "Pristupačnost"
+
+#: src/libsysprof/sysprof-category-summary.c:142
+msgid "Actions"
+msgstr "Radnje"
+
+#: src/libsysprof/sysprof-category-summary.c:145
+msgid "Crash Handler"
+msgstr "Rukovalac padom programa"
+
+#: src/libsysprof/sysprof-category-summary.c:148
+msgid "Context Switches"
+msgstr "Zamena konteksta"
+
+#: src/libsysprof/sysprof-category-summary.c:151
+msgid "CSS"
+msgstr "CSS"
+
+#: src/libsysprof/sysprof-category-summary.c:154
+#: src/sysprof/sysprof-greeter.ui:402 src/sysprof/sysprof-window.ui:393
+msgid "Graphics"
+msgstr "Grafika"
+
+#: src/libsysprof/sysprof-category-summary.c:157
+msgid "Icons"
+msgstr "Ikonice"
+
+#: src/libsysprof/sysprof-category-summary.c:160
+msgid "Input"
+msgstr "Ulaz"
+
+#: src/libsysprof/sysprof-category-summary.c:163
+msgid "IO"
+msgstr "IO"
+
+#: src/libsysprof/sysprof-category-summary.c:166
+msgid "IPC"
+msgstr "IPC"
+
+#: src/libsysprof/sysprof-category-summary.c:169
+msgid "JavaScript"
+msgstr "Java skript"
+
+#: src/libsysprof/sysprof-category-summary.c:172
+msgid "Kernel"
+msgstr "Jezgro"
+
+#: src/libsysprof/sysprof-category-summary.c:175
+msgid "Layout"
+msgstr "Raspored"
+
+#: src/libsysprof/sysprof-category-summary.c:178
+msgid "Locking"
+msgstr "Zaključavanje"
+
+#: src/libsysprof/sysprof-category-summary.c:181
+msgid "Main Loop"
+msgstr "Glavna petlja"
+
+#: src/libsysprof/sysprof-category-summary.c:184
+msgid "Memory"
+msgstr "Memorija"
+
+#: src/libsysprof/sysprof-category-summary.c:187
+msgid "Paint"
+msgstr "Slikanje"
+
+#: src/libsysprof/sysprof-category-summary.c:190
+msgid "Type System"
+msgstr "Vrsta sistema"
+
+#: src/libsysprof/sysprof-category-summary.c:193
+msgid "Unwindable"
+msgstr "Može se raspetljati"
+
+#: src/libsysprof/sysprof-category-summary.c:196
+msgid "Windowing"
+msgstr "Uprozoravanje"
+
+#: src/libsysprof/sysprof-debuginfod-task.c:97
+msgid "Downloading Symbols…"
+msgstr "Preuzimam simbole…"
+
+#: src/libsysprof/sysprof-document-allocation.c:151
+msgid "Allocation"
+msgstr "Akolacija"
+
+#: src/libsysprof/sysprof-document.c:570
+msgid "Unknown Process"
+msgstr "Nepoznati proces"
+
+#: src/libsysprof/sysprof-document.c:1251
+#: src/libsysprof/sysprof-document.c:1287
+msgid "Indexing capture data frames"
+msgstr "Indeksiram okvire kadrova za snimak"
+
+#: src/libsysprof/sysprof-document.c:1473
+msgid "Discovering file system mounts"
+msgstr "Otkrivam tačke montiranja na sistemu datoteka"
+
+#: src/libsysprof/sysprof-document.c:1476
+msgid "Discovering process mount namespaces"
+msgstr "Otkrivam imenske prostore procesa montiranja"
+
+#: src/libsysprof/sysprof-document.c:1479
+msgid "Analyzing process address layouts"
+msgstr "Analiziram rasporede adresa procesa"
+
+#: src/libsysprof/sysprof-document.c:1482
+msgid "Analyzing process command line"
+msgstr "Analiziram komandnu liniju procesa"
+
+#: src/libsysprof/sysprof-document.c:1485
+msgid "Analyzing file system overlays"
+msgstr "Analiziram prekrivenih sistema datoteka"
+
+#: src/libsysprof/sysprof-document.c:1488
+msgid "Processing counters"
+msgstr "Obrađujem brojanje"
+
+#: src/libsysprof/sysprof-document.c:2480
+#: src/libsysprof/sysprof-document.c:2499
+#, c-format
+msgid "Recording at %X %x"
+msgstr "Snimam u %X %x"
+
+#: src/libsysprof/sysprof-document.c:2483
+#: src/libsysprof/sysprof-document.c:2502
+#, c-format
+msgid "Recording at %s"
+msgstr "Snimam u %s"
+
+#: src/libsysprof/sysprof-document-dbus-message.c:152
+msgid "D-Bus Message"
+msgstr "Poruka D-magistrale"
+
+#: src/libsysprof/sysprof-document-frame.c:139
+msgid "Frame"
+msgstr "Okvir"
+
+#: src/libsysprof/sysprof-document-loader.c:499
+msgid "Document loaded"
+msgstr "Dokument je učitan"
+
+#: src/libsysprof/sysprof-document-loader.c:530
+msgid "Loading failed"
+msgstr "Učitavanje nije uspelo"
+
+#: src/libsysprof/sysprof-document-loader.c:542
+#: src/libsysprof/sysprof-document-symbols.c:276
+msgid "Symbolizing stack traces"
+msgstr "Simbolizacija tragova steka"
+
+#: src/libsysprof/sysprof-document-loader.c:611
+msgid "Loading document"
+msgstr "Učitavam dokument"
+
+#: src/libsysprof/sysprof-document-log.c:85
+msgid "Log"
+msgstr "Dnevnik"
+
+#: src/libsysprof/sysprof-document-mark.c:134
+msgid "Mark"
+msgstr "Oznaka"
+
+#: src/libsysprof/sysprof-document-process.c:293
+#, c-format
+msgid "%s [Process %d]"
+msgstr "%s [proces %d]"
+
+#: src/libsysprof/sysprof-document-process.c:295
+#, c-format
+msgid "Process %d"
+msgstr "Proces %d"
+
+#: src/libsysprof/sysprof-document-sample.c:136
+msgid "Sample"
+msgstr "Uzorak"
+
+#: src/libsysprof/sysprof-system-logs.c:171
+msgid "System Logs"
+msgstr "Sistemski dnevnik"
+
+#: src/libsysprof/sysprof-system-logs.c:172
+msgid "Recording system logs is not supported on your platform."
+msgstr "Čuvanje sistemskog dnevnika nije područano na vašoj platformi."
+
+#: src/libsysprof/sysprof-tracer.c:65
+msgid "Tracer"
+msgstr "Tragač"
+
+#: src/libsysprof/sysprof-tracer.c:66
+msgid ""
+"Tracing requires spawning a program compiled with ‘-finstrument-functions’. "
+"Tracing will not be available."
+msgstr ""
+"Praćenje zahteva pokretanje programa koji je kompajliran sa „-finstrument-"
+"functions“. Praćenje neće biti dostupno."
+
+#: src/sysprof-cli/sysprof-cli.c:120
+#, c-format
+msgid "--merge requires at least 2 filename arguments"
+msgstr "„--merge“ zahteva barem 2 argumenta naziva datoteke"
+
+#: src/sysprof-cli/sysprof-cli.c:319
+msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
+msgstr ""
+"Onemogući prigušivanje (trotlovanje) procesora tokom profilisanja [zastarelo za "
+"--power-profile]"
+
+#: src/sysprof-cli/sysprof-cli.c:320
+msgid "Make sysprof specific to a task [Deprecated]"
+msgstr "Ograniči sysprof na određeni zadatak [zastarelo]"
+
+#: src/sysprof-cli/sysprof-cli.c:320 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof/sysprof-logs-section.ui:181
+#: src/sysprof/sysprof-processes-section.ui:283
+#: src/sysprof/sysprof-traceables-utility.ui:52
+msgid "PID"
+msgstr "PID"
+
+#: src/sysprof-cli/sysprof-cli.c:321
+msgid "Run a command and profile the process"
+msgstr "Izvršava naredbu i profiliše proces"
+
+#: src/sysprof-cli/sysprof-cli.c:321
+msgid "COMMAND"
+msgstr "NAREDBA"
+
+#: src/sysprof-cli/sysprof-cli.c:322
+msgid ""
+"Set environment variable for spawned process. Can be used multiple times."
+msgstr ""
+"Postavlja promenljivu okruženja za izrođene procese. Može se koristiti više "
+"puta."
+
+#: src/sysprof-cli/sysprof-cli.c:322
+msgid "VAR=VALUE"
+msgstr "PROM=VREDNOST"
+
+#: src/sysprof-cli/sysprof-cli.c:323
+msgid "Force overwrite the capture file"
+msgstr "Primorava prepisivanje datoteke snimanja"
+
+#: src/sysprof-cli/sysprof-cli.c:324
+msgid "Disable recording of battery statistics"
+msgstr "Isključuje snimanje statistike baterije"
+
+#: src/sysprof-cli/sysprof-cli.c:325
+msgid "Disable recording of CPU statistics"
+msgstr "Isključuje snimanje statistike procesora"
+
+#: src/sysprof-cli/sysprof-cli.c:326
+msgid "Disable recording of Disk statistics"
+msgstr "Isključuje snimanje statistike diska"
+
+#: src/sysprof-cli/sysprof-cli.c:327
+msgid "Do not record stacktraces using Linux perf"
+msgstr "Ne snima praćenja spremnika koristeći Linuks „perf“"
+
+#: src/sysprof-cli/sysprof-cli.c:328
+msgid "Do not append symbol name information from local machine"
+msgstr "Ne dodaje informacije o nazivu simbola iz lokalnog računara"
+
+#: src/sysprof-cli/sysprof-cli.c:329
+msgid "Disable recording of memory statistics"
+msgstr "Isključuje snimanje statistike memorije"
+
+#: src/sysprof-cli/sysprof-cli.c:330
+msgid "Disable recording of network statistics"
+msgstr "Isključuje snimanje statistike mreže"
+
+#: src/sysprof-cli/sysprof-cli.c:331
+msgid "Set SYSPROF_TRACE_FD environment for subprocess"
+msgstr "Postavlja „SYSPROF_TRACE_FD“ okruženje za podprocese"
+
+#: src/sysprof-cli/sysprof-cli.c:332
+msgid "Track when processes are scheduled"
+msgstr "Prati kada su procesi zakazani"
+
+#: src/sysprof-cli/sysprof-cli.c:333
+msgid "Profile the D-Bus session bus"
+msgstr "Profil D-magistrale sesije"
+
+#: src/sysprof-cli/sysprof-cli.c:334
+msgid "Profile the D-Bus system bus"
+msgstr "Profil D-magistrale sistema"
+
+#: src/sysprof-cli/sysprof-cli.c:335
+msgid "Set GJS_TRACE_FD environment to trace GJS processes"
+msgstr "Postavlja „GJS_TRACE_FD“ okruženje za praćenje GJS procesa"
+
+#: src/sysprof-cli/sysprof-cli.c:336
+msgid "Set GTK_TRACE_FD environment to trace a GTK application"
+msgstr "Postavlja „GJS_TRACE_FD“ okruženje za praćenje GTK programa"
+
+#: src/sysprof-cli/sysprof-cli.c:337
+msgid "Include RAPL energy statistics"
+msgstr "Zključuje „RAPL“ statistiku napajanja"
+
+#: src/sysprof-cli/sysprof-cli.c:338
+msgid "Profile memory allocations and frees"
+msgstr "Profiliše raspodelu memorije i oslobađa"
+
+#: src/sysprof-cli/sysprof-cli.c:339
+msgid "Connect to org.gnome.Shell for profiler statistics"
+msgstr "Povezuje se na „org.gnome.Shell“ za statistike profilatora"
+
+#: src/sysprof-cli/sysprof-cli.c:340
+msgid "Track performance of the applications main loop"
+msgstr "Prati učinkovitost glavne petlje programa"
+
+#: src/sysprof-cli/sysprof-cli.c:342
+msgid "Merge all provided *.syscap files and write to stdout"
+msgstr "Stapa sve dostavljene „*.syscap“ datoteke i piše na standardni izlaz"
+
+#: src/sysprof-cli/sysprof-cli.c:343
+msgid "Print the sysprof-cli version and exit"
+msgstr "Ispisuje izdanje programa „sysprof-cli“ i izlazi"
+
+#: src/sysprof-cli/sysprof-cli.c:344
+msgid "The size of the buffer in pages (1 = 1 page)"
+msgstr "Veličina bafera u stranicama (1 = jedna stranica)"
+
+#: src/sysprof-cli/sysprof-cli.c:345
+msgid "Additional D-Bus address to monitor"
+msgstr "Dodatne adrese D-magistrale za praćenje"
+
+#: src/sysprof-cli/sysprof-cli.c:346
+msgid "Stack size to copy for unwinding in user-space"
+msgstr "Veličina steka za kopiranje radi raspetljavanja u korisničkom prostoru"
+
+#: src/sysprof-cli/sysprof-cli.c:347
+msgid "Do not use debuginfod to resolve symbols"
+msgstr "Ne koristi debuginfod za razrešenje simbola"
+
+#: src/sysprof-cli/sysprof-cli.c:348
+msgid "Do not use Sysprofd to acquire privileges"
+msgstr "Ne koristi Sysprofd za dobijanje ovlašćenja"
+
+#: src/sysprof-cli/sysprof-cli.c:382
+msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
+msgstr "[DATOTEKA_SNIMKA] [-- NAREDBA ARGUMENTI] – Sysprof"
+
+#: src/sysprof-cli/sysprof-cli.c:385
+msgid ""
+"\n"
+"Examples:\n"
+"\n"
+"  # Record gtk4-widget-factory using trace-fd to get application provided\n"
+"  # data as well as GTK and GNOME Shell data providers\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"  # Merge multiple syscap files into one\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+"\n"
+"  # Unwind by capturing stack/register contents instead of frame-pointers\n"
+"  # where the stack-size is a multiple of page-size\n"
+"  sysprof-cli --stack-size=8192\n"
+msgstr ""
+"\n"
+"Primeri:\n"
+"\n"
+"  # Snima „gtk4-widget-factory“ koristeći „trace-fd“ da dobije dostavljeni "
+"program\n"
+"  # podaci kao dostavljači podataka GTK-a i Gnomove školjke\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"  # Stapa više datoteka snimaka sistema u jednu\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+"\n"
+"  # Raspetljava snimanjem steka/registrovanog sadržaja umesto pokazivača \n"
+"  # okvira gde je veličina steka umnožak veličine stranice\n"
+"  sysprof-cli --stack-size=8192\n"
+
+#: src/sysprof-cli/sysprof-cli.c:425
+#, c-format
+msgid "Too many arguments were passed to sysprof-cli:"
+msgstr "Previše argumenata je prosleđeno konzolnom programu:"
+
+#. Translators: %s is a file name.
+#: src/sysprof-cli/sysprof-cli.c:482
+#, c-format
+msgid "%s exists. Use --force to overwrite\n"
+msgstr "„%s“ je izašao. Koristite „--force“ da prepišete\n"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:13
+msgid "Profile the system"
+msgstr "Profilišite sistem"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:14
+msgid "Authentication is required to profile the system."
+msgstr "Potrebno je potvrđivanje identiteta za profilisanje sistema."
+
+#: src/sysprof/gtk/help-overlay.ui:11
+msgctxt "shortcut window"
+msgid "Recording View"
+msgstr "Snimanje pregleda"
+
+#: src/sysprof/gtk/help-overlay.ui:14
+msgctxt "shortcut window"
+msgid "Start New Recording"
+msgstr "Započni novo snimanje"
+
+#: src/sysprof/gtk/help-overlay.ui:20
+msgctxt "shortcut window"
+msgid "Save As"
+msgstr "Sačuvaj kao"
+
+#: src/sysprof/gtk/help-overlay.ui:26
+msgctxt "shortcut window"
+msgid "Toggle Visibility of Main Sidebar"
+msgstr "Promena vidljivosti glavne bočne trake"
+
+#: src/sysprof/gtk/help-overlay.ui:32
+msgctxt "shortcut window"
+msgid "Toggle Visibility of Stack Trace Sidebar"
+msgstr "Promena vidljivosti bočne trake steka"
+
+#: src/sysprof/gtk/help-overlay.ui:40
+msgctxt "shortcut window"
+msgid "General"
+msgstr "Opšte"
+
+#: src/sysprof/gtk/help-overlay.ui:43
+msgctxt "shortcut window"
+msgid "Open Recording"
+msgstr "Otvori snimanje"
+
+#: src/sysprof/gtk/help-overlay.ui:49
+msgctxt "shortcut window"
+msgid "Close Window"
+msgstr "Zatvara prozor"
+
+#: src/sysprof/gtk/help-overlay.ui:56
+msgctxt "shortcut window"
+msgid "Show Help"
+msgstr "Prikz pomoći"
+
+#: src/sysprof/gtk/help-overlay.ui:62
+msgctxt "shortcut window"
+msgid "Show keyboard shortcuts"
+msgstr "Prikaži prečice tastature"
+
+#: src/sysprof/gtk/help-overlay.ui:68
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "Izlazi"
+
+#: src/sysprof/gtk/menus.ui:6
+msgid "Make Function Root"
+msgstr "Napravi koren funkcije"
+
+#: src/sysprof/gtk/menus.ui:11 src/sysprof/sysprof-process-dialog.ui:520
+msgid "Options"
+msgstr "Opcije"
+
+#: src/sysprof/gtk/menus.ui:13 src/sysprof/sysprof-window.ui:497
+msgid "Categorize Frames"
+msgstr "Kategorizuj okvire"
+
+#: src/sysprof/gtk/menus.ui:17 src/sysprof/sysprof-window.ui:501
+msgid "Hide System Libraries"
+msgstr "Sakrij sistemske biblioteke"
+
+#: src/sysprof/gtk/menus.ui:21 src/sysprof/sysprof-window.ui:505
+msgid "Include Threads"
+msgstr "Uključi niti procesora"
+
+#: src/sysprof/gtk/menus.ui:25 src/sysprof/sysprof-window.ui:509
+msgid "Bottom Up"
+msgstr "Odozdo nagore"
+
+#: src/sysprof/gtk/menus.ui:29 src/sysprof/sysprof-window.ui:513
+msgid "Ignore Kernel Processes"
+msgstr "Zanemari procese jezgra"
+
+#: src/sysprof/gtk/menus.ui:33 src/sysprof/sysprof-window.ui:517
+msgid "Ignore Process 0"
+msgstr "Zanemari proces 0"
+
+#: src/sysprof/gtk/menus.ui:37 src/sysprof/sysprof-window.ui:521
+msgid "Merge Similar Processes"
+msgstr "Spoji slične procese"
+
+#: src/sysprof/sysprof-animation.c:1038
+#, c-format
+msgid "Failed to find property %s in %s"
+msgstr "Ne mogu da nađem osobinu %s u %s"
+
+#: src/sysprof/sysprof-animation.c:1047
+#, c-format
+msgid "Failed to retrieve va_list value: %s"
+msgstr "Ne mogu da prikupim vrednost va_list: %s"
+
+#: src/sysprof/sysprof-application.c:38
+msgid "Start a new recording"
+msgstr "Započni novo snimanje"
+
+#: src/sysprof/sysprof-application.c:39
+msgid "Show Sysprof version and exit"
+msgstr "Ispiši Sysprof verziju i izađi"
+
+#: src/sysprof/sysprof-application.c:277
+msgid "A system profiler"
+msgstr "Profilator sistema"
+
+#: src/sysprof/sysprof-application.c:278
+msgid "translator-credits"
+msgstr ""
+"Miroslav Nikolić <miroslavnikolic@rocketmail.com>\n"
+"\n"
+"http://prevod.org — prevodi na srpski jezik"
+
+#: src/sysprof/sysprof-callgraph-view.ui:22
+msgid "Functions"
+msgstr "Funkcije"
+
+#: src/sysprof/sysprof-callgraph-view.ui:71
+msgid "Filter Functions"
+msgstr "Filter funkcija"
+
+#: src/sysprof/sysprof-callgraph-view.ui:94
+msgid "Callers"
+msgstr "Pozivači"
+
+#: src/sysprof/sysprof-callgraph-view.ui:146
+msgid "Descendants"
+msgstr "Naslednici"
+
+#: src/sysprof/sysprof-counters-section.ui:26
+#: src/sysprof/sysprof-cpu-section.ui:169
+#: src/sysprof/sysprof-energy-section.ui:177
+#: src/sysprof/sysprof-graphics-section.ui:88
+#: src/sysprof/sysprof-network-section.ui:86
+#: src/sysprof/sysprof-storage-section.ui:86
+msgid "Counters Chart"
+msgstr "Grafik brojača"
+
+#: src/sysprof/sysprof-counters-section.ui:40
+#: src/sysprof/sysprof-cpu-section.ui:323
+#: src/sysprof/sysprof-energy-section.ui:312
+#: src/sysprof/sysprof-graphics-section.ui:223
+#: src/sysprof/sysprof-network-section.ui:291
+#: src/sysprof/sysprof-storage-section.ui:291
+msgid "Counters Table"
+msgstr "Tabela brojača"
+
+#: src/sysprof/sysprof-cpu-section.ui:378
+#: src/sysprof/sysprof-dbus-section.ui:171
+#: src/sysprof/sysprof-energy-section.ui:348
+#: src/sysprof/sysprof-frame-utility.ui:49
+#: src/sysprof/sysprof-graphics-section.ui:259
+#: src/sysprof/sysprof-logs-section.ui:110
+#: src/sysprof/sysprof-metadata-section.ui:38
+#: src/sysprof/sysprof-network-section.ui:346
+#: src/sysprof/sysprof-process-dialog.ui:64
+#: src/sysprof/sysprof-processes-section.ui:215
+#: src/sysprof/sysprof-storage-section.ui:346
+#: src/sysprof/sysprof-traceables-utility.ui:23
+msgid "Time"
+msgstr "Vreme"
+
+#: src/sysprof/sysprof-cpu-section.ui:412
+#: src/sysprof/sysprof-energy-section.ui:382
+#: src/sysprof/sysprof-flame-graph.c:458
+#: src/sysprof/sysprof-graphics-section.ui:293
+#: src/sysprof/sysprof-marks-section.ui:248
+#: src/sysprof/sysprof-network-section.ui:380
+#: src/sysprof/sysprof-storage-section.ui:380
+msgid "Category"
+msgstr "Kategorija"
+
+#: src/sysprof/sysprof-cpu-section.ui:450
+#: src/sysprof/sysprof-energy-section.ui:420
+#: src/sysprof/sysprof-graphics-section.ui:331
+#: src/sysprof/sysprof-marks-section.ui:282
+#: src/sysprof/sysprof-network-section.ui:418
+#: src/sysprof/sysprof-storage-section.ui:418
+msgid "Name"
+msgstr "Naziv"
+
+#: src/sysprof/sysprof-cpu-section.ui:488
+#: src/sysprof/sysprof-energy-section.ui:458
+#: src/sysprof/sysprof-graphics-section.ui:369
+#: src/sysprof/sysprof-metadata-section.ui:105
+#: src/sysprof/sysprof-network-section.ui:456
+#: src/sysprof/sysprof-storage-section.ui:456
+msgid "Value"
+msgstr "Vrednost"
+
+#: src/sysprof/sysprof-cpu-section.ui:529
+msgid "CPU Info"
+msgstr "Podaci o procesoru"
+
+#: src/sysprof/sysprof-cpu-section.ui:560
+#: src/sysprof/sysprof-process-dialog.ui:248
+msgid "ID"
+msgstr "ID"
+
+#: src/sysprof/sysprof-cpu-section.ui:595
+msgid "Core"
+msgstr "Jezgro"
+
+#: src/sysprof/sysprof-cpu-section.ui:630
+msgid "Model Name"
+msgstr "Naziv modela"
+
+#: src/sysprof/sysprof-dbus-section.ui:205
+msgid "Bus"
+msgstr "Magistrala"
+
+#: src/sysprof/sysprof-dbus-section.ui:244
+msgid "Serial"
+msgstr "Serijski broj"
+
+#: src/sysprof/sysprof-dbus-section.ui:281
+msgid "Reply"
+msgstr "Odgovor"
+
+#: src/sysprof/sysprof-dbus-section.ui:318
+msgid "Flags"
+msgstr "Zastavice"
+
+#: src/sysprof/sysprof-dbus-section.ui:347
+#: src/sysprof/sysprof-files-section.ui:122
+#: src/sysprof/sysprof-memory-callgraph-view.ui:68
+msgid "Size"
+msgstr "Veličina"
+
+#: src/sysprof/sysprof-dbus-section.ui:383
+#: src/sysprof/sysprof-frame-utility.ui:20
+#: src/sysprof/sysprof-mark-table.ui:221
+msgid "Type"
+msgstr "Vrsta"
+
+#: src/sysprof/sysprof-dbus-section.ui:412
+msgid "Sender"
+msgstr "Pošiljalac"
+
+#: src/sysprof/sysprof-dbus-section.ui:446
+msgid "Destination"
+msgstr "Odredište"
+
+#: src/sysprof/sysprof-dbus-section.ui:480
+#: src/sysprof/sysprof-files-section.ui:53
+msgid "Path"
+msgstr "Putanja"
+
+#: src/sysprof/sysprof-dbus-section.ui:514
+msgid "Interface"
+msgstr "Sučelje"
+
+#: src/sysprof/sysprof-dbus-section.ui:548
+msgid "Member"
+msgstr "Član"
+
+#: src/sysprof/sysprof-dbus-section.ui:582
+msgid "Signature"
+msgstr "Potpis"
+
+#: src/sysprof/sysprof-dbus-section.ui:626
+msgid "Filter Messages"
+msgstr "Filter poruka"
+
+#: src/sysprof/sysprof-dbus-utility.ui:13
+#: src/sysprof/sysprof-logs-section.c:114
+#: src/sysprof/sysprof-logs-section.ui:290
+msgid "Message"
+msgstr "Poruka"
+
+#: src/sysprof/sysprof-files-section.ui:4
+msgid "Files"
+msgstr "Datoteke"
+
+#: src/sysprof/sysprof-files-section.ui:88
+msgid "Compressed"
+msgstr "Zapakovano"
+
+#: src/sysprof/sysprof-files-section.ui:165
+msgid "Filter Files"
+msgstr "Filter datoteka"
+
+#: src/sysprof/sysprof-flame-graph.c:462
+#: src/sysprof/sysprof-process-dialog.ui:177
+msgid "File"
+msgstr "Datoteka"
+
+#: src/sysprof/sysprof-frame-utility.ui:80
+#: src/sysprof/sysprof-logs-section.ui:143
+#: src/sysprof/sysprof-mark-table.ui:116
+#: src/sysprof/sysprof-traceables-utility.ui:81
+#: src/sysprof/sysprof-window.ui:373
+msgid "CPU"
+msgstr "CPU"
+
+#: src/sysprof/sysprof-greeter.c:144
+msgid "Use KEY=VALUE to set an environment variable"
+msgstr "Koristite KLJUČ=VREDNOST da postavite promenljive okruženja"
+
+#: src/sysprof/sysprof-greeter.c:150
+msgid "Keys may not start with a number"
+msgstr "Ključevi ne smeju da počinju brojem"
+
+#: src/sysprof/sysprof-greeter.c:160
+msgid "Keys may only contain alpha-numerics or underline."
+msgstr "Ključevi mogu da sadrže samo alfa-numeričke znakove ili donju crticu."
+
+#: src/sysprof/sysprof-greeter.c:357 src/sysprof/sysprof-window.c:172
+msgid "Must Capture to Local File"
+msgstr "Mora da snimi u lokalnu datoteku"
+
+#: src/sysprof/sysprof-greeter.c:359 src/sysprof/sysprof-window.c:173
+msgid "You must choose a local file to capture using Sysprof"
+msgstr "Morate da izaberete lokalnu datoteku za snimanje koristeći Sysprof"
+
+#: src/sysprof/sysprof-greeter.c:361 src/sysprof/sysprof-greeter.c:401
+#: src/sysprof/sysprof-recording-pad.c:119 src/sysprof/sysprof-window.c:174
+#: src/sysprof/sysprof-window.c:751
+msgid "Close"
+msgstr "Zatvori"
+
+#: src/sysprof/sysprof-greeter.c:399
+msgid "Must Select Local Folder"
+msgstr "Morate izabrati lokalnu fasciklu"
+
+#: src/sysprof/sysprof-greeter.c:400
+msgid "You must choose a local folder to add as a debug directory"
+msgstr ""
+"Morate izabrati lokalnu fasciklu da je dodate kao dorektorijum za uklanjanje "
+"grešaka"
+
+#: src/sysprof/sysprof-greeter.c:420
+msgid "Add debug directory"
+msgstr "Dodaj direktorijum za uklanjanje grešaka"
+
+#: src/sysprof/sysprof-greeter.c:421 src/sysprof/sysprof-greeter.ui:595
+msgid "Add _Directory"
+msgstr "Dodaj _direktorijum"
+
+#: src/sysprof/sysprof-greeter.c:445
+#, c-format
+msgid "System Capture from %s.syscap"
+msgstr "Snimanje sistema iz %s.syscap"
+
+#: src/sysprof/sysprof-greeter.c:449
+msgid "Record to File"
+msgstr "Snimi u datoteku"
+
+#: src/sysprof/sysprof-greeter.c:450
+msgid "Record"
+msgstr "Snimi"
+
+#: src/sysprof/sysprof-greeter.c:664
+msgid "No Change"
+msgstr "Nepromenjeno"
+
+#: src/sysprof/sysprof-greeter.c:667
+msgid "Balanced"
+msgstr "Balansirano"
+
+#: src/sysprof/sysprof-greeter.c:670
+msgid "Power Saver"
+msgstr "Ušteda energije"
+
+#: src/sysprof/sysprof-greeter.c:673
+msgid "Performance"
+msgstr "Učinkovitost"
+
+#: src/sysprof/sysprof-greeter.ui:95
+msgid "Sampling"
+msgstr "Uzorkovanje"
+
+#: src/sysprof/sysprof-greeter.ui:98
+msgid "Sample Native Stacks"
+msgstr "Uzorkuj nativne stekove"
+
+#: src/sysprof/sysprof-greeter.ui:99
+msgid "Record native stack traces using a sampling profiler"
+msgstr "Snima nativnih tragova stekova pomoću profajlera za uzorkovanje"
+
+#: src/sysprof/sysprof-greeter.ui:105
+msgid "Unwind Stacks in User Space"
+msgstr "Raspetljaj stekove u korisničkom prostoru"
+
+#: src/sysprof/sysprof-greeter.ui:106
+msgid "Copy stack contents and registers for unwinding in user-space"
+msgstr ""
+"Kopiraj sadržaj stekova i registruj za raspetljavanje u korisničkom prostoru"
+
+#: src/sysprof/sysprof-greeter.ui:117
+msgid "Stack Size"
+msgstr "Veličina steka"
+
+#: src/sysprof/sysprof-greeter.ui:118
+msgid "The number of bytes to copy from the stack"
+msgstr "Broj bajtova za kopiranje iz steka"
+
+#: src/sysprof/sysprof-greeter.ui:129
+msgid ""
+"Unwinding in user-space has considerable overhead but may help in situations "
+"where frame-pointers are unavailable."
+msgstr ""
+"Raspetljavanje u korisničkom prostoru stvara značajno opterećenje, ali može "
+"pomoći u kada pokazivači okvira nisu dostupni."
+
+#: src/sysprof/sysprof-greeter.ui:144
+msgid "Sample JavaScript Stacks"
+msgstr "Uzorak Java skript stekova"
+
+#: src/sysprof/sysprof-greeter.ui:145
+msgid "Record JavaScript stack traces using a sampling profiler"
+msgstr "Snima Java skript tragove steka koristiće profajler za uzorkovanje"
+
+#: src/sysprof/sysprof-greeter.ui:151
+msgid ""
+"Sysprof must launch your application to record JavaScript stacks using GJS."
+msgstr ""
+"Sysprof mora da pokrene program za snimanje Java skript stekova koristeći GJS."
+
+#: src/sysprof/sysprof-greeter.ui:166
+msgid "Record Scheduler Details"
+msgstr "Snimi podatke zakazivača"
+
+#: src/sysprof/sysprof-greeter.ui:167
+msgid "Track when processes are scheduled per CPU"
+msgstr "Prati kada su procesi zakazani na svakom procesoru"
+
+#: src/sysprof/sysprof-greeter.ui:175
+msgid "Tracing"
+msgstr "Pratim tragove"
+
+#: src/sysprof/sysprof-greeter.ui:178
+msgid "Trace Memory Allocations"
+msgstr "Prati alokaciju memorije"
+
+#: src/sysprof/sysprof-greeter.ui:179
+msgid "Record a stack trace when malloc or similar functions are used"
+msgstr "Snimi tragove steka kada se koristi malloc ili slična funkcija"
+
+#: src/sysprof/sysprof-greeter.ui:185
+msgid "Sysprof must launch your application to record memory allocations."
+msgstr "Sysprof mora da pokrene vaš program da zabeleži alokaciju memorije."
+
+#: src/sysprof/sysprof-greeter.ui:203 src/sysprof/sysprof-greeter.ui:208
+msgid "Application"
+msgstr "Program"
+
+#: src/sysprof/sysprof-greeter.ui:211
+#: src/sysprof/sysprof-processes-section.ui:317
+msgid "Command Line"
+msgstr "Linija naredbi"
+
+#: src/sysprof/sysprof-greeter.ui:217
+msgid "Working directory"
+msgstr "Radni direktorijum"
+
+#: src/sysprof/sysprof-greeter.ui:223
+msgid "The application will be run as a subprocess of Sysprof."
+msgstr "Program će biti pokrenut kao podproces Sysprof-a."
+
+#: src/sysprof/sysprof-greeter.ui:236
+msgid "Environment"
+msgstr "Okruženje"
+
+#: src/sysprof/sysprof-greeter.ui:239
+msgid "Clear Environment"
+msgstr "Očisti okruženje"
+
+#: src/sysprof/sysprof-greeter.ui:240
+msgid "Clear the environment before launching application"
+msgstr "Čisti okruženje pre pokretanja programa"
+
+#: src/sysprof/sysprof-greeter.ui:261
+msgid "Add _Variable"
+msgstr "Dodaj _promenljivu"
+
+#: src/sysprof/sysprof-greeter.ui:267
+msgid "Add Variable"
+msgstr "Dodaj promenljivu"
+
+#: src/sysprof/sysprof-greeter.ui:268
+msgid "_Add"
+msgstr "_Dodaj"
+
+#: src/sysprof/sysprof-greeter.ui:285 src/sysprof/sysprof-greeter.ui:290
+msgid "Counters"
+msgstr "Brojači"
+
+#: src/sysprof/sysprof-greeter.ui:293
+msgid "CPU Usage"
+msgstr "Korišćenje procesora"
+
+#: src/sysprof/sysprof-greeter.ui:294
+msgid "Record coarse-grained counters about CPU usage and frequency"
+msgstr "Ugrubo snima brojače o upotrebi procesora i frekvenciji"
+
+#: src/sysprof/sysprof-greeter.ui:300
+msgid "Memory Usage"
+msgstr "Upotreba memorije"
+
+#: src/sysprof/sysprof-greeter.ui:301
+msgid "Record coarse-grained counters about system memory usage"
+msgstr "Ugrubo snima brojače o korišćenju memorije sistema"
+
+#: src/sysprof/sysprof-greeter.ui:307
+msgid "Disk Usage"
+msgstr "Korišćenje diska"
+
+#: src/sysprof/sysprof-greeter.ui:308
+msgid "Record coarse-grained counters about storage throughput"
+msgstr "Ugrubo snima brojače o ubacivanju u skladište"
+
+#: src/sysprof/sysprof-greeter.ui:314
+msgid "Network Usage"
+msgstr "Korišćenje mreže"
+
+#: src/sysprof/sysprof-greeter.ui:315
+msgid "Record coarse-grained counters about network traffic"
+msgstr "Ugrubo snimi brojače o prenosu na mreži"
+
+#: src/sysprof/sysprof-greeter.ui:325
+msgid "Energy Usage"
+msgstr "Korišćenje napajanja"
+
+#: src/sysprof/sysprof-greeter.ui:326
+msgid "Record coarse-grained counters about energy usage in Watts"
+msgstr "Ugrubo snimi brojače o korišćenju električne energije u vatima"
+
+#: src/sysprof/sysprof-greeter.ui:332
+msgid "Battery Charge"
+msgstr "Punjenje baterije"
+
+#: src/sysprof/sysprof-greeter.ui:333
+msgid "Record coarse-grained counters about battery charge or discharge rates"
+msgstr "Ugrubo snimi brojače o stopi punjenja ili pražnjenja baterije"
+
+#: src/sysprof/sysprof-greeter.ui:346 src/sysprof/sysprof-greeter.ui:351
+#: src/sysprof/sysprof-window.ui:363
+msgid "D-Bus"
+msgstr "D-magistrala"
+
+#: src/sysprof/sysprof-greeter.ui:355
+msgid "Record System Bus"
+msgstr "Snimi magistrali sistema"
+
+#: src/sysprof/sysprof-greeter.ui:356
+msgid "Record messages on the D-Bus system bus"
+msgstr "Sačuvaj poruke na D-magistrali sistema"
+
+#: src/sysprof/sysprof-greeter.ui:372
+msgid "Record Session Bus"
+msgstr "Snimi magistralu sesije"
+
+#: src/sysprof/sysprof-greeter.ui:373
+msgid "Record messages on the D-Bus user session bus"
+msgstr "Sačuvaj poruke sa D-magistrale sesije korisnika"
+
+#: src/sysprof/sysprof-greeter.ui:384
+msgid ""
+"The session bus may contain sensitive information such as keyboard usage and "
+"passwords."
+msgstr ""
+"Magistrala sesije može da sadrži osetljive podatke kao što je upotreba "
+"tastature i lozinke."
+
+#: src/sysprof/sysprof-greeter.ui:407
+msgid "Timings"
+msgstr "Trajanja"
+
+#: src/sysprof/sysprof-greeter.ui:411
+msgid "Compositor Frame Timings"
+msgstr "Vremena iscrtavanja kadrova kompozitora"
+
+#: src/sysprof/sysprof-greeter.ui:412
+msgid "Record frame-timing information from the GNOME Shell compositor"
+msgstr "Snimi podatke o vremenu kadrova iz kompozitora Gnomove školjke"
+
+#: src/sysprof/sysprof-greeter.ui:423
+msgid ""
+"Applications launched by Sysprof will automatically collect GTK frame timing "
+"information."
+msgstr ""
+"Programi pokrenuti preko Sysprof-a će automatski sačupiti podatke o GTK "
+"vremenima kadrova."
+
+#: src/sysprof/sysprof-greeter.ui:463
+msgid "Devices"
+msgstr "Uređaji"
+
+#: src/sysprof/sysprof-greeter.ui:467
+msgid "Include GPU Information"
+msgstr "Uključi podatke o grafičkom procesoru"
+
+#: src/sysprof/sysprof-greeter.ui:468
+msgid "Records information about graphics hardware and drivers"
+msgstr ""
+"Snima podatke o harveru grafičkog procesora i njegovim upravljačkim uređajima"
+
+#: src/sysprof/sysprof-greeter.ui:486
+msgid "System"
+msgstr "Sistem"
+
+#: src/sysprof/sysprof-greeter.ui:491
+msgid "Power Profile"
+msgstr "Profil energije"
+
+#: src/sysprof/sysprof-greeter.ui:494
+msgid "Record with Power Profile"
+msgstr "Sačuvaj sa profilom korišćenja električne energije"
+
+#: src/sysprof/sysprof-greeter.ui:495
+msgid "Switch to power profile while recording"
+msgstr "Prebaci u režim uštede energije prilikom snimanja"
+
+#: src/sysprof/sysprof-greeter.ui:505
+msgid "Details"
+msgstr "Detalji"
+
+#: src/sysprof/sysprof-greeter.ui:509
+msgid "Record System Log"
+msgstr "Sačuvaj dnevnik sistema"
+
+#: src/sysprof/sysprof-greeter.ui:510
+msgid "Watch the system log for new messages and record them"
+msgstr "Nadgledaj dnevnik sistema u potrazi za novim porukama i sačuvaj ih"
+
+#: src/sysprof/sysprof-greeter.ui:526
+msgid "Include Hardware Information"
+msgstr "Uključi podatke o hardveru"
+
+#: src/sysprof/sysprof-greeter.ui:527
+msgid "Records information about PCI and USB devices"
+msgstr "Čuva podatke o PCI i USB uređajima"
+
+#: src/sysprof/sysprof-greeter.ui:540
+msgid "Symbols"
+msgstr "Simboli"
+
+#: src/sysprof/sysprof-greeter.ui:544
+msgid "Bundle Symbols"
+msgstr "Upakuj simbole"
+
+#: src/sysprof/sysprof-greeter.ui:545
+msgid "Make recording shareable by symbolizing stack traces after recording"
+msgstr "Učini snimke deljivim simbolizovanjem tragova steka nakon snimanja"
+
+#: src/sysprof/sysprof-greeter.ui:561
+msgid "Debuginfod"
+msgstr "Debuginfod"
+
+#: src/sysprof/sysprof-greeter.ui:562
+msgid "Enable Debuginfod to automatically fetch debug symbols"
+msgstr "Omogući Debuginfod da automatski preuzme simbole za ukanjanje grešaka"
+
+#: src/sysprof/sysprof-greeter.ui:575
+msgid "Debug File Directories"
+msgstr "Otklanjanje grešaka u dorektorijumima datoteka"
+
+#: src/sysprof/sysprof-greeter.ui:576
+msgid "Directories to search for debug files"
+msgstr ""
+"Direktorijumi koji su uključeni u pretragu za uklanjanje grešaka nad datotekama"
+
+#: src/sysprof/sysprof-greeter.ui:624
+msgid "_Open File…"
+msgstr "_Otvori datoteku…"
+
+#: src/sysprof/sysprof-greeter.ui:631
+msgid "Record to _File…"
+msgstr "S_nimi datoteku…"
+
+#: src/sysprof/sysprof-greeter.ui:638
+msgid "Record to _Memory"
+msgstr "Snimi u _memoriju"
+
+#: src/sysprof/sysprof-greeter.ui:657 src/sysprof/sysprof-window.ui:474
+msgid "_Keyboard Shortcuts"
+msgstr "Prečice na _tastaturi"
+
+#: src/sysprof/sysprof-greeter.ui:661 src/sysprof/sysprof-window.ui:478
+msgid "Help"
+msgstr "Pomoć"
+
+#: src/sysprof/sysprof-greeter.ui:665 src/sysprof/sysprof-window.ui:482
+msgid "About Sysprof"
+msgstr "O Profilatoru sistema"
+
+#: src/sysprof/sysprof-logs-section.c:105
+msgid "Critical"
+msgstr "Kritično"
+
+#: src/sysprof/sysprof-logs-section.c:108
+msgid "Warning"
+msgstr "Upozorenje"
+
+#: src/sysprof/sysprof-logs-section.c:111
+msgid "Debug"
+msgstr "Pročišćavanje"
+
+#: src/sysprof/sysprof-logs-section.c:117
+msgid "Info"
+msgstr "Podaci"
+
+#: src/sysprof/sysprof-logs-section.c:120
+msgid "Error"
+msgstr "Greška"
+
+#: src/sysprof/sysprof-logs-section.ui:4 src/sysprof/sysprof-logs-section.ui:30
+msgid "Logs"
+msgstr "Dnevnici"
+
+#: src/sysprof/sysprof-logs-section.ui:219
+msgid "Severity"
+msgstr "Ozbiljnost"
+
+#: src/sysprof/sysprof-logs-section.ui:255
+msgid "Domain"
+msgstr "Domen"
+
+#: src/sysprof/sysprof-marks-section.ui:4
+msgid "Marks"
+msgstr "Oznake"
+
+#: src/sysprof/sysprof-marks-section.ui:78
+msgid "Mark Chart"
+msgstr "Grafikon oznaka"
+
+#: src/sysprof/sysprof-marks-section.ui:92
+msgid "Mark Table"
+msgstr "Tabela oznaka"
+
+#: src/sysprof/sysprof-marks-section.ui:105
+msgid "Mark Waterfall"
+msgstr "Vodopad oznaka"
+
+#: src/sysprof/sysprof-marks-section.ui:212
+msgid "Summary"
+msgstr "Izveštaj"
+
+#: src/sysprof/sysprof-marks-section.ui:317
+msgid "Minimum"
+msgstr "Najmanje"
+
+#: src/sysprof/sysprof-marks-section.ui:351
+msgid "Maximum"
+msgstr "Najveće"
+
+#: src/sysprof/sysprof-marks-section.ui:385
+msgid "Average"
+msgstr "Prosečno"
+
+#: src/sysprof/sysprof-marks-section.ui:419
+msgid "Median"
+msgstr "Medijana"
+
+#: src/sysprof/sysprof-mark-chart-row.ui:8
+msgid "Set as Filter"
+msgstr "Postavi kao filter"
+
+#: src/sysprof/sysprof-mark-table.ui:47
+msgid "Start"
+msgstr "Početak"
+
+#: src/sysprof/sysprof-mark-table.ui:81
+#: src/sysprof/sysprof-processes-section.ui:249
+msgid "Duration"
+msgstr "Trajanje"
+
+#: src/sysprof/sysprof-mark-table.ui:151
+msgid "Process"
+msgstr "Proces"
+
+#: src/sysprof/sysprof-mark-table.ui:186
+msgid "Group"
+msgstr "Grupa"
+
+#: src/sysprof/sysprof-mark-table.ui:256
+msgid "Description"
+msgstr "Opis"
+
+#: src/sysprof/sysprof-memory-callgraph-view.ui:8
+#: src/sysprof/sysprof-memory-callgraph-view.ui:105
+#: src/sysprof/sysprof-memory-callgraph-view.ui:172
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:8
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:105
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:172
+msgid "Self"
+msgstr "Jedna"
+
+#: src/sysprof/sysprof-memory-callgraph-view.ui:38
+#: src/sysprof/sysprof-memory-callgraph-view.ui:135
+#: src/sysprof/sysprof-memory-callgraph-view.ui:202
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:38
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:135
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:202
+msgid "Total"
+msgstr "Ukupno"
+
+#: src/sysprof/sysprof-memory-section.ui:4
+msgid "Memory Allocations"
+msgstr "Raspodela memorije"
+
+#: src/sysprof/sysprof-memory-section.ui:29
+#: src/sysprof/sysprof-samples-section.ui:29
+msgid "Stack Traces"
+msgstr "Praćenje spremnika"
+
+#: src/sysprof/sysprof-memory-section.ui:88
+msgid "Allocations"
+msgstr "Alokacije"
+
+#: src/sysprof/sysprof-memory-section.ui:144
+msgid "Leaks"
+msgstr "Curenja"
+
+#: src/sysprof/sysprof-memory-section.ui:212
+#: src/sysprof/sysprof-samples-section.ui:216
+#: src/sysprof/sysprof-traceables-utility.ui:162
+msgid "Stack Trace"
+msgstr "Trag steka"
+
+#: src/sysprof/sysprof-metadata-section.ui:4
+msgid "Metadata"
+msgstr "Metapodaci"
+
+#: src/sysprof/sysprof-metadata-section.ui:71
+msgid "Key"
+msgstr "Ključ"
+
+#: src/sysprof/sysprof-process-dialog.ui:35
+msgid "Address Layout"
+msgstr "Raspored adresa"
+
+#: src/sysprof/sysprof-process-dialog.ui:97
+msgid "Start Address"
+msgstr "Početak adresa"
+
+#: src/sysprof/sysprof-process-dialog.ui:137
+msgid "End Address"
+msgstr "Kraj adresa"
+
+#: src/sysprof/sysprof-process-dialog.ui:219
+msgid "Mounts"
+msgstr "Montirano"
+
+#: src/sysprof/sysprof-process-dialog.ui:282
+msgid "Parent"
+msgstr "Roditelj"
+
+#: src/sysprof/sysprof-process-dialog.ui:316
+msgid "Major"
+msgstr "Glavni"
+
+#: src/sysprof/sysprof-process-dialog.ui:350
+msgid "Minor"
+msgstr "Sporedni"
+
+#: src/sysprof/sysprof-process-dialog.ui:384
+msgid "Mount Point"
+msgstr "Tačka montiranja"
+
+#: src/sysprof/sysprof-process-dialog.ui:418
+msgid "Mount Source"
+msgstr "Izvor montiranja"
+
+#: src/sysprof/sysprof-process-dialog.ui:452
+msgid "Root"
+msgstr "Koren"
+
+#: src/sysprof/sysprof-process-dialog.ui:486
+msgid "Filesystem"
+msgstr "Sistem datoteka"
+
+#: src/sysprof/sysprof-process-dialog.ui:562
+msgid "Threads"
+msgstr "Niti"
+
+#: src/sysprof/sysprof-process-dialog.ui:591
+msgid "Thread ID"
+msgstr "ID niti"
+
+#: src/sysprof/sysprof-process-dialog.ui:625
+msgid "Main Thread"
+msgstr "Glavna nit"
+
+#: src/sysprof/sysprof-processes-section.ui:4
+msgid "Processes"
+msgstr "Procesi"
+
+#: src/sysprof/sysprof-processes-section.ui:73
+msgid "Process Chart"
+msgstr "Grafikon procesa"
+
+#: src/sysprof/sysprof-processes-section.ui:174
+msgid "Process Table"
+msgstr "Tabela procesa"
+
+#. translators: this expands to the number of events recorded by the profiler as an indicator of progress
+#: src/sysprof/sysprof-recording-pad.c:58
+#, c-format
+msgid "%<PRIi64> events"
+msgstr "%<PRIi64> događaji"
+
+#: src/sysprof/sysprof-recording-pad.c:115
+msgid "Recording Failed"
+msgstr "Snimanje nije uspelo"
+
+#: src/sysprof/sysprof-recording-pad.c:117
+#, c-format
+msgid ""
+"Sysprof failed to record.\n"
+"\n"
+"%s"
+msgstr ""
+"Sysprof nije uspeo da snimi.\n"
+"\n"
+"„%s“."
+
+#: src/sysprof/sysprof-recording-pad.ui:71
+msgid "Stop Recording"
+msgstr "Zaustavi snimanje"
+
+#: src/sysprof/sysprof-samples-section.ui:4
+msgid "Time Profiler"
+msgstr "Profiler vremena"
+
+#: src/sysprof/sysprof-samples-section.ui:98 src/sysprof/sysprof-window.ui:495
+msgid "Callgraph"
+msgstr "Grafik poziva"
+
+#: src/sysprof/sysprof-samples-section.ui:181 src/sysprof/sysprof-window.ui:526
+msgid "Flamegraph"
+msgstr "Vatreni grafikon"
+
+#: src/sysprof/sysprof-session-filters-widget.ui:103
+msgid "Clear All Filters"
+msgstr "Očisti sve filtere"
+
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:166
+msgid "Seek Backward"
+msgstr "Traži unazad"
+
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:176
+msgid "Zoom Out"
+msgstr "Umanji"
+
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:186
+msgid "Reset Zoom"
+msgstr "Poništi uvećanje"
+
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:196
+msgid "Zoom In"
+msgstr "Uvećaj"
+
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:206
+msgid "Seek Forward"
+msgstr "Traži unapred"
+
+#: src/sysprof/sysprof-traceables-utility.ui:109
+msgid "Depth"
+msgstr "Dubina"
+
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:68
+msgid "Hits"
+msgstr "Pogodaka"
+
+#: src/sysprof/sysprof-window.c:191
+msgid "Open Recording"
+msgstr "Otvori snimanje"
+
+#: src/sysprof/sysprof-window.c:192
+msgid "Open"
+msgstr "Otvori"
+
+#: src/sysprof/sysprof-window.c:196
+msgid "Sysprof Capture (*.syscap)"
+msgstr "Sysprof snimak (*.syscap)"
+
+#: src/sysprof/sysprof-window.c:485
+msgid "Save to File"
+msgstr "Sačuvaj u datoteku"
+
+#: src/sysprof/sysprof-window.c:486
+msgid "Save"
+msgstr "Sačuvaj"
+
+#: src/sysprof/sysprof-window.c:666
+msgid "Loading…"
+msgstr "Učitavam…"
+
+#: src/sysprof/sysprof-window.c:747
+msgid "Invalid Document"
+msgstr "Neispravan dokument"
+
+#: src/sysprof/sysprof-window.c:749
+#, c-format
+msgid ""
+"The document could not be loaded. Please check that you have the correct "
+"capture file.\n"
+"\n"
+"%s"
+msgstr ""
+"Ne mogu da učitam dokument. Proverite da li imate ispravnu datoteku snimka.\n"
+"\n"
+"%s"
+
+#: src/sysprof/sysprof-window.ui:126
+msgid "Toggle Left Panel"
+msgstr "Prikaz leve površi"
+
+#: src/sysprof/sysprof-window.ui:133
+msgid "View Filters"
+msgstr "Prikaži filtere"
+
+#: src/sysprof/sysprof-window.ui:221
+msgid "Main Menu"
+msgstr "Glavni izbornik"
+
+#: src/sysprof/sysprof-window.ui:228
+msgid "View Options"
+msgstr "Opcije za prikaz"
+
+#: src/sysprof/sysprof-window.ui:234
+msgid "Toggle Right Panel"
+msgstr "Prikaz desne površi"
+
+#: src/sysprof/sysprof-window.ui:383
+msgid "Energy"
+msgstr "Energija"
+
+#: src/sysprof/sysprof-window.ui:403
+msgid "Network"
+msgstr "Mreža"
+
+#: src/sysprof/sysprof-window.ui:413
+msgid "Storage"
+msgstr "Skladište"
+
+#: src/sysprof/sysprof-window.ui:460
+msgid "_Record Again…"
+msgstr "_Ponovo snimi…"
+
+#: src/sysprof/sysprof-window.ui:464
+msgid "Open Recording…"
+msgstr "Otvori snimak…"
+
+#: src/sysprof/sysprof-window.ui:468
+msgid "Save As…"
+msgstr "Sačuvaj kao…"
+
+#: src/sysprof/sysprof-window.ui:488
+msgid "_Quit"
+msgstr "_Izađi"
+
+#. translators: Left Heavy means to sort larger (heavier) stack frames before others, starting from the left
+#: src/sysprof/sysprof-window.ui:529
+msgid "Left Heavy"
+msgstr "Naglašeno na levoj strani"
+
+#~ msgid "The GNOME Foundation"
+#~ msgstr "Gnomova Fondacija"
+
+#~ msgid "Sysprof was unable to generate a callgraph from the system capture."
+#~ msgstr ""
+#~ "Profilator sistema nije bio u stanju da stvori grafik poziva iz snimka "
+#~ "sistema."
+
+#, c-format
+#~ msgid "Sysprof failed to find field “%s”."
+#~ msgstr "Profilator sistema nije uspeo naći polje „%s“."
+
+#, c-format
+#~ msgid "Sysprof failed to get perf_event ID."
+#~ msgstr "Profilator sistema nije uspeo da dobavi IB perf_event-a."
+
+#, c-format
+#~ msgid "An error occurred while attempting to access performance counters"
+#~ msgstr "Došlo je do greške prilikom pokušaja pristupanja brojačima učinka"
+
+#~ msgid "Battery Charge (All)"
+#~ msgstr "Punjenje baterije (sve)"
+
+#~ msgid "Battery"
+#~ msgstr "Baterija"
+
+#~ msgid "Stack Traces (In Kernel)"
+#~ msgstr "Praćenje spremnika (U kernelu)"
+
+#~ msgid "Stack Traces (In User)"
+#~ msgstr "Praćenje spremnika (U korisniku)"
+
+#~ msgid "Generating Callgraph"
+#~ msgstr "Stvaram grafik poziva"
+
+#~ msgid "Sysprof is busy creating the selected callgraph."
+#~ msgstr "Profilator sistema je zauzet stvaranjem izabranog grafika poziva."
+
+#~ msgid "Not Enough Samples"
+#~ msgstr "Nema dovoljno uzoraka"
+
+#~ msgid "More samples are necessary to display a callgraph."
+#~ msgstr "Još uzoraka je potrebno za prikaz grafika poziva."
+
+#, c-format
+#~ msgctxt "progress bar label"
+#~ msgid "%d %%"
+#~ msgstr "%d %%"
+
+#~ msgid "CPU Frequency"
+#~ msgstr "Učestalost procesora"
+
+#~ msgid "CPU Frequency (All)"
+#~ msgstr "Učestalost procesora (sve)"
+
+#~ msgid "CPU Usage (All)"
+#~ msgstr "Korišćenje procesora (sve)"
+
+#~ msgid "Memory Capture"
+#~ msgstr "Snimak memorije"
+
+#, c-format
+#~ msgid "%0.4lf seconds"
+#~ msgstr "%0.4lf sekunde"
+
+#~ msgid "Location"
+#~ msgstr "Mesto"
+
+#~ msgid "Recorded At"
+#~ msgstr "Snimnjeno u"
+
+#~ msgid "CPU Model"
+#~ msgstr "Model procesora"
+
+#~ msgid "Statistics"
+#~ msgstr "Statistika"
+
+#~ msgid "Number of stack traces sampled for performance callgraphs"
+#~ msgstr "Broj staza spremnika uzorkovanih za grafike poziva učinkovitosti"
+
+#~ msgid "Number of marks seen"
+#~ msgstr "Broj viđenih oznaka"
+
+#~ msgid "Number of processes seen"
+#~ msgstr "Broj viđenih procesa"
+
+#~ msgid "Forks"
+#~ msgstr "Klonovi"
+
+#~ msgid "Number of times a process forked"
+#~ msgstr "Kloiko je puta proces kloniran"
+
+#~ msgid "Number of stack traces recorded for tracing memory allocations"
+#~ msgstr "Broj snimljenih staza spremnika za praćenje dodela memorije"
+
+#~ msgid "Number of recorded counter values"
+#~ msgstr "Broj snimljenih vrednosti brojača"
+
+#~ msgid "Min"
+#~ msgstr "Najmanje"
+
+#~ msgid "Max"
+#~ msgstr "Najviše"
+
+#~ msgid "Avg"
+#~ msgstr "Prosek"
+
+#~ msgid "Disk"
+#~ msgstr "Disk"
+
+#~ msgid "Writes"
+#~ msgstr "Pisanja"
+
+#~ msgid "New Recording"
+#~ msgstr "Novi snimak"
+
+#~ msgid "The recording could not be opened"
+#~ msgstr "Ne mogu da otvorim snimak"
+
+#~ msgid "Save Recording"
+#~ msgstr "Sačuvaj snimak"
+
+#~ msgid "Cancel"
+#~ msgstr "Otkaži"
+
+#~ msgid "New environment variable…"
+#~ msgstr "Nova promenljiva okruženja…"
+
+#~ msgid "Ouch, that hurt!"
+#~ msgstr "Jao, što ovo boli!"
+
+#~ msgid ""
+#~ "Something unexpectedly went wrong while trying to profile your system."
+#~ msgstr ""
+#~ "Nešto je neočekivano pošlo naopako kada sam pokušao da profilišem vaš "
+#~ "sistem."
+
+#~ msgid "End"
+#~ msgstr "Kraj"
+
+#~ msgid "No Timings Available"
+#~ msgstr "Nisu dostupna vremenska trajanja"
+
+#~ msgid "No timing data was found for the current selection"
+#~ msgstr "Nisam našao podatke vremenskog trajanja za tekući izbor"
+
+#~ msgid "Track Allocations"
+#~ msgstr "Raspodela staze"
+
+#, c-format
+#~ msgid "> %s to %s"
+#~ msgstr "> %s do %s"
+
+#~ msgid "Number of Allocations"
+#~ msgstr "Broj dodela"
+
+#~ msgid "Total number of allocation and free records"
+#~ msgstr "Ukupan broj dodela i slobodnih snimaka"
+
+#~ msgid "Leaked Allocations"
+#~ msgstr "Istekle raspodele"
+
+#~ msgid "Number of allocations without a free record"
+#~ msgstr "Broj dodela bez slobodnog snimka"
+
+#~ msgid "Temporary Allocations"
+#~ msgstr "Privremene raspodele"
+
+#~ msgid "Number of allocations freed from similar stack trace"
+#~ msgstr "Broj dodela oslobođenih od sličnih staza spremnika"
+
+#~ msgid "Allocations by Size"
+#~ msgstr "Dodela po veličini"
+
+#~ msgid "Analyzing Memory Allocations"
+#~ msgstr "Analiziram raspodelu memorije"
+
+#~ msgid "Memory Used"
+#~ msgstr "Korišćena memorija"
+
+#~ msgid "GNOME Shell"
+#~ msgstr "Gnomova školjka"
+
+#~ msgid "Speedtrack"
+#~ msgstr "Staza brzine"
+
+#~ msgid "GJS"
+#~ msgstr "GJS"
+
+#~ msgid "Profiling Target"
+#~ msgstr "Profilisanje mete"
+
+#~ msgid "Profile Entire System"
+#~ msgstr "Profiliši čitav sistem"
+
+#~ msgid ""
+#~ "Sysprof can generate callgraphs for one or more processes on your system."
+#~ msgstr ""
+#~ "Profilator sistema može da stvori grafik poziva za jedan ili više procesa "
+#~ "na vašem sistemu."
+
+#~ msgid "Launch Application"
+#~ msgstr "Pokreni program"
+
+#~ msgid ""
+#~ "Sysprof can launch an application to be profiled. The profiler will "
+#~ "automatically stop when it exits."
+#~ msgstr ""
+#~ "Profilator sitema može da pokrene neki program za profilisanje. Profilator "
+#~ "će sam stati kada se zatvori."
+
+#~ msgid "Inherit Environment"
+#~ msgstr "Nasledi okruženje"
+
+#~ msgid ""
+#~ "Enable to ensure your application shares the display, message-bus, and "
+#~ "other desktop environment settings."
+#~ msgstr ""
+#~ "Uključite da osigurate da programi dele ekran, sabirnicu poruka i druge "
+#~ "postavke radnog okruženja."
+
+#~ msgid "Allow CPU Throttling"
+#~ msgstr "Dopušta prigušenje procesora"
+
+#~ msgid ""
+#~ "When enabled, your system is allowed to scale CPU frequency as necessary."
+#~ msgstr ""
+#~ "Kada je uključeno, vašem sistemu je dozvoljeno da srazmerno izmeni "
+#~ "učestalost procesora kao što je potrebno."
+
+#~ msgid "Instruments"
+#~ msgstr "Instrumenti"
+
+#~ msgid ""
+#~ "Track application memory allocations (Sysprof must launch target "
+#~ "application)"
+#~ msgstr ""
+#~ "Pratite raspodelu memorije programa (Profilator sistema mora da pokrene "
+#~ "ciljni program)"
+
+#~ msgid "Track slow operations on your applications main loop"
+#~ msgstr "Pratite spore radnje na glavnoj petlji vaših programa"
+
+#~ msgid "Energy Usage (All)"
+#~ msgstr "Korišćenje napajanja (sve)"
+
+#~ msgid ""
+#~ "Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to "
+#~ "record?"
+#~ msgstr ""
+#~ "Da li znate da možete koristiti „<a href=\"help:sysprof\">sysprof-cli</"
+#~ "a>“ za snimanje?"
+
+#~ msgid "Events"
+#~ msgstr "Događaji"
+
+#~ msgid "Select for more details"
+#~ msgstr "Izaberite za više pojedinosti"
+
+#~ msgid "Display supplemental graphs"
+#~ msgstr "Prikaži dodatne grafike"
+
+#~ msgid "Open a perf event stream"
+#~ msgstr "Otvori tok događaja učinka"
+
+#~ msgid "Authentication is required to access system performance counters."
+#~ msgstr ""
+#~ "Potrebno je potvrđivanje identiteta za pristup brojačima učinka računara."
+
+#~ msgid "Get a list of kernel symbols and their address"
+#~ msgstr "Dobavi spisak simbola kernela i njihove adrese"
+
+#~ msgid "Authentication is required to access Linux kernel information."
+#~ msgstr ""
+#~ "Potrebno je potvrđivanje identiteta za pristup podacima kernela Linuksa."
+
+#~ msgctxt "shortcut window"
+#~ msgid "Save Recording"
+#~ msgstr "Sačuvaj snimanje"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Saves the current recording"
+#~ msgstr "Sačuvaće tekuće snimanje"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Opens a previously saved recording"
+#~ msgstr "Otvoriće prethodno sačuvano snimanje"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Recording"
+#~ msgstr "Snimam"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Record again"
+#~ msgstr "Snimi opet"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Stop recording"
+#~ msgstr "Zaustavi snimanje"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Callgraph"
+#~ msgstr "Grafik poziva"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Expand function"
+#~ msgstr "Raširi funkciju"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Shows the direct descendants of the callgraph function"
+#~ msgstr "Prikazuje direktne naslednike funkcije grafika poziva"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Collapse function"
+#~ msgstr "Skupi funkciju"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Hides all callgraph descendants below the selected function"
+#~ msgstr "Skriva sve naslednike grafika poziva ispod izabrane funkcije"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Jump into function"
+#~ msgstr "Skoči u funkciju"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Selects the function or file as the top of the callgraph"
+#~ msgstr "Bira funkciju ili datoteku kao vrh grafika poziva"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Visualizers"
+#~ msgstr "Prikazivači"
+
+#~| msgid "New Tab"
+#~ msgctxt "shortcut window"
+#~ msgid "New Tab"
+#~ msgstr "Novi jezičak"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Switch Tab"
+#~ msgstr "Promena jezička"
+
+#~| msgid "New Window"
+#~ msgctxt "shortcut window"
+#~ msgid "New Window"
+#~ msgstr "Novi prozor"
+
+#~ msgid "New Tab"
+#~ msgstr "Novi jezičak"
+
+#~ msgid "New Window"
+#~ msgstr "Novi prozor"
+
+#~ msgid "Save Recording…"
+#~ msgstr "Sačuvaj snimak…"
+
+#~ msgid "_Open"
+#~ msgstr "_Otvori"
+
+#~ msgid "Open Recording… (Ctrl+O)"
+#~ msgstr "Otvori snimak… (Ctrl+O)"
+
+#~ msgid "Stopping profiler. Press twice more ^C to force exit."
+#~ msgstr ""
+#~ "Zaustavljam profilatora. Pritisnite još dva puta „^C“ da prisilite izlazak."
+
+#~ msgid "Profiler stopped."
+#~ msgstr "Profilator je zaustavljen."
+
+#~ msgid "Connect to the system bus"
+#~ msgstr "Povezuje se na sabirnicu sistema"
+
+#~ msgid "Connect to the given D-Bus address"
+#~ msgstr "Povezuje se na datu adresu D-sabirnice"
+
+#~ msgid "Destination D-Bus name to invoke method on"
+#~ msgstr "Odredište naziva D-sabirnice na kome treba pozvati metod"
+
+#~ msgid "Object path to invoke method on"
+#~ msgstr "Putanja objekta na kome treba pozvati metod"
+
+#~ msgid "/org/gnome/Sysprof3/Profiler"
+#~ msgstr "/org/gnome/Sysprof3/Profiler"
+
+#~ msgid "Timeout in seconds"
+#~ msgstr "Vreme isteka u sekundama"
+
+#~ msgid "Overwrite FILENAME if it exists"
+#~ msgstr "Prepisuje NAZIV_DATOTEKE ako postoji"
+
+#~ msgid "--dest=BUS_NAME [FILENAME] - connect to an embedded sysprof profiler"
+#~ msgstr ""
+#~ "--dest=NAZIV_SABIRNICE [DATOTEKA] – povezuje se na ugneždenog profilatora "
+#~ "„sysprof“-a"
+
+#~ msgctxt "shortcut window"
+#~ msgid "Sysprof Shortcuts"
+#~ msgstr "Prečice"
+
+#~ msgid "Last Spawn Program"
+#~ msgstr "Poslednji izrođeni program"
+
+#~ msgid ""
+#~ "The last spawned program, which will be set in the UI upon restart of the "
+#~ "application."
+#~ msgstr ""
+#~ "Poslednji izrođeni program, koji će biti podešen u korisničkom sučelju "
+#~ "nakon ponovnog pokretanja programa."
+
+#~ msgid "Last Spawn Inherit Environment"
+#~ msgstr "Poslednje izrođeno nasleđuje okruženje"
+
+#~ msgid "If the last spawned environment inherits the parent environment."
+#~ msgstr "Da li poslednje izrođeno okruženje nasleđuje roditeljsko okruženje."
+
+#~ msgid "Last Spawn Environment"
+#~ msgstr "Poslednje izrođeno okruženje"
+
+#~ msgid ""
+#~ "The last spawned environment, which will be set in the UI upon restart of "
+#~ "the application."
+#~ msgstr ""
+#~ "Poslednje izrođeno okruženje, koje će biti podešeno u korisničkom sučelju "
+#~ "nakon ponovnog pokretanja programa."
+
+#~ msgid "Filename"
+#~ msgstr "Datoteka"
+
+#~ msgid "Samples Captured"
+#~ msgstr "Snimljenih uzoraka"
+
+#~ msgid "Forks Captured"
+#~ msgstr "Snimljenih klonova"
+
+#~ msgid "New variable…"
+#~ msgstr "Nova promenljiva…"
+
+#~ msgid "Profilers"
+#~ msgstr "Profilatori"
+
+#~ msgid "All Processes"
+#~ msgstr "Svi procesi"
+
+#~ msgid ""
+#~ "Include all applications and operating system kernel in callgraph. This "
+#~ "may not be possible on some system configurations."
+#~ msgstr ""
+#~ "Uključite sve programe i kernel operativnog sistema u grafik poziva. Ovo "
+#~ "neće biti moguće na nekim podešavanjima sistema."
+
+#~ msgid "Enable to launch a program of your choosing before profiling."
+#~ msgstr "Uključite da pokrenete program po vašem izboru pre profilisanja."
+
+#~ msgid ""
+#~ "If disabled, your CPU will be placed in performance mode. It will be "
+#~ "restored after profiling."
+#~ msgstr ""
+#~ "Ako je isključeno, vaš procesor će biti stavljen u režim učinkovitosti. "
+#~ "Biće vraćen nakon profilisanja."
+
+#~ msgid "Learn more about Sysprof"
+#~ msgstr "Saznajte više o Profilatoru sistema"
+
+#~ msgid "Window size (width and height)."
+#~ msgstr "Veličina prozora (širina i visina)."
+
+#~ msgid "Window position"
+#~ msgstr "Položaj prozora"
+
+#~ msgid "Window position (x and y)."
+#~ msgstr "Položaj prozora (vodoravno i uspravno)."
+
+#~ msgid "Window maximized"
+#~ msgstr "Uvećan prozor"
+
+#~ msgid "Window maximized state"
+#~ msgstr "Stanje uvećanog prozora"
+
+#~ msgid "sysprof"
+#~ msgstr "sysprof"
+
+#~ msgid "Cumulative"
+#~ msgstr "Zbirno"
+
+#~ msgid "Welcome to Sysprof"
+#~ msgstr "Dobrodošli u Profilator sistema"
+
+#~ msgid "Start profiling your system with the <b>Record</b> button above"
+#~ msgstr "Započnite profilisanje vašeg sistema pritiskom na dugme <b>Snimi</b>"
+
+#~ msgid "Search"
+#~ msgstr "Traži"
+
+#~ msgid "00:00"
+#~ msgstr "00:00"
+
+#~ msgid ""
+#~ "Sysprof requires authorization to access your computers performance "
+#~ "counters."
+#~ msgstr ""
+#~ "Profilator sistema zahteva ovlašćenje za pristup brojačima učinka računara."
+
+#~ msgid "FPS"
+#~ msgstr "KPS (FPS)"
+
+#~ msgid "The command line arguments provided are invalid"
+#~ msgstr "Dostavljeni argumenti linije naredbi su neispravni"
+
+#~ msgid "_Open Capture"
+#~ msgstr "_Otvori snimak"
+
+#~ msgid "About"
+#~ msgstr "O programu"
+
+#~ msgid "Not running"
+#~ msgstr "Nije pokrenut"
+
+#~ msgid "_Close"
+#~ msgstr "_Zatvori"
+
+#~ msgid "Zoom out (Ctrl+-)"
+#~ msgstr "Umanji (Ktrl+-)"
+
+#~ msgid "Reset zoom level (Ctrl+0)"
+#~ msgstr "Vrati nivo uveličanja (Ktrl+0)"
+
+#~ msgid "Zoom in (Ctrl++)"
+#~ msgstr "Uvećaj (Ktrl++)"
+
+#~ msgid "Screenshot"
+#~ msgstr "Snimak ekrana"
+
+#~ msgid "%s — %s"
+#~ msgstr "%s — %s"
+
+#~ msgid "Stop"
+#~ msgstr "Zaustavi"
+
+#~ msgid "Building profile…"
+#~ msgstr "Izgrađujem profil…"
+
+#~ msgid "Stopping…"
+#~ msgstr "Zaustavljam…"
+
+#~ msgid "An error occurred while attempting to save your capture: %s"
+#~ msgstr "Došlo je do greške prilikom pokušaja čuvanja vašeg snimka: %s"
+
+#~ msgid "The file “%s” could not be opened. Only local files are supported."
+#~ msgstr "Ne mogu da otvorim datoteku „%s“. Podržane su samo mesne datoteke."
+
+#~ msgid "%s - %s"
+#~ msgstr "%s — %s"

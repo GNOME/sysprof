@@ -18,12 +18,13 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <sys/mman.h>
+
 #ifdef __APPLE__
 # include <libelf.h>
 #else
 # include <elf.h>
 #endif
-#include <sys/mman.h>
 
 #include "demangle.h"
 #include "elfparser.h"

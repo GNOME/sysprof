@@ -135,6 +135,7 @@ enum {
 
 static GParamSpec *properties[N_PROPS];
 
+G_GNUC_UNUSED
 static inline guint16
 swap_uint16 (gboolean needs_swap,
              guint16  value)
@@ -149,6 +150,7 @@ swap_uint16 (gboolean needs_swap,
 #endif
 }
 
+G_GNUC_UNUSED
 static inline guint32
 swap_uint32 (gboolean needs_swap,
              guint32  value)
@@ -163,6 +165,7 @@ swap_uint32 (gboolean needs_swap,
 #endif
 }
 
+G_GNUC_UNUSED
 static inline int
 swap_int32 (gboolean needs_swap,
             int      value)
@@ -177,6 +180,7 @@ swap_int32 (gboolean needs_swap,
 #endif
 }
 
+G_GNUC_UNUSED
 static inline gint64
 swap_int64 (gboolean needs_swap,
             gint64   value)
@@ -191,6 +195,7 @@ swap_int64 (gboolean needs_swap,
 #endif
 }
 
+G_GNUC_UNUSED
 static inline guint64
 swap_uint64 (gboolean needs_swap,
              guint64  value)

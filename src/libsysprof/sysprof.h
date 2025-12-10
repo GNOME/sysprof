@@ -77,8 +77,11 @@ G_BEGIN_DECLS
 # include "sysprof-profiler.h"
 # include "sysprof-proxied-instrument.h"
 # include "sysprof-recording.h"
+#ifdef __linux__
 # include "sysprof-sampler.h"
 # include "sysprof-scheduler-details.h"
+# include "sysprof-user-sampler.h"
+#endif
 # include "sysprof-spawnable.h"
 # include "sysprof-subprocess-output.h"
 # include "sysprof-symbol.h"
@@ -89,7 +92,6 @@ G_BEGIN_DECLS
 # include "sysprof-time-span.h"
 # include "sysprof-tracefd-consumer.h"
 # include "sysprof-tracer.h"
-# include "sysprof-user-sampler.h"
 #undef SYSPROF_INSIDE
 
 G_END_DECLS

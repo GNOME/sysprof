@@ -51,8 +51,6 @@ libsysprof_public_sources = [
   'sysprof-profiler.c',
   'sysprof-proxied-instrument.c',
   'sysprof-recording.c',
-  'sysprof-sampler.c',
-  'sysprof-scheduler-details.c',
   'sysprof-spawnable.c',
   'sysprof-subprocess-output.c',
   'sysprof-symbol.c',
@@ -63,7 +61,6 @@ libsysprof_public_sources = [
   'sysprof-time-span.c',
   'sysprof-tracefd-consumer.c',
   'sysprof-tracer.c',
-  'sysprof-user-sampler.c',
 ]
 
 libsysprof_public_headers = [
@@ -120,7 +117,6 @@ libsysprof_public_headers = [
   'sysprof-proxied-instrument.h',
   'sysprof-recording.h',
   'sysprof-sampler.h',
-  'sysprof-scheduler-details.h',
   'sysprof-spawnable.h',
   'sysprof-subprocess-output.h',
   'sysprof-symbol.h',
@@ -151,7 +147,6 @@ libsysprof_private_sources = [
   'sysprof-mount-namespace.c',
   'sysprof-mount.c',
   'sysprof-muxer-source.c',
-  'sysprof-perf-event-stream.c',
   'sysprof-podman.c',
   'sysprof-process-info.c',
   'sysprof-strings.c',
@@ -178,7 +173,20 @@ if polkit_dep.found()
 endif
 
 if host_machine.system() == 'linux'
-  libsysprof_private_sources += ['sysprof-linux-instrument.c']
+  libsysprof_public_sources += [
+    'sysprof-scheduler-details.c',
+    'sysprof-sampler.c',
+    'sysprof-user-sampler.c'
+  ]
+  libsysprof_public_headers += [
+    'sysprof-scheduler-details.h',
+    'sysprof-sampler.h',
+    'sysprof-user-sampler.h',
+  ]
+  libsysprof_private_sources += [
+    'sysprof-linux-instrument.c',
+    'sysprof-perf-event-stream.c',
+  ]
 endif
 
 if libsystemd_dep.found()

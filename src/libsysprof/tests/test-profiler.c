@@ -203,12 +203,14 @@ main (int   argc,
   if (memprof)
     sysprof_profiler_add_instrument (profiler, sysprof_malloc_tracing_new ());
 
+#ifdef __linux__
   sysprof_profiler_add_instrument (profiler, sysprof_scheduler_details_new ());
 
   if (tracer)
     sysprof_profiler_add_instrument (profiler, sysprof_tracer_new ());
   else
     sysprof_profiler_add_instrument (profiler, sysprof_sampler_new ());
+#endif
 
   if (session_bus)
     sysprof_profiler_add_instrument (profiler, sysprof_dbus_monitor_new (G_BUS_TYPE_SESSION));

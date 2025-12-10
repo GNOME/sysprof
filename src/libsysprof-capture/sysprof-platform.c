@@ -56,6 +56,7 @@
 
 #include "config.h"
 
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/syscall.h>
@@ -131,6 +132,8 @@ sysprof_memfd_create (const char *name)
 
 #ifdef __APPLE__
   flags = 0;
+#elif defined(__FreeBSD__)
+  flags = O_CLOEXEC;
 #else
   flags = O_BINARY | O_CLOEXEC;
 #endif

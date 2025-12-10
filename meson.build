@@ -142,6 +142,10 @@ global_c_args = [
   '-D_POSIX_C_SOURCE=200809L',
 ]
 
+if host_machine.system() == 'freebsd'
+  global_c_args += ['-D__BSD_VISIBLE=1']
+endif
+
 # Enforce GLib symbol access by required version
 if need_glib
   glib_major = glib_req.split('.')[0].to_int()

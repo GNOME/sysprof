@@ -22,7 +22,9 @@ endif
 
 if get_option('sysprofd') == 'bundled'
   subdir('sysprofd')
-  subdir('sysprof-live-unwinder')
+  if host_machine.system() == 'linux'
+    subdir('sysprof-live-unwinder')
+  endif
 endif
 
 if get_option('gtk')

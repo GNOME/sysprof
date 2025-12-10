@@ -37,6 +37,13 @@ sysprofd_deps = [
   libsysprof_capture_dep,
 ]
 
+# Add DTrace support on FreeBSD
+if host_machine.system() == 'freebsd'
+  libdtrace_dep = cc.find_library('dtrace', static: true, required: true)
+  sysprofd_sources += 'ipc-dtrace-profiler.c'
+  sysprofd_deps += libdtrace_dep
+endif
+
 sysprofd = executable('sysprofd', sysprofd_sources,
          dependencies: sysprofd_deps,
               install: true,
@@ -48,9 +55,23 @@ sysprofd = executable('sysprofd', sysprofd_sources,
 sysprofdconf = configuration_data()
 sysprofdconf.set('sysprofdprivdir', pkglibexecdir)
 
-systemdunitdir = get_option('systemdunitdir')
-if systemdunitdir == ''
-  systemdunitdir = dependency('systemd').get_variable(pkgconfig: 'systemdsystemunitdir')
+if host_machine.system() == 'linux'
+  systemdunitdir = get_option('systemdunitdir')
+  if systemdunitdir == ''
+    systemdunitdir = dependency('systemd').get_variable(pkgconfig: 'systemdsystemunitdir')
+  endif
+  configure_file(
+            input: 'org.gnome.Sysprof3.conf.in',
+           output: 'org.gnome.Sysprof3.conf',
+    configuration: sysprofdconf,
+      install_dir: join_paths(datadir, 'dbus-1/system.d'),
+  )
+  configure_file(
+            input: 'sysprof3.service.in',
+           output: 'sysprof3.service',
+    configuration: sysprofdconf,
+      install_dir: systemdunitdir,
+  )
 endif
 
 #
@@ -62,20 +83,6 @@ configure_file(
          output: 'org.gnome.Sysprof3.service',
   configuration: sysprofdconf,
     install_dir: join_paths(datadir, 'dbus-1/system-services'),
-)
-
-configure_file(
-          input: 'org.gnome.Sysprof3.conf.in',
-         output: 'org.gnome.Sysprof3.conf',
-  configuration: sysprofdconf,
-    install_dir: join_paths(datadir, 'dbus-1/system.d'),
-)
-
-configure_file(
-          input: 'sysprof3.service.in',
-         output: 'sysprof3.service',
-  configuration: sysprofdconf,
-    install_dir: systemdunitdir,
 )
 
 i18n.merge_file(

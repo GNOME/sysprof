@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2025-12-10 22:55+0000\n"
-"PO-Revision-Date: 2025-12-13 23:48+0100\n"
+"POT-Creation-Date: 2025-12-13 22:49+0000\n"
+"PO-Revision-Date: 2025-12-22 14:01+0100\n"
 "Last-Translator: Christian Kirbach <christian.kirbach@gmail.com>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "Language: de\n"
@@ -411,25 +411,13 @@ msgstr "debuginfod nicht zum Auflösen von Symbolen verwenden"
 
 #: src/sysprof-cli/sysprof-cli.c:348
 msgid "Do not use Sysprofd to acquire privileges"
-msgstr ""
+msgstr "Sysprofd nicht verwenden, um Privilegien zu erhalten"
 
 #: src/sysprof-cli/sysprof-cli.c:382
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[AUFNAHMEDATEI] [--BEFEHLSARGUMENTE] — Sysprof"
 
 #: src/sysprof-cli/sysprof-cli.c:385
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "Examples:\n"
-#| "\n"
-#| "  # Record gtk4-widget-factory using trace-fd to get application "
-#| "provided\n"
-#| "  # data as well as GTK and GNOME Shell data providers\n"
-#| "  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
-#| "\n"
-#| "  # Merge multiple syscap files into one\n"
-#| "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 msgid ""
 "\n"
 "Examples:\n"
@@ -455,6 +443,11 @@ msgstr ""
 "\n"
 "  # Mehrere Syscap-Dateien zu einer zusammenführen\n"
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+"\n"
+"  # Entfalten durch Auffangen von Stapel/Register-Inhalte anstatt\n"
+"  #  Rahmenzeigern, wobei die Stapelgröße ein Vielfaches der Seitengröße "
+"ist\n"
+"  sysprof-cli --stack-size=8192\n"
 "\n"
 
 #: src/sysprof-cli/sysprof-cli.c:425
@@ -810,22 +803,18 @@ msgid "Close"
 msgstr "Schließen"
 
 #: src/sysprof/sysprof-greeter.c:399
-#, fuzzy
-#| msgid "Must Capture to Local File"
 msgid "Must Select Local Folder"
-msgstr "Aufzeichnung muss in eine lokale Datei erfolgen"
+msgstr "Es muss ein lokaler Ordner gewählt werden"
 
 #: src/sysprof/sysprof-greeter.c:400
-#, fuzzy
-#| msgid "You must choose a local file to capture using Sysprof"
 msgid "You must choose a local folder to add as a debug directory"
-msgstr "Sie müssen zum Aufzeichnen mit Sysprof eine lokale Datei wählen"
+msgstr ""
+"Sie müssen einen lokalen Ordner wählen, um diesen zur Fehlerdiagnose "
+"hinzuzufügen"
 
 #: src/sysprof/sysprof-greeter.c:420
-#, fuzzy
-#| msgid "Working directory"
 msgid "Add debug directory"
-msgstr "Arbeitsordner"
+msgstr "Fehlerdiagnose-Ordner hinzufügen"
 
 #: src/sysprof/sysprof-greeter.c:421 src/sysprof/sysprof-greeter.ui:595
 msgid "Add _Directory"
@@ -930,13 +919,10 @@ msgid "Trace Memory Allocations"
 msgstr "Speicherzuweisungen nachverfolgen"
 
 #: src/sysprof/sysprof-greeter.ui:179
-#, fuzzy
-#| msgid ""
-#| "Record a stack trace when <tt>malloc</tt> or similar functions are used"
 msgid "Record a stack trace when malloc or similar functions are used"
 msgstr ""
-"Einen Stapelaufruf-Verlauf aufzeichnen, wenn <tt>malloc</tt> oder ähnliche "
-"Funktionen verwendet werden"
+"Einen Stapelaufruf-Verlauf aufzeichnen, wenn malloc oder ähnliche Funktionen "
+"verwendet werden"
 
 #: src/sysprof/sysprof-greeter.ui:185
 msgid "Sysprof must launch your application to record memory allocations."
@@ -1150,10 +1136,9 @@ msgstr ""
 "Aufzeichnung symbolisiert werden"
 
 #: src/sysprof/sysprof-greeter.ui:561
-#, fuzzy
 #| msgid "Debug"
 msgid "Debuginfod"
-msgstr "Fehlerbehebung"
+msgstr "Debuginfod"
 
 #: src/sysprof/sysprof-greeter.ui:562
 msgid "Enable Debuginfod to automatically fetch debug symbols"
@@ -1162,11 +1147,11 @@ msgstr ""
 
 #: src/sysprof/sysprof-greeter.ui:575
 msgid "Debug File Directories"
-msgstr ""
+msgstr "Ordner mit Diagnosehilfsdateien"
 
 #: src/sysprof/sysprof-greeter.ui:576
 msgid "Directories to search for debug files"
-msgstr ""
+msgstr "Ordner mit Diagnosehilfsdateien, die durchsucht werden"
 
 #: src/sysprof/sysprof-greeter.ui:624
 msgid "_Open File…"
@@ -1264,10 +1249,8 @@ msgid "Median"
 msgstr "Median"
 
 #: src/sysprof/sysprof-mark-chart-row.ui:8
-#, fuzzy
-#| msgid "Save to File"
 msgid "Set as Filter"
-msgstr "In Datei speichern"
+msgstr "Als Filter setzen"
 
 #: src/sysprof/sysprof-mark-table.ui:47
 msgid "Start"
@@ -1411,7 +1394,7 @@ msgstr "Prozesstabelle"
 #: src/sysprof/sysprof-recording-pad.c:58
 #, c-format
 msgid "%<PRIi64> events"
-msgstr ""
+msgstr "%<PRIi64> Ereignisse"
 
 #: src/sysprof/sysprof-recording-pad.c:115
 msgid "Recording Failed"
@@ -1446,10 +1429,8 @@ msgid "Flamegraph"
 msgstr "Flamegraph"
 
 #: src/sysprof/sysprof-session-filters-widget.ui:103
-#, fuzzy
-#| msgid "All Files"
 msgid "Clear All Filters"
-msgstr "Alle Dateien"
+msgstr "Alle Filter löschen"
 
 #: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:166
 msgid "Seek Backward"
@@ -1525,10 +1506,8 @@ msgid "Toggle Left Panel"
 msgstr "Linke Seitenleiste anzeigen/verbergen"
 
 #: src/sysprof/sysprof-window.ui:133
-#, fuzzy
-#| msgid "Filter Files"
 msgid "View Filters"
-msgstr "Dateien filtern"
+msgstr "Filter ansehen"
 
 #: src/sysprof/sysprof-window.ui:221
 msgid "Main Menu"

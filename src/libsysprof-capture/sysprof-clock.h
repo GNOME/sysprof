@@ -87,7 +87,7 @@ sysprof_clock_get_current_time (void)
 #endif
   clock_gettime (clock, &ts);
 
-  return (ts.tv_sec * SYSPROF_NSEC_PER_SEC) + ts.tv_nsec;
+  return ((SysprofTimeStamp) ts.tv_sec * (SysprofTimeStamp) SYSPROF_NSEC_PER_SEC) + (SysprofTimeStamp) ts.tv_nsec;
 }
 
 static inline SysprofTimeSysprofan

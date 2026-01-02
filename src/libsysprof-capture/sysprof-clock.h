@@ -93,7 +93,10 @@ sysprof_clock_get_current_time (void)
 static inline SysprofTimeSysprofan
 sysprof_clock_get_relative_time (SysprofTimeStamp epoch)
 {
-  return sysprof_clock_get_current_time () - epoch;
+  /* This shortens int64_t to int32_t so if these values are wildly different
+   * then the return value will be wildly incorrect. But they shouldn’t be, so
+   * let’s sacrifice correctness checks on the altar of speed. */
+  return (SysprofTimeSysprofan) (sysprof_clock_get_current_time () - epoch);
 }
 
 SYSPROF_AVAILABLE_IN_ALL

@@ -17,6 +17,55 @@
     <p>Sysprof allows you to profile applications to aid in debugging and optimization.</p>
   </description>
 
+  <!-- These allow us to be found in GNOME Software, as it ignores the description for searching: -->
+  <keywords>
+    <keyword>profiler</keyword>
+    <keyword>profiling</keyword>
+    <keyword>performance</keyword>
+    <keyword>latency</keyword>
+    <keyword>speed</keyword>
+    <keyword>slowness</keyword>
+    <keyword>power consumption</keyword>
+    <keyword>energy efficiency</keyword>
+    <keyword>battery life</keyword>
+    <keyword>optimization</keyword>
+    <keyword>optimizing</keyword>
+    <keyword>auditing</keyword>
+    <keyword>sampling</keyword>
+    <keyword>sampler</keyword>
+    <keyword>benchmarking</keyword>
+    <keyword>measurements</keyword>
+    <keyword>counters</keyword>
+    <keyword>CPU usage</keyword>
+    <keyword>stack traces</keyword>
+    <keyword translate="no">stacktraces</keyword>
+    <keyword>call graphs</keyword>
+    <keyword>flame graphs</keyword>
+    <keyword translate="no">flamegraphs</keyword>
+    <keyword>flame charts</keyword>
+    <keyword translate="no">flamecharts</keyword>
+    <keyword>programming</keyword>
+    <keyword>software developers</keyword>
+    <keyword>software development</keyword>
+    <keyword>testing</keyword>
+    <keyword>QA</keyword>
+    <keyword>quality assurance</keyword>
+    <keyword>troubleshooting</keyword>
+    <keyword>inefficiencies</keyword>
+    <keyword>debugging</keyword>
+    <keyword>memory allocations tracer</keyword>
+    <keyword>memory leaks detector</keyword>
+    <keyword>compositor</keyword>
+    <keyword>graphics</keyword>
+    <keyword>frames timing</keyword>
+    <keyword>system logs</keyword>
+    <keyword>logging</keyword>
+    <keyword>Linux kernel</keyword>
+    <keyword translate="no">GNOME Shell</keyword>
+    <keyword translate="no">debuginfod</keyword>
+    <keyword translate="no">D-Bus</keyword>
+  </keywords>
+
   <url type="homepage">https://apps.gnome.org/Sysprof/</url>
   <url type="bugtracker">https://gitlab.gnome.org/GNOME/sysprof/issues</url>
   <url type="contribute">https://welcome.gnome.org/app/Sysprof/</url>

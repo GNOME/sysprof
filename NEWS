@@ -1,3 +1,16 @@
+Overview of changes in Sysprof 50.alpha
+=======================================
+
+ * Mark chart improvements with filtering and ability to hide mark groups
+ * Recording template cleanup and simplification
+ * Improved discoverability with additional keywords in appdata
+ * Fix compiler warnings for integer conversions
+ * Version macros added to libsysprof-capture
+ * Counter ring buffer memory cleanup
+ * Minimum GTK version bumped to 4.19.4
+ * CI build integration updates
+ * Translation updates including new languages: Bulgarian, Serbian (Latin), Japanese
+
 Overview of changes in Sysprof 49.alpha
 =======================================
 

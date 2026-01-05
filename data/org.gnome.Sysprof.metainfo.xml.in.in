@@ -95,7 +95,7 @@
   </provides>
 
   <releases>
-    <release version="49.alpha" date="2025-06-28"/>
+    <release version="50.alpha" date="2026-01-05"/>
   </releases>
 
   <metadata_license>CC0-1.0</metadata_license>

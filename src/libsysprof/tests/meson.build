@@ -34,6 +34,7 @@ libsysprof_testsuite = {
   'test-symbolize'                : {'skip': true},
   'test-strings'                  : {},
   'test-symbol-cache'             : {},
+  'top-offenders'                 : {'skip': true},
 }
 
 libsysprof_testsuite_deps = [

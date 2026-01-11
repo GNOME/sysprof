@@ -66,7 +66,11 @@ SYSPROF_BEGIN_DECLS
 
 typedef int SysprofClock;
 typedef int64_t SysprofTimeStamp;
-typedef int32_t SysprofTimeSysprofan;
+typedef int32_t SysprofTimeStampDiff;
+
+/* Unfortunately this typo slipped its way into the public API at some point, so
+ * we have to support it until next breaking API. */
+typedef SysprofTimeStampDiff SysprofTimeSysprofan;
 
 #define SYSPROF_NSEC_PER_SEC SYSPROF_INT64_CONSTANT(1000000000)
 
@@ -90,13 +94,13 @@ sysprof_clock_get_current_time (void)
   return ((SysprofTimeStamp) ts.tv_sec * (SysprofTimeStamp) SYSPROF_NSEC_PER_SEC) + (SysprofTimeStamp) ts.tv_nsec;
 }
 
-static inline SysprofTimeSysprofan
+static inline SysprofTimeStampDiff
 sysprof_clock_get_relative_time (SysprofTimeStamp epoch)
 {
   /* This shortens int64_t to int32_t so if these values are wildly different
    * then the return value will be wildly incorrect. But they shouldn’t be, so
    * let’s sacrifice correctness checks on the altar of speed. */
-  return (SysprofTimeSysprofan) (sysprof_clock_get_current_time () - epoch);
+  return (SysprofTimeStampDiff) (sysprof_clock_get_current_time () - epoch);
 }
 
 SYSPROF_AVAILABLE_IN_ALL

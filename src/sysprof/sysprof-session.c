@@ -288,7 +288,11 @@ sysprof_session_class_init (SysprofSessionClass *klass)
 
   properties [PROP_IGNORE_PROCESS_0] =
     g_param_spec_boolean ("ignore-process-0", NULL, NULL,
+#ifdef __aarch64__
+                          TRUE,
+#else
                           FALSE,
+#endif
                           (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_IGNORE_KERNEL_PROCESSES] =
@@ -342,6 +346,9 @@ sysprof_session_init (SysprofSession *self)
   self->visible_time_axis = sysprof_value_axis_new (0, 0);
 
   self->categorize_frames = TRUE;
+#ifdef __aarch64__
+  self->ignore_process_0 = TRUE;
+#endif
 }
 
 SysprofSession *

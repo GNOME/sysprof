@@ -535,7 +535,11 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
 
   properties[PROP_IGNORE_PROCESS_0] =
     g_param_spec_boolean ("ignore-process-0", NULL, NULL,
+#ifdef __aarch64__
+                          TRUE,
+#else
                           FALSE,
+#endif
                           (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   properties[PROP_IGNORE_KERNEL_PROCESSES] =
@@ -599,6 +603,9 @@ static void
 sysprof_callgraph_view_init (SysprofCallgraphView *self)
 {
   self->categorize_frames = TRUE;
+#ifdef __aarch64__
+  self->ignore_process_0 = TRUE;
+#endif
 
   self->traceables_signals = g_signal_group_new (G_TYPE_LIST_MODEL);
   g_signal_connect_object (self->traceables_signals,

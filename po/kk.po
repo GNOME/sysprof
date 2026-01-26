@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-49\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2025-09-13 00:41+0000\n"
-"PO-Revision-Date: 2026-01-26 19:57+0500\n"
+"POT-Creation-Date: 2026-01-05 21:10+0000\n"
+"PO-Revision-Date: 2026-01-26 20:00+0500\n"
 "Last-Translator: Baurzhan Muftakhidinov <baurthefirst@gmail.com>\n"
 "Language-Team: Kazakh <Kazakh>\n"
 "Language: kk\n"
@@ -264,8 +264,7 @@ msgid "--merge requires at least 2 filename arguments"
 msgstr "--merge кем дегенде 2 файл аты аргументін талап етеді"
 
 #: src/sysprof-cli/sysprof-cli.c:319
-msgid ""
-"Disable CPU throttling while profiling [Deprecated for --power-profile]"
+msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
 msgstr ""
 "Профильдеу кезінде Орталық процессорды шектеуді сөндіру [--power-profile "
 "үшін ескірген]"
@@ -624,7 +623,7 @@ msgstr "Уақыт"
 #: src/sysprof/sysprof-energy-section.ui:382
 #: src/sysprof/sysprof-flame-graph.c:458
 #: src/sysprof/sysprof-graphics-section.ui:293
-#: src/sysprof/sysprof-marks-section.ui:248
+#: src/sysprof/sysprof-marks-section.ui:234
 #: src/sysprof/sysprof-network-section.ui:380
 #: src/sysprof/sysprof-storage-section.ui:380
 msgid "Category"
@@ -633,7 +632,7 @@ msgstr "Санат"
 #: src/sysprof/sysprof-cpu-section.ui:450
 #: src/sysprof/sysprof-energy-section.ui:420
 #: src/sysprof/sysprof-graphics-section.ui:331
-#: src/sysprof/sysprof-marks-section.ui:282
+#: src/sysprof/sysprof-marks-section.ui:268
 #: src/sysprof/sysprof-network-section.ui:418
 #: src/sysprof/sysprof-storage-section.ui:418
 msgid "Name"
@@ -857,8 +856,8 @@ msgstr "Стектен көшірілетін байттар саны"
 
 #: src/sysprof/sysprof-greeter.ui:129
 msgid ""
-"Unwinding in user-space has considerable overhead but may help in "
-"situations where frame-pointers are unavailable."
+"Unwinding in user-space has considerable overhead but may help in situations "
+"where frame-pointers are unavailable."
 msgstr ""
 "Пайдаланушы кеңістігінде айналдыру едәуір қосымша шығындарға әкеледі, бірақ "
 "фрейм нұсқағыштары қолжетімсіз болған жағдайда көмектесуі мүмкін."
@@ -1023,8 +1022,8 @@ msgstr "D-Bus пайдаланушы сеанс шинасындағы хаба�
 
 #: src/sysprof/sysprof-greeter.ui:384
 msgid ""
-"The session bus may contain sensitive information such as keyboard usage "
-"and passwords."
+"The session bus may contain sensitive information such as keyboard usage and "
+"passwords."
 msgstr ""
 "Сеанс шинасында пернетақтаны қолдану және парольдер сияқты құпия ақпарат "
 "болуы мүмкін."
@@ -1043,8 +1042,8 @@ msgstr "GNOME Shell композиторынан кадр таймингтері
 
 #: src/sysprof/sysprof-greeter.ui:423
 msgid ""
-"Applications launched by Sysprof will automatically collect GTK frame "
-"timing information."
+"Applications launched by Sysprof will automatically collect GTK frame timing "
+"information."
 msgstr ""
 "Sysprof іске қосқан қолданбалар GTK кадр таймингтері туралы ақпаратты "
 "автоматты түрде жинайды."
@@ -1170,8 +1169,7 @@ msgstr "Ақпарат"
 msgid "Error"
 msgstr "Қате"
 
-#: src/sysprof/sysprof-logs-section.ui:4
-#: src/sysprof/sysprof-logs-section.ui:30
+#: src/sysprof/sysprof-logs-section.ui:4 src/sysprof/sysprof-logs-section.ui:30
 msgid "Logs"
 msgstr "Журналдар"
 
@@ -1187,39 +1185,43 @@ msgstr "Домен"
 msgid "Marks"
 msgstr "Белгілер"
 
-#: src/sysprof/sysprof-marks-section.ui:78
+#: src/sysprof/sysprof-marks-section.ui:72
 msgid "Mark Chart"
 msgstr "Белгілер диаграммасы"
 
-#: src/sysprof/sysprof-marks-section.ui:92
+#: src/sysprof/sysprof-marks-section.ui:84
 msgid "Mark Table"
 msgstr "Белгілер кестесі"
 
-#: src/sysprof/sysprof-marks-section.ui:105
+#: src/sysprof/sysprof-marks-section.ui:97
 msgid "Mark Waterfall"
 msgstr "Белгілер сарқырамасы"
 
-#: src/sysprof/sysprof-marks-section.ui:212
+#: src/sysprof/sysprof-marks-section.ui:198
 msgid "Summary"
 msgstr "Жиынтық"
 
-#: src/sysprof/sysprof-marks-section.ui:317
+#: src/sysprof/sysprof-marks-section.ui:303
 msgid "Minimum"
 msgstr "Минимум"
 
-#: src/sysprof/sysprof-marks-section.ui:351
+#: src/sysprof/sysprof-marks-section.ui:337
 msgid "Maximum"
 msgstr "Максимум"
 
-#: src/sysprof/sysprof-marks-section.ui:385
+#: src/sysprof/sysprof-marks-section.ui:371
 msgid "Average"
 msgstr "Орташа"
 
-#: src/sysprof/sysprof-marks-section.ui:419
+#: src/sysprof/sysprof-marks-section.ui:405
 msgid "Median"
 msgstr "Медиана"
 
 #: src/sysprof/sysprof-mark-chart-row.ui:8
+msgid "Toggle marks"
+msgstr "Белгілер күйін ауыстыру"
+
+#: src/sysprof/sysprof-mark-chart-row.ui:12
 msgid "Set as Filter"
 msgstr "Сүзгі ретінде орнату"
 
@@ -1361,8 +1363,7 @@ msgstr "Процестер диаграммасы"
 msgid "Process Table"
 msgstr "Процестер кестесі"
 
-#. translators: this expands to the number of events recorded by the profiler
-#. as an indicator of progress
+#. translators: this expands to the number of events recorded by the profiler as an indicator of progress
 #: src/sysprof/sysprof-recording-pad.c:58
 #, c-format
 msgid "%<PRIi64> events"
@@ -1395,8 +1396,7 @@ msgstr "Уақыт профильдеушісі"
 msgid "Callgraph"
 msgstr "Шақырулар графы"
 
-#: src/sysprof/sysprof-samples-section.ui:181
-#: src/sysprof/sysprof-window.ui:526
+#: src/sysprof/sysprof-samples-section.ui:181 src/sysprof/sysprof-window.ui:526
 msgid "Flamegraph"
 msgstr "Флеймграф"
 
@@ -1520,8 +1520,7 @@ msgstr "Қалай сақтау…"
 msgid "_Quit"
 msgstr "_Шығу"
 
-#. translators: Left Heavy means to sort larger (heavier) stack frames before
-#. others, starting from the left
+#. translators: Left Heavy means to sort larger (heavier) stack frames before others, starting from the left
 #: src/sysprof/sysprof-window.ui:529
 msgid "Left Heavy"
 msgstr "Сол жаққа бағытталған"

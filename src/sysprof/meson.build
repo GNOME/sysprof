@@ -92,7 +92,7 @@ sysprof_resources = gnome.compile_resources('sysprof-resources', 'sysprof.gresou
 sysprof_deps = [
   cc.find_library('m', required: false),
   dependency('gtk4', version: gtk_req_version),
-  dependency('libadwaita-1', version: '>= 1.6.0'),
+  dependency('libadwaita-1', version: '>= 1.8.0'),
   dependency('libpanel-1', version: '>= 1.4'),
 
   libtree_static_dep,

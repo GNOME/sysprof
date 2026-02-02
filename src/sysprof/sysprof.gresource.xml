@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <gresources>
   <gresource prefix="/org/gnome/sysprof">
-    <file preprocess="xml-stripblanks">gtk/help-overlay.ui</file>
+    <file preprocess="xml-stripblanks" alias="shortcuts-dialog.ui">gtk/shortcuts-dialog.ui</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/address-layout-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/dbus-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/document-properties-symbolic.svg</file>

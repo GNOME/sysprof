@@ -298,40 +298,11 @@ sysprof_help (GSimpleAction *action,
 }
 
 static void
-sysprof_show_help_overlay (GSimpleAction *action,
-                           GVariant      *variant,
-                           gpointer       user_data)
-{
-  SysprofApplication *self = user_data;
-  g_autoptr(GtkBuilder) builder = NULL;
-  GtkWindow *window;
-  GObject *help_overlay;
-
-  g_assert (SYSPROF_IS_APPLICATION (self));
-  g_assert (G_IS_SIMPLE_ACTION (action));
-
-  window = gtk_application_get_active_window (GTK_APPLICATION (self));
-  builder = gtk_builder_new_from_resource ("/org/gnome/sysprof/gtk/help-overlay.ui");
-  help_overlay = gtk_builder_get_object (builder, "help_overlay");
-
-  if (GTK_IS_SHORTCUTS_WINDOW (help_overlay))
-    {
-#if DEVELOPMENT_BUILD
-      gtk_widget_add_css_class (GTK_WIDGET (help_overlay), "devel");
-#endif
-      gtk_window_set_transient_for (GTK_WINDOW (help_overlay), GTK_WINDOW (window));
-      gtk_window_present (GTK_WINDOW (help_overlay));
-    }
-
-}
-
-static void
 sysprof_application_init (SysprofApplication *self)
 {
   static const GActionEntry actions[] = {
     { "new-window", sysprof_new_window },
     { "about", sysprof_about },
-    { "show-help-overlay", sysprof_show_help_overlay },
     { "help",  sysprof_help },
     { "quit",  sysprof_quit },
   };

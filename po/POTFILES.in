@@ -18,7 +18,7 @@ src/libsysprof/sysprof-system-logs.c
 src/libsysprof/sysprof-tracer.c
 src/sysprof-cli/sysprof-cli.c
 src/sysprofd/org.gnome.sysprof3.policy.in
-src/sysprof/gtk/help-overlay.ui
+src/sysprof/gtk/shortcuts-dialog.ui
 src/sysprof/gtk/menus.ui
 src/sysprof/sysprof-animation.c
 src/sysprof/sysprof-application.c

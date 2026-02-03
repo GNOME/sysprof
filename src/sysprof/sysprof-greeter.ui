@@ -37,12 +37,6 @@
             <property name="action">action(app.help)</property>
           </object>
         </child>
-        <child>
-          <object class="GtkShortcut">
-            <property name="trigger">&lt;ctrl&gt;question</property>
-            <property name="action">action(app.show-help-overlay)</property>
-          </object>
-        </child>
       </object>
     </child>
     <property name="content">
@@ -655,7 +649,7 @@
     <section>
       <item>
         <attribute name="label" translatable="yes">_Keyboard Shortcuts</attribute>
-        <attribute name="action">app.show-help-overlay</attribute>
+        <attribute name="action">app.shortcuts</attribute>
       </item>
       <item>
         <attribute name="label" translatable="yes">Help</attribute>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <object class="AdwShortcutsDialog" id="shortcuts_dialog">
+    <child>
+      <object class="AdwShortcutsSection">
+        <property name="title" translatable="yes" context="shortcut window">Recording View</property>
+        <child>
+          <object class="AdwShortcutsItem">
+            <property name="title" translatable="yes" context="shortcut window">Start New Recording</property>
+            <property name="accelerator">&lt;control&gt;n</property>
+          </object>
+        </child>
+        <child>
+          <object class="AdwShortcutsItem">
+            <property name="title" translatable="yes" context="shortcut window">Save As</property>
+            <property name="accelerator">&lt;control&gt;s</property>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="AdwShortcutsSection">
+        <child>
+          <object class="AdwShortcutsItem">
+            <property name="title" translatable="yes" context="shortcut window">Toggle Visibility of Main Sidebar</property>
+            <property name="accelerator">F9</property>
+          </object>
+        </child>
+        <child>
+          <object class="AdwShortcutsItem">
+            <property name="title" translatable="yes" context="shortcut window">Toggle Visibility of Stack Trace Sidebar</property>
+            <property name="accelerator">&lt;control&gt;F9</property>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="AdwShortcutsSection">
+        <property name="title" translatable="yes" context="shortcut window">General</property>
+        <child>
+          <object class="AdwShortcutsItem">
+            <property name="title" translatable="yes" context="shortcut window">Open Recording</property>
+            <property name="accelerator">&lt;control&gt;o</property>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="AdwShortcutsSection">
+        <child>
+          <object class="AdwShortcutsItem">
+            <property name="title" translatable="yes" context="shortcut window">Close Window</property>
+            <property name="action-name">window.close</property>
+            <property name="accelerator">&lt;ctrl&gt;w</property>
+          </object>
+        </child>
+        <child>
+          <object class="AdwShortcutsItem">
+            <property name="title" translatable="yes" context="shortcut window">Show Help</property>
+            <property name="accelerator">F1</property>
+          </object>
+        </child>
+        <child>
+          <object class="AdwShortcutsItem">
+            <property name="title" translatable="yes" context="shortcut window">Show keyboard shortcuts</property>
+            <property name="accelerator">&lt;ctrl&gt;question</property>
+          </object>
+        </child>
+        <child>
+          <object class="AdwShortcutsItem">
+            <property name="title" translatable="yes" context="shortcut window">Quit</property>
+            <property name="accelerator">&lt;ctrl&gt;q</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

@@ -95,6 +95,7 @@
   </provides>
 
   <releases>
+    <release version="50.beta" date="2026-02-03"/>
     <release version="50.alpha" date="2026-01-05"/>
   </releases>
 

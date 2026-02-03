@@ -1,6 +1,6 @@
 project('sysprof', 'c', 'cpp',
           license: 'GPL-3.0-or-later',
-          version: '50.beta',
+          version: '50.rc',
     meson_version: '>= 1.0.0',
   default_options: [ 'c_std=gnu17',
                      'cpp_std=gnu++17',

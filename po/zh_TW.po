@@ -1,0 +1,1650 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: GNOME xx\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
+"POT-Creation-Date: 2026-02-03 19:30+0000\n"
+"PO-Revision-Date: 2026-02-05 23:13+0800\n"
+"Last-Translator: Chao-Hsiung Liao <j_h_liau@yahoo.com.tw>\n"
+"Language-Team: Traditional Chinese\n"
+"Language: zh_TW\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: data/org.gnome.Sysprof.desktop.in.in:3
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:6
+#: src/sysprof/sysprof-application.c:268 src/sysprof/sysprof-application.c:316
+#: src/sysprof/sysprof-recording-pad.ui:20 src/sysprof/sysprof-window.c:253
+msgid "Sysprof"
+msgstr ""
+
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-greeter.ui:83
+msgid "Profiler"
+msgstr "效能剖析"
+
+#: data/org.gnome.Sysprof.desktop.in.in:5
+#, fuzzy
+msgid "Profile an application or entire system."
+msgstr "可存取虛擬系統的簡易 GNOME 應用程式"
+
+#: data/org.gnome.Sysprof.desktop.in.in:20
+#, fuzzy
+msgid "Start New Recording"
+msgstr "開始錄影"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:7
+#, fuzzy
+msgid "Profile an application or entire system"
+msgstr "可存取虛擬系統的簡易 GNOME 應用程式"
+
+#. developer_name tag deprecated with Appstream 1.0
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:11
+msgid "Christian Hergert"
+msgstr "Christian Hergert"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:17
+msgid ""
+"Sysprof allows you to profile applications to aid in debugging and "
+"optimization."
+msgstr ""
+
+#: src/libsysprof/sysprof-category-summary.c:136
+#, fuzzy
+msgid "Uncategorized"
+msgstr "分類"
+
+#: src/libsysprof/sysprof-category-summary.c:139
+msgid "Accessibility"
+msgstr "無障礙輔助"
+
+#: src/libsysprof/sysprof-category-summary.c:142
+msgid "Actions"
+msgstr "動作"
+
+#: src/libsysprof/sysprof-category-summary.c:145
+#, fuzzy
+msgid "Crash Handler"
+msgstr "昌德勒"
+
+#: src/libsysprof/sysprof-category-summary.c:148
+#, fuzzy
+msgid "Context Switches"
+msgstr "內文是 %s"
+
+#: src/libsysprof/sysprof-category-summary.c:151
+msgid "CSS"
+msgstr "CSS"
+
+#: src/libsysprof/sysprof-category-summary.c:154
+#: src/sysprof/sysprof-greeter.ui:396 src/sysprof/sysprof-window.ui:387
+msgid "Graphics"
+msgstr "顯示卡"
+
+#: src/libsysprof/sysprof-category-summary.c:157
+msgid "Icons"
+msgstr "圖示"
+
+#: src/libsysprof/sysprof-category-summary.c:160
+msgid "Input"
+msgstr "輸入"
+
+#: src/libsysprof/sysprof-category-summary.c:163
+#, fuzzy
+msgid "IO"
+msgstr "ISO"
+
+#: src/libsysprof/sysprof-category-summary.c:166
+#, fuzzy
+msgid "IPC"
+msgstr "ICQ"
+
+#: src/libsysprof/sysprof-category-summary.c:169
+#, fuzzy
+msgid "JavaScript"
+msgstr "命令稿"
+
+#: src/libsysprof/sysprof-category-summary.c:172
+#, fuzzy
+msgid "Kernel"
+msgstr "核心裝置"
+
+#: src/libsysprof/sysprof-category-summary.c:175
+msgid "Layout"
+msgstr "配置"
+
+#: src/libsysprof/sysprof-category-summary.c:178
+#, fuzzy
+msgid "Locking"
+msgstr "鎖定"
+
+#: src/libsysprof/sysprof-category-summary.c:181
+#, fuzzy
+msgid "Main Loop"
+msgstr "循環"
+
+#: src/libsysprof/sysprof-category-summary.c:184
+msgid "Memory"
+msgstr "記憶體"
+
+#: src/libsysprof/sysprof-category-summary.c:187
+#, fuzzy
+msgid "Paint"
+msgstr "遭到污染"
+
+#: src/libsysprof/sysprof-category-summary.c:190
+#, fuzzy
+msgid "Type System"
+msgstr "檔案系統"
+
+#: src/libsysprof/sysprof-category-summary.c:193
+msgid "Unwindable"
+msgstr ""
+
+#: src/libsysprof/sysprof-category-summary.c:196
+#, fuzzy
+msgid "Windowing"
+msgstr "視窗"
+
+#: src/libsysprof/sysprof-debuginfod-task.c:97
+#, fuzzy
+msgid "Downloading Symbols…"
+msgstr "正在下載..."
+
+#: src/libsysprof/sysprof-document-allocation.c:151
+msgid "Allocation"
+msgstr "分配"
+
+#: src/libsysprof/sysprof-document.c:570
+#, fuzzy
+msgid "Unknown Process"
+msgstr "未明的原因"
+
+#: src/libsysprof/sysprof-document.c:1251
+#: src/libsysprof/sysprof-document.c:1287
+msgid "Indexing capture data frames"
+msgstr ""
+
+#: src/libsysprof/sysprof-document.c:1473
+#, fuzzy
+msgid "Discovering file system mounts"
+msgstr "探查檔案設定"
+
+#: src/libsysprof/sysprof-document.c:1476
+msgid "Discovering process mount namespaces"
+msgstr ""
+
+#: src/libsysprof/sysprof-document.c:1479
+msgid "Analyzing process address layouts"
+msgstr ""
+
+#: src/libsysprof/sysprof-document.c:1482
+#, fuzzy
+msgid "Analyzing process command line"
+msgstr "停用命令列"
+
+#: src/libsysprof/sysprof-document.c:1485
+msgid "Analyzing file system overlays"
+msgstr ""
+
+#: src/libsysprof/sysprof-document.c:1488
+#, fuzzy
+msgid "Processing counters"
+msgstr "正在處理"
+
+#: src/libsysprof/sysprof-document.c:2480
+#: src/libsysprof/sysprof-document.c:2499
+#, fuzzy, c-format
+msgid "Recording at %X %x"
+msgstr "錄製中"
+
+#: src/libsysprof/sysprof-document.c:2483
+#: src/libsysprof/sysprof-document.c:2502
+#, fuzzy, c-format
+msgid "Recording at %s"
+msgstr "錄製中"
+
+#: src/libsysprof/sysprof-document-dbus-message.c:152
+#, fuzzy
+msgid "D-Bus Message"
+msgstr "訊息"
+
+#: src/libsysprof/sysprof-document-frame.c:139
+#, fuzzy
+msgid "Frame"
+msgstr "框架"
+
+#: src/libsysprof/sysprof-document-loader.c:499
+#, fuzzy
+msgid "Document loaded"
+msgstr "文件資料夾"
+
+#: src/libsysprof/sysprof-document-loader.c:530
+#, fuzzy
+msgid "Loading failed"
+msgstr "正在載入頁面"
+
+#: src/libsysprof/sysprof-document-loader.c:542
+#: src/libsysprof/sysprof-document-symbols.c:276
+msgid "Symbolizing stack traces"
+msgstr ""
+
+#: src/libsysprof/sysprof-document-loader.c:611
+#, fuzzy
+msgid "Loading document"
+msgstr "正在載入文件"
+
+#: src/libsysprof/sysprof-document-log.c:85
+#, fuzzy
+msgid "Log"
+msgstr "長"
+
+#: src/libsysprof/sysprof-document-mark.c:134
+#, fuzzy
+msgid "Mark"
+msgstr "標記語言"
+
+#: src/libsysprof/sysprof-document-process.c:293
+#, fuzzy, c-format
+msgid "%s [Process %d]"
+msgstr "程序 ID"
+
+#: src/libsysprof/sysprof-document-process.c:295
+#, fuzzy, c-format
+msgid "Process %d"
+msgstr "程序"
+
+#: src/libsysprof/sysprof-document-sample.c:136
+#, fuzzy
+msgid "Sample"
+msgstr "簡易"
+
+#: src/libsysprof/sysprof-system-logs.c:171
+#, fuzzy
+msgid "System Logs"
+msgstr "系統標誌"
+
+#: src/libsysprof/sysprof-system-logs.c:172
+#, fuzzy
+msgid "Recording system logs is not supported on your platform."
+msgstr "您的平臺沒有 GCredentials 支援"
+
+#: src/libsysprof/sysprof-tracer.c:65
+#, fuzzy
+msgid "Tracer"
+msgstr "追蹤器(_T)"
+
+#: src/libsysprof/sysprof-tracer.c:66
+msgid ""
+"Tracing requires spawning a program compiled with ‘-finstrument-functions’. "
+"Tracing will not be available."
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:120
+#, c-format
+msgid "--merge requires at least 2 filename arguments"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:319
+msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:320
+msgid "Make sysprof specific to a task [Deprecated]"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:320 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof/sysprof-logs-section.ui:181
+#: src/sysprof/sysprof-processes-section.ui:283
+#: src/sysprof/sysprof-traceables-utility.ui:52
+msgid "PID"
+msgstr "PID"
+
+#: src/sysprof-cli/sysprof-cli.c:321
+msgid "Run a command and profile the process"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:321
+msgid "COMMAND"
+msgstr "COMMAND"
+
+#: src/sysprof-cli/sysprof-cli.c:322
+msgid ""
+"Set environment variable for spawned process. Can be used multiple times."
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:322
+#, fuzzy
+msgid "VAR=VALUE"
+msgstr "VALUE"
+
+#: src/sysprof-cli/sysprof-cli.c:323
+#, fuzzy
+msgid "Force overwrite the capture file"
+msgstr "不要寫入 gschemas.compiled 檔案"
+
+#: src/sysprof-cli/sysprof-cli.c:324
+msgid "Disable recording of battery statistics"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:325
+msgid "Disable recording of CPU statistics"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:326
+#, fuzzy
+msgid "Disable recording of Disk statistics"
+msgstr "啟用錄製功能以檢視螢幕使用時間記錄"
+
+#: src/sysprof-cli/sysprof-cli.c:327
+msgid "Do not record stacktraces using Linux perf"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:328
+msgid "Do not append symbol name information from local machine"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:329
+#, fuzzy
+msgid "Disable recording of memory statistics"
+msgstr "啟用錄製功能以檢視螢幕使用時間記錄"
+
+#: src/sysprof-cli/sysprof-cli.c:330
+#, fuzzy
+msgid "Disable recording of network statistics"
+msgstr "啟用錄製功能以檢視螢幕使用時間記錄"
+
+#: src/sysprof-cli/sysprof-cli.c:331
+msgid "Set SYSPROF_TRACE_FD environment for subprocess"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:332
+#, fuzzy
+msgid "Track when processes are scheduled"
+msgstr "搜尋程序與使用者"
+
+#: src/sysprof-cli/sysprof-cli.c:333
+#, fuzzy
+msgid "Profile the D-Bus session bus"
+msgstr "連線到作業階段匯流排"
+
+#: src/sysprof-cli/sysprof-cli.c:334
+#, fuzzy
+msgid "Profile the D-Bus system bus"
+msgstr "連線到系統匯流排"
+
+#: src/sysprof-cli/sysprof-cli.c:335
+msgid "Set GJS_TRACE_FD environment to trace GJS processes"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:336
+msgid "Set GTK_TRACE_FD environment to trace a GTK application"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:337
+msgid "Include RAPL energy statistics"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:338
+msgid "Profile memory allocations and frees"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:339
+msgid "Connect to org.gnome.Shell for profiler statistics"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:340
+#, fuzzy
+msgid "Track performance of the applications main loop"
+msgstr "應用程式資料夾的名稱。"
+
+#: src/sysprof-cli/sysprof-cli.c:342
+msgid "Merge all provided *.syscap files and write to stdout"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:343
+#, fuzzy
+msgid "Print the sysprof-cli version and exit"
+msgstr "顯示釋出版本並離開"
+
+#: src/sysprof-cli/sysprof-cli.c:344
+#, fuzzy
+msgid "The size of the buffer in pages (1 = 1 page)"
+msgstr "要建立的映像檔大小"
+
+#: src/sysprof-cli/sysprof-cli.c:345
+#, fuzzy
+msgid "Additional D-Bus address to monitor"
+msgstr "要監控的目的端名稱"
+
+#: src/sysprof-cli/sysprof-cli.c:346
+msgid "Stack size to copy for unwinding in user-space"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:347
+msgid "Do not use debuginfod to resolve symbols"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:348
+msgid "Do not use Sysprofd to acquire privileges"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:382
+msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:385
+msgid ""
+"\n"
+"Examples:\n"
+"\n"
+"  # Record gtk4-widget-factory using trace-fd to get application provided\n"
+"  # data as well as GTK and GNOME Shell data providers\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"  # Merge multiple syscap files into one\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+"\n"
+"  # Unwind by capturing stack/register contents instead of frame-pointers\n"
+"  # where the stack-size is a multiple of page-size\n"
+"  sysprof-cli --stack-size=8192\n"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:425
+#, fuzzy, c-format
+msgid "Too many arguments were passed to sysprof-cli:"
+msgstr "傳給 %s 的計數值太大"
+
+#. Translators: %s is a file name.
+#: src/sysprof-cli/sysprof-cli.c:482
+#, fuzzy, c-format
+msgid "%s exists. Use --force to overwrite\n"
+msgstr ""
+"檔案 %s 已存在。\n"
+"使用 --force 進行覆蓋。\n"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:13
+#, fuzzy
+msgid "Profile the system"
+msgstr "描述檔類型"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:14
+#, fuzzy
+msgid "Authentication is required to profile the system."
+msgstr "執行檔案操作需要核對"
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:6
+#, fuzzy
+msgctxt "shortcut window"
+msgid "Recording View"
+msgstr "錄影模式"
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:9
+#, fuzzy
+msgctxt "shortcut window"
+msgid "Start New Recording"
+msgstr "開始錄影"
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:15
+msgctxt "shortcut window"
+msgid "Save As"
+msgstr "另存新檔"
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:25
+#, fuzzy
+msgctxt "shortcut window"
+msgid "Toggle Visibility of Main Sidebar"
+msgstr "切換上面板的可見性"
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:31
+#, fuzzy
+msgctxt "shortcut window"
+msgid "Toggle Visibility of Stack Trace Sidebar"
+msgstr "切換上面板的可見性"
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:39
+msgctxt "shortcut window"
+msgid "General"
+msgstr "一般"
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:42
+#, fuzzy
+msgctxt "shortcut window"
+msgid "Open Recording"
+msgstr "停止錄影"
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:52
+msgctxt "shortcut window"
+msgid "Close Window"
+msgstr "關閉視窗"
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:59
+msgctxt "shortcut window"
+msgid "Show Help"
+msgstr "顯示求助"
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:65
+msgctxt "shortcut window"
+msgid "Show keyboard shortcuts"
+msgstr "顯示鍵盤快捷鍵"
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:71
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "結束"
+
+#: src/sysprof/gtk/menus.ui:6
+#, fuzzy
+msgid "Make Function Root"
+msgstr "海恩斯姜欣"
+
+#: src/sysprof/gtk/menus.ui:11 src/sysprof/sysprof-process-dialog.ui:520
+#, fuzzy
+msgid "Options"
+msgstr "選項："
+
+#: src/sysprof/gtk/menus.ui:13 src/sysprof/sysprof-window.ui:491
+#, fuzzy
+msgid "Categorize Frames"
+msgstr "分類"
+
+#: src/sysprof/gtk/menus.ui:17 src/sysprof/sysprof-window.ui:495
+#, fuzzy
+msgid "Hide System Libraries"
+msgstr "使用系統服務"
+
+#: src/sysprof/gtk/menus.ui:21 src/sysprof/sysprof-window.ui:499
+msgid "Include Threads"
+msgstr ""
+
+#: src/sysprof/gtk/menus.ui:25 src/sysprof/sysprof-window.ui:503
+#, fuzzy
+msgid "Bottom Up"
+msgstr "下"
+
+#: src/sysprof/gtk/menus.ui:29 src/sysprof/sysprof-window.ui:507
+msgid "Ignore Kernel Processes"
+msgstr ""
+
+#: src/sysprof/gtk/menus.ui:33 src/sysprof/sysprof-window.ui:511
+#, fuzzy
+msgid "Ignore Process 0"
+msgstr "文書處理器"
+
+#: src/sysprof/gtk/menus.ui:37 src/sysprof/sysprof-window.ui:515
+#, fuzzy
+msgid "Merge Similar Processes"
+msgstr "我的程序(_M)"
+
+#: src/sysprof/sysprof-animation.c:1038
+#, c-format
+msgid "Failed to find property %s in %s"
+msgstr "%2$s 中找不到 %1$s 屬性"
+
+#: src/sysprof/sysprof-animation.c:1047
+#, c-format
+msgid "Failed to retrieve va_list value: %s"
+msgstr "無法取得 Va_list 數值：%s"
+
+#: src/sysprof/sysprof-application.c:38
+#, fuzzy
+msgid "Start a new recording"
+msgstr "開始錄影"
+
+#: src/sysprof/sysprof-application.c:39
+#, fuzzy
+msgid "Show Sysprof version and exit"
+msgstr "顯示程式的版本並離開"
+
+#: src/sysprof/sysprof-application.c:277
+#, fuzzy
+msgid "A system profiler"
+msgstr "測試描述檔："
+
+# (freddy)新版 Libadwaita About Dialog 不支援留言功能，原文如下：
+# 如對翻譯有任何意見，請送一封電子郵件給
+# 以下地址，GNOME 翻譯團隊會盡快回覆您：
+# zh-l10n@lists.linux.org.tw
+#: src/sysprof/sysprof-application.c:278
+msgid "translator-credits"
+msgstr ""
+"Ching-Hung Lin <billlin@wshlab2.ee.kuas.edu.tw>, 2006\n"
+"Lin-Chieh Shangkuan <r93066@csie.ntu.edu.tw>, 2006\n"
+"Woodman Tuen <wmtuen@gmail.com>, 2005\n"
+"Roy Chan <roy.chan@linux.org.hk>, 2004\n"
+"Abel Cheung <abel@oaka.org>, 2001-2004\n"
+"Ming-Yen Hsu <myhsu@cyberdude.com>, 1999\n"
+"Freddy Cheng <freddy4212@gmail.com>, 2022.\n"
+"Yi-Jyun Pan <me@pan93.com>, 2024."
+
+#: src/sysprof/sysprof-callgraph-view.ui:22
+#, fuzzy
+msgid "Functions"
+msgstr "姜欣"
+
+#: src/sysprof/sysprof-callgraph-view.ui:71
+#, fuzzy
+msgid "Filter Functions"
+msgstr "定義的函數"
+
+#: src/sysprof/sysprof-callgraph-view.ui:94
+#, fuzzy
+msgid "Callers"
+msgstr "通話"
+
+#: src/sysprof/sysprof-callgraph-view.ui:146
+#, fuzzy
+msgid "Descendants"
+msgstr "遞減(_D)"
+
+#: src/sysprof/sysprof-counters-section.ui:26
+#: src/sysprof/sysprof-cpu-section.ui:169
+#: src/sysprof/sysprof-energy-section.ui:177
+#: src/sysprof/sysprof-graphics-section.ui:88
+#: src/sysprof/sysprof-network-section.ui:86
+#: src/sysprof/sysprof-storage-section.ui:86
+#, fuzzy
+msgid "Counters Chart"
+msgstr "環狀圖表(_R)"
+
+#: src/sysprof/sysprof-counters-section.ui:40
+#: src/sysprof/sysprof-cpu-section.ui:323
+#: src/sysprof/sysprof-energy-section.ui:312
+#: src/sysprof/sysprof-graphics-section.ui:223
+#: src/sysprof/sysprof-network-section.ui:291
+#: src/sysprof/sysprof-storage-section.ui:291
+#, fuzzy
+msgid "Counters Table"
+msgstr "掛載為可掛載形式"
+
+#: src/sysprof/sysprof-cpu-section.ui:378
+#: src/sysprof/sysprof-dbus-section.ui:171
+#: src/sysprof/sysprof-energy-section.ui:348
+#: src/sysprof/sysprof-frame-utility.ui:49
+#: src/sysprof/sysprof-graphics-section.ui:259
+#: src/sysprof/sysprof-logs-section.ui:110
+#: src/sysprof/sysprof-metadata-section.ui:38
+#: src/sysprof/sysprof-network-section.ui:346
+#: src/sysprof/sysprof-process-dialog.ui:64
+#: src/sysprof/sysprof-processes-section.ui:215
+#: src/sysprof/sysprof-storage-section.ui:346
+#: src/sysprof/sysprof-traceables-utility.ui:23
+msgid "Time"
+msgstr "時刻"
+
+#: src/sysprof/sysprof-cpu-section.ui:412
+#: src/sysprof/sysprof-energy-section.ui:382
+#: src/sysprof/sysprof-flame-graph.c:458
+#: src/sysprof/sysprof-graphics-section.ui:293
+#: src/sysprof/sysprof-marks-section.ui:234
+#: src/sysprof/sysprof-network-section.ui:380
+#: src/sysprof/sysprof-storage-section.ui:380
+#, fuzzy
+msgid "Category"
+msgstr "分類"
+
+#: src/sysprof/sysprof-cpu-section.ui:450
+#: src/sysprof/sysprof-energy-section.ui:420
+#: src/sysprof/sysprof-graphics-section.ui:331
+#: src/sysprof/sysprof-marks-section.ui:268
+#: src/sysprof/sysprof-network-section.ui:418
+#: src/sysprof/sysprof-storage-section.ui:418
+msgid "Name"
+msgstr "名稱"
+
+#: src/sysprof/sysprof-cpu-section.ui:488
+#: src/sysprof/sysprof-energy-section.ui:458
+#: src/sysprof/sysprof-graphics-section.ui:369
+#: src/sysprof/sysprof-metadata-section.ui:105
+#: src/sysprof/sysprof-network-section.ui:456
+#: src/sysprof/sysprof-storage-section.ui:456
+msgid "Value"
+msgstr "值"
+
+#: src/sysprof/sysprof-cpu-section.ui:529
+msgid "CPU Info"
+msgstr ""
+
+#: src/sysprof/sysprof-cpu-section.ui:560
+#: src/sysprof/sysprof-process-dialog.ui:248
+msgid "ID"
+msgstr "ID"
+
+#: src/sysprof/sysprof-cpu-section.ui:595
+msgid "Core"
+msgstr ""
+
+#: src/sysprof/sysprof-cpu-section.ui:630
+#, fuzzy
+msgid "Model Name"
+msgstr "資料夾名稱"
+
+#: src/sysprof/sysprof-dbus-section.ui:205
+msgid "Bus"
+msgstr "匯流排"
+
+#: src/sysprof/sysprof-dbus-section.ui:244
+#, fuzzy
+msgid "Serial"
+msgstr "有襯線"
+
+#: src/sysprof/sysprof-dbus-section.ui:281
+#, fuzzy
+msgid "Reply"
+msgstr "取代"
+
+#: src/sysprof/sysprof-dbus-section.ui:318
+msgid "Flags"
+msgstr "旗標"
+
+#: src/sysprof/sysprof-dbus-section.ui:347
+#: src/sysprof/sysprof-files-section.ui:122
+#: src/sysprof/sysprof-memory-callgraph-view.ui:68
+msgid "Size"
+msgstr "大小"
+
+#: src/sysprof/sysprof-dbus-section.ui:383
+#: src/sysprof/sysprof-frame-utility.ui:20
+#: src/sysprof/sysprof-mark-table.ui:221
+msgid "Type"
+msgstr "類型"
+
+#: src/sysprof/sysprof-dbus-section.ui:412
+msgid "Sender"
+msgstr "發送者"
+
+#: src/sysprof/sysprof-dbus-section.ui:446
+msgid "Destination"
+msgstr "目的地"
+
+#: src/sysprof/sysprof-dbus-section.ui:480
+#: src/sysprof/sysprof-files-section.ui:53
+msgid "Path"
+msgstr "路徑"
+
+#: src/sysprof/sysprof-dbus-section.ui:514
+msgid "Interface"
+msgstr "介面"
+
+#: src/sysprof/sysprof-dbus-section.ui:548
+#, fuzzy
+msgid "Member"
+msgstr "成員"
+
+#: src/sysprof/sysprof-dbus-section.ui:582
+msgid "Signature"
+msgstr "簽章"
+
+#: src/sysprof/sysprof-dbus-section.ui:626
+#, fuzzy
+msgid "Filter Messages"
+msgstr "狀態訊息"
+
+#: src/sysprof/sysprof-dbus-utility.ui:13
+#: src/sysprof/sysprof-logs-section.c:114
+#: src/sysprof/sysprof-logs-section.ui:290
+msgid "Message"
+msgstr "訊息"
+
+#: src/sysprof/sysprof-files-section.ui:4
+msgid "Files"
+msgstr "檔案"
+
+#: src/sysprof/sysprof-files-section.ui:88
+#, fuzzy
+msgid "Compressed"
+msgstr "壓縮(_O)"
+
+#: src/sysprof/sysprof-files-section.ui:165
+#, fuzzy
+msgid "Filter Files"
+msgstr "篩選條件"
+
+#: src/sysprof/sysprof-flame-graph.c:462
+#: src/sysprof/sysprof-process-dialog.ui:177
+msgid "File"
+msgstr "檔案"
+
+#: src/sysprof/sysprof-frame-utility.ui:80
+#: src/sysprof/sysprof-logs-section.ui:143
+#: src/sysprof/sysprof-mark-table.ui:116
+#: src/sysprof/sysprof-traceables-utility.ui:81
+#: src/sysprof/sysprof-window.ui:367
+msgid "CPU"
+msgstr "CPU"
+
+#: src/sysprof/sysprof-greeter.c:144
+msgid "Use KEY=VALUE to set an environment variable"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:150
+#, fuzzy
+msgid "Keys may not start with a number"
+msgstr "鍵檔案並非以群組開頭"
+
+#: src/sysprof/sysprof-greeter.c:160
+msgid "Keys may only contain alpha-numerics or underline."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:357 src/sysprof/sysprof-window.c:172
+msgid "Must Capture to Local File"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:359 src/sysprof/sysprof-window.c:173
+msgid "You must choose a local file to capture using Sysprof"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:361 src/sysprof/sysprof-greeter.c:401
+#: src/sysprof/sysprof-recording-pad.c:119 src/sysprof/sysprof-window.c:174
+#: src/sysprof/sysprof-window.c:751
+msgid "Close"
+msgstr "關閉"
+
+#: src/sysprof/sysprof-greeter.c:399
+#, fuzzy
+msgid "Must Select Local Folder"
+msgstr "選擇資料夾"
+
+#: src/sysprof/sysprof-greeter.c:400
+msgid "You must choose a local folder to add as a debug directory"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:420
+#, fuzzy
+msgid "Add debug directory"
+msgstr "加入分享目錄"
+
+#: src/sysprof/sysprof-greeter.c:421 src/sysprof/sysprof-greeter.ui:589
+#, fuzzy
+msgid "Add _Directory"
+msgstr "目錄"
+
+#: src/sysprof/sysprof-greeter.c:445
+#, c-format
+msgid "System Capture from %s.syscap"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:449
+#, fuzzy
+msgid "Record to File"
+msgstr "列印成檔案儲存"
+
+#: src/sysprof/sysprof-greeter.c:450
+#, fuzzy
+msgid "Record"
+msgstr "錄製(_R)"
+
+#: src/sysprof/sysprof-greeter.c:664
+#, fuzzy
+msgid "No Change"
+msgstr "沒有變更"
+
+#: src/sysprof/sysprof-greeter.c:667
+#, fuzzy
+msgid "Balanced"
+msgstr "平衡模式"
+
+#: src/sysprof/sysprof-greeter.c:670
+#, fuzzy
+msgid "Power Saver"
+msgstr "省電模式"
+
+#: src/sysprof/sysprof-greeter.c:673
+msgid "Performance"
+msgstr "效能"
+
+#: src/sysprof/sysprof-greeter.ui:89
+#, fuzzy
+msgid "Sampling"
+msgstr "賭博"
+
+#: src/sysprof/sysprof-greeter.ui:92
+#, fuzzy
+msgid "Sample Native Stacks"
+msgstr "取樣率"
+
+#: src/sysprof/sysprof-greeter.ui:93
+msgid "Record native stack traces using a sampling profiler"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:99
+msgid "Unwind Stacks in User Space"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:100
+msgid "Copy stack contents and registers for unwinding in user-space"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:111
+#, fuzzy
+msgid "Stack Size"
+msgstr "取樣大小"
+
+#: src/sysprof/sysprof-greeter.ui:112
+#, fuzzy
+msgid "The number of bytes to copy from the stack"
+msgstr "數值要取四捨五入的位數。"
+
+#: src/sysprof/sysprof-greeter.ui:123
+msgid ""
+"Unwinding in user-space has considerable overhead but may help in situations "
+"where frame-pointers are unavailable."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:138
+msgid "Sample JavaScript Stacks"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:139
+msgid "Record JavaScript stack traces using a sampling profiler"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:145
+msgid ""
+"Sysprof must launch your application to record JavaScript stacks using GJS."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:160
+msgid "Record Scheduler Details"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:161
+msgid "Track when processes are scheduled per CPU"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:169
+#, fuzzy
+msgid "Tracing"
+msgstr "網路追蹤"
+
+#: src/sysprof/sysprof-greeter.ui:172
+#, fuzzy
+msgid "Trace Memory Allocations"
+msgstr "取用您的定位"
+
+#: src/sysprof/sysprof-greeter.ui:173
+msgid "Record a stack trace when malloc or similar functions are used"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:179
+msgid "Sysprof must launch your application to record memory allocations."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:197 src/sysprof/sysprof-greeter.ui:202
+msgid "Application"
+msgstr "應用程式"
+
+#: src/sysprof/sysprof-greeter.ui:205
+#: src/sysprof/sysprof-processes-section.ui:317
+msgid "Command Line"
+msgstr "命令列"
+
+#: src/sysprof/sysprof-greeter.ui:211
+#, fuzzy
+msgid "Working directory"
+msgstr "設定工作資料夾"
+
+#: src/sysprof/sysprof-greeter.ui:217
+msgid "The application will be run as a subprocess of Sysprof."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:230
+msgid "Environment"
+msgstr "環境"
+
+#: src/sysprof/sysprof-greeter.ui:233
+#, fuzzy
+msgid "Clear Environment"
+msgstr "環境"
+
+#: src/sysprof/sysprof-greeter.ui:234
+#, fuzzy
+msgid "Clear the environment before launching application"
+msgstr "顯示已知執行的應用程式"
+
+#: src/sysprof/sysprof-greeter.ui:255
+#, fuzzy
+msgid "Add _Variable"
+msgstr "無定向"
+
+#: src/sysprof/sysprof-greeter.ui:261
+#, fuzzy
+msgid "Add Variable"
+msgstr "無定向"
+
+#: src/sysprof/sysprof-greeter.ui:262
+msgid "_Add"
+msgstr "加入(_A)"
+
+#: src/sysprof/sysprof-greeter.ui:279 src/sysprof/sysprof-greeter.ui:284
+#, fuzzy
+msgid "Counters"
+msgstr "國家"
+
+#: src/sysprof/sysprof-greeter.ui:287
+#, fuzzy
+msgid "CPU Usage"
+msgstr "使用"
+
+#: src/sysprof/sysprof-greeter.ui:288
+msgid "Record coarse-grained counters about CPU usage and frequency"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:294
+#, fuzzy
+msgid "Memory Usage"
+msgstr "記憶體用量"
+
+#: src/sysprof/sysprof-greeter.ui:295
+msgid "Record coarse-grained counters about system memory usage"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:301
+#, fuzzy
+msgid "Disk Usage"
+msgstr "磁碟空間"
+
+#: src/sysprof/sysprof-greeter.ui:302
+msgid "Record coarse-grained counters about storage throughput"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:308
+#, fuzzy
+msgid "Network Usage"
+msgstr "網路名稱"
+
+#: src/sysprof/sysprof-greeter.ui:309
+msgid "Record coarse-grained counters about network traffic"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:319
+#, fuzzy
+msgid "Energy Usage"
+msgstr "金鑰用法"
+
+#: src/sysprof/sysprof-greeter.ui:320
+msgid "Record coarse-grained counters about energy usage in Watts"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:326
+#, fuzzy
+msgid "Battery Charge"
+msgstr "電池充電"
+
+#: src/sysprof/sysprof-greeter.ui:327
+msgid "Record coarse-grained counters about battery charge or discharge rates"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:340 src/sysprof/sysprof-greeter.ui:345
+#: src/sysprof/sysprof-window.ui:357
+msgid "D-Bus"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:349
+#, fuzzy
+msgid "Record System Bus"
+msgstr "系統匯流排"
+
+#: src/sysprof/sysprof-greeter.ui:350
+msgid "Record messages on the D-Bus system bus"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:366
+#, fuzzy
+msgid "Record Session Bus"
+msgstr "工作階段匯流排"
+
+#: src/sysprof/sysprof-greeter.ui:367
+msgid "Record messages on the D-Bus user session bus"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:378
+msgid ""
+"The session bus may contain sensitive information such as keyboard usage and "
+"passwords."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:401
+#, fuzzy
+msgid "Timings"
+msgstr "露營"
+
+#: src/sysprof/sysprof-greeter.ui:405
+msgid "Compositor Frame Timings"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:406
+msgid "Record frame-timing information from the GNOME Shell compositor"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:417
+msgid ""
+"Applications launched by Sysprof will automatically collect GTK frame timing "
+"information."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:457
+msgid "Devices"
+msgstr "裝置"
+
+#: src/sysprof/sysprof-greeter.ui:461
+#, fuzzy
+msgid "Include GPU Information"
+msgstr "簽章資訊"
+
+#: src/sysprof/sysprof-greeter.ui:462
+#, fuzzy
+msgid "Records information about graphics hardware and drivers"
+msgstr "提供有關繪製節點的資訊。"
+
+#: src/sysprof/sysprof-greeter.ui:480
+msgid "System"
+msgstr "系統"
+
+#: src/sysprof/sysprof-greeter.ui:485
+#, fuzzy
+msgid "Power Profile"
+msgstr "印表機設定檔"
+
+#: src/sysprof/sysprof-greeter.ui:488
+#, fuzzy
+msgid "Record with Power Profile"
+msgstr "執行效能分析"
+
+#: src/sysprof/sysprof-greeter.ui:489
+msgid "Switch to power profile while recording"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:499
+msgid "Details"
+msgstr "詳細資料"
+
+#: src/sysprof/sysprof-greeter.ui:503
+#, fuzzy
+msgid "Record System Log"
+msgstr "系統標誌"
+
+#: src/sysprof/sysprof-greeter.ui:504
+msgid "Watch the system log for new messages and record them"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:520
+#, fuzzy
+msgid "Include Hardware Information"
+msgstr "硬體資訊"
+
+#: src/sysprof/sysprof-greeter.ui:521
+#, fuzzy
+msgid "Records information about PCI and USB devices"
+msgstr "提供有關繪製節點的資訊。"
+
+#: src/sysprof/sysprof-greeter.ui:534
+msgid "Symbols"
+msgstr "符號"
+
+#: src/sysprof/sysprof-greeter.ui:538
+#, fuzzy
+msgid "Bundle Symbols"
+msgstr "符號"
+
+#: src/sysprof/sysprof-greeter.ui:539
+msgid "Make recording shareable by symbolizing stack traces after recording"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:555
+#, fuzzy
+msgid "Debuginfod"
+msgstr "偵錯輸出"
+
+#: src/sysprof/sysprof-greeter.ui:556
+msgid "Enable Debuginfod to automatically fetch debug symbols"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:569
+#, fuzzy
+msgid "Debug File Directories"
+msgstr "建立目錄"
+
+#: src/sysprof/sysprof-greeter.ui:570
+#, fuzzy
+msgid "Directories to search for debug files"
+msgstr "儲存檔案的目錄"
+
+#: src/sysprof/sysprof-greeter.ui:618
+#, fuzzy
+msgid "_Open File…"
+msgstr "開啟檔案(_O)…"
+
+#: src/sysprof/sysprof-greeter.ui:625
+#, fuzzy
+msgid "Record to _File…"
+msgstr "傳送檔案(_F)…"
+
+#: src/sysprof/sysprof-greeter.ui:632
+#, fuzzy
+msgid "Record to _Memory"
+msgstr "常駐記憶體"
+
+#: src/sysprof/sysprof-greeter.ui:651 src/sysprof/sysprof-window.ui:468
+msgid "_Keyboard Shortcuts"
+msgstr "鍵盤快捷鍵(_K)"
+
+#: src/sysprof/sysprof-greeter.ui:655 src/sysprof/sysprof-window.ui:472
+msgid "Help"
+msgstr "求助"
+
+#: src/sysprof/sysprof-greeter.ui:659 src/sysprof/sysprof-window.ui:476
+#, fuzzy
+msgid "About Sysprof"
+msgstr "關於 %s"
+
+#: src/sysprof/sysprof-logs-section.c:105
+msgid "Critical"
+msgstr "重要"
+
+#: src/sysprof/sysprof-logs-section.c:108
+msgid "Warning"
+msgstr "警告"
+
+#: src/sysprof/sysprof-logs-section.c:111
+#, fuzzy
+msgid "Debug"
+msgstr "除錯器"
+
+#: src/sysprof/sysprof-logs-section.c:117
+msgid "Info"
+msgstr ""
+
+#: src/sysprof/sysprof-logs-section.c:120
+msgid "Error"
+msgstr "錯誤"
+
+#: src/sysprof/sysprof-logs-section.ui:4 src/sysprof/sysprof-logs-section.ui:30
+msgid "Logs"
+msgstr "紀錄檔"
+
+#: src/sysprof/sysprof-logs-section.ui:219
+#, fuzzy
+msgid "Severity"
+msgstr "安全性"
+
+#: src/sysprof/sysprof-logs-section.ui:255
+msgid "Domain"
+msgstr "網域"
+
+#: src/sysprof/sysprof-marks-section.ui:4
+#, fuzzy
+msgid "Marks"
+msgstr "公園"
+
+#: src/sysprof/sysprof-marks-section.ui:72
+#, fuzzy
+msgid "Mark Chart"
+msgstr "查理湖"
+
+#: src/sysprof/sysprof-marks-section.ui:84
+#, fuzzy
+msgid "Mark Table"
+msgstr "標記表格"
+
+#: src/sysprof/sysprof-marks-section.ui:97
+#, fuzzy
+msgid "Mark Waterfall"
+msgstr "以點字標示"
+
+#: src/sysprof/sysprof-marks-section.ui:198
+msgid "Summary"
+msgstr "摘要"
+
+#: src/sysprof/sysprof-marks-section.ui:303
+msgid "Minimum"
+msgstr "最小值"
+
+#: src/sysprof/sysprof-marks-section.ui:337
+msgid "Maximum"
+msgstr "最大值"
+
+#: src/sysprof/sysprof-marks-section.ui:371
+#, fuzzy
+msgid "Average"
+msgstr "每週平均"
+
+#: src/sysprof/sysprof-marks-section.ui:405
+#, fuzzy
+msgid "Median"
+msgstr "媒體"
+
+#: src/sysprof/sysprof-mark-chart-row.ui:8
+#, fuzzy
+msgid "Toggle marks"
+msgstr "切換搜尋"
+
+#: src/sysprof/sysprof-mark-chart-row.ui:12
+#, fuzzy
+msgid "Set as Filter"
+msgstr "重啟夜光模式"
+
+#: src/sysprof/sysprof-mark-table.ui:47
+msgid "Start"
+msgstr "開始"
+
+#: src/sysprof/sysprof-mark-table.ui:81
+#: src/sysprof/sysprof-processes-section.ui:249
+msgid "Duration"
+msgstr "持續時間"
+
+#: src/sysprof/sysprof-mark-table.ui:151
+msgid "Process"
+msgstr "程序"
+
+#: src/sysprof/sysprof-mark-table.ui:186
+msgid "Group"
+msgstr "群組"
+
+#: src/sysprof/sysprof-mark-table.ui:256
+msgid "Description"
+msgstr "描述"
+
+#: src/sysprof/sysprof-memory-callgraph-view.ui:8
+#: src/sysprof/sysprof-memory-callgraph-view.ui:105
+#: src/sysprof/sysprof-memory-callgraph-view.ui:172
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:8
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:105
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:172
+msgid "Self"
+msgstr "自我"
+
+#: src/sysprof/sysprof-memory-callgraph-view.ui:38
+#: src/sysprof/sysprof-memory-callgraph-view.ui:135
+#: src/sysprof/sysprof-memory-callgraph-view.ui:202
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:38
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:135
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:202
+msgid "Total"
+msgstr "總計"
+
+#: src/sysprof/sysprof-memory-section.ui:4
+#, fuzzy
+msgid "Memory Allocations"
+msgstr "分配"
+
+#: src/sysprof/sysprof-memory-section.ui:29
+#: src/sysprof/sysprof-samples-section.ui:29
+#, fuzzy
+msgid "Stack Traces"
+msgstr "搜尋地點"
+
+#: src/sysprof/sysprof-memory-section.ui:88
+#, fuzzy
+msgid "Allocations"
+msgstr "分配"
+
+#: src/sysprof/sysprof-memory-section.ui:144
+msgid "Leaks"
+msgstr ""
+
+#: src/sysprof/sysprof-memory-section.ui:212
+#: src/sysprof/sysprof-samples-section.ui:216
+#: src/sysprof/sysprof-traceables-utility.ui:162
+#, fuzzy
+msgid "Stack Trace"
+msgstr "堆疊"
+
+#: src/sysprof/sysprof-metadata-section.ui:4
+msgid "Metadata"
+msgstr "中介資料"
+
+#: src/sysprof/sysprof-metadata-section.ui:71
+msgid "Key"
+msgstr "金鑰"
+
+#: src/sysprof/sysprof-process-dialog.ui:35
+#, fuzzy
+msgid "Address Layout"
+msgstr "所有通訊錄"
+
+#: src/sysprof/sysprof-process-dialog.ui:97
+#, fuzzy
+msgid "Start Address"
+msgstr "伺服器位址(_S)"
+
+#: src/sysprof/sysprof-process-dialog.ui:137
+#, fuzzy
+msgid "End Address"
+msgstr "開啟位址"
+
+#: src/sysprof/sysprof-process-dialog.ui:219
+#, fuzzy
+msgid "Mounts"
+msgstr "掛載(_M)"
+
+#: src/sysprof/sysprof-process-dialog.ui:282
+msgid "Parent"
+msgstr "父項"
+
+#: src/sysprof/sysprof-process-dialog.ui:316
+msgid "Major"
+msgstr "主要"
+
+#: src/sysprof/sysprof-process-dialog.ui:350
+msgid "Minor"
+msgstr "次要"
+
+#: src/sysprof/sysprof-process-dialog.ui:384
+#, fuzzy
+msgid "Mount Point"
+msgstr "掛載點(_P)"
+
+#: src/sysprof/sysprof-process-dialog.ui:418
+#, fuzzy
+msgid "Mount Source"
+msgstr "Mount Forest"
+
+#: src/sysprof/sysprof-process-dialog.ui:452
+msgid "Root"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:486
+msgid "Filesystem"
+msgstr "檔案系統"
+
+#: src/sysprof/sysprof-process-dialog.ui:562
+#, fuzzy
+msgid "Threads"
+msgstr "臨界值"
+
+#: src/sysprof/sysprof-process-dialog.ui:591
+msgid "Thread ID"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:625
+#, fuzzy
+msgid "Main Thread"
+msgstr "移動範圍閾值"
+
+#: src/sysprof/sysprof-processes-section.ui:4
+msgid "Processes"
+msgstr "程序"
+
+#: src/sysprof/sysprof-processes-section.ui:73
+#, fuzzy
+msgid "Process Chart"
+msgstr "處理器"
+
+#: src/sysprof/sysprof-processes-section.ui:174
+#, fuzzy
+msgid "Process Table"
+msgstr "程序名稱"
+
+#. translators: this expands to the number of events recorded by the profiler as an indicator of progress
+#: src/sysprof/sysprof-recording-pad.c:58
+#, c-format
+msgid "%<PRIi64> events"
+msgstr ""
+
+#: src/sysprof/sysprof-recording-pad.c:115
+#, fuzzy
+msgid "Recording Failed"
+msgstr "錄影模式"
+
+#: src/sysprof/sysprof-recording-pad.c:117
+#, c-format
+msgid ""
+"Sysprof failed to record.\n"
+"\n"
+"%s"
+msgstr ""
+
+#: src/sysprof/sysprof-recording-pad.ui:71
+msgid "Stop Recording"
+msgstr "停止錄影"
+
+#: src/sysprof/sysprof-samples-section.ui:4
+#, fuzzy
+msgid "Time Profiler"
+msgstr "測試用描述檔"
+
+#: src/sysprof/sysprof-samples-section.ui:98 src/sysprof/sysprof-window.ui:489
+#, fuzzy
+msgid "Callgraph"
+msgstr "段落"
+
+#: src/sysprof/sysprof-samples-section.ui:181 src/sysprof/sysprof-window.ui:520
+#, fuzzy
+msgid "Flamegraph"
+msgstr "命名的圖表"
+
+#: src/sysprof/sysprof-session-filters-widget.ui:103
+#, fuzzy
+msgid "Clear All Filters"
+msgstr "色彩過濾器"
+
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:160
+#, fuzzy
+msgid "Seek Backward"
+msgstr "向上搜尋(_B)"
+
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:170
+msgid "Zoom Out"
+msgstr "拉遠"
+
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:180
+msgid "Reset Zoom"
+msgstr "重設縮放"
+
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:190
+msgid "Zoom In"
+msgstr "拉近"
+
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:200
+#, fuzzy
+msgid "Seek Forward"
+msgstr "下一頁"
+
+#: src/sysprof/sysprof-traceables-utility.ui:109
+#, fuzzy
+msgid "Depth"
+msgstr "深度："
+
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:68
+msgid "Hits"
+msgstr ""
+
+#: src/sysprof/sysprof-window.c:191
+#, fuzzy
+msgid "Open Recording"
+msgstr "停止錄影"
+
+#: src/sysprof/sysprof-window.c:192
+msgid "Open"
+msgstr "開啟"
+
+#: src/sysprof/sysprof-window.c:196
+msgid "Sysprof Capture (*.syscap)"
+msgstr ""
+
+#: src/sysprof/sysprof-window.c:485
+#, fuzzy
+msgid "Save to File"
+msgstr "儲存一個檔案"
+
+#: src/sysprof/sysprof-window.c:486
+msgid "Save"
+msgstr "儲存"
+
+#: src/sysprof/sysprof-window.c:666
+msgid "Loading…"
+msgstr "正在載入…"
+
+#: src/sysprof/sysprof-window.c:747
+#, fuzzy
+msgid "Invalid Document"
+msgstr "無效的文件"
+
+#: src/sysprof/sysprof-window.c:749
+#, c-format
+msgid ""
+"The document could not be loaded. Please check that you have the correct "
+"capture file.\n"
+"\n"
+"%s"
+msgstr ""
+
+#: src/sysprof/sysprof-window.ui:120
+#, fuzzy
+msgid "Toggle Left Panel"
+msgstr "切換狀態"
+
+#: src/sysprof/sysprof-window.ui:127
+#, fuzzy
+msgid "View Filters"
+msgstr "篩選條件"
+
+#: src/sysprof/sysprof-window.ui:215
+msgid "Main Menu"
+msgstr "主要選單"
+
+#: src/sysprof/sysprof-window.ui:222
+msgid "View Options"
+msgstr "檢視選項"
+
+#: src/sysprof/sysprof-window.ui:228
+#, fuzzy
+msgid "Toggle Right Panel"
+msgstr "切換狀態"
+
+#: src/sysprof/sysprof-window.ui:377
+msgid "Energy"
+msgstr "能量"
+
+#: src/sysprof/sysprof-window.ui:397
+msgid "Network"
+msgstr "網路"
+
+#: src/sysprof/sysprof-window.ui:407
+msgid "Storage"
+msgstr "儲存空間"
+
+#: src/sysprof/sysprof-window.ui:454
+#, fuzzy
+msgid "_Record Again…"
+msgstr "再試一次(_T)…"
+
+#: src/sysprof/sysprof-window.ui:458
+#, fuzzy
+msgid "Open Recording…"
+msgstr "停止錄影"
+
+#: src/sysprof/sysprof-window.ui:462
+msgid "Save As…"
+msgstr "另存為…"
+
+#: src/sysprof/sysprof-window.ui:482
+msgid "_Quit"
+msgstr "結束(_Q)"
+
+#. translators: Left Heavy means to sort larger (heavier) stack frames before others, starting from the left
+#: src/sysprof/sysprof-window.ui:523
+#, fuzzy
+msgid "Left Heavy"
+msgstr "左半部"

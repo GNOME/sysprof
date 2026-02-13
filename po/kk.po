@@ -1,0 +1,1509 @@
+# Kazakh translation for sysprof.
+# Copyright (C) 2026 sysprof's COPYRIGHT HOLDER
+# This file is distributed under the same license as the sysprof package.
+# Baurzhan Muftakhidinov <baurthefirst@gmail.com>,  2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sysprof sysprof-49\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
+"POT-Creation-Date: 2025-08-27 18:54+0000\n"
+"PO-Revision-Date: 2026-02-13 21:56+0500\n"
+"Last-Translator: Baurzhan Muftakhidinov <baurthefirst@gmail.com>\n"
+"Language-Team: Kazakh <Kazakh>\n"
+"Language: kk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.8\n"
+
+#: data/org.gnome.Sysprof.appdata.xml.in.in:6
+#: data/org.gnome.Sysprof.desktop.in.in:3 src/sysprof/sysprof-application.c:172
+#: src/sysprof/sysprof-application.c:248
+#: src/sysprof/sysprof-recording-pad.ui:20 src/sysprof/sysprof-window.c:274
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#: data/org.gnome.Sysprof.appdata.xml.in.in:7
+msgid "Profile an application or entire system"
+msgstr "Қолданбаны немесе бүкіл жүйені профильдеу"
+
+#. developer_name tag deprecated with Appstream 1.0
+#: data/org.gnome.Sysprof.appdata.xml.in.in:11
+msgid "Christian Hergert"
+msgstr "Christian Hergert"
+
+#: data/org.gnome.Sysprof.appdata.xml.in.in:17
+msgid ""
+"Sysprof allows you to profile applications to aid in debugging and "
+"optimization."
+msgstr ""
+"Sysprof қолданбаларды жөндеуге және оңтайландыруға көмектесу үшін оларды "
+"профильдеуге мүмкіндік береді."
+
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-greeter.ui:89
+msgid "Profiler"
+msgstr "Профильдеуші"
+
+#: data/org.gnome.Sysprof.desktop.in.in:5
+msgid "Profile an application or entire system."
+msgstr "Қолданбаны немесе бүкіл жүйені профильдеу."
+
+#: src/libsysprof/sysprof-category-summary.c:136
+msgid "Uncategorized"
+msgstr "Санатталмаған"
+
+#: src/libsysprof/sysprof-category-summary.c:139
+msgid "Accessibility"
+msgstr "Қолжетімділік"
+
+#: src/libsysprof/sysprof-category-summary.c:142
+msgid "Actions"
+msgstr "Әрекеттер"
+
+#: src/libsysprof/sysprof-category-summary.c:145
+msgid "Crash Handler"
+msgstr "Қателерді өңдеуіш"
+
+#: src/libsysprof/sysprof-category-summary.c:148
+msgid "Context Switches"
+msgstr "Контекст ауыстырулары"
+
+#: src/libsysprof/sysprof-category-summary.c:151
+msgid "CSS"
+msgstr "CSS"
+
+#: src/libsysprof/sysprof-category-summary.c:154
+#: src/sysprof/sysprof-greeter.ui:468 src/sysprof/sysprof-window.ui:363
+msgid "Graphics"
+msgstr "Графика"
+
+#: src/libsysprof/sysprof-category-summary.c:157
+msgid "Icons"
+msgstr "Таңбашалар"
+
+#: src/libsysprof/sysprof-category-summary.c:160
+msgid "Input"
+msgstr "Енгізу"
+
+#: src/libsysprof/sysprof-category-summary.c:163
+msgid "IO"
+msgstr "Е/Ш"
+
+#: src/libsysprof/sysprof-category-summary.c:166
+msgid "IPC"
+msgstr "IPC"
+
+#: src/libsysprof/sysprof-category-summary.c:169
+msgid "JavaScript"
+msgstr "JavaScript"
+
+#: src/libsysprof/sysprof-category-summary.c:172
+msgid "Kernel"
+msgstr "Ядро"
+
+#: src/libsysprof/sysprof-category-summary.c:175
+msgid "Layout"
+msgstr "Жайма"
+
+#: src/libsysprof/sysprof-category-summary.c:178
+msgid "Locking"
+msgstr "Құлыптау"
+
+#: src/libsysprof/sysprof-category-summary.c:181
+msgid "Main Loop"
+msgstr "Негізгі цикл"
+
+#: src/libsysprof/sysprof-category-summary.c:184
+msgid "Memory"
+msgstr "Жад"
+
+#: src/libsysprof/sysprof-category-summary.c:187
+msgid "Paint"
+msgstr "Сурет салу"
+
+#: src/libsysprof/sysprof-category-summary.c:190
+msgid "Type System"
+msgstr "Типтер жүйесі"
+
+#: src/libsysprof/sysprof-category-summary.c:193
+msgid "Unwindable"
+msgstr "Қалпына келтіруге болатын"
+
+#: src/libsysprof/sysprof-category-summary.c:196
+msgid "Windowing"
+msgstr "Терезелеу"
+
+#: src/libsysprof/sysprof-debuginfod-task.c:97
+msgid "Downloading Symbols…"
+msgstr "Таңбаларды жүктеп алу…"
+
+#: src/libsysprof/sysprof-document-allocation.c:151
+msgid "Allocation"
+msgstr "Бөлу"
+
+#: src/libsysprof/sysprof-document.c:570
+msgid "Unknown Process"
+msgstr "Белгісіз процесс"
+
+#: src/libsysprof/sysprof-document.c:1251
+#: src/libsysprof/sysprof-document.c:1287
+msgid "Indexing capture data frames"
+msgstr "Түсірілген деректер фреймдерін индекстеу"
+
+#: src/libsysprof/sysprof-document.c:1473
+msgid "Discovering file system mounts"
+msgstr "Файлдық жүйенің тіркеу нүктелерін анықтау"
+
+#: src/libsysprof/sysprof-document.c:1476
+msgid "Discovering process mount namespaces"
+msgstr "Процестердің тіркеу аттар кеңістігін анықтау"
+
+#: src/libsysprof/sysprof-document.c:1479
+msgid "Analyzing process address layouts"
+msgstr "Процесс адрестерінің жаймасын талдау"
+
+#: src/libsysprof/sysprof-document.c:1482
+msgid "Analyzing process command line"
+msgstr "Процесс командалық жолын талдау"
+
+#: src/libsysprof/sysprof-document.c:1485
+msgid "Analyzing file system overlays"
+msgstr "Файлдық жүйе қабаттарын талдау"
+
+#: src/libsysprof/sysprof-document.c:1488
+msgid "Processing counters"
+msgstr "Есептегіштерді өңдеу"
+
+#: src/libsysprof/sysprof-document.c:2480
+#: src/libsysprof/sysprof-document.c:2499
+#, c-format
+msgid "Recording at %X %x"
+msgstr "Жазу уақыты: %X %x"
+
+#: src/libsysprof/sysprof-document.c:2483
+#: src/libsysprof/sysprof-document.c:2502
+#, c-format
+msgid "Recording at %s"
+msgstr "Жазу уақыты: %s"
+
+#: src/libsysprof/sysprof-document-dbus-message.c:152
+msgid "D-Bus Message"
+msgstr "D-Bus хабарламасы"
+
+#: src/libsysprof/sysprof-document-frame.c:139
+msgid "Frame"
+msgstr "Фрейм"
+
+#: src/libsysprof/sysprof-document-loader.c:499
+msgid "Document loaded"
+msgstr "Құжат жүктелді"
+
+#: src/libsysprof/sysprof-document-loader.c:530
+msgid "Loading failed"
+msgstr "Жүктеу сәтсіз аяқталды"
+
+#: src/libsysprof/sysprof-document-loader.c:542
+#: src/libsysprof/sysprof-document-symbols.c:276
+msgid "Symbolizing stack traces"
+msgstr "Стек іздерін таңбалау"
+
+#: src/libsysprof/sysprof-document-loader.c:611
+msgid "Loading document"
+msgstr "Құжатты жүктеу"
+
+#: src/libsysprof/sysprof-document-log.c:85
+msgid "Log"
+msgstr "Журнал"
+
+#: src/libsysprof/sysprof-document-mark.c:134
+msgid "Mark"
+msgstr "Белгі"
+
+#: src/libsysprof/sysprof-document-process.c:293
+#, c-format
+msgid "%s [Process %d]"
+msgstr "%s [%d процесі]"
+
+#: src/libsysprof/sysprof-document-process.c:295
+#, c-format
+msgid "Process %d"
+msgstr "%d процесі"
+
+#: src/libsysprof/sysprof-document-sample.c:136
+msgid "Sample"
+msgstr "Үлгі"
+
+#: src/libsysprof/sysprof-system-logs.c:171
+msgid "System Logs"
+msgstr "Жүйелік журналдар"
+
+#: src/libsysprof/sysprof-system-logs.c:172
+msgid "Recording system logs is not supported on your platform."
+msgstr "Жүйелік журналдарды жазу бұл платформада қолдау көрсетілмейді."
+
+#: src/libsysprof/sysprof-tracer.c:65
+msgid "Tracer"
+msgstr "Трейсер"
+
+#: src/libsysprof/sysprof-tracer.c:66
+msgid ""
+"Tracing requires spawning a program compiled with ‘-finstrument-functions’. "
+"Tracing will not be available."
+msgstr ""
+"Трейсинг үшін ‘-finstrument-functions’ арқылы жинақталған бағдарламаны іске "
+"қосу керек. Трейсинг қолжетімді болмайды."
+
+#: src/sysprof-cli/sysprof-cli.c:115
+#, c-format
+msgid "--merge requires at least 2 filename arguments"
+msgstr "--merge кем дегенде 2 файл аты аргументін талап етеді"
+
+#: src/sysprof-cli/sysprof-cli.c:314
+msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
+msgstr ""
+"Профильдеу кезінде Орталық процессорды шектеуді сөндіру [--power-profile "
+"үшін ескірген]"
+
+#: src/sysprof-cli/sysprof-cli.c:315
+msgid "Make sysprof specific to a task [Deprecated]"
+msgstr "Sysprof-ты белгілі бір тапсырмаға арналған ету [Ескірген]"
+
+#: src/sysprof-cli/sysprof-cli.c:315 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof/sysprof-logs-section.ui:181
+#: src/sysprof/sysprof-processes-section.ui:283
+#: src/sysprof/sysprof-traceables-utility.ui:52
+msgid "PID"
+msgstr "PID"
+
+#: src/sysprof-cli/sysprof-cli.c:316
+msgid "Run a command and profile the process"
+msgstr "Команданы орындау және процесті профильдеу"
+
+#: src/sysprof-cli/sysprof-cli.c:316
+msgid "COMMAND"
+msgstr "КОМАНДА"
+
+#: src/sysprof-cli/sysprof-cli.c:317
+msgid ""
+"Set environment variable for spawned process. Can be used multiple times."
+msgstr ""
+"Іске қосылған процесс үшін қоршам айнымалысын орнату. Бірнеше рет "
+"пайдалануға болады."
+
+#: src/sysprof-cli/sysprof-cli.c:317
+msgid "VAR=VALUE"
+msgstr "VAR=МӘН"
+
+#: src/sysprof-cli/sysprof-cli.c:318
+msgid "Force overwrite the capture file"
+msgstr "Түсіру файлын мәжбүрлі түрде қайта жазу"
+
+#: src/sysprof-cli/sysprof-cli.c:319
+msgid "Disable recording of battery statistics"
+msgstr "Батарея статистикасын жазуды сөндіру"
+
+#: src/sysprof-cli/sysprof-cli.c:320
+msgid "Disable recording of CPU statistics"
+msgstr "Процессор статистикасын жазуды сөндіру"
+
+#: src/sysprof-cli/sysprof-cli.c:321
+msgid "Disable recording of Disk statistics"
+msgstr "Диск статистикасын жазуды сөндіру"
+
+#: src/sysprof-cli/sysprof-cli.c:322
+msgid "Do not record stacktraces using Linux perf"
+msgstr "Linux perf көмегімен стек іздерін жазбау"
+
+#: src/sysprof-cli/sysprof-cli.c:323
+msgid "Do not append symbol name information from local machine"
+msgstr "Жергілікті машинадан таңба атауы туралы ақпаратты қоспау"
+
+#: src/sysprof-cli/sysprof-cli.c:324
+msgid "Disable recording of memory statistics"
+msgstr "Жад статистикасын жазуды сөндіру"
+
+#: src/sysprof-cli/sysprof-cli.c:325
+msgid "Disable recording of network statistics"
+msgstr "Желі статистикасын жазуды сөндіру"
+
+#: src/sysprof-cli/sysprof-cli.c:326
+msgid "Set SYSPROF_TRACE_FD environment for subprocess"
+msgstr "Субпроцесс үшін SYSPROF_TRACE_FD қоршамын орнату"
+
+#: src/sysprof-cli/sysprof-cli.c:327
+msgid "Track when processes are scheduled"
+msgstr "Процестердің жоспарлануын қадағалау"
+
+#: src/sysprof-cli/sysprof-cli.c:328
+msgid "Profile the D-Bus session bus"
+msgstr "D-Bus сессия шинасын профильдеу"
+
+#: src/sysprof-cli/sysprof-cli.c:329
+msgid "Profile the D-Bus system bus"
+msgstr "D-Bus жүйелік шинасын профильдеу"
+
+#: src/sysprof-cli/sysprof-cli.c:330
+msgid "Set GJS_TRACE_FD environment to trace GJS processes"
+msgstr "GJS процестерін бақылау үшін GJS_TRACE_FD қоршамын орнату"
+
+#: src/sysprof-cli/sysprof-cli.c:331
+msgid "Set GTK_TRACE_FD environment to trace a GTK application"
+msgstr "GTK қолданбасын бақылау үшін GTK_TRACE_FD қоршамын орнату"
+
+#: src/sysprof-cli/sysprof-cli.c:332
+msgid "Include RAPL energy statistics"
+msgstr "RAPL энергия статистикасын қосу"
+
+#: src/sysprof-cli/sysprof-cli.c:333
+msgid "Profile memory allocations and frees"
+msgstr "Жадтың бөлінуін және босатылуын профильдеу"
+
+#: src/sysprof-cli/sysprof-cli.c:334
+msgid "Connect to org.gnome.Shell for profiler statistics"
+msgstr "Профайлер статистикасы үшін org.gnome.Shell-ге қосылу"
+
+#: src/sysprof-cli/sysprof-cli.c:335
+msgid "Track performance of the applications main loop"
+msgstr "Қолданбалардың негізгі циклінің өнімділігін қадағалау"
+
+#: src/sysprof-cli/sysprof-cli.c:337
+msgid "Merge all provided *.syscap files and write to stdout"
+msgstr "Барлық берілген *.syscap файлдарын біріктіру және stdout-қа жазу"
+
+#: src/sysprof-cli/sysprof-cli.c:338
+msgid "Print the sysprof-cli version and exit"
+msgstr "sysprof-cli нұсқасын басып шығару және шығу"
+
+#: src/sysprof-cli/sysprof-cli.c:339
+msgid "The size of the buffer in pages (1 = 1 page)"
+msgstr "Буфердің беттермен өлшенген өлшемі (1 = 1 бет)"
+
+#: src/sysprof-cli/sysprof-cli.c:340
+msgid "Additional D-Bus address to monitor"
+msgstr "Бақылау үшін қосымша D-Bus адресі"
+
+#: src/sysprof-cli/sysprof-cli.c:341
+msgid "Stack size to copy for unwinding in user-space"
+msgstr "Пайдаланушы кеңістігінде қалпына келтіру үшін көшірілетін стек өлшемі"
+
+#: src/sysprof-cli/sysprof-cli.c:342
+msgid "Do not use debuginfod to resolve symbols"
+msgstr "Таңбаларды шешу үшін debuginfod қолданбау"
+
+#: src/sysprof-cli/sysprof-cli.c:376
+msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
+msgstr "[ТҮСІРУ_ФАЙЛЫ] [--КОМАНДА АРГУМЕНТТЕР] — Sysprof"
+
+#: src/sysprof-cli/sysprof-cli.c:379
+msgid ""
+"\n"
+"Examples:\n"
+"\n"
+"  # Record gtk4-widget-factory using trace-fd to get application provided\n"
+"  # data as well as GTK and GNOME Shell data providers\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"  # Merge multiple syscap files into one\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+"\n"
+"  # Unwind by capturing stack/register contents instead of frame-pointers\n"
+"  # where the stack-size is a multiple of page-size\n"
+"  sysprof-cli --stack-size=8192\n"
+msgstr ""
+"\n"
+"Мысалдар:\n"
+"\n"
+"  # gtk4-widget-factory қолданбасын қолданба ұсынған деректерді, сондай-ақ\n"
+"  # GTK және GNOME Shell деректер жеткізушілерін алу үшін trace-fd арқылы "
+"жазу\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"  # Бірнеше syscap файлдарын біреуге біріктіру\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+"\n"
+"  # Фрейм көрсеткіштерінің орнына стек/регистр мазмұнын түсіру арқылы\n"
+"  # стек өлшемі бет өлшеміне еселі болған кезде қалпына келтіру\n"
+"  sysprof-cli --stack-size=8192\n"
+
+#: src/sysprof-cli/sysprof-cli.c:419
+#, c-format
+msgid "Too many arguments were passed to sysprof-cli:"
+msgstr "sysprof-cli-ге тым көп аргумент жіберілді:"
+
+#. Translators: %s is a file name.
+#: src/sysprof-cli/sysprof-cli.c:476
+#, c-format
+msgid "%s exists. Use --force to overwrite\n"
+msgstr "%s бар. Қайта жазу үшін --force пайдаланыңыз\n"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:13
+msgid "Profile the system"
+msgstr "Жүйені профильдеу"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:14
+msgid "Authentication is required to profile the system."
+msgstr "Жүйені профильдеу үшін аутентификация қажет."
+
+#: src/sysprof/gtk/help-overlay.ui:11
+msgctxt "shortcut window"
+msgid "Recording View"
+msgstr "Жазу көрінісі"
+
+#: src/sysprof/gtk/help-overlay.ui:14
+msgctxt "shortcut window"
+msgid "Start New Recording"
+msgstr "Жаңа жазуды бастау"
+
+#: src/sysprof/gtk/help-overlay.ui:20
+msgctxt "shortcut window"
+msgid "Save As"
+msgstr "Қалай сақтау"
+
+#: src/sysprof/gtk/help-overlay.ui:26
+msgctxt "shortcut window"
+msgid "Toggle Visibility of Main Sidebar"
+msgstr "Негізгі бүйірлік панельдің көрінуін ауыстыру"
+
+#: src/sysprof/gtk/help-overlay.ui:32
+msgctxt "shortcut window"
+msgid "Toggle Visibility of Stack Trace Sidebar"
+msgstr "Стек ізінің бүйірлік панелінің көрінуін ауыстыру"
+
+#: src/sysprof/gtk/help-overlay.ui:40
+msgctxt "shortcut window"
+msgid "General"
+msgstr "Жалпы"
+
+#: src/sysprof/gtk/help-overlay.ui:43
+msgctxt "shortcut window"
+msgid "Open Recording"
+msgstr "Жазбаны ашу"
+
+#: src/sysprof/gtk/help-overlay.ui:49
+msgctxt "shortcut window"
+msgid "Close Window"
+msgstr "Терезені жабу"
+
+#: src/sysprof/gtk/help-overlay.ui:56
+msgctxt "shortcut window"
+msgid "Show Help"
+msgstr "Көмекті көрсету"
+
+#: src/sysprof/gtk/help-overlay.ui:62
+msgctxt "shortcut window"
+msgid "Show keyboard shortcuts"
+msgstr "Пернетақта жарлықтарын көрсету"
+
+#: src/sysprof/gtk/help-overlay.ui:68
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "Шығу"
+
+#: src/sysprof/sysprof-animation.c:1038
+#, c-format
+msgid "Failed to find property %s in %s"
+msgstr "%s қасиетін %s ішінен табу сәтсіз аяқталды"
+
+#: src/sysprof/sysprof-animation.c:1047
+#, c-format
+msgid "Failed to retrieve va_list value: %s"
+msgstr "va_list мәнін алу сәтсіз аяқталды: %s"
+
+#: src/sysprof/sysprof-application.c:38
+msgid "Show Sysprof version and exit"
+msgstr "Sysprof нұсқасын көрсету және шығу"
+
+#: src/sysprof/sysprof-application.c:181
+msgid "A system profiler"
+msgstr "Жүйелік профильдеуші"
+
+#: src/sysprof/sysprof-application.c:182
+msgid "translator-credits"
+msgstr "Baurzhan Muftakhidinov <baurthefirst@gmail.com>"
+
+#: src/sysprof/sysprof-callgraph-view.ui:22
+msgid "Functions"
+msgstr "Функциялар"
+
+#: src/sysprof/sysprof-callgraph-view.ui:71
+msgid "Filter Functions"
+msgstr "Функцияларды сүзгілеу"
+
+#: src/sysprof/sysprof-callgraph-view.ui:94
+msgid "Callers"
+msgstr "Шақырушылар"
+
+#: src/sysprof/sysprof-callgraph-view.ui:146
+msgid "Descendants"
+msgstr "Ұрпақтар"
+
+#: src/sysprof/sysprof-counters-section.ui:26
+#: src/sysprof/sysprof-cpu-section.ui:169
+#: src/sysprof/sysprof-energy-section.ui:177
+#: src/sysprof/sysprof-graphics-section.ui:88
+#: src/sysprof/sysprof-network-section.ui:86
+#: src/sysprof/sysprof-storage-section.ui:86
+msgid "Counters Chart"
+msgstr "Есептегіштер диаграммасы"
+
+#: src/sysprof/sysprof-counters-section.ui:40
+#: src/sysprof/sysprof-cpu-section.ui:323
+#: src/sysprof/sysprof-energy-section.ui:312
+#: src/sysprof/sysprof-graphics-section.ui:223
+#: src/sysprof/sysprof-network-section.ui:291
+#: src/sysprof/sysprof-storage-section.ui:291
+msgid "Counters Table"
+msgstr "Есептегіштер кестесі"
+
+#: src/sysprof/sysprof-cpu-section.ui:378
+#: src/sysprof/sysprof-dbus-section.ui:171
+#: src/sysprof/sysprof-energy-section.ui:348
+#: src/sysprof/sysprof-frame-utility.ui:49
+#: src/sysprof/sysprof-graphics-section.ui:259
+#: src/sysprof/sysprof-logs-section.ui:110
+#: src/sysprof/sysprof-metadata-section.ui:38
+#: src/sysprof/sysprof-network-section.ui:346
+#: src/sysprof/sysprof-process-dialog.ui:64
+#: src/sysprof/sysprof-processes-section.ui:215
+#: src/sysprof/sysprof-storage-section.ui:346
+#: src/sysprof/sysprof-traceables-utility.ui:23
+msgid "Time"
+msgstr "Уақыт"
+
+#: src/sysprof/sysprof-cpu-section.ui:412
+#: src/sysprof/sysprof-energy-section.ui:382
+#: src/sysprof/sysprof-flame-graph.c:458
+#: src/sysprof/sysprof-graphics-section.ui:293
+#: src/sysprof/sysprof-marks-section.ui:248
+#: src/sysprof/sysprof-network-section.ui:380
+#: src/sysprof/sysprof-storage-section.ui:380
+msgid "Category"
+msgstr "Санат"
+
+#: src/sysprof/sysprof-cpu-section.ui:450
+#: src/sysprof/sysprof-energy-section.ui:420
+#: src/sysprof/sysprof-graphics-section.ui:331
+#: src/sysprof/sysprof-marks-section.ui:282
+#: src/sysprof/sysprof-network-section.ui:418
+#: src/sysprof/sysprof-storage-section.ui:418
+msgid "Name"
+msgstr "Аты"
+
+#: src/sysprof/sysprof-cpu-section.ui:488
+#: src/sysprof/sysprof-energy-section.ui:458
+#: src/sysprof/sysprof-graphics-section.ui:369
+#: src/sysprof/sysprof-metadata-section.ui:105
+#: src/sysprof/sysprof-network-section.ui:456
+#: src/sysprof/sysprof-storage-section.ui:456
+msgid "Value"
+msgstr "Мән"
+
+#: src/sysprof/sysprof-cpu-section.ui:529
+msgid "CPU Info"
+msgstr "Процессор ақпараты"
+
+#: src/sysprof/sysprof-cpu-section.ui:560
+#: src/sysprof/sysprof-process-dialog.ui:248
+msgid "ID"
+msgstr "ID"
+
+#: src/sysprof/sysprof-cpu-section.ui:595
+msgid "Core"
+msgstr "Ядро"
+
+#: src/sysprof/sysprof-cpu-section.ui:630
+msgid "Model Name"
+msgstr "Модель аты"
+
+#: src/sysprof/sysprof-dbus-section.ui:205
+msgid "Bus"
+msgstr "Шина"
+
+#: src/sysprof/sysprof-dbus-section.ui:244
+msgid "Serial"
+msgstr "Сериялық нөмір"
+
+#: src/sysprof/sysprof-dbus-section.ui:281
+msgid "Reply"
+msgstr "Жауап"
+
+#: src/sysprof/sysprof-dbus-section.ui:318
+msgid "Flags"
+msgstr "Жалаушалар"
+
+#: src/sysprof/sysprof-dbus-section.ui:347
+#: src/sysprof/sysprof-files-section.ui:122
+#: src/sysprof/sysprof-memory-callgraph-view.ui:68
+msgid "Size"
+msgstr "Өлшемі"
+
+#: src/sysprof/sysprof-dbus-section.ui:383
+#: src/sysprof/sysprof-frame-utility.ui:20
+#: src/sysprof/sysprof-mark-table.ui:221
+msgid "Type"
+msgstr "Түрі"
+
+#: src/sysprof/sysprof-dbus-section.ui:412
+msgid "Sender"
+msgstr "Жіберуші"
+
+#: src/sysprof/sysprof-dbus-section.ui:446
+msgid "Destination"
+msgstr "Мақсаты"
+
+#: src/sysprof/sysprof-dbus-section.ui:480
+#: src/sysprof/sysprof-files-section.ui:53
+msgid "Path"
+msgstr "Жол"
+
+#: src/sysprof/sysprof-dbus-section.ui:514
+msgid "Interface"
+msgstr "Интерфейс"
+
+#: src/sysprof/sysprof-dbus-section.ui:548
+msgid "Member"
+msgstr "Мүше"
+
+#: src/sysprof/sysprof-dbus-section.ui:582
+msgid "Signature"
+msgstr "Қолтаңба"
+
+#: src/sysprof/sysprof-dbus-section.ui:626
+msgid "Filter Messages"
+msgstr "Хабарламаларды сүзгілеу"
+
+#: src/sysprof/sysprof-dbus-utility.ui:13
+#: src/sysprof/sysprof-logs-section.c:114
+#: src/sysprof/sysprof-logs-section.ui:290
+msgid "Message"
+msgstr "Хабарлама"
+
+#: src/sysprof/sysprof-files-section.ui:4
+msgid "Files"
+msgstr "Файлдар"
+
+#: src/sysprof/sysprof-files-section.ui:88
+msgid "Compressed"
+msgstr "Сығылған"
+
+#: src/sysprof/sysprof-files-section.ui:165
+msgid "Filter Files"
+msgstr "Файлдарларды сүзгілеу"
+
+#: src/sysprof/sysprof-flame-graph.c:462
+#: src/sysprof/sysprof-process-dialog.ui:177
+msgid "File"
+msgstr "Файл"
+
+#: src/sysprof/sysprof-frame-utility.ui:80
+#: src/sysprof/sysprof-logs-section.ui:143
+#: src/sysprof/sysprof-mark-table.ui:116
+#: src/sysprof/sysprof-traceables-utility.ui:81
+#: src/sysprof/sysprof-window.ui:343
+msgid "CPU"
+msgstr "Процессор"
+
+#: src/sysprof/sysprof-greeter.c:128
+msgid "Use KEY=VALUE to set an environment variable"
+msgstr "Қоршам айнымалысын орнату үшін КІЛТ=МӘНІ пайдаланыңыз"
+
+#: src/sysprof/sysprof-greeter.c:134
+msgid "Keys may not start with a number"
+msgstr "Кілттер саннан басталмауы керек"
+
+#: src/sysprof/sysprof-greeter.c:144
+msgid "Keys may only contain alpha-numerics or underline."
+msgstr ""
+"Кілттер тек әріптерді, сандарды немесе астын сызу таңбасын қамтуы мүмкін."
+
+#: src/sysprof/sysprof-greeter.c:324 src/sysprof/sysprof-window.c:175
+msgid "Must Capture to Local File"
+msgstr "Жергілікті файлға түсіру керек"
+
+#: src/sysprof/sysprof-greeter.c:325 src/sysprof/sysprof-window.c:176
+msgid "You must choose a local file to capture using Sysprof"
+msgstr "Sysprof көмегімен түсіру үшін жергілікті файлды таңдауыңыз керек"
+
+#: src/sysprof/sysprof-greeter.c:326 src/sysprof/sysprof-recording-pad.c:119
+#: src/sysprof/sysprof-window.c:177 src/sysprof/sysprof-window.c:764
+msgid "Close"
+msgstr "Жабу"
+
+#: src/sysprof/sysprof-greeter.c:349
+#, c-format
+msgid "System Capture from %s.syscap"
+msgstr "Жүйелік түсіру - %s.syscap"
+
+#: src/sysprof/sysprof-greeter.c:353
+msgid "Record to File"
+msgstr "Файлға жазу"
+
+#: src/sysprof/sysprof-greeter.c:354
+msgid "Record"
+msgstr "Жазу"
+
+#: src/sysprof/sysprof-greeter.c:503
+msgid "No Change"
+msgstr "Өзгеріссіз"
+
+#: src/sysprof/sysprof-greeter.c:506
+msgid "Balanced"
+msgstr "Теңгерілген"
+
+#: src/sysprof/sysprof-greeter.c:509
+msgid "Power Saver"
+msgstr "Қуатты үнемдеу"
+
+#: src/sysprof/sysprof-greeter.c:512
+msgid "Performance"
+msgstr "Өнімділік"
+
+#: src/sysprof/sysprof-greeter.ui:95
+msgid "Sampling"
+msgstr "Сэмплдеу"
+
+#: src/sysprof/sysprof-greeter.ui:99
+msgid "Sample Native Stacks"
+msgstr "Нативті стектерді сэмплдеу"
+
+#: src/sysprof/sysprof-greeter.ui:100
+msgid "Record native stack traces using a sampling profiler"
+msgstr "Сэмплдеу профильдеушісі арқылы нативті стек іздерін жазу"
+
+#: src/sysprof/sysprof-greeter.ui:111
+msgid "Unwind Stacks in User Space"
+msgstr "Стектерді пайдаланушы кеңістігінде айналдыру"
+
+#: src/sysprof/sysprof-greeter.ui:112
+msgid "Copy stack contents and registers for unwinding in user-space"
+msgstr ""
+"Пайдаланушы кеңістігінде айналдыру үшін стек мазмұнын және регистрлерді "
+"көшіру"
+
+#: src/sysprof/sysprof-greeter.ui:123
+msgid "Stack Size"
+msgstr "Стек өлшемі"
+
+#: src/sysprof/sysprof-greeter.ui:124
+msgid "The number of bytes to copy from the stack"
+msgstr "Стектен көшірілетін байттар саны"
+
+#: src/sysprof/sysprof-greeter.ui:135
+msgid ""
+"Unwinding in user-space has considerable overhead but may help in situations "
+"where frame-pointers are unavailable."
+msgstr ""
+"Пайдаланушы кеңістігінде айналдыру едәуір қосымша шығындарға әкеледі, бірақ "
+"фрейм нұсқағыштары қолжетімсіз болған жағдайда көмектесуі мүмкін."
+
+#: src/sysprof/sysprof-greeter.ui:151
+msgid "Sample JavaScript Stacks"
+msgstr "JavaScript стектерін сэмплдеу"
+
+#: src/sysprof/sysprof-greeter.ui:152
+msgid "Record JavaScript stack traces using a sampling profiler"
+msgstr "Сэмплдеу профайлері арқылы JavaScript стек іздерін жазу"
+
+#: src/sysprof/sysprof-greeter.ui:163
+msgid ""
+"Sysprof must launch your application to record JavaScript stacks using GJS."
+msgstr ""
+"GJS көмегімен JavaScript стектерін жазу үшін Sysprof қолданбаңызды іске "
+"қосуы керек."
+
+#: src/sysprof/sysprof-greeter.ui:179
+msgid "Record Scheduler Details"
+msgstr "Жоспарлағыш мәліметтерін жазу"
+
+#: src/sysprof/sysprof-greeter.ui:180
+msgid "Track when processes are scheduled per CPU"
+msgstr "Процестердің әрбір процессор бойынша жоспарлануын бақылау"
+
+#: src/sysprof/sysprof-greeter.ui:193
+msgid "Tracing"
+msgstr "Трассировка"
+
+#: src/sysprof/sysprof-greeter.ui:197
+msgid "Trace Memory Allocations"
+msgstr "Жады үлестірулерін бақылау"
+
+#: src/sysprof/sysprof-greeter.ui:198
+msgid "Record a stack trace when <tt>malloc</tt> or similar functions are used"
+msgstr ""
+"<tt>malloc</tt> немесе ұқсас функциялар пайдаланылған кезде стек ізін жазу"
+
+#: src/sysprof/sysprof-greeter.ui:209
+msgid "Sysprof must launch your application to record memory allocations."
+msgstr "Жады үлестірулерін жазу үшін Sysprof қолданбаңызды іске қосуы керек."
+
+#: src/sysprof/sysprof-greeter.ui:227 src/sysprof/sysprof-greeter.ui:232
+msgid "Application"
+msgstr "Қолданба"
+
+#: src/sysprof/sysprof-greeter.ui:235
+#: src/sysprof/sysprof-processes-section.ui:317
+msgid "Command Line"
+msgstr "Командалық жол"
+
+#: src/sysprof/sysprof-greeter.ui:241
+msgid "Working directory"
+msgstr "Жұмыс бумасы"
+
+#: src/sysprof/sysprof-greeter.ui:247
+msgid "The application will be run as a subprocess of Sysprof."
+msgstr "Қолданба Sysprof ішкі процесі ретінде орындалады."
+
+#: src/sysprof/sysprof-greeter.ui:260
+msgid "Environment"
+msgstr "Қоршам"
+
+#: src/sysprof/sysprof-greeter.ui:264
+msgid "Clear Environment"
+msgstr "Қоршамды тазарту"
+
+#: src/sysprof/sysprof-greeter.ui:265
+msgid "Clear the environment before launching application"
+msgstr "Қолданбаны іске қосу алдында қоршамды тазарту"
+
+#: src/sysprof/sysprof-greeter.ui:291
+msgid "Add _Variable"
+msgstr "_Айнымалыны қосу"
+
+#: src/sysprof/sysprof-greeter.ui:297
+msgid "Add Variable"
+msgstr "Айнымалыны қосу"
+
+#: src/sysprof/sysprof-greeter.ui:298
+msgid "_Add"
+msgstr "Қ_осу"
+
+#: src/sysprof/sysprof-greeter.ui:315 src/sysprof/sysprof-greeter.ui:320
+msgid "Counters"
+msgstr "Есептегіштер"
+
+#: src/sysprof/sysprof-greeter.ui:324
+msgid "CPU Usage"
+msgstr "Процессор қолданылуы"
+
+#: src/sysprof/sysprof-greeter.ui:325
+msgid "Record coarse-grained counters about CPU usage and frequency"
+msgstr ""
+"Процессордың қолданылуы мен жиілігі туралы іріленген есептегіштерді жазу"
+
+#: src/sysprof/sysprof-greeter.ui:337
+msgid "Memory Usage"
+msgstr "Жадыны қолдану"
+
+#: src/sysprof/sysprof-greeter.ui:338
+msgid "Record coarse-grained counters about system memory usage"
+msgstr "Жүйелік жадының қолданылуы туралы іріленген есептегіштерді жазу"
+
+#: src/sysprof/sysprof-greeter.ui:350
+msgid "Disk Usage"
+msgstr "Дискіні қолдану"
+
+#: src/sysprof/sysprof-greeter.ui:351
+msgid "Record coarse-grained counters about storage throughput"
+msgstr ""
+"Сақтау құрылғысының өткізу қабілеті туралы іріленген есептегіштерді жазу"
+
+#: src/sysprof/sysprof-greeter.ui:363
+msgid "Network Usage"
+msgstr "Желіні қолдану"
+
+#: src/sysprof/sysprof-greeter.ui:364
+msgid "Record coarse-grained counters about network traffic"
+msgstr "Желілік трафик туралы іріленген есептегіштерді жазу"
+
+#: src/sysprof/sysprof-greeter.ui:380
+msgid "Energy Usage"
+msgstr "Энергияны қолдану"
+
+#: src/sysprof/sysprof-greeter.ui:381
+msgid "Record coarse-grained counters about energy usage in Watts"
+msgstr ""
+"Ваттпен өлшенетін энергияны қолдану туралы іріленген есептегіштерді жазу"
+
+#: src/sysprof/sysprof-greeter.ui:393
+msgid "Battery Charge"
+msgstr "Батарея заряды"
+
+#: src/sysprof/sysprof-greeter.ui:394
+msgid "Record coarse-grained counters about battery charge or discharge rates"
+msgstr ""
+"Батареяның зарядталу немесе разрядталу жылдамдығы туралы іріленген "
+"есептегіштерді жазу"
+
+#: src/sysprof/sysprof-greeter.ui:412 src/sysprof/sysprof-greeter.ui:417
+#: src/sysprof/sysprof-window.ui:333
+msgid "D-Bus"
+msgstr "D-Bus"
+
+#: src/sysprof/sysprof-greeter.ui:421
+msgid "Record System Bus"
+msgstr "Жүйелік шинаны жазу"
+
+#: src/sysprof/sysprof-greeter.ui:422
+msgid "Record messages on the D-Bus system bus"
+msgstr "D-Bus жүйелік шинасындағы хабарламаларды жазу"
+
+#: src/sysprof/sysprof-greeter.ui:438
+msgid "Record Session Bus"
+msgstr "Сеанс шинасын жазу"
+
+#: src/sysprof/sysprof-greeter.ui:439
+msgid "Record messages on the D-Bus user session bus"
+msgstr "D-Bus пайдаланушы сеанс шинасындағы хабарламаларды жазу"
+
+#: src/sysprof/sysprof-greeter.ui:450
+msgid ""
+"The session bus may contain sensitive information such as keyboard usage and "
+"passwords."
+msgstr ""
+"Сеанс шинасында пернетақтаны қолдану және парольдер сияқты құпия ақпарат "
+"болуы мүмкін."
+
+#: src/sysprof/sysprof-greeter.ui:473
+msgid "Timings"
+msgstr "Таймингтер"
+
+#: src/sysprof/sysprof-greeter.ui:477
+msgid "Compositor Frame Timings"
+msgstr "Композитор кадрларының таймингтері"
+
+#: src/sysprof/sysprof-greeter.ui:478
+msgid "Record frame-timing information from the GNOME Shell compositor"
+msgstr "GNOME Shell композиторынан кадр таймингтері туралы ақпаратты жазу"
+
+#: src/sysprof/sysprof-greeter.ui:489
+msgid ""
+"Applications launched by Sysprof will automatically collect GTK frame timing "
+"information."
+msgstr ""
+"Sysprof іске қосқан қолданбалар GTK кадр таймингтері туралы ақпаратты "
+"автоматты түрде жинайды."
+
+#: src/sysprof/sysprof-greeter.ui:529
+msgid "Devices"
+msgstr "Құрылғылар"
+
+#: src/sysprof/sysprof-greeter.ui:533
+msgid "Include GPU Information"
+msgstr "GPU ақпаратын қосу"
+
+#: src/sysprof/sysprof-greeter.ui:534
+msgid "Records information about graphics hardware and drivers"
+msgstr "Графикалық аппараттық қамтама және драйверлер туралы ақпаратты жазады"
+
+#: src/sysprof/sysprof-greeter.ui:552
+msgid "System"
+msgstr "Жүйе"
+
+#: src/sysprof/sysprof-greeter.ui:557
+msgid "Power Profile"
+msgstr "Қуат профилі"
+
+#: src/sysprof/sysprof-greeter.ui:560
+msgid "Record with Power Profile"
+msgstr "Қуат профилімен жазу"
+
+#: src/sysprof/sysprof-greeter.ui:561
+msgid "Switch to power profile while recording"
+msgstr "Жазу кезінде қуат профиліне ауысу"
+
+#: src/sysprof/sysprof-greeter.ui:571
+msgid "Details"
+msgstr "Мәліметтер"
+
+#: src/sysprof/sysprof-greeter.ui:575
+msgid "Record System Log"
+msgstr "Жүйелік журналды жазу"
+
+#: src/sysprof/sysprof-greeter.ui:576
+msgid "Watch the system log for new messages and record them"
+msgstr "Жүйелік журналды жаңа хабарламаларға бақылау және оларды жазу"
+
+#: src/sysprof/sysprof-greeter.ui:592
+msgid "Include Hardware Information"
+msgstr "Аппараттық қамтама ақпаратын қосу"
+
+#: src/sysprof/sysprof-greeter.ui:593
+msgid "Records information about PCI and USB devices"
+msgstr "PCI және USB құрылғылары туралы ақпаратты жазады"
+
+#: src/sysprof/sysprof-greeter.ui:606
+msgid "Symbols"
+msgstr "Таңбалар"
+
+#: src/sysprof/sysprof-greeter.ui:610
+msgid "Bundle Symbols"
+msgstr "Таңбаларды жинақтау"
+
+#: src/sysprof/sysprof-greeter.ui:611
+msgid "Make recording shareable by symbolizing stack traces after recording"
+msgstr ""
+"Жазудан кейін стек іздерін таңбалау арқылы жазбаны бөлісуге болатындай ету"
+
+#: src/sysprof/sysprof-greeter.ui:627
+msgid "Debuginfod"
+msgstr "Debuginfod"
+
+#: src/sysprof/sysprof-greeter.ui:628
+msgid "Enable Debuginfod to automatically fetch debug symbols"
+msgstr "Жөндеу таңбаларын автоматты түрде алу үшін Debuginfod іске қосу"
+
+#: src/sysprof/sysprof-greeter.ui:661
+msgid "_Open File…"
+msgstr "Файлды _ашу…"
+
+#: src/sysprof/sysprof-greeter.ui:668
+msgid "Record to _File…"
+msgstr "_Файлға жазу…"
+
+#: src/sysprof/sysprof-greeter.ui:675
+msgid "Record to _Memory"
+msgstr "_Жадыға жазу"
+
+#: src/sysprof/sysprof-greeter.ui:694 src/sysprof/sysprof-window.ui:444
+msgid "_Keyboard Shortcuts"
+msgstr "_Пернетақта жарлықтары"
+
+#: src/sysprof/sysprof-greeter.ui:698 src/sysprof/sysprof-window.ui:448
+msgid "Help"
+msgstr "Көмек"
+
+#: src/sysprof/sysprof-greeter.ui:702 src/sysprof/sysprof-window.ui:452
+msgid "About Sysprof"
+msgstr "Sysprof туралы"
+
+#: src/sysprof/sysprof-logs-section.c:105
+msgid "Critical"
+msgstr "Критикалық"
+
+#: src/sysprof/sysprof-logs-section.c:108
+msgid "Warning"
+msgstr "Ескерту"
+
+#: src/sysprof/sysprof-logs-section.c:111
+msgid "Debug"
+msgstr "Жөндеу"
+
+#: src/sysprof/sysprof-logs-section.c:117
+msgid "Info"
+msgstr "Ақпарат"
+
+#: src/sysprof/sysprof-logs-section.c:120
+msgid "Error"
+msgstr "Қате"
+
+#: src/sysprof/sysprof-logs-section.ui:4 src/sysprof/sysprof-logs-section.ui:30
+msgid "Logs"
+msgstr "Журналдар"
+
+#: src/sysprof/sysprof-logs-section.ui:219
+msgid "Severity"
+msgstr "Маңыздылығы"
+
+#: src/sysprof/sysprof-logs-section.ui:255
+msgid "Domain"
+msgstr "Домен"
+
+#: src/sysprof/sysprof-marks-section.ui:4
+msgid "Marks"
+msgstr "Белгілер"
+
+#: src/sysprof/sysprof-marks-section.ui:78
+msgid "Mark Chart"
+msgstr "Белгілер диаграммасы"
+
+#: src/sysprof/sysprof-marks-section.ui:92
+msgid "Mark Table"
+msgstr "Белгілер кестесі"
+
+#: src/sysprof/sysprof-marks-section.ui:105
+msgid "Mark Waterfall"
+msgstr "Белгілер сарқырамасы"
+
+#: src/sysprof/sysprof-marks-section.ui:212
+msgid "Summary"
+msgstr "Жиынтық"
+
+#: src/sysprof/sysprof-marks-section.ui:317
+msgid "Minimum"
+msgstr "Минимум"
+
+#: src/sysprof/sysprof-marks-section.ui:351
+msgid "Maximum"
+msgstr "Максимум"
+
+#: src/sysprof/sysprof-marks-section.ui:385
+msgid "Average"
+msgstr "Орташа"
+
+#: src/sysprof/sysprof-marks-section.ui:419
+msgid "Median"
+msgstr "Медиана"
+
+#: src/sysprof/sysprof-mark-table.ui:47
+msgid "Start"
+msgstr "Бастау"
+
+#: src/sysprof/sysprof-mark-table.ui:81
+#: src/sysprof/sysprof-processes-section.ui:249
+msgid "Duration"
+msgstr "Ұзақтығы"
+
+#: src/sysprof/sysprof-mark-table.ui:151
+msgid "Process"
+msgstr "Процесс"
+
+#: src/sysprof/sysprof-mark-table.ui:186
+msgid "Group"
+msgstr "Топ"
+
+#: src/sysprof/sysprof-mark-table.ui:256
+msgid "Description"
+msgstr "Сипаттамасы"
+
+#: src/sysprof/sysprof-memory-callgraph-view.ui:8
+#: src/sysprof/sysprof-memory-callgraph-view.ui:105
+#: src/sysprof/sysprof-memory-callgraph-view.ui:172
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:8
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:105
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:172
+msgid "Self"
+msgstr "Меншікті"
+
+#: src/sysprof/sysprof-memory-callgraph-view.ui:38
+#: src/sysprof/sysprof-memory-callgraph-view.ui:135
+#: src/sysprof/sysprof-memory-callgraph-view.ui:202
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:38
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:135
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:202
+msgid "Total"
+msgstr "Барлығы"
+
+#: src/sysprof/sysprof-memory-section.ui:4
+msgid "Memory Allocations"
+msgstr "Жадыны бөлу"
+
+#: src/sysprof/sysprof-memory-section.ui:29
+#: src/sysprof/sysprof-samples-section.ui:29
+msgid "Stack Traces"
+msgstr "Стек іздері"
+
+#: src/sysprof/sysprof-memory-section.ui:88
+msgid "Allocations"
+msgstr "Бөлулер"
+
+#: src/sysprof/sysprof-memory-section.ui:144
+msgid "Leaks"
+msgstr "Жылыстаулар"
+
+#: src/sysprof/sysprof-memory-section.ui:212
+#: src/sysprof/sysprof-samples-section.ui:207
+#: src/sysprof/sysprof-traceables-utility.ui:162
+msgid "Stack Trace"
+msgstr "Стек ізі"
+
+#: src/sysprof/sysprof-metadata-section.ui:4
+msgid "Metadata"
+msgstr "Метадеректер"
+
+#: src/sysprof/sysprof-metadata-section.ui:71
+msgid "Key"
+msgstr "Кілт"
+
+#: src/sysprof/sysprof-process-dialog.ui:35
+msgid "Address Layout"
+msgstr "Адрестер жаймасы"
+
+#: src/sysprof/sysprof-process-dialog.ui:97
+msgid "Start Address"
+msgstr "Бастапқы адрес"
+
+#: src/sysprof/sysprof-process-dialog.ui:137
+msgid "End Address"
+msgstr "Соңғы адрес"
+
+#: src/sysprof/sysprof-process-dialog.ui:219
+msgid "Mounts"
+msgstr "Тіркелген нүктелер"
+
+#: src/sysprof/sysprof-process-dialog.ui:282
+msgid "Parent"
+msgstr "Аталық"
+
+#: src/sysprof/sysprof-process-dialog.ui:316
+msgid "Major"
+msgstr "Негізгі"
+
+#: src/sysprof/sysprof-process-dialog.ui:350
+msgid "Minor"
+msgstr "Қосымша"
+
+#: src/sysprof/sysprof-process-dialog.ui:384
+msgid "Mount Point"
+msgstr "Тіркеу нүктесі"
+
+#: src/sysprof/sysprof-process-dialog.ui:418
+msgid "Mount Source"
+msgstr "Тіркеу көзі"
+
+#: src/sysprof/sysprof-process-dialog.ui:452
+msgid "Root"
+msgstr "Түбір"
+
+#: src/sysprof/sysprof-process-dialog.ui:486
+msgid "Filesystem"
+msgstr "Файлдық жүйе"
+
+#: src/sysprof/sysprof-process-dialog.ui:520
+msgid "Options"
+msgstr "Опциялар"
+
+#: src/sysprof/sysprof-process-dialog.ui:562
+msgid "Threads"
+msgstr "Ағындар"
+
+#: src/sysprof/sysprof-process-dialog.ui:591
+msgid "Thread ID"
+msgstr "Ағын ID"
+
+#: src/sysprof/sysprof-process-dialog.ui:625
+msgid "Main Thread"
+msgstr "Негізгі ағын"
+
+#: src/sysprof/sysprof-processes-section.ui:4
+msgid "Processes"
+msgstr "Процестер"
+
+#: src/sysprof/sysprof-processes-section.ui:73
+msgid "Process Chart"
+msgstr "Процестер диаграммасы"
+
+#: src/sysprof/sysprof-processes-section.ui:174
+msgid "Process Table"
+msgstr "Процестер кестесі"
+
+#. translators: this expands to the number of events recorded by the profiler as an indicator of progress
+#: src/sysprof/sysprof-recording-pad.c:58
+#, c-format
+msgid "%<PRIi64> events"
+msgstr "%<PRIi64> оқиға"
+
+#: src/sysprof/sysprof-recording-pad.c:115
+msgid "Recording Failed"
+msgstr "Жазу сәтсіз аяқталды"
+
+#: src/sysprof/sysprof-recording-pad.c:117
+#, c-format
+msgid ""
+"Sysprof failed to record.\n"
+"\n"
+"%s"
+msgstr ""
+"Sysprof жазуды орындай алмады.\n"
+"\n"
+"%s"
+
+#: src/sysprof/sysprof-recording-pad.ui:71
+msgid "Stop Recording"
+msgstr "Жазуды тоқтату"
+
+#: src/sysprof/sysprof-samples-section.ui:4
+msgid "Time Profiler"
+msgstr "Уақыт профильдеушісі"
+
+#: src/sysprof/sysprof-samples-section.ui:89 src/sysprof/sysprof-window.ui:465
+msgid "Callgraph"
+msgstr "Шақырулар графы"
+
+#: src/sysprof/sysprof-samples-section.ui:172 src/sysprof/sysprof-window.ui:496
+msgid "Flamegraph"
+msgstr "Флеймграф"
+
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:136
+msgid "Seek Backward"
+msgstr "Артқа жылжу"
+
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:146
+msgid "Zoom Out"
+msgstr "Кішірейту"
+
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:156
+msgid "Reset Zoom"
+msgstr "Масштабты тастау"
+
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:166
+msgid "Zoom In"
+msgstr "Үлкейту"
+
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:176
+msgid "Seek Forward"
+msgstr "Алға жылжу"
+
+#: src/sysprof/sysprof-traceables-utility.ui:109
+msgid "Depth"
+msgstr "Тереңдік"
+
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:68
+msgid "Hits"
+msgstr "Хиттер"
+
+#: src/sysprof/sysprof-window.c:194
+msgid "Open Recording"
+msgstr "Жазбаны ашу"
+
+#: src/sysprof/sysprof-window.c:195
+msgid "Open"
+msgstr "Ашу"
+
+#: src/sysprof/sysprof-window.c:199
+msgid "Sysprof Capture (*.syscap)"
+msgstr "Sysprof түсірілімі (*.syscap)"
+
+#: src/sysprof/sysprof-window.c:499
+msgid "Save to File"
+msgstr "Файлға сақтау"
+
+#: src/sysprof/sysprof-window.c:500
+msgid "Save"
+msgstr "Сақтау"
+
+#: src/sysprof/sysprof-window.c:679
+msgid "Loading…"
+msgstr "Жүктелуде…"
+
+#: src/sysprof/sysprof-window.c:760
+msgid "Invalid Document"
+msgstr "Қате құжат"
+
+#: src/sysprof/sysprof-window.c:762
+#, c-format
+msgid ""
+"The document could not be loaded. Please check that you have the correct "
+"capture file.\n"
+"\n"
+"%s"
+msgstr ""
+"Құжатты жүктеу мүмкін болмады. Түсірілім файлының дұрыс екенін тексеріңіз.\n"
+"\n"
+"%s"
+
+#: src/sysprof/sysprof-window.ui:126
+msgid "Toggle Left Panel"
+msgstr "Сол жақ панельді көрсету/жасыру"
+
+#: src/sysprof/sysprof-window.ui:191
+msgid "Main Menu"
+msgstr "Бас мәзір"
+
+#: src/sysprof/sysprof-window.ui:198
+msgid "View Options"
+msgstr "Көрініс опциялары"
+
+#: src/sysprof/sysprof-window.ui:204
+msgid "Toggle Right Panel"
+msgstr "Оң жақ панельді көрсету/жасыру"
+
+#: src/sysprof/sysprof-window.ui:353
+msgid "Energy"
+msgstr "Энергия"
+
+#: src/sysprof/sysprof-window.ui:373
+msgid "Network"
+msgstr "Желі"
+
+#: src/sysprof/sysprof-window.ui:383
+msgid "Storage"
+msgstr "Сақтау орны"
+
+#: src/sysprof/sysprof-window.ui:430
+msgid "_Record Again…"
+msgstr "Қа_йта жазу…"
+
+#: src/sysprof/sysprof-window.ui:434
+msgid "Open Recording…"
+msgstr "Жазбаны ашу…"
+
+#: src/sysprof/sysprof-window.ui:438
+msgid "Save As…"
+msgstr "Қалай сақтау…"
+
+#: src/sysprof/sysprof-window.ui:458
+msgid "_Quit"
+msgstr "_Шығу"
+
+#: src/sysprof/sysprof-window.ui:467
+msgid "Categorize Frames"
+msgstr "Фреймдерді санаттарға бөлу"
+
+#: src/sysprof/sysprof-window.ui:471
+msgid "Hide System Libraries"
+msgstr "Жүйелік кітапханаларды жасыру"
+
+#: src/sysprof/sysprof-window.ui:475
+msgid "Include Threads"
+msgstr "Ағындарды қосу"
+
+#: src/sysprof/sysprof-window.ui:479
+msgid "Bottom Up"
+msgstr "Төменнен жоғары"
+
+#: src/sysprof/sysprof-window.ui:483
+msgid "Ignore Kernel Processes"
+msgstr "Ядро процестерін елемеу"
+
+#: src/sysprof/sysprof-window.ui:487
+msgid "Ignore Process 0"
+msgstr "0-ші процесті елемеу"
+
+#: src/sysprof/sysprof-window.ui:491
+msgid "Merge Similar Processes"
+msgstr "Ұқсас процестерді біріктіру"
+
+#. translators: Left Heavy means to sort larger (heavier) stack frames before others, starting from the left
+#: src/sysprof/sysprof-window.ui:499
+msgid "Left Heavy"
+msgstr "Сол жаққа бағытталған"
+
+#~ msgid "Start New Recording"
+#~ msgstr "Жаңа жазуды бастау"
+
+#~ msgid "Do not use Sysprofd to acquire privileges"
+#~ msgstr "Артықшылықтарды алу үшін Sysprofd қолданбау"
+
+#~ msgid "Make Function Root"
+#~ msgstr "Функцияны түбір ету"
+
+#~ msgid "Start a new recording"
+#~ msgstr "Жаңа жазуды бастау"
+
+#~ msgid "Must Select Local Folder"
+#~ msgstr "Жергілікті буманы таңдау керек"
+
+#~ msgid "You must choose a local folder to add as a debug directory"
+#~ msgstr "Жөндеу бумасы ретінде қосу үшін жергілікті буманы таңдауыңыз керек"
+
+#~ msgid "Add debug directory"
+#~ msgstr "Жөндеу бумасын қосу"
+
+#~ msgid "Add _Directory"
+#~ msgstr "_Буманы қосу"
+
+#~ msgid "Debug File Directories"
+#~ msgstr "Жөндеу файлдарының бумалары"
+
+#~ msgid "Directories to search for debug files"
+#~ msgstr "Жөндеу файлдарын іздеуге арналған бумалар"
+
+#~ msgid "Set as Filter"
+#~ msgstr "Сүзгі ретінде орнату"
+
+#~ msgid "Clear All Filters"
+#~ msgstr "Барлық сүзгілерді тазарту"
+
+#~ msgid "View Filters"
+#~ msgstr "Сүзгілерді қарау"

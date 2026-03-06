@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
 "POT-Creation-Date: 2025-09-15 15:51+0000\n"
-"PO-Revision-Date: 2025-09-17 11:31+0200\n"
+"PO-Revision-Date: 2026-03-06 11:31+0200\n"
 "Last-Translator: Jordi Mas i Hernàndez <jmas@softcatala.org>\n"
 "Language-Team: \n"
 "Language: ca\n"
@@ -157,7 +157,7 @@ msgstr "Indexació de marcs de dades de captura"
 
 #: src/libsysprof/sysprof-document.c:1473
 msgid "Discovering file system mounts"
-msgstr "Descoverta del muntatge del sistema de fitxers"
+msgstr "Descobriment del muntatge del sistema de fitxers"
 
 #: src/libsysprof/sysprof-document.c:1476
 msgid "Discovering process mount namespaces"
@@ -1011,7 +1011,7 @@ msgstr "Càrrega de la bateria"
 #: src/sysprof/sysprof-greeter.ui:333
 msgid "Record coarse-grained counters about battery charge or discharge rates"
 msgstr ""
-"Enregistreu els comptadors detalladament sobre la relación de càrrega i "
+"Enregistreu els comptadors detalladament sobre la relació de càrrega i "
 "descàrrega de bateria"
 
 #: src/sysprof/sysprof-greeter.ui:346 src/sysprof/sysprof-greeter.ui:351
@@ -1045,7 +1045,7 @@ msgstr ""
 
 #: src/sysprof/sysprof-greeter.ui:407
 msgid "Timings"
-msgstr "Horaris"
+msgstr "Temps"
 
 #: src/sysprof/sysprof-greeter.ui:411
 msgid "Compositor Frame Timings"
@@ -1400,7 +1400,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"No s'ha pogut enregistrar el Sysprof.\n"
+"El Sysprof no ha pogut enregistrar.\n"
 "\n"
 "%s"
 

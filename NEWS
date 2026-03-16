@@ -1,3 +1,8 @@
+Overview of changes in Sysprof 50.0
+===================================
+
+ * Translation updates
+
 Overview of changes in Sysprof 50.rc
 ====================================
 
@@ -562,4 +567,3 @@ sysprofd API so that older clients may continue to work.
 Happy Profiling,
 
 -- Christian
-

@@ -7,27 +7,27 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2025-10-29 21:10+0000\n"
-"PO-Revision-Date: 2025-11-09 22:18+0100\n"
-"Last-Translator: Мирослав Николић <miroslavnikolic@rocketmail.com>\n"
+"POT-Creation-Date: 2026-03-16 21:19+0000\n"
+"PO-Revision-Date: 2026-03-17 23:45+0100\n"
+"Last-Translator: Марко М. Костић <marko.m.kostic@gmail.com>\n"
 "Language-Team: Serbian <gnome-sr@googlegroups.org>\n"
 "Language: sr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=n==1? 3 : n%10==1 && n%100!=11 ? 0 : "
-"n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2\n"
+"n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Project-Style: gnome\n"
-"X-Generator: Gtranslator 48.0\n"
+"X-Generator: Poedit 3.9\n"
 
 #: data/org.gnome.Sysprof.desktop.in.in:3
 #: data/org.gnome.Sysprof.metainfo.xml.in.in:6
-#: src/sysprof/sysprof-application.c:268 src/sysprof/sysprof-application.c:345
+#: src/sysprof/sysprof-application.c:268 src/sysprof/sysprof-application.c:316
 #: src/sysprof/sysprof-recording-pad.ui:20 src/sysprof/sysprof-window.c:253
 msgid "Sysprof"
 msgstr "Профилатор система"
 
-#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-greeter.ui:89
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-greeter.ui:83
 msgid "Profiler"
 msgstr "Профилатор"
 
@@ -81,7 +81,7 @@ msgid "CSS"
 msgstr "ЦСС"
 
 #: src/libsysprof/sysprof-category-summary.c:154
-#: src/sysprof/sysprof-greeter.ui:402 src/sysprof/sysprof-window.ui:393
+#: src/sysprof/sysprof-greeter.ui:396 src/sysprof/sysprof-window.ui:387
 msgid "Graphics"
 msgstr "Графика"
 
@@ -456,57 +456,57 @@ msgstr "Профилишите систем"
 msgid "Authentication is required to profile the system."
 msgstr "Потребно је потврђивање идентитета за профилисање система."
 
-#: src/sysprof/gtk/help-overlay.ui:11
+#: src/sysprof/gtk/shortcuts-dialog.ui:6
 msgctxt "shortcut window"
 msgid "Recording View"
 msgstr "Снимање прегледа"
 
-#: src/sysprof/gtk/help-overlay.ui:14
+#: src/sysprof/gtk/shortcuts-dialog.ui:9
 msgctxt "shortcut window"
 msgid "Start New Recording"
 msgstr "Започни ново снимање"
 
-#: src/sysprof/gtk/help-overlay.ui:20
+#: src/sysprof/gtk/shortcuts-dialog.ui:15
 msgctxt "shortcut window"
 msgid "Save As"
 msgstr "Сачувај као"
 
-#: src/sysprof/gtk/help-overlay.ui:26
+#: src/sysprof/gtk/shortcuts-dialog.ui:25
 msgctxt "shortcut window"
 msgid "Toggle Visibility of Main Sidebar"
 msgstr "Промена видљивости главне бочне траке"
 
-#: src/sysprof/gtk/help-overlay.ui:32
+#: src/sysprof/gtk/shortcuts-dialog.ui:31
 msgctxt "shortcut window"
 msgid "Toggle Visibility of Stack Trace Sidebar"
 msgstr "Промена видљивости бочне траке стека"
 
-#: src/sysprof/gtk/help-overlay.ui:40
+#: src/sysprof/gtk/shortcuts-dialog.ui:39
 msgctxt "shortcut window"
 msgid "General"
 msgstr "Опште"
 
-#: src/sysprof/gtk/help-overlay.ui:43
+#: src/sysprof/gtk/shortcuts-dialog.ui:42
 msgctxt "shortcut window"
 msgid "Open Recording"
 msgstr "Отвори снимање"
 
-#: src/sysprof/gtk/help-overlay.ui:49
+#: src/sysprof/gtk/shortcuts-dialog.ui:52
 msgctxt "shortcut window"
 msgid "Close Window"
 msgstr "Затвара прозор"
 
-#: src/sysprof/gtk/help-overlay.ui:56
+#: src/sysprof/gtk/shortcuts-dialog.ui:59
 msgctxt "shortcut window"
 msgid "Show Help"
 msgstr "Прикз помоћи"
 
-#: src/sysprof/gtk/help-overlay.ui:62
+#: src/sysprof/gtk/shortcuts-dialog.ui:65
 msgctxt "shortcut window"
 msgid "Show keyboard shortcuts"
 msgstr "Прикажи пречице тастатуре"
 
-#: src/sysprof/gtk/help-overlay.ui:68
+#: src/sysprof/gtk/shortcuts-dialog.ui:71
 msgctxt "shortcut window"
 msgid "Quit"
 msgstr "Излази"
@@ -519,31 +519,31 @@ msgstr "Направи корен функције"
 msgid "Options"
 msgstr "Опције"
 
-#: src/sysprof/gtk/menus.ui:13 src/sysprof/sysprof-window.ui:497
+#: src/sysprof/gtk/menus.ui:13 src/sysprof/sysprof-window.ui:491
 msgid "Categorize Frames"
 msgstr "Категоризуј оквире"
 
-#: src/sysprof/gtk/menus.ui:17 src/sysprof/sysprof-window.ui:501
+#: src/sysprof/gtk/menus.ui:17 src/sysprof/sysprof-window.ui:495
 msgid "Hide System Libraries"
 msgstr "Сакриј системске библиотеке"
 
-#: src/sysprof/gtk/menus.ui:21 src/sysprof/sysprof-window.ui:505
+#: src/sysprof/gtk/menus.ui:21 src/sysprof/sysprof-window.ui:499
 msgid "Include Threads"
 msgstr "Укључи нити процесора"
 
-#: src/sysprof/gtk/menus.ui:25 src/sysprof/sysprof-window.ui:509
+#: src/sysprof/gtk/menus.ui:25 src/sysprof/sysprof-window.ui:503
 msgid "Bottom Up"
 msgstr "Одоздо нагоре"
 
-#: src/sysprof/gtk/menus.ui:29 src/sysprof/sysprof-window.ui:513
+#: src/sysprof/gtk/menus.ui:29 src/sysprof/sysprof-window.ui:507
 msgid "Ignore Kernel Processes"
 msgstr "Занемари процесе језгра"
 
-#: src/sysprof/gtk/menus.ui:33 src/sysprof/sysprof-window.ui:517
+#: src/sysprof/gtk/menus.ui:33 src/sysprof/sysprof-window.ui:511
 msgid "Ignore Process 0"
 msgstr "Занемари процес 0"
 
-#: src/sysprof/gtk/menus.ui:37 src/sysprof/sysprof-window.ui:521
+#: src/sysprof/gtk/menus.ui:37 src/sysprof/sysprof-window.ui:515
 msgid "Merge Similar Processes"
 msgstr "Споји сличне процесе"
 
@@ -629,7 +629,7 @@ msgstr "Време"
 #: src/sysprof/sysprof-energy-section.ui:382
 #: src/sysprof/sysprof-flame-graph.c:458
 #: src/sysprof/sysprof-graphics-section.ui:293
-#: src/sysprof/sysprof-marks-section.ui:248
+#: src/sysprof/sysprof-marks-section.ui:234
 #: src/sysprof/sysprof-network-section.ui:380
 #: src/sysprof/sysprof-storage-section.ui:380
 msgid "Category"
@@ -638,7 +638,7 @@ msgstr "Категорија"
 #: src/sysprof/sysprof-cpu-section.ui:450
 #: src/sysprof/sysprof-energy-section.ui:420
 #: src/sysprof/sysprof-graphics-section.ui:331
-#: src/sysprof/sysprof-marks-section.ui:282
+#: src/sysprof/sysprof-marks-section.ui:268
 #: src/sysprof/sysprof-network-section.ui:418
 #: src/sysprof/sysprof-storage-section.ui:418
 msgid "Name"
@@ -754,7 +754,7 @@ msgstr "Датотека"
 #: src/sysprof/sysprof-logs-section.ui:143
 #: src/sysprof/sysprof-mark-table.ui:116
 #: src/sysprof/sysprof-traceables-utility.ui:81
-#: src/sysprof/sysprof-window.ui:373
+#: src/sysprof/sysprof-window.ui:367
 msgid "CPU"
 msgstr "ЦПУ"
 
@@ -798,7 +798,7 @@ msgstr ""
 msgid "Add debug directory"
 msgstr "Додај директоријум за уклањање грешака"
 
-#: src/sysprof/sysprof-greeter.c:421 src/sysprof/sysprof-greeter.ui:595
+#: src/sysprof/sysprof-greeter.c:421 src/sysprof/sysprof-greeter.ui:589
 msgid "Add _Directory"
 msgstr "Додај _директоријум"
 
@@ -831,36 +831,36 @@ msgstr "Уштеда енергије"
 msgid "Performance"
 msgstr "Учинковитост"
 
-#: src/sysprof/sysprof-greeter.ui:95
+#: src/sysprof/sysprof-greeter.ui:89
 msgid "Sampling"
 msgstr "Узорковање"
 
-#: src/sysprof/sysprof-greeter.ui:98
+#: src/sysprof/sysprof-greeter.ui:92
 msgid "Sample Native Stacks"
 msgstr "Узоркуј нативне стекове"
 
-#: src/sysprof/sysprof-greeter.ui:99
+#: src/sysprof/sysprof-greeter.ui:93
 msgid "Record native stack traces using a sampling profiler"
 msgstr "Снима нативних трагова стекова помоћу профајлера за узорковање"
 
-#: src/sysprof/sysprof-greeter.ui:105
+#: src/sysprof/sysprof-greeter.ui:99
 msgid "Unwind Stacks in User Space"
 msgstr "Распетљај стекове у корисничком простору"
 
-#: src/sysprof/sysprof-greeter.ui:106
+#: src/sysprof/sysprof-greeter.ui:100
 msgid "Copy stack contents and registers for unwinding in user-space"
 msgstr ""
 "Копирај садржај стекова и региструј за распетљавање у корисничком простору"
 
-#: src/sysprof/sysprof-greeter.ui:117
+#: src/sysprof/sysprof-greeter.ui:111
 msgid "Stack Size"
 msgstr "Величина стека"
 
-#: src/sysprof/sysprof-greeter.ui:118
+#: src/sysprof/sysprof-greeter.ui:112
 msgid "The number of bytes to copy from the stack"
 msgstr "Број бајтова за копирање из стека"
 
-#: src/sysprof/sysprof-greeter.ui:129
+#: src/sysprof/sysprof-greeter.ui:123
 msgid ""
 "Unwinding in user-space has considerable overhead but may help in situations "
 "where frame-pointers are unavailable."
@@ -868,159 +868,159 @@ msgstr ""
 "Распетљавање у корисничком простору ствара значајно оптерећење, али може "
 "помоћи у када показивачи оквира нису доступни."
 
-#: src/sysprof/sysprof-greeter.ui:144
+#: src/sysprof/sysprof-greeter.ui:138
 msgid "Sample JavaScript Stacks"
 msgstr "Узорак Јава скрипт стекова"
 
-#: src/sysprof/sysprof-greeter.ui:145
+#: src/sysprof/sysprof-greeter.ui:139
 msgid "Record JavaScript stack traces using a sampling profiler"
 msgstr "Снима Јава скрипт трагове стека користиће профајлер за узорковање"
 
-#: src/sysprof/sysprof-greeter.ui:151
+#: src/sysprof/sysprof-greeter.ui:145
 msgid ""
 "Sysprof must launch your application to record JavaScript stacks using GJS."
 msgstr ""
 "Sysprof мора да покрене програм за снимање Јава скрипт стекова користећи ГЈС."
 
-#: src/sysprof/sysprof-greeter.ui:166
+#: src/sysprof/sysprof-greeter.ui:160
 msgid "Record Scheduler Details"
 msgstr "Сними податке заказивача"
 
-#: src/sysprof/sysprof-greeter.ui:167
+#: src/sysprof/sysprof-greeter.ui:161
 msgid "Track when processes are scheduled per CPU"
 msgstr "Прати када су процеси заказани на сваком процесору"
 
-#: src/sysprof/sysprof-greeter.ui:175
+#: src/sysprof/sysprof-greeter.ui:169
 msgid "Tracing"
 msgstr "Пратим трагове"
 
-#: src/sysprof/sysprof-greeter.ui:178
+#: src/sysprof/sysprof-greeter.ui:172
 msgid "Trace Memory Allocations"
 msgstr "Прати алокацију меморије"
 
-#: src/sysprof/sysprof-greeter.ui:179
+#: src/sysprof/sysprof-greeter.ui:173
 msgid "Record a stack trace when malloc or similar functions are used"
 msgstr "Сними трагове стека када се користи malloc или слична функција"
 
-#: src/sysprof/sysprof-greeter.ui:185
+#: src/sysprof/sysprof-greeter.ui:179
 msgid "Sysprof must launch your application to record memory allocations."
 msgstr "Sysprof мора да покрене ваш програм да забележи алокацију меморије."
 
-#: src/sysprof/sysprof-greeter.ui:203 src/sysprof/sysprof-greeter.ui:208
+#: src/sysprof/sysprof-greeter.ui:197 src/sysprof/sysprof-greeter.ui:202
 msgid "Application"
 msgstr "Програм"
 
-#: src/sysprof/sysprof-greeter.ui:211
+#: src/sysprof/sysprof-greeter.ui:205
 #: src/sysprof/sysprof-processes-section.ui:317
 msgid "Command Line"
 msgstr "Линија наредби"
 
-#: src/sysprof/sysprof-greeter.ui:217
+#: src/sysprof/sysprof-greeter.ui:211
 msgid "Working directory"
 msgstr "Радни директоријум"
 
-#: src/sysprof/sysprof-greeter.ui:223
+#: src/sysprof/sysprof-greeter.ui:217
 msgid "The application will be run as a subprocess of Sysprof."
 msgstr "Програм ће бити покренут као подпроцес Sysprof-а."
 
-#: src/sysprof/sysprof-greeter.ui:236
+#: src/sysprof/sysprof-greeter.ui:230
 msgid "Environment"
 msgstr "Окружење"
 
-#: src/sysprof/sysprof-greeter.ui:239
+#: src/sysprof/sysprof-greeter.ui:233
 msgid "Clear Environment"
 msgstr "Очисти окружење"
 
-#: src/sysprof/sysprof-greeter.ui:240
+#: src/sysprof/sysprof-greeter.ui:234
 msgid "Clear the environment before launching application"
 msgstr "Чисти окружење пре покретања програма"
 
-#: src/sysprof/sysprof-greeter.ui:261
+#: src/sysprof/sysprof-greeter.ui:255
 msgid "Add _Variable"
 msgstr "Додај _променљиву"
 
-#: src/sysprof/sysprof-greeter.ui:267
+#: src/sysprof/sysprof-greeter.ui:261
 msgid "Add Variable"
 msgstr "Додај променљиву"
 
-#: src/sysprof/sysprof-greeter.ui:268
+#: src/sysprof/sysprof-greeter.ui:262
 msgid "_Add"
 msgstr "_Додај"
 
-#: src/sysprof/sysprof-greeter.ui:285 src/sysprof/sysprof-greeter.ui:290
+#: src/sysprof/sysprof-greeter.ui:279 src/sysprof/sysprof-greeter.ui:284
 msgid "Counters"
 msgstr "Бројачи"
 
-#: src/sysprof/sysprof-greeter.ui:293
+#: src/sysprof/sysprof-greeter.ui:287
 msgid "CPU Usage"
 msgstr "Коришћење процесора"
 
-#: src/sysprof/sysprof-greeter.ui:294
+#: src/sysprof/sysprof-greeter.ui:288
 msgid "Record coarse-grained counters about CPU usage and frequency"
 msgstr "Угрубо снима бројаче о употреби процесора и фреквенцији"
 
-#: src/sysprof/sysprof-greeter.ui:300
+#: src/sysprof/sysprof-greeter.ui:294
 msgid "Memory Usage"
 msgstr "Употреба меморије"
 
-#: src/sysprof/sysprof-greeter.ui:301
+#: src/sysprof/sysprof-greeter.ui:295
 msgid "Record coarse-grained counters about system memory usage"
 msgstr "Угрубо снима бројаче о коришћењу меморије система"
 
-#: src/sysprof/sysprof-greeter.ui:307
+#: src/sysprof/sysprof-greeter.ui:301
 msgid "Disk Usage"
 msgstr "Коришћење диска"
 
-#: src/sysprof/sysprof-greeter.ui:308
+#: src/sysprof/sysprof-greeter.ui:302
 msgid "Record coarse-grained counters about storage throughput"
 msgstr "Угрубо снима бројаче о убацивању у складиште"
 
-#: src/sysprof/sysprof-greeter.ui:314
+#: src/sysprof/sysprof-greeter.ui:308
 msgid "Network Usage"
 msgstr "Коришћење мреже"
 
-#: src/sysprof/sysprof-greeter.ui:315
+#: src/sysprof/sysprof-greeter.ui:309
 msgid "Record coarse-grained counters about network traffic"
 msgstr "Угрубо сними бројаче о преносу на мрежи"
 
-#: src/sysprof/sysprof-greeter.ui:325
+#: src/sysprof/sysprof-greeter.ui:319
 msgid "Energy Usage"
 msgstr "Коришћење напајања"
 
-#: src/sysprof/sysprof-greeter.ui:326
+#: src/sysprof/sysprof-greeter.ui:320
 msgid "Record coarse-grained counters about energy usage in Watts"
 msgstr "Угрубо сними бројаче о коришћењу електричне енергије у ватима"
 
-#: src/sysprof/sysprof-greeter.ui:332
+#: src/sysprof/sysprof-greeter.ui:326
 msgid "Battery Charge"
 msgstr "Пуњење батерије"
 
-#: src/sysprof/sysprof-greeter.ui:333
+#: src/sysprof/sysprof-greeter.ui:327
 msgid "Record coarse-grained counters about battery charge or discharge rates"
 msgstr "Угрубо сними бројаче о стопи пуњења или пражњења батерије"
 
-#: src/sysprof/sysprof-greeter.ui:346 src/sysprof/sysprof-greeter.ui:351
-#: src/sysprof/sysprof-window.ui:363
+#: src/sysprof/sysprof-greeter.ui:340 src/sysprof/sysprof-greeter.ui:345
+#: src/sysprof/sysprof-window.ui:357
 msgid "D-Bus"
 msgstr "Д-магистрала"
 
-#: src/sysprof/sysprof-greeter.ui:355
+#: src/sysprof/sysprof-greeter.ui:349
 msgid "Record System Bus"
 msgstr "Сними магистрали система"
 
-#: src/sysprof/sysprof-greeter.ui:356
+#: src/sysprof/sysprof-greeter.ui:350
 msgid "Record messages on the D-Bus system bus"
 msgstr "Сачувај поруке на Д-магистрали система"
 
-#: src/sysprof/sysprof-greeter.ui:372
+#: src/sysprof/sysprof-greeter.ui:366
 msgid "Record Session Bus"
 msgstr "Сними магистралу сесије"
 
-#: src/sysprof/sysprof-greeter.ui:373
+#: src/sysprof/sysprof-greeter.ui:367
 msgid "Record messages on the D-Bus user session bus"
 msgstr "Сачувај поруке са Д-магистрале сесије корисника"
 
-#: src/sysprof/sysprof-greeter.ui:384
+#: src/sysprof/sysprof-greeter.ui:378
 msgid ""
 "The session bus may contain sensitive information such as keyboard usage and "
 "passwords."
@@ -1028,19 +1028,19 @@ msgstr ""
 "Магистрала сесије може да садржи осетљиве податке као што је употреба "
 "тастатуре и лозинке."
 
-#: src/sysprof/sysprof-greeter.ui:407
+#: src/sysprof/sysprof-greeter.ui:401
 msgid "Timings"
 msgstr "Трајања"
 
-#: src/sysprof/sysprof-greeter.ui:411
+#: src/sysprof/sysprof-greeter.ui:405
 msgid "Compositor Frame Timings"
 msgstr "Времена исцртавања кадрова композитора"
 
-#: src/sysprof/sysprof-greeter.ui:412
+#: src/sysprof/sysprof-greeter.ui:406
 msgid "Record frame-timing information from the GNOME Shell compositor"
 msgstr "Сними податке о времену кадрова из композитора Гномове шкољке"
 
-#: src/sysprof/sysprof-greeter.ui:423
+#: src/sysprof/sysprof-greeter.ui:417
 msgid ""
 "Applications launched by Sysprof will automatically collect GTK frame timing "
 "information."
@@ -1048,105 +1048,105 @@ msgstr ""
 "Програми покренути преко Sysprof-а ће аутоматски сачупити податке о ГТК "
 "временима кадрова."
 
-#: src/sysprof/sysprof-greeter.ui:463
+#: src/sysprof/sysprof-greeter.ui:457
 msgid "Devices"
 msgstr "Уређаји"
 
-#: src/sysprof/sysprof-greeter.ui:467
+#: src/sysprof/sysprof-greeter.ui:461
 msgid "Include GPU Information"
 msgstr "Укључи податке о графичком процесору"
 
-#: src/sysprof/sysprof-greeter.ui:468
+#: src/sysprof/sysprof-greeter.ui:462
 msgid "Records information about graphics hardware and drivers"
 msgstr ""
 "Снима податке о харверу графичког процесора и његовим управљачким уређајима"
 
-#: src/sysprof/sysprof-greeter.ui:486
+#: src/sysprof/sysprof-greeter.ui:480
 msgid "System"
 msgstr "Систем"
 
-#: src/sysprof/sysprof-greeter.ui:491
+#: src/sysprof/sysprof-greeter.ui:485
 msgid "Power Profile"
 msgstr "Профил енергије"
 
-#: src/sysprof/sysprof-greeter.ui:494
+#: src/sysprof/sysprof-greeter.ui:488
 msgid "Record with Power Profile"
 msgstr "Сачувај са профилом коришћења електричне енергије"
 
-#: src/sysprof/sysprof-greeter.ui:495
+#: src/sysprof/sysprof-greeter.ui:489
 msgid "Switch to power profile while recording"
 msgstr "Пребаци у режим уштеде енергије приликом снимања"
 
-#: src/sysprof/sysprof-greeter.ui:505
+#: src/sysprof/sysprof-greeter.ui:499
 msgid "Details"
 msgstr "Детаљи"
 
-#: src/sysprof/sysprof-greeter.ui:509
+#: src/sysprof/sysprof-greeter.ui:503
 msgid "Record System Log"
 msgstr "Сачувај дневник система"
 
-#: src/sysprof/sysprof-greeter.ui:510
+#: src/sysprof/sysprof-greeter.ui:504
 msgid "Watch the system log for new messages and record them"
 msgstr "Надгледај дневник система у потрази за новим порукама и сачувај их"
 
-#: src/sysprof/sysprof-greeter.ui:526
+#: src/sysprof/sysprof-greeter.ui:520
 msgid "Include Hardware Information"
 msgstr "Укључи податке о хардверу"
 
-#: src/sysprof/sysprof-greeter.ui:527
+#: src/sysprof/sysprof-greeter.ui:521
 msgid "Records information about PCI and USB devices"
 msgstr "Чува податке о ПЦИ и УСБ уређајима"
 
-#: src/sysprof/sysprof-greeter.ui:540
+#: src/sysprof/sysprof-greeter.ui:534
 msgid "Symbols"
 msgstr "Симболи"
 
-#: src/sysprof/sysprof-greeter.ui:544
+#: src/sysprof/sysprof-greeter.ui:538
 msgid "Bundle Symbols"
 msgstr "Упакуј симболе"
 
-#: src/sysprof/sysprof-greeter.ui:545
+#: src/sysprof/sysprof-greeter.ui:539
 msgid "Make recording shareable by symbolizing stack traces after recording"
 msgstr "Учини снимке дељивим симболизовањем трагова стека након снимања"
 
-#: src/sysprof/sysprof-greeter.ui:561
+#: src/sysprof/sysprof-greeter.ui:555
 msgid "Debuginfod"
 msgstr "Debuginfod"
 
-#: src/sysprof/sysprof-greeter.ui:562
+#: src/sysprof/sysprof-greeter.ui:556
 msgid "Enable Debuginfod to automatically fetch debug symbols"
 msgstr "Омогући Debuginfod да аутоматски преузме симболе за укањање грешака"
 
-#: src/sysprof/sysprof-greeter.ui:575
+#: src/sysprof/sysprof-greeter.ui:569
 msgid "Debug File Directories"
 msgstr "Отклањање грешака у доректоријумима датотека"
 
-#: src/sysprof/sysprof-greeter.ui:576
+#: src/sysprof/sysprof-greeter.ui:570
 msgid "Directories to search for debug files"
 msgstr ""
 "Директоријуми који су укључени у претрагу за уклањање грешака над датотекама"
 
-#: src/sysprof/sysprof-greeter.ui:624
+#: src/sysprof/sysprof-greeter.ui:618
 msgid "_Open File…"
 msgstr "_Отвори датотеку…"
 
-#: src/sysprof/sysprof-greeter.ui:631
+#: src/sysprof/sysprof-greeter.ui:625
 msgid "Record to _File…"
 msgstr "С_ними датотеку…"
 
-#: src/sysprof/sysprof-greeter.ui:638
+#: src/sysprof/sysprof-greeter.ui:632
 msgid "Record to _Memory"
 msgstr "Сними у _меморију"
 
-#: src/sysprof/sysprof-greeter.ui:657 src/sysprof/sysprof-window.ui:474
+#: src/sysprof/sysprof-greeter.ui:651 src/sysprof/sysprof-window.ui:468
 msgid "_Keyboard Shortcuts"
 msgstr "Пречице на _тастатури"
 
-#: src/sysprof/sysprof-greeter.ui:661 src/sysprof/sysprof-window.ui:478
+#: src/sysprof/sysprof-greeter.ui:655 src/sysprof/sysprof-window.ui:472
 msgid "Help"
 msgstr "Помоћ"
 
-#: src/sysprof/sysprof-greeter.ui:665 src/sysprof/sysprof-window.ui:482
+#: src/sysprof/sysprof-greeter.ui:659 src/sysprof/sysprof-window.ui:476
 msgid "About Sysprof"
 msgstr "О Профилатору система"
 
@@ -1186,39 +1186,43 @@ msgstr "Домен"
 msgid "Marks"
 msgstr "Ознаке"
 
-#: src/sysprof/sysprof-marks-section.ui:78
+#: src/sysprof/sysprof-marks-section.ui:72
 msgid "Mark Chart"
 msgstr "Графикон ознака"
 
-#: src/sysprof/sysprof-marks-section.ui:92
+#: src/sysprof/sysprof-marks-section.ui:84
 msgid "Mark Table"
 msgstr "Табела ознака"
 
-#: src/sysprof/sysprof-marks-section.ui:105
+#: src/sysprof/sysprof-marks-section.ui:97
 msgid "Mark Waterfall"
 msgstr "Водопад ознака"
 
-#: src/sysprof/sysprof-marks-section.ui:212
+#: src/sysprof/sysprof-marks-section.ui:198
 msgid "Summary"
 msgstr "Извештај"
 
-#: src/sysprof/sysprof-marks-section.ui:317
+#: src/sysprof/sysprof-marks-section.ui:303
 msgid "Minimum"
 msgstr "Најмање"
 
-#: src/sysprof/sysprof-marks-section.ui:351
+#: src/sysprof/sysprof-marks-section.ui:337
 msgid "Maximum"
 msgstr "Највеће"
 
-#: src/sysprof/sysprof-marks-section.ui:385
+#: src/sysprof/sysprof-marks-section.ui:371
 msgid "Average"
 msgstr "Просечно"
 
-#: src/sysprof/sysprof-marks-section.ui:419
+#: src/sysprof/sysprof-marks-section.ui:405
 msgid "Median"
 msgstr "Медијана"
 
 #: src/sysprof/sysprof-mark-chart-row.ui:8
+msgid "Toggle marks"
+msgstr "Окини ознаке"
+
+#: src/sysprof/sysprof-mark-chart-row.ui:12
 msgid "Set as Filter"
 msgstr "Постави као филтер"
 
@@ -1389,11 +1393,11 @@ msgstr "Заустави снимање"
 msgid "Time Profiler"
 msgstr "Профилер времена"
 
-#: src/sysprof/sysprof-samples-section.ui:98 src/sysprof/sysprof-window.ui:495
+#: src/sysprof/sysprof-samples-section.ui:98 src/sysprof/sysprof-window.ui:489
 msgid "Callgraph"
 msgstr "График позива"
 
-#: src/sysprof/sysprof-samples-section.ui:181 src/sysprof/sysprof-window.ui:526
+#: src/sysprof/sysprof-samples-section.ui:181 src/sysprof/sysprof-window.ui:520
 msgid "Flamegraph"
 msgstr "Ватрени графикон"
 
@@ -1401,23 +1405,23 @@ msgstr "Ватрени графикон"
 msgid "Clear All Filters"
 msgstr "Очисти све филтере"
 
-#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:166
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:160
 msgid "Seek Backward"
 msgstr "Тражи уназад"
 
-#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:176
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:170
 msgid "Zoom Out"
 msgstr "Умањи"
 
-#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:186
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:180
 msgid "Reset Zoom"
 msgstr "Поништи увећање"
 
-#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:196
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:190
 msgid "Zoom In"
 msgstr "Увећај"
 
-#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:206
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:200
 msgid "Seek Forward"
 msgstr "Тражи унапред"
 
@@ -1469,56 +1473,56 @@ msgstr ""
 "\n"
 "%s"
 
-#: src/sysprof/sysprof-window.ui:126
+#: src/sysprof/sysprof-window.ui:120
 msgid "Toggle Left Panel"
 msgstr "Приказ леве површи"
 
-#: src/sysprof/sysprof-window.ui:133
+#: src/sysprof/sysprof-window.ui:127
 msgid "View Filters"
 msgstr "Прикажи филтере"
 
-#: src/sysprof/sysprof-window.ui:221
+#: src/sysprof/sysprof-window.ui:215
 msgid "Main Menu"
 msgstr "Главни изборник"
 
-#: src/sysprof/sysprof-window.ui:228
+#: src/sysprof/sysprof-window.ui:222
 msgid "View Options"
 msgstr "Опције за приказ"
 
-#: src/sysprof/sysprof-window.ui:234
+#: src/sysprof/sysprof-window.ui:228
 msgid "Toggle Right Panel"
 msgstr "Приказ десне површи"
 
-#: src/sysprof/sysprof-window.ui:383
+#: src/sysprof/sysprof-window.ui:377
 msgid "Energy"
 msgstr "Енергија"
 
-#: src/sysprof/sysprof-window.ui:403
+#: src/sysprof/sysprof-window.ui:397
 msgid "Network"
 msgstr "Мрежа"
 
-#: src/sysprof/sysprof-window.ui:413
+#: src/sysprof/sysprof-window.ui:407
 msgid "Storage"
 msgstr "Складиште"
 
-#: src/sysprof/sysprof-window.ui:460
+#: src/sysprof/sysprof-window.ui:454
 msgid "_Record Again…"
 msgstr "_Поново сними…"
 
-#: src/sysprof/sysprof-window.ui:464
+#: src/sysprof/sysprof-window.ui:458
 msgid "Open Recording…"
 msgstr "Отвори снимак…"
 
-#: src/sysprof/sysprof-window.ui:468
+#: src/sysprof/sysprof-window.ui:462
 msgid "Save As…"
 msgstr "Сачувај као…"
 
-#: src/sysprof/sysprof-window.ui:488
+#: src/sysprof/sysprof-window.ui:482
 msgid "_Quit"
 msgstr "_Изађи"
 
 #. translators: Left Heavy means to sort larger (heavier) stack frames before others, starting from the left
-#: src/sysprof/sysprof-window.ui:529
+#: src/sysprof/sysprof-window.ui:523
 msgid "Left Heavy"
 msgstr "Наглашено на левој страни"
 

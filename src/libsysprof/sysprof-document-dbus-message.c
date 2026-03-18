@@ -296,8 +296,12 @@ sysprof_document_dbus_message_dup_message (SysprofDocumentDBusMessage *self)
     {
       const guint8 *data;
       guint len;
+      g_autoptr(GError) local_error = NULL;
 
-      if ((data = sysprof_document_dbus_message_get_message_data (self, &len)))
+      if ((data = sysprof_document_dbus_message_get_message_data (self, &len)) &&
+          len >= 16 /* minimum D-Bus header size to be able to start decoding */ &&
+          len >= g_dbus_message_bytes_needed ((guchar *) data, len, &local_error) &&
+          local_error == NULL)
         self->message = g_dbus_message_new_from_blob ((guchar *)data, len, G_DBUS_CAPABILITY_FLAGS_UNIX_FD_PASSING, NULL);
     }
 

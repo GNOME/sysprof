@@ -1,0 +1,354 @@
+# Serbian translation for sysprof.
+# Copyright (C) 2026 sysprof's COPYRIGHT HOLDER
+# This file is distributed under the same license as the sysprof package.
+# Марко Костић <marko.m.kostic@gmail.com>,  2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sysprof master\n"
+"POT-Creation-Date: 2026-03-20 23:08+0000\n"
+"PO-Revision-Date: 2026-04-02 13:02+0200\n"
+"Last-Translator: Марко Костић <marko.m.kostic@gmail.com>\n"
+"Language-Team: Serbian <Serbian>\n"
+"Language: sr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=n==1? 3 : n%10==1 && n%100!=11 ? 0 : "
+"n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Poedit 3.9\n"
+
+#. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
+msgctxt "_"
+msgid "translator-credits"
+msgstr ""
+"Марко Костић <marko.m.kostic@gmail.com>\n"
+"Превод на српски језик https://гном.срб"
+
+#. (itstool) path: info/title
+#: C/index.page:7
+msgctxt "link:trail"
+msgid "Sysprof"
+msgstr "Профилатор система"
+
+#. (itstool) path: info/title
+#: C/index.page:8
+msgctxt "link"
+msgid "Sysprof"
+msgstr "Профилатор система"
+
+#. (itstool) path: info/title
+#: C/index.page:9
+msgctxt "text"
+msgid "Sysprof"
+msgstr "Профилатор система"
+
+#. (itstool) path: page/title
+#: C/index.page:15
+msgid "<_:media-1/> Sysprof"
+msgstr "<_:media-1/> Профилатор система"
+
+#. (itstool) path: section/title
+#. (itstool) path: page/title
+#: C/index.page:21 C/profiling.page:8
+msgid "Profiling"
+msgstr "Профилисање"
+
+#. (itstool) path: section/title
+#: C/index.page:25
+msgid "Frequently Asked Questions"
+msgstr "Често постављена питања"
+
+#. (itstool) path: credit/name
+#: C/introduction.page:15
+msgid "Christian Hergert"
+msgstr "Кристијан Хергерт (Christian Hergert)"
+
+#. (itstool) path: credit/years
+#: C/introduction.page:17
+msgid "2016"
+msgstr "2016"
+
+#. (itstool) path: info/desc
+#: C/introduction.page:22
+msgid "Welcome to <app>Sysprof</app>!"
+msgstr "Добро дошли у <app>Профилатора система</app>!"
+
+#. (itstool) path: page/title
+#: C/introduction.page:25
+msgid "Introduction"
+msgstr "Увод"
+
+#. (itstool) path: page/p
+#: C/introduction.page:27
+msgid ""
+"<app>Sysprof</app> is a system profiler for Linux that targets the GNOME "
+"desktop."
+msgstr "<app>Профилатор система</app> је профилатор система за Линукс који циља Гномову радну површ."
+
+#. (itstool) path: info/desc
+#: C/introduction.page:33
+msgid "Differences between tracing and sampling"
+msgstr "Разлике између праћења и узорковања"
+
+#. (itstool) path: section/title
+#: C/introduction.page:35
+msgid "What is a Profiler?"
+msgstr "Шта је профилатор?"
+
+#. (itstool) path: section/p
+#: C/introduction.page:37
+msgid ""
+"A profiler is an application that records information about an application "
+"or system while it runs. That information can be explored to gain insight "
+"into how the application could be changed to perform better."
+msgstr "Профилатор је програм који бележи податке о програму или систему док ради. Ти подаци се могу истражити како би се добио увид у то како би се програм могао изменити да би боље радио."
+
+#. (itstool) path: section/p
+#: C/introduction.page:42
+msgid ""
+"Two common categories of software profilers exist, commonly referred to as "
+"either tracing or sampling profilers. What is meant by tracing profiler is "
+"that every function call executed by the program is known to the profiler. A "
+"sampling profiler works by inspecting the state of the program on a regular "
+"frequency and therefore does not see every function call executed by the "
+"program."
+msgstr "Постоје две уобичајене категорије софтверских профилатора, који се обично називају или профилаторима за праћење или профилаторима за узорковање. Под профилатором за праћење се подразумева да је сваки позив функције који програм изврши познат профилатору. Профилатор за узорковање ради тако што прегледа стање програма у редовним интервалима и стога не види сваки позив функције који програм изврши."
+
+#. (itstool) path: section/p
+#: C/introduction.page:49
+msgid ""
+"Both tracing and sampling profilers have their advantages. A notable "
+"advantage of a sampling profiler is that the overhead is much less than that "
+"of a tracing profiler, making it easier to use for software that requires "
+"interactivity."
+msgstr "И профилатори за праћење и профилатори за узорковање имају своје предности. Значајна предност профилатора за узорковање је то што је оптерећење много мање него код профилатора за праћење, што га чини лакшим за коришћење код софтвера који захтева интерактивност."
+
+#. (itstool) path: section/p
+#: C/introduction.page:54
+msgid "<app>Sysprof</app> is a sampling profiler."
+msgstr "<app>Профилатор система</app> је профилатор за узорковање."
+
+#. (itstool) path: section/title
+#: C/profiling.page:10
+msgid "How to profile your system"
+msgstr "Како профилисати систем"
+
+#. (itstool) path: section/p
+#: C/profiling.page:11
+msgid ""
+"When <app>Sysprof</app> profiles your system, it records stack information "
+"for all applications executing, including the Linux kernel. This can "
+"sometimes be confusing if you only want to look at a single process. If your "
+"application does not interact much with the host system, you may have more "
+"success by using <app>Sysprof</app> to <link href=\"profiling#new-process-"
+"profiling\">spawn a new process</link>."
+msgstr "Када <app>Профилатор система</app> профилише ваш систем, он бележи податке о стеку за све програме који се извршавају, укључујући и Линукс језгро. Ово понекад може бити збуњујуће ако желите да посматрате само један процес. Ако ваш програм не комуницира много са системом домаћином, можда ћете имати више успеха ако користите <app>Профилатор система</app> да <link href=\"profiling#new-process-profiling\">покренете нови процес</link>."
+
+#. (itstool) path: section/p
+#: C/profiling.page:18
+msgid ""
+"To profile your entire system, ensure the target button is set to <em>All "
+"Processes</em> and click <em>Record</em>."
+msgstr "Да бисте профилисали читав систем, уверите се да је дугме за мету постављено на <em>Сви процеси</em> и кликните на <em>Снимај</em>."
+
+#. (itstool) path: section/p
+#: C/profiling.page:21
+msgid ""
+"At this point, you may be asked to <em>authorize</em> access to profile the "
+"system. This is required as the Linux kernel's perf implementation requires "
+"root to perform whole-system profiling."
+msgstr "У овом тренутку, можда ће бити затражено да <em>овластите</em> приступ за профилисање система. Ово је неопходно јер изведба „perf“ Линукс језгра захтева администратора (root) за обављање профилисања читавог система."
+
+#. (itstool) path: section/p
+#: C/profiling.page:25
+msgid ""
+"During the profiling session, you will see the number of seconds the profile "
+"has been active. Clicking the <em>Record</em> button again will stop the "
+"profiling session. Afterwhich, the callgraph will be displayed."
+msgstr "Током сесије профилисања, видећете број секунди колико је профилисање активно. Поновни клик на дугме <em>Снимај</em> ће зауставити сесију профилисања. Након тога ће бити приказан график позива."
+
+#. (itstool) path: note/p
+#: C/profiling.page:31
+msgid ""
+"If you find that the <app>sysprof</app> application is showing up in your "
+"profiling callgraph, you might consider recording the profiling session with "
+"<cmd>sysprof-cli</cmd>. This is a command line program that will capture "
+"your profiling session to disk to be viewed at a later time."
+msgstr "Ако приметите да се програм <app>Профилатор система</app> појављује у вашем графику позива профилисања, можете размислити о снимању сесије профилисања помоћу <cmd>sysprof-cli</cmd>. Ово је програм линије наредби који ће снимити вашу сесију профилисања на диск како бисте је касније погледали."
+
+#. (itstool) path: section/p
+#: C/profiling.page:37
+msgid ""
+"See <link href=\"profiling#interpreting-results\">interpreting results</"
+"link> for more guidance."
+msgstr "Погледајте <link href=\"profiling#interpreting-results\">тумачење резултата</link> за више упутстава."
+
+#. (itstool) path: section/title
+#: C/profiling.page:46
+msgid "Profile a new process"
+msgstr "Профилисање новог процеса"
+
+#. (itstool) path: section/p
+#: C/profiling.page:48
+msgid ""
+"Often times, you may need to spawn a new process to profile. First, select "
+"the <em>Application</em> button next at the top of the recording window. "
+"Fill in your command and working directory, and optionally specify any "
+"environment variables you need. Your process will be started when recording "
+"begins."
+msgstr "Често ћете можда морати да покренете нови процес за профилисање. Прво изаберите дугме <em>Програм</em> на врху прозора за снимање. Попуните своју наредбу и радни директоријум, и опционо наведите све променљиве окружења које су вам потребне. Ваш процес ће бити покренут када снимање почне."
+
+#. (itstool) path: note/p
+#: C/profiling.page:55
+msgid ""
+"If you are spawning a process that requires access to your current display, "
+"such as a GTK+ application, you will want to make sure <em>Inherit current "
+"environment</em> is set."
+msgstr "Ако покрећете процес који захтева приступ вашем тренутном приказу, као што је ГТК+ програм, требало би да се уверите да је опција <em>Наследи тренутно окружење</em> постављена."
+
+#. (itstool) path: section/title
+#: C/profiling.page:66
+msgid "Profiling with the sysprof-cli command line tool"
+msgstr "Профилисање помоћу sysprof-cli алатке командне линије"
+
+#. (itstool) path: section/p
+#: C/profiling.page:68
+msgid ""
+"For minimal overhead, you might consider using the <cmd>sysprof-cli</cmd> "
+"command line tool. When run without any arguments, it will record your "
+"entire system and save the output to <file>capture.syscap</file>. This file "
+"can be opened with the <app>Sysprof</app> application to view the callgraph."
+msgstr "За минимално оптерећење, можете размотрити коришћење <cmd>sysprof-cli</cmd> алатке командне линије. Када се покрене без икаквих аргумената, она ће снимити читав ваш систем и сачувати излаз у <file>capture.syscap</file>. Ова датотека се може отворити програмом <app>Профилатор система</app> ради прегледа графика позива."
+
+#. (itstool) path: section/p
+#: C/profiling.page:73
+msgid ""
+"If you would like to spawn a new process, use <cmd>sysprof-cli -- 'command'</"
+"cmd> to specify a command to be launched. The command will inherit the "
+"current environment."
+msgstr "Ако желите да изродите нови процес, користите <cmd>sysprof-cli -- 'наредба'</cmd> да наведете наредбу која ће бити покренута. Наредба ће наследити тренутно окружење."
+
+#. (itstool) path: section/title
+#: C/profiling.page:83
+msgid "Interpreting results"
+msgstr "Тумачење резултата"
+
+#. (itstool) path: section/p
+#: C/profiling.page:85
+msgid ""
+"The profiling results in <app>Sysprof</app> are split into three sections. "
+"On the top left is a list of all the functions profiled. They are sorted by "
+"how often they were called during the recording."
+msgstr "Резултати профилисања у <app>Профилатору система</app> су подељени у три одељка. Горе лево је списак свих профилисаних функција. Оне су поређане према томе колико су често позиване током снимања."
+
+#. (itstool) path: note/p
+#: C/profiling.page:90
+msgid ""
+"It is important to note that the amount of time spent in each function is "
+"not captured. That would require a tracing profiler to accurately record. "
+"The percentage is calculated by determining how often that function showed "
+"up in the current stacktrace when a sample was recorded."
+msgstr "Важно је напоменути да утрошено време у свакој функцији није снимљено. То би захтевало профилатор за праћење ради тачног бележења. Проценат се израчунава одређивањем колико се често та функција појављивала у тренутном трагу стека када је узорак снимљен."
+
+#. (itstool) path: section/p
+#: C/profiling.page:96
+msgid ""
+"After selecting a function from the functions list, all of the recorded "
+"callers of that function will be displayed on the bottom left. They are also "
+"sorted by the percentage of samples that included that function in the "
+"stacktrace."
+msgstr "Након избора функције са списка функција, сви снимљени позивачи те функције биће приказани доле лево. Они су такође поређани према проценту узорака који су укључивали ту функцију у трагу стека."
+
+#. (itstool) path: section/p
+#: C/profiling.page:101
+msgid ""
+"On the right, are all of the decendants of a selected function. You can "
+"select a function either from the functions list, or the callers list."
+msgstr "Десно су сви потомци изабране функције. Можете изабрати функцију било са списка функција, било са списка позивача."
+
+#. (itstool) path: note/p
+#: C/profiling.page:105
+msgid ""
+"If you see <em>- - Context Switch - -</em> in your results, that means that "
+"the application transitioned into or from the Linux kernel. There can be "
+"many reasons for this such as a <em>syscall</em> or <em>signal</em>."
+msgstr "Ако у својим резултатима видите <em>- - Context Switch - -</em>, то значи да је програм прешао у језгро Линукса или из њега. Може бити много разлога за то, као што су <em>системски позив</em> или <em>сигнал</em>."
+
+#. (itstool) path: page/title
+#: C/faq.page:9
+msgid "What does heap mean?"
+msgstr "Шта значи гомила (heap)?"
+
+#. (itstool) path: section/title
+#: C/faq.page:12
+msgid "What does \"In file [heap]\" mean?"
+msgstr "Шта значи „У датотеци [гомила]“?"
+
+#. (itstool) path: section/p
+#: C/faq.page:14
+msgid ""
+"This means that sysprof believes a function was called from somewhere in the "
+"program's heap (where <code>malloc</code> allocates memory) rather than the "
+"code section (where executable code normally lives.) There are several "
+"possible explanations."
+msgstr "Ово значи да Профилатор система верује да је функција позвана однекуд из гомиле програма (где <code>malloc</code> додељује меморију), а не из одељка кода (где извршни код обично борави). Постоји неколико могућих објашњења."
+
+#. (itstool) path: section/title
+#: C/faq.page:22
+msgid "JIT (Just in Time) compilers"
+msgstr "JIT (Just in Time) компајлери"
+
+#. (itstool) path: section/p
+#: C/faq.page:24
+msgid ""
+"Languages like Java can generate executable code while a program is running "
+"and store it in the heap. Sysprof is accurately reporting the situation in "
+"this case."
+msgstr "Језици попут Јаве могу да генеришу извршни код док је програм покренут и да га сместе у гомилу. Профилатор система у овом случају тачно извештава о ситуацији."
+
+#. (itstool) path: section/title
+#: C/faq.page:30
+msgid "Optimizing compilers"
+msgstr "Оптимизујући компајлери"
+
+#. (itstool) path: section/p
+#: C/faq.page:32
+msgid ""
+"C and C++ compilers can optimize away information needed to determine a "
+"function's caller, so it is mistaken for [heap]. You can still tell how "
+"often each function is called by the program, but not always from where."
+msgstr "Ц и Ц++ компајлери могу оптимизацијом да уклоне податке потребне за одређивање позиваоца функције, па се он погрешно препознаје као [гомила]. И даље можете рећи колико често програм позива сваку функцију, али не увек и одакле."
+
+#. (itstool) path: note/p
+#: C/faq.page:38
+msgid ""
+"For gcc, the flag <code>-fno-omit-frame-pointer</code> will prevent this "
+"optimization. The flag is not always needed, for example on x86_64 machines "
+"it is only needed with -O3 optimization."
+msgstr "За гцц, опција <code>-fno-omit-frame-pointer</code> ће спречити ову оптимизацију. Опција није увек потребна, на пример на x86_64 машинама потребна је само уз -O3 оптимизацију."
+
+#. (itstool) path: note/p
+#: C/faq.page:44
+msgid ""
+"To get the most detailed and accurate call tree from un-optimized code, use "
+"these flags: <code>-ggdb -fno-omit-frame-pointer -O0</code>"
+msgstr "Да бисте добили најдетаљније и најтачније стабло позива из неоптимизованог кода, користите ове опције: <code>-ggdb -fno-omit-frame-pointer -O0</code>"
+
+#. (itstool) path: p/link
+#: C/legal.xml:5
+msgid "Creative Commons Attribution-ShareAlike 4.0 International"
+msgstr "Creative Commons Attribution-ShareAlike 4.0 International"
+
+#. (itstool) path: license/p
+#: C/legal.xml:4
+msgid "This work is licensed under a <_:link-1/> license."
+msgstr "Овај рад је лиценциран под <_:link-1/> лиценцом."
+
+#. (itstool) path: license/p
+#: C/legal.xml:8
+msgid ""
+"As a special exception, the copyright holders give you permission to copy, "
+"modify, and distribute the example code contained in this documentation "
+"under the terms of your choosing, without restriction."
+msgstr "Као посебан изузетак, носиоци ауторских права вам дају дозволу да умножавате, мењате и расподељујете пример кода садржан у овој документацији под условима по вашем избору, без ограничења."

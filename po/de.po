@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2025-12-13 22:49+0000\n"
-"PO-Revision-Date: 2025-12-22 14:01+0100\n"
+"POT-Creation-Date: 2025-09-13 00:41+0000\n"
+"PO-Revision-Date: 2026-03-31 21:26+0200\n"
 "Last-Translator: Christian Kirbach <christian.kirbach@gmail.com>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "Language: de\n"
@@ -526,9 +526,10 @@ msgctxt "shortcut window"
 msgid "Quit"
 msgstr "Beenden"
 
+# Make Function Root is a feature used to refocus the callgraph on a specific function. When you select this option for a function, Sysprof regenerates the callgraph view so that the selected function becomes the new "root" of the hierarchy.
 #: src/sysprof/gtk/menus.ui:6
 msgid "Make Function Root"
-msgstr ""
+msgstr "Funktion zur neue Wurzel machen"
 
 #: src/sysprof/gtk/menus.ui:11 src/sysprof/sysprof-process-dialog.ui:520
 msgid "Options"
@@ -1136,7 +1137,6 @@ msgstr ""
 "Aufzeichnung symbolisiert werden"
 
 #: src/sysprof/sysprof-greeter.ui:561
-#| msgid "Debug"
 msgid "Debuginfod"
 msgstr "Debuginfod"
 

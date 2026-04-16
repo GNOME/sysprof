@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "POT-Creation-Date: 2026-04-02 12:02+0000\n"
-"PO-Revision-Date: 2026-04-16 16:50+0200\n"
+"PO-Revision-Date: 2026-04-16 16:52+0200\n"
 "Last-Translator: petervanco347-cell <petervanco347@gmail.com>\n"
 "Language-Team: Slovak <sk@li.org>\n"
 "Language: sk\n"
@@ -208,7 +208,7 @@ msgstr ""
 #. (itstool) path: section/title
 #: C/profiling.page:46
 msgid "Profile a new process"
-msgstr "Profilovať nový proces"
+msgstr "Profilovanie nového procesu"
 
 #. (itstool) path: section/p
 #: C/profiling.page:48

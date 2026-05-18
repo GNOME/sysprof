@@ -101,6 +101,8 @@ MappedRingBuffer *mapped_ring_buffer_new_writer         (int                    
 SYSPROF_INTERNAL
 int               mapped_ring_buffer_get_fd             (MappedRingBuffer         *self);
 SYSPROF_INTERNAL
+void              mapped_ring_buffer_close_fd           (MappedRingBuffer         *self);
+SYSPROF_INTERNAL
 MappedRingBuffer *mapped_ring_buffer_ref                (MappedRingBuffer         *self);
 SYSPROF_INTERNAL
 void              mapped_ring_buffer_unref              (MappedRingBuffer         *self);

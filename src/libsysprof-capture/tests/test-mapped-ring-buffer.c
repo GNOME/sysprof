@@ -47,6 +47,7 @@ test_basic_movements (void)
 
   writer = mapped_ring_buffer_new_writer (fd);
   g_assert_nonnull (writer);
+  g_assert_cmpint (mapped_ring_buffer_get_fd (writer), ==, -1);
 
   while ((ptr = mapped_ring_buffer_allocate (writer, sizeof *ptr)))
     {
@@ -157,6 +158,7 @@ test_threaded_movements (void)
 
   writer = mapped_ring_buffer_new_writer (fd);
   g_assert_nonnull (writer);
+  g_assert_cmpint (mapped_ring_buffer_get_fd (writer), ==, -1);
 
   thread1 = g_thread_new ("thread1-reader", threaded_reader, reader);
   thread2 = g_thread_new ("thread2-writer", threaded_writer, writer);
@@ -206,6 +208,7 @@ test_allocate_with_reserve (void)
 
   writer = mapped_ring_buffer_new_writer (fd);
   g_assert_nonnull (writer);
+  g_assert_cmpint (mapped_ring_buffer_get_fd (writer), ==, -1);
 
   while ((ptr = mapped_ring_buffer_allocate_with_reserve (writer, sizeof *ptr, sizeof *ptr)))
     {

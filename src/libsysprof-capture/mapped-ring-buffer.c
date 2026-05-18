@@ -57,8 +57,10 @@
 #include "config.h"
 
 #include <assert.h>
+#include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -249,7 +251,11 @@ mapped_ring_buffer_new_reader (size_t buffer_size)
 
   self = sysprof_malloc0 (sizeof (MappedRingBuffer));
   if (self == NULL)
-    return NULL;
+    {
+      munmap (map, page_size + ((buffer_size - page_size) * 2));
+      close (fd);
+      return NULL;
+    }
 
   self->ref_count = 1;
   self->mode = MODE_READER;
@@ -276,7 +282,8 @@ mapped_ring_buffer_new_readwrite (size_t buffer_size)
  * mapped_ring_buffer_new_writer:
  * @fd: a FD to map
  *
- * Creates a new #MappedRingBuffer using a copy of @fd.
+ * Creates a new #MappedRingBuffer using a copy of @fd. The copied fd is closed
+ * after mapping the ring buffer.
  *
  * The caller may close(fd) after calling this function regardless of
  * success creating the #MappedRingBuffer.
@@ -299,7 +306,10 @@ mapped_ring_buffer_new_writer (int fd)
   /* Make our own copy of the FD */
   if ((fd = dup (fd)) < 0)
     {
-      fprintf (stderr, "Failed to dup() fd, cannot continue\n");
+      fprintf (stderr,
+               "Failed to dup() ring buffer fd in pid %d: %s\n",
+               (int)getpid (),
+               strerror (errno));
       return NULL;
     }
 
@@ -362,10 +372,12 @@ mapped_ring_buffer_new_writer (int fd)
 
   self->ref_count = 1;
   self->mode = MODE_WRITER;
-  self->fd = fd;
+  self->fd = -1;
   self->body_size = buffer_size - page_size;
   self->map = map;
   self->page_size = page_size;
+
+  close (fd);
 
   return sysprof_steal_pointer (&self);
 }
@@ -415,6 +427,18 @@ mapped_ring_buffer_get_fd (MappedRingBuffer *self)
   assert (self != NULL);
 
   return self->fd;
+}
+
+void
+mapped_ring_buffer_close_fd (MappedRingBuffer *self)
+{
+  assert (self != NULL);
+
+  if (self->fd != -1)
+    {
+      close (self->fd);
+      self->fd = -1;
+    }
 }
 
 /**

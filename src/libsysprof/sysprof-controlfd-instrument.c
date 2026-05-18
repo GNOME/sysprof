@@ -250,6 +250,7 @@ sysprof_controlfd_instrument_record_fiber (gpointer user_data)
           g_array_append_val (state->source_ids, ring_data->id);
 
           g_unix_connection_send_fd (G_UNIX_CONNECTION (state->stream), fd, NULL, NULL);
+          mapped_ring_buffer_close_fd (ring_buffer);
         }
     }
 

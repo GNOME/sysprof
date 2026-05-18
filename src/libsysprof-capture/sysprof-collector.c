@@ -111,8 +111,21 @@ static pthread_mutex_t control_fd_lock = PTHREAD_MUTEX_INITIALIZER;
 static pthread_key_t collector_key;  /* initialised in sysprof_collector_init() */
 static pthread_key_t single_trace_key;  /* initialised in sysprof_collector_init() */
 static pthread_once_t collector_init = PTHREAD_ONCE_INIT;
+static int collector_disabled;
 static SysprofCollector *shared_collector;
 static SysprofCollector invalid;
+
+static inline bool
+collector_get_disabled (void)
+{
+  return __atomic_load_n (&collector_disabled, __ATOMIC_RELAXED) != 0;
+}
+
+static inline void
+collector_set_disabled (void)
+{
+  __atomic_store_n (&collector_disabled, 1, __ATOMIC_RELAXED);
+}
 
 static inline bool
 use_single_trace (void)
@@ -401,6 +414,9 @@ sysprof_collector_get (void)
 {
   const SysprofCollector *collector;
 
+  if SYSPROF_LIKELY (collector_get_disabled ())
+    return COLLECTOR_INVALID;
+
   sysprof_collector_init ();
   collector = pthread_getspecific (collector_key);
 
@@ -437,8 +453,16 @@ sysprof_collector_get (void)
 
     pthread_mutex_lock (&control_fd_lock);
 
+    if SYSPROF_UNLIKELY (collector_get_disabled ())
+      goto disabled;
+
     if (getenv ("SYSPROF_CONTROL_FD") != NULL)
       self->buffer = request_writer ();
+    else
+      {
+        collector_set_disabled ();
+        goto disabled;
+      }
 
     /* Update the stored collector */
     old_collector = pthread_getspecific (collector_key);
@@ -460,6 +484,12 @@ sysprof_collector_get (void)
     pthread_mutex_unlock (&control_fd_lock);
 
     return self;
+
+disabled:
+    pthread_mutex_unlock (&control_fd_lock);
+    sysprof_collector_free (self);
+
+    return COLLECTOR_INVALID;
 
 fail:
     pthread_mutex_unlock (&control_fd_lock);
@@ -926,6 +956,9 @@ sysprof_collector_is_active (void)
 {
   const SysprofCollector *collector;
 
+  if SYSPROF_LIKELY (collector_get_disabled ())
+    return false;
+
   sysprof_collector_init ();
 
   collector = pthread_getspecific (collector_key);
@@ -941,5 +974,10 @@ sysprof_collector_is_active (void)
       shared_collector != COLLECTOR_INVALID)
     return shared_collector->buffer != NULL;
 
-  return getenv ("SYSPROF_CONTROL_FD") != NULL;
+  if (getenv ("SYSPROF_CONTROL_FD") != NULL)
+    return true;
+
+  collector_set_disabled ();
+
+  return false;
 }

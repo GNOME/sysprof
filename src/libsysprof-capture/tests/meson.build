@@ -21,6 +21,7 @@ libsysprof_capture_testsuite = {
   'rewrite-pid'             : {'skip': true},
   'test-capture'            : {},
   'test-capture-cursor'     : {},
+  'test-collector'          : {},
   'test-cplusplus'          : {'cpp': true},
   'test-mapped-ring-buffer' : {},
 }

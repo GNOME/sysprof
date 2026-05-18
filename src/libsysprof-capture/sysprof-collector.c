@@ -924,11 +924,22 @@ sysprof_collector_request_counters (unsigned int n_counters)
 bool
 sysprof_collector_is_active (void)
 {
-  bool ret = false;
+  const SysprofCollector *collector;
 
-  COLLECTOR_BEGIN {
-    ret = true;
-  } COLLECTOR_END;
+  sysprof_collector_init ();
 
-  return ret;
+  collector = pthread_getspecific (collector_key);
+
+  if SYSPROF_UNLIKELY (collector == COLLECTOR_INVALID)
+    return false;
+
+  if (collector != NULL)
+    return collector->buffer != NULL;
+
+  if (use_single_trace () &&
+      shared_collector != NULL &&
+      shared_collector != COLLECTOR_INVALID)
+    return shared_collector->buffer != NULL;
+
+  return getenv ("SYSPROF_CONTROL_FD") != NULL;
 }

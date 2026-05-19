@@ -828,8 +828,12 @@ sysprof_document_load_processes (SysprofDocument *self)
           if (cmdline != NULL)
             {
               GRefString *nick = g_ref_string_acquire (process_info->fallback_symbol->binary_nick);
-              g_auto(GStrv) split = g_strsplit (cmdline, " ", 2);
-              const char *shared_name = split[0] ? split[0] : cmdline;
+              g_autofree char *shared_name_copy = NULL;
+              const char *space = strchr (cmdline, ' ');
+              const char *shared_name = cmdline;
+
+              if (space != NULL)
+                shared_name = shared_name_copy = g_strndup (cmdline, space - cmdline);
 
               g_clear_object (&process_info->symbol);
               process_info->symbol =
@@ -1129,7 +1133,14 @@ sysprof_document_update_process_exit_times (SysprofDocument *self)
 static void
 sysprof_document_load_cpu (SysprofDocument *self)
 {
-  const gsize model_len = strlen ("Model\t\t: ");
+  static const char processor_prefix[] = "processor\t: ";
+  static const char core_id_prefix[] = "core id\t\t: ";
+  static const char model_name_prefix[] = "model name\t: ";
+  static const char model_prefix[] = "Model\t\t: ";
+  const gsize processor_len = sizeof processor_prefix - 1;
+  const gsize core_id_len = sizeof core_id_prefix - 1;
+  const gsize model_name_len = sizeof model_name_prefix - 1;
+  const gsize model_len = sizeof model_prefix - 1;
   g_autoptr(SysprofDocumentFile) file = NULL;
   g_autoptr(GBytes) bytes = NULL;
   g_autoptr(SysprofCpuInfo) cpu_info = NULL;
@@ -1151,9 +1162,10 @@ sysprof_document_load_cpu (SysprofDocument *self)
   line_reader_init (&reader, (char *)str, len);
   while ((line = line_reader_next (&reader, &line_len)))
     {
-      if (g_str_has_prefix (line, "processor\t: "))
+      if (line_len > processor_len &&
+          memcmp (line, processor_prefix, processor_len) == 0)
         {
-          gint64 id = g_ascii_strtoll (line+strlen("processor\t: "), NULL, 10);
+          gint64 id = g_ascii_strtoll (line + processor_len, NULL, 10);
 
           if (cpu_info != NULL)
             g_list_store_append (self->cpu_info, cpu_info);
@@ -1165,25 +1177,29 @@ sysprof_document_load_cpu (SysprofDocument *self)
                                    NULL);
         }
 
-      if (g_str_has_prefix (line, "core id\t\t: "))
+      if (line_len > core_id_len &&
+          memcmp (line, core_id_prefix, core_id_len) == 0)
         {
-          gint64 core_id = g_ascii_strtoll (line+strlen("core id\t\t: "), NULL, 10);
+          gint64 core_id = g_ascii_strtoll (line + core_id_len, NULL, 10);
 
-          if (core_id > 0)
+          if (cpu_info != NULL && core_id > 0)
             _sysprof_cpu_info_set_core_id (cpu_info, core_id);
         }
 
-      if (g_str_has_prefix (line, "model name\t: "))
+      if (line_len > model_name_len &&
+          memcmp (line, model_name_prefix, model_name_len) == 0)
         {
-          const gsize model_name_len = strlen ("model name\t: ");
-          g_autofree char *model_name = g_strndup (line+model_name_len, line_len-model_name_len);
+          g_autofree char *model_name = g_strndup (line + model_name_len,
+                                                   line_len - model_name_len);
 
           if (cpu_info != NULL)
             _sysprof_cpu_info_set_model_name (cpu_info, model_name);
         }
 
-      if (!model && g_str_has_prefix (line, "Model\t\t: "))
-        model = g_strndup (line+model_len, line_len-model_len);
+      if (model == NULL &&
+          line_len > model_len &&
+          memcmp (line, model_prefix, model_len) == 0)
+        model = g_strndup (line + model_len, line_len - model_len);
     }
 
   if (cpu_info != NULL)

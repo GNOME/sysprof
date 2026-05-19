@@ -36,6 +36,36 @@
 
 #ifdef __linux__
 static gboolean
+parse_pid_dirname (const char *name,
+                   gint32     *pid)
+{
+  gint32 val = 0;
+
+  g_assert (name != NULL);
+  g_assert (pid != NULL);
+
+  if (!g_ascii_isdigit (*name))
+    return FALSE;
+
+  for (; g_ascii_isdigit (*name); name++)
+    {
+      gint32 digit = *name - '0';
+
+      if (val > (G_MAXINT - digit) / 10)
+        return FALSE;
+
+      val = val * 10 + digit;
+    }
+
+  if (*name != 0)
+    return FALSE;
+
+  *pid = val;
+
+  return TRUE;
+}
+
+static gboolean
 linux_list_processes (gint32 **processes,
                       gsize   *n_processes)
 {
@@ -50,17 +80,10 @@ linux_list_processes (gint32 **processes,
 
   while ((name = g_dir_read_name (dir)))
     {
-      if (g_ascii_isalnum (*name))
-        {
-          gchar *endptr = NULL;
-          gint64 val = g_ascii_strtoll (name, &endptr, 10);
+      gint32 pid;
 
-          if (endptr != NULL && *endptr == 0 && val < G_MAXINT && val >= 0)
-            {
-              gint32 v32 = val;
-              g_array_append_val (pids, v32);
-            }
-        }
+      if (parse_pid_dirname (name, &pid))
+        g_array_append_val (pids, pid);
     }
 
   *n_processes = pids->len;
@@ -450,10 +473,30 @@ needs_escape (const gchar *str)
 }
 
 static void
+append_shell_quoted (GString    *str,
+                     const char *arg)
+{
+  g_assert (str != NULL);
+  g_assert (arg != NULL);
+
+  g_string_append_c (str, '\'');
+
+  for (; *arg; arg++)
+    {
+      if (*arg == '\'')
+        g_string_append (str, "'\\''");
+      else
+        g_string_append_c (str, *arg);
+    }
+
+  g_string_append_c (str, '\'');
+}
+
+static void
 postprocess_cmdline (gchar **str,
                      gsize   len)
 {
-  g_autoptr(GPtrArray) parts = g_ptr_array_new_with_free_func (g_free);
+  g_autoptr(GString) out = NULL;
   g_autofree gchar *instr = NULL;
   const gchar *begin = NULL;
 
@@ -461,6 +504,7 @@ postprocess_cmdline (gchar **str,
     return;
 
   instr = *str;
+  out = g_string_sized_new (len);
 
   for (gsize i = 0; i < len; i++)
     {
@@ -470,10 +514,13 @@ postprocess_cmdline (gchar **str,
         }
       else if (begin && instr[i] == '\0')
         {
+          if (out->len > 0)
+            g_string_append_c (out, ' ');
+
           if (needs_escape (begin))
-            g_ptr_array_add (parts, g_shell_quote (begin));
+            append_shell_quoted (out, begin);
           else
-            g_ptr_array_add (parts, g_strdup (begin));
+            g_string_append (out, begin);
 
           begin = NULL;
         }
@@ -484,15 +531,16 @@ postprocess_cmdline (gchar **str,
    */
   if (begin)
     {
+      if (out->len > 0)
+        g_string_append_c (out, ' ');
+
       if (needs_escape (begin))
-        g_ptr_array_add (parts, g_shell_quote (begin));
+        append_shell_quoted (out, begin);
       else
-        g_ptr_array_add (parts, g_strdup (begin));
+        g_string_append (out, begin);
     }
 
-  g_ptr_array_add (parts, NULL);
-
-  *str = g_strjoinv (" ", (gchar **)parts->pdata);
+  *str = g_string_free (g_steal_pointer (&out), FALSE);
 }
 
 static void
@@ -508,7 +556,7 @@ add_pid_proc_file_to (gint          pid,
                       GVariantDict *dict,
                       void (*postprocess) (gchar **, gsize))
 {
-  g_autofree gchar *path = NULL;
+  char path[64];
   g_autofree gchar *contents = NULL;
   gsize len;
 
@@ -516,7 +564,7 @@ add_pid_proc_file_to (gint          pid,
   g_assert (name != NULL);
   g_assert (dict != NULL);
 
-  path = g_strdup_printf ("/proc/%d/%s", pid, name);
+  g_snprintf (path, sizeof path, "/proc/%d/%s", pid, name);
 
   if (g_file_get_contents (path, &contents, &len, NULL))
     {

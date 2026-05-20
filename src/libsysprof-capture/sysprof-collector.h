@@ -57,6 +57,7 @@
 #pragma once
 
 #include <stdarg.h>
+#include <stdbool.h>
 
 #include "sysprof-capture-types.h"
 #include "sysprof-macros.h"

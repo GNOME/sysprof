@@ -1,3 +1,8 @@
+Overview of changes in Sysprof 50.alpha
+=======================================
+
+ * Various optimizations to libsysprof-capture
+
 Overview of changes in Sysprof 50.0
 ===================================
 

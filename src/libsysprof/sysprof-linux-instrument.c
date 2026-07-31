@@ -223,6 +223,14 @@ add_process_info (SysprofLinuxInstrument *self,
       sysprof_capture_writer_add_process (writer, at_time, -1, pid,
                                           *cmdline ? cmdline : comm);
 
+      /* Notify other instruments about processes found in the initial
+       * snapshot. Runtime process discovery normally arrives through perf.
+       */
+      _sysprof_recording_follow_process (recording,
+                                         pid,
+                                         *cmdline ? cmdline : comm,
+                                         TRUE);
+
       /* Give the capture access to the mountinfo of that process to aid
        * in resolving symbols later on.
        */
@@ -414,7 +422,8 @@ static DexFuture *
 sysprof_linux_instrument_process_started (SysprofInstrument *instrument,
                                           SysprofRecording  *recording,
                                           int                pid,
-                                          const char        *comm)
+                                          const char        *comm,
+                                          gboolean           is_initial)
 {
   SysprofLinuxInstrument *self = (SysprofLinuxInstrument *)instrument;
   g_autoptr(GDBusConnection) bus = NULL;

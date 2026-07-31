@@ -86,32 +86,33 @@ struct _SysprofRecording
   guint use_sysprofd : 1;
 };
 
-SysprofRecording     *_sysprof_recording_new           (SysprofCaptureWriter  *writer,
-                                                        SysprofSpawnable      *spawnable,
-                                                        SysprofInstrument    **instruments,
-                                                        guint                  n_instruments,
-                                                        gboolean               use_sysprofd);
-void                  _sysprof_recording_start         (SysprofRecording      *self);
-SysprofSpawnable     *_sysprof_recording_get_spawnable (SysprofRecording      *self);
-DexFuture            *_sysprof_recording_add_file      (SysprofRecording      *self,
-                                                        const char            *path,
-                                                        gboolean               compress);
-void                  _sysprof_recording_add_file_data (SysprofRecording      *self,
-                                                        const char            *path,
-                                                        const char            *contents,
-                                                        gssize                 length,
-                                                        gboolean               compress);
-void                  _sysprof_recording_follow_process(SysprofRecording      *self,
-                                                        int                    pid,
-                                                        const char            *comm);
-void                  _sysprof_recording_diagnostic    (SysprofRecording      *self,
-                                                        const char            *domain,
-                                                        const char            *format,
-                                                        ...) G_GNUC_PRINTF (3, 4);
-void                  _sysprof_recording_error         (SysprofRecording      *self,
-                                                        const char            *domain,
-                                                        const char            *format,
-                                                        ...) G_GNUC_PRINTF (3, 4);
+SysprofRecording *_sysprof_recording_new            (SysprofCaptureWriter  *writer,
+                                                     SysprofSpawnable      *spawnable,
+                                                     SysprofInstrument    **instruments,
+                                                     guint                  n_instruments,
+                                                     gboolean               use_sysprofd);
+void              _sysprof_recording_start          (SysprofRecording      *self);
+SysprofSpawnable *_sysprof_recording_get_spawnable  (SysprofRecording      *self);
+DexFuture        *_sysprof_recording_add_file       (SysprofRecording      *self,
+                                                     const char            *path,
+                                                     gboolean               compress);
+void              _sysprof_recording_add_file_data  (SysprofRecording      *self,
+                                                     const char            *path,
+                                                     const char            *contents,
+                                                     gssize                 length,
+                                                     gboolean               compress);
+void              _sysprof_recording_follow_process (SysprofRecording      *self,
+                                                     int                    pid,
+                                                     const char            *comm,
+                                                     gboolean               is_initial);
+void              _sysprof_recording_diagnostic     (SysprofRecording      *self,
+                                                     const char            *domain,
+                                                     const char            *format,
+                                                     ...) G_GNUC_PRINTF (3, 4);
+void              _sysprof_recording_error          (SysprofRecording      *self,
+                                                     const char            *domain,
+                                                     const char            *format,
+                                                     ...) G_GNUC_PRINTF (3, 4);
 
 static inline SysprofCaptureWriter *
 _sysprof_recording_writer (const SysprofRecording *self)

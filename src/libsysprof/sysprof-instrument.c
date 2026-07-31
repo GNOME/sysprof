@@ -127,13 +127,18 @@ static DexFuture *
 _sysprof_instrument_process_started (SysprofInstrument *self,
                                      SysprofRecording  *recording,
                                      int                pid,
-                                     const char        *comm)
+                                     const char        *comm,
+                                     gboolean           is_initial)
 {
   g_assert (SYSPROF_IS_INSTRUMENT (self));
   g_assert (SYSPROF_IS_RECORDING (recording));
 
   if (SYSPROF_INSTRUMENT_GET_CLASS (self)->process_started)
-    return SYSPROF_INSTRUMENT_GET_CLASS (self)->process_started (self, recording, pid, comm);
+    return SYSPROF_INSTRUMENT_GET_CLASS (self)->process_started (self,
+                                                                 recording,
+                                                                 pid,
+                                                                 comm,
+                                                                 is_initial);
 
   return dex_future_new_for_boolean (TRUE);
 }
@@ -289,7 +294,8 @@ DexFuture *
 _sysprof_instruments_process_started (GPtrArray        *instruments,
                                       SysprofRecording *recording,
                                       int               pid,
-                                      const char       *comm)
+                                      const char       *comm,
+                                      gboolean          is_initial)
 {
   g_autoptr(GPtrArray) futures = NULL;
 
@@ -302,7 +308,11 @@ _sysprof_instruments_process_started (GPtrArray        *instruments,
     {
       SysprofInstrument *instrument = g_ptr_array_index (instruments, i);
 
-      g_ptr_array_add (futures, _sysprof_instrument_process_started (instrument, recording, pid, comm));
+      g_ptr_array_add (futures, _sysprof_instrument_process_started (instrument,
+                                                                     recording,
+                                                                     pid,
+                                                                     comm,
+                                                                     is_initial));
     }
 
   if (futures->len == 0)

@@ -51,7 +51,8 @@ struct _SysprofInstrumentClass
   DexFuture  *(*process_started)      (SysprofInstrument *self,
                                        SysprofRecording  *recording,
                                        int                pid,
-                                       const char        *comm);
+                                       const char        *comm,
+                                       gboolean           is_initial);
 };
 
 void       _sysprof_instruments_set_connection  (GPtrArray        *instruments,
@@ -68,6 +69,7 @@ DexFuture *_sysprof_instruments_augment         (GPtrArray        *instruments,
 DexFuture *_sysprof_instruments_process_started (GPtrArray        *instruments,
                                                  SysprofRecording *recording,
                                                  int               pid,
-                                                 const char       *comm);
+                                                 const char       *comm,
+                                                 gboolean          is_initial);
 
 G_END_DECLS

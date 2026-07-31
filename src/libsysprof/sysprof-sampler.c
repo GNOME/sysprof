@@ -194,7 +194,8 @@ sysprof_sampler_perf_event_stream_cb (const SysprofPerfEvent *event,
 
           _sysprof_recording_follow_process (recording,
                                              event->comm.pid,
-                                             event->comm.comm);
+                                             event->comm.comm,
+                                             FALSE);
         }
 
       break;

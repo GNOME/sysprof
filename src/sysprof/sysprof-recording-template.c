@@ -54,6 +54,7 @@ struct _SysprofRecordingTemplate
   guint memory_usage : 1;
   guint native_stacks : 1;
   guint network_usage : 1;
+  guint python_stacks : 1;
   guint scheduler_details : 1;
   guint session_bus : 1;
   guint system_bus : 1;
@@ -83,6 +84,7 @@ enum {
   PROP_NATIVE_STACKS,
   PROP_NETWORK_USAGE,
   PROP_POWER_PROFILE,
+  PROP_PYTHON_STACKS,
   PROP_SCHEDULER_DETAILS,
   PROP_SESSION_BUS,
   PROP_STACK_SIZE,
@@ -198,6 +200,10 @@ sysprof_recording_template_get_property (GObject    *object,
 
     case PROP_POWER_PROFILE:
       g_value_set_string (value, self->power_profile);
+      break;
+
+    case PROP_PYTHON_STACKS:
+      g_value_set_boolean (value, self->python_stacks);
       break;
 
     case PROP_SCHEDULER_DETAILS:
@@ -319,6 +325,10 @@ sysprof_recording_template_set_property (GObject      *object,
 
     case PROP_POWER_PROFILE:
       g_set_str (&self->power_profile, g_value_get_string (value));
+      break;
+
+    case PROP_PYTHON_STACKS:
+      self->python_stacks = g_value_get_boolean (value);
       break;
 
     case PROP_SCHEDULER_DETAILS:
@@ -458,6 +468,11 @@ sysprof_recording_template_class_init (SysprofRecordingTemplateClass *klass)
     g_param_spec_string ("power-profile", NULL, NULL,
                          NULL,
                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_PYTHON_STACKS] =
+    g_param_spec_boolean ("python-stacks", NULL, NULL,
+                          FALSE,
+                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   properties[PROP_SCHEDULER_DETAILS] =
     g_param_spec_boolean ("scheduler-details", NULL, NULL,
@@ -633,7 +648,13 @@ sysprof_recording_template_apply (SysprofRecordingTemplate  *self,
           sysprof_spawnable_setenv (spawnable, "GJS_ENABLE_PROFILER", "1");
           add_trace_fd (profiler, spawnable, "GJS_TRACE_FD");
         }
+
+      if (self->python_stacks)
+        sysprof_spawnable_setenv (spawnable, "PYTHONPERFSUPPORT", "1");
     }
+
+  if (self->python_stacks)
+    sysprof_profiler_add_instrument (profiler, sysprof_perf_map_new ());
 
   if (self->power_profile && self->power_profile[0])
     sysprof_profiler_add_instrument (profiler, sysprof_power_profile_new (self->power_profile));
@@ -804,6 +825,7 @@ sysprof_recording_template_setup_loader (SysprofRecordingTemplate *self,
   /* Add in order of priority */
   sysprof_multi_symbolizer_take (multi, sysprof_bundled_symbolizer_new ());
   sysprof_multi_symbolizer_take (multi, sysprof_kallsyms_symbolizer_new ());
+  sysprof_multi_symbolizer_take (multi, sysprof_perf_map_symbolizer_new ());
   sysprof_multi_symbolizer_take (multi, SYSPROF_SYMBOLIZER (g_steal_pointer (&elf)));
   sysprof_multi_symbolizer_take (multi, sysprof_jitmap_symbolizer_new ());
 

@@ -141,8 +141,15 @@
                               </object>
                             </child>
                             <child>
+                              <object class="AdwSwitchRow" id="sample_python_stacks">
+                                <property name="title" translatable="yes">Sample Python Stacks</property>
+                                <property name="subtitle" translatable="yes">Include Python function names in sampled stack traces</property>
+                                <property name="active" bind-source="recording_template" bind-flags="bidirectional|sync-create" bind-property="python-stacks"/>
+                              </object>
+                            </child>
+                            <child>
                               <object class="GtkLabel">
-                                <property name="label" translatable="yes">Sysprof must launch your application to record JavaScript stacks using GJS.</property>
+                                <property name="label" translatable="yes">Sysprof must launch your application to enable JavaScript or Python stack recording.</property>
                                 <property name="xalign">0</property>
                                 <property name="margin-top">8</property>
                                 <style>

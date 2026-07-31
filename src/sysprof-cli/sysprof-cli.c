@@ -305,6 +305,7 @@ main (int   argc,
   gboolean rapl = FALSE;
   gboolean memprof = FALSE;
   gboolean merge = FALSE;
+  gboolean python = FALSE;
   gboolean speedtrack = FALSE;
   gboolean scheduler_details = FALSE;
   gboolean system_bus = FALSE;
@@ -333,6 +334,7 @@ main (int   argc,
     { "session-bus", 0, 0, G_OPTION_ARG_NONE, &session_bus, N_("Profile the D-Bus session bus") },
     { "system-bus", 0, 0, G_OPTION_ARG_NONE, &system_bus, N_("Profile the D-Bus system bus") },
     { "gjs", 0, 0, G_OPTION_ARG_NONE, &gjs, N_("Set GJS_TRACE_FD environment to trace GJS processes") },
+    { "python", 0, 0, G_OPTION_ARG_NONE, &python, N_("Enable and collect Python perf-map symbols") },
     { "gtk", 0, 0, G_OPTION_ARG_NONE, &gtk, N_("Set GTK_TRACE_FD environment to trace a GTK application") },
     { "rapl", 0, 0, G_OPTION_ARG_NONE, &rapl, N_("Include RAPL energy statistics") },
     { "memprof", 0, 0, G_OPTION_ARG_NONE, &memprof, N_("Profile memory allocations and frees") },
@@ -537,6 +539,9 @@ Examples:\n\
           add_trace_fd (profiler, spawnable, "GJS_TRACE_FD");
         }
 
+      if (python)
+        sysprof_spawnable_setenv (spawnable, "PYTHONPERFSUPPORT", "1");
+
       if (use_trace_fd)
         add_trace_fd (profiler, spawnable, NULL);
 
@@ -556,6 +561,9 @@ Examples:\n\
       else
         sysprof_profiler_add_instrument (profiler, sysprof_user_sampler_new (stack_size));
     }
+
+  if (python)
+    sysprof_profiler_add_instrument (profiler, sysprof_perf_map_new ());
 
   if (!no_disk)
     sysprof_profiler_add_instrument (profiler, sysprof_disk_usage_new ());

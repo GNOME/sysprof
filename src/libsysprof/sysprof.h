@@ -74,6 +74,7 @@ G_BEGIN_DECLS
 # include "sysprof-network-usage.h"
 # include "sysprof-no-symbolizer.h"
 # include "sysprof-power-profile.h"
+# include "sysprof-perf-map.h"
 # include "sysprof-perf-map-symbolizer.h"
 # include "sysprof-profiler.h"
 # include "sysprof-proxied-instrument.h"

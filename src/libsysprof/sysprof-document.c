@@ -61,6 +61,12 @@
 
 #define MAX_STACK_DEPTH 128
 
+typedef struct _EmbeddedFile
+{
+  char *stored_path;
+  guint first_position;
+} EmbeddedFile;
+
 struct _SysprofDocument
 {
   GObject                   parent_instance;
@@ -98,7 +104,7 @@ struct _SysprofDocument
   EggBitset                *samples_with_context_switch;
   EggBitset                *traceables;
 
-  GHashTable               *files_first_position;
+  GHashTable               *files_last_complete;
   GHashTable               *pid_to_process_info;
   GHashTable               *tid_to_symbol;
   GHashTable               *mark_groups;
@@ -352,6 +358,26 @@ has_null_byte (const char *str,
 }
 
 static void
+embedded_file_free (gpointer data)
+{
+  EmbeddedFile *file = data;
+
+  g_clear_pointer (&file->stored_path, g_free);
+  g_free (file);
+}
+
+static char *
+canonicalize_embedded_file_path (const char *path)
+{
+  g_assert (path != NULL);
+
+  if (g_str_has_suffix (path, ".gz"))
+    return g_strndup (path, strlen (path) - 3);
+
+  return g_strdup (path);
+}
+
+static void
 sysprof_document_finalize (GObject *object)
 {
   SysprofDocument *self = (SysprofDocument *)object;
@@ -392,7 +418,7 @@ sysprof_document_finalize (GObject *object)
   g_clear_object (&self->mount_namespace);
   g_clear_object (&self->symbols);
 
-  g_clear_pointer (&self->files_first_position, g_hash_table_unref);
+  g_clear_pointer (&self->files_last_complete, g_hash_table_unref);
 
   G_OBJECT_CLASS (sysprof_document_parent_class)->finalize (object);
 }
@@ -591,7 +617,10 @@ sysprof_document_init (SysprofDocument *self)
   self->samples_with_context_switch = egg_bitset_new_empty ();
   self->traceables = egg_bitset_new_empty ();
 
-  self->files_first_position = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+  self->files_last_complete = g_hash_table_new_full (g_str_hash,
+                                                     g_str_equal,
+                                                     g_free,
+                                                     embedded_file_free);
   self->pid_to_process_info = g_hash_table_new_full (NULL, NULL, NULL, (GDestroyNotify)sysprof_process_info_unref);
   self->tid_to_symbol = g_hash_table_new_full (NULL, NULL, NULL, (GDestroyNotify)g_object_unref);
   self->mark_groups = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (GDestroyNotify)g_hash_table_unref);
@@ -1236,6 +1265,7 @@ sysprof_document_load_worker (GTask        *task,
   g_assert (load != NULL);
 
   self = g_object_new (SYSPROF_TYPE_DOCUMENT, NULL);
+  files = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
   self->mapped_file = g_mapped_file_ref (load->mapped_file);
   self->base = (const guint8 *)g_mapped_file_get_contents (load->mapped_file);
   len = g_mapped_file_get_length (load->mapped_file);
@@ -1396,11 +1426,34 @@ sysprof_document_load_worker (GTask        *task,
         {
           const SysprofCaptureFileChunk *file_chunk = (const SysprofCaptureFileChunk *)tainted;
 
-          if (has_null_byte (file_chunk->path, (const char *)file_chunk->data) &&
-              !g_hash_table_contains (self->files_first_position, file_chunk->path))
-            g_hash_table_insert (self->files_first_position,
-                                 g_strdup (file_chunk->path),
-                                 GUINT_TO_POINTER (f));
+          if (has_null_byte (file_chunk->path, (const char *)file_chunk->data))
+            {
+              gpointer first_position;
+
+              if (!g_hash_table_contains (files, file_chunk->path))
+                g_hash_table_insert (files,
+                                     g_strdup (file_chunk->path),
+                                     GUINT_TO_POINTER (f + 1));
+
+              if (file_chunk->is_last &&
+                  g_hash_table_lookup_extended (files,
+                                                file_chunk->path,
+                                                NULL,
+                                                &first_position))
+                {
+                  g_autofree char *logical_path = NULL;
+                  EmbeddedFile *file = g_new0 (EmbeddedFile, 1);
+
+                  logical_path = canonicalize_embedded_file_path (file_chunk->path);
+                  file->stored_path = g_strdup (file_chunk->path);
+                  file->first_position = GPOINTER_TO_UINT (first_position) - 1;
+
+                  g_hash_table_replace (self->files_last_complete,
+                                        g_steal_pointer (&logical_path),
+                                        file);
+                  g_hash_table_remove (files, file_chunk->path);
+                }
+            }
         }
       else if (tainted->type == SYSPROF_CAPTURE_FRAME_SAMPLE)
         {
@@ -1709,30 +1762,28 @@ SysprofDocumentFile *
 sysprof_document_lookup_file (SysprofDocument *self,
                               const char      *path)
 {
-  g_autofree char *gz_path = NULL;
-  gpointer key, value;
+  g_autofree char *logical_path = NULL;
+  EmbeddedFile *file;
 
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
   g_return_val_if_fail (path != NULL, NULL);
 
-  gz_path = g_strdup_printf ("%s.gz", path);
+  logical_path = canonicalize_embedded_file_path (path);
 
-  if (g_hash_table_lookup_extended (self->files_first_position, path, &key, &value) ||
-      g_hash_table_lookup_extended (self->files_first_position, gz_path, &key, &value))
+  if ((file = g_hash_table_lookup (self->files_last_complete, logical_path)))
     {
       g_autoptr(GPtrArray) file_chunks = g_ptr_array_new_with_free_func (g_object_unref);
-      const char *real_path = key;
       EggBitsetIter iter;
-      guint target = GPOINTER_TO_SIZE (value);
       guint i;
 
-      if (egg_bitset_iter_init_at (&iter, self->file_chunks, target, &i))
+      if (egg_bitset_iter_init_at (&iter, self->file_chunks, file->first_position, &i))
         {
           do
             {
               g_autoptr(SysprofDocumentFileChunk) file_chunk = sysprof_document_get_item ((GListModel *)self, i);
 
-              if (g_strcmp0 (real_path, sysprof_document_file_chunk_get_path (file_chunk)) == 0)
+              if (g_strcmp0 (file->stored_path,
+                             sysprof_document_file_chunk_get_path (file_chunk)) == 0)
                 {
                   gboolean is_last = sysprof_document_file_chunk_get_is_last (file_chunk);
 
@@ -1745,9 +1796,9 @@ sysprof_document_lookup_file (SysprofDocument *self,
           while (egg_bitset_iter_next (&iter, &i));
         }
 
-      return _sysprof_document_file_new (path,
+      return _sysprof_document_file_new (logical_path,
                                          g_steal_pointer (&file_chunks),
-                                         g_strcmp0 (real_path, gz_path) == 0);
+                                         g_str_has_suffix (file->stored_path, ".gz"));
     }
 
   return NULL;
@@ -1773,23 +1824,23 @@ sysprof_document_list_files (SysprofDocument *self)
 
   model = g_list_store_new (SYSPROF_TYPE_DOCUMENT_FILE);
 
-  g_hash_table_iter_init (&hiter, self->files_first_position);
+  g_hash_table_iter_init (&hiter, self->files_last_complete);
   while (g_hash_table_iter_next (&hiter, &key, &value))
     {
       g_autoptr(SysprofDocumentFile) file = NULL;
       g_autoptr(GPtrArray) file_chunks = g_ptr_array_new_with_free_func (g_object_unref);
-      g_autofree char *no_gz_path = NULL;
       const char *path = key;
-      guint target = GPOINTER_TO_SIZE (value);
+      EmbeddedFile *embedded_file = value;
       guint i;
 
-      if (egg_bitset_iter_init_at (&iter, self->file_chunks, target, &i))
+      if (egg_bitset_iter_init_at (&iter, self->file_chunks, embedded_file->first_position, &i))
         {
           do
             {
               g_autoptr(SysprofDocumentFileChunk) file_chunk = sysprof_document_get_item ((GListModel *)self, i);
 
-              if (g_strcmp0 (path, sysprof_document_file_chunk_get_path (file_chunk)) == 0)
+              if (g_strcmp0 (embedded_file->stored_path,
+                             sysprof_document_file_chunk_get_path (file_chunk)) == 0)
                 {
                   gboolean is_last = sysprof_document_file_chunk_get_is_last (file_chunk);
 
@@ -1802,12 +1853,9 @@ sysprof_document_list_files (SysprofDocument *self)
           while (egg_bitset_iter_next (&iter, &i));
         }
 
-      if (g_str_has_suffix (path, ".gz"))
-        path = no_gz_path = g_strndup (path, strlen (path) - 3);
-
       file = _sysprof_document_file_new (path,
                                          g_steal_pointer (&file_chunks),
-                                         no_gz_path != NULL);
+                                         g_str_has_suffix (embedded_file->stored_path, ".gz"));
 
       g_list_store_append (model, file);
     }

@@ -35,6 +35,7 @@
 #include "sysprof-jitmap-symbolizer.h"
 #include "sysprof-kallsyms-symbolizer.h"
 #include "sysprof-multi-symbolizer.h"
+#include "sysprof-perf-map-symbolizer.h"
 #include "sysprof-symbolizer-private.h"
 
 struct _SysprofDocumentLoader
@@ -205,6 +206,7 @@ set_default_symbolizer (SysprofDocumentLoader *self)
   multi = sysprof_multi_symbolizer_new ();
   sysprof_multi_symbolizer_take (multi, sysprof_bundled_symbolizer_new ());
   sysprof_multi_symbolizer_take (multi, sysprof_kallsyms_symbolizer_new ());
+  sysprof_multi_symbolizer_take (multi, sysprof_perf_map_symbolizer_new ());
   sysprof_multi_symbolizer_take (multi, sysprof_elf_symbolizer_new ());
   sysprof_multi_symbolizer_take (multi, sysprof_jitmap_symbolizer_new ());
 

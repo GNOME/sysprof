@@ -94,6 +94,7 @@ sysprof_symbols_bundle_augment_fiber (gpointer user_data)
   g_assert (SYSPROF_IS_DOCUMENT_LOADER (loader));
 
   multi = sysprof_multi_symbolizer_new ();
+  sysprof_multi_symbolizer_take (multi, sysprof_perf_map_symbolizer_new ());
   sysprof_multi_symbolizer_take (multi, sysprof_elf_symbolizer_new ());
 
   if (augment->enable_debuginfod)

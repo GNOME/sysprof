@@ -45,6 +45,7 @@ typedef struct _OpenMap
   SysprofPerfMap *self;
   SysprofRecording *recording;
   GDBusConnection *connection;
+  guint64 generation;
   int pid;
   guint is_initial : 1;
   guint allow_privileged : 1;
@@ -65,6 +66,7 @@ struct _SysprofPerfMap
   GHashTable *seen;
   GPtrArray *pending;
   GMutex mutex;
+  guint64 next_generation;
   guint stopping : 1;
 };
 
@@ -124,6 +126,38 @@ record_free (gpointer data)
   g_clear_object (&record->recording);
   dex_clear (&record->cancellable);
   g_free (record);
+}
+
+static gboolean
+has_generation (SysprofPerfMap *self,
+                int             pid,
+                guint64         generation)
+{
+  const guint64 *current;
+
+  g_assert (SYSPROF_IS_PERF_MAP (self));
+  g_assert (pid > 0);
+  g_assert (generation > 0);
+
+  current = g_hash_table_lookup (self->seen, GINT_TO_POINTER (pid));
+
+  return current != NULL && *current == generation;
+}
+
+static DexFuture *
+open_map_completed_cb (DexFuture *completed,
+                       gpointer   user_data)
+{
+  SysprofPerfMap *self = user_data;
+
+  g_assert (DEX_IS_FUTURE (completed));
+  g_assert (SYSPROF_IS_PERF_MAP (self));
+
+  g_mutex_lock (&self->mutex);
+  g_ptr_array_remove (self->pending, completed);
+  g_mutex_unlock (&self->mutex);
+
+  return NULL;
 }
 
 static int
@@ -352,19 +386,25 @@ sysprof_perf_map_open_fiber (gpointer user_data)
 
   if (file != NULL)
     {
-      snapshot_file (open_map->recording, file);
+      PerfMapFile *copy = NULL;
 
       g_mutex_lock (&open_map->self->mutex);
-      if (!g_hash_table_contains (open_map->self->files,
+      if (has_generation (open_map->self, open_map->pid, open_map->generation) &&
+          !g_hash_table_contains (open_map->self->files,
                                   GINT_TO_POINTER (open_map->pid)))
         {
           g_hash_table_insert (open_map->self->files,
                                GINT_TO_POINTER (open_map->pid),
                                file);
+          copy = perf_map_file_dup (file);
           file = NULL;
         }
       g_mutex_unlock (&open_map->self->mutex);
 
+      if (copy != NULL)
+        snapshot_file (open_map->recording, copy);
+
+      g_clear_pointer (&copy, perf_map_file_free);
       g_clear_pointer (&file, perf_map_file_free);
     }
   else
@@ -373,7 +413,8 @@ sysprof_perf_map_open_fiber (gpointer user_data)
        * fork notification raced with exec or Python initialization.
        */
       g_mutex_lock (&open_map->self->mutex);
-      g_hash_table_remove (open_map->self->seen, GINT_TO_POINTER (open_map->pid));
+      if (has_generation (open_map->self, open_map->pid, open_map->generation))
+        g_hash_table_remove (open_map->self->seen, GINT_TO_POINTER (open_map->pid));
       g_mutex_unlock (&open_map->self->mutex);
     }
 
@@ -454,8 +495,10 @@ sysprof_perf_map_process_started (SysprofInstrument *instrument,
                                   gboolean           is_initial)
 {
   SysprofPerfMap *self = (SysprofPerfMap *)instrument;
+  DexFuture *open_future;
   DexFuture *future;
   OpenMap *open_map;
+  guint64 *generation;
 
   g_assert (SYSPROF_IS_PERF_MAP (self));
   g_assert (SYSPROF_IS_RECORDING (recording));
@@ -468,26 +511,60 @@ sysprof_perf_map_process_started (SysprofInstrument *instrument,
       g_mutex_unlock (&self->mutex);
       return dex_future_new_for_boolean (TRUE);
     }
-  g_hash_table_add (self->seen, GINT_TO_POINTER (pid));
+  generation = g_new (guint64, 1);
+  *generation = ++self->next_generation;
+  g_hash_table_insert (self->seen, GINT_TO_POINTER (pid), generation);
 
   open_map = g_new0 (OpenMap, 1);
   open_map->self = g_object_ref (self);
   open_map->recording = g_object_ref (recording);
   open_map->connection = self->connection ? g_object_ref (self->connection) : NULL;
+  open_map->generation = *generation;
   open_map->pid = pid;
   open_map->is_initial = !!is_initial;
   open_map->allow_privileged = looks_like_python (comm);
 
-  future = dex_scheduler_spawn (NULL,
-                                0,
-                                sysprof_perf_map_open_fiber,
-                                open_map,
-                                open_map_free);
+  open_future = dex_scheduler_spawn (NULL,
+                                     0,
+                                     sysprof_perf_map_open_fiber,
+                                     open_map,
+                                     open_map_free);
 
-  g_ptr_array_add (self->pending, dex_ref (future));
+  g_ptr_array_add (self->pending, dex_ref (open_future));
   g_mutex_unlock (&self->mutex);
 
+  future = dex_future_finally (open_future,
+                               open_map_completed_cb,
+                               g_object_ref (self),
+                               g_object_unref);
+
   return future;
+}
+
+static void
+sysprof_perf_map_process_exited (SysprofInstrument *instrument,
+                                 SysprofRecording  *recording,
+                                 int                pid)
+{
+  SysprofPerfMap *self = (SysprofPerfMap *)instrument;
+  PerfMapFile *file = NULL;
+
+  g_assert (SYSPROF_IS_PERF_MAP (self));
+  g_assert (SYSPROF_IS_RECORDING (recording));
+  g_assert (pid > 0);
+
+  g_mutex_lock (&self->mutex);
+  g_hash_table_remove (self->seen, GINT_TO_POINTER (pid));
+  g_hash_table_steal_extended (self->files,
+                               GINT_TO_POINTER (pid),
+                               NULL,
+                               (gpointer *)&file);
+  g_mutex_unlock (&self->mutex);
+
+  if (file != NULL)
+    snapshot_file (recording, file);
+
+  g_clear_pointer (&file, perf_map_file_free);
 }
 
 static DexFuture *
@@ -549,6 +626,7 @@ sysprof_perf_map_class_init (SysprofPerfMapClass *klass)
   instrument_class->list_required_policy = sysprof_perf_map_list_required_policy;
   instrument_class->set_connection = sysprof_perf_map_set_connection;
   instrument_class->process_started = sysprof_perf_map_process_started;
+  instrument_class->process_exited = sysprof_perf_map_process_exited;
   instrument_class->record = sysprof_perf_map_record;
 }
 
@@ -557,7 +635,7 @@ sysprof_perf_map_init (SysprofPerfMap *self)
 {
   g_mutex_init (&self->mutex);
   self->files = g_hash_table_new_full (NULL, NULL, NULL, perf_map_file_free);
-  self->seen = g_hash_table_new (NULL, NULL);
+  self->seen = g_hash_table_new_full (NULL, NULL, NULL, g_free);
   self->pending = g_ptr_array_new_with_free_func (dex_unref);
 }
 

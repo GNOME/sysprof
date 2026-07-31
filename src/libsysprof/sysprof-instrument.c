@@ -322,6 +322,24 @@ _sysprof_instruments_process_started (GPtrArray        *instruments,
 }
 
 void
+_sysprof_instruments_process_exited (GPtrArray        *instruments,
+                                     SysprofRecording *recording,
+                                     int               pid)
+{
+  g_return_if_fail (instruments != NULL);
+  g_return_if_fail (SYSPROF_IS_RECORDING (recording));
+  g_return_if_fail (pid > 0);
+
+  for (guint i = 0; i < instruments->len; i++)
+    {
+      SysprofInstrument *instrument = g_ptr_array_index (instruments, i);
+
+      if (SYSPROF_INSTRUMENT_GET_CLASS (instrument)->process_exited)
+        SYSPROF_INSTRUMENT_GET_CLASS (instrument)->process_exited (instrument, recording, pid);
+    }
+}
+
+void
 _sysprof_instruments_set_connection (GPtrArray       *instruments,
                                      GDBusConnection *connection)
 {

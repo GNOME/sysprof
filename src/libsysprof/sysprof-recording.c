@@ -933,3 +933,13 @@ _sysprof_recording_follow_process (SysprofRecording *self,
                                                            comm,
                                                            is_initial));
 }
+
+void
+_sysprof_recording_process_exited (SysprofRecording *self,
+                                   int               pid)
+{
+  g_return_if_fail (SYSPROF_IS_RECORDING (self));
+  g_return_if_fail (pid > 0);
+
+  _sysprof_instruments_process_exited (self->instruments, self, pid);
+}

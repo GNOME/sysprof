@@ -210,6 +210,8 @@ sysprof_sampler_perf_event_stream_cb (const SysprofPerfEvent *event,
                                        cpu,
                                        event->exit.pid);
 
+      _sysprof_recording_process_exited (recording, event->exit.pid);
+
       break;
 
     case PERF_RECORD_FORK:

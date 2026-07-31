@@ -105,6 +105,8 @@ void              _sysprof_recording_follow_process (SysprofRecording      *self
                                                      int                    pid,
                                                      const char            *comm,
                                                      gboolean               is_initial);
+void              _sysprof_recording_process_exited (SysprofRecording      *self,
+                                                     int                    pid);
 void              _sysprof_recording_diagnostic     (SysprofRecording      *self,
                                                      const char            *domain,
                                                      const char            *format,

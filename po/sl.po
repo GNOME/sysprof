@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
 "POT-Creation-Date: 2026-03-18 15:56+0000\n"
-"PO-Revision-Date: 2026-07-31 23:10+0200\n"
+"PO-Revision-Date: 2026-07-31 23:12+0200\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
@@ -104,7 +104,6 @@ msgid "optimizing"
 msgstr "optimizacija"
 
 #: data/org.gnome.Sysprof.metainfo.xml.in.in:33
-#, fuzzy
 msgid "auditing"
 msgstr "preverjanje"
 
@@ -201,9 +200,8 @@ msgid "graphics"
 msgstr "grafika"
 
 #: data/org.gnome.Sysprof.metainfo.xml.in.in:60
-#, fuzzy
 msgid "frames timing"
-msgstr "časovna usklajenost"
+msgstr "časovno usklajevanje dogodkov"
 
 #: data/org.gnome.Sysprof.metainfo.xml.in.in:61
 msgid "system logs"

@@ -1114,6 +1114,376 @@ sort_by_time_swapped (gconstpointer a,
   return 0;
 }
 
+typedef struct _FrameScan
+{
+  const guint8 *base;
+  GArray *frames;
+  GCancellable *cancellable;
+  gsize begin;
+  gsize end;
+  guint needs_swap : 1;
+  guint valid : 1;
+} FrameScan;
+
+static void
+frame_scan_free (FrameScan *scan)
+{
+  g_clear_pointer (&scan->frames, g_array_unref);
+  g_clear_object (&scan->cancellable);
+  g_free (scan);
+}
+
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (FrameScan, frame_scan_free)
+
+static FrameScan *
+frame_scan_new (const guint8 *base,
+                gsize         begin,
+                gsize         end,
+                gboolean      needs_swap,
+                GCancellable *cancellable)
+{
+  FrameScan *scan;
+
+  g_assert (base != NULL);
+  g_assert (begin <= end);
+
+  scan = g_new0 (FrameScan, 1);
+  scan->base = base;
+  scan->frames = g_array_new (FALSE, FALSE, sizeof (SysprofDocumentFramePointer));
+  scan->cancellable = cancellable ? g_object_ref (cancellable) : NULL;
+  scan->begin = begin;
+  scan->end = end;
+  scan->needs_swap = !!needs_swap;
+
+  return scan;
+}
+
+static gboolean
+frame_is_index (const SysprofCaptureFrame *frame,
+                guint16                    frame_len)
+{
+  g_assert (frame != NULL);
+
+  return frame->type == SYSPROF_CAPTURE_FRAME_TIMESTAMP &&
+         (frame->padding2 == SYSPROF_CAPTURE_FRAME_INDEX_MAGIC ||
+          GUINT32_SWAP_LE_BE (frame->padding2) == SYSPROF_CAPTURE_FRAME_INDEX_MAGIC) &&
+         frame_len == sizeof (SysprofCaptureFrameIndex);
+}
+
+static gboolean
+frame_scan_run (FrameScan *scan)
+{
+  gsize pos;
+  guint count = 0;
+
+  g_assert (scan != NULL);
+  g_assert (scan->base != NULL);
+  g_assert (scan->begin <= scan->end);
+
+  pos = scan->begin;
+
+  while (pos < scan->end)
+    {
+      const SysprofCaptureFrame *frame;
+      SysprofDocumentFramePointer ptr;
+      guint16 frame_len;
+
+      if (scan->end - pos < sizeof (SysprofCaptureFrame))
+        break;
+
+      memcpy (&frame_len, &scan->base[pos], sizeof frame_len);
+      frame_len = swap_uint16 (scan->needs_swap, frame_len);
+
+      if (frame_len < sizeof (SysprofCaptureFrame) ||
+          frame_len % SYSPROF_CAPTURE_ALIGN != 0 ||
+          frame_len > scan->end - pos)
+        break;
+
+      frame = (const SysprofCaptureFrame *)(const void *)&scan->base[pos];
+
+      if (!frame_is_index (frame, frame_len))
+        {
+          ptr.offset = pos;
+          ptr.length = frame_len;
+          g_array_append_val (scan->frames, ptr);
+        }
+
+      pos += frame_len;
+      count++;
+
+      if (count % 4096 == 0 &&
+          scan->cancellable != NULL &&
+          g_cancellable_is_cancelled (scan->cancellable))
+        return FALSE;
+    }
+
+  scan->valid = pos == scan->end;
+
+  if G_UNLIKELY (scan->needs_swap)
+    gtk_tim_sort (scan->frames->data,
+                  scan->frames->len,
+                  sizeof (SysprofDocumentFramePointer),
+                  sort_by_time_swapped,
+                  (gpointer)scan->base);
+  else
+    gtk_tim_sort (scan->frames->data,
+                  scan->frames->len,
+                  sizeof (SysprofDocumentFramePointer),
+                  sort_by_time,
+                  (gpointer)scan->base);
+
+  return TRUE;
+}
+
+static DexFuture *
+frame_scan_thread (gpointer user_data)
+{
+  FrameScan *scan = user_data;
+
+  g_assert (scan != NULL);
+
+  if (!frame_scan_run (scan))
+    return dex_future_new_reject (G_IO_ERROR,
+                                  G_IO_ERROR_CANCELLED,
+                                  "Document indexing was cancelled");
+
+  return dex_future_new_for_boolean (TRUE);
+}
+
+static GPtrArray *
+sysprof_document_create_frame_scans (SysprofDocument *self,
+                                     gsize            len,
+                                     GCancellable    *cancellable,
+                                     gboolean        *has_index)
+{
+  g_autoptr(GArray) offsets = NULL;
+  GPtrArray *scans;
+  guint64 current;
+  gsize begin;
+
+  g_assert (SYSPROF_IS_DOCUMENT (self));
+  g_assert (len >= sizeof self->header);
+  g_assert (has_index != NULL);
+
+  *has_index = FALSE;
+  current = swap_uint64 (self->needs_swap,
+                         self->header.frame_index.last_frame_index);
+
+  if (current == 0)
+    return NULL;
+
+  *has_index = TRUE;
+  offsets = g_array_new (FALSE, FALSE, sizeof (guint64));
+
+  while (current != 0)
+    {
+      const SysprofCaptureFrameIndex *frame_index;
+      guint64 previous;
+      guint16 frame_len;
+
+      if (current < sizeof self->header ||
+          current > len - sizeof (SysprofCaptureFrameIndex) ||
+          current % SYSPROF_CAPTURE_ALIGN != 0 ||
+          offsets->len > len / sizeof (SysprofCaptureFrameIndex))
+        return NULL;
+
+      frame_index = (const SysprofCaptureFrameIndex *)(const void *)&self->base[current];
+      frame_len = swap_uint16 (self->needs_swap, frame_index->frame.len);
+
+      if (!frame_is_index (&frame_index->frame, frame_len) ||
+          frame_len != sizeof *frame_index)
+        return NULL;
+
+      previous = swap_uint64 (self->needs_swap,
+                              frame_index->previous_frame_index);
+
+      if (previous >= current)
+        return NULL;
+
+      g_array_append_val (offsets, current);
+      current = previous;
+    }
+
+  for (guint i = 0; i < offsets->len / 2; i++)
+    {
+      guint64 tmp = g_array_index (offsets, guint64, i);
+      guint opposite = offsets->len - i - 1;
+
+      g_array_index (offsets, guint64, i) =
+        g_array_index (offsets, guint64, opposite);
+      g_array_index (offsets, guint64, opposite) = tmp;
+    }
+
+  scans = g_ptr_array_new_with_free_func ((GDestroyNotify)frame_scan_free);
+  begin = sizeof self->header;
+
+  for (guint i = 0; i < offsets->len; i++)
+    {
+      guint64 offset = g_array_index (offsets, guint64, i);
+
+      if (offset < begin)
+        {
+          g_ptr_array_unref (scans);
+          return NULL;
+        }
+
+      if (offset > begin)
+        g_ptr_array_add (scans,
+                         frame_scan_new (self->base,
+                                         begin,
+                                         offset,
+                                         self->needs_swap,
+                                         cancellable));
+
+      begin = offset + sizeof (SysprofCaptureFrameIndex);
+    }
+
+  if (begin < len)
+    g_ptr_array_add (scans,
+                     frame_scan_new (self->base,
+                                     begin,
+                                     len,
+                                     self->needs_swap,
+                                     cancellable));
+
+  return scans;
+}
+
+static gboolean
+sysprof_document_scan_frames_serial (SysprofDocument *self,
+                                     gsize            len,
+                                     GCancellable    *cancellable,
+                                     GError         **error)
+{
+  g_autoptr(GArray) frames = NULL;
+  g_autoptr(FrameScan) scan = NULL;
+
+  g_assert (SYSPROF_IS_DOCUMENT (self));
+
+  scan = frame_scan_new (self->base,
+                         sizeof self->header,
+                         len,
+                         self->needs_swap,
+                         cancellable);
+
+  if (!frame_scan_run (scan))
+    {
+      g_set_error_literal (error,
+                           G_IO_ERROR,
+                           G_IO_ERROR_CANCELLED,
+                           "Document indexing was cancelled");
+      return FALSE;
+    }
+
+  if (!scan->valid)
+    g_warning ("Capture contained an invalid or truncated frame");
+
+  frames = g_steal_pointer (&scan->frames);
+  g_clear_pointer (&self->frames, g_array_unref);
+  self->frames = g_steal_pointer (&frames);
+
+  return TRUE;
+}
+
+static gboolean
+sysprof_document_scan_frames (SysprofDocument *self,
+                              gsize            len,
+                              GCancellable    *cancellable,
+                              GError         **error)
+{
+  g_autoptr(DexThreadPool) pool = NULL;
+  g_autoptr(GPtrArray) futures = NULL;
+  g_autoptr(GPtrArray) scans = NULL;
+  g_autoptr(GError) local_error = NULL;
+  gboolean has_index;
+  gboolean valid = TRUE;
+  guint n_threads;
+
+  g_assert (SYSPROF_IS_DOCUMENT (self));
+
+  scans = sysprof_document_create_frame_scans (self, len, cancellable, &has_index);
+
+  if (!has_index || scans == NULL || scans->len < 2)
+    return sysprof_document_scan_frames_serial (self, len, cancellable, error);
+
+  n_threads = MIN (g_get_num_processors (), scans->len);
+
+  if (!(pool = dex_thread_pool_new (n_threads)))
+    return sysprof_document_scan_frames_serial (self, len, cancellable, error);
+
+  futures = g_ptr_array_new_with_free_func (dex_unref);
+
+  for (guint i = 0; i < scans->len; i++)
+    {
+      FrameScan *scan = g_ptr_array_index (scans, i);
+      DexFuture *future;
+
+      future = dex_thread_pool_submit (pool,
+                                       "[sysprof-document-frame-scan]",
+                                       frame_scan_thread,
+                                       scan,
+                                       NULL);
+      g_ptr_array_add (futures, future);
+    }
+
+  if (!dex_thread_wait_for (dex_future_allv ((DexFuture **)futures->pdata,
+                                             futures->len),
+                            &local_error))
+    valid = FALSE;
+
+  dex_thread_wait_for (dex_thread_pool_close (pool, DEX_THREAD_POOL_SHUTDOWN_DRAIN), NULL);
+
+  if (local_error != NULL)
+    {
+      g_propagate_error (error, g_steal_pointer (&local_error));
+      return FALSE;
+    }
+
+  for (guint i = 0; i < scans->len; i++)
+    {
+      FrameScan *scan = g_ptr_array_index (scans, i);
+
+      if (!scan->valid)
+        {
+          valid = FALSE;
+          break;
+        }
+    }
+
+  if (!valid)
+    {
+      g_clear_pointer (&futures, g_ptr_array_unref);
+      g_clear_pointer (&scans, g_ptr_array_unref);
+      return sysprof_document_scan_frames_serial (self, len, cancellable, error);
+    }
+
+  self->frames->len = 0;
+
+  for (guint i = 0; i < scans->len; i++)
+    {
+      FrameScan *scan = g_ptr_array_index (scans, i);
+
+      if (scan->frames->len > 0)
+        g_array_append_vals (self->frames, scan->frames->data, scan->frames->len);
+      g_clear_pointer (&scan->frames, g_array_unref);
+    }
+
+  if G_UNLIKELY (self->needs_swap)
+    gtk_tim_sort (self->frames->data,
+                  self->frames->len,
+                  sizeof (SysprofDocumentFramePointer),
+                  sort_by_time_swapped,
+                  (gpointer)self->base);
+  else
+    gtk_tim_sort (self->frames->data,
+                  self->frames->len,
+                  sizeof (SysprofDocumentFramePointer),
+                  sort_by_time,
+                  (gpointer)self->base);
+
+  return TRUE;
+}
+
 static void
 sysprof_document_update_process_exit_times (SysprofDocument *self)
 {
@@ -1226,11 +1596,10 @@ sysprof_document_load_worker (GTask        *task,
 {
   g_autoptr(SysprofDocument) self = NULL;
   g_autoptr(GHashTable) files = NULL;
+  g_autoptr(GError) error = NULL;
   Load *load = task_data;
   gint64 guessed_end_nsec = 0;
-  goffset pos;
   gsize len;
-  guint count;
 
   g_assert (source_object == NULL);
   g_assert (load != NULL);
@@ -1266,59 +1635,13 @@ sysprof_document_load_worker (GTask        *task,
 
   load_progress (load, .1, _("Indexing capture data frames"));
 
-  count = 0;
-  pos = sizeof self->header;
-  while (pos < (len - sizeof(guint16)))
+  if (!sysprof_document_scan_frames (self, len, cancellable, &error))
     {
-      SysprofDocumentFramePointer ptr;
-      guint16 frame_len;
-
-      memcpy (&frame_len, &self->base[pos], sizeof frame_len);
-      frame_len = swap_uint16 (self->needs_swap, frame_len);
-
-      if (frame_len < sizeof (SysprofCaptureFrame))
-        {
-          g_warning ("Capture contained implausibly short frame");
-          break;
-        }
-
-      if (frame_len % SYSPROF_CAPTURE_ALIGN != 0)
-        {
-          g_warning ("Capture contained frame not aligned to %u",
-                     (guint)SYSPROF_CAPTURE_ALIGN);
-          break;
-        }
-
-      ptr.offset = pos;
-      ptr.length = frame_len;
-
-      pos += frame_len;
-      count++;
-
-      g_array_append_val (self->frames, ptr);
-
-      if (count % 100 == 0)
-        load_progress (load,
-                       (pos / (double)len) * .4,
-                       _("Indexing capture data frames"));
+      g_task_return_error (task, g_steal_pointer (&error));
+      return;
     }
 
-  /* Now sort all the items by their respective frame times as frames
-   * cat into the writer may be tacked on at the end even though they
-   * have state which belongs earlier in the capture.
-   */
-  if G_UNLIKELY (self->needs_swap)
-    gtk_tim_sort (self->frames->data,
-                  self->frames->len,
-                  sizeof (SysprofDocumentFramePointer),
-                  sort_by_time_swapped,
-                  (gpointer)self->base);
-  else
-    gtk_tim_sort (self->frames->data,
-                  self->frames->len,
-                  sizeof (SysprofDocumentFramePointer),
-                  sort_by_time,
-                  (gpointer)self->base);
+  load_progress (load, .4, _("Indexing capture data frames"));
 
   for (guint f = 0; f < self->frames->len; f++)
     {

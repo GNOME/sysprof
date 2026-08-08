@@ -100,6 +100,8 @@ SYSPROF_STATIC_ASSERT (sizeof (void *) == sizeof (uintptr_t), "UINTPTR_MAX canâ€
 #define SYSPROF_CAPTURE_COUNTER_INT64  0
 #define SYSPROF_CAPTURE_COUNTER_DOUBLE 1
 
+#define SYSPROF_CAPTURE_FRAME_INDEX_MAGIC 0x53504958u
+
 typedef struct _SysprofCaptureReader    SysprofCaptureReader;
 typedef struct _SysprofCaptureWriter    SysprofCaptureWriter;
 typedef struct _SysprofCaptureCursor    SysprofCaptureCursor;
@@ -160,7 +162,13 @@ typedef struct
   char     capture_time[64];
   int64_t  time;
   int64_t  end_time;
-  char     suffix[168];
+  union {
+    char suffix[168];
+    struct {
+      uint64_t last_frame_index;
+      char     padding[160];
+    } frame_index;
+  };
 } SysprofCaptureFileHeader
 SYSPROF_ALIGNED_END(1);
 
@@ -262,6 +270,19 @@ typedef struct
 {
   SysprofCaptureFrame frame;
 } SysprofCaptureTimestamp
+SYSPROF_ALIGNED_END(1);
+
+/*
+ * Frame indexes are encoded as extended timestamp frames so that older
+ * readers can continue to walk the capture. The padding2 marker identifies
+ * the timestamp as an index rather than user-provided capture data.
+ */
+SYSPROF_ALIGNED_BEGIN(1)
+typedef struct
+{
+  SysprofCaptureFrame frame;
+  uint64_t            previous_frame_index;
+} SysprofCaptureFrameIndex
 SYSPROF_ALIGNED_END(1);
 
 SYSPROF_ALIGNED_BEGIN(1)
@@ -397,6 +418,7 @@ SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureTrace) == 32, "SysprofCaptureTrace 
 SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureFork) == 28, "SysprofCaptureFork changed size");
 SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureExit) == 24, "SysprofCaptureExit changed size");
 SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureTimestamp) == 24, "SysprofCaptureTimestamp changed size");
+SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureFrameIndex) == 32, "SysprofCaptureFrameIndex changed size");
 SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureCounter) == 128, "SysprofCaptureCounter changed size");
 SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureCounterValues) == 96, "SysprofCaptureCounterValues changed size");
 SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureCounterDefine) == 32, "SysprofCaptureCounterDefine changed size");

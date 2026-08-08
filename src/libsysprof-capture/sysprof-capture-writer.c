@@ -78,6 +78,7 @@
 #include "sysprof-macros.h"
 
 #define DEFAULT_BUFFER_SIZE (_sysprof_getpagesize() * 64L)
+#define FRAME_INDEX_INTERVAL (64L * 1024L)
 #define INVALID_ADDRESS     (SYSPROF_UINT64_CONSTANT(0))
 #define MAX_COUNTERS        ((1 << 24) - 1)
 #define MAX_UNWIND_DEPTH    64
@@ -141,6 +142,12 @@ struct _SysprofCaptureWriter
 
   /* Statistics while recording */
   SysprofCaptureStat stat;
+
+  uint64_t last_frame_index;
+  size_t frames_since_index;
+
+  unsigned int initialized : 1;
+  unsigned int seekable : 1;
 };
 
 static inline void
@@ -238,6 +245,97 @@ sysprof_capture_writer_flush_data (SysprofCaptureWriter *self)
   return true;
 }
 
+static bool
+sysprof_capture_writer_write_all (SysprofCaptureWriter *self,
+                                  const void           *data,
+                                  size_t                len)
+{
+  const uint8_t *buf = data;
+
+  assert (self != NULL);
+  assert (data != NULL);
+
+  while (len > 0)
+    {
+      ssize_t written = _sysprof_write (self->fd, buf, len);
+
+      if (written < 0)
+        {
+          if (errno == EAGAIN)
+            continue;
+
+          return false;
+        }
+
+      if (written == 0)
+        return false;
+
+      buf += written;
+      len -= written;
+    }
+
+  return true;
+}
+
+static void
+sysprof_capture_writer_update_frame_index (SysprofCaptureWriter *self)
+{
+  ssize_t ret;
+
+  assert (self != NULL);
+
+again:
+  ret = _sysprof_pwrite (self->fd,
+                         &self->last_frame_index,
+                         sizeof self->last_frame_index,
+                         offsetof (SysprofCaptureFileHeader,
+                                   frame_index.last_frame_index));
+
+  if (ret < 0 && errno == EAGAIN)
+    goto again;
+}
+
+static bool
+sysprof_capture_writer_write_frame_index (SysprofCaptureWriter *self,
+                                          bool                  force)
+{
+  SysprofCaptureFrameIndex frame_index;
+  off_t offset;
+
+  assert (self != NULL);
+
+  if (!self->seekable || self->frames_since_index == 0)
+    return true;
+
+  if (!force && self->frames_since_index < FRAME_INDEX_INTERVAL)
+    return true;
+
+  if (!sysprof_capture_writer_flush_data (self))
+    return false;
+
+  if ((offset = lseek (self->fd, 0L, SEEK_CUR)) < 0)
+    return false;
+
+  sysprof_capture_writer_frame_init (&frame_index.frame,
+                                     sizeof frame_index,
+                                     -1,
+                                     -1,
+                                     SYSPROF_CAPTURE_CURRENT_TIME,
+                                     SYSPROF_CAPTURE_FRAME_TIMESTAMP);
+  frame_index.frame.padding2 = SYSPROF_CAPTURE_FRAME_INDEX_MAGIC;
+  frame_index.previous_frame_index = self->last_frame_index;
+
+  if (!sysprof_capture_writer_write_all (self, &frame_index, sizeof frame_index))
+    return false;
+
+  self->last_frame_index = offset;
+  self->frames_since_index = 0;
+
+  sysprof_capture_writer_update_frame_index (self);
+
+  return true;
+}
+
 static inline void
 sysprof_capture_writer_realign (size_t *pos)
 {
@@ -271,6 +369,9 @@ sysprof_capture_writer_allocate (SysprofCaptureWriter *self,
   assert (len != NULL);
   assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
 
+  if (self->initialized && !sysprof_capture_writer_write_frame_index (self, false))
+    return NULL;
+
   sysprof_capture_writer_realign (len);
 
   if (!sysprof_capture_writer_ensure_space_for (self, *len))
@@ -279,6 +380,9 @@ sysprof_capture_writer_allocate (SysprofCaptureWriter *self,
   p = (void *)&self->buf[self->pos];
 
   self->pos += *len;
+
+  if (self->initialized)
+    self->frames_since_index++;
 
   assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
 
@@ -296,6 +400,9 @@ sysprof_capture_writer_flush_jitmap (SysprofCaptureWriter *self)
 
   if (self->addr_hash_size == 0)
     return true;
+
+  if (!sysprof_capture_writer_write_frame_index (self, false))
+    return false;
 
   assert (self->addr_buf_pos > 0);
 
@@ -323,6 +430,7 @@ sysprof_capture_writer_flush_jitmap (SysprofCaptureWriter *self)
   memset (self->addr_hash, 0, sizeof self->addr_hash);
 
   self->stat.frame_count[SYSPROF_CAPTURE_FRAME_JITMAP]++;
+  self->frames_since_index++;
 
   return true;
 }
@@ -504,6 +612,7 @@ sysprof_capture_writer_new_from_fd (int    fd,
     }
   self->len = buffer_size;
   self->next_counter_id = 1;
+  self->seekable = lseek (fd, 0L, SEEK_SET) == 0;
 
   /* Format the time as ISO 8601, in UTC */
   time (&now);
@@ -540,6 +649,8 @@ sysprof_capture_writer_new_from_fd (int    fd,
       sysprof_capture_writer_finalize (self);
       return NULL;
     }
+
+  self->initialized = true;
 
   assert (self->pos == 0);
   assert (self->len > 0);
@@ -1214,6 +1325,9 @@ _sysprof_capture_writer_splice_from_fd (SysprofCaptureWriter *self,
       return false;
     }
 
+  if (!sysprof_capture_writer_write_frame_index (self, true))
+    goto handle_errno;
+
   in_off = 256;
   to_write = stbuf.st_size - in_off;
 
@@ -1233,6 +1347,9 @@ _sysprof_capture_writer_splice_from_fd (SysprofCaptureWriter *self,
 
       to_write -= written;
     }
+
+  if (stbuf.st_size > 256)
+    self->frames_since_index = FRAME_INDEX_INTERVAL;
 
   return true;
 
@@ -1791,6 +1908,13 @@ _sysprof_capture_writer_add_raw (SysprofCaptureWriter      *self,
   size_t len;
 
   assert (self != NULL);
+
+  if (fr->type == SYSPROF_CAPTURE_FRAME_TIMESTAMP &&
+      (fr->padding2 == SYSPROF_CAPTURE_FRAME_INDEX_MAGIC ||
+       bswap_32 (fr->padding2) == SYSPROF_CAPTURE_FRAME_INDEX_MAGIC) &&
+      fr->len == sizeof (SysprofCaptureFrameIndex))
+    return true;
+
   assert ((fr->len & 0x7) == 0);
   assert (fr->type < SYSPROF_CAPTURE_FRAME_LAST);
 

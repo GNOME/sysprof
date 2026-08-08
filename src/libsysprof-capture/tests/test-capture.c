@@ -1026,6 +1026,54 @@ test_reader_writer_overlay (void)
   g_unlink ("overlay1.syscap");
 }
 
+static void
+test_writer_frame_index (void)
+{
+  const guint n_frames = 140000;
+  g_autofree char *contents = NULL;
+  SysprofCaptureFileHeader *header;
+  SysprofCaptureWriter *writer;
+  guint64 current;
+  gsize len;
+  guint n_indexes = 0;
+
+  writer = sysprof_capture_writer_new ("frame-index.syscap", 0);
+  g_assert_nonnull (writer);
+
+  for (guint i = 0; i < n_frames; i++)
+    g_assert_true (sysprof_capture_writer_add_timestamp (writer, i + 1, i % 16, 1));
+
+  g_assert_true (sysprof_capture_writer_flush (writer));
+  g_clear_pointer (&writer, sysprof_capture_writer_unref);
+
+  g_assert_true (g_file_get_contents ("frame-index.syscap", &contents, &len, NULL));
+  g_assert_cmpuint (len, >, sizeof *header);
+
+  header = (SysprofCaptureFileHeader *)(void *)contents;
+  current = header->frame_index.last_frame_index;
+
+  while (current != 0)
+    {
+      const SysprofCaptureFrameIndex *frame_index;
+
+      g_assert_cmpuint (current, >=, sizeof *header);
+      g_assert_cmpuint (current, <=, len - sizeof *frame_index);
+
+      frame_index = (const SysprofCaptureFrameIndex *)(const void *)&contents[current];
+      g_assert_cmpuint (frame_index->frame.len, ==, sizeof *frame_index);
+      g_assert_cmpuint (frame_index->frame.type, ==, SYSPROF_CAPTURE_FRAME_TIMESTAMP);
+      g_assert_cmpuint (frame_index->frame.padding2, ==, SYSPROF_CAPTURE_FRAME_INDEX_MAGIC);
+      g_assert_cmpuint (frame_index->previous_frame_index, <, current);
+
+      current = frame_index->previous_frame_index;
+      n_indexes++;
+    }
+
+  g_assert_cmpuint (n_indexes, ==, 2);
+
+  g_unlink ("frame-index.syscap");
+}
+
 int
 main (int argc,
       char *argv[])
@@ -1033,6 +1081,7 @@ main (int argc,
   sysprof_clock_init ();
   g_test_init (&argc, &argv, NULL);
   g_test_add_func ("/SysprofCapture/ReaderWriter", test_reader_basic);
+  g_test_add_func ("/SysprofCapture/Writer/frame-index", test_writer_frame_index);
   g_test_add_func ("/SysprofCapture/ReaderWriter/alloc_free", test_writer_memory_alloc_free);
   g_test_add_func ("/SysprofCapture/Writer/splice", test_writer_splice);
   g_test_add_func ("/SysprofCapture/Reader/splice", test_reader_splice);

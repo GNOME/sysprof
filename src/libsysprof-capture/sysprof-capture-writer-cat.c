@@ -247,6 +247,11 @@ sysprof_capture_writer_cat (SysprofCaptureWriter *self,
             if (!(frame = sysprof_capture_reader_read_timestamp (reader)))
               goto panic;
 
+            if ((frame->frame.padding2 == SYSPROF_CAPTURE_FRAME_INDEX_MAGIC ||
+                 bswap_32 (frame->frame.padding2) == SYSPROF_CAPTURE_FRAME_INDEX_MAGIC) &&
+                frame->frame.len == sizeof (SysprofCaptureFrameIndex))
+              break;
+
             sysprof_capture_writer_add_timestamp (self,
                                                   frame->frame.time,
                                                   frame->frame.cpu,

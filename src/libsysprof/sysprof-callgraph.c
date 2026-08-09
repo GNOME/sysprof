@@ -217,10 +217,13 @@ sysprof_callgraph_add_trace (SysprofCallgraph  *self,
   for (guint i = n_symbols - 1; i > 0; i--)
     {
       SysprofSymbol *symbol = symbols[i-1];
+      SysprofCallgraphSummary *summary;
       SysprofCallgraphNode *node = NULL;
 
       if (hide_system_libraries && _sysprof_symbol_is_system_library (symbol))
         continue;
+
+      summary = sysprof_callgraph_get_summary (self, symbol);
 
       /* Try to find @symbol within the children of @parent */
       for (SysprofCallgraphNode *iter = parent->children;
@@ -232,17 +235,31 @@ sysprof_callgraph_add_trace (SysprofCallgraph  *self,
           g_assert (iter->summary->symbol != NULL);
           g_assert (symbol != NULL);
 
-          if (_sysprof_symbol_equal (iter->summary->symbol, symbol))
+          if (iter->summary == summary)
             {
               node = iter;
               node->count++;
+
+              if (iter != parent->children)
+                {
+                  iter->prev->next = iter->next;
+
+                  if (iter->next != NULL)
+                    iter->next->prev = iter->prev;
+
+                  iter->prev = NULL;
+                  iter->next = parent->children;
+                  parent->children->prev = iter;
+                  parent->children = iter;
+                }
+
               goto next_symbol;
             }
         }
 
       /* Otherwise create a new node */
       node = sysprof_allocator_new0 (self->allocator, SysprofCallgraphNode);
-      node->summary = sysprof_callgraph_get_summary (self, symbol);
+      node->summary = summary;
       node->parent = parent;
       node->next = parent->children;
       node->count = 1;

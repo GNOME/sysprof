@@ -74,7 +74,8 @@ sysprof_leak_detector_detect (SysprofDocument *document,
   SysprofAllocs allocs;
   g_autoptr(SysprofDocumentFrame) frame = NULL;
   g_autoptr(EggBitset) leaks = NULL;
-  g_autoptr(GArray) frames = NULL;
+  const SysprofDocumentFramePointer *frames;
+  guint n_frames;
   const char *base_addr;
   EggBitsetIter iter;
   SysprofAllocNode find = {0};
@@ -89,7 +90,8 @@ sysprof_leak_detector_detect (SysprofDocument *document,
   if (!egg_bitset_iter_init_first (&iter, allocations, &pos))
     return g_steal_pointer (&leaks);
 
-  frames = _sysprof_document_get_frames (document);
+  frames = _sysprof_document_get_frames (document, &n_frames);
+  g_assert (frames != NULL);
 
   /* Load the first allocation to look at. To avoid creating lots
    * of GObjects, we will update the internal data in the alloc
@@ -109,9 +111,12 @@ sysprof_leak_detector_detect (SysprofDocument *document,
   for (;;)
     {
       SysprofDocumentAllocation *alloc = (SysprofDocumentAllocation *)frame;
-      SysprofDocumentFramePointer *ptr = &g_array_index (frames, SysprofDocumentFramePointer, pos);
+      const SysprofDocumentFramePointer *ptr;
       guint64 address = sysprof_document_allocation_get_address (alloc);
       gint64 size = sysprof_document_allocation_get_size (alloc);
+
+      g_assert (pos < n_frames);
+      ptr = &frames[pos];
 
       /* Generally we'd want to take into account the PID as well, but
        * since we only support recording from LD_PRELOAD currently, there

@@ -50,41 +50,42 @@ typedef void (*ProgressFunc) (double      fraction,
                               const char *message,
                               gpointer    user_data);
 
-void             _sysprof_document_new_async        (GMappedFile          *mapped_file,
-                                                     ProgressFunc          progress,
-                                                     gpointer              progress_data,
-                                                     GDestroyNotify        progress_data_destroy,
-                                                     GCancellable         *cancellable,
-                                                     GAsyncReadyCallback   callback,
-                                                     gpointer              user_data);
-SysprofDocument *_sysprof_document_new_finish       (GAsyncResult         *result,
-                                                     GError              **error);
-void             _sysprof_document_set_title        (SysprofDocument      *self,
-                                                     const char           *title);
-void             _sysprof_document_symbolize_async  (SysprofDocument      *self,
-                                                     SysprofSymbolizer    *symbolizer,
-                                                     ProgressFunc          progress_func,
-                                                     gpointer              progress_data,
-                                                     GDestroyNotify        progress_data_destroy,
-                                                     GCancellable         *cancellable,
-                                                     GAsyncReadyCallback   callback,
-                                                     gpointer              user_data);
-gboolean         _sysprof_document_symbolize_finish (SysprofDocument      *self,
-                                                     GAsyncResult         *result,
-                                                     GError              **error);
-gboolean         _sysprof_document_is_native        (SysprofDocument      *self);
-GRefString      *_sysprof_document_ref_string       (SysprofDocument      *self,
-                                                     const char           *name);
-EggBitset       *_sysprof_document_traceables       (SysprofDocument      *self);
-SysprofSymbol   *_sysprof_document_process_symbol   (SysprofDocument      *self,
-                                                     int                   pid,
-                                                     gboolean              want_shared);
-SysprofSymbol   *_sysprof_document_thread_symbol    (SysprofDocument      *self,
-                                                     int                   pid,
-                                                     int                   tid);
-SysprofSymbol   *_sysprof_document_kernel_symbol    (SysprofDocument      *self);
-GArray          *_sysprof_document_get_frames       (SysprofDocument      *self);
-EggBitset       *_sysprof_document_get_allocations  (SysprofDocument      *self);
-DexFuture       *_sysprof_document_serialize_symbols(SysprofDocument      *self);
+void                               _sysprof_document_new_async         (GMappedFile          *mapped_file,
+                                                                        ProgressFunc          progress,
+                                                                        gpointer              progress_data,
+                                                                        GDestroyNotify        progress_data_destroy,
+                                                                        GCancellable         *cancellable,
+                                                                        GAsyncReadyCallback   callback,
+                                                                        gpointer              user_data);
+SysprofDocument                   *_sysprof_document_new_finish        (GAsyncResult         *result,
+                                                                        GError              **error);
+void                               _sysprof_document_set_title         (SysprofDocument      *self,
+                                                                        const char           *title);
+void                               _sysprof_document_symbolize_async   (SysprofDocument      *self,
+                                                                        SysprofSymbolizer    *symbolizer,
+                                                                        ProgressFunc          progress_func,
+                                                                        gpointer              progress_data,
+                                                                        GDestroyNotify        progress_data_destroy,
+                                                                        GCancellable         *cancellable,
+                                                                        GAsyncReadyCallback   callback,
+                                                                        gpointer              user_data);
+gboolean                           _sysprof_document_symbolize_finish  (SysprofDocument      *self,
+                                                                        GAsyncResult         *result,
+                                                                        GError              **error);
+gboolean                           _sysprof_document_is_native         (SysprofDocument      *self);
+GRefString                        *_sysprof_document_ref_string        (SysprofDocument      *self,
+                                                                        const char           *name);
+EggBitset                         *_sysprof_document_traceables        (SysprofDocument      *self);
+SysprofSymbol                     *_sysprof_document_process_symbol    (SysprofDocument      *self,
+                                                                        int                   pid,
+                                                                        gboolean              want_shared);
+SysprofSymbol                     *_sysprof_document_thread_symbol     (SysprofDocument      *self,
+                                                                        int                   pid,
+                                                                        int                   tid);
+SysprofSymbol                     *_sysprof_document_kernel_symbol     (SysprofDocument      *self);
+const SysprofDocumentFramePointer *_sysprof_document_get_frames        (SysprofDocument      *self,
+                                                                        guint                *n_frames);
+EggBitset                         *_sysprof_document_get_allocations   (SysprofDocument      *self);
+DexFuture                         *_sysprof_document_serialize_symbols (SysprofDocument      *self);
 
 G_END_DECLS

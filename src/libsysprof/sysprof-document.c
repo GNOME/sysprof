@@ -61,6 +61,11 @@
 
 #define MAX_STACK_DEPTH 128
 
+#define GDK_ARRAY_ELEMENT_TYPE SysprofDocumentFramePointer
+#define GDK_ARRAY_NAME sysprof_document_frames
+#define GDK_ARRAY_TYPE_NAME SysprofDocumentFrames
+#include "gdkarrayimpl.c"
+
 struct _SysprofDocument
 {
   GObject                   parent_instance;
@@ -69,7 +74,7 @@ struct _SysprofDocument
 
   char                     *title;
 
-  GArray                   *frames;
+  SysprofDocumentFrames     frames;
   GMappedFile              *mapped_file;
   const guint8             *base;
 
@@ -214,7 +219,9 @@ sysprof_document_get_item_type (GListModel *model)
 static guint
 sysprof_document_get_n_items (GListModel *model)
 {
-  return SYSPROF_DOCUMENT (model)->frames->len;
+  SysprofDocument *self = SYSPROF_DOCUMENT (model);
+
+  return sysprof_document_frames_get_size (&self->frames);
 }
 
 static gpointer
@@ -225,10 +232,10 @@ sysprof_document_get_item (GListModel *model,
   SysprofDocumentFramePointer *ptr;
   SysprofDocumentFrame *ret;
 
-  if (position >= self->frames->len)
+  if (position >= sysprof_document_frames_get_size (&self->frames))
     return NULL;
 
-  ptr = &g_array_index (self->frames, SysprofDocumentFramePointer, position);
+  ptr = sysprof_document_frames_index (&self->frames, position);
   ret = _sysprof_document_frame_new (self->mapped_file,
                                      (gconstpointer)&self->base[ptr->offset],
                                      ptr->length,
@@ -363,7 +370,7 @@ sysprof_document_finalize (GObject *object)
   g_clear_pointer (&self->pid_to_process_info, g_hash_table_unref);
   g_clear_pointer (&self->tid_to_symbol, g_hash_table_unref);
   g_clear_pointer (&self->mapped_file, g_mapped_file_unref);
-  g_clear_pointer (&self->frames, g_array_unref);
+  sysprof_document_frames_clear (&self->frames);
 
   g_clear_pointer (&self->allocations, egg_bitset_unref);
   g_clear_pointer (&self->ctrdefs, egg_bitset_unref);
@@ -563,7 +570,7 @@ sysprof_document_init (SysprofDocument *self)
 {
   self->strings = sysprof_strings_new ();
 
-  self->frames = g_array_new (FALSE, FALSE, sizeof (SysprofDocumentFramePointer));
+  sysprof_document_frames_init (&self->frames);
 
   self->cpu_info = g_list_store_new (SYSPROF_TYPE_CPU_INFO);
 
@@ -1117,7 +1124,7 @@ sort_by_time_swapped (gconstpointer a,
 typedef struct _FrameScan
 {
   const guint8 *base;
-  GArray *frames;
+  SysprofDocumentFrames frames;
   GCancellable *cancellable;
   gsize begin;
   gsize end;
@@ -1128,7 +1135,7 @@ typedef struct _FrameScan
 static void
 frame_scan_free (FrameScan *scan)
 {
-  g_clear_pointer (&scan->frames, g_array_unref);
+  sysprof_document_frames_clear (&scan->frames);
   g_clear_object (&scan->cancellable);
   g_free (scan);
 }
@@ -1149,7 +1156,7 @@ frame_scan_new (const guint8 *base,
 
   scan = g_new0 (FrameScan, 1);
   scan->base = base;
-  scan->frames = g_array_new (FALSE, FALSE, sizeof (SysprofDocumentFramePointer));
+  sysprof_document_frames_init (&scan->frames);
   scan->cancellable = cancellable ? g_object_ref (cancellable) : NULL;
   scan->begin = begin;
   scan->end = end;
@@ -1205,7 +1212,7 @@ frame_scan_run (FrameScan *scan)
         {
           ptr.offset = pos;
           ptr.length = frame_len;
-          g_array_append_val (scan->frames, ptr);
+          sysprof_document_frames_append (&scan->frames, ptr);
         }
 
       pos += frame_len;
@@ -1220,14 +1227,14 @@ frame_scan_run (FrameScan *scan)
   scan->valid = pos == scan->end;
 
   if G_UNLIKELY (scan->needs_swap)
-    gtk_tim_sort (scan->frames->data,
-                  scan->frames->len,
+    gtk_tim_sort (sysprof_document_frames_get_data (&scan->frames),
+                  sysprof_document_frames_get_size (&scan->frames),
                   sizeof (SysprofDocumentFramePointer),
                   sort_by_time_swapped,
                   (gpointer)scan->base);
   else
-    gtk_tim_sort (scan->frames->data,
-                  scan->frames->len,
+    gtk_tim_sort (sysprof_document_frames_get_data (&scan->frames),
+                  sysprof_document_frames_get_size (&scan->frames),
                   sizeof (SysprofDocumentFramePointer),
                   sort_by_time,
                   (gpointer)scan->base);
@@ -1355,7 +1362,6 @@ sysprof_document_scan_frames_serial (SysprofDocument *self,
                                      GCancellable    *cancellable,
                                      GError         **error)
 {
-  g_autoptr(GArray) frames = NULL;
   g_autoptr(FrameScan) scan = NULL;
 
   g_assert (SYSPROF_IS_DOCUMENT (self));
@@ -1378,9 +1384,9 @@ sysprof_document_scan_frames_serial (SysprofDocument *self,
   if (!scan->valid)
     g_warning ("Capture contained an invalid or truncated frame");
 
-  frames = g_steal_pointer (&scan->frames);
-  g_clear_pointer (&self->frames, g_array_unref);
-  self->frames = g_steal_pointer (&frames);
+  sysprof_document_frames_clear (&self->frames);
+  self->frames = scan->frames;
+  sysprof_document_frames_init (&scan->frames);
 
   return TRUE;
 }
@@ -1457,26 +1463,33 @@ sysprof_document_scan_frames (SysprofDocument *self,
       return sysprof_document_scan_frames_serial (self, len, cancellable, error);
     }
 
-  self->frames->len = 0;
+  sysprof_document_frames_set_size (&self->frames, 0);
 
   for (guint i = 0; i < scans->len; i++)
     {
       FrameScan *scan = g_ptr_array_index (scans, i);
 
-      if (scan->frames->len > 0)
-        g_array_append_vals (self->frames, scan->frames->data, scan->frames->len);
-      g_clear_pointer (&scan->frames, g_array_unref);
+      gsize n_frames = sysprof_document_frames_get_size (&scan->frames);
+
+      if (n_frames > 0)
+        sysprof_document_frames_splice (&self->frames,
+                                        sysprof_document_frames_get_size (&self->frames),
+                                        0,
+                                        FALSE,
+                                        sysprof_document_frames_get_data (&scan->frames),
+                                        n_frames);
+      sysprof_document_frames_clear (&scan->frames);
     }
 
   if G_UNLIKELY (self->needs_swap)
-    gtk_tim_sort (self->frames->data,
-                  self->frames->len,
+    gtk_tim_sort (sysprof_document_frames_get_data (&self->frames),
+                  sysprof_document_frames_get_size (&self->frames),
                   sizeof (SysprofDocumentFramePointer),
                   sort_by_time_swapped,
                   (gpointer)self->base);
   else
-    gtk_tim_sort (self->frames->data,
-                  self->frames->len,
+    gtk_tim_sort (sysprof_document_frames_get_data (&self->frames),
+                  sysprof_document_frames_get_size (&self->frames),
                   sizeof (SysprofDocumentFramePointer),
                   sort_by_time,
                   (gpointer)self->base);
@@ -1643,9 +1656,9 @@ sysprof_document_load_worker (GTask        *task,
 
   load_progress (load, .4, _("Indexing capture data frames"));
 
-  for (guint f = 0; f < self->frames->len; f++)
+  for (guint f = 0; f < sysprof_document_frames_get_size (&self->frames); f++)
     {
-      SysprofDocumentFramePointer *ptr = &g_array_index (self->frames, SysprofDocumentFramePointer, f);
+      SysprofDocumentFramePointer *ptr = sysprof_document_frames_index (&self->frames, f);
       const SysprofCaptureFrame *tainted = (const SysprofCaptureFrame *)(gpointer)&self->base[ptr->offset];
       gint64 t = swap_int64 (self->needs_swap, tainted->time);
       int pid = swap_int32 (self->needs_swap, tainted->pid);
@@ -2728,7 +2741,7 @@ sysprof_document_catalog_marks (SysprofDocument *self)
             {
               do
                 {
-                  const SysprofDocumentFramePointer *ptr = &g_array_index (self->frames, SysprofDocumentFramePointer, pos);
+                  const SysprofDocumentFramePointer *ptr = sysprof_document_frames_index (&self->frames, pos);
                   const SysprofCaptureMark *tainted = (const SysprofCaptureMark *)(gpointer)&self->base[ptr->offset];
                   gint64 duration = swap_int64 (self->needs_swap, tainted->duration);
 
@@ -3130,12 +3143,15 @@ sysprof_document_save_finish (SysprofDocument  *self,
   return g_task_propagate_boolean (G_TASK (result), error);
 }
 
-GArray *
-_sysprof_document_get_frames (SysprofDocument *self)
+const SysprofDocumentFramePointer *
+_sysprof_document_get_frames (SysprofDocument *self,
+                              guint           *n_frames)
 {
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+  g_return_val_if_fail (n_frames != NULL, NULL);
 
-  return g_array_ref (self->frames);
+  *n_frames = sysprof_document_frames_get_size (&self->frames);
+  return sysprof_document_frames_get_data (&self->frames);
 }
 
 EggBitset *

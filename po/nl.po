@@ -1,14 +1,14 @@
 # Dutch translation for sysprof.
 # Copyright (C) 2019 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
-# Nathan Follens <nfollens@gnome.org>, 2019, 2023-2025.
+# Nathan Follens <nfollens@gnome.org>, 2019, 2023-2026.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2025-09-11 08:35+0000\n"
-"PO-Revision-Date: 2025-09-13 21:43+0200\n"
+"POT-Creation-Date: 2026-08-09 00:14+0000\n"
+"PO-Revision-Date: 2026-08-11 10:26+0200\n"
 "Last-Translator: Nathan Follens <nfollens@gnome.org>\n"
 "Language-Team: GNOME-NL https://matrix.to/#/#nl:gnome.org\n"
 "Language: nl\n"
@@ -16,16 +16,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.9\n"
 
 #: data/org.gnome.Sysprof.desktop.in.in:3
 #: data/org.gnome.Sysprof.metainfo.xml.in.in:6
-#: src/sysprof/sysprof-application.c:268 src/sysprof/sysprof-application.c:345
+#: src/sysprof/sysprof-application.c:268 src/sysprof/sysprof-application.c:316
 #: src/sysprof/sysprof-recording-pad.ui:20 src/sysprof/sysprof-window.c:253
 msgid "Sysprof"
 msgstr "Sysprof"
 
-#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-greeter.ui:89
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-greeter.ui:83
 msgid "Profiler"
 msgstr "Profiler"
 
@@ -43,6 +43,7 @@ msgstr "Profileer een toepassing of het volledige systeem"
 
 #. developer_name tag deprecated with Appstream 1.0
 #: data/org.gnome.Sysprof.metainfo.xml.in.in:11
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:13
 msgid "Christian Hergert"
 msgstr "Christian Hergert"
 
@@ -53,6 +54,163 @@ msgid ""
 msgstr ""
 "Sysprof biedt u de mogelijkheid om toepassingen te profileren, om u te "
 "helpen bij debuggen en optimalisatie."
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:22
+#| msgid "Profiler"
+msgid "profiler"
+msgstr "profiler"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:23
+msgid "profiling"
+msgstr "profileren"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:24
+msgid "performance"
+msgstr "prestaties"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:25
+msgid "latency"
+msgstr "latentie"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:26
+msgid "speed"
+msgstr "snelheid"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:27
+msgid "slowness"
+msgstr "traagheid"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:28
+msgid "power consumption"
+msgstr "stroomverbruik"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:29
+msgid "energy efficiency"
+msgstr "energie-efficiëntie"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:30
+msgid "battery life"
+msgstr "acculevensduur"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:31
+msgid "optimization"
+msgstr "optimalisatie"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:32
+msgid "optimizing"
+msgstr "optimaliseren"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:33
+msgid "auditing"
+msgstr "auditen"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:34
+msgid "sampling"
+msgstr "samplen"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:35
+msgid "sampler"
+msgstr "sampler"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:36
+msgid "benchmarking"
+msgstr "benchmarken"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:37
+msgid "measurements"
+msgstr "metingen"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:38
+msgid "counters"
+msgstr "tellers"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:39
+msgid "CPU usage"
+msgstr "processorgebruik"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:40
+msgid "stack traces"
+msgstr "stacktraces"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:42
+msgid "call graphs"
+msgstr "oproepgrafieken"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:43
+msgid "flame graphs"
+msgstr "vlamgrafieken"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:45
+msgid "flame charts"
+msgstr "vlamkaarten"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:47
+msgid "programming"
+msgstr "programmeren"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:48
+msgid "software developers"
+msgstr "softwareontwikkelaars"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:49
+msgid "software development"
+msgstr "softwareontwikkeling"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:50
+msgid "testing"
+msgstr "testen"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:51
+msgid "QA"
+msgstr "QA"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:52
+msgid "quality assurance"
+msgstr "kwaliteitsborging"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:53
+msgid "troubleshooting"
+msgstr "probleemoplossing"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:54
+msgid "inefficiencies"
+msgstr "inefficiënties"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:55
+msgid "debugging"
+msgstr "debuggen"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:56
+msgid "memory allocations tracer"
+msgstr "eheugentoewijzingen traceren"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:57
+msgid "memory leaks detector"
+msgstr "geheugenlekdetectie"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:58
+msgid "compositor"
+msgstr "compositor"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:59
+msgid "graphics"
+msgstr "grafisch"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:60
+msgid "frames timing"
+msgstr "frametiming"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:61
+msgid "system logs"
+msgstr "systeemlogboeken"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:62
+msgid "logging"
+msgstr "loggen"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:63
+msgid "Linux kernel"
+msgstr "Linux-kernel"
 
 #: src/libsysprof/sysprof-category-summary.c:136
 msgid "Uncategorized"
@@ -79,7 +237,7 @@ msgid "CSS"
 msgstr "CSS"
 
 #: src/libsysprof/sysprof-category-summary.c:154
-#: src/sysprof/sysprof-greeter.ui:402 src/sysprof/sysprof-window.ui:393
+#: src/sysprof/sysprof-greeter.ui:396 src/sysprof/sysprof-window.ui:387
 msgid "Graphics"
 msgstr "Grafisch"
 
@@ -147,48 +305,48 @@ msgstr "Symbolen downloaden…"
 msgid "Allocation"
 msgstr "Toewijzing"
 
-#: src/libsysprof/sysprof-document.c:570
+#: src/libsysprof/sysprof-document.c:577
 msgid "Unknown Process"
 msgstr "Onbekend proces"
 
 # Wat een rottoepassing is dit toch, één en al jargon - Nathan
-#: src/libsysprof/sysprof-document.c:1251
-#: src/libsysprof/sysprof-document.c:1287
+#: src/libsysprof/sysprof-document.c:1649
+#: src/libsysprof/sysprof-document.c:1657
 msgid "Indexing capture data frames"
 msgstr "Opnamedataframes indexeren"
 
-#: src/libsysprof/sysprof-document.c:1473
+#: src/libsysprof/sysprof-document.c:1825
 msgid "Discovering file system mounts"
 msgstr "Bestandssysteemkoppelpunten ontdekken"
 
-#: src/libsysprof/sysprof-document.c:1476
+#: src/libsysprof/sysprof-document.c:1828
 msgid "Discovering process mount namespaces"
 msgstr "Proceskoppelnaamruimten ontdekken"
 
-#: src/libsysprof/sysprof-document.c:1479
+#: src/libsysprof/sysprof-document.c:1831
 msgid "Analyzing process address layouts"
 msgstr "Procesadresindelingen analyseren"
 
-#: src/libsysprof/sysprof-document.c:1482
+#: src/libsysprof/sysprof-document.c:1834
 msgid "Analyzing process command line"
 msgstr "Procesopdrachtregel analyseren"
 
-#: src/libsysprof/sysprof-document.c:1485
+#: src/libsysprof/sysprof-document.c:1837
 msgid "Analyzing file system overlays"
 msgstr "Bestandssysteemoverlays analyseren"
 
-#: src/libsysprof/sysprof-document.c:1488
+#: src/libsysprof/sysprof-document.c:1840
 msgid "Processing counters"
 msgstr "Tellers verwerken"
 
-#: src/libsysprof/sysprof-document.c:2480
-#: src/libsysprof/sysprof-document.c:2499
+#: src/libsysprof/sysprof-document.c:2832
+#: src/libsysprof/sysprof-document.c:2851
 #, c-format
 msgid "Recording at %X %x"
 msgstr "Opname op %X %x"
 
-#: src/libsysprof/sysprof-document.c:2483
-#: src/libsysprof/sysprof-document.c:2502
+#: src/libsysprof/sysprof-document.c:2835
+#: src/libsysprof/sysprof-document.c:2854
 #, c-format
 msgid "Recording at %s"
 msgstr "Opname op %s"
@@ -262,6 +420,7 @@ msgstr ""
 "‘-finstrument-functions’. Traceren zal niet beschikbaar zijn."
 
 #: src/sysprof-cli/sysprof-cli.c:120
+#, c-format
 msgid "--merge requires at least 2 filename arguments"
 msgstr "--merge vereist minstens 2 bestandsnamen als parameters"
 
@@ -439,6 +598,7 @@ msgstr ""
 "  sysprof-cli --stack-size=8192\n"
 
 #: src/sysprof-cli/sysprof-cli.c:425
+#, c-format
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Te veel parameters gegeven aan sysprof-cli:"
 
@@ -456,57 +616,57 @@ msgstr "Het systeem profileren"
 msgid "Authentication is required to profile the system."
 msgstr "Authenticatie is vereist om het systeem te profileren."
 
-#: src/sysprof/gtk/help-overlay.ui:11
+#: src/sysprof/gtk/shortcuts-dialog.ui:6
 msgctxt "shortcut window"
 msgid "Recording View"
 msgstr "Opnameweergave"
 
-#: src/sysprof/gtk/help-overlay.ui:14
+#: src/sysprof/gtk/shortcuts-dialog.ui:9
 msgctxt "shortcut window"
 msgid "Start New Recording"
 msgstr "Nieuwe opname starten"
 
-#: src/sysprof/gtk/help-overlay.ui:20
+#: src/sysprof/gtk/shortcuts-dialog.ui:15
 msgctxt "shortcut window"
 msgid "Save As"
 msgstr "Opslaan als"
 
-#: src/sysprof/gtk/help-overlay.ui:26
+#: src/sysprof/gtk/shortcuts-dialog.ui:25
 msgctxt "shortcut window"
 msgid "Toggle Visibility of Main Sidebar"
 msgstr "Hoofdzijbalk tonen of verbergen"
 
-#: src/sysprof/gtk/help-overlay.ui:32
+#: src/sysprof/gtk/shortcuts-dialog.ui:31
 msgctxt "shortcut window"
 msgid "Toggle Visibility of Stack Trace Sidebar"
 msgstr "Stacktracezijbalk tonen of verbergen"
 
-#: src/sysprof/gtk/help-overlay.ui:40
+#: src/sysprof/gtk/shortcuts-dialog.ui:39
 msgctxt "shortcut window"
 msgid "General"
 msgstr "Algemeen"
 
-#: src/sysprof/gtk/help-overlay.ui:43
+#: src/sysprof/gtk/shortcuts-dialog.ui:42
 msgctxt "shortcut window"
 msgid "Open Recording"
 msgstr "Opname openen"
 
-#: src/sysprof/gtk/help-overlay.ui:49
+#: src/sysprof/gtk/shortcuts-dialog.ui:52
 msgctxt "shortcut window"
 msgid "Close Window"
 msgstr "Venster sluiten"
 
-#: src/sysprof/gtk/help-overlay.ui:56
+#: src/sysprof/gtk/shortcuts-dialog.ui:59
 msgctxt "shortcut window"
 msgid "Show Help"
 msgstr "Hulp tonen"
 
-#: src/sysprof/gtk/help-overlay.ui:62
+#: src/sysprof/gtk/shortcuts-dialog.ui:65
 msgctxt "shortcut window"
 msgid "Show keyboard shortcuts"
 msgstr "Sneltoetsen tonen"
 
-#: src/sysprof/gtk/help-overlay.ui:68
+#: src/sysprof/gtk/shortcuts-dialog.ui:71
 msgctxt "shortcut window"
 msgid "Quit"
 msgstr "Afsluiten"
@@ -519,31 +679,31 @@ msgstr "Functie uitvoeren als beheerder"
 msgid "Options"
 msgstr "Opties"
 
-#: src/sysprof/gtk/menus.ui:13 src/sysprof/sysprof-window.ui:497
+#: src/sysprof/gtk/menus.ui:13 src/sysprof/sysprof-window.ui:491
 msgid "Categorize Frames"
 msgstr "Frames categoriseren"
 
-#: src/sysprof/gtk/menus.ui:17 src/sysprof/sysprof-window.ui:501
+#: src/sysprof/gtk/menus.ui:17 src/sysprof/sysprof-window.ui:495
 msgid "Hide System Libraries"
 msgstr "Systeembibliotheken verbergen"
 
-#: src/sysprof/gtk/menus.ui:21 src/sysprof/sysprof-window.ui:505
+#: src/sysprof/gtk/menus.ui:21 src/sysprof/sysprof-window.ui:499
 msgid "Include Threads"
 msgstr "Threads invoegen"
 
-#: src/sysprof/gtk/menus.ui:25 src/sysprof/sysprof-window.ui:509
+#: src/sysprof/gtk/menus.ui:25 src/sysprof/sysprof-window.ui:503
 msgid "Bottom Up"
 msgstr "Onderkant bovenaan"
 
-#: src/sysprof/gtk/menus.ui:29 src/sysprof/sysprof-window.ui:513
+#: src/sysprof/gtk/menus.ui:29 src/sysprof/sysprof-window.ui:507
 msgid "Ignore Kernel Processes"
 msgstr "Kernelprocessen negeren"
 
-#: src/sysprof/gtk/menus.ui:33 src/sysprof/sysprof-window.ui:517
+#: src/sysprof/gtk/menus.ui:33 src/sysprof/sysprof-window.ui:511
 msgid "Ignore Process 0"
 msgstr "Proces 0 negeren"
 
-#: src/sysprof/gtk/menus.ui:37 src/sysprof/sysprof-window.ui:521
+#: src/sysprof/gtk/menus.ui:37 src/sysprof/sysprof-window.ui:515
 msgid "Merge Similar Processes"
 msgstr "Gelijkaardige processen samenvoegen"
 
@@ -754,7 +914,7 @@ msgstr "Bestand"
 #: src/sysprof/sysprof-logs-section.ui:143
 #: src/sysprof/sysprof-mark-table.ui:116
 #: src/sysprof/sysprof-traceables-utility.ui:81
-#: src/sysprof/sysprof-window.ui:373
+#: src/sysprof/sysprof-window.ui:367
 msgid "CPU"
 msgstr "Processor"
 
@@ -796,7 +956,7 @@ msgstr "U moet een lokale map kiezen om toe te voegen als debugmap"
 msgid "Add debug directory"
 msgstr "Debugmap toevoegen"
 
-#: src/sysprof/sysprof-greeter.c:421 src/sysprof/sysprof-greeter.ui:595
+#: src/sysprof/sysprof-greeter.c:421 src/sysprof/sysprof-greeter.ui:589
 msgid "Add _Directory"
 msgstr "Map _toevoegen"
 
@@ -829,36 +989,36 @@ msgstr "Energie besparen"
 msgid "Performance"
 msgstr "Prestaties"
 
-#: src/sysprof/sysprof-greeter.ui:95
+#: src/sysprof/sysprof-greeter.ui:89
 msgid "Sampling"
 msgstr "Samplen"
 
-#: src/sysprof/sysprof-greeter.ui:98
+#: src/sysprof/sysprof-greeter.ui:92
 msgid "Sample Native Stacks"
 msgstr "Native stacks monsteren"
 
-#: src/sysprof/sysprof-greeter.ui:99
+#: src/sysprof/sysprof-greeter.ui:93
 msgid "Record native stack traces using a sampling profiler"
 msgstr "Neem native stacktraces op met een monsterprofiler"
 
-#: src/sysprof/sysprof-greeter.ui:105
+#: src/sysprof/sysprof-greeter.ui:99
 msgid "Unwind Stacks in User Space"
 msgstr "Stacks ontrollen in gebruikersomgeving"
 
-#: src/sysprof/sysprof-greeter.ui:106
+#: src/sysprof/sysprof-greeter.ui:100
 msgid "Copy stack contents and registers for unwinding in user-space"
 msgstr ""
 "Stackinhoud en -registers kopiëren om in de gebruikersomgeving te ontrollen"
 
-#: src/sysprof/sysprof-greeter.ui:117
+#: src/sysprof/sysprof-greeter.ui:111
 msgid "Stack Size"
 msgstr "Stackgrootte"
 
-#: src/sysprof/sysprof-greeter.ui:118
+#: src/sysprof/sysprof-greeter.ui:112
 msgid "The number of bytes to copy from the stack"
 msgstr "Het aantal bytes om uit de stack te kopiëren"
 
-#: src/sysprof/sysprof-greeter.ui:129
+#: src/sysprof/sysprof-greeter.ui:123
 msgid ""
 "Unwinding in user-space has considerable overhead but may help in situations "
 "where frame-pointers are unavailable."
@@ -866,163 +1026,163 @@ msgstr ""
 "Ontrollen in de gebruikersomgeving heeft een aanzienlijke overhead, maar kan "
 "helpen in situaties waar frame-pointers niet beschikbaar zijn."
 
-#: src/sysprof/sysprof-greeter.ui:144
+#: src/sysprof/sysprof-greeter.ui:138
 msgid "Sample JavaScript Stacks"
 msgstr "JavaScript-stacks monsteren"
 
-#: src/sysprof/sysprof-greeter.ui:145
+#: src/sysprof/sysprof-greeter.ui:139
 msgid "Record JavaScript stack traces using a sampling profiler"
 msgstr "Neem JavaScript-stacktraces op met een monsterprofiler"
 
-#: src/sysprof/sysprof-greeter.ui:151
+#: src/sysprof/sysprof-greeter.ui:145
 msgid ""
 "Sysprof must launch your application to record JavaScript stacks using GJS."
 msgstr ""
 "Sysprof moet uw toepassing opstarten om JavaScript-stacks op te nemen met "
 "GJS."
 
-#: src/sysprof/sysprof-greeter.ui:166
+#: src/sysprof/sysprof-greeter.ui:160
 msgid "Record Scheduler Details"
 msgstr "Planningsgegevens opnemen"
 
-#: src/sysprof/sysprof-greeter.ui:167
+#: src/sysprof/sysprof-greeter.ui:161
 msgid "Track when processes are scheduled per CPU"
 msgstr "Traceer wanneer processen gepland worden per CPU"
 
-#: src/sysprof/sysprof-greeter.ui:175
+#: src/sysprof/sysprof-greeter.ui:169
 msgid "Tracing"
 msgstr "Traceren"
 
-#: src/sysprof/sysprof-greeter.ui:178
+#: src/sysprof/sysprof-greeter.ui:172
 msgid "Trace Memory Allocations"
 msgstr "Geheugentoewijzingen traceren"
 
-#: src/sysprof/sysprof-greeter.ui:179
+#: src/sysprof/sysprof-greeter.ui:173
 msgid "Record a stack trace when malloc or similar functions are used"
 msgstr ""
 "Neem een stacktrace op wanneer malloc of gelijkaardige functies gebruikt "
 "worden"
 
-#: src/sysprof/sysprof-greeter.ui:185
+#: src/sysprof/sysprof-greeter.ui:179
 msgid "Sysprof must launch your application to record memory allocations."
 msgstr ""
 "Sysprof moet uw toepassing starten om geheugentoewijzingen op te nemen."
 
-#: src/sysprof/sysprof-greeter.ui:203 src/sysprof/sysprof-greeter.ui:208
+#: src/sysprof/sysprof-greeter.ui:197 src/sysprof/sysprof-greeter.ui:202
 msgid "Application"
 msgstr "Toepassing"
 
-#: src/sysprof/sysprof-greeter.ui:211
+#: src/sysprof/sysprof-greeter.ui:205
 #: src/sysprof/sysprof-processes-section.ui:317
 msgid "Command Line"
 msgstr "Opdrachtregel"
 
-#: src/sysprof/sysprof-greeter.ui:217
+#: src/sysprof/sysprof-greeter.ui:211
 msgid "Working directory"
 msgstr "Werkmap"
 
-#: src/sysprof/sysprof-greeter.ui:223
+#: src/sysprof/sysprof-greeter.ui:217
 msgid "The application will be run as a subprocess of Sysprof."
 msgstr "De toepassing zal uitgevoerd worden als subproces van Sysprof."
 
-#: src/sysprof/sysprof-greeter.ui:236
+#: src/sysprof/sysprof-greeter.ui:230
 msgid "Environment"
 msgstr "Omgeving"
 
-#: src/sysprof/sysprof-greeter.ui:239
+#: src/sysprof/sysprof-greeter.ui:233
 msgid "Clear Environment"
 msgstr "Omgeving legen"
 
-#: src/sysprof/sysprof-greeter.ui:240
+#: src/sysprof/sysprof-greeter.ui:234
 msgid "Clear the environment before launching application"
 msgstr "Leeg de omgeving voordat de toepassing opgestart wordt"
 
-#: src/sysprof/sysprof-greeter.ui:261
+#: src/sysprof/sysprof-greeter.ui:255
 msgid "Add _Variable"
 msgstr "_Variabele toevoegen"
 
-#: src/sysprof/sysprof-greeter.ui:267
+#: src/sysprof/sysprof-greeter.ui:261
 msgid "Add Variable"
 msgstr "Variabele toevoegen"
 
-#: src/sysprof/sysprof-greeter.ui:268
+#: src/sysprof/sysprof-greeter.ui:262
 msgid "_Add"
 msgstr "_Toevoegen"
 
-#: src/sysprof/sysprof-greeter.ui:285 src/sysprof/sysprof-greeter.ui:290
+#: src/sysprof/sysprof-greeter.ui:279 src/sysprof/sysprof-greeter.ui:284
 msgid "Counters"
 msgstr "Tellers"
 
-#: src/sysprof/sysprof-greeter.ui:293
+#: src/sysprof/sysprof-greeter.ui:287
 msgid "CPU Usage"
 msgstr "Processorgebruik"
 
-#: src/sysprof/sysprof-greeter.ui:294
+#: src/sysprof/sysprof-greeter.ui:288
 msgid "Record coarse-grained counters about CPU usage and frequency"
 msgstr "Neem ruw gerekende tellers op over processorgebruik en -frequentie"
 
-#: src/sysprof/sysprof-greeter.ui:300
+#: src/sysprof/sysprof-greeter.ui:294
 msgid "Memory Usage"
 msgstr "Geheugengebruik"
 
-#: src/sysprof/sysprof-greeter.ui:301
+#: src/sysprof/sysprof-greeter.ui:295
 msgid "Record coarse-grained counters about system memory usage"
 msgstr "Neem ruw gerekende tellers op over systeemgeheugengebruik"
 
-#: src/sysprof/sysprof-greeter.ui:307
+#: src/sysprof/sysprof-greeter.ui:301
 msgid "Disk Usage"
 msgstr "Schijfgebruik"
 
-#: src/sysprof/sysprof-greeter.ui:308
+#: src/sysprof/sysprof-greeter.ui:302
 msgid "Record coarse-grained counters about storage throughput"
 msgstr "Neem ruw gerekende tellers op over opslagdoorvoer"
 
-#: src/sysprof/sysprof-greeter.ui:314
+#: src/sysprof/sysprof-greeter.ui:308
 msgid "Network Usage"
 msgstr "Netwerkgebruik"
 
-#: src/sysprof/sysprof-greeter.ui:315
+#: src/sysprof/sysprof-greeter.ui:309
 msgid "Record coarse-grained counters about network traffic"
 msgstr "Neem ruw gerekende tellers op over netwerkverkeer"
 
-#: src/sysprof/sysprof-greeter.ui:325
+#: src/sysprof/sysprof-greeter.ui:319
 msgid "Energy Usage"
 msgstr "Energieverbruik"
 
-#: src/sysprof/sysprof-greeter.ui:326
+#: src/sysprof/sysprof-greeter.ui:320
 msgid "Record coarse-grained counters about energy usage in Watts"
 msgstr "Neem ruw gerekende tellers op over energieverbruik in Watt"
 
-#: src/sysprof/sysprof-greeter.ui:332
+#: src/sysprof/sysprof-greeter.ui:326
 msgid "Battery Charge"
 msgstr "Accupercentage"
 
-#: src/sysprof/sysprof-greeter.ui:333
+#: src/sysprof/sysprof-greeter.ui:327
 msgid "Record coarse-grained counters about battery charge or discharge rates"
 msgstr "Neem ruw gerekende tellers op over op- en ontlaadsnelheden van de accu"
 
-#: src/sysprof/sysprof-greeter.ui:346 src/sysprof/sysprof-greeter.ui:351
-#: src/sysprof/sysprof-window.ui:363
+#: src/sysprof/sysprof-greeter.ui:340 src/sysprof/sysprof-greeter.ui:345
+#: src/sysprof/sysprof-window.ui:357
 msgid "D-Bus"
 msgstr "D-Bus"
 
-#: src/sysprof/sysprof-greeter.ui:355
+#: src/sysprof/sysprof-greeter.ui:349
 msgid "Record System Bus"
 msgstr "Systeembus opnemen"
 
-#: src/sysprof/sysprof-greeter.ui:356
+#: src/sysprof/sysprof-greeter.ui:350
 msgid "Record messages on the D-Bus system bus"
 msgstr "Neem berichten op de D-Bus-systeembus op"
 
-#: src/sysprof/sysprof-greeter.ui:372
+#: src/sysprof/sysprof-greeter.ui:366
 msgid "Record Session Bus"
 msgstr "Sessiebus opnemen"
 
-#: src/sysprof/sysprof-greeter.ui:373
+#: src/sysprof/sysprof-greeter.ui:367
 msgid "Record messages on the D-Bus user session bus"
 msgstr "Neem berichten op de D-Bus-gebruikerssessiebus op"
 
-#: src/sysprof/sysprof-greeter.ui:384
+#: src/sysprof/sysprof-greeter.ui:378
 msgid ""
 "The session bus may contain sensitive information such as keyboard usage and "
 "passwords."
@@ -1030,19 +1190,19 @@ msgstr ""
 "De sessiebus bevat potentieel gevoelige informatie, zoals toetsenbordgebruik "
 "en wachtwoorden."
 
-#: src/sysprof/sysprof-greeter.ui:407
+#: src/sysprof/sysprof-greeter.ui:401
 msgid "Timings"
 msgstr "Timings"
 
-#: src/sysprof/sysprof-greeter.ui:411
+#: src/sysprof/sysprof-greeter.ui:405
 msgid "Compositor Frame Timings"
 msgstr "Frametijden van compositor"
 
-#: src/sysprof/sysprof-greeter.ui:412
+#: src/sysprof/sysprof-greeter.ui:406
 msgid "Record frame-timing information from the GNOME Shell compositor"
 msgstr "Neem frametijdinformatie op van de GNOME Shell-compositor"
 
-#: src/sysprof/sysprof-greeter.ui:423
+#: src/sysprof/sysprof-greeter.ui:417
 msgid ""
 "Applications launched by Sysprof will automatically collect GTK frame timing "
 "information."
@@ -1050,103 +1210,103 @@ msgstr ""
 "Toepassingen die door Sysprof opgestart worden zullen automatisch GTK-"
 "frametijdinformatie verzamelen."
 
-#: src/sysprof/sysprof-greeter.ui:463
+#: src/sysprof/sysprof-greeter.ui:457
 msgid "Devices"
 msgstr "Apparaten"
 
-#: src/sysprof/sysprof-greeter.ui:467
+#: src/sysprof/sysprof-greeter.ui:461
 msgid "Include GPU Information"
 msgstr "GPU-informatie invoegen"
 
-#: src/sysprof/sysprof-greeter.ui:468
+#: src/sysprof/sysprof-greeter.ui:462
 msgid "Records information about graphics hardware and drivers"
 msgstr "Neemt informatie over grafische hardware en stuurprogramma’s op"
 
-#: src/sysprof/sysprof-greeter.ui:486
+#: src/sysprof/sysprof-greeter.ui:480
 msgid "System"
 msgstr "Systeem"
 
-#: src/sysprof/sysprof-greeter.ui:491
+#: src/sysprof/sysprof-greeter.ui:485
 msgid "Power Profile"
 msgstr "Energieprofiel"
 
-#: src/sysprof/sysprof-greeter.ui:494
+#: src/sysprof/sysprof-greeter.ui:488
 msgid "Record with Power Profile"
 msgstr "Opnemen met energieprofiel"
 
-#: src/sysprof/sysprof-greeter.ui:495
+#: src/sysprof/sysprof-greeter.ui:489
 msgid "Switch to power profile while recording"
 msgstr "Specifieke energiemodus instellen tijdens opname"
 
-#: src/sysprof/sysprof-greeter.ui:505
+#: src/sysprof/sysprof-greeter.ui:499
 msgid "Details"
 msgstr "Details"
 
-#: src/sysprof/sysprof-greeter.ui:509
+#: src/sysprof/sysprof-greeter.ui:503
 msgid "Record System Log"
 msgstr "Systeemlogboek opnemen"
 
-#: src/sysprof/sysprof-greeter.ui:510
+#: src/sysprof/sysprof-greeter.ui:504
 msgid "Watch the system log for new messages and record them"
 msgstr "Controleer het systeemlogboek op nieuwe berichten en neem ze op"
 
-#: src/sysprof/sysprof-greeter.ui:526
+#: src/sysprof/sysprof-greeter.ui:520
 msgid "Include Hardware Information"
 msgstr "Hardware-informatie invoegen"
 
-#: src/sysprof/sysprof-greeter.ui:527
+#: src/sysprof/sysprof-greeter.ui:521
 msgid "Records information about PCI and USB devices"
 msgstr "Neemt informatie over PCI- en USB-apparaten op"
 
-#: src/sysprof/sysprof-greeter.ui:540
+#: src/sysprof/sysprof-greeter.ui:534
 msgid "Symbols"
 msgstr "Symbolen"
 
-#: src/sysprof/sysprof-greeter.ui:544
+#: src/sysprof/sysprof-greeter.ui:538
 msgid "Bundle Symbols"
 msgstr "Symbolen bundelen"
 
-#: src/sysprof/sysprof-greeter.ui:545
+#: src/sysprof/sysprof-greeter.ui:539
 msgid "Make recording shareable by symbolizing stack traces after recording"
 msgstr "Maak opname deelbaar door stacktraces na opname te symboliseren"
 
-#: src/sysprof/sysprof-greeter.ui:561
+#: src/sysprof/sysprof-greeter.ui:555
 msgid "Debuginfod"
 msgstr "Debuginfod"
 
-#: src/sysprof/sysprof-greeter.ui:562
+#: src/sysprof/sysprof-greeter.ui:556
 msgid "Enable Debuginfod to automatically fetch debug symbols"
 msgstr "Schakel Debuginfod in om debugsymbolen automatisch op te halen"
 
-#: src/sysprof/sysprof-greeter.ui:575
+#: src/sysprof/sysprof-greeter.ui:569
 msgid "Debug File Directories"
 msgstr "Debugbestandsmappen"
 
-#: src/sysprof/sysprof-greeter.ui:576
+#: src/sysprof/sysprof-greeter.ui:570
 msgid "Directories to search for debug files"
 msgstr "Mappen om te doorzoeken naar debugbestanden"
 
-#: src/sysprof/sysprof-greeter.ui:624
+#: src/sysprof/sysprof-greeter.ui:618
 msgid "_Open File…"
 msgstr "Bestand _openen…"
 
-#: src/sysprof/sysprof-greeter.ui:631
+#: src/sysprof/sysprof-greeter.ui:625
 msgid "Record to _File…"
 msgstr "Opnemen naar _bestand…"
 
-#: src/sysprof/sysprof-greeter.ui:638
+#: src/sysprof/sysprof-greeter.ui:632
 msgid "Record to _Memory"
 msgstr "Opnemen naar _geheugen"
 
-#: src/sysprof/sysprof-greeter.ui:657 src/sysprof/sysprof-window.ui:474
+#: src/sysprof/sysprof-greeter.ui:651 src/sysprof/sysprof-window.ui:468
 msgid "_Keyboard Shortcuts"
 msgstr "Snel_toetsen"
 
-#: src/sysprof/sysprof-greeter.ui:661 src/sysprof/sysprof-window.ui:478
+#: src/sysprof/sysprof-greeter.ui:655 src/sysprof/sysprof-window.ui:472
 msgid "Help"
 msgstr "Hulp"
 
-#: src/sysprof/sysprof-greeter.ui:665 src/sysprof/sysprof-window.ui:482
+#: src/sysprof/sysprof-greeter.ui:659 src/sysprof/sysprof-window.ui:476
 msgid "About Sysprof"
 msgstr "Over Sysprof"
 
@@ -1394,11 +1554,11 @@ msgstr "Opname stoppen"
 msgid "Time Profiler"
 msgstr "Tijdsprofiler"
 
-#: src/sysprof/sysprof-samples-section.ui:98 src/sysprof/sysprof-window.ui:495
+#: src/sysprof/sysprof-samples-section.ui:98 src/sysprof/sysprof-window.ui:489
 msgid "Callgraph"
 msgstr "Oproepgrafiek"
 
-#: src/sysprof/sysprof-samples-section.ui:181 src/sysprof/sysprof-window.ui:526
+#: src/sysprof/sysprof-samples-section.ui:181 src/sysprof/sysprof-window.ui:520
 msgid "Flamegraph"
 msgstr "Vlamgrafiek"
 
@@ -1406,23 +1566,23 @@ msgstr "Vlamgrafiek"
 msgid "Clear All Filters"
 msgstr "Alle filters wissen"
 
-#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:166
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:160
 msgid "Seek Backward"
 msgstr "Terugspoelen"
 
-#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:176
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:170
 msgid "Zoom Out"
 msgstr "Uitzoomen"
 
-#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:186
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:180
 msgid "Reset Zoom"
 msgstr "Zoomniveau herstellen"
 
-#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:196
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:190
 msgid "Zoom In"
 msgstr "Inzoomen"
 
-#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:206
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:200
 msgid "Seek Forward"
 msgstr "Doorspoelen"
 
@@ -1475,56 +1635,56 @@ msgstr ""
 "\n"
 "%s"
 
-#: src/sysprof/sysprof-window.ui:126
+#: src/sysprof/sysprof-window.ui:120
 msgid "Toggle Left Panel"
 msgstr "Linkerpaneel aan-/uitzetten"
 
-#: src/sysprof/sysprof-window.ui:133
+#: src/sysprof/sysprof-window.ui:127
 msgid "View Filters"
 msgstr "Filters bekijken"
 
-#: src/sysprof/sysprof-window.ui:221
+#: src/sysprof/sysprof-window.ui:215
 msgid "Main Menu"
 msgstr "Hoofdmenu"
 
-#: src/sysprof/sysprof-window.ui:228
+#: src/sysprof/sysprof-window.ui:222
 msgid "View Options"
 msgstr "Opties tonen"
 
-#: src/sysprof/sysprof-window.ui:234
+#: src/sysprof/sysprof-window.ui:228
 msgid "Toggle Right Panel"
 msgstr "Rechterpaneel aan-/uitzetten"
 
-#: src/sysprof/sysprof-window.ui:383
+#: src/sysprof/sysprof-window.ui:377
 msgid "Energy"
 msgstr "Energie"
 
-#: src/sysprof/sysprof-window.ui:403
+#: src/sysprof/sysprof-window.ui:397
 msgid "Network"
 msgstr "Netwerk"
 
-#: src/sysprof/sysprof-window.ui:413
+#: src/sysprof/sysprof-window.ui:407
 msgid "Storage"
 msgstr "Opslag"
 
-#: src/sysprof/sysprof-window.ui:460
+#: src/sysprof/sysprof-window.ui:454
 msgid "_Record Again…"
 msgstr "_Opnieuw opnemen…"
 
-#: src/sysprof/sysprof-window.ui:464
+#: src/sysprof/sysprof-window.ui:458
 msgid "Open Recording…"
 msgstr "Opname openen…"
 
-#: src/sysprof/sysprof-window.ui:468
+#: src/sysprof/sysprof-window.ui:462
 msgid "Save As…"
 msgstr "Opslaan als…"
 
-#: src/sysprof/sysprof-window.ui:488
+#: src/sysprof/sysprof-window.ui:482
 msgid "_Quit"
 msgstr "A_fsluiten"
 
 #. translators: Left Heavy means to sort larger (heavier) stack frames before others, starting from the left
-#: src/sysprof/sysprof-window.ui:529
+#: src/sysprof/sysprof-window.ui:523
 msgid "Left Heavy"
 msgstr "Links zwaar"
 

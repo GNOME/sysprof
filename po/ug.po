@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2026-02-23 19:06+0000\n"
-"PO-Revision-Date: 2026-03-09 19:03-0400\n"
+"POT-Creation-Date: 2026-06-30 01:14+0000\n"
+"PO-Revision-Date: 2026-08-18 13:38-0400\n"
 "Last-Translator: Abduqadir Abliz <sahranbay@gmail.com>\n"
 "Language-Team: Uighur <ug@li.org>\n"
 "Language: ug\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.8\n"
+"X-Generator: Poedit 3.9\n"
 
 #: data/org.gnome.Sysprof.desktop.in.in:3 data/org.gnome.Sysprof.metainfo.xml.in.in:6 src/sysprof/sysprof-application.c:268
 #: src/sysprof/sysprof-application.c:316 src/sysprof/sysprof-recording-pad.ui:20 src/sysprof/sysprof-window.c:253
@@ -40,13 +40,169 @@ msgid "Profile an application or entire system"
 msgstr "پىروگرامما ياكى پۈتكۈل سىستېمىغا ئۈنۈم تەھلىلى ئېلىپ بارىدۇ"
 
 #. developer_name tag deprecated with Appstream 1.0
-#: data/org.gnome.Sysprof.metainfo.xml.in.in:11
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:11 data/org.gnome.Sysprof.metainfo.xml.in.in:13
 msgid "Christian Hergert"
 msgstr "Christian Hergert"
 
 #: data/org.gnome.Sysprof.metainfo.xml.in.in:17
 msgid "Sysprof allows you to profile applications to aid in debugging and optimization."
 msgstr "Sysprof پىروگراممىنى سازلاش ۋە ئەلالاشتۇرۇشقا ياردەم بېرىش ئۈچۈن ئۈنۈم تەھلىلى ئېلىپ بېرىشقا يول قويىدۇ."
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:22
+msgid "profiler"
+msgstr "تەكشۈرگۈچ"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:23
+msgid "profiling"
+msgstr "سەپلىمە ھۆججەت"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:24
+msgid "performance"
+msgstr "ئۈنۈم"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:25
+msgid "latency"
+msgstr "كېچىكىش"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:26
+msgid "speed"
+msgstr "سۈرئىتى"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:27
+msgid "slowness"
+msgstr "ئاستىلىق"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:28
+msgid "power consumption"
+msgstr "توك سەرپىياتى"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:29
+msgid "energy efficiency"
+msgstr "ئېنېرگىيە ئۈنۈمى"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:30
+msgid "battery life"
+msgstr "توكدان ئۆمرى"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:31
+msgid "optimization"
+msgstr "ئەلالاشتۇرۇش"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:32
+msgid "optimizing"
+msgstr "ئەلالاشتۇرۇۋاتىدۇ"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:33
+msgid "auditing"
+msgstr "تەكشۈرۈپ ئېنىقلاش"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:34
+msgid "sampling"
+msgstr "نۇسخا ئېلىش"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:35
+msgid "sampler"
+msgstr "نۇسخا"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:36
+msgid "benchmarking"
+msgstr "ئاساسىي ئۆلچەم تەكشۈرۈش"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:37
+msgid "measurements"
+msgstr "ئۆلچەم"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:38
+msgid "counters"
+msgstr "سانىغۇچ"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:39
+msgid "CPU usage"
+msgstr "CPU ئىشلىتىلىشى"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:40
+msgid "stack traces"
+msgstr "دەستە ئىزلاش"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:42
+msgid "call graphs"
+msgstr "چاقىرىش گىرافىكى"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:43
+msgid "flame graphs"
+msgstr "يالقۇن گىرافىكى"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:45
+msgid "flame charts"
+msgstr "يالقۇن دىياگرامما"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:47
+msgid "programming"
+msgstr "پىروگراممىچىلىق"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:48
+msgid "software developers"
+msgstr "يۇمشاق دېتال ئىجادىيەتچى"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:49
+msgid "software development"
+msgstr "يۇمشاق دېتال ئىجادىيىتى"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:50
+msgid "testing"
+msgstr "سىناق"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:51
+msgid "QA"
+msgstr "سوئال جاۋاب"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:52
+msgid "quality assurance"
+msgstr "سۈپەت كاپالىتى"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:53
+msgid "troubleshooting"
+msgstr "چىگىش مەسىلىگە جاۋاب"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:54
+msgid "inefficiencies"
+msgstr "ئۈنۈمسىزلىك"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:55
+msgid "debugging"
+msgstr "سازلاش"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:56
+msgid "memory allocations tracer"
+msgstr "ئەسلەك تەقسىماتى ئىزلىغۇچ"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:57
+msgid "memory leaks detector"
+msgstr "ئەسلەك سارقىشنى بايقىغۇچ"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:58
+msgid "compositor"
+msgstr "بىرىكتۈرگۈچ"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:59
+msgid "graphics"
+msgstr "گىرافىك"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:60
+msgid "frames timing"
+msgstr "كاندۇك ۋاقتى"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:61
+msgid "system logs"
+msgstr "سىستېما خاتىرىسى"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:62
+msgid "logging"
+msgstr "كۈندىلىك خاتىرە"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:63
+msgid "Linux kernel"
+msgstr "Linux يادروسى"
 
 #: src/libsysprof/sysprof-category-summary.c:136
 msgid "Uncategorized"
@@ -144,40 +300,40 @@ msgstr "تەقسىملەش"
 msgid "Unknown Process"
 msgstr "يوچۇن جەريان"
 
-#: src/libsysprof/sysprof-document.c:1251 src/libsysprof/sysprof-document.c:1287
+#: src/libsysprof/sysprof-document.c:1267 src/libsysprof/sysprof-document.c:1303
 msgid "Indexing capture data frames"
 msgstr "تۇتقان سانلىق مەلۇمات كاندۇكىنى ئىندېكىسلاش"
 
-#: src/libsysprof/sysprof-document.c:1473
+#: src/libsysprof/sysprof-document.c:1489
 msgid "Discovering file system mounts"
 msgstr "ھۆججەت سىستېما ئېگەرلەشنى بايقاش"
 
-#: src/libsysprof/sysprof-document.c:1476
+#: src/libsysprof/sysprof-document.c:1492
 msgid "Discovering process mount namespaces"
 msgstr "ئات بوشلۇقىنى ئېگەرلەشنى بايقاش"
 
-#: src/libsysprof/sysprof-document.c:1479
+#: src/libsysprof/sysprof-document.c:1495
 msgid "Analyzing process address layouts"
 msgstr "جەريان ئادرېسىنىڭ جايلىشىشىنى تەھلىل قىلىش"
 
-#: src/libsysprof/sysprof-document.c:1482
+#: src/libsysprof/sysprof-document.c:1498
 msgid "Analyzing process command line"
 msgstr "جەريان بۇيرۇق قۇرىنى تەھلىل قىلىش"
 
-#: src/libsysprof/sysprof-document.c:1485
+#: src/libsysprof/sysprof-document.c:1501
 msgid "Analyzing file system overlays"
 msgstr "ھۆججەت سىستېما دەستىلىنىشىنى تەھلىل قىلىدۇ"
 
-#: src/libsysprof/sysprof-document.c:1488
+#: src/libsysprof/sysprof-document.c:1504
 msgid "Processing counters"
 msgstr "جەريان سانىغۇچ"
 
-#: src/libsysprof/sysprof-document.c:2480 src/libsysprof/sysprof-document.c:2499
+#: src/libsysprof/sysprof-document.c:2496 src/libsysprof/sysprof-document.c:2515
 #, c-format
 msgid "Recording at %X %x"
 msgstr "خاتىرىلەنگەن ۋاقىت %X %x"
 
-#: src/libsysprof/sysprof-document.c:2483 src/libsysprof/sysprof-document.c:2502
+#: src/libsysprof/sysprof-document.c:2499 src/libsysprof/sysprof-document.c:2518
 #, c-format
 msgid "Recording at %s"
 msgstr "خاتىرىلەنگەن ۋاقىت %s"

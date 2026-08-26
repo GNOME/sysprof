@@ -28,6 +28,7 @@
     <file preprocess="xml-stripblanks">icons/scalable/actions/threads-symbolic.svg</file>
     <file preprocess="xml-stripblanks">sysprof-callgraph-view.ui</file>
     <file preprocess="xml-stripblanks">sysprof-counters-section.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-counters-section-counter.ui</file>
     <file preprocess="xml-stripblanks">sysprof-cpu-section.ui</file>
     <file preprocess="xml-stripblanks">sysprof-cpu-section-counter.ui</file>
     <file preprocess="xml-stripblanks">sysprof-dbus-section.ui</file>

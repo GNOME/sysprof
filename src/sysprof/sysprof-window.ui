@@ -363,6 +363,16 @@
                               </object>
                             </child>
                             <child>
+                              <object class="SysprofCountersSection">
+                                <property name="title" translatable="yes">All Counters</property>
+                                <property name="category">counters</property>
+                                <property name="icon-name">mark-chart-symbolic</property>
+                                <binding name="session">
+                                  <lookup name="session">SysprofWindow</lookup>
+                                </binding>
+                              </object>
+                            </child>
+                            <child>
                               <object class="SysprofCpuSection">
                                 <property name="title" translatable="yes">CPU</property>
                                 <property name="category">counters</property>

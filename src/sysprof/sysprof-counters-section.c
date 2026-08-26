@@ -23,13 +23,19 @@
 #include "sysprof-chart.h"
 #include "sysprof-counters-section.h"
 #include "sysprof-line-layer.h"
+#include "sysprof-time-filter-model.h"
+#include "sysprof-time-scrubber.h"
 #include "sysprof-time-series.h"
 #include "sysprof-time-span-layer.h"
+#include "sysprof-value-axis.h"
 #include "sysprof-xy-series.h"
 
 struct _SysprofCountersSection
 {
-  SysprofSection parent_instance;
+  SysprofSection       parent_instance;
+
+  GtkColumnView       *column_view;
+  GtkColumnViewColumn *time_column;
 };
 
 G_DEFINE_FINAL_TYPE (SysprofCountersSection, sysprof_counters_section, SYSPROF_TYPE_SECTION)
@@ -53,6 +59,8 @@ sysprof_counters_section_class_init (SysprofCountersSectionClass *klass)
   object_class->dispose = sysprof_counters_section_dispose;
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-counters-section.ui");
+  gtk_widget_class_bind_template_child (widget_class, SysprofCountersSection, column_view);
+  gtk_widget_class_bind_template_child (widget_class, SysprofCountersSection, time_column);
 
   g_type_ensure (SYSPROF_TYPE_CHART);
   g_type_ensure (SYSPROF_TYPE_DOCUMENT_MARK);
@@ -68,4 +76,6 @@ static void
 sysprof_counters_section_init (SysprofCountersSection *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  gtk_column_view_sort_by_column (self->column_view, self->time_column, GTK_SORT_ASCENDING);
 }

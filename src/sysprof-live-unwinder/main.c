@@ -97,7 +97,6 @@ typedef struct _PerfSource
   guint8                      *buffer;
 
   int                          cpu;
-  GPid                         self_pid;
 
   guint                        stack_size;
 } PerfSource;
@@ -374,8 +373,6 @@ perf_source_dispatch (GSource     *gsource,
   guint64 mask = n_bytes - 1;
   guint64 head;
   guint64 tail;
-  guint us = 0;
-  guint them = 0;
 
   g_assert (source != NULL);
 
@@ -391,7 +388,6 @@ perf_source_dispatch (GSource     *gsource,
     {
       const SysprofPerfEvent *event;
       struct perf_event_header *header;
-      gboolean is_self = FALSE;
 
       /* Note that:
        *
@@ -442,7 +438,6 @@ perf_source_dispatch (GSource     *gsource,
           break;
 
         case PERF_RECORD_SAMPLE:
-          is_self = event->callchain.pid == source->self_pid;
           break;
 
         case PERF_RECORD_READ:
@@ -455,9 +450,6 @@ perf_source_dispatch (GSource     *gsource,
         }
 
       handle_event (source, event);
-
-      us += is_self;
-      them += !is_self;
 
     skip_callback:
       tail += header->size;
@@ -541,7 +533,6 @@ perf_source_init (PerfSource            *source,
   source->map_data_size = N_PAGES * sysprof_getpagesize ();
   source->map_data_end = source->map_data + source->map_data_size;
   source->tail = 0;
-  source->self_pid = getpid ();
   source->cpu = cpu;
   source->stack_size = stack_size;
 

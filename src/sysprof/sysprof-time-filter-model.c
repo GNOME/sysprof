@@ -204,10 +204,12 @@ static void
 sysprof_time_filter_model_init (SysprofTimeFilterModel *self)
 {
   self->signal_group = g_signal_group_new (G_TYPE_LIST_MODEL);
-  g_signal_group_connect_swapped (self->signal_group,
-                                  "items-changed",
-                                  G_CALLBACK (sysprof_time_filter_model_update),
-                                  self);
+  g_signal_group_connect_data (self->signal_group,
+                               "items-changed",
+                               G_CALLBACK (sysprof_time_filter_model_update),
+                               self,
+                               NULL,
+                               (G_CONNECT_AFTER | G_CONNECT_SWAPPED));
 
   self->expression = gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_FRAME, NULL, "time");
   self->inclusive = TRUE;

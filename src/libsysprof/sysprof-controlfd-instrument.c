@@ -300,6 +300,9 @@ sysprof_controlfd_instrument_record (SysprofInstrument *instrument,
   if (!(spawnable = _sysprof_recording_get_spawnable (recording)))
     return dex_future_new_for_boolean (TRUE);
 
+  if (self->connection == NULL)
+    return dex_future_new_for_boolean (TRUE);
+
   state = g_new0 (SysprofControlfdRecording, 1);
   state->recording = g_object_ref (recording);
   state->stream = g_object_ref (G_IO_STREAM (self->connection));

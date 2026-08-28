@@ -30,6 +30,8 @@
 #include <gio/gunixinputstream.h>
 #include <gio/gunixoutputstream.h>
 
+#include <libdex.h>
+
 #include <sysprof.h>
 
 #include "ipc-agent.h"
@@ -427,6 +429,8 @@ main (int   argc,
       g_printerr ("You must provide --capture=PATH\n");
       return EXIT_FAILURE;
     }
+
+  dex_init ();
 
   /* Setup main loop, we'll need it going forward for things
    * like async D-Bus, waiting for child processes, etc.

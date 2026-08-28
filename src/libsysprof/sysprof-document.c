@@ -397,6 +397,7 @@ sysprof_document_finalize (GObject *object)
   g_clear_object (&self->cpu_info);
 
   g_clear_object (&self->mount_namespace);
+  g_clear_object (&self->missing_process);
   g_clear_object (&self->symbols);
 
   g_clear_pointer (&self->files_first_position, g_hash_table_unref);

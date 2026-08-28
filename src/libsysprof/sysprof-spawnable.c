@@ -106,6 +106,7 @@ sysprof_spawnable_finalize (GObject *object)
   g_clear_pointer (&self->fds, g_array_unref);
   g_clear_pointer (&self->argv, g_ptr_array_unref);
   g_clear_pointer (&self->environ, g_strfreev);
+  g_clear_pointer (&self->cwd, g_free);
 
   G_OBJECT_CLASS (sysprof_spawnable_parent_class)->finalize (object);
 }

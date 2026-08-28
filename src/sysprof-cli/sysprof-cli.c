@@ -435,12 +435,13 @@ Examples:\n\
 
 #if HAVE_POLKIT_AGENT
   /* Start polkit agent so that we can elevate privileges from a TTY */
-  if (g_getenv ("DESKTOP_SESSION") == NULL &&
-      (subject = polkit_unix_process_new_for_owner (getpid (), 0, -1)))
+  if (!no_sysprofd &&
+      g_getenv ("DESKTOP_SESSION") == NULL &&
+      (subject = polkit_unix_process_new_for_owner (getpid (), 0, -1)) &&
+      (polkit = polkit_agent_text_listener_new (NULL, NULL)))
     {
       g_autoptr(GError) pkerror = NULL;
 
-      polkit = polkit_agent_text_listener_new (NULL, NULL);
       polkit_agent_listener_register (polkit,
                                       POLKIT_AGENT_REGISTER_FLAGS_NONE,
                                       subject,

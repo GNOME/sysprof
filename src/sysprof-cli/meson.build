@@ -22,3 +22,22 @@ sysprof_cli = executable('sysprof-cli', sysprof_cli_sources,
         c_args: release_flags + sysprof_cli_c_args,
        install: true,
 )
+
+test('sysprof-cli-unprivileged',
+  sysprof_cli,
+  args: [
+    '--force',
+    '--no-sysprofd',
+    '--no-perf',
+    '--no-cpu',
+    '--no-battery',
+    '--no-memory',
+    '--no-disk',
+    '--no-network',
+    '--use-trace-fd',
+    join_paths(meson.current_build_dir(), 'unprivileged.syscap'),
+    '--',
+    '/usr/bin/true',
+  ],
+  env: ['G_DEBUG=fatal-criticals'],
+)

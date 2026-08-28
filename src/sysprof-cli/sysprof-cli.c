@@ -52,7 +52,6 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureWriter, sysprof_capture_writer_unre
 
 static gboolean no_decode;
 static gboolean disable_debuginfod;
-static GMainLoop *main_loop;
 static SysprofRecording *active_recording;
 
 static void
@@ -78,11 +77,14 @@ diagnostics_items_changed_cb (GListModel *model,
 static gboolean
 sigint_handler (gpointer user_data)
 {
+  GMainLoop *loop = user_data;
   static int count;
+
+  g_assert (loop != NULL);
 
   if (count >= 2)
     {
-      g_main_loop_quit (main_loop);
+      g_main_loop_quit (loop);
       return G_SOURCE_REMOVE;
     }
 
@@ -201,11 +203,12 @@ sysprof_cli_wait_cb (GObject      *object,
                      gpointer      user_data)
 {
   SysprofRecording *recording = (SysprofRecording *)object;
+  GMainLoop *loop = user_data;
   g_autoptr(GError) error = NULL;
 
   g_assert (SYSPROF_IS_RECORDING (recording));
   g_assert (G_IS_ASYNC_RESULT (result));
-  g_assert (user_data == NULL);
+  g_assert (loop != NULL);
 
   if (!sysprof_recording_wait_finish (recording, result, &error))
     {
@@ -214,7 +217,7 @@ sysprof_cli_wait_cb (GObject      *object,
                     error->message);
     }
 
-  g_main_loop_quit (main_loop);
+  g_main_loop_quit (loop);
 }
 
 static void
@@ -223,13 +226,14 @@ sysprof_cli_record_cb (GObject      *object,
                        gpointer      user_data)
 {
   SysprofProfiler *profiler = (SysprofProfiler *)object;
+  GMainLoop *loop = user_data;
   g_autoptr(SysprofRecording) recording = NULL;
   g_autoptr(GListModel) diagnostics = NULL;
   g_autoptr(GError) error = NULL;
 
   g_assert (SYSPROF_IS_PROFILER (profiler));
   g_assert (G_IS_ASYNC_RESULT (result));
-  g_assert (user_data == NULL);
+  g_assert (loop != NULL);
 
   if (!(recording = sysprof_profiler_record_finish (profiler, result, &error)))
     g_error ("Failed to start profiling session: %s", error->message);
@@ -248,7 +252,7 @@ sysprof_cli_record_cb (GObject      *object,
   sysprof_recording_wait_async (recording,
                                 NULL,
                                 sysprof_cli_wait_cb,
-                                NULL);
+                                loop);
 
   g_set_object (&active_recording, recording);
 }
@@ -280,15 +284,18 @@ main (int   argc,
 #endif
   g_autoptr(SysprofCaptureWriter) writer = NULL;
   g_autoptr(SysprofProfiler) profiler = NULL;
+  g_autoptr(GMainLoop) loop = NULL;
+  g_autoptr(GOptionContext) context = NULL;
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GSource) sigint_source = NULL;
+  g_autoptr(GSource) sigterm_source = NULL;
   g_autofree char *power_profile = NULL;
+  g_autofree char *command = NULL;
   g_auto(GStrv) child_argv = NULL;
   g_auto(GStrv) envs = NULL;
   g_auto(GStrv) monitor_bus = NULL;
   GMainContext *main_context;
-  GOptionContext *context;
   const char *filename = "capture.syscap";
-  GError *error = NULL;
-  char *command = NULL;
   gboolean gjs = FALSE;
   gboolean gtk = FALSE;
   gboolean no_battery = FALSE;
@@ -351,9 +358,6 @@ main (int   argc,
 
   sysprof_clock_init ();
   dex_init ();
-
-  g_unix_signal_add (SIGINT, sigint_handler, main_loop);
-  g_unix_signal_add (SIGTERM, sigint_handler, main_loop);
 
   /* Set up gettext translations */
   setlocale (LC_ALL, "");
@@ -431,7 +435,7 @@ Examples:\n\
       return EXIT_FAILURE;
     }
 
-  main_loop = g_main_loop_new (NULL, FALSE);
+  loop = g_main_loop_new (NULL, FALSE);
 
 #if HAVE_POLKIT_AGENT
   /* Start polkit agent so that we can elevate privileges from a TTY */
@@ -495,6 +499,7 @@ Examples:\n\
   if (command != NULL || child_argv != NULL)
     {
       g_autoptr(SysprofSpawnable) spawnable = sysprof_spawnable_new ();
+      g_autofree char *cwd = NULL;
       g_auto(GStrv) current_env = g_get_environ ();
       int child_argc;
 
@@ -508,7 +513,8 @@ Examples:\n\
           return EXIT_FAILURE;
         }
 
-      sysprof_spawnable_set_cwd (spawnable, g_get_current_dir ());
+      cwd = g_get_current_dir ();
+      sysprof_spawnable_set_cwd (spawnable, cwd);
       sysprof_spawnable_append_args (spawnable, (const char * const *)child_argv);
       sysprof_spawnable_set_environ (spawnable, (const char * const *)current_env);
 
@@ -625,10 +631,15 @@ Examples:\n\
                                  writer,
                                  NULL,
                                  sysprof_cli_record_cb,
-                                 NULL);
+                                 loop);
 
-  g_unix_signal_add (SIGINT, sigint_handler, main_loop);
-  g_unix_signal_add (SIGTERM, sigint_handler, main_loop);
+  sigint_source = g_unix_signal_source_new (SIGINT);
+  g_source_set_callback (sigint_source, sigint_handler, loop, NULL);
+  g_source_attach (sigint_source, NULL);
+
+  sigterm_source = g_unix_signal_source_new (SIGTERM);
+  g_source_set_callback (sigterm_source, sigint_handler, loop, NULL);
+  g_source_attach (sigterm_source, NULL);
 
   g_printerr ("Recording, press ^C to exit\n");
 
@@ -637,15 +648,19 @@ Examples:\n\
     sd_notify (TRUE, "READY=1");
 #endif
 
-  g_main_loop_run (main_loop);
+  g_main_loop_run (loop);
 
   sysprof_capture_writer_flush (writer);
 
-  main_context = g_main_loop_get_context (main_loop);
+  main_context = g_main_loop_get_context (loop);
   while (g_main_context_pending (main_context))
     g_main_context_iteration (main_context, FALSE);
 
   sysprof_capture_writer_flush (writer);
+
+  g_source_destroy (sigint_source);
+  g_source_destroy (sigterm_source);
+  g_clear_object (&active_recording);
 
   return EXIT_SUCCESS;
 }

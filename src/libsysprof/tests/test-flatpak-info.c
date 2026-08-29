@@ -20,6 +20,10 @@
 
 #include "config.h"
 
+#include <sys/stat.h>
+
+#include "sysprof-elf-private.h"
+#include "sysprof-elf-loader-private.h"
 #include "sysprof-mount-namespace-private.h"
 #include "sysprof-strings-private.h"
 
@@ -273,6 +277,42 @@ test_btrfs_ostree_paths (void)
 }
 
 static void
+test_elf_matching (void)
+{
+  g_autoptr(GMappedFile) mapped_file = NULL;
+  g_autoptr(SysprofElf) elf = NULL;
+  g_autoptr(GError) error = NULL;
+  g_autofree char *filename = NULL;
+  const char *build_id;
+  struct stat stbuf;
+
+  filename = g_file_read_link ("/proc/self/exe", &error);
+  g_assert_no_error (error);
+  g_assert_nonnull (filename);
+  g_assert_cmpint (stat (filename, &stbuf), ==, 0);
+
+  mapped_file = g_mapped_file_new (filename, FALSE, &error);
+  g_assert_no_error (error);
+  g_assert_nonnull (mapped_file);
+
+  elf = sysprof_elf_new (filename,
+                         g_steal_pointer (&mapped_file),
+                         stbuf.st_ino,
+                         &error);
+  g_assert_no_error (error);
+  g_assert_nonnull (elf);
+
+  build_id = sysprof_elf_get_build_id (elf);
+  g_assert_nonnull (build_id);
+  g_assert_true (sysprof_elf_matches (elf, stbuf.st_ino + 1, build_id));
+  g_assert_false (sysprof_elf_matches (elf,
+                                      stbuf.st_ino,
+                                      "0000000000000000000000000000000000000000"));
+  g_assert_true (sysprof_elf_matches (elf, stbuf.st_ino, NULL));
+  g_assert_false (sysprof_elf_matches (elf, stbuf.st_ino + 1, NULL));
+}
+
+static void
 test_flatpak_prefixed_runtime (void)
 {
   static const char contents[] =
@@ -304,6 +344,43 @@ test_flatpak_prefixed_runtime (void)
   sysprof_strings_unref (strings);
 }
 
+static void
+test_build_id_path (void)
+{
+  g_autofree char *path = NULL;
+
+  path = _sysprof_elf_loader_build_id_path ("/usr/lib/debug", "abcdef0123456789");
+  g_assert_cmpstr (path, ==, "/usr/lib/debug/.build-id/ab/cdef0123456789.debug");
+}
+
+static void
+test_flatpak_access_paths (void)
+{
+  g_autofree char *path = NULL;
+
+  path = _sysprof_elf_loader_access_path ("/var/home/alice/.local/lib/example.so",
+                                          TRUE,
+                                          FALSE);
+  g_assert_null (path);
+
+  path = _sysprof_elf_loader_access_path ("/sysroot/ostree/deploy/example.so",
+                                          TRUE,
+                                          FALSE);
+  g_assert_null (path);
+
+  path = _sysprof_elf_loader_access_path ("/var/lib/flatpak/runtime/example.so",
+                                          TRUE,
+                                          FALSE);
+  g_assert_null (path);
+
+  path = _sysprof_elf_loader_access_path ("/usr/lib/example.so", TRUE, FALSE);
+  g_assert_cmpstr (path, ==, "/var/run/host/usr/lib/example.so");
+
+  g_clear_pointer (&path, g_free);
+  path = _sysprof_elf_loader_access_path ("/var/home/alice/example.so", FALSE, TRUE);
+  g_assert_cmpstr (path, ==, "/var/run/host/var/home/alice/example.so");
+}
+
 int
 main (int   argc,
       char *argv[])
@@ -316,6 +393,9 @@ main (int   argc,
   g_test_add_func ("/Sysprof/Flatpak/prefixed-runtime", test_flatpak_prefixed_runtime);
   g_test_add_func ("/Sysprof/Mount/overlay-order", test_overlay_order);
   g_test_add_func ("/Sysprof/Mount/btrfs-ostree-paths", test_btrfs_ostree_paths);
+  g_test_add_func ("/Sysprof/Elf/matching", test_elf_matching);
+  g_test_add_func ("/Sysprof/Elf/build-id-path", test_build_id_path);
+  g_test_add_func ("/Sysprof/Elf/flatpak-access-paths", test_flatpak_access_paths);
 
   return g_test_run ();
 }

@@ -512,9 +512,12 @@ sysprof_elf_matches (SysprofElf *self,
     {
       const char *elf_build_id = elf_parser_get_build_id (self->parser);
 
-      /* Not matching build-id, you definitely don't want this ELF */
-      if (elf_build_id != NULL && !g_str_equal (build_id, elf_build_id))
-        return FALSE;
+      /* Build IDs identify the contents even when the capture was recorded on
+       * another machine, or when Flatpak checked out the same object under a
+       * different inode.
+       */
+      if (elf_build_id != NULL)
+        return g_str_equal (build_id, elf_build_id);
     }
 
   if (file_inode && self->file_inode && file_inode != self->file_inode)

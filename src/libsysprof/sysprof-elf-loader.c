@@ -248,11 +248,43 @@ sysprof_elf_loader_set_external_debug_dirs (SysprofElfLoader   *self,
     g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_EXTERNAL_DEBUG_DIRS]);
 }
 
-static char *
-access_path_from_container (const char *path)
+char *
+_sysprof_elf_loader_access_path (const char *path,
+                                 gboolean    flatpak,
+                                 gboolean    podman)
 {
-  if ((in_flatpak && !g_str_has_prefix (path, "/home/")) || in_podman)
+  static const char * const flatpak_direct_paths[] = {
+    "/home/",
+    "/media/",
+    "/mnt/",
+    "/opt/",
+    "/ostree/",
+    "/run/media/",
+    "/srv/",
+    "/sysroot/",
+    "/var/home/",
+    "/var/lib/flatpak/",
+  };
+
+  g_return_val_if_fail (path != NULL, NULL);
+
+  if (podman)
     return g_build_filename ("/var/run/host", path, NULL);
+
+  if (flatpak)
+    {
+      /* --filesystem=host exposes these paths directly, while Sysprof and
+       * Builder also grant the Flatpak installation directories explicitly.
+       * In particular, do not hide Silverblue's /var/home behind /run/host.
+       */
+      for (guint i = 0; i < G_N_ELEMENTS (flatpak_direct_paths); i++)
+        {
+          if (g_str_has_prefix (path, flatpak_direct_paths[i]))
+            return NULL;
+        }
+
+      return g_build_filename ("/var/run/host", path, NULL);
+    }
 
   return NULL;
 }
@@ -262,6 +294,26 @@ get_deepest_debuglink (SysprofElf *elf)
 {
   SysprofElf *debug_link = sysprof_elf_get_debug_link_elf (elf);
   return debug_link ? get_deepest_debuglink (debug_link) : elf;
+}
+
+char *
+_sysprof_elf_loader_build_id_path (const char *debug_dir,
+                                   const char *build_id)
+{
+  g_autofree char *filename = NULL;
+  char prefix[3];
+
+  g_return_val_if_fail (debug_dir != NULL, NULL);
+
+  if (build_id == NULL || strlen (build_id) < 3)
+    return NULL;
+
+  prefix[0] = build_id[0];
+  prefix[1] = build_id[1];
+  prefix[2] = 0;
+  filename = g_strconcat (build_id + 2, ".debug", NULL);
+
+  return g_build_filename (debug_dir, ".build-id", prefix, filename, NULL);
 }
 
 static gboolean
@@ -275,15 +327,21 @@ try_load_build_id (SysprofElfLoader      *self,
   g_assert (!mount_namespace || SYSPROF_IS_MOUNT_NAMESPACE (mount_namespace));
   g_assert (SYSPROF_IS_ELF (elf));
 
-  if (build_id && build_id[0] && build_id[1])
+  if (build_id != NULL)
     {
-      char prefix[3] = {build_id[0], build_id[1], 0};
-      g_autofree char *build_id_path = g_build_filename (debug_dir, ".build-id", prefix, build_id, NULL);
-      g_autoptr(SysprofElf) debug_link_elf = sysprof_elf_loader_load (self, mount_namespace, build_id_path, build_id, 0, NULL);
+      g_autofree char *build_id_path = _sysprof_elf_loader_build_id_path (debug_dir, build_id);
+      g_autoptr(SysprofElf) debug_link_elf = NULL;
 
-      if (debug_link_elf != NULL)
+      if (build_id_path != NULL &&
+          (debug_link_elf = sysprof_elf_loader_load (self,
+                                                     mount_namespace,
+                                                     build_id_path,
+                                                     build_id,
+                                                     0,
+                                                     NULL)) &&
+          debug_link_elf != elf)
         {
-          sysprof_elf_set_debug_link_elf (elf, debug_link_elf);
+          sysprof_elf_set_debug_link_elf (elf, get_deepest_debuglink (debug_link_elf));
           return TRUE;
         }
     }
@@ -326,7 +384,6 @@ sysprof_elf_loader_annotate (SysprofElfLoader      *self,
   g_assert (SYSPROF_IS_ELF_LOADER (self));
   g_assert (SYSPROF_IS_MOUNT_NAMESPACE (mount_namespace));
   g_assert (SYSPROF_IS_ELF (elf));
-  g_assert (debug_link != NULL);
 
   if (self->debug_dirs != NULL)
     {
@@ -346,6 +403,9 @@ sysprof_elf_loader_annotate (SysprofElfLoader      *self,
 
           if (try_load_build_id (self, mount_namespace, elf, build_id, debug_dir))
             return;
+
+          if (debug_link == NULL)
+            continue;
 
           debug_path = g_build_filename (debug_dir, directory_name, debug_link, NULL);
           if ((debug_link_elf = sysprof_elf_loader_load (self, mount_namespace, debug_path, build_id, 0, NULL)))
@@ -381,12 +441,15 @@ sysprof_elf_loader_annotate (SysprofElfLoader      *self,
           const char *build_id;
 
           directory_name = g_path_get_dirname (orig_file);
-          debug_path = g_build_filename (debug_dir, directory_name, debug_link, NULL);
           build_id = sysprof_elf_get_build_id (elf);
 
           if (try_load_build_id (self, NULL, elf, build_id, debug_dir))
             return;
 
+          if (debug_link == NULL)
+            continue;
+
+          debug_path = g_build_filename (debug_dir, directory_name, debug_link, NULL);
           if ((debug_link_elf = sysprof_elf_loader_load (self, NULL, debug_path, build_id, 0, NULL)))
             {
               sysprof_elf_set_debug_link_elf (elf, get_deepest_debuglink (debug_link_elf));
@@ -488,7 +551,9 @@ sysprof_elf_loader_load (SysprofElfLoader       *self,
 
       if (in_flatpak || in_podman)
         {
-          if ((container_path = access_path_from_container (path)))
+          if ((container_path = _sysprof_elf_loader_access_path (path,
+                                                                 in_flatpak,
+                                                                 in_podman)))
             path = container_path;
         }
 
@@ -521,8 +586,14 @@ sysprof_elf_loader_load (SysprofElfLoader       *self,
 
       if (elf != NULL)
         {
-          if (mount_namespace && (debug_link = sysprof_elf_get_debug_link (elf)))
-            sysprof_elf_loader_annotate (self, mount_namespace, file, elf, debug_link);
+          /* A file loaded from the build-id tree is already debuginfo. Avoid
+           * resolving its build ID back to itself while it is being loaded.
+           */
+          if (mount_namespace != NULL && strstr (file, "/.build-id/") == NULL)
+            {
+              debug_link = sysprof_elf_get_debug_link (elf);
+              sysprof_elf_loader_annotate (self, mount_namespace, file, elf, debug_link);
+            }
 
           /* If we loaded the ELF, but it doesn't match what this request is looking
            * for in terms of inode/build-id, then we need to bail and not return it.

@@ -18,6 +18,7 @@ libsysprof_testsuite = {
   'test-capture-model'            : {'skip': true},
   'test-cplusplus'                : {'cpp': true},
   'test-elf-loader'               : {'skip': true},
+  'test-flatpak-info'             : {},
   'test-leak-detector'            : {'skip': true},
   'test-list-counters'            : {'skip': true},
   'test-list-cpu'                 : {'skip': true},

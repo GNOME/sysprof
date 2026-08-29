@@ -242,6 +242,7 @@ _sysprof_mount_new_for_overlay (SysprofStrings *strings,
   self->root = sysprof_strings_get (strings, "/");
   self->mount_source = sysprof_strings_get (strings, host_path);
   self->is_overlay = TRUE;
+  self->layer = layer;
 
   return self;
 }

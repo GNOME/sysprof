@@ -152,50 +152,58 @@ sysprof_mount_namespace_add_mount (SysprofMountNamespace *self,
   self->mounts_dirty = TRUE;
 }
 
-static SysprofMountDevice *
-sysprof_mount_namespace_find_device (SysprofMountNamespace *self,
-                                     SysprofMount          *mount,
-                                     const char            *relative_path)
+static gboolean
+path_is_equal_or_below (const char *path,
+                        const char *prefix)
 {
-  const char *mount_source;
-  g_autofree char *subvolume = NULL;
+  gsize prefix_len;
 
-  g_assert (SYSPROF_IS_MOUNT_NAMESPACE (self));
-  g_assert (SYSPROF_IS_MOUNT (mount));
+  g_assert (path != NULL);
+  g_assert (prefix != NULL);
 
-  while (relative_path[0] == '/')
-    relative_path++;
+  prefix_len = strlen (prefix);
 
-  mount_source = sysprof_mount_get_mount_source (mount);
-  subvolume = sysprof_mount_get_superblock_option (mount, "subvol");
+  return g_str_has_prefix (path, prefix) &&
+         (path[prefix_len] == 0 || path[prefix_len] == '/');
+}
 
-  for (guint i = 0; i < self->devices->len; i++)
-    {
-      SysprofMountDevice *device = g_ptr_array_index (self->devices, i);
-      const char *fs_spec = sysprof_mount_device_get_fs_spec (device);
+static const char *
+get_root_relative_to_subvolume (const char *root,
+                                const char *subvolume)
+{
+  g_assert (root != NULL);
 
-      if (g_strcmp0 (fs_spec, mount_source) != 0)
-        continue;
+  if (subvolume == NULL || subvolume[0] == 0 || g_str_equal (subvolume, "/"))
+    return root;
 
-      if (subvolume != NULL)
-        {
-          const char *device_subvolume = sysprof_mount_device_get_subvolume (device);
-          const char *mount_point = sysprof_mount_device_get_mount_point (device);
+  if (g_str_equal (root, subvolume))
+    return "/";
 
-          if (g_strcmp0 (subvolume, device_subvolume) != 0)
-            continue;
-
-          /* Just ignore /sysroot, as it seems to be a convention on systems like
-           * Silverblue or GNOME OS.
-           */
-          if (g_strcmp0 (mount_point, "/sysroot") == 0)
-            continue;
-        }
-
-      return device;
-    }
+  if (path_is_equal_or_below (root, subvolume))
+    return root + strlen (subvolume);
 
   return NULL;
+}
+
+static void
+append_unique_path (GArray *strv,
+                    char   *path)
+{
+  g_assert (strv != NULL);
+  g_assert (path != NULL);
+
+  for (guint i = 0; i < strv->len; i++)
+    {
+      const char *element = g_array_index (strv, char *, i);
+
+      if (g_str_equal (element, path))
+        {
+          g_free (path);
+          return;
+        }
+    }
+
+  g_array_append_val (strv, path);
 }
 
 static int
@@ -264,8 +272,6 @@ sysprof_mount_namespace_translate (SysprofMountNamespace *self,
   for (guint i = 0; i < self->mounts->len; i++)
     {
       SysprofMount *mount = g_ptr_array_index (self->mounts, i);
-      SysprofMountDevice *device;
-      const char *device_mount_point;
       const char *fs_type;
       const char *relative;
       char *translated;
@@ -278,6 +284,7 @@ sysprof_mount_namespace_translate (SysprofMountNamespace *self,
       if (mount->is_overlay)
         {
           translated = g_build_filename (mount->mount_source, relative, NULL);
+          append_unique_path (strv, translated);
         }
       else if (g_strcmp0 (fs_type, "overlay") == 0)
         {
@@ -291,7 +298,7 @@ sysprof_mount_namespace_translate (SysprofMountNamespace *self,
               for (guint j = 0; upperdirs[j]; j++)
                 {
                   translated = g_build_filename (upperdirs[j], relative, NULL);
-                  g_array_append_val (strv, translated);
+                  append_unique_path (strv, translated);
                 }
             }
 
@@ -300,7 +307,7 @@ sysprof_mount_namespace_translate (SysprofMountNamespace *self,
               for (guint j = 0; lowerdirs[j]; j++)
                 {
                   translated = g_build_filename (lowerdirs[j], relative, NULL);
-                  g_array_append_val (strv, translated);
+                  append_unique_path (strv, translated);
                 }
             }
 
@@ -308,28 +315,42 @@ sysprof_mount_namespace_translate (SysprofMountNamespace *self,
         }
       else
         {
+          const char *mount_source = sysprof_mount_get_mount_source (mount);
           const char *root;
-          const char *subvolume;
 
-          if (!(device = sysprof_mount_namespace_find_device (self, mount, relative)))
+          if (!(root = sysprof_mount_get_root (mount)))
             continue;
 
-          device_mount_point = sysprof_mount_device_get_mount_point (device);
-          root = sysprof_mount_get_root (mount);
-          subvolume = sysprof_mount_device_get_subvolume (device);
-
-          if (root != NULL && subvolume != NULL)
+          /* A device can be visible through multiple mounts on OSTree systems,
+           * including /sysroot and bind mounts for /var or /var/home. Preserve
+           * every compatible view and let the ELF build ID select the right
+           * file instead of guessing which view is canonical.
+           */
+          for (guint j = 0; j < self->devices->len; j++)
             {
-              if (g_strcmp0 (root, subvolume) == 0)
-                root = "/";
-              else if (g_str_has_prefix (root, subvolume) && root[strlen (subvolume)] == '/')
-                root += strlen (subvolume);
+              SysprofMountDevice *device = g_ptr_array_index (self->devices, j);
+              const char *device_mount_point;
+              const char *device_subvolume;
+              const char *relative_root;
+
+              if (g_strcmp0 (sysprof_mount_device_get_fs_spec (device), mount_source) != 0)
+                continue;
+
+              device_mount_point = sysprof_mount_device_get_mount_point (device);
+              device_subvolume = sysprof_mount_device_get_subvolume (device);
+
+              if (device_mount_point == NULL ||
+                  !(relative_root = get_root_relative_to_subvolume (root,
+                                                                    device_subvolume)))
+                continue;
+
+              translated = g_build_filename (device_mount_point,
+                                             relative_root,
+                                             relative,
+                                             NULL);
+              append_unique_path (strv, translated);
             }
-
-          translated = g_build_filename (device_mount_point, root, relative, NULL);
         }
-
-      g_array_append_val (strv, translated);
     }
 
   if (strv->len == 0)

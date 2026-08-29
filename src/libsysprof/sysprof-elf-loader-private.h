@@ -33,6 +33,11 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (SysprofElfLoader, sysprof_elf_loader, SYSPROF, ELF_LOADER, GObject)
 
 SysprofElfLoader   *sysprof_elf_loader_new                     (void);
+char               *_sysprof_elf_loader_access_path            (const char             *path,
+                                                                gboolean                flatpak,
+                                                                gboolean                podman);
+char               *_sysprof_elf_loader_build_id_path          (const char             *debug_dir,
+                                                                const char             *build_id);
 const char * const *sysprof_elf_loader_get_debug_dirs          (SysprofElfLoader       *self);
 void                sysprof_elf_loader_set_debug_dirs          (SysprofElfLoader       *self,
                                                                 const char * const     *debug_dirs);

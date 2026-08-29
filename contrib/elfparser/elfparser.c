@@ -564,13 +564,30 @@ read_table (ElfParser *parser,
 #endif
     for (i = 0; i < parser->n_symbols; ++i)
     {
+        const char *name = NULL;
+        guint bind;
         guint info;
+        guint type;
+        uint64_t name_offset;
         gulong addr;
         gulong shndx;
 
         info = st_info (parser, sym_table->offset, i);
+        bind = info >> 4;
+        type = info & 0xf;
         addr = st_value (parser, sym_table->offset, i);
         shndx = st_shndx (parser, sym_table->offset, i);
+
+        /* ARM-family mapping symbols are local STT_NOTYPE entries beginning
+         * with '$'. They mark code/data transitions rather than functions.
+         */
+        if (type == STT_NOTYPE)
+        {
+            name_offset = st_name (parser, sym_table->offset, i);
+
+            if (name_offset < str_table->size)
+                name = (const char *)parser->data + str_table->offset + name_offset;
+        }
 
 #if 0
         g_print ("read symbol: %s (section: %d)\n", get_string_indirct (parser->parser,
@@ -582,10 +599,14 @@ read_table (ElfParser *parser,
         if (addr != 0                                           &&
             shndx < parser->n_sections                          &&
             parser->sections[shndx] == parser->text_section     &&
-            (info & 0xf) == STT_FUNC                            &&
-            ((info >> 4) == STB_GLOBAL ||
-             (info >> 4) == STB_LOCAL  ||
-             (info >> 4) == STB_WEAK))
+            (type == STT_FUNC ||
+             (type == STT_NOTYPE &&
+              name != NULL &&
+              name[0] != '\0' &&
+              name[0] != '$'))                                  &&
+            (bind == STB_GLOBAL ||
+             bind == STB_LOCAL  ||
+             bind == STB_WEAK))
         {
             parser->symbols[n_symbols].address = addr;
             parser->symbols[n_symbols].table = sym_table->offset;

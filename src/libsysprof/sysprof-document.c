@@ -777,6 +777,38 @@ sysprof_document_load_mountinfos (SysprofDocument *self)
 }
 
 static void
+sysprof_document_load_flatpaks (SysprofDocument *self)
+{
+  EggBitsetIter iter;
+  guint pid;
+
+  g_assert (SYSPROF_IS_DOCUMENT (self));
+
+  if (egg_bitset_iter_init_first (&iter, self->pids, &pid))
+    {
+      do
+        {
+          g_autofree char *path = g_strdup_printf ("/proc/%u/root/.flatpak-info", pid);
+          g_autoptr(SysprofDocumentFile) file = sysprof_document_lookup_file (self, path);
+
+          if (file != NULL)
+            {
+              g_autoptr(GBytes) bytes = sysprof_document_file_dup_bytes (file);
+              SysprofProcessInfo *process_info = _sysprof_document_process_info (self, pid, TRUE);
+              gsize len;
+              const char *contents = g_bytes_get_data (bytes, &len);
+
+              sysprof_mount_namespace_add_flatpak (process_info->mount_namespace,
+                                                   self->strings,
+                                                   contents,
+                                                   len);
+            }
+        }
+      while (egg_bitset_iter_next (&iter, &pid));
+    }
+}
+
+static void
 sysprof_document_load_overlays (SysprofDocument *self)
 {
   EggBitsetIter iter;
@@ -1828,6 +1860,8 @@ sysprof_document_load_worker (GTask        *task,
 
   load_progress (load, .65, _("Discovering process mount namespaces"));
   sysprof_document_load_mountinfos (self);
+
+  sysprof_document_load_flatpaks (self);
 
   load_progress (load, .7, _("Analyzing process address layouts"));
   sysprof_document_load_memory_maps (self);

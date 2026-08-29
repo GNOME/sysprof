@@ -32,12 +32,16 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (SysprofMountNamespace, sysprof_mount_namespace, SYSPROF, MOUNT_NAMESPACE, GObject)
 
 SysprofMountNamespace  *sysprof_mount_namespace_new         (void);
-SysprofMountNamespace  *sysprof_mount_namespace_copy        (SysprofMountNamespace  *self);
-void                    sysprof_mount_namespace_add_device  (SysprofMountNamespace  *self,
-                                                             SysprofMountDevice     *mount);
-void                    sysprof_mount_namespace_add_mount   (SysprofMountNamespace  *self,
-                                                             SysprofMount           *mount);
-char                  **sysprof_mount_namespace_translate   (SysprofMountNamespace  *self,
-                                                             const char             *path);
+SysprofMountNamespace  *sysprof_mount_namespace_copy        (SysprofMountNamespace *self);
+void                    sysprof_mount_namespace_add_device  (SysprofMountNamespace *self,
+                                                             SysprofMountDevice    *mount);
+void                    sysprof_mount_namespace_add_mount   (SysprofMountNamespace *self,
+                                                             SysprofMount          *mount);
+void                    sysprof_mount_namespace_add_flatpak (SysprofMountNamespace *self,
+                                                             SysprofStrings        *strings,
+                                                             const char            *contents,
+                                                             gsize                  contents_len);
+char                  **sysprof_mount_namespace_translate   (SysprofMountNamespace *self,
+                                                             const char            *path);
 
 G_END_DECLS

@@ -20,12 +20,24 @@
 
 #include "config.h"
 
+#include <dlfcn.h>
 #include <sys/stat.h>
 
 #include "sysprof-elf-private.h"
 #include "sysprof-elf-loader-private.h"
 #include "sysprof-mount-namespace-private.h"
 #include "sysprof-strings-private.h"
+
+__asm__ (".pushsection .text\n"
+         ".local sysprof_test_notype_symbol\n"
+         "sysprof_test_notype_symbol:\n"
+         ".byte 0\n"
+         ".local $x.sysprof_test\n"
+         "$x.sysprof_test:\n"
+         ".byte 0\n"
+         ".popsection\n");
+
+extern char sysprof_test_notype_symbol;
 
 static void
 test_flatpak_sdk (void)
@@ -381,6 +393,45 @@ test_flatpak_access_paths (void)
   g_assert_cmpstr (path, ==, "/var/run/host/var/home/alice/example.so");
 }
 
+static void
+test_notype_symbol (void)
+{
+  g_autoptr(GMappedFile) mapped_file = NULL;
+  g_autoptr(SysprofElf) elf = NULL;
+  g_autoptr(GError) error = NULL;
+  g_autofree char *filename = NULL;
+  g_autofree char *name = NULL;
+  Dl_info info;
+  struct stat stbuf;
+  guint64 address;
+
+  filename = g_file_read_link ("/proc/self/exe", &error);
+  g_assert_no_error (error);
+  g_assert_nonnull (filename);
+  g_assert_cmpint (stat (filename, &stbuf), ==, 0);
+  g_assert_true (dladdr (&sysprof_test_notype_symbol, &info) != 0);
+
+  mapped_file = g_mapped_file_new (filename, FALSE, &error);
+  g_assert_no_error (error);
+  g_assert_nonnull (mapped_file);
+
+  elf = sysprof_elf_new (filename,
+                         g_steal_pointer (&mapped_file),
+                         stbuf.st_ino,
+                         &error);
+  g_assert_no_error (error);
+  g_assert_nonnull (elf);
+
+  address = (guintptr)&sysprof_test_notype_symbol - (guintptr)info.dli_fbase;
+  name = sysprof_elf_get_symbol_at_address (elf, address, NULL, NULL);
+  g_assert_cmpstr (name, ==, "sysprof_test_notype_symbol");
+
+  g_clear_pointer (&name, g_free);
+  address = (guintptr)&sysprof_test_notype_symbol + 1 - (guintptr)info.dli_fbase;
+  name = sysprof_elf_get_symbol_at_address (elf, address, NULL, NULL);
+  g_assert_cmpstr (name, ==, "sysprof_test_notype_symbol");
+}
+
 int
 main (int   argc,
       char *argv[])
@@ -396,6 +447,7 @@ main (int   argc,
   g_test_add_func ("/Sysprof/Elf/matching", test_elf_matching);
   g_test_add_func ("/Sysprof/Elf/build-id-path", test_build_id_path);
   g_test_add_func ("/Sysprof/Elf/flatpak-access-paths", test_flatpak_access_paths);
+  g_test_add_func ("/Sysprof/Elf/notype-symbol", test_notype_symbol);
 
   return g_test_run ();
 }

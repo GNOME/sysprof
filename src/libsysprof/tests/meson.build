@@ -11,6 +11,11 @@ libsysprof_testsuite_c_args = [
 ]
 
 libsysprof_testsuite = {
+  'log-messages'                  : {'skip': true},
+  'mark-summary'                  : {
+    'skip': true,
+    'dependencies': [cc.find_library('m', required: false)],
+  },
   'read-build-id'                 : {'skip': true},
   'ninja-to-marks'                : {'skip': true},
   'test-allocs-by-func'           : {'skip': true},
@@ -48,13 +53,13 @@ foreach test, params: libsysprof_testsuite
     test_exe = executable(test, '@0@.cpp'.format(test),
           cpp_args: libsysprof_testsuite_c_args,
          link_args: params.get('link_args', []),
-      dependencies: libsysprof_testsuite_deps,
+      dependencies: libsysprof_testsuite_deps + params.get('dependencies', []),
     )
   else
     test_exe = executable(test, '@0@.c'.format(test),
             c_args: libsysprof_testsuite_c_args,
          link_args: params.get('link_args', []),
-      dependencies: libsysprof_testsuite_deps,
+      dependencies: libsysprof_testsuite_deps + params.get('dependencies', []),
     )
   endif
 

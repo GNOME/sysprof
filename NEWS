@@ -1,4 +1,12 @@
-Overview of changes in Sysprof 50.alpha
+Overview of changes in Sysprof 51.rc
+=======================================
+
+ * Fix running sysprof-cli with --no-sysprofd and --no-perf
+ * Various optimizations to libsysprof
+ * Fix a warning when disposing some widget
+ * Translation updates
+
+Overview of changes in Sysprof 51.alpha
 =======================================
 
  * Various optimizations to libsysprof-capture

@@ -12,9 +12,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2026-05-19 22:46+0000\n"
-"PO-Revision-Date: 2026-06-27 20:58+0200\n"
-"Last-Translator: Jürgen Benvenuti <gastornis@posteo.org>\n"
+"POT-Creation-Date: 2026-09-02 12:04+0000\n"
+"PO-Revision-Date: 2026-09-03 18:43+0200\n"
+"Last-Translator: Christian Kirbach <christian.kirbach@gmail.com>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -48,6 +48,7 @@ msgstr "Ein Profil einer Anwendung oder des gesamten Systems erstellen"
 
 #. developer_name tag deprecated with Appstream 1.0
 #: data/org.gnome.Sysprof.metainfo.xml.in.in:11
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:13
 msgid "Christian Hergert"
 msgstr "Christian Hergert"
 
@@ -58,6 +59,167 @@ msgid ""
 msgstr ""
 "Sysprof ermöglicht Ihnen die Profilerstellung von Anwendungen zwecks "
 "Fehlerdiagnose und Optimierung."
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:22
+msgid "profiler"
+msgstr "Profiler"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:23
+msgid "profiling"
+msgstr "Effizienzanalyse"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:24
+msgid "performance"
+msgstr "Leistungsfähigkeit"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:25
+msgid "latency"
+msgstr "Verzögerung"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:26
+msgid "speed"
+msgstr "Geschwindigkeit"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:27
+msgid "slowness"
+msgstr "Langsamkeit"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:28
+msgid "power consumption"
+msgstr "Energieverbrauch"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:29
+msgid "energy efficiency"
+msgstr "Energieeffizienz"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:30
+msgid "battery life"
+msgstr "Akkulebensdauer"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:31
+msgid "optimization"
+msgstr "Optimierung"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:32
+msgid "optimizing"
+msgstr "Optimierung läuft"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:33
+msgid "auditing"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:34
+msgid "sampling"
+msgstr "Messwertnahme"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:35
+#, fuzzy
+#| msgid "Sample"
+msgid "sampler"
+msgstr "Messwert"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:36
+msgid "benchmarking"
+msgstr "Leistungstest"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:37
+msgid "measurements"
+msgstr "Messungen"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:38
+msgid "counters"
+msgstr "Zähler"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:39
+msgid "CPU usage"
+msgstr "CPU-Auslastung"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:40
+msgid "stack traces"
+msgstr "Stapelverfolgungen"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:42
+msgid "call graphs"
+msgstr "Aufrufgraphen"
+
+# https://www.brendangregg.com/flamegraphs.html
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:43
+msgid "flame graphs"
+msgstr "Flammengraphen"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:45
+msgid "flame charts"
+msgstr "Flammendiagramme"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:47
+msgid "programming"
+msgstr "Programmierung"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:48
+msgid "software developers"
+msgstr "Software-Entwickler"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:49
+msgid "software development"
+msgstr "Software-Entwicklung"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:50
+msgid "testing"
+msgstr "Testen"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:51
+msgid "QA"
+msgstr "Qualitätssicherung"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:52
+msgid "quality assurance"
+msgstr "Qualitätssicherung"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:53
+msgid "troubleshooting"
+msgstr "Fehlerbehebung"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:54
+msgid "inefficiencies"
+msgstr "Ineffizienzen"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:55
+msgid "debugging"
+msgstr "Fehlerdiagnose"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:56
+#, fuzzy
+#| msgid "Memory Allocations"
+msgid "memory allocations tracer"
+msgstr "Speicherzuweisungen"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:57
+msgid "memory leaks detector"
+msgstr "Speicherleckage-Erkennung"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:58
+msgid "compositor"
+msgstr "Compositor"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:59
+msgid "graphics"
+msgstr "Grafik"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:60
+msgid "frames timing"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:61
+msgid "system logs"
+msgstr "Systemprotokolle"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:62
+msgid "logging"
+msgstr "Protokollierung"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:63
+msgid "Linux kernel"
+msgstr "Linux-Kernel"
 
 #: src/libsysprof/sysprof-category-summary.c:136
 msgid "Uncategorized"
@@ -152,47 +314,47 @@ msgstr "Symbole werden heruntergeladen …"
 msgid "Allocation"
 msgstr "Zuweisung"
 
-#: src/libsysprof/sysprof-document.c:570
+#: src/libsysprof/sysprof-document.c:578
 msgid "Unknown Process"
 msgstr "Unbekannter Prozess"
 
-#: src/libsysprof/sysprof-document.c:1267
-#: src/libsysprof/sysprof-document.c:1303
+#: src/libsysprof/sysprof-document.c:1682
+#: src/libsysprof/sysprof-document.c:1690
 msgid "Indexing capture data frames"
 msgstr "Aufzeichnungs-Datenrahmen werden indiziert"
 
-#: src/libsysprof/sysprof-document.c:1489
+#: src/libsysprof/sysprof-document.c:1858
 msgid "Discovering file system mounts"
 msgstr "Einhängepunkte von Dateisystemen erkunden"
 
-#: src/libsysprof/sysprof-document.c:1492
+#: src/libsysprof/sysprof-document.c:1861
 msgid "Discovering process mount namespaces"
 msgstr "Die Namensräume der Einbindung des Prozesses entdecken"
 
-#: src/libsysprof/sysprof-document.c:1495
+#: src/libsysprof/sysprof-document.c:1866
 msgid "Analyzing process address layouts"
 msgstr "Die Adressraumanordnungen eines Prozesses analysieren"
 
-#: src/libsysprof/sysprof-document.c:1498
+#: src/libsysprof/sysprof-document.c:1869
 msgid "Analyzing process command line"
 msgstr "Die Befehlszeile eines Prozesses analysieren"
 
-#: src/libsysprof/sysprof-document.c:1501
+#: src/libsysprof/sysprof-document.c:1872
 msgid "Analyzing file system overlays"
 msgstr "Dateisystemüberlagerungen analysieren"
 
-#: src/libsysprof/sysprof-document.c:1504
+#: src/libsysprof/sysprof-document.c:1875
 msgid "Processing counters"
 msgstr "Zähler werden verarbeitet"
 
-#: src/libsysprof/sysprof-document.c:2496
-#: src/libsysprof/sysprof-document.c:2515
+#: src/libsysprof/sysprof-document.c:2867
+#: src/libsysprof/sysprof-document.c:2886
 #, c-format
 msgid "Recording at %X %x"
 msgstr "Aufnahme vom %X %x"
 
-#: src/libsysprof/sysprof-document.c:2499
-#: src/libsysprof/sysprof-document.c:2518
+#: src/libsysprof/sysprof-document.c:2870
+#: src/libsysprof/sysprof-document.c:2889
 #, c-format
 msgid "Recording at %s"
 msgstr "Aufnahme vom %s"
@@ -266,158 +428,158 @@ msgstr ""
 "Für die Nachverfolgung muss ein mit »-finstrument-functions« kompiliertes "
 "Programm gestartet werden. Nachverfolgung wird nicht verfügbar sein."
 
-#: src/sysprof-cli/sysprof-cli.c:120
+#: src/sysprof-cli/sysprof-cli.c:122
 #, c-format
 msgid "--merge requires at least 2 filename arguments"
 msgstr "»--merge« erfordert mindestens 2 Dateinamenargumente"
 
 # s.o.
-#: src/sysprof-cli/sysprof-cli.c:319
+#: src/sysprof-cli/sysprof-cli.c:326
 msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
 msgstr ""
 "CPU-Drosselung während der Profilerstellung deaktivieren (nicht verfügbar "
 "für --power-profile)"
 
 # Task ist ein Begriff aus der Informatik
-#: src/sysprof-cli/sysprof-cli.c:320
+#: src/sysprof-cli/sysprof-cli.c:327
 msgid "Make sysprof specific to a task [Deprecated]"
 msgstr "Sysprof auf einen Task festlegen [veraltet]"
 
-#: src/sysprof-cli/sysprof-cli.c:320 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof-cli/sysprof-cli.c:327 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:181
 #: src/sysprof/sysprof-processes-section.ui:283
 #: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "PID"
 
-#: src/sysprof-cli/sysprof-cli.c:321
+#: src/sysprof-cli/sysprof-cli.c:328
 msgid "Run a command and profile the process"
 msgstr "Einen Befehl ausführen und ein Profil des Prozesses erstellen"
 
-#: src/sysprof-cli/sysprof-cli.c:321
+#: src/sysprof-cli/sysprof-cli.c:328
 msgid "COMMAND"
 msgstr "BEFEHL"
 
-#: src/sysprof-cli/sysprof-cli.c:322
+#: src/sysprof-cli/sysprof-cli.c:329
 msgid ""
 "Set environment variable for spawned process. Can be used multiple times."
 msgstr ""
 "Die Umgebungsvariable für einen erzeugten Prozess festlegen. Kann mehrmals "
 "verwendet werden."
 
-#: src/sysprof-cli/sysprof-cli.c:322
+#: src/sysprof-cli/sysprof-cli.c:329
 msgid "VAR=VALUE"
 msgstr "VAR=WERT"
 
-#: src/sysprof-cli/sysprof-cli.c:323
+#: src/sysprof-cli/sysprof-cli.c:330
 msgid "Force overwrite the capture file"
 msgstr "Überschreiben der Aufzeichnungsdatei erzwingen"
 
-#: src/sysprof-cli/sysprof-cli.c:324
+#: src/sysprof-cli/sysprof-cli.c:331
 msgid "Disable recording of battery statistics"
 msgstr "Aufzeichnung von Akkustatistiken deaktivieren"
 
-#: src/sysprof-cli/sysprof-cli.c:325
+#: src/sysprof-cli/sysprof-cli.c:332
 msgid "Disable recording of CPU statistics"
 msgstr "Aufzeichnung von CPU-Statistiken deaktivieren"
 
-#: src/sysprof-cli/sysprof-cli.c:326
+#: src/sysprof-cli/sysprof-cli.c:333
 msgid "Disable recording of Disk statistics"
 msgstr "Aufzeichnung von Datenträgerstatistiken deaktivieren"
 
-#: src/sysprof-cli/sysprof-cli.c:327
+#: src/sysprof-cli/sysprof-cli.c:334
 msgid "Do not record stacktraces using Linux perf"
 msgstr "Stapelverfolgung nicht mit Linux perf aufzeichnen"
 
-#: src/sysprof-cli/sysprof-cli.c:328
+#: src/sysprof-cli/sysprof-cli.c:335
 msgid "Do not append symbol name information from local machine"
 msgstr "Keine Symbolnamensinformationen vom lokalen Rechner anhängen"
 
-#: src/sysprof-cli/sysprof-cli.c:329
+#: src/sysprof-cli/sysprof-cli.c:336
 msgid "Disable recording of memory statistics"
 msgstr "Aufzeichnung von Speicherstatistiken deaktivieren"
 
-#: src/sysprof-cli/sysprof-cli.c:330
+#: src/sysprof-cli/sysprof-cli.c:337
 msgid "Disable recording of network statistics"
 msgstr "Aufzeichnung von Netzwerkstatistiken deaktivieren"
 
-#: src/sysprof-cli/sysprof-cli.c:331
+#: src/sysprof-cli/sysprof-cli.c:338
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr "Umgebungsvariable SYSPROF_TRACE_FD für den Unterprozess festlegen"
 
-#: src/sysprof-cli/sysprof-cli.c:332
+#: src/sysprof-cli/sysprof-cli.c:339
 msgid "Track when processes are scheduled"
 msgstr "Nachverfolgen, wann Prozesse eingeplant werden"
 
-#: src/sysprof-cli/sysprof-cli.c:333
+#: src/sysprof-cli/sysprof-cli.c:340
 msgid "Profile the D-Bus session bus"
 msgstr "D-Bus-Sitzungsbus profilen"
 
-#: src/sysprof-cli/sysprof-cli.c:334
+#: src/sysprof-cli/sysprof-cli.c:341
 msgid "Profile the D-Bus system bus"
 msgstr "D-Bus-Systembus profilen"
 
-#: src/sysprof-cli/sysprof-cli.c:335
+#: src/sysprof-cli/sysprof-cli.c:342
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr ""
 "Umgebungsvariable GIS_TRACE_FD zur Rückverfolgung von GJS-Prozessen festlegen"
 
-#: src/sysprof-cli/sysprof-cli.c:336
+#: src/sysprof-cli/sysprof-cli.c:343
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr ""
 "Umgebungsvariable GTK_TRACE_FD zur Rückverfolgung einer GTK-Anwendung "
 "festlegen"
 
-#: src/sysprof-cli/sysprof-cli.c:337
+#: src/sysprof-cli/sysprof-cli.c:344
 msgid "Include RAPL energy statistics"
 msgstr "RAPL-Energiestatistiken einschließen"
 
-#: src/sysprof-cli/sysprof-cli.c:338
+#: src/sysprof-cli/sysprof-cli.c:345
 msgid "Profile memory allocations and frees"
 msgstr "Profilspeicherzuweisungen und -freigaben"
 
-#: src/sysprof-cli/sysprof-cli.c:339
+#: src/sysprof-cli/sysprof-cli.c:346
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr "Für Profilstatistiken mit org.gnome.Shell verbinden"
 
-#: src/sysprof-cli/sysprof-cli.c:340
+#: src/sysprof-cli/sysprof-cli.c:347
 msgid "Track performance of the applications main loop"
 msgstr "Die Effizienz der Programmhauptschleife nachvollziehen"
 
-#: src/sysprof-cli/sysprof-cli.c:342
+#: src/sysprof-cli/sysprof-cli.c:349
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr ""
 "Alle bereitgestellten *.syscap-Dateien zusammenführen und in stdout schreiben"
 
-#: src/sysprof-cli/sysprof-cli.c:343
+#: src/sysprof-cli/sysprof-cli.c:350
 msgid "Print the sysprof-cli version and exit"
 msgstr "Die Versionsnummer von sysprof-cli ausgeben und beenden"
 
-#: src/sysprof-cli/sysprof-cli.c:344
+#: src/sysprof-cli/sysprof-cli.c:351
 msgid "The size of the buffer in pages (1 = 1 page)"
 msgstr "Die Puffergröße in Seiten (1 bedeutet 1 Seite)"
 
-#: src/sysprof-cli/sysprof-cli.c:345
+#: src/sysprof-cli/sysprof-cli.c:352
 msgid "Additional D-Bus address to monitor"
 msgstr "Zusätzlich zu überwachende D-Bus-Adresse"
 
-#: src/sysprof-cli/sysprof-cli.c:346
+#: src/sysprof-cli/sysprof-cli.c:353
 msgid "Stack size to copy for unwinding in user-space"
 msgstr "Zu kopierende Stapelgröße zum Ausrollen im Benutzerraum"
 
-#: src/sysprof-cli/sysprof-cli.c:347
+#: src/sysprof-cli/sysprof-cli.c:354
 msgid "Do not use debuginfod to resolve symbols"
 msgstr "debuginfod nicht zum Auflösen von Symbolen verwenden"
 
-#: src/sysprof-cli/sysprof-cli.c:348
+#: src/sysprof-cli/sysprof-cli.c:355
 msgid "Do not use Sysprofd to acquire privileges"
 msgstr "Sysprofd nicht verwenden, um Privilegien zu erhalten"
 
-#: src/sysprof-cli/sysprof-cli.c:382
+#: src/sysprof-cli/sysprof-cli.c:386
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[AUFNAHMEDATEI] [--BEFEHLSARGUMENTE] — Sysprof"
 
-#: src/sysprof-cli/sysprof-cli.c:385
+#: src/sysprof-cli/sysprof-cli.c:389
 msgid ""
 "\n"
 "Examples:\n"
@@ -449,13 +611,13 @@ msgstr ""
 "ist\n"
 "  sysprof-cli --stack-size=8192\r\n"
 
-#: src/sysprof-cli/sysprof-cli.c:425
+#: src/sysprof-cli/sysprof-cli.c:429
 #, c-format
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "An sysprof-cli wurden zu viele Argumente übergeben:"
 
 #. Translators: %s is a file name.
-#: src/sysprof-cli/sysprof-cli.c:482
+#: src/sysprof-cli/sysprof-cli.c:487
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s existiert bereits. Verwenden Sie --force zum Überschreiben\n"
@@ -1592,9 +1754,6 @@ msgstr "Linkslastig"
 #~ msgid "Battery Charge (All)"
 #~ msgstr "Akkuladung (Alle)"
 
-#~ msgid "Battery"
-#~ msgstr "Akku"
-
 #~ msgid "Stack Traces (In Kernel)"
 #~ msgstr "Stapelverfolgung (im Kernel)"
 
@@ -1765,9 +1924,6 @@ msgstr "Linkslastig"
 #~ msgid "GJS"
 #~ msgstr "GJS"
 
-#~ msgid "Profiling Target"
-#~ msgstr "Profilierungsziel"
-
 #~ msgid "Profile Entire System"
 #~ msgstr "Profil des gesamten Systems erstellen"
 
@@ -1806,9 +1962,6 @@ msgstr "Linkslastig"
 #~ msgstr ""
 #~ "Erlaubt dem System, die CPU-Taktfrequenz nach anstehendem Bedarf "
 #~ "anzupassen."
-
-#~ msgid "Instruments"
-#~ msgstr "Werkzeuge"
 
 #~ msgid ""
 #~ "Track application memory allocations (Sysprof must launch target "

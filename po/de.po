@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
 "POT-Creation-Date: 2026-03-18 15:56+0000\n"
-"PO-Revision-Date: 2026-07-31 23:37+0200\n"
+"PO-Revision-Date: 2026-09-03 19:07+0200\n"
 "Last-Translator: Christian Kirbach <christian.kirbach@gmail.com>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "Language: de\n"
@@ -106,23 +106,19 @@ msgstr "Optimierung läuft"
 
 #: data/org.gnome.Sysprof.metainfo.xml.in.in:33
 msgid "auditing"
-msgstr ""
+msgstr "Prüfung"
 
 #: data/org.gnome.Sysprof.metainfo.xml.in.in:34
-#, fuzzy
-#| msgid "Sampling"
 msgid "sampling"
 msgstr "Messwertnahme"
 
 #: data/org.gnome.Sysprof.metainfo.xml.in.in:35
-#, fuzzy
-#| msgid "Sample"
 msgid "sampler"
-msgstr "Messwert"
+msgstr "Prüfer"
 
 #: data/org.gnome.Sysprof.metainfo.xml.in.in:36
 msgid "benchmarking"
-msgstr ""
+msgstr "Leistungstest"
 
 #: data/org.gnome.Sysprof.metainfo.xml.in.in:37
 msgid "measurements"
@@ -190,14 +186,12 @@ msgid "debugging"
 msgstr "Fehlerdiagnose"
 
 #: data/org.gnome.Sysprof.metainfo.xml.in.in:56
-#, fuzzy
-#| msgid "Memory Allocations"
 msgid "memory allocations tracer"
-msgstr "Speicherzuweisungen"
+msgstr "Speicherzuweisungsverfolgung"
 
 #: data/org.gnome.Sysprof.metainfo.xml.in.in:57
 msgid "memory leaks detector"
-msgstr ""
+msgstr "Speicherleckage-Erkennung"
 
 #: data/org.gnome.Sysprof.metainfo.xml.in.in:58
 msgid "compositor"
@@ -209,7 +203,7 @@ msgstr "Grafik"
 
 #: data/org.gnome.Sysprof.metainfo.xml.in.in:60
 msgid "frames timing"
-msgstr ""
+msgstr "Bildratenzeiten"
 
 #: data/org.gnome.Sysprof.metainfo.xml.in.in:61
 msgid "system logs"

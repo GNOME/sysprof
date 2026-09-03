@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
 "POT-Creation-Date: 2026-03-18 15:56+0000\n"
-"PO-Revision-Date: 2026-03-21 00:07+0100\n"
+"PO-Revision-Date: 2026-07-31 23:37+0200\n"
 "Last-Translator: Christian Kirbach <christian.kirbach@gmail.com>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "Language: de\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.8\n"
+"X-Generator: Poedit 3.9\n"
 
 #: data/org.gnome.Sysprof.desktop.in.in:3
 #: data/org.gnome.Sysprof.metainfo.xml.in.in:6
@@ -48,6 +48,7 @@ msgstr "Ein Profil einer Anwendung oder des gesamten Systems erstellen"
 
 #. developer_name tag deprecated with Appstream 1.0
 #: data/org.gnome.Sysprof.metainfo.xml.in.in:11
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:13
 msgid "Christian Hergert"
 msgstr "Christian Hergert"
 
@@ -58,6 +59,169 @@ msgid ""
 msgstr ""
 "Sysprof ermöglicht Ihnen die Profilerstellung von Anwendungen zwecks "
 "Fehlerdiagnose und Optimierung."
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:22
+msgid "profiler"
+msgstr "Profiler"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:23
+msgid "profiling"
+msgstr "Effizienzanalyse"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:24
+msgid "performance"
+msgstr "Leistungsfähigkeit"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:25
+msgid "latency"
+msgstr "Verzögerung"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:26
+msgid "speed"
+msgstr "Geschwindigkeit"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:27
+msgid "slowness"
+msgstr "Langsamkeit"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:28
+msgid "power consumption"
+msgstr "Energieverbrauch"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:29
+msgid "energy efficiency"
+msgstr "Energieeffizienz"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:30
+msgid "battery life"
+msgstr "Akkulebensdauer"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:31
+msgid "optimization"
+msgstr "Optimierung"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:32
+msgid "optimizing"
+msgstr "Optimierung läuft"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:33
+msgid "auditing"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:34
+#, fuzzy
+#| msgid "Sampling"
+msgid "sampling"
+msgstr "Messwertnahme"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:35
+#, fuzzy
+#| msgid "Sample"
+msgid "sampler"
+msgstr "Messwert"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:36
+msgid "benchmarking"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:37
+msgid "measurements"
+msgstr "Messungen"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:38
+msgid "counters"
+msgstr "Zähler"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:39
+msgid "CPU usage"
+msgstr "CPU-Auslastung"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:40
+msgid "stack traces"
+msgstr "Stapelverfolgungen"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:42
+msgid "call graphs"
+msgstr "Aufrufgraphen"
+
+# https://www.brendangregg.com/flamegraphs.html
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:43
+msgid "flame graphs"
+msgstr "Flammendiagramme"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:45
+msgid "flame charts"
+msgstr "Flammendiagramme"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:47
+msgid "programming"
+msgstr "Programmierung"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:48
+msgid "software developers"
+msgstr "Software-Entwickler"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:49
+msgid "software development"
+msgstr "Software-Entwicklung"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:50
+msgid "testing"
+msgstr "Testen"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:51
+msgid "QA"
+msgstr "Qualitätssicherung"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:52
+msgid "quality assurance"
+msgstr "Qualitätssicherung"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:53
+msgid "troubleshooting"
+msgstr "Fehlerbehandlung"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:54
+msgid "inefficiencies"
+msgstr "Ineffizienzen"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:55
+msgid "debugging"
+msgstr "Fehlerdiagnose"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:56
+#, fuzzy
+#| msgid "Memory Allocations"
+msgid "memory allocations tracer"
+msgstr "Speicherzuweisungen"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:57
+msgid "memory leaks detector"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:58
+msgid "compositor"
+msgstr "Compositor"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:59
+msgid "graphics"
+msgstr "Grafik"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:60
+msgid "frames timing"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:61
+msgid "system logs"
+msgstr "Systemprotokolle"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:62
+msgid "logging"
+msgstr "Protokollierung"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:63
+msgid "Linux kernel"
+msgstr "Linux-Kernel"
 
 #: src/libsysprof/sysprof-category-summary.c:136
 msgid "Uncategorized"
@@ -418,18 +582,6 @@ msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[AUFNAHMEDATEI] [--BEFEHLSARGUMENTE] — Sysprof"
 
 #: src/sysprof-cli/sysprof-cli.c:385
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "Examples:\n"
-#| "\n"
-#| "  # Record gtk4-widget-factory using trace-fd to get application "
-#| "provided\n"
-#| "  # data as well as GTK and GNOME Shell data providers\n"
-#| "  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
-#| "\n"
-#| "  # Merge multiple syscap files into one\n"
-#| "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 msgid ""
 "\n"
 "Examples:\n"
@@ -450,12 +602,16 @@ msgstr ""
 "\n"
 "  # gtk4-widget-factory mit trace-fd aufzeichnen, um die von der Anwendung "
 "bereitgestellten Daten \n"
-"  #sowie GTK- und GNOME-Shell-Datenanbieter zu erhalten\n"
+"  # sowie GTK- und GNOME-Shell-Datenanbieter zu erhalten\n"
 "  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
 "\n"
 "  # Mehrere Syscap-Dateien zu einer zusammenführen\n"
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 "\n"
+"  # Ausrollen durch ERfassung von Stapel- und Registerinhalten anstelle "
+"Rahmenzeigern\n"
+"  # wobei die Stapelgröße ein Vielfaches der Seitengröße ist\n"
+"  sysprof-cli --stack-size=8192\r\n"
 
 #: src/sysprof-cli/sysprof-cli.c:425
 #, c-format
@@ -535,7 +691,7 @@ msgstr "Beenden"
 
 #: src/sysprof/gtk/menus.ui:6
 msgid "Make Function Root"
-msgstr ""
+msgstr "Funktion zur neue Wurzel machen"
 
 #: src/sysprof/gtk/menus.ui:11 src/sysprof/sysprof-process-dialog.ui:520
 msgid "Options"
@@ -1256,7 +1412,7 @@ msgstr "Median"
 
 #: src/sysprof/sysprof-mark-chart-row.ui:8
 msgid "Toggle marks"
-msgstr ""
+msgstr "Markierungen umschalten"
 
 #: src/sysprof/sysprof-mark-chart-row.ui:12
 msgid "Set as Filter"
@@ -1600,9 +1756,6 @@ msgstr "Linkslastig"
 #~ msgid "Battery Charge (All)"
 #~ msgstr "Akkuladung (Alle)"
 
-#~ msgid "Battery"
-#~ msgstr "Akku"
-
 #~ msgid "Stack Traces (In Kernel)"
 #~ msgstr "Stapelverfolgung (im Kernel)"
 
@@ -1773,9 +1926,6 @@ msgstr "Linkslastig"
 #~ msgid "GJS"
 #~ msgstr "GJS"
 
-#~ msgid "Profiling Target"
-#~ msgstr "Profilierungsziel"
-
 #~ msgid "Profile Entire System"
 #~ msgstr "Profil des gesamten Systems erstellen"
 
@@ -1814,9 +1964,6 @@ msgstr "Linkslastig"
 #~ msgstr ""
 #~ "Erlaubt dem System, die CPU-Taktfrequenz nach anstehendem Bedarf "
 #~ "anzupassen."
-
-#~ msgid "Instruments"
-#~ msgstr "Werkzeuge"
 
 #~ msgid ""
 #~ "Track application memory allocations (Sysprof must launch target "

@@ -6,34 +6,56 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
-"POT-Creation-Date: 2017-11-22 01:08+0000\n"
-"PO-Revision-Date: 2017-11-22 13:56+0100\n"
-"Last-Translator: Marek Černocký <marek@manet.cz>\n"
+"POT-Creation-Date: 2026-09-07 10:55+0000\n"
+"PO-Revision-Date: 2026-09-07 20:28+0200\n"
+"Last-Translator: Daniel Rusek <mail@asciiwolf.com>\n"
 "Language-Team: čeština <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Gtranslator 2.91.7\n"
+"X-Generator: Poedit 3.9\n"
 
 #. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
 msgctxt "_"
 msgid "translator-credits"
 msgstr "Marek Černocký <marek@manet.cz>"
 
-#. (itstool) path: page/title
-#: C/index.page:12
+#. (itstool) path: info/title
+#: C/index.page:7
+#| msgid "Sysprof"
+msgctxt "link:trail"
 msgid "Sysprof"
 msgstr "Sysprof"
 
-#. (itstool) path: section/title
+#. (itstool) path: info/title
+#: C/index.page:8
+#| msgid "Sysprof"
+msgctxt "link"
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#. (itstool) path: info/title
+#: C/index.page:9
+#| msgid "Sysprof"
+msgctxt "text"
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#. (itstool) path: page/title
 #: C/index.page:15
+msgid "<_:media-1/> Sysprof"
+msgstr "<_:media-1/> Sysprof"
+
+#. (itstool) path: section/title
+#. (itstool) path: page/title
+#: C/index.page:21 C/profiling.page:8
 msgid "Profiling"
 msgstr "Profilování"
 
 #. (itstool) path: section/title
-#: C/index.page:19
+#: C/index.page:25
 msgid "Frequently Asked Questions"
 msgstr "Časté dotazy a odpovědi"
 
@@ -187,65 +209,33 @@ msgstr ""
 "sezení na disk pro pozdější zobrazení."
 
 #. (itstool) path: section/p
-#: C/profiling.page:37 C/profiling.page:60
+#: C/profiling.page:37
 msgid ""
 "See <link href=\"profiling#interpreting-results\">interpreting results</"
 "link> for more guidance."
 msgstr ""
-"Hlubší vysvětlené viz <link href=\"profiling#interpreting-results"
-"\">interpretace výsledků</link>."
+"Hlubší vysvětlené viz <link href=\"profiling#interpreting-"
+"results\">interpretace výsledků</link>."
 
 #. (itstool) path: section/title
 #: C/profiling.page:46
-msgid "Profile an existing process"
-msgstr "Profilování existujícího procesu"
-
-#. (itstool) path: section/p
-#: C/profiling.page:47
-msgid ""
-"With <app>Sysprof</app>, you can profile one or more existing processes on "
-"your system. First, select the <em>profiling target</em> button next to the "
-"<em>Record</em> button. Select <em>Existing Process</em> in the popover that "
-"is displayed. Next, select as many processes as you'd like to profile. "
-"Processes selected for profiling will have a checkmark next to their name."
-msgstr ""
-"S pomocí aplikace <app>Sysprof</app> můžete profilovat jeden nebo i více "
-"stávajících procesů ve svém systému. Nejprve vyberte <em>cíl profilování</"
-"em> vedle tlačítka <em>Záznam</em>. Ve vyskakovacím dialogu, který se "
-"objeví, vyberte <em>Stávající proces</em>. Následně vyberte všechny procesy, "
-"které chcete profilovat. Tyto procesu budou mít vedle svého názvu "
-"zaškrtávátko."
-
-#. (itstool) path: section/p
-#: C/profiling.page:54
-msgid ""
-"After selecting your target processes, click the <em>Record</em> button to "
-"start profiling."
-msgstr ""
-"Po vybrání cílového procesu klikněte na tlačítko <em>Záznam</em> a "
-"profilování začne."
-
-#. (itstool) path: section/p
-#: C/profiling.page:57
-msgid ""
-"When you have completed, click the <em>Record</em> button again to stop "
-"profiling."
-msgstr ""
-"Když jste hotovi, klikněte znovu na tlačítko <em>Záznam</em> a profilování "
-"se zastaví."
-
-#. (itstool) path: section/title
-#: C/profiling.page:69
 msgid "Profile a new process"
 msgstr "Profilování nového procesu"
 
 #. (itstool) path: section/p
-#: C/profiling.page:71
+#: C/profiling.page:48
+#, fuzzy
+#| msgid ""
+#| "Often times, you may need to spawn a new process to profile. First, "
+#| "select the <em>profiling target</em> button next to the <em>Record</em> "
+#| "button. Next, select <em>New Process</em> and fill out the necessary "
+#| "information to spawn the process."
 msgid ""
 "Often times, you may need to spawn a new process to profile. First, select "
-"the <em>profiling target</em> button next to the <em>Record</em> button. "
-"Next, select <em>New Process</em> and fill out the necessary information to "
-"spawn the process."
+"the <em>Application</em> button next at the top of the recording window. "
+"Fill in your command and working directory, and optionally specify any "
+"environment variables you need. Your process will be started when recording "
+"begins."
 msgstr ""
 "Často můžete potřebovat spustit nový proces, který budete profilovat. "
 "Nejprve vyberte <em>cíl profilování</em> vedle tlačítka <em>Záznam</em>. "
@@ -253,7 +243,7 @@ msgstr ""
 "spuštění."
 
 #. (itstool) path: note/p
-#: C/profiling.page:77
+#: C/profiling.page:55
 msgid ""
 "If you are spawning a process that requires access to your current display, "
 "such as a GTK+ application, you will want to make sure <em>Inherit current "
@@ -264,12 +254,12 @@ msgstr ""
 "prostředí</em>."
 
 #. (itstool) path: section/title
-#: C/profiling.page:88
+#: C/profiling.page:66
 msgid "Profiling with the sysprof-cli command line tool"
 msgstr "Profilování pomocí nástroje příkazové řádky sysprof-cli"
 
 #. (itstool) path: section/p
-#: C/profiling.page:90
+#: C/profiling.page:68
 msgid ""
 "For minimal overhead, you might consider using the <cmd>sysprof-cli</cmd> "
 "command line tool. When run without any arguments, it will record your "
@@ -283,31 +273,22 @@ msgstr ""
 "grafu volání."
 
 #. (itstool) path: section/p
-#: C/profiling.page:95
+#: C/profiling.page:73
 msgid ""
-"You can also attach to an existing process using <cmd>sysprof-cli -p pid</"
-"cmd>."
-msgstr ""
-"Můžete se také připojit k již existujícímu procesu pomocí <cmd>sysprof-cli -"
-"p pid</cmd>."
-
-#. (itstool) path: section/p
-#: C/profiling.page:98
-msgid ""
-"If you would like to spawn a new process, use <cmd>sysprof-cli -c 'command'</"
+"If you would like to spawn a new process, use <cmd>sysprof-cli -- 'command'</"
 "cmd> to specify a command to be launched. The command will inherit the "
 "current environment."
 msgstr ""
 "Jestliže si přejete spustit nový proces, použijte k určení spouštěného "
-"příkazu <cmd>sysprof-cli -c 'příkaz'</cmd>. Příkaz zdědí aktuální prostředí."
+"příkazu <cmd>sysprof-cli -- 'příkaz'</cmd>. Příkaz zdědí aktuální prostředí."
 
 #. (itstool) path: section/title
-#: C/profiling.page:108
+#: C/profiling.page:83
 msgid "Interpreting results"
 msgstr "Interpretace výsledků"
 
 #. (itstool) path: section/p
-#: C/profiling.page:110
+#: C/profiling.page:85
 msgid ""
 "The profiling results in <app>Sysprof</app> are split into three sections. "
 "On the top left is a list of all the functions profiled. They are sorted by "
@@ -318,7 +299,7 @@ msgstr ""
 "často byly volány během zaznamenávání."
 
 #. (itstool) path: note/p
-#: C/profiling.page:115
+#: C/profiling.page:90
 msgid ""
 "It is important to note that the amount of time spent in each function is "
 "not captured. That would require a tracing profiler to accurately record. "
@@ -331,7 +312,7 @@ msgstr ""
 "aktuálním zásobníku volání při záznamu jednotlivých vzorků."
 
 #. (itstool) path: section/p
-#: C/profiling.page:121
+#: C/profiling.page:96
 msgid ""
 "After selecting a function from the functions list, all of the recorded "
 "callers of that function will be displayed on the bottom left. They are also "
@@ -343,7 +324,7 @@ msgstr ""
 "touto funkcí v zásobníku volání."
 
 #. (itstool) path: section/p
-#: C/profiling.page:126
+#: C/profiling.page:101
 msgid ""
 "On the right, are all of the decendants of a selected function. You can "
 "select a function either from the functions list, or the callers list."
@@ -351,22 +332,17 @@ msgstr ""
 "Vpravo se nachází všichni následovníci vybrané funkce. Funkci můžete vybrat "
 "buď ze seznamu funkcí nebo seznamu volajících."
 
-#. (itstool) path: section/p
-#: C/profiling.page:129
-msgid ""
-"You can jump into a function by activating a row in the tree of descendants "
-"with a double-click or by pressing <key>Enter</key> or <key>Spacebar</key>."
-msgstr ""
-"Do funkce můžete skočit aktivováním řádku ve stromu následovníků pomocí "
-"dvojitého kliknutí nebo zmáčknutím klávesy <key>Enter</key> nebo "
-"<key>mezerník</key>."
-
 #. (itstool) path: note/p
-#: C/profiling.page:133
+#: C/profiling.page:105
+#, fuzzy
+#| msgid ""
+#| "If you see <em>- - kernel - -</em> in your results, that means that the "
+#| "application transitioned into or from the Linux kernel. There can be many "
+#| "reasons for this such as a <em>syscall</em> or <em>signal</em>."
 msgid ""
-"If you see <em>- - kernel - -</em> in your results, that means that the "
-"application transitioned into or from the Linux kernel. There can be many "
-"reasons for this such as a <em>syscall</em> or <em>signal</em>."
+"If you see <em>- - Context Switch - -</em> in your results, that means that "
+"the application transitioned into or from the Linux kernel. There can be "
+"many reasons for this such as a <em>syscall</em> or <em>signal</em>."
 msgstr ""
 "Pokud ve svých výsledcích vidíte <em>- - kernel - -</em>, znamená to, že "
 "aplikace přešla do/z linuxového jádra. To se děje z různých důvodů, "
@@ -466,3 +442,51 @@ msgstr ""
 "Jako zvláštní výjimka se vám držitelem autorských práv uděluje svolení "
 "kopírovat, upravovat a šířit ukázkový kód obsažený v tomto dokumentu za "
 "podmínek, které si zvolíte, bez dalších omezení."
+
+#~ msgid "Profile an existing process"
+#~ msgstr "Profilování existujícího procesu"
+
+#~ msgid ""
+#~ "With <app>Sysprof</app>, you can profile one or more existing processes "
+#~ "on your system. First, select the <em>profiling target</em> button next "
+#~ "to the <em>Record</em> button. Select <em>Existing Process</em> in the "
+#~ "popover that is displayed. Next, select as many processes as you'd like "
+#~ "to profile. Processes selected for profiling will have a checkmark next "
+#~ "to their name."
+#~ msgstr ""
+#~ "S pomocí aplikace <app>Sysprof</app> můžete profilovat jeden nebo i více "
+#~ "stávajících procesů ve svém systému. Nejprve vyberte <em>cíl profilování</"
+#~ "em> vedle tlačítka <em>Záznam</em>. Ve vyskakovacím dialogu, který se "
+#~ "objeví, vyberte <em>Stávající proces</em>. Následně vyberte všechny "
+#~ "procesy, které chcete profilovat. Tyto procesu budou mít vedle svého "
+#~ "názvu zaškrtávátko."
+
+#~ msgid ""
+#~ "After selecting your target processes, click the <em>Record</em> button "
+#~ "to start profiling."
+#~ msgstr ""
+#~ "Po vybrání cílového procesu klikněte na tlačítko <em>Záznam</em> a "
+#~ "profilování začne."
+
+#~ msgid ""
+#~ "When you have completed, click the <em>Record</em> button again to stop "
+#~ "profiling."
+#~ msgstr ""
+#~ "Když jste hotovi, klikněte znovu na tlačítko <em>Záznam</em> a "
+#~ "profilování se zastaví."
+
+#~ msgid ""
+#~ "You can also attach to an existing process using <cmd>sysprof-cli -p pid</"
+#~ "cmd>."
+#~ msgstr ""
+#~ "Můžete se také připojit k již existujícímu procesu pomocí <cmd>sysprof-"
+#~ "cli -p pid</cmd>."
+
+#~ msgid ""
+#~ "You can jump into a function by activating a row in the tree of "
+#~ "descendants with a double-click or by pressing <key>Enter</key> or "
+#~ "<key>Spacebar</key>."
+#~ msgstr ""
+#~ "Do funkce můžete skočit aktivováním řádku ve stromu následovníků pomocí "
+#~ "dvojitého kliknutí nebo zmáčknutím klávesy <key>Enter</key> nebo "
+#~ "<key>mezerník</key>."

@@ -1,0 +1,1666 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Roy-Magne Mo <rmo@sunnmore.net>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sysprof master\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
+"POT-Creation-Date: 2026-09-13 21:33+0000\n"
+"PO-Revision-Date: 2026-09-20 01:50+0200\n"
+"Last-Translator: Roy-Magne Mo <rmo@sunnmore.net>\n"
+"Language-Team: Norwegian Nynorsk <nn@li.org>\n"
+"Language: nn\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: data/org.gnome.Sysprof.desktop.in.in:3
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:6
+#: src/sysprof/sysprof-application.c:268 src/sysprof/sysprof-application.c:316
+#: src/sysprof/sysprof-recording-pad.ui:20 src/sysprof/sysprof-window.c:253
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-greeter.ui:83
+msgid "Profiler"
+msgstr "Profileringsverktøy"
+
+#: data/org.gnome.Sysprof.desktop.in.in:5
+msgid "Profile an application or entire system."
+msgstr "Profiler ein app eller eit heilt system."
+
+#: data/org.gnome.Sysprof.desktop.in.in:20
+msgid "Start New Recording"
+msgstr "Start nytt opptak"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:7
+msgid "Profile an application or entire system"
+msgstr "Profiler ein app eller heile systemet"
+
+#. developer_name tag deprecated with Appstream 1.0
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:11
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:13
+msgid "Christian Hergert"
+msgstr "Christian Hergert"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:17
+msgid ""
+"Sysprof allows you to profile applications to aid in debugging and "
+"optimization."
+msgstr ""
+"Sysprof lèt deg profilere appar som hjelp til feilsøking og optimalisering."
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:22
+msgid "profiler"
+msgstr "profileringsverktøy"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:23
+msgid "profiling"
+msgstr "profilering"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:24
+msgid "performance"
+msgstr "yting"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:25
+msgid "latency"
+msgstr "latens"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:26
+msgid "speed"
+msgstr "fart"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:27
+msgid "slowness"
+msgstr "langsemd"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:28
+msgid "power consumption"
+msgstr "straumforbruk"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:29
+msgid "energy efficiency"
+msgstr "energiutnytting"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:30
+msgid "battery life"
+msgstr "batteritid"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:31
+msgid "optimization"
+msgstr "optimalisering"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:32
+msgid "optimizing"
+msgstr "optimaliserer"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:33
+msgid "auditing"
+msgstr "revisjon"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:34
+msgid "sampling"
+msgstr "sampling"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:35
+msgid "sampler"
+msgstr "prøvetakar"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:36
+msgid "benchmarking"
+msgstr "benchmarking"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:37
+msgid "measurements"
+msgstr "målingar"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:38
+msgid "counters"
+msgstr "teljarar"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:39
+msgid "CPU usage"
+msgstr "CPU-bruk"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:40
+msgid "stack traces"
+msgstr "stakksporingar"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:42
+msgid "call graphs"
+msgstr "kallgrafar"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:43
+msgid "flame graphs"
+msgstr "flame-grafar"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:45
+msgid "flame charts"
+msgstr "flame-diagram"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:47
+msgid "programming"
+msgstr "programmering"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:48
+msgid "software developers"
+msgstr "programvareutviklarar"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:49
+msgid "software development"
+msgstr "programvareutvikling"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:50
+msgid "testing"
+msgstr "testing"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:51
+msgid "QA"
+msgstr "QA"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:52
+msgid "quality assurance"
+msgstr "kvalitetssikring"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:53
+msgid "troubleshooting"
+msgstr "feilsøking"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:54
+msgid "inefficiencies"
+msgstr "ineffektivitetar"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:55
+msgid "debugging"
+msgstr "feilsøking"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:56
+msgid "memory allocations tracer"
+msgstr "minnetildelingssporar"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:57
+msgid "memory leaks detector"
+msgstr "minnelekkasjedetektor"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:58
+msgid "compositor"
+msgstr "kompositor"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:59
+msgid "graphics"
+msgstr "grafikk"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:60
+msgid "frames timing"
+msgstr "rammetid"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:61
+msgid "system logs"
+msgstr "systemloggar"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:62
+msgid "logging"
+msgstr "loggføring"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:63
+msgid "Linux kernel"
+msgstr "Linux-kjerne"
+
+#: src/libsysprof/sysprof-category-summary.c:136
+msgid "Uncategorized"
+msgstr "Ukategorisert"
+
+#: src/libsysprof/sysprof-category-summary.c:139
+msgid "Accessibility"
+msgstr "Tilgjenge"
+
+#: src/libsysprof/sysprof-category-summary.c:142
+msgid "Actions"
+msgstr "Handlingar"
+
+#: src/libsysprof/sysprof-category-summary.c:145
+msgid "Crash Handler"
+msgstr "Krasjhandterar"
+
+#: src/libsysprof/sysprof-category-summary.c:148
+msgid "Context Switches"
+msgstr "Kontekstskifte"
+
+#: src/libsysprof/sysprof-category-summary.c:151
+msgid "CSS"
+msgstr "CSS"
+
+#: src/libsysprof/sysprof-category-summary.c:154
+#: src/sysprof/sysprof-greeter.ui:396 src/sysprof/sysprof-window.ui:387
+msgid "Graphics"
+msgstr "Grafikk"
+
+#: src/libsysprof/sysprof-category-summary.c:157
+msgid "Icons"
+msgstr "Ikon"
+
+#: src/libsysprof/sysprof-category-summary.c:160
+msgid "Input"
+msgstr "Inndata"
+
+#: src/libsysprof/sysprof-category-summary.c:163
+msgid "IO"
+msgstr "IO"
+
+#: src/libsysprof/sysprof-category-summary.c:166
+msgid "IPC"
+msgstr "IPC"
+
+#: src/libsysprof/sysprof-category-summary.c:169
+msgid "JavaScript"
+msgstr "JavaScript"
+
+#: src/libsysprof/sysprof-category-summary.c:172
+msgid "Kernel"
+msgstr "Kjerne"
+
+#: src/libsysprof/sysprof-category-summary.c:175
+msgid "Layout"
+msgstr "Oppsett"
+
+#: src/libsysprof/sysprof-category-summary.c:178
+msgid "Locking"
+msgstr "Låsing"
+
+#: src/libsysprof/sysprof-category-summary.c:181
+msgid "Main Loop"
+msgstr "Hovudløkke"
+
+#: src/libsysprof/sysprof-category-summary.c:184
+msgid "Memory"
+msgstr "Minne"
+
+#: src/libsysprof/sysprof-category-summary.c:187
+msgid "Paint"
+msgstr "Teikning"
+
+#: src/libsysprof/sysprof-category-summary.c:190
+msgid "Type System"
+msgstr "Type-system"
+
+#: src/libsysprof/sysprof-category-summary.c:193
+msgid "Unwindable"
+msgstr "Kan ikkje rullast opp"
+
+#: src/libsysprof/sysprof-category-summary.c:196
+msgid "Windowing"
+msgstr "Vindaugsstyring"
+
+#: src/libsysprof/sysprof-debuginfod-task.c:97
+msgid "Downloading Symbols…"
+msgstr "Lastar ned symbol …"
+
+#: src/libsysprof/sysprof-document-allocation.c:151
+msgid "Allocation"
+msgstr "Tildeling"
+
+#: src/libsysprof/sysprof-document.c:578
+msgid "Unknown Process"
+msgstr "Ukjend prosess"
+
+#: src/libsysprof/sysprof-document.c:1682
+#: src/libsysprof/sysprof-document.c:1690
+msgid "Indexing capture data frames"
+msgstr "Indekserer datarammer i opptaket"
+
+#: src/libsysprof/sysprof-document.c:1858
+msgid "Discovering file system mounts"
+msgstr "Oppdagar filsystem-monteringar"
+
+#: src/libsysprof/sysprof-document.c:1861
+msgid "Discovering process mount namespaces"
+msgstr "Oppdagar prosess-monteringsnamnerom"
+
+#: src/libsysprof/sysprof-document.c:1866
+msgid "Analyzing process address layouts"
+msgstr "Analyserer adresseoppsettet i prosessane"
+
+#: src/libsysprof/sysprof-document.c:1869
+msgid "Analyzing process command line"
+msgstr "Analyserer kommandolinja til prosessen"
+
+#: src/libsysprof/sysprof-document.c:1872
+msgid "Analyzing file system overlays"
+msgstr "Analyserer filsystem-overlegg"
+
+#: src/libsysprof/sysprof-document.c:1875
+msgid "Processing counters"
+msgstr "Handsamar teljarar"
+
+#: src/libsysprof/sysprof-document.c:2867
+#: src/libsysprof/sysprof-document.c:2886
+#, c-format
+msgid "Recording at %X %x"
+msgstr "Opptak ved %X %x"
+
+#: src/libsysprof/sysprof-document.c:2870
+#: src/libsysprof/sysprof-document.c:2889
+#, c-format
+msgid "Recording at %s"
+msgstr "Opptak ved %s"
+
+#: src/libsysprof/sysprof-document-dbus-message.c:152
+msgid "D-Bus Message"
+msgstr "D-Bus-melding"
+
+#: src/libsysprof/sysprof-document-frame.c:139
+msgid "Frame"
+msgstr "Ramme"
+
+#: src/libsysprof/sysprof-document-loader.c:499
+msgid "Document loaded"
+msgstr "Dokumentet er lasta"
+
+#: src/libsysprof/sysprof-document-loader.c:530
+msgid "Loading failed"
+msgstr "Lastinga mislukkast"
+
+#: src/libsysprof/sysprof-document-loader.c:542
+#: src/libsysprof/sysprof-document-symbols.c:276
+msgid "Symbolizing stack traces"
+msgstr "Symboliserer stakksporingar"
+
+#: src/libsysprof/sysprof-document-loader.c:611
+msgid "Loading document"
+msgstr "Lastar dokument"
+
+#: src/libsysprof/sysprof-document-log.c:85
+msgid "Log"
+msgstr "Logg"
+
+#: src/libsysprof/sysprof-document-mark.c:134
+msgid "Mark"
+msgstr "Merke"
+
+#: src/libsysprof/sysprof-document-process.c:293
+#, c-format
+msgid "%s [Process %d]"
+msgstr "%s [Prosess %d]"
+
+#: src/libsysprof/sysprof-document-process.c:295
+#, c-format
+msgid "Process %d"
+msgstr "Prosess %d"
+
+#: src/libsysprof/sysprof-document-sample.c:136
+msgid "Sample"
+msgstr "Prøve"
+
+#: src/libsysprof/sysprof-system-logs.c:171
+msgid "System Logs"
+msgstr "Systemloggar"
+
+#: src/libsysprof/sysprof-system-logs.c:172
+msgid "Recording system logs is not supported on your platform."
+msgstr "Opptak av systemloggar er ikkje støtta på plattforma di."
+
+#: src/libsysprof/sysprof-tracer.c:65
+msgid "Tracer"
+msgstr "Tracer"
+
+#: src/libsysprof/sysprof-tracer.c:66
+msgid ""
+"Tracing requires spawning a program compiled with ‘-finstrument-functions’. "
+"Tracing will not be available."
+msgstr ""
+"Sporing krev at du køyrer eit program som er kompilert med «-finstrument-"
+"functions». Sporing er difor ikkje tilgjengeleg."
+
+#: src/sysprof-cli/sysprof-cli.c:122
+#, c-format
+msgid "--merge requires at least 2 filename arguments"
+msgstr "--merge krev minst 2 filnamn-argument"
+
+#: src/sysprof-cli/sysprof-cli.c:326
+msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
+msgstr ""
+"Slå av CPU-struping under profilering [Utdatert, bruk --power-profile]"
+
+#: src/sysprof-cli/sysprof-cli.c:327
+msgid "Make sysprof specific to a task [Deprecated]"
+msgstr "Gjer sysprof spesifikk for ei oppgåve [Utdatert]"
+
+#: src/sysprof-cli/sysprof-cli.c:327 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof/sysprof-logs-section.ui:181
+#: src/sysprof/sysprof-processes-section.ui:283
+#: src/sysprof/sysprof-traceables-utility.ui:52
+msgid "PID"
+msgstr "PID"
+
+#: src/sysprof-cli/sysprof-cli.c:328
+msgid "Run a command and profile the process"
+msgstr "Køyr ein kommando og profiler prosessen"
+
+#: src/sysprof-cli/sysprof-cli.c:328
+msgid "COMMAND"
+msgstr "KOMMANDO"
+
+#: src/sysprof-cli/sysprof-cli.c:329
+msgid ""
+"Set environment variable for spawned process. Can be used multiple times."
+msgstr "Set miljøvariabel for oppretta prosess. Kan brukast fleire gongar."
+
+#: src/sysprof-cli/sysprof-cli.c:329
+msgid "VAR=VALUE"
+msgstr "VAR=VALUE"
+
+#: src/sysprof-cli/sysprof-cli.c:330
+msgid "Force overwrite the capture file"
+msgstr "Tving overskriving av opptaksfila"
+
+#: src/sysprof-cli/sysprof-cli.c:331
+msgid "Disable recording of battery statistics"
+msgstr "Slå av opptak av batteristatistikk"
+
+#: src/sysprof-cli/sysprof-cli.c:332
+msgid "Disable recording of CPU statistics"
+msgstr "Slå av opptak av CPU-statistikk"
+
+#: src/sysprof-cli/sysprof-cli.c:333
+msgid "Disable recording of Disk statistics"
+msgstr "Slå av opptak av diskstatistikk"
+
+#: src/sysprof-cli/sysprof-cli.c:334
+msgid "Do not record stacktraces using Linux perf"
+msgstr "Ikkje ta opp stakksporingar med Linux perf"
+
+#: src/sysprof-cli/sysprof-cli.c:335
+msgid "Do not append symbol name information from local machine"
+msgstr "Ikkje legg til symbolnamn frå lokal maskin"
+
+#: src/sysprof-cli/sysprof-cli.c:336
+msgid "Disable recording of memory statistics"
+msgstr "Slå av opptak av minnestatistikk"
+
+#: src/sysprof-cli/sysprof-cli.c:337
+msgid "Disable recording of network statistics"
+msgstr "Slå av opptak av nettverksstatistikk"
+
+#: src/sysprof-cli/sysprof-cli.c:338
+msgid "Set SYSPROF_TRACE_FD environment for subprocess"
+msgstr "Set miljøvariabelen SYSPROF_TRACE_FD for underprosess"
+
+#: src/sysprof-cli/sysprof-cli.c:339
+msgid "Track when processes are scheduled"
+msgstr "Følg med når prosessar vert planlagde"
+
+#: src/sysprof-cli/sysprof-cli.c:340
+msgid "Profile the D-Bus session bus"
+msgstr "Profiler D-Bus-øktbussen"
+
+#: src/sysprof-cli/sysprof-cli.c:341
+msgid "Profile the D-Bus system bus"
+msgstr "Profiler D-Bus-systembussen"
+
+#: src/sysprof-cli/sysprof-cli.c:342
+msgid "Set GJS_TRACE_FD environment to trace GJS processes"
+msgstr "Set miljøvariabelen GJS_TRACE_FD for å spore GJS-prosessar"
+
+#: src/sysprof-cli/sysprof-cli.c:343
+msgid "Set GTK_TRACE_FD environment to trace a GTK application"
+msgstr "Set miljøvariabelen GTK_TRACE_FD for å spore ein GTK-app"
+
+#: src/sysprof-cli/sysprof-cli.c:344
+msgid "Include RAPL energy statistics"
+msgstr "Ta med RAPL-energistatistikk"
+
+#: src/sysprof-cli/sysprof-cli.c:345
+msgid "Profile memory allocations and frees"
+msgstr "Profiler minnetildelingar og frigjeringar"
+
+#: src/sysprof-cli/sysprof-cli.c:346
+msgid "Connect to org.gnome.Shell for profiler statistics"
+msgstr "Kople til org.gnome.Shell for profilstatistikk"
+
+#: src/sysprof-cli/sysprof-cli.c:347
+msgid "Track performance of the applications main loop"
+msgstr "Følg med på hovudløkka til appen"
+
+#: src/sysprof-cli/sysprof-cli.c:349
+msgid "Merge all provided *.syscap files and write to stdout"
+msgstr "Slå saman alle oppgitte *.syscap-filer og skriv til stdout"
+
+#: src/sysprof-cli/sysprof-cli.c:350
+msgid "Print the sysprof-cli version and exit"
+msgstr "Skriv ut sysprof-cli-versjonen og avslutt"
+
+#: src/sysprof-cli/sysprof-cli.c:351
+msgid "The size of the buffer in pages (1 = 1 page)"
+msgstr "Storleiken på bufferen i sider (1 = 1 side)"
+
+#: src/sysprof-cli/sysprof-cli.c:352
+msgid "Additional D-Bus address to monitor"
+msgstr "Ekstra D-Bus-adresse å overvake"
+
+#: src/sysprof-cli/sysprof-cli.c:353
+msgid "Stack size to copy for unwinding in user-space"
+msgstr "Kor mykje av stakken som skal kopierast for opprulling i brukarrommet"
+
+#: src/sysprof-cli/sysprof-cli.c:354
+msgid "Do not use debuginfod to resolve symbols"
+msgstr "Bruk ikkje debuginfod til å løyse symbol"
+
+#: src/sysprof-cli/sysprof-cli.c:355
+msgid "Do not use Sysprofd to acquire privileges"
+msgstr "Ikkje bruk Sysprofd for å få privilegium"
+
+#: src/sysprof-cli/sysprof-cli.c:386
+msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
+msgstr "[CAPTURE_FILE] [-- KOMMANDO ARGUMENT] — Sysprof"
+
+#: src/sysprof-cli/sysprof-cli.c:389
+msgid ""
+"\n"
+"Examples:\n"
+"\n"
+"  # Record gtk4-widget-factory using trace-fd to get application provided\n"
+"  # data as well as GTK and GNOME Shell data providers\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"  # Merge multiple syscap files into one\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+"\n"
+"  # Unwind by capturing stack/register contents instead of frame-pointers\n"
+"  # where the stack-size is a multiple of page-size\n"
+"  sysprof-cli --stack-size=8192\n"
+msgstr ""
+"\n"
+"Døme:\n"
+"\n"
+"  # Ta opp gtk4-widget-factory med trace-fd for å få app-data\n"
+"  # samt GTK og GNOME Shell-dataleverandørar\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"  # Slå saman fleire syscap-filer til éi\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+"\n"
+"  # Rull ut ved å fange stack/register-innhald i staden for rammepunktar\n"
+"  # der stack-storleiken er eit multiplum av sidetorleiken\n"
+"  sysprof-cli --stack-size=8192\n"
+
+#: src/sysprof-cli/sysprof-cli.c:429
+#, c-format
+msgid "Too many arguments were passed to sysprof-cli:"
+msgstr "For mange argument vart sende til sysprof-cli:"
+
+#. Translators: %s is a file name.
+#: src/sysprof-cli/sysprof-cli.c:487
+#, c-format
+msgid "%s exists. Use --force to overwrite\n"
+msgstr "%s finst. Bruk --force for å skrive over\n"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:13
+msgid "Profile the system"
+msgstr "Profiler systemet"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:14
+msgid "Authentication is required to profile the system."
+msgstr "Autentisering er nødvendig for å profilere systemet."
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:6
+msgctxt "shortcut window"
+msgid "Recording View"
+msgstr "Opptaksvising"
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:9
+msgctxt "shortcut window"
+msgid "Start New Recording"
+msgstr "Start nytt opptak"
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:15
+msgctxt "shortcut window"
+msgid "Save As"
+msgstr "Lagre som"
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:25
+msgctxt "shortcut window"
+msgid "Toggle Visibility of Main Sidebar"
+msgstr "Vis eller skjul hovudsidefeltet"
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:31
+msgctxt "shortcut window"
+msgid "Toggle Visibility of Stack Trace Sidebar"
+msgstr "Vis eller skjul sidefeltet for stakksporing"
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:39
+msgctxt "shortcut window"
+msgid "General"
+msgstr "Generelt"
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:42
+msgctxt "shortcut window"
+msgid "Open Recording"
+msgstr "Opne opptak"
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:52
+msgctxt "shortcut window"
+msgid "Close Window"
+msgstr "Lukk vindauge"
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:59
+msgctxt "shortcut window"
+msgid "Show Help"
+msgstr "Vis hjelp"
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:65
+msgctxt "shortcut window"
+msgid "Show keyboard shortcuts"
+msgstr "Vis tastatursnarvegar"
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:71
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "Avslutt"
+
+#: src/sysprof/gtk/menus.ui:6
+msgid "Make Function Root"
+msgstr "Gjer funksjon til rot"
+
+#: src/sysprof/gtk/menus.ui:11 src/sysprof/sysprof-process-dialog.ui:520
+msgid "Options"
+msgstr "Val"
+
+#: src/sysprof/gtk/menus.ui:13 src/sysprof/sysprof-window.ui:491
+msgid "Categorize Frames"
+msgstr "Kategoriser rammer"
+
+#: src/sysprof/gtk/menus.ui:17 src/sysprof/sysprof-window.ui:495
+msgid "Hide System Libraries"
+msgstr "Skjul systembibliotek"
+
+#: src/sysprof/gtk/menus.ui:21 src/sysprof/sysprof-window.ui:499
+msgid "Include Threads"
+msgstr "Ta med trådar"
+
+#: src/sysprof/gtk/menus.ui:25 src/sysprof/sysprof-window.ui:503
+msgid "Bottom Up"
+msgstr "Nedanfrå og opp"
+
+#: src/sysprof/gtk/menus.ui:29 src/sysprof/sysprof-window.ui:507
+msgid "Ignore Kernel Processes"
+msgstr "Ignorer kjerne-prosessar"
+
+#: src/sysprof/gtk/menus.ui:33 src/sysprof/sysprof-window.ui:511
+msgid "Ignore Process 0"
+msgstr "Ignorer prosess 0"
+
+#: src/sysprof/gtk/menus.ui:37 src/sysprof/sysprof-window.ui:515
+msgid "Merge Similar Processes"
+msgstr "Slå saman like prosessar"
+
+#: src/sysprof/sysprof-animation.c:1038
+#, c-format
+msgid "Failed to find property %s in %s"
+msgstr "Klarte ikkje finne eigenskapen %s i %s"
+
+#: src/sysprof/sysprof-animation.c:1047
+#, c-format
+msgid "Failed to retrieve va_list value: %s"
+msgstr "Klarte ikkje hente verdi frå va_list: %s"
+
+#: src/sysprof/sysprof-application.c:38
+msgid "Start a new recording"
+msgstr "Start eit nytt opptak"
+
+#: src/sysprof/sysprof-application.c:39
+msgid "Show Sysprof version and exit"
+msgstr "Vis Sysprof-versjon og avslutt"
+
+#: src/sysprof/sysprof-application.c:277
+msgid "A system profiler"
+msgstr "Eit systemprofileringsverktøy"
+
+#: src/sysprof/sysprof-application.c:278
+msgid "translator-credits"
+msgstr "Roy-Magne Mo <rmo@sunnmore.net>"
+
+#: src/sysprof/sysprof-callgraph-view.ui:22
+msgid "Functions"
+msgstr "Funksjonar"
+
+#: src/sysprof/sysprof-callgraph-view.ui:71
+msgid "Filter Functions"
+msgstr "Filtrer funksjonar"
+
+#: src/sysprof/sysprof-callgraph-view.ui:94
+msgid "Callers"
+msgstr "Kallarar"
+
+#: src/sysprof/sysprof-callgraph-view.ui:146
+msgid "Descendants"
+msgstr "Etterkomarar"
+
+#: src/sysprof/sysprof-counters-section.ui:26
+#: src/sysprof/sysprof-cpu-section.ui:169
+#: src/sysprof/sysprof-energy-section.ui:177
+#: src/sysprof/sysprof-graphics-section.ui:88
+#: src/sysprof/sysprof-network-section.ui:86
+#: src/sysprof/sysprof-storage-section.ui:86
+msgid "Counters Chart"
+msgstr "Teljardiagram"
+
+#: src/sysprof/sysprof-counters-section.ui:40
+#: src/sysprof/sysprof-cpu-section.ui:323
+#: src/sysprof/sysprof-energy-section.ui:312
+#: src/sysprof/sysprof-graphics-section.ui:223
+#: src/sysprof/sysprof-network-section.ui:291
+#: src/sysprof/sysprof-storage-section.ui:291
+msgid "Counters Table"
+msgstr "Teljartabell"
+
+#: src/sysprof/sysprof-cpu-section.ui:378
+#: src/sysprof/sysprof-dbus-section.ui:171
+#: src/sysprof/sysprof-energy-section.ui:348
+#: src/sysprof/sysprof-frame-utility.ui:49
+#: src/sysprof/sysprof-graphics-section.ui:259
+#: src/sysprof/sysprof-logs-section.ui:110
+#: src/sysprof/sysprof-metadata-section.ui:38
+#: src/sysprof/sysprof-network-section.ui:346
+#: src/sysprof/sysprof-process-dialog.ui:64
+#: src/sysprof/sysprof-processes-section.ui:215
+#: src/sysprof/sysprof-storage-section.ui:346
+#: src/sysprof/sysprof-traceables-utility.ui:23
+msgid "Time"
+msgstr "Tid"
+
+#: src/sysprof/sysprof-cpu-section.ui:412
+#: src/sysprof/sysprof-energy-section.ui:382
+#: src/sysprof/sysprof-flame-graph.c:458
+#: src/sysprof/sysprof-graphics-section.ui:293
+#: src/sysprof/sysprof-marks-section.ui:234
+#: src/sysprof/sysprof-network-section.ui:380
+#: src/sysprof/sysprof-storage-section.ui:380
+msgid "Category"
+msgstr "Kategori"
+
+#: src/sysprof/sysprof-cpu-section.ui:450
+#: src/sysprof/sysprof-energy-section.ui:420
+#: src/sysprof/sysprof-graphics-section.ui:331
+#: src/sysprof/sysprof-marks-section.ui:268
+#: src/sysprof/sysprof-network-section.ui:418
+#: src/sysprof/sysprof-storage-section.ui:418
+msgid "Name"
+msgstr "Namn"
+
+#: src/sysprof/sysprof-cpu-section.ui:488
+#: src/sysprof/sysprof-energy-section.ui:458
+#: src/sysprof/sysprof-graphics-section.ui:369
+#: src/sysprof/sysprof-metadata-section.ui:105
+#: src/sysprof/sysprof-network-section.ui:456
+#: src/sysprof/sysprof-storage-section.ui:456
+msgid "Value"
+msgstr "Verdi"
+
+#: src/sysprof/sysprof-cpu-section.ui:529
+msgid "CPU Info"
+msgstr "CPU-info"
+
+#: src/sysprof/sysprof-cpu-section.ui:560
+#: src/sysprof/sysprof-process-dialog.ui:248
+msgid "ID"
+msgstr "ID"
+
+#: src/sysprof/sysprof-cpu-section.ui:595
+msgid "Core"
+msgstr "Kjerne"
+
+#: src/sysprof/sysprof-cpu-section.ui:630
+msgid "Model Name"
+msgstr "Modellnamn"
+
+#: src/sysprof/sysprof-dbus-section.ui:205
+msgid "Bus"
+msgstr "Buss"
+
+#: src/sysprof/sysprof-dbus-section.ui:244
+msgid "Serial"
+msgstr "Serienummer"
+
+#: src/sysprof/sysprof-dbus-section.ui:281
+msgid "Reply"
+msgstr "Svar"
+
+#: src/sysprof/sysprof-dbus-section.ui:318
+msgid "Flags"
+msgstr "Flagg"
+
+#: src/sysprof/sysprof-dbus-section.ui:347
+#: src/sysprof/sysprof-files-section.ui:122
+#: src/sysprof/sysprof-memory-callgraph-view.ui:68
+msgid "Size"
+msgstr "Storleik"
+
+#: src/sysprof/sysprof-dbus-section.ui:383
+#: src/sysprof/sysprof-frame-utility.ui:20
+#: src/sysprof/sysprof-mark-table.ui:221
+msgid "Type"
+msgstr "Type"
+
+#: src/sysprof/sysprof-dbus-section.ui:412
+msgid "Sender"
+msgstr "Sendar"
+
+#: src/sysprof/sysprof-dbus-section.ui:446
+msgid "Destination"
+msgstr "Mål"
+
+#: src/sysprof/sysprof-dbus-section.ui:480
+#: src/sysprof/sysprof-files-section.ui:53
+msgid "Path"
+msgstr "Sti"
+
+#: src/sysprof/sysprof-dbus-section.ui:514
+msgid "Interface"
+msgstr "Grensesnitt"
+
+#: src/sysprof/sysprof-dbus-section.ui:548
+msgid "Member"
+msgstr "Medlem"
+
+#: src/sysprof/sysprof-dbus-section.ui:582
+msgid "Signature"
+msgstr "Signatur"
+
+#: src/sysprof/sysprof-dbus-section.ui:626
+msgid "Filter Messages"
+msgstr "Filtrer meldingar"
+
+#: src/sysprof/sysprof-dbus-utility.ui:13
+#: src/sysprof/sysprof-logs-section.c:114
+#: src/sysprof/sysprof-logs-section.ui:290
+msgid "Message"
+msgstr "Melding"
+
+#: src/sysprof/sysprof-files-section.ui:4
+msgid "Files"
+msgstr "Filer"
+
+#: src/sysprof/sysprof-files-section.ui:88
+msgid "Compressed"
+msgstr "Komprimert"
+
+#: src/sysprof/sysprof-files-section.ui:165
+msgid "Filter Files"
+msgstr "Filtrer filer"
+
+#: src/sysprof/sysprof-flame-graph.c:462
+#: src/sysprof/sysprof-process-dialog.ui:177
+msgid "File"
+msgstr "Fil"
+
+#: src/sysprof/sysprof-frame-utility.ui:80
+#: src/sysprof/sysprof-logs-section.ui:143
+#: src/sysprof/sysprof-mark-table.ui:116
+#: src/sysprof/sysprof-traceables-utility.ui:81
+#: src/sysprof/sysprof-window.ui:367
+msgid "CPU"
+msgstr "CPU"
+
+#: src/sysprof/sysprof-greeter.c:144
+msgid "Use KEY=VALUE to set an environment variable"
+msgstr "Bruk KEY=VALUE for å setje ein miljøvariabel"
+
+#: src/sysprof/sysprof-greeter.c:150
+msgid "Keys may not start with a number"
+msgstr "Nøklar kan ikkje byrje med eit tal"
+
+#: src/sysprof/sysprof-greeter.c:160
+msgid "Keys may only contain alpha-numerics or underline."
+msgstr "Nøklar kan berre innehalde alfanumeriske teikn eller understrek."
+
+#: src/sysprof/sysprof-greeter.c:357 src/sysprof/sysprof-window.c:172
+msgid "Must Capture to Local File"
+msgstr "Må fange til lokal fil"
+
+#: src/sysprof/sysprof-greeter.c:359 src/sysprof/sysprof-window.c:173
+msgid "You must choose a local file to capture using Sysprof"
+msgstr "Du må velje ei lokal fil som skal fangast med Sysprof"
+
+#: src/sysprof/sysprof-greeter.c:361 src/sysprof/sysprof-greeter.c:401
+#: src/sysprof/sysprof-recording-pad.c:119 src/sysprof/sysprof-window.c:174
+#: src/sysprof/sysprof-window.c:751
+msgid "Close"
+msgstr "Lukk"
+
+#: src/sysprof/sysprof-greeter.c:399
+msgid "Must Select Local Folder"
+msgstr "Må velje lokal mappe"
+
+#: src/sysprof/sysprof-greeter.c:400
+msgid "You must choose a local folder to add as a debug directory"
+msgstr "Du må velje ei lokal mappe som skal leggjast til som feilsøkingsmappe"
+
+#: src/sysprof/sysprof-greeter.c:420
+msgid "Add debug directory"
+msgstr "Legg til feilsøkingsmappe"
+
+#: src/sysprof/sysprof-greeter.c:421 src/sysprof/sysprof-greeter.ui:589
+msgid "Add _Directory"
+msgstr "_Legg til mappe"
+
+#: src/sysprof/sysprof-greeter.c:445
+#, c-format
+msgid "System Capture from %s.syscap"
+msgstr "Systemopptak frå %s.syscap"
+
+#: src/sysprof/sysprof-greeter.c:449
+msgid "Record to File"
+msgstr "Opptak til fil"
+
+#: src/sysprof/sysprof-greeter.c:450
+msgid "Record"
+msgstr "Opptak"
+
+#: src/sysprof/sysprof-greeter.c:664
+msgid "No Change"
+msgstr "Ingen endring"
+
+#: src/sysprof/sysprof-greeter.c:667
+msgid "Balanced"
+msgstr "Balansert"
+
+#: src/sysprof/sysprof-greeter.c:670
+msgid "Power Saver"
+msgstr "Straumsparing"
+
+#: src/sysprof/sysprof-greeter.c:673
+msgid "Performance"
+msgstr "Yting"
+
+#: src/sysprof/sysprof-greeter.ui:89
+msgid "Sampling"
+msgstr "Prøvetaking"
+
+#: src/sysprof/sysprof-greeter.ui:92
+msgid "Sample Native Stacks"
+msgstr "Døme på innfødde stakkar"
+
+#: src/sysprof/sysprof-greeter.ui:93
+msgid "Record native stack traces using a sampling profiler"
+msgstr "Ta opp native stakksporingar med prøvetaking"
+
+#: src/sysprof/sysprof-greeter.ui:99
+msgid "Unwind Stacks in User Space"
+msgstr "Rull opp stakkar i brukarrommet"
+
+#: src/sysprof/sysprof-greeter.ui:100
+msgid "Copy stack contents and registers for unwinding in user-space"
+msgstr "Kopier stakkinnhald og register for opprulling i brukarrommet"
+
+#: src/sysprof/sysprof-greeter.ui:111
+msgid "Stack Size"
+msgstr "Stakkhøgd"
+
+#: src/sysprof/sysprof-greeter.ui:112
+msgid "The number of bytes to copy from the stack"
+msgstr "Talet på byte som skal kopierast frå stakken"
+
+#: src/sysprof/sysprof-greeter.ui:123
+msgid ""
+"Unwinding in user-space has considerable overhead but may help in situations "
+"where frame-pointers are unavailable."
+msgstr ""
+"Opprulling i brukarrommet kostar ein del, men kan hjelpe når rammepeikarar "
+"ikkje er tilgjengelege."
+
+#: src/sysprof/sysprof-greeter.ui:138
+msgid "Sample JavaScript Stacks"
+msgstr "Døme på JavaScript-stakkar"
+
+#: src/sysprof/sysprof-greeter.ui:139
+msgid "Record JavaScript stack traces using a sampling profiler"
+msgstr "Ta opp JavaScript-stakksporingar med prøvetaking"
+
+#: src/sysprof/sysprof-greeter.ui:145
+msgid ""
+"Sysprof must launch your application to record JavaScript stacks using GJS."
+msgstr "Sysprof må starte appen din for å ta opp JavaScript-stakkar med GJS."
+
+#: src/sysprof/sysprof-greeter.ui:160
+msgid "Record Scheduler Details"
+msgstr "Opptakstidsplan-detaljar"
+
+#: src/sysprof/sysprof-greeter.ui:161
+msgid "Track when processes are scheduled per CPU"
+msgstr "Følg med på når prosessar vert planlagde per CPU"
+
+#: src/sysprof/sysprof-greeter.ui:169
+msgid "Tracing"
+msgstr "Sporing"
+
+#: src/sysprof/sysprof-greeter.ui:172
+msgid "Trace Memory Allocations"
+msgstr "Spor minneallokeringar"
+
+#: src/sysprof/sysprof-greeter.ui:173
+msgid "Record a stack trace when malloc or similar functions are used"
+msgstr ""
+"Ta opp ei stakksporing når malloc eller liknande funksjonar vert brukte"
+
+#: src/sysprof/sysprof-greeter.ui:179
+msgid "Sysprof must launch your application to record memory allocations."
+msgstr "Sysprof må starte appen din for å ta opp minnetildelingar."
+
+#: src/sysprof/sysprof-greeter.ui:197 src/sysprof/sysprof-greeter.ui:202
+msgid "Application"
+msgstr "App"
+
+#: src/sysprof/sysprof-greeter.ui:205
+#: src/sysprof/sysprof-processes-section.ui:317
+msgid "Command Line"
+msgstr "Kommandolinje"
+
+#: src/sysprof/sysprof-greeter.ui:211
+msgid "Working directory"
+msgstr "Arbeidsmappe"
+
+#: src/sysprof/sysprof-greeter.ui:217
+msgid "The application will be run as a subprocess of Sysprof."
+msgstr "Appen vert køyrt som ein underprosess av Sysprof."
+
+#: src/sysprof/sysprof-greeter.ui:230
+msgid "Environment"
+msgstr "Miljø"
+
+#: src/sysprof/sysprof-greeter.ui:233
+msgid "Clear Environment"
+msgstr "Tøm miljøet"
+
+#: src/sysprof/sysprof-greeter.ui:234
+msgid "Clear the environment before launching application"
+msgstr "Tøm miljøet før du startar appen"
+
+#: src/sysprof/sysprof-greeter.ui:255
+msgid "Add _Variable"
+msgstr "_Legg til variabel"
+
+#: src/sysprof/sysprof-greeter.ui:261
+msgid "Add Variable"
+msgstr "Legg til variabel"
+
+#: src/sysprof/sysprof-greeter.ui:262
+msgid "_Add"
+msgstr "_Legg til"
+
+#: src/sysprof/sysprof-greeter.ui:279 src/sysprof/sysprof-greeter.ui:284
+msgid "Counters"
+msgstr "Teljarar"
+
+#: src/sysprof/sysprof-greeter.ui:287
+msgid "CPU Usage"
+msgstr "CPU-bruk"
+
+#: src/sysprof/sysprof-greeter.ui:288
+msgid "Record coarse-grained counters about CPU usage and frequency"
+msgstr "Registrer grovkorna teljarar om CPU-bruk og frekvens"
+
+#: src/sysprof/sysprof-greeter.ui:294
+msgid "Memory Usage"
+msgstr "Minnebruk"
+
+#: src/sysprof/sysprof-greeter.ui:295
+msgid "Record coarse-grained counters about system memory usage"
+msgstr "Registrer grovkorna teljarar om bruk av systemminne"
+
+#: src/sysprof/sysprof-greeter.ui:301
+msgid "Disk Usage"
+msgstr "Diskbruk"
+
+#: src/sysprof/sysprof-greeter.ui:302
+msgid "Record coarse-grained counters about storage throughput"
+msgstr "Registrer grovkorna teljarar om gjennomstrøyming på lagringa"
+
+#: src/sysprof/sysprof-greeter.ui:308
+msgid "Network Usage"
+msgstr "Nettverksbruk"
+
+#: src/sysprof/sysprof-greeter.ui:309
+msgid "Record coarse-grained counters about network traffic"
+msgstr "Registrer grovkorna teljarar om nettverkstrafikk"
+
+#: src/sysprof/sysprof-greeter.ui:319
+msgid "Energy Usage"
+msgstr "Energibruk"
+
+#: src/sysprof/sysprof-greeter.ui:320
+msgid "Record coarse-grained counters about energy usage in Watts"
+msgstr "Registrer grovkorna teljarar om energibruk i watt"
+
+#: src/sysprof/sysprof-greeter.ui:326
+msgid "Battery Charge"
+msgstr "Batterilading"
+
+#: src/sysprof/sysprof-greeter.ui:327
+msgid "Record coarse-grained counters about battery charge or discharge rates"
+msgstr "Registrer grovkorna teljarar om lade- og utladingsfart"
+
+#: src/sysprof/sysprof-greeter.ui:340 src/sysprof/sysprof-greeter.ui:345
+#: src/sysprof/sysprof-window.ui:357
+msgid "D-Bus"
+msgstr "D-Bus"
+
+#: src/sysprof/sysprof-greeter.ui:349
+msgid "Record System Bus"
+msgstr "Opptak Systembuss"
+
+#: src/sysprof/sysprof-greeter.ui:350
+msgid "Record messages on the D-Bus system bus"
+msgstr "Ta opp meldingar på D-Bus-systembussen"
+
+#: src/sysprof/sysprof-greeter.ui:366
+msgid "Record Session Bus"
+msgstr "Opptak av øktbuss"
+
+#: src/sysprof/sysprof-greeter.ui:367
+msgid "Record messages on the D-Bus user session bus"
+msgstr "Ta opp meldingar på D-Bus-øktbussen"
+
+#: src/sysprof/sysprof-greeter.ui:378
+msgid ""
+"The session bus may contain sensitive information such as keyboard usage and "
+"passwords."
+msgstr ""
+"Øktbussen kan innehalde sensitive opplysningar, som tastaturbruk og passord."
+
+#: src/sysprof/sysprof-greeter.ui:401
+msgid "Timings"
+msgstr "Tidspunkt"
+
+#: src/sysprof/sysprof-greeter.ui:405
+msgid "Compositor Frame Timings"
+msgstr "Visingssystem-rammefrekvensar"
+
+#: src/sysprof/sysprof-greeter.ui:406
+msgid "Record frame-timing information from the GNOME Shell compositor"
+msgstr "Ta opp informasjon om rammetider frå GNOME Shell-kompositoren"
+
+#: src/sysprof/sysprof-greeter.ui:417
+msgid ""
+"Applications launched by Sysprof will automatically collect GTK frame timing "
+"information."
+msgstr ""
+"Appar som Sysprof startar, samlar automatisk inn informasjon om GTK-"
+"rammetider."
+
+#: src/sysprof/sysprof-greeter.ui:457
+msgid "Devices"
+msgstr "Einingar"
+
+#: src/sysprof/sysprof-greeter.ui:461
+msgid "Include GPU Information"
+msgstr "Ta med GPU-informasjon"
+
+#: src/sysprof/sysprof-greeter.ui:462
+msgid "Records information about graphics hardware and drivers"
+msgstr "Registrerer informasjon om grafikkmaskinvare og drivarar"
+
+#: src/sysprof/sysprof-greeter.ui:480
+msgid "System"
+msgstr "System"
+
+#: src/sysprof/sysprof-greeter.ui:485
+msgid "Power Profile"
+msgstr "Straumprofil"
+
+#: src/sysprof/sysprof-greeter.ui:488
+msgid "Record with Power Profile"
+msgstr "Opptak med Power-profil"
+
+#: src/sysprof/sysprof-greeter.ui:489
+msgid "Switch to power profile while recording"
+msgstr "Byt til straumprofil under opptak"
+
+#: src/sysprof/sysprof-greeter.ui:499
+msgid "Details"
+msgstr "Detaljar"
+
+#: src/sysprof/sysprof-greeter.ui:503
+msgid "Record System Log"
+msgstr "Registrer systemlogg"
+
+#: src/sysprof/sysprof-greeter.ui:504
+msgid "Watch the system log for new messages and record them"
+msgstr "Hald auge med systemloggen for nye meldingar og registrer dei"
+
+#: src/sysprof/sysprof-greeter.ui:520
+msgid "Include Hardware Information"
+msgstr "Ta med maskinvareinformasjon"
+
+#: src/sysprof/sysprof-greeter.ui:521
+msgid "Records information about PCI and USB devices"
+msgstr "Registrerer informasjon om PCI- og USB-einingar"
+
+#: src/sysprof/sysprof-greeter.ui:534
+msgid "Symbols"
+msgstr "Symbol"
+
+#: src/sysprof/sysprof-greeter.ui:538
+msgid "Bundle Symbols"
+msgstr "Samle symbol"
+
+#: src/sysprof/sysprof-greeter.ui:539
+msgid "Make recording shareable by symbolizing stack traces after recording"
+msgstr "Gjer opptaket delbart ved å symbolisere stakksporingane etterpå"
+
+#: src/sysprof/sysprof-greeter.ui:555
+msgid "Debuginfod"
+msgstr "Debuginfod"
+
+#: src/sysprof/sysprof-greeter.ui:556
+msgid "Enable Debuginfod to automatically fetch debug symbols"
+msgstr "Slå på Debuginfod for å automatisk hente debug-symbol"
+
+#: src/sysprof/sysprof-greeter.ui:569
+msgid "Debug File Directories"
+msgstr "Feilsøk filkatalogar"
+
+#: src/sysprof/sysprof-greeter.ui:570
+msgid "Directories to search for debug files"
+msgstr "Mapper det skal søkjast i etter feilsøkingsfiler"
+
+#: src/sysprof/sysprof-greeter.ui:618
+msgid "_Open File…"
+msgstr "_Opne fil …"
+
+#: src/sysprof/sysprof-greeter.ui:625
+msgid "Record to _File…"
+msgstr "_Opptak til fil …"
+
+#: src/sysprof/sysprof-greeter.ui:632
+msgid "Record to _Memory"
+msgstr "_Opptak til minne"
+
+#: src/sysprof/sysprof-greeter.ui:651 src/sysprof/sysprof-window.ui:468
+msgid "_Keyboard Shortcuts"
+msgstr "_Tastatursnarvegar"
+
+#: src/sysprof/sysprof-greeter.ui:655 src/sysprof/sysprof-window.ui:472
+msgid "Help"
+msgstr "Hjelp"
+
+#: src/sysprof/sysprof-greeter.ui:659 src/sysprof/sysprof-window.ui:476
+msgid "About Sysprof"
+msgstr "Om Sysprof"
+
+#: src/sysprof/sysprof-logs-section.c:105
+msgid "Critical"
+msgstr "Kritisk"
+
+#: src/sysprof/sysprof-logs-section.c:108
+msgid "Warning"
+msgstr "Åtvaring"
+
+#: src/sysprof/sysprof-logs-section.c:111
+msgid "Debug"
+msgstr "Feilsøk"
+
+#: src/sysprof/sysprof-logs-section.c:117
+msgid "Info"
+msgstr "Info"
+
+#: src/sysprof/sysprof-logs-section.c:120
+msgid "Error"
+msgstr "Feil"
+
+#: src/sysprof/sysprof-logs-section.ui:4 src/sysprof/sysprof-logs-section.ui:30
+msgid "Logs"
+msgstr "Loggar"
+
+#: src/sysprof/sysprof-logs-section.ui:219
+msgid "Severity"
+msgstr "Alvorlegheitsgrad"
+
+#: src/sysprof/sysprof-logs-section.ui:255
+msgid "Domain"
+msgstr "Domene"
+
+#: src/sysprof/sysprof-marks-section.ui:4
+msgid "Marks"
+msgstr "Merke"
+
+#: src/sysprof/sysprof-marks-section.ui:72
+msgid "Mark Chart"
+msgstr "Markering av diagram"
+
+#: src/sysprof/sysprof-marks-section.ui:84
+msgid "Mark Table"
+msgstr "Marker tabell"
+
+#: src/sysprof/sysprof-marks-section.ui:97
+msgid "Mark Waterfall"
+msgstr "Mark Waterfall"
+
+#: src/sysprof/sysprof-marks-section.ui:198
+msgid "Summary"
+msgstr "Samandrag"
+
+#: src/sysprof/sysprof-marks-section.ui:303
+msgid "Minimum"
+msgstr "Minimum"
+
+#: src/sysprof/sysprof-marks-section.ui:337
+msgid "Maximum"
+msgstr "Maksimalt"
+
+#: src/sysprof/sysprof-marks-section.ui:371
+msgid "Average"
+msgstr "Gjennomsnitt"
+
+#: src/sysprof/sysprof-marks-section.ui:405
+msgid "Median"
+msgstr "Median"
+
+#: src/sysprof/sysprof-mark-chart-row.ui:8
+msgid "Toggle marks"
+msgstr "Veksle merke"
+
+#: src/sysprof/sysprof-mark-chart-row.ui:12
+msgid "Set as Filter"
+msgstr "Set som filter"
+
+#: src/sysprof/sysprof-mark-table.ui:47
+msgid "Start"
+msgstr "Byrje"
+
+#: src/sysprof/sysprof-mark-table.ui:81
+#: src/sysprof/sysprof-processes-section.ui:249
+msgid "Duration"
+msgstr "Varigheit"
+
+#: src/sysprof/sysprof-mark-table.ui:151
+msgid "Process"
+msgstr "Prosess"
+
+#: src/sysprof/sysprof-mark-table.ui:186
+msgid "Group"
+msgstr "Gruppe"
+
+#: src/sysprof/sysprof-mark-table.ui:256
+msgid "Description"
+msgstr "Skildring"
+
+#: src/sysprof/sysprof-memory-callgraph-view.ui:8
+#: src/sysprof/sysprof-memory-callgraph-view.ui:105
+#: src/sysprof/sysprof-memory-callgraph-view.ui:172
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:8
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:105
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:172
+msgid "Self"
+msgstr "Sjølv"
+
+#: src/sysprof/sysprof-memory-callgraph-view.ui:38
+#: src/sysprof/sysprof-memory-callgraph-view.ui:135
+#: src/sysprof/sysprof-memory-callgraph-view.ui:202
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:38
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:135
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:202
+msgid "Total"
+msgstr "Totalt"
+
+#: src/sysprof/sysprof-memory-section.ui:4
+msgid "Memory Allocations"
+msgstr "Minneallokeringar"
+
+#: src/sysprof/sysprof-memory-section.ui:29
+#: src/sysprof/sysprof-samples-section.ui:29
+msgid "Stack Traces"
+msgstr "Stakktrådar"
+
+#: src/sysprof/sysprof-memory-section.ui:88
+msgid "Allocations"
+msgstr "Tildelingar"
+
+#: src/sysprof/sysprof-memory-section.ui:144
+msgid "Leaks"
+msgstr "Lekkasjar"
+
+#: src/sysprof/sysprof-memory-section.ui:212
+#: src/sysprof/sysprof-samples-section.ui:216
+#: src/sysprof/sysprof-traceables-utility.ui:162
+msgid "Stack Trace"
+msgstr "Stakktrådkontroll"
+
+#: src/sysprof/sysprof-metadata-section.ui:4
+msgid "Metadata"
+msgstr "Metadata"
+
+#: src/sysprof/sysprof-metadata-section.ui:71
+msgid "Key"
+msgstr "Nøkkel"
+
+#: src/sysprof/sysprof-process-dialog.ui:35
+msgid "Address Layout"
+msgstr "Adresseoppsett"
+
+#: src/sysprof/sysprof-process-dialog.ui:97
+msgid "Start Address"
+msgstr "Startadresse"
+
+#: src/sysprof/sysprof-process-dialog.ui:137
+msgid "End Address"
+msgstr "Sluttadresse"
+
+#: src/sysprof/sysprof-process-dialog.ui:219
+msgid "Mounts"
+msgstr "Monteringar"
+
+#: src/sysprof/sysprof-process-dialog.ui:282
+msgid "Parent"
+msgstr "Foreldre"
+
+#: src/sysprof/sysprof-process-dialog.ui:316
+msgid "Major"
+msgstr "Hovud"
+
+#: src/sysprof/sysprof-process-dialog.ui:350
+msgid "Minor"
+msgstr "Mindre"
+
+#: src/sysprof/sysprof-process-dialog.ui:384
+msgid "Mount Point"
+msgstr "Monteringspunkt"
+
+#: src/sysprof/sysprof-process-dialog.ui:418
+msgid "Mount Source"
+msgstr "Kople til kjelde"
+
+#: src/sysprof/sysprof-process-dialog.ui:452
+msgid "Root"
+msgstr "Rot"
+
+#: src/sysprof/sysprof-process-dialog.ui:486
+msgid "Filesystem"
+msgstr "Filsystem"
+
+#: src/sysprof/sysprof-process-dialog.ui:562
+msgid "Threads"
+msgstr "Trådar"
+
+#: src/sysprof/sysprof-process-dialog.ui:591
+msgid "Thread ID"
+msgstr "Tråd-ID"
+
+#: src/sysprof/sysprof-process-dialog.ui:625
+msgid "Main Thread"
+msgstr "Hovudtråd"
+
+#: src/sysprof/sysprof-processes-section.ui:4
+msgid "Processes"
+msgstr "Prosessar"
+
+#: src/sysprof/sysprof-processes-section.ui:73
+msgid "Process Chart"
+msgstr "Prosesskart"
+
+#: src/sysprof/sysprof-processes-section.ui:174
+msgid "Process Table"
+msgstr "Prosess-tabell"
+
+#. translators: this expands to the number of events recorded by the profiler as an indicator of progress
+#: src/sysprof/sysprof-recording-pad.c:58
+#, c-format
+msgid "%<PRIi64> events"
+msgstr "%<PRIi64> hendingar"
+
+#: src/sysprof/sysprof-recording-pad.c:115
+msgid "Recording Failed"
+msgstr "Opptak mislukkast"
+
+#: src/sysprof/sysprof-recording-pad.c:117
+#, c-format
+msgid ""
+"Sysprof failed to record.\n"
+"\n"
+"%s"
+msgstr ""
+"Sysprof klarte ikkje å ta opp.\n"
+"\n"
+"%s"
+
+#: src/sysprof/sysprof-recording-pad.ui:71
+msgid "Stop Recording"
+msgstr "Stopp opptak"
+
+#: src/sysprof/sysprof-samples-section.ui:4
+msgid "Time Profiler"
+msgstr "Tidsprofilering"
+
+#: src/sysprof/sysprof-samples-section.ui:98 src/sysprof/sysprof-window.ui:489
+msgid "Callgraph"
+msgstr "Oppkallinggraf"
+
+#: src/sysprof/sysprof-samples-section.ui:181 src/sysprof/sysprof-window.ui:520
+msgid "Flamegraph"
+msgstr "Flamegraf"
+
+#: src/sysprof/sysprof-session-filters-widget.ui:103
+msgid "Clear All Filters"
+msgstr "Tømm alle filter"
+
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:160
+msgid "Seek Backward"
+msgstr "Søk bakover"
+
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:170
+msgid "Zoom Out"
+msgstr "Forminsk"
+
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:180
+msgid "Reset Zoom"
+msgstr "Tilbakestill zoom"
+
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:190
+msgid "Zoom In"
+msgstr "Forstørr"
+
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:200
+msgid "Seek Forward"
+msgstr "Søk framover"
+
+#: src/sysprof/sysprof-traceables-utility.ui:109
+msgid "Depth"
+msgstr "Djupne"
+
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:68
+msgid "Hits"
+msgstr "Treff"
+
+#: src/sysprof/sysprof-window.c:191
+msgid "Open Recording"
+msgstr "Opne opptak"
+
+#: src/sysprof/sysprof-window.c:192
+msgid "Open"
+msgstr "Opne"
+
+#: src/sysprof/sysprof-window.c:196
+msgid "Sysprof Capture (*.syscap)"
+msgstr "Sysprof Capture (*.syscap)"
+
+#: src/sysprof/sysprof-window.c:485
+msgid "Save to File"
+msgstr "Lagre til fil"
+
+#: src/sysprof/sysprof-window.c:486
+msgid "Save"
+msgstr "Lagre"
+
+#: src/sysprof/sysprof-window.c:666
+msgid "Loading…"
+msgstr "Laster …"
+
+#: src/sysprof/sysprof-window.c:747
+msgid "Invalid Document"
+msgstr "Ugyldig dokument"
+
+#: src/sysprof/sysprof-window.c:749
+#, c-format
+msgid ""
+"The document could not be loaded. Please check that you have the correct "
+"capture file.\n"
+"\n"
+"%s"
+msgstr ""
+"Klarte ikkje laste dokumentet. Sjekk at du har rett opptaksfil.\n"
+"\n"
+"%s"
+
+#: src/sysprof/sysprof-window.ui:120
+msgid "Toggle Left Panel"
+msgstr "Slå venstre panel av og på"
+
+#: src/sysprof/sysprof-window.ui:127
+msgid "View Filters"
+msgstr "Vis filter"
+
+#: src/sysprof/sysprof-window.ui:215
+msgid "Main Menu"
+msgstr "Hovudmeny"
+
+#: src/sysprof/sysprof-window.ui:222
+msgid "View Options"
+msgstr "Visingsalternativ"
+
+#: src/sysprof/sysprof-window.ui:228
+msgid "Toggle Right Panel"
+msgstr "Slå høgre panel av og på"
+
+#: src/sysprof/sysprof-window.ui:377
+msgid "Energy"
+msgstr "Energi"
+
+#: src/sysprof/sysprof-window.ui:397
+msgid "Network"
+msgstr "Nettverk"
+
+#: src/sysprof/sysprof-window.ui:407
+msgid "Storage"
+msgstr "Lagring"
+
+#: src/sysprof/sysprof-window.ui:454
+msgid "_Record Again…"
+msgstr "_Ta opp att …"
+
+#: src/sysprof/sysprof-window.ui:458
+msgid "Open Recording…"
+msgstr "Opne opptak …"
+
+#: src/sysprof/sysprof-window.ui:462
+msgid "Save As…"
+msgstr "Lagre som …"
+
+#: src/sysprof/sysprof-window.ui:482
+msgid "_Quit"
+msgstr "_Avslutt"
+
+#. translators: Left Heavy means to sort larger (heavier) stack frames before others, starting from the left
+#: src/sysprof/sysprof-window.ui:523
+msgid "Left Heavy"
+msgstr "Venstre tung"

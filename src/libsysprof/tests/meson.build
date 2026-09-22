@@ -12,6 +12,7 @@ libsysprof_testsuite_c_args = [
 
 libsysprof_testsuite = {
   'log-messages'                  : {'skip': true},
+  'main-migrate'                  : {'skip': true},
   'mark-summary'                  : {
     'skip': true,
     'dependencies': [cc.find_library('m', required: false)],

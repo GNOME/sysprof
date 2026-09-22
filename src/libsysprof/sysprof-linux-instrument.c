@@ -282,6 +282,7 @@ sysprof_linux_instrument_prepare_fiber (gpointer user_data)
   SysprofLinuxInstrument *self = user_data;
   g_autoptr(GVariant) process_info_reply = NULL;
   g_autoptr(GVariant) process_info = NULL;
+  g_autoptr(GPtrArray) futures = NULL;
   g_autoptr(GError) error = NULL;
   gint64 at_time;
 
@@ -291,9 +292,23 @@ sysprof_linux_instrument_prepare_fiber (gpointer user_data)
   /* First get some basic information about the system into the capture. We can
    * get the contents for all of these concurrently.
    */
-  if (!dex_await (dex_future_all (_sysprof_recording_add_file (self->recording, "/proc/cpuinfo", TRUE),
-                                  _sysprof_recording_add_file (self->recording, "/proc/mounts", TRUE),
-                                  NULL),
+  futures = g_ptr_array_new_with_free_func (dex_unref);
+  g_ptr_array_add (futures, _sysprof_recording_add_file (self->recording, "/proc/cpuinfo", TRUE));
+  g_ptr_array_add (futures, _sysprof_recording_add_file (self->recording, "/proc/mounts", TRUE));
+
+  if (g_file_test ("/sys/devices/cpu_atom/cpus", G_FILE_TEST_EXISTS))
+    g_ptr_array_add (futures,
+                     _sysprof_recording_add_file (self->recording,
+                                                  "/sys/devices/cpu_atom/cpus",
+                                                  TRUE));
+
+  if (g_file_test ("/sys/devices/cpu_core/cpus", G_FILE_TEST_EXISTS))
+    g_ptr_array_add (futures,
+                     _sysprof_recording_add_file (self->recording,
+                                                  "/sys/devices/cpu_core/cpus",
+                                                  TRUE));
+
+  if (!dex_await (dex_future_allv ((DexFuture **)futures->pdata, futures->len),
                   &error))
     return dex_future_new_for_error (g_steal_pointer (&error));
 

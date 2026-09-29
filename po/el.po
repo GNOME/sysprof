@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2026-02-03 19:30+0000\n"
+"POT-Creation-Date: 2026-09-13 21:33+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Efstathios Iosifidis <eiosifidis@gnome.org>\n"
 "Language-Team: \n"
@@ -43,6 +43,7 @@ msgstr "Δημιουργία προφίλ εφαρμογής ή ολόκληρο
 
 #. developer_name tag deprecated with Appstream 1.0
 #: data/org.gnome.Sysprof.metainfo.xml.in.in:11
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:13
 msgid "Christian Hergert"
 msgstr "Christian Hergert"
 
@@ -53,6 +54,162 @@ msgid ""
 msgstr ""
 "Το Sysprof σας επιτρέπει να δημιουργείτε προφίλ εφαρμογών για διευκόλυνση "
 "του εντοπισμού σφαλμάτων και της βελτιστοποίησης."
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:22
+msgid "profiler"
+msgstr "αναλυτής επιδόσεων"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:23
+msgid "profiling"
+msgstr "ανάλυση επιδόσεων"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:24
+msgid "performance"
+msgstr "απόδοση"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:25
+msgid "latency"
+msgstr "καθυστέρηση"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:26
+msgid "speed"
+msgstr "ταχύτητα"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:27
+msgid "slowness"
+msgstr "βραδύτητα"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:28
+msgid "power consumption"
+msgstr "κατανάλωση ισχύος"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:29
+msgid "energy efficiency"
+msgstr "ενεργειακή απόδοση"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:30
+msgid "battery life"
+msgstr "διάρκεια μπαταρίας"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:31
+msgid "optimization"
+msgstr "βελτιστοποίηση"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:32
+msgid "optimizing"
+msgstr "βελτιστοποίηση"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:33
+msgid "auditing"
+msgstr "έλεγχος"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:34
+msgid "sampling"
+msgstr "δειγματοληψία"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:35
+msgid "sampler"
+msgstr "δειγματολήπτης"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:36
+msgid "benchmarking"
+msgstr "μέτρηση επιδόσεων"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:37
+msgid "measurements"
+msgstr "μετρήσεις"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:38
+msgid "counters"
+msgstr "μετρητές"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:39
+msgid "CPU usage"
+msgstr "χρήση CPU"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:40
+msgid "stack traces"
+msgstr "ιχνηλατήσεις στοίβας"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:42
+msgid "call graphs"
+msgstr "γραφήματα κλήσεων"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:43
+msgid "flame graphs"
+msgstr "γραφήματα φλόγας"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:45
+msgid "flame charts"
+msgstr "διαγράμματα φλόγας"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:47
+msgid "programming"
+msgstr "προγραμματισμός"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:48
+msgid "software developers"
+msgstr "προγραμματιστές λογισμικού"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:49
+msgid "software development"
+msgstr "ανάπτυξη λογισμικού"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:50
+msgid "testing"
+msgstr "δοκιμές"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:51
+msgid "QA"
+msgstr "QA"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:52
+msgid "quality assurance"
+msgstr "διασφάλιση ποιότητας"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:53
+msgid "troubleshooting"
+msgstr "αντιμετώπιση προβλημάτων"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:54
+msgid "inefficiencies"
+msgstr "αναποτελεσματικότητες"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:55
+msgid "debugging"
+msgstr "αποσφαλμάτωση"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:56
+msgid "memory allocations tracer"
+msgstr "ιχνηλάτης εκχωρήσεων μνήμης"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:57
+msgid "memory leaks detector"
+msgstr "ανιχνευτής διαρροών μνήμης"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:58
+msgid "compositor"
+msgstr "συνθέτης"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:59
+msgid "graphics"
+msgstr "γραφικά"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:60
+msgid "frames timing"
+msgstr "χρονισμός καρέ"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:61
+msgid "system logs"
+msgstr "καταγραφές συστήματος"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:62
+msgid "logging"
+msgstr "καταγραφή"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:63
+msgid "Linux kernel"
+msgstr "πυρήνας Linux"
 
 #: src/libsysprof/sysprof-category-summary.c:136
 msgid "Uncategorized"
@@ -147,47 +304,47 @@ msgstr "Λήψη Συμβόλων…"
 msgid "Allocation"
 msgstr "Κατανομή"
 
-#: src/libsysprof/sysprof-document.c:570
+#: src/libsysprof/sysprof-document.c:578
 msgid "Unknown Process"
 msgstr "Άγνωστη διαδικασία"
 
-#: src/libsysprof/sysprof-document.c:1251
-#: src/libsysprof/sysprof-document.c:1287
+#: src/libsysprof/sysprof-document.c:1682
+#: src/libsysprof/sysprof-document.c:1690
 msgid "Indexing capture data frames"
 msgstr "Δημιουργία ευρετηρίου πλαισίων δεδομένων καταγραφής"
 
-#: src/libsysprof/sysprof-document.c:1473
+#: src/libsysprof/sysprof-document.c:1858
 msgid "Discovering file system mounts"
 msgstr "Αναγνώριση σημείων προσάρτησης συστήματος αρχείων"
 
-#: src/libsysprof/sysprof-document.c:1476
+#: src/libsysprof/sysprof-document.c:1861
 msgid "Discovering process mount namespaces"
 msgstr "Αναγνώριση χώρων ονομάτων προσάρτησης διεργασιών"
 
-#: src/libsysprof/sysprof-document.c:1479
+#: src/libsysprof/sysprof-document.c:1866
 msgid "Analyzing process address layouts"
 msgstr "Ανάλυση διάταξης διευθύνσεων διεργασιών"
 
-#: src/libsysprof/sysprof-document.c:1482
+#: src/libsysprof/sysprof-document.c:1869
 msgid "Analyzing process command line"
 msgstr "Ανάλυση γραμμής εντολών διεργασίας"
 
-#: src/libsysprof/sysprof-document.c:1485
+#: src/libsysprof/sysprof-document.c:1872
 msgid "Analyzing file system overlays"
 msgstr "Ανάλυση επικαλύψεων συστήματος αρχείων"
 
-#: src/libsysprof/sysprof-document.c:1488
+#: src/libsysprof/sysprof-document.c:1875
 msgid "Processing counters"
 msgstr "Επεξεργασία μετρητών"
 
-#: src/libsysprof/sysprof-document.c:2480
-#: src/libsysprof/sysprof-document.c:2499
+#: src/libsysprof/sysprof-document.c:2867
+#: src/libsysprof/sysprof-document.c:2886
 #, c-format
 msgid "Recording at %X %x"
 msgstr "Εγγραφή στις %X %x"
 
-#: src/libsysprof/sysprof-document.c:2483
-#: src/libsysprof/sysprof-document.c:2502
+#: src/libsysprof/sysprof-document.c:2870
+#: src/libsysprof/sysprof-document.c:2889
 #, c-format
 msgid "Recording at %s"
 msgstr "Εγγραφή στις %s"
@@ -260,156 +417,156 @@ msgstr ""
 "Η ιχνηλάτηση απαιτεί την εκκίνηση προγράμματος που έχει μεταγλωττιστεί με ‘-"
 "finstrument-functions’. Η ιχνηλάτηση δεν θα είναι διαθέσιμη."
 
-#: src/sysprof-cli/sysprof-cli.c:120
+#: src/sysprof-cli/sysprof-cli.c:122
 #, c-format
 msgid "--merge requires at least 2 filename arguments"
 msgstr "Η --merge απαιτεί τουλάχιστον 2 ορίσματα ονομάτων αρχείων"
 
-#: src/sysprof-cli/sysprof-cli.c:319
+#: src/sysprof-cli/sysprof-cli.c:326
 msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
 msgstr ""
 "Απενεργοποίηση περιορισμού CPU κατά τη δημιουργία προφίλ [Παρωχημένο για --"
 "power-profile]"
 
-#: src/sysprof-cli/sysprof-cli.c:320
+#: src/sysprof-cli/sysprof-cli.c:327
 msgid "Make sysprof specific to a task [Deprecated]"
 msgstr "Καθιστά το sysprof ειδικό για μια εργασία [Παρωχημένο]"
 
-#: src/sysprof-cli/sysprof-cli.c:320 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof-cli/sysprof-cli.c:327 src/sysprof/sysprof-frame-utility.ui:109
 #: src/sysprof/sysprof-logs-section.ui:181
 #: src/sysprof/sysprof-processes-section.ui:283
 #: src/sysprof/sysprof-traceables-utility.ui:52
 msgid "PID"
 msgstr "PID"
 
-#: src/sysprof-cli/sysprof-cli.c:321
+#: src/sysprof-cli/sysprof-cli.c:328
 msgid "Run a command and profile the process"
 msgstr "Εκτέλεση εντολής και δημιουργία προφίλ της διεργασίας"
 
-#: src/sysprof-cli/sysprof-cli.c:321
+#: src/sysprof-cli/sysprof-cli.c:328
 msgid "COMMAND"
 msgstr "ΕΝΤΟΛΗ"
 
-#: src/sysprof-cli/sysprof-cli.c:322
+#: src/sysprof-cli/sysprof-cli.c:329
 msgid ""
 "Set environment variable for spawned process. Can be used multiple times."
 msgstr ""
 "Ορισμός μεταβλητής περιβάλλοντος για την εκκινημένη διεργασία. Μπορεί να "
 "χρησιμοποιηθεί πολλές φορές."
 
-#: src/sysprof-cli/sysprof-cli.c:322
+#: src/sysprof-cli/sysprof-cli.c:329
 msgid "VAR=VALUE"
 msgstr "ΜΕΤΑΒΛΗΤΗ=ΤΙΜΗ"
 
-#: src/sysprof-cli/sysprof-cli.c:323
+#: src/sysprof-cli/sysprof-cli.c:330
 msgid "Force overwrite the capture file"
 msgstr "Εξαναγκασμένη αντικατάσταση του αρχείου καταγραφής"
 
-#: src/sysprof-cli/sysprof-cli.c:324
+#: src/sysprof-cli/sysprof-cli.c:331
 msgid "Disable recording of battery statistics"
 msgstr "Απενεργοποίηση εγγραφής στατιστικών μπαταρίας"
 
-#: src/sysprof-cli/sysprof-cli.c:325
+#: src/sysprof-cli/sysprof-cli.c:332
 msgid "Disable recording of CPU statistics"
 msgstr "Απενεργοποίηση εγγραφής στατιστικών CPU"
 
-#: src/sysprof-cli/sysprof-cli.c:326
+#: src/sysprof-cli/sysprof-cli.c:333
 msgid "Disable recording of Disk statistics"
 msgstr "Απενεργοποίηση εγγραφής στατιστικών δίσκου"
 
-#: src/sysprof-cli/sysprof-cli.c:327
+#: src/sysprof-cli/sysprof-cli.c:334
 msgid "Do not record stacktraces using Linux perf"
 msgstr "Να μην γίνεται εγγραφή ιχνηλάσεων στοίβας χρησιμοποιώντας Linux perf"
 
-#: src/sysprof-cli/sysprof-cli.c:328
+#: src/sysprof-cli/sysprof-cli.c:335
 msgid "Do not append symbol name information from local machine"
 msgstr ""
 "Να μην προστεθεί πληροφορία ονομάτων συμβόλων από τον τοπικό υπολογιστή"
 
-#: src/sysprof-cli/sysprof-cli.c:329
+#: src/sysprof-cli/sysprof-cli.c:336
 msgid "Disable recording of memory statistics"
 msgstr "Απενεργοποίηση εγγραφής στατιστικών μνήμης"
 
-#: src/sysprof-cli/sysprof-cli.c:330
+#: src/sysprof-cli/sysprof-cli.c:337
 msgid "Disable recording of network statistics"
 msgstr "Απενεργοποίηση εγγραφής στατιστικών δικτύου"
 
-#: src/sysprof-cli/sysprof-cli.c:331
+#: src/sysprof-cli/sysprof-cli.c:338
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr "Ορισμός μεταβλητής περιβάλλοντος SYSPROF_TRACE_FD για υποδιεργασία"
 
-#: src/sysprof-cli/sysprof-cli.c:332
+#: src/sysprof-cli/sysprof-cli.c:339
 msgid "Track when processes are scheduled"
 msgstr "Παρακολούθηση προγραμματισμού διεργασιών"
 
-#: src/sysprof-cli/sysprof-cli.c:333
+#: src/sysprof-cli/sysprof-cli.c:340
 msgid "Profile the D-Bus session bus"
 msgstr "Δημιουργία προφίλ για το λεωφορείο συνεδρίας D-Bus"
 
-#: src/sysprof-cli/sysprof-cli.c:334
+#: src/sysprof-cli/sysprof-cli.c:341
 msgid "Profile the D-Bus system bus"
 msgstr "Δημιουργία προφίλ για το λεωφορείο συστήματος D-Bus"
 
-#: src/sysprof-cli/sysprof-cli.c:335
+#: src/sysprof-cli/sysprof-cli.c:342
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr ""
 "Ορισμός μεταβλητής περιβάλλοντος GJS_TRACE_FD για ιχνηλάτηση διεργασιών GJS"
 
-#: src/sysprof-cli/sysprof-cli.c:336
+#: src/sysprof-cli/sysprof-cli.c:343
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr ""
 "Ορισμός μεταβλητής περιβάλλοντος GTK_TRACE_FD για ιχνηλάτηση εφαρμογής GTK"
 
-#: src/sysprof-cli/sysprof-cli.c:337
+#: src/sysprof-cli/sysprof-cli.c:344
 msgid "Include RAPL energy statistics"
 msgstr "Συμπερίληψη στατιστικών ενέργειας RAPL"
 
-#: src/sysprof-cli/sysprof-cli.c:338
+#: src/sysprof-cli/sysprof-cli.c:345
 msgid "Profile memory allocations and frees"
 msgstr "Δημιουργία προφίλ για κατανομές και απελευθερώσεις μνήμης"
 
-#: src/sysprof-cli/sysprof-cli.c:339
+#: src/sysprof-cli/sysprof-cli.c:346
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr "Σύνδεση στο org.gnome.Shell για στατιστικά εκπαραθυρωτή"
 
-#: src/sysprof-cli/sysprof-cli.c:340
+#: src/sysprof-cli/sysprof-cli.c:347
 msgid "Track performance of the applications main loop"
 msgstr "Παρακολούθηση απόδοσης του κύριου βρόχου εφαρμογών"
 
-#: src/sysprof-cli/sysprof-cli.c:342
+#: src/sysprof-cli/sysprof-cli.c:349
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr ""
 "Συγχώνευση όλων των παρεχόμενων αρχείων *.syscap και εγγραφή στην stdout"
 
-#: src/sysprof-cli/sysprof-cli.c:343
+#: src/sysprof-cli/sysprof-cli.c:350
 msgid "Print the sysprof-cli version and exit"
 msgstr "Εμφάνιση της έκδοσης sysprof-cli και έξοδος"
 
-#: src/sysprof-cli/sysprof-cli.c:344
+#: src/sysprof-cli/sysprof-cli.c:351
 msgid "The size of the buffer in pages (1 = 1 page)"
 msgstr "Το μέγεθος του buffer σε σελίδες (1 = 1 σελίδα)"
 
-#: src/sysprof-cli/sysprof-cli.c:345
+#: src/sysprof-cli/sysprof-cli.c:352
 msgid "Additional D-Bus address to monitor"
 msgstr "Πρόσθετη διεύθυνση D-Bus για παρακολούθηση"
 
-#: src/sysprof-cli/sysprof-cli.c:346
+#: src/sysprof-cli/sysprof-cli.c:353
 msgid "Stack size to copy for unwinding in user-space"
 msgstr "Μέγεθος στοίβας προς αντιγραφή για ανάκτηση στο χώρο χρήστη"
 
-#: src/sysprof-cli/sysprof-cli.c:347
+#: src/sysprof-cli/sysprof-cli.c:354
 msgid "Do not use debuginfod to resolve symbols"
 msgstr "Να μην χρησιμοποιηθεί το debuginfod για επίλυση συμβόλων"
 
-#: src/sysprof-cli/sysprof-cli.c:348
+#: src/sysprof-cli/sysprof-cli.c:355
 msgid "Do not use Sysprofd to acquire privileges"
 msgstr "Να μην χρησιμοποιηθεί το Sysprofd για απόκτηση δικαιωμάτων"
 
-#: src/sysprof-cli/sysprof-cli.c:382
+#: src/sysprof-cli/sysprof-cli.c:386
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 
-#: src/sysprof-cli/sysprof-cli.c:385
+#: src/sysprof-cli/sysprof-cli.c:389
 msgid ""
 "\n"
 "Examples:\n"
@@ -441,13 +598,13 @@ msgstr ""
 "  # όπου το μέγεθος στοίβας είναι πολλαπλάσιο του μεγέθους σελίδας\n"
 "  sysprof-cli --stack-size=8192\n"
 
-#: src/sysprof-cli/sysprof-cli.c:425
+#: src/sysprof-cli/sysprof-cli.c:429
 #, c-format
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Πολλά ορίσματα δόθηκαν στο sysprof-cli:"
 
 #. Translators: %s is a file name.
-#: src/sysprof-cli/sysprof-cli.c:482
+#: src/sysprof-cli/sysprof-cli.c:487
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "Το %s υπάρχει. Χρησιμοποιήστε --force για αντικατάσταση\n"
@@ -1584,9 +1741,6 @@ msgstr "Αριστερά Βαρύ"
 
 #~ msgid "Window maximized state"
 #~ msgstr "Κατάσταση μεγιστοποιημένου παραθύρου"
-
-#~ msgid "Battery"
-#~ msgstr "Μπαταρία"
 
 #~ msgid "Filename"
 #~ msgstr "Όνομα αρχείου"

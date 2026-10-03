@@ -6,14 +6,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-34\n"
-"POT-Creation-Date: 2019-11-25 11:43+0000\n"
-"PO-Revision-Date: 2019-12-08 00:23+0200\n"
+"POT-Creation-Date: 2026-09-29 21:10+0000\n"
+"PO-Revision-Date: 2026-10-03 16:00+0300\n"
 "Last-Translator: Efstathios Iosifidis <iosifidis@opensuse.org>\n"
 "Language-Team: Greek, Modern (1453-) <gnome-el-list@gnome.org>\n"
+"Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: el\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.2.4\n"
 
@@ -27,65 +27,39 @@ msgstr ""
 "Για περισσότερες πληροφορίες, επισκεφθείτε την σελίδα\n"
 "http://gnome.gr/"
 
+#. (itstool) path: info/title
+#: C/index.page:7
+msgctxt "link:trail"
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#. (itstool) path: info/title
+#: C/index.page:8
+msgctxt "link"
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#. (itstool) path: info/title
+#: C/index.page:9
+msgctxt "text"
+msgid "Sysprof"
+msgstr "Sysprof"
+
 #. (itstool) path: page/title
-#: C/faq.page:9
-msgid "What does heap mean?"
-msgstr ""
+#: C/index.page:15
+msgid "<_:media-1/> Sysprof"
+msgstr "<_:media-1/> Sysprof"
 
 #. (itstool) path: section/title
-#: C/faq.page:12
-msgid "What does \"In file [heap]\" mean?"
-msgstr ""
-
-#. (itstool) path: section/p
-#: C/faq.page:14
-msgid ""
-"This means that sysprof believes a function was called from somewhere in the "
-"program's heap (where <code>malloc</code> allocates memory) rather than the "
-"code section (where executable code normally lives.) There are several "
-"possible explanations."
-msgstr ""
+#. (itstool) path: page/title
+#: C/index.page:21 C/profiling.page:8
+msgid "Profiling"
+msgstr "Δημιουργία προφίλ"
 
 #. (itstool) path: section/title
-#: C/faq.page:22
-msgid "JIT (Just in Time) compilers"
-msgstr ""
-
-#. (itstool) path: section/p
-#: C/faq.page:24
-msgid ""
-"Languages like Java can generate executable code while a program is running "
-"and store it in the heap. Sysprof is accurately reporting the situation in "
-"this case."
-msgstr ""
-
-#. (itstool) path: section/title
-#: C/faq.page:30
-msgid "Optimizing compilers"
-msgstr "Βελτιστοποίηση μεταγλωττιστών"
-
-#. (itstool) path: section/p
-#: C/faq.page:32
-msgid ""
-"C and C++ compilers can optimize away information needed to determine a "
-"function's caller, so it is mistaken for [heap]. You can still tell how "
-"often each function is called by the program, but not always from where."
-msgstr ""
-
-#. (itstool) path: note/p
-#: C/faq.page:38
-msgid ""
-"For gcc, the flag <code>-fno-omit-frame-pointer</code> will prevent this "
-"optimization. The flag is not always needed, for example on x86_64 machines "
-"it is only needed with -O3 optimization."
-msgstr ""
-
-#. (itstool) path: note/p
-#: C/faq.page:44
-msgid ""
-"To get the most detailed and accurate call tree from un-optimized code, use "
-"these flags: <code>-ggdb -fno-omit-frame-pointer -O0</code>"
-msgstr ""
+#: C/index.page:25
+msgid "Frequently Asked Questions"
+msgstr "Συχνές ερωτήσεις"
 
 #. (itstool) path: credit/name
 #: C/introduction.page:15
@@ -113,16 +87,18 @@ msgid ""
 "<app>Sysprof</app> is a system profiler for Linux that targets the GNOME "
 "desktop."
 msgstr ""
+"Το <app>Sysprof</app> είναι ένα εργαλείο δημιουργίας προφίλ συστήματος για το "
+"Linux που στοχεύει στην επιφάνεια εργασίας GNOME."
 
 #. (itstool) path: info/desc
 #: C/introduction.page:33
 msgid "Differences between tracing and sampling"
-msgstr ""
+msgstr "Διαφορές μεταξύ ανίχνευσης και δειγματοληψίας"
 
 #. (itstool) path: section/title
 #: C/introduction.page:35
 msgid "What is a Profiler?"
-msgstr ""
+msgstr "Τι είναι ένα εργαλείο δημιουργίας προφίλ;"
 
 #. (itstool) path: section/p
 #: C/introduction.page:37
@@ -131,6 +107,10 @@ msgid ""
 "or system while it runs. That information can be explored to gain insight "
 "into how the application could be changed to perform better."
 msgstr ""
+"Ένα εργαλείο δημιουργίας προφίλ είναι μια εφαρμογή που καταγράφει "
+"πληροφορίες σχετικά με μια εφαρμογή ή ένα σύστημα ενώ εκτελείται. Αυτές οι "
+"πληροφορίες μπορούν να εξερευνηθούν για να αποκτηθεί εικόνα για το πώς θα "
+"μπορούσε να αλλάξει η εφαρμογή ώστε να έχει καλύτερη απόδοση."
 
 #. (itstool) path: section/p
 #: C/introduction.page:42
@@ -142,6 +122,13 @@ msgid ""
 "frequency and therefore does not see every function call executed by the "
 "program."
 msgstr ""
+"Υπάρχουν δύο κοινές κατηγορίες εργαλείων δημιουργίας προφίλ λογισμικού, που "
+"συνήθως αναφέρονται είτε ως εργαλεία δημιουργίας προφίλ ανίχνευσης είτε ως "
+"δειγματοληψίας. Αυτό που εννοείται με το εργαλείο δημιουργίας προφίλ "
+"ανίχνευσης είναι ότι κάθε κλήση συνάρτησης που εκτελείται από το πρόγραμμα "
+"είναι γνωστή στο εργαλείο. Ένα εργαλείο δημιουργίας προφίλ δειγματοληψίας "
+"λειτουργεί εξετάζοντας την κατάσταση του προγράμματος σε τακτική συχνότητα και "
+"επομένως δεν βλέπει κάθε κλήση συνάρτησης που εκτελείται από το πρόγραμμα."
 
 #. (itstool) path: section/p
 #: C/introduction.page:49
@@ -151,35 +138,24 @@ msgid ""
 "of a tracing profiler, making it easier to use for software that requires "
 "interactivity."
 msgstr ""
+"Τόσο τα εργαλεία δημιουργίας προφίλ ανίχνευσης όσο και τα εργαλεία "
+"δειγματοληψίας έχουν τα πλεονεκτήματά τους. Ένα αξιοσημείωτο πλεονέκτημα ενός "
+"εργαλείου δημιουργίας προφίλ δειγματοληψίας είναι ότι η επιβάρυνση είναι πολύ "
+"μικρότερη από αυτή ενός εργαλείου ανίχνευσης, καθιστώντας το ευκολότερο στη "
+"χρήση για λογισμικό που απαιτεί διαδραστικότητα."
 
 #. (itstool) path: section/p
 #: C/introduction.page:54
 msgid "<app>Sysprof</app> is a sampling profiler."
-msgstr ""
-
-#. (itstool) path: page/title
-#: C/index.page:12
-msgid "Sysprof"
-msgstr "Sysprof"
+msgstr "Το <app>Sysprof</app> είναι ένα εργαλείο δημιουργίας προφίλ δειγματοληψίας."
 
 #. (itstool) path: section/title
-#. (itstool) path: page/title
-#: C/index.page:15 C/profiling.page:6
-msgid "Profiling"
-msgstr ""
-
-#. (itstool) path: section/title
-#: C/index.page:19
-msgid "Frequently Asked Questions"
-msgstr ""
-
-#. (itstool) path: section/title
-#: C/profiling.page:12
+#: C/profiling.page:10
 msgid "How to profile your system"
-msgstr ""
+msgstr "Πώς να δημιουργήσετε προφίλ του συστήματός σας"
 
 #. (itstool) path: section/p
-#: C/profiling.page:13
+#: C/profiling.page:11
 msgid ""
 "When <app>Sysprof</app> profiles your system, it records stack information "
 "for all applications executing, including the Linux kernel. This can "
@@ -188,178 +164,302 @@ msgid ""
 "success by using <app>Sysprof</app> to <link href=\"profiling#new-process-"
 "profiling\">spawn a new process</link>."
 msgstr ""
+"Όταν το <app>Sysprof</app> δημιουργεί προφίλ του συστήματός σας, καταγράφει "
+"πληροφορίες στοίβας για όλες τις εφαρμογές που εκτελούνται, συμπεριλαμβανομένου "
+"του πυρήνα Linux. Αυτό μπορεί μερικές φορές να προκαλέσει σύγχυση εάν θέλετε "
+"να κοιτάξετε μόνο μία διεργασία. Εάν η εφαρμογή σας δεν αλληλεπιδρά πολύ με το "
+"κεντρικό σύστημα, μπορεί να έχετε μεγαλύτερη επιτυχία χρησιμοποιώντας το <app>"
+"Sysprof</app> για να <link href=\"profiling#new-process-profiling\">εκκινήσετε "
+"μια νέα διεργασία</link>."
 
 #. (itstool) path: section/p
-#: C/profiling.page:20
+#: C/profiling.page:18
 msgid ""
 "To profile your entire system, ensure the target button is set to <em>All "
 "Processes</em> and click <em>Record</em>."
 msgstr ""
+"Για να δημιουργήσετε προφίλ ολόκληρου του συστήματός σας, βεβαιωθείτε ότι το "
+"κουμπί προορισμού έχει οριστεί σε <em>Όλες οι διεργασίες</em> και κάντε κλικ "
+"στο <em>Εγγραφή</em>."
 
 #. (itstool) path: section/p
-#: C/profiling.page:23
+#: C/profiling.page:21
 msgid ""
 "At this point, you may be asked to <em>authorize</em> access to profile the "
 "system. This is required as the Linux kernel's perf implementation requires "
 "root to perform whole-system profiling."
 msgstr ""
+"Σε αυτό το σημείο, ίσως σας ζητηθεί να <em>εξουσιοδοτήσετε</em> την πρόσβαση "
+"για τη δημιουργία προφίλ του συστήματος. Αυτό απαιτείται καθώς η υλοποίηση "
+"perf του πυρήνα Linux απαιτεί δικαιώματα root για την εκτέλεση δημιουργίας "
+"προφίλ ολόκληρου του συστήματος."
 
 #. (itstool) path: section/p
-#: C/profiling.page:27
+#: C/profiling.page:25
 msgid ""
 "During the profiling session, you will see the number of seconds the profile "
 "has been active. Clicking the <em>Record</em> button again will stop the "
 "profiling session. Afterwhich, the callgraph will be displayed."
 msgstr ""
+"Κατά τη διάρκεια της συνεδρίας δημιουργίας προφίλ, θα δείτε τον αριθμό των "
+"δευτερολέπτων που το προφίλ είναι ενεργό. Κάνοντας κλικ στο κουμπί <em>Εγγραφή"
+"</em> ξανά θα διακοπεί η συνεδρία δημιουργίας προφίλ. Μετά από αυτό, θα "
+"εμφανιστεί το γράφημα κλήσεων."
 
 #. (itstool) path: note/p
-#: C/profiling.page:33
+#: C/profiling.page:31
 msgid ""
 "If you find that the <app>sysprof</app> application is showing up in your "
 "profiling callgraph, you might consider recording the profiling session with "
 "<cmd>sysprof-cli</cmd>. This is a command line program that will capture "
 "your profiling session to disk to be viewed at a later time."
 msgstr ""
+"Εάν διαπιστώσετε ότι η εφαρμογή <app>sysprof</app> εμφανίζεται στο γράφημα "
+"κλήσεων δημιουργίας προφίλ, μπορείτε να εξετάσετε το ενδεχόμενο να καταγράψετε "
+"τη συνεδρία δημιουργίας προφίλ με το <cmd>sysprof-cli</cmd>. Αυτό είναι ένα "
+"πρόγραμμα γραμμής εντολών που καταγράφει τη συνεδρία δημιουργίας προφίλ στον "
+"δίσκο για να προβληθεί αργότερα."
 
 #. (itstool) path: section/p
-#: C/profiling.page:39 C/profiling.page:62
+#: C/profiling.page:37
 msgid ""
 "See <link href=\"profiling#interpreting-results\">interpreting results</"
 "link> for more guidance."
 msgstr ""
+"Δείτε την ενότητα <link href=\"profiling#interpreting-results\">ερμηνεία "
+"αποτελεσμάτων</link> για περισσότερη καθοδήγηση."
 
 #. (itstool) path: section/title
-#: C/profiling.page:48
-msgid "Profile an existing process"
-msgstr ""
-
-#. (itstool) path: section/p
-#: C/profiling.page:49
-msgid ""
-"With <app>Sysprof</app>, you can profile one or more existing processes on "
-"your system. First, select the <em>profiling target</em> button next to the "
-"<em>Record</em> button. Select <em>Existing Process</em> in the popover that "
-"is displayed. Next, select as many processes as you'd like to profile. "
-"Processes selected for profiling will have a checkmark next to their name."
-msgstr ""
-
-#. (itstool) path: section/p
-#: C/profiling.page:56
-msgid ""
-"After selecting your target processes, click the <em>Record</em> button to "
-"start profiling."
-msgstr ""
-
-#. (itstool) path: section/p
-#: C/profiling.page:59
-msgid ""
-"When you have completed, click the <em>Record</em> button again to stop "
-"profiling."
-msgstr ""
-
-#. (itstool) path: section/title
-#: C/profiling.page:71
+#: C/profiling.page:46
 msgid "Profile a new process"
-msgstr ""
+msgstr "Δημιουργία προφίλ μιας νέας διεργασίας"
 
 #. (itstool) path: section/p
-#: C/profiling.page:73
+#: C/profiling.page:48
 msgid ""
 "Often times, you may need to spawn a new process to profile. First, select "
-"the <em>profiling target</em> button next to the <em>Record</em> button. "
-"Next, select <em>New Process</em> and fill out the necessary information to "
-"spawn the process."
+"the <em>Application</em> button next at the top of the recording window. "
+"Fill in your command and working directory, and optionally specify any "
+"environment variables you need. Your process will be started when recording "
+"begins."
 msgstr ""
+"Συχνά, μπορεί να χρειαστεί να εκκινήσετε μια νέα διεργασία για τη δημιουργία "
+"προφίλ. Πρώτα, επιλέξτε το κουμπί <em>Εφαρμογή</em> στο επάνω μέρος του "
+"παραθύρου εγγραφής. Συμπληρώστε την εντολή και τον κατάλογο εργασίας σας και, "
+"προαιρετικά, καθορίστε τυχόν μεταβλητές περιβάλλοντος που χρειάζεστε. Η "
+"διεργασία σας θα ξεκινήσει όταν αρχίσει η εγγραφή."
 
 #. (itstool) path: note/p
-#: C/profiling.page:79
+#: C/profiling.page:55
 msgid ""
 "If you are spawning a process that requires access to your current display, "
 "such as a GTK+ application, you will want to make sure <em>Inherit current "
 "environment</em> is set."
 msgstr ""
+"Εάν εκκινείτε μια διεργασία που απαιτεί πρόσβαση στην τρέχουσα οθόνη σας, όπως "
+"μια εφαρμογή GTK+, θα θέλετε να βεβαιωθείτε ότι έχει οριστεί η επιλογή "
+"<em>Κληρονόμηση τρέχοντος περιβάλλοντος</em>."
 
 #. (itstool) path: section/title
-#: C/profiling.page:90
+#: C/profiling.page:66
 msgid "Profiling with the sysprof-cli command line tool"
-msgstr ""
+msgstr "Δημιουργία προφίλ με το εργαλείο γραμμής εντολών sysprof-cli"
 
 #. (itstool) path: section/p
-#: C/profiling.page:92
+#: C/profiling.page:68
 msgid ""
 "For minimal overhead, you might consider using the <cmd>sysprof-cli</cmd> "
 "command line tool. When run without any arguments, it will record your "
 "entire system and save the output to <file>capture.syscap</file>. This file "
 "can be opened with the <app>Sysprof</app> application to view the callgraph."
 msgstr ""
+"Για ελάχιστη επιβάρυνση, μπορείτε να εξετάσετε τη χρήση του εργαλείου γραμμής "
+"εντολών <cmd>sysprof-cli</cmd>. Όταν εκτελείται χωρίς ορίσματα, θα καταγράψει "
+"ολόκληρο το σύστημά σας και θα αποθηκεύσει την έξοδο στο <file>capture.syscap"
+"</file>. Αυτό το αρχείο μπορεί να ανοιχτεί με την εφαρμογή <app>Sysprof</app> "
+"για να δείτε το γράφημα κλήσεων."
 
 #. (itstool) path: section/p
-#: C/profiling.page:97
+#: C/profiling.page:73
 msgid ""
-"You can also attach to an existing process using <cmd>sysprof-cli -p pid</"
-"cmd>."
-msgstr ""
-
-#. (itstool) path: section/p
-#: C/profiling.page:100
-msgid ""
-"If you would like to spawn a new process, use <cmd>sysprof-cli -c 'command'</"
+"If you would like to spawn a new process, use <cmd>sysprof-cli -- 'command'</"
 "cmd> to specify a command to be launched. The command will inherit the "
 "current environment."
 msgstr ""
+"Εάν θέλετε να εκκινήσετε μια νέα διεργασία, χρησιμοποιήστε το <cmd>sysprof-cli "
+"-- 'command'</cmd> για να καθορίσετε μια εντολή προς εκκίνηση. Η εντολή θα "
+"κληρονομήσει το τρέχον περιβάλλον."
 
 #. (itstool) path: section/title
-#: C/profiling.page:110
+#: C/profiling.page:83
 msgid "Interpreting results"
-msgstr ""
+msgstr "Ερμηνεία αποτελεσμάτων"
 
 #. (itstool) path: section/p
-#: C/profiling.page:112
+#: C/profiling.page:85
 msgid ""
 "The profiling results in <app>Sysprof</app> are split into three sections. "
 "On the top left is a list of all the functions profiled. They are sorted by "
 "how often they were called during the recording."
 msgstr ""
+"Τα αποτελέσματα δημιουργίας προφίλ στο <app>Sysprof</app> χωρίζονται σε τρεις "
+"ενότητες. Επάνω αριστερά υπάρχει μια λίστα με όλες τις συναρτήσεις των οποίων "
+"δημιουργήθηκε προφίλ. Ταξινομούνται ανάλογα με το πόσο συχνά κλήθηκαν κατά τη "
+"διάρκεια της εγγραφής."
 
 #. (itstool) path: note/p
-#: C/profiling.page:117
+#: C/profiling.page:90
 msgid ""
 "It is important to note that the amount of time spent in each function is "
 "not captured. That would require a tracing profiler to accurately record. "
 "The percentage is calculated by determining how often that function showed "
 "up in the current stacktrace when a sample was recorded."
 msgstr ""
+"Είναι σημαντικό να σημειωθεί ότι ο χρόνος που αφιερώνεται σε κάθε συνάρτηση "
+"δεν καταγράφεται. Αυτό θα απαιτούσε ένα εργαλείο δημιουργίας προφίλ ανίχνευσης "
+"για ακριβή καταγραφή. Το ποσοστό υπολογίζεται προσδιορίζοντας πόσο συχνά "
+"εμφανιζόταν αυτή η συνάρτηση στο τρέχον ίχνος στοίβας κατά την καταγραφή ενός "
+"δείγματος."
 
 #. (itstool) path: section/p
-#: C/profiling.page:123
+#: C/profiling.page:96
 msgid ""
 "After selecting a function from the functions list, all of the recorded "
 "callers of that function will be displayed on the bottom left. They are also "
 "sorted by the percentage of samples that included that function in the "
 "stacktrace."
 msgstr ""
+"Αφού επιλέξετε μια συνάρτηση από τη λίστα συναρτήσεων, όλοι οι καταγεγραμμένοι "
+"καλούντες αυτής της συνάρτησης θα εμφανιστούν κάτω αριστερά. Είναι επίσης "
+"ταξινομημένοι κατά το ποσοστό των δειγμάτων που περιλάμβαναν αυτήν τη "
+"συνάρτηση στο ίχνος στοίβας."
 
 #. (itstool) path: section/p
-#: C/profiling.page:128
+#: C/profiling.page:101
 msgid ""
 "On the right, are all of the decendants of a selected function. You can "
 "select a function either from the functions list, or the callers list."
 msgstr ""
-
-#. (itstool) path: section/p
-#: C/profiling.page:131
-msgid ""
-"You can jump into a function by activating a row in the tree of descendants "
-"with a double-click or by pressing <key>Enter</key> or <key>Spacebar</key>."
-msgstr ""
-"Μπορείτε να μεταβείτε σε μια λειτουργία ενεργοποιώντας μια σειρά στο δέντρο "
-"των απογόνων με ένα διπλό κλικ ή πατώντας το πλήκτρο <key>Enter</key> ή "
-"<key>Κενό</key>."
+"Στα δεξιά, βρίσκονται όλοι οι απόγονοι μιας επιλεγμένης συνάρτησης. Μπορείτε "
+"να επιλέξετε μια συνάρτηση είτε από τη λίστα συναρτήσεων είτε από τη λίστα "
+"καλούντων."
 
 #. (itstool) path: note/p
-#: C/profiling.page:135
+#: C/profiling.page:105
 msgid ""
-"If you see <em>- - kernel - -</em> in your results, that means that the "
-"application transitioned into or from the Linux kernel. There can be many "
-"reasons for this such as a <em>syscall</em> or <em>signal</em>."
+"If you see <em>- - Context Switch - -</em> in your results, that means that "
+"the application transitioned into or from the Linux kernel. There can be "
+"many reasons for this such as a <em>syscall</em> or <em>signal</em>."
 msgstr ""
+"Εάν δείτε το <em>- - Context Switch - -</em> στα αποτελέσματά σας, αυτό "
+"σημαίνει ότι η εφαρμογή μετέβη στον ή από τον πυρήνα Linux. Μπορεί να υπάρχουν "
+"πολλοί λόγοι για αυτό, όπως μια <em>κλήση συστήματος (syscall)</em> ή ένα "
+"<em>σήμα (signal)</em>."
+
+#. (itstool) path: page/title
+#: C/faq.page:9
+msgid "What does heap mean?"
+msgstr "Τι σημαίνει σωρός (heap);"
+
+#. (itstool) path: section/title
+#: C/faq.page:12
+msgid "What does \"In file [heap]\" mean?"
+msgstr "Τι σημαίνει «Στο αρχείο [heap]»;"
+
+#. (itstool) path: section/p
+#: C/faq.page:14
+msgid ""
+"This means that sysprof believes a function was called from somewhere in the "
+"program's heap (where <code>malloc</code> allocates memory) rather than the "
+"code section (where executable code normally lives.) There are several "
+"possible explanations."
+msgstr ""
+"Αυτό σημαίνει ότι το sysprof θεωρεί ότι μια συνάρτηση κλήθηκε από κάποιο σημείο "
+"στον σωρό του προγράμματος (όπου η <code>malloc</code> δεσμεύει μνήμη) αντί για "
+"την ενότητα κώδικα (όπου κανονικά βρίσκεται ο εκτελέσιμος κώδικας). Υπάρχουν "
+"αρκετές πιθανές εξηγήσεις."
+
+#. (itstool) path: section/title
+#: C/faq.page:22
+msgid "JIT (Just in Time) compilers"
+msgstr "Μεταγλωττιστές JIT (Just in Time)"
+
+#. (itstool) path: section/p
+#: C/faq.page:24
+msgid ""
+"Languages like Java can generate executable code while a program is running "
+"and store it in the heap. Sysprof is accurately reporting the situation in "
+"this case."
+msgstr ""
+"Γλώσσες όπως η Java μπορούν να παράγουν εκτελέσιμο κώδικα ενώ ένα πρόγραμμα "
+"εκτελείται και να τον αποθηκεύουν στον σωρό. Το Sysprof αναφέρει με ακρίβεια "
+"την κατάσταση σε αυτήν την περίπτωση."
+
+#. (itstool) path: section/title
+#: C/faq.page:30
+msgid "Optimizing compilers"
+msgstr "Βελτιστοποίηση μεταγλωττιστών"
+
+#. (itstool) path: section/p
+#: C/faq.page:32
+msgid ""
+"C and C++ compilers can optimize away information needed to determine a "
+"function's caller, so it is mistaken for [heap]. You can still tell how "
+"often each function is called by the program, but not always from where."
+msgstr ""
+"Οι μεταγλωττιστές C και C++ μπορούν να παραλείψουν λόγω βελτιστοποίησης "
+"πληροφορίες που απαιτούνται για τον προσδιορισμό του καλούντος μιας "
+"συνάρτησης, οπότε εκλαμβάνεται εσφαλμένα ως [heap]. Μπορείτε ακόμα να δείτε "
+"πόσο συχνά καλείται κάθε συνάρτηση από το πρόγραμμα, αλλά όχι πάντα από πού."
+
+#. (itstool) path: note/p
+#: C/faq.page:38
+msgid ""
+"For gcc, the flag <code>-fno-omit-frame-pointer</code> will prevent this "
+"optimization. The flag is not always needed, for example on x86_64 machines "
+"it is only needed with -O3 optimization."
+msgstr ""
+"Για το gcc, η σημαία <code>-fno-omit-frame-pointer</code> θα αποτρέψει αυτήν τη "
+"βελτιστοποίηση. Η σημαία δεν είναι πάντα απαραίτητη, για παράδειγμα σε "
+"μηχανήματα x86_64 χρειάζεται μόνο με βελτιστοποίηση -O3."
+
+#. (itstool) path: note/p
+#: C/faq.page:44
+msgid ""
+"To get the most detailed and accurate call tree from un-optimized code, use "
+"these flags: <code>-ggdb -fno-omit-frame-pointer -O0</code>"
+msgstr ""
+"Για να λάβετε το πιο λεπτομερές και ακριβές δέντρο κλήσεων από μη "
+"βελτιστοποιημένο κώδικα, χρησιμοποιήστε αυτές τις σημαίες: <code>-ggdb -fno-"
+"omit-frame-pointer -O0</code>"
+
+#. (itstool) path: p/link
+#: C/legal.xml:5
+msgid "Creative Commons Attribution-ShareAlike 4.0 International"
+msgstr "Creative Commons Attribution-ShareAlike 4.0 International"
+
+#. (itstool) path: license/p
+#: C/legal.xml:4
+msgid "This work is licensed under a <_:link-1/> license."
+msgstr "Αυτό το έργο έχει αδειοδοτηθεί υπό τους όρους μιας άδειας <_:link-1/>."
+
+#. (itstool) path: license/p
+#: C/legal.xml:8
+msgid ""
+"As a special exception, the copyright holders give you permission to copy, "
+"modify, and distribute the example code contained in this documentation "
+"under the terms of your choosing, without restriction."
+msgstr ""
+"Ως ειδική εξαίρεση, οι κάτοχοι πνευματικών δικαιωμάτων σας δίνουν την άδεια να "
+"αντιγράψετε, να τροποποιήσετε και να διανείμετε τον παραδειγματικό κώδικα που "
+"περιέχεται σε αυτήν την τεκμηρίωση υπό τους όρους της επιλογής σας, χωρίς "
+"περιορισμούς."
+
+#~ msgid ""
+#~ "You can jump into a function by activating a row in the tree of "
+#~ "descendants with a double-click or by pressing <key>Enter</key> or "
+#~ "<key>Spacebar</key>."
+#~ msgstr ""
+#~ "Μπορείτε να μεταβείτε σε μια λειτουργία ενεργοποιώντας μια σειρά στο "
+#~ "δέντρο των απογόνων με ένα διπλό κλικ ή πατώντας το πλήκτρο <key>Enter</"
+#~ "key> ή <key>Κενό</key>."

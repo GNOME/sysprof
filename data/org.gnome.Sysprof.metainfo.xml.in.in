@@ -67,7 +67,7 @@
   </keywords>
 
   <url type="homepage">https://apps.gnome.org/Sysprof/</url>
-  <url type="bugtracker">https://gitlab.gnome.org/GNOME/sysprof/issues</url>
+  <url type="bugtracker">https://gitlab.gnome.org/GNOME/sysprof/-/work_items</url>
   <url type="contribute">https://welcome.gnome.org/app/Sysprof/</url>
   <url type="donation">https://www.gnome.org/donate/</url>
   <url type="translate">https://l10n.gnome.org/module/sysprof/</url>

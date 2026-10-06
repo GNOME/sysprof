@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
-"POT-Creation-Date: 2026-09-13 21:33+0000\n"
-"PO-Revision-Date: 2026-10-04 21:36+0200\n"
+"POT-Creation-Date: 2026-06-30 01:14+0000\n"
+"PO-Revision-Date: 2026-07-09 12:26+0200\n"
 "Last-Translator: Kjartan Maraas <kmaraas@gnome.org>\n"
 "Language-Team: Norwegian Bokmål <nb@li.org>\n"
 "Language: nb\n"
@@ -421,8 +421,7 @@ msgid "--merge requires at least 2 filename arguments"
 msgstr "--merge krever minst 2 filnavn-argumenter"
 
 #: src/sysprof-cli/sysprof-cli.c:326
-msgid ""
-"Disable CPU throttling while profiling [Deprecated for --power-profile]"
+msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
 msgstr ""
 "Deaktiver CPU-strømming under profilering [Forældet for --power-profile]"
 
@@ -557,7 +556,7 @@ msgstr "Ikke bruk Sysprofd for å skaffe privilegier"
 
 #: src/sysprof-cli/sysprof-cli.c:386
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
-msgstr ""
+msgstr "[FANGST_FIL] [-- KOMMANDO ARGUMENTER] – Sysprof"
 
 #: src/sysprof-cli/sysprof-cli.c:389
 msgid ""
@@ -575,6 +574,16 @@ msgid ""
 "  # where the stack-size is a multiple of page-size\n"
 "  sysprof-cli --stack-size=8192\n"
 msgstr ""
+"\n"
+"Eksempler:\n"
+"\n"
+"  # Ta opp gtk4-widget-factory ved bruk av trace-fd for å få applikasjonsdata\n"
+"  # i tillegg til GTK og GNOME skall datatilbydere\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd --gtk4-widget-factory\n"
+"\n"
+"  # Angre ved å fange stack/register innhold i stedet for frame-pointers\n"
+"  # hvor stack-size er en multippel av page-size\n"
+"  sysprof-cli --stack-size=8192\n"
 
 #: src/sysprof-cli/sysprof-cli.c:429
 #, c-format
@@ -997,8 +1006,8 @@ msgstr "Antall bytes som skal kopieres fra stakken"
 
 #: src/sysprof/sysprof-greeter.ui:123
 msgid ""
-"Unwinding in user-space has considerable overhead but may help in situations"
-" where frame-pointers are unavailable."
+"Unwinding in user-space has considerable overhead but may help in situations "
+"where frame-pointers are unavailable."
 msgstr ""
 "Unwinding i brukerrommet har betydelig overhead, men kan hjelpe i "
 "situasjoner der rampevisere ikke er tilgjengelige."
@@ -1161,11 +1170,10 @@ msgstr "Opptak av meldinger på D-Bus-bruker-session-bussen"
 
 #: src/sysprof/sysprof-greeter.ui:378
 msgid ""
-"The session bus may contain sensitive information such as keyboard usage and"
-" passwords."
+"The session bus may contain sensitive information such as keyboard usage and "
+"passwords."
 msgstr ""
-"Sesjonsbussen kan inneholde sensitiv informasjon som tastaturbruk og "
-"passord."
+"Sesjonsbussen kan inneholde sensitiv informasjon som tastaturbruk og passord."
 
 #: src/sysprof/sysprof-greeter.ui:401
 msgid "Timings"
@@ -1181,8 +1189,8 @@ msgstr "Opptak av rammetidsinformasjon fra GNOME Shell-kompositor"
 
 #: src/sysprof/sysprof-greeter.ui:417
 msgid ""
-"Applications launched by Sysprof will automatically collect GTK frame timing"
-" information."
+"Applications launched by Sysprof will automatically collect GTK frame timing "
+"information."
 msgstr ""
 "Applikasjoner som startes av Sysprof vil automatisk samle inn GTK-"
 "rammetidsinformasjon."
@@ -1307,8 +1315,7 @@ msgstr "Info"
 msgid "Error"
 msgstr "Feil"
 
-#: src/sysprof/sysprof-logs-section.ui:4
-#: src/sysprof/sysprof-logs-section.ui:30
+#: src/sysprof/sysprof-logs-section.ui:4 src/sysprof/sysprof-logs-section.ui:30
 msgid "Logs"
 msgstr "Logger"
 
@@ -1502,8 +1509,7 @@ msgstr "Prosesskart"
 msgid "Process Table"
 msgstr "Prosesstabell"
 
-#. translators: this expands to the number of events recorded by the profiler
-#. as an indicator of progress
+#. translators: this expands to the number of events recorded by the profiler as an indicator of progress
 #: src/sysprof/sysprof-recording-pad.c:58
 #, c-format
 msgid "%<PRIi64> events"
@@ -1536,8 +1542,7 @@ msgstr "Tidsprofiler"
 msgid "Callgraph"
 msgstr "Callgraph"
 
-#: src/sysprof/sysprof-samples-section.ui:181
-#: src/sysprof/sysprof-window.ui:520
+#: src/sysprof/sysprof-samples-section.ui:181 src/sysprof/sysprof-window.ui:520
 msgid "Flamegraph"
 msgstr "Flamegraph"
 
@@ -1604,11 +1609,13 @@ msgstr "Ugyldig dokument"
 #: src/sysprof/sysprof-window.c:749
 #, c-format
 msgid ""
-"The document could not be loaded. Please check that you have the correct capture file.\n"
+"The document could not be loaded. Please check that you have the correct "
+"capture file.\n"
 "\n"
 "%s"
 msgstr ""
-"Dokumentet kunne ikke lastes inn. Vennligst kontroller at du har den riktige opptak-filen.\n"
+"Dokumentet kunne ikke lastes inn. Vennligst kontroller at du har den riktige "
+"opptak-filen.\n"
 "\n"
 "%s"
 
@@ -1660,8 +1667,7 @@ msgstr "Lagre som …"
 msgid "_Quit"
 msgstr "A_vslutt"
 
-#. translators: Left Heavy means to sort larger (heavier) stack frames before
-#. others, starting from the left
+#. translators: Left Heavy means to sort larger (heavier) stack frames before others, starting from the left
 #: src/sysprof/sysprof-window.ui:523
 msgid "Left Heavy"
 msgstr "Venstre-tung"

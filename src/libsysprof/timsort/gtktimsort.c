@@ -17,11 +17,7 @@
  * this constant to be a number that's not a power of two, you'll need
  * to change the compute_min_run() computation.
  *
- * If you decrease this constant, you must change the
- * GTK_TIM_SORT_MAX_PENDING value, or you risk running out of space.
- * See Python's listsort.txt for a discussion of the minimum stack
- * length required as a function of the length of the array being sorted and
- * the minimum merge sequence length.
+ * The Powersort stack bound is independent of this constant.
  */
 #define MIN_MERGE 32
 
@@ -70,6 +66,7 @@ gtk_tim_sort_init (GtkTimSort       *self,
   self->element_size = element_size;
   self->base = base;
   self->size = size;
+  self->total_size = size;
   self->compare_func = compare_func;
   self->data = data;
 
@@ -80,6 +77,7 @@ gtk_tim_sort_init (GtkTimSort       *self,
   self->tmp = NULL;
   self->tmp_length = 0;
   self->pending_runs = 0;
+  self->n_saved_runs = 0;
 }
 
 void
@@ -112,6 +110,59 @@ gtk_tim_sort_compare (GtkTimSort *self,
   return self->compare_func (a, b, self->data);
 }
 
+/* Compute the power of the boundary between adjacent runs [start, start+n1)
+ * and [start+n1, start+n1+n2). This is the first differing binary digit of
+ * their midpoints divided by the total array length (the root has power 1).
+ *
+ * See Munro and Wild, "Nearly-Optimal Mergesorts: Fast, Practical Sorting
+ * Methods That Optimally Adapt to Existing Runs", and CPython's listsort.txt.
+ *
+ * Initially represent each doubled midpoint as a sum of the run's two
+ * endpoints. Unlike CPython's pointer arrays, byte arrays need not leave
+ * spare high bits in gsize. Test a + a_add >= size by subtraction instead
+ * of forming a potentially overflowing sum. After extracting the first
+ * digit, a and b are remainders below size, and we double them to extract
+ * subsequent digits, again avoiding overflowing intermediate sums.
+ */
+static guint
+gtk_tim_sort_power (gsize start,
+                    gsize n1,
+                    gsize n2,
+                    gsize size)
+{
+  gsize a = start;
+  gsize b = start + n1;
+  gsize a_add = b;
+  gsize b_add = b + n2;
+  guint power = 0;
+
+  g_assert (n1 > 0 && n2 > 0);
+  g_assert (start < size && n1 <= size - start);
+  g_assert (n2 <= size - start - n1);
+
+  for (;;)
+    {
+      power++;
+      if (a >= size - a_add)
+        {
+          a -= size - a_add;
+          b -= size - b_add;
+        }
+      else if (b >= size - b_add)
+        {
+          return power;
+        }
+      else
+        {
+          a += a_add;
+          b += b_add;
+        }
+
+      a_add = a;
+      b_add = b;
+    }
+}
+
 
 /**
  * Pushes the specified run onto the pending-run stack.
@@ -124,11 +175,21 @@ gtk_tim_sort_push_run (GtkTimSort *self,
                        void       *base,
                        gsize       len)
 {
-  g_assert (self->pending_runs < GTK_TIM_SORT_MAX_PENDING);
+  g_assert (self->pending_runs + self->n_saved_runs < GTK_TIM_SORT_MAX_PENDING);
   g_assert (len <= self->size);
+
+  if (self->pending_runs > 0)
+    {
+      gsize n = self->pending_runs - 1;
+
+      /* Compute this before any merges change the two runs' midpoints. */
+      self->run_power[n] = gtk_tim_sort_power (self->total_size - self->size - self->run[n].len,
+                                              self->run[n].len, len, self->total_size);
+    }
 
   self->run[self->pending_runs].base = base;
   self->run[self->pending_runs].len = len;
+  self->run_power[self->pending_runs] = 0;
   self->pending_runs++;
 
   /* Advance to find next run */
@@ -157,8 +218,9 @@ gtk_tim_sort_ensure_capacity (GtkTimSort *self,
       new_size |= new_size >> 4;
       new_size |= new_size >> 8;
       new_size |= new_size >> 16;
-      if (sizeof(new_size) > 4)
-        new_size |= new_size >> 32;
+#if GLIB_SIZEOF_SIZE_T > 4
+      new_size |= new_size >> 32;
+#endif
 
       new_size++;
       if (new_size == 0) /* (overflow) Not bloody likely! */
@@ -199,7 +261,7 @@ void
 gtk_tim_sort_get_runs (GtkTimSort *self,
                        gsize       runs[GTK_TIM_SORT_MAX_PENDING + 1])
 {
-  gsize i;
+  gsize i, j;
 
   g_return_if_fail (self);
   g_return_if_fail (runs);
@@ -207,7 +269,10 @@ gtk_tim_sort_get_runs (GtkTimSort *self,
   for (i = 0; i < self->pending_runs; i++)
     runs[i] = self->run[i].len;
 
-  runs[self->pending_runs] = 0;
+  for (j = 0; j < self->n_saved_runs; j++)
+    runs[i++] = self->run[GTK_TIM_SORT_MAX_PENDING - self->n_saved_runs + j].len;
+
+  runs[i] = 0;
 }
 
 /*<private>
@@ -225,13 +290,28 @@ void
 gtk_tim_sort_set_runs (GtkTimSort *self,
                        gsize      *runs)
 {
-  gsize i;
+  gsize i, n, remaining;
 
   g_return_if_fail (self);
+  g_return_if_fail (runs);
   g_return_if_fail (self->pending_runs == 0);
+  g_return_if_fail (self->n_saved_runs == 0);
 
-  for (i = 0; runs[i] != 0; i++)
-    gtk_tim_sort_push_run (self, self->base, runs[i]);
+  remaining = self->size;
+  for (n = 0; runs[n] != 0; n++)
+    {
+      g_return_if_fail (n < GTK_TIM_SORT_MAX_PENDING);
+      g_return_if_fail (runs[n] <= remaining);
+      remaining -= runs[n];
+    }
+
+  /* Restored runs may have different lengths after items were removed.
+   * Queue them for merge_append() instead of assuming that their powers
+   * already form a valid stack. Keep them visible to get_runs() meanwhile.
+   */
+  for (i = 0; i < n; i++)
+    self->run[GTK_TIM_SORT_MAX_PENDING - n + i].len = runs[i];
+  self->n_saved_runs = n;
 }
 
 /*

@@ -25,6 +25,7 @@
 #define INCPTR(x) ((gpointer) ((char *) (x) + WIDTH))
 #define DECPTR(x) ((gpointer) ((char *) (x) - WIDTH))
 #define ELEM(a, i) ((char *) (a) + (i) * WIDTH)
+#define ELEM_REV(a, i) ((char *) (a) - (i) * WIDTH)
 #define LEN(n) ((n) * WIDTH)
 
 #define CONCAT(x, y) gtk_tim_sort_ ## x ## _ ## y
@@ -227,16 +228,25 @@ gtk_tim_sort(merge_append) (GtkTimSort    *self,
   /* Identify next run */
   gsize run_len;
 
-  run_len = gtk_tim_sort(prepare_run) (self, out_change);
-  if (run_len == 0)
-    return FALSE;
-
-  /* If run is short, extend to min(self->min_run, self->size) */
-  if (run_len < self->min_run)
+  if (self->n_saved_runs > 0)
     {
-      gsize force = MIN (self->size, self->min_run);
-      gtk_tim_sort(binary_sort) (self, self->base, force, run_len, out_change);
-      run_len = force;
+      run_len = self->run[GTK_TIM_SORT_MAX_PENDING - self->n_saved_runs].len;
+      self->n_saved_runs--;
+      gtk_tim_sort_set_change (out_change, NULL, 0);
+    }
+  else
+    {
+      run_len = gtk_tim_sort(prepare_run) (self, out_change);
+      if (run_len == 0)
+        return FALSE;
+
+      /* If run is short, extend to min(self->min_run, self->size) */
+      if (run_len < self->min_run)
+        {
+          gsize force = MIN (self->size, self->min_run);
+          gtk_tim_sort(binary_sort) (self, self->base, force, run_len, out_change);
+          run_len = force;
+        }
     }
   /* Push run onto pending-run stack, and maybe merge */
   gtk_tim_sort_push_run (self, self->base, run_len);
@@ -296,7 +306,7 @@ gtk_tim_sort(gallop_left) (GtkTimSort *self,
       const gsize max_ofs = hint + 1;
       gsize tmp;
       while (ofs < max_ofs
-             && gtk_tim_sort_compare (self, key, ELEM (hintp, -ofs)) <= 0)
+             && gtk_tim_sort_compare (self, key, ELEM_REV (hintp, ofs)) <= 0)
         {
           last_ofs = ofs;
           ofs = (ofs << 1) + 1;                 /* no need to check for overflow */
@@ -363,7 +373,7 @@ gtk_tim_sort(gallop_right) (GtkTimSort *self,
       gsize max_ofs = hint + 1;
       gsize tmp;
       while (ofs < max_ofs
-             && gtk_tim_sort_compare (self, key, ELEM (hintp, -ofs)) < 0)
+             && gtk_tim_sort_compare (self, key, ELEM_REV (hintp, ofs)) < 0)
         {
           last_ofs = ofs;
           ofs = (ofs << 1) + 1;                 /* no need to check for overflow */
@@ -622,13 +632,13 @@ gtk_tim_sort(merge_hi) (GtkTimSort *self,
   cursor1 = DECPTR (cursor1);
   if (--len1 == 0)
     {
-      memcpy (ELEM (dest, -(len2 - 1)), tmp, LEN (len2));        /* POP: can't overlap */
+      memcpy (ELEM_REV (dest, (len2 - 1)), tmp, LEN (len2));        /* POP: can't overlap */
       return;
     }
   if (len2 == 1)
     {
-      dest = ELEM (dest, -len1);
-      cursor1 = ELEM (cursor1, -len1);
+      dest = ELEM_REV (dest, len1);
+      cursor1 = ELEM_REV (cursor1, len1);
       memmove (ELEM (dest, 1), ELEM (cursor1, 1), LEN (len1));       /* POP: overlaps */
       /* a[dest] = tmp[cursor2]; */
       ASSIGN (dest, cursor2);
@@ -684,8 +694,8 @@ gtk_tim_sort(merge_hi) (GtkTimSort *self,
           count1 = len1 - gtk_tim_sort(gallop_right) (self, cursor2, base1, len1, len1 - 1);
           if (count1 != 0)
             {
-              dest = ELEM (dest, -count1);
-              cursor1 = ELEM (cursor1, -count1);
+              dest = ELEM_REV (dest, count1);
+              cursor1 = ELEM_REV (cursor1, count1);
               len1 -= count1;
               memmove (INCPTR (dest), INCPTR (cursor1),
                        LEN (count1));                /* POP: might overlap */
@@ -701,8 +711,8 @@ gtk_tim_sort(merge_hi) (GtkTimSort *self,
           count2 = len2 - gtk_tim_sort(gallop_left) (self, cursor1, tmp, len2, len2 - 1);
           if (count2 != 0)
             {
-              dest = ELEM (dest, -count2);
-              cursor2 = ELEM (cursor2, -count2);
+              dest = ELEM_REV (dest, count2);
+              cursor2 = ELEM_REV (cursor2, count2);
               len2 -= count2;
               memcpy (INCPTR (dest), INCPTR (cursor2), LEN (count2));               /* POP: can't overlap */
               if (len2 <= 1)                    /* len2 == 1 || len2 == 0 */
@@ -725,8 +735,8 @@ outer:
   if (len2 == 1)
     {
       g_assert (len1 > 0);
-      dest = ELEM (dest, -len1);
-      cursor1 = ELEM (cursor1, -len1);
+      dest = ELEM_REV (dest, len1);
+      cursor1 = ELEM_REV (cursor1, len1);
       memmove (INCPTR (dest), INCPTR (cursor1), LEN (len1));       /* POP: might overlap */
       /* a[dest] = tmp[cursor2];  // Move first elt of run2 to front of merge */
       ASSIGN (dest, cursor2);
@@ -740,7 +750,7 @@ outer:
     {
       g_assert (len1 == 0);
       g_assert (len2 > 0);
-      memcpy (ELEM (dest, -(len2 - 1)), tmp, LEN (len2));        /* POP: can't overlap */
+      memcpy (ELEM_REV (dest, (len2 - 1)), tmp, LEN (len2));        /* POP: can't overlap */
     }
 }
 
@@ -802,7 +812,7 @@ gtk_tim_sort(merge_at) (GtkTimSort    *self,
           gtk_tim_sort(merge_lo) (self, base1, self->max_merge_size, base2, len2);
           gtk_tim_sort_set_change (out_change, base1, self->max_merge_size + len2);
           self->run[i].len -= self->max_merge_size;
-          self->run[i + 1].base = ELEM (self->run[i + 1].base, - self->max_merge_size);
+          self->run[i + 1].base = ELEM_REV (self->run[i + 1].base, self->max_merge_size);
           self->run[i + 1].len += self->max_merge_size;
           g_assert (ELEM (self->run[i].base, self->run[i].len) == self->run[i + 1].base);
           return;
@@ -839,60 +849,44 @@ done:
    * in this merge).  The current run (i+1) goes away in any case.
    */
   self->run[i].len += self->run[i + 1].len;
+  self->run_power[i] = self->run_power[i + 1];
   if (i == self->pending_runs - 3)
-    self->run[i + 1] = self->run[i + 2];
+    {
+      self->run[i + 1] = self->run[i + 2];
+      self->run_power[i + 1] = self->run_power[i + 2];
+    }
   self->pending_runs--;
 }
 
 
 /*
- * Examines the stack of runs waiting to be merged and merges adjacent runs
- * until the stack invariants are reestablished:
- *
- *     1. run_len[i - 3] > run_len[i - 2] + run_len[i - 1]
- *     2. run_len[i - 2] > run_len[i - 1]
- *
- * This method is called each time a new run is pushed onto the stack,
- * so the invariants are guaranteed to hold for i < pending_runs upon
- * entry to the method.
- *
- * POP:
- * Modified according to http://envisage-project.eu/wp-content/uploads/2015/02/sorting.pdf
- *
- * and
- *
- * https://bugs.openjdk.java.net/browse/JDK-8072909 (suggestion 2)
- *
+ * Powersort merges deeper boundaries before shallower ones. After appending
+ * a run, restore strictly increasing boundary powers from bottom to top.
+ * The newest run supplies the preceding boundary's power but is not itself
+ * merged here. Powers stay unchanged during partial merges, so subsequent
+ * steps continue merging the same pair until its boundary is removed.
  */
 static gboolean
 gtk_tim_sort(merge_collapse) (GtkTimSort *self,
                               GtkTimSortRun *out_change)
 {
-  GtkTimSortRun *run = self->run;
   gsize n;
 
-  if (self->pending_runs <= 1)
+  if (self->pending_runs < 3)
     return FALSE;
 
-  n = self->pending_runs - 2;
-  if ((n > 0 && run[n - 1].len <= run[n].len + run[n + 1].len) ||
-      (n > 1 && run[n - 2].len <= run[n].len + run[n - 1].len))
-    {
-      if (run[n - 1].len < run[n + 1].len)
-        n--;
-    }
-  else if (run[n].len > run[n + 1].len)
-    {
-      return FALSE; /* Invariant is established */
-    }
-  
+  n = self->pending_runs - 3;
+  if (self->run_power[n] < self->run_power[n + 1])
+    return FALSE;
+
+  g_assert (self->run_power[n] > self->run_power[n + 1]);
   gtk_tim_sort(merge_at) (self, n, out_change);
   return TRUE;
 }
 
 /*
- * Merges all runs on the stack until only one remains.  This method is
- * called once, to complete the sort.
+ * Merge from the top of the stack, where the remaining boundaries are
+ * deepest, until only one run remains. Each call performs one merge step.
  */
 static gboolean
 gtk_tim_sort(merge_force_collapse) (GtkTimSort    *self,
@@ -904,8 +898,6 @@ gtk_tim_sort(merge_force_collapse) (GtkTimSort    *self,
     return FALSE;
 
   n = self->pending_runs - 2;
-  if (n > 0 && self->run[n - 1].len < self->run[n + 1].len)
-    n--;
   gtk_tim_sort(merge_at) (self, n, out_change);
   return TRUE;
 }
@@ -916,8 +908,20 @@ gtk_tim_sort(step) (GtkTimSort    *self,
 {
   g_assert (self);
 
-  if (gtk_tim_sort(merge_collapse) (self, out_change))
-    return TRUE;
+  for (;;)
+    {
+      if (gtk_tim_sort(merge_collapse) (self, out_change))
+        return TRUE;
+
+      if (self->n_saved_runs == 0)
+        break;
+
+      /* Accepting a saved run only updates bookkeeping. Do not yield until
+       * a merge or new run changes the partition: otherwise restarting
+       * from get_runs() after every step would repeat this work forever.
+       */
+      gtk_tim_sort(merge_append) (self, out_change);
+    }
 
   if (gtk_tim_sort(merge_append) (self, out_change))
     return TRUE;

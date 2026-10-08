@@ -17,15 +17,14 @@
 
 #pragma once
 
-#include <glib-object.h>
+#include <limits.h>
+#include <glib.h>
 
-/* The maximum number of entries in a GtkTimState's pending-runs stack.
- * This is enough to sort arrays of size up to about
- *     32 * phi ** GTK_TIM_SORT_MAX_PENDING
- * where phi ~= 1.618.  85 is ridiculously large enough, good for an array
- * with 2**64 elements.
+/* Boundary powers are strictly increasing after collapsing the stack,
+ * and are at most ceil (log2 (size)). Allow one entry for the newest run,
+ * whose power is not known yet, and one for an append before collapsing.
  */
-#define GTK_TIM_SORT_MAX_PENDING 86
+#define GTK_TIM_SORT_MAX_PENDING (sizeof (gsize) * CHAR_BIT + 2)
 
 typedef struct _GtkTimSort GtkTimSort;
 typedef struct _GtkTimSortRun GtkTimSortRun;
@@ -49,10 +48,11 @@ struct _GtkTimSort
   gpointer         data;
 
   /*
-   * The array being sorted.
+   * The unprocessed suffix of the array, and its original total length.
    */
   gpointer base;
   gsize size;
+  gsize total_size;
 
   /*
    * The maximum size of a merge. It's guaranteed >0 and user-provided.
@@ -90,6 +90,19 @@ struct _GtkTimSort
    */
   gsize pending_runs;	// Number of pending runs on stack
   GtkTimSortRun run[GTK_TIM_SORT_MAX_PENDING];
+
+  /* Powers of the boundaries to the right of the pending runs. The newest
+   * run has no right neighbor yet, and its power is zero. A power is kept
+   * until its boundary is removed, including across partial merges.
+   */
+  guint run_power[GTK_TIM_SORT_MAX_PENDING];
+
+  /* Runs supplied by set_runs() are queued at the end of run[], in input
+   * order, with only their lengths set. Introduce them into the pending
+   * stack one at a time, so they establish the same power invariant as
+   * newly discovered runs. The two regions of run[] never overlap.
+   */
+  gsize n_saved_runs;
 };
 
 void            gtk_tim_sort_init                               (GtkTimSort             *self,

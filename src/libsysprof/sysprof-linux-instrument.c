@@ -368,6 +368,84 @@ sysprof_linux_instrument_prepare (SysprofInstrument *instrument,
 typedef struct
 {
   SysprofRecording *recording;
+  char *previous_maps;
+  int pid;
+  guint attempts;
+} ProcessMapsSnapshot;
+
+static void
+process_maps_snapshot_free (gpointer data)
+{
+  ProcessMapsSnapshot *state = data;
+
+  g_clear_object (&state->recording);
+  g_clear_pointer (&state->previous_maps, g_free);
+  g_free (state);
+}
+
+static gboolean
+process_maps_snapshot_cb (gpointer data)
+{
+  ProcessMapsSnapshot *state = data;
+  g_autofree char *maps_path = NULL;
+  g_autofree char *maps = NULL;
+
+  g_assert (state != NULL);
+  g_assert (SYSPROF_IS_RECORDING (state->recording));
+
+  if (state->recording->end_time != 0)
+    return G_SOURCE_REMOVE;
+
+  maps_path = g_strdup_printf ("/proc/%d/maps", state->pid);
+
+  if (!g_file_get_contents (maps_path, &maps, NULL, NULL))
+    return G_SOURCE_REMOVE;
+
+  if (g_strcmp0 (maps, state->previous_maps) != 0)
+    {
+      add_mmaps (state->recording, state->pid, maps, FALSE,
+                 SYSPROF_CAPTURE_CURRENT_TIME);
+      g_free (state->previous_maps);
+      state->previous_maps = g_steal_pointer (&maps);
+    }
+
+  state->attempts++;
+
+  return state->attempts < 4 ? G_SOURCE_CONTINUE : G_SOURCE_REMOVE;
+}
+
+static void
+watch_spawned_process_maps (SysprofRecording *recording,
+                            int               pid,
+                            char             *initial_maps)
+{
+  GSubprocess *subprocess = sysprof_recording_get_subprocess (recording);
+  g_autofree char *identifier = g_strdup_printf ("%d", pid);
+  ProcessMapsSnapshot *state;
+  GSource *source;
+
+  g_assert (SYSPROF_IS_RECORDING (recording));
+  g_assert (pid > 0);
+
+  if (subprocess == NULL ||
+      g_strcmp0 (g_subprocess_get_identifier (subprocess), identifier) != 0)
+    return;
+
+  state = g_new0 (ProcessMapsSnapshot, 1);
+  state->recording = g_object_ref (recording);
+  state->previous_maps = g_strdup (initial_maps);
+  state->pid = pid;
+
+  source = g_timeout_source_new (250);
+  g_source_set_callback (source, process_maps_snapshot_cb,
+                         state, process_maps_snapshot_free);
+  g_source_attach (source, g_main_context_get_thread_default ());
+  g_source_unref (source);
+}
+
+typedef struct
+{
+  SysprofRecording *recording;
   GPtrArray *paths;
   int pid;
 } ProcessStarted;
@@ -468,6 +546,26 @@ sysprof_linux_instrument_process_started (SysprofInstrument *instrument,
   if (g_hash_table_contains (self->seen, GINT_TO_POINTER (pid)))
     return dex_future_new_for_boolean (TRUE);
   g_hash_table_add (self->seen, GINT_TO_POINTER (pid));
+
+  /* The initial process snapshot predates a child spawned by the recording.
+   * Without perf mmap events, this is our only source of its address layout.
+   */
+  {
+    g_autofree char *maps_path = g_strdup_printf ("/proc/%d/maps", pid);
+    g_autofree char *maps = NULL;
+    gint64 at_time = SYSPROF_CAPTURE_CURRENT_TIME;
+
+    sysprof_capture_writer_add_process (_sysprof_recording_writer (recording),
+                                        at_time, -1, pid, comm ? comm : "");
+
+    if (g_file_get_contents (maps_path, &maps, NULL, NULL))
+      add_mmaps (recording, pid, maps, FALSE, at_time);
+
+    /* The child can still be in the dynamic loader at this point. Capture
+     * later changes while it starts, even when perf mmap events are disabled.
+     */
+    watch_spawned_process_maps (recording, pid, maps);
+  }
 
   /* Get the bus synchronously so we don't have to suspend the fiber. This
    * will always return immediately anyway.

@@ -150,7 +150,23 @@ sysprof_recording_fiber (gpointer user_data)
 
   /* If we need to spawn a subprocess, do it now */
   if (self->spawnable != NULL)
-    monitor = _sysprof_recording_spawn (self->spawnable, &self->subprocess);
+    {
+      monitor = _sysprof_recording_spawn (self->spawnable, &self->subprocess);
+
+      if (self->subprocess != NULL)
+        {
+          const char *identifier = g_subprocess_get_identifier (self->subprocess);
+          const char * const *argv = sysprof_spawnable_get_argv (self->spawnable);
+          char *endptr = NULL;
+          if (identifier != NULL)
+            {
+              gint64 pid = g_ascii_strtoll (identifier, &endptr, 10);
+
+              if (pid > 0 && pid <= G_MAXINT && endptr != identifier && *endptr == '\0')
+                _sysprof_recording_follow_process (self, pid, argv ? argv[0] : NULL);
+            }
+        }
+    }
   else
     monitor = dex_future_new_infinite ();
 

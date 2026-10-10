@@ -65,3 +65,89 @@ sysprof_get_proc_file_bytes (GDBusConnection *connection,
       return dex_file_load_contents_bytes (file);
     }
 }
+
+/* Parse the kernel's sorted CPU list, preserving IDs when CPUs are offline. */
+GArray *
+_sysprof_parse_cpu_list (const char  *cpu_list,
+                        GError     **error)
+{
+  g_autoptr(GArray) cpus = NULL;
+  const char *p = cpu_list;
+
+  g_return_val_if_fail (cpu_list != NULL, NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  cpus = g_array_new (FALSE, FALSE, sizeof (guint));
+
+  while (g_ascii_isspace (*p))
+    p++;
+
+  for (;;)
+    {
+      guint64 first;
+      guint64 last;
+      char *end;
+
+      if (!g_ascii_isdigit (*p))
+        goto invalid;
+
+      first = g_ascii_strtoull (p, &end, 10);
+      if (first > G_MAXINT)
+        goto invalid;
+      p = end;
+      last = first;
+
+      if (*p == '-')
+        {
+          p++;
+          if (!g_ascii_isdigit (*p))
+            goto invalid;
+          last = g_ascii_strtoull (p, &end, 10);
+          if (last > G_MAXINT || last < first)
+            goto invalid;
+          p = end;
+        }
+
+      if (cpus->len > 0 && first <= g_array_index (cpus, guint, cpus->len - 1))
+        goto invalid;
+
+      for (guint cpu = first; cpu <= last; cpu++)
+        g_array_append_val (cpus, cpu);
+
+      if (*p != ',')
+        break;
+      p++;
+    }
+
+  while (g_ascii_isspace (*p))
+    p++;
+
+  if (*p != 0)
+    goto invalid;
+
+  return g_steal_pointer (&cpus);
+
+invalid:
+  g_set_error_literal (error,
+                       G_IO_ERROR,
+                       G_IO_ERROR_INVALID_DATA,
+                       "Invalid online CPU list");
+  return NULL;
+}
+
+/* System-wide instruments must cover every online CPU, regardless of the
+ * recording thread's affinity. g_get_num_processors() returns an affinity
+ * count, which is neither a list of CPU IDs nor necessarily the host count.
+ */
+GArray *
+_sysprof_get_online_cpus (GError **error)
+{
+  g_autofree char *contents = NULL;
+
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  if (!g_file_get_contents ("/sys/devices/system/cpu/online", &contents, NULL, error))
+    return NULL;
+
+  return _sysprof_parse_cpu_list (contents, error);
+}

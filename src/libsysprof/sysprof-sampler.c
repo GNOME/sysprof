@@ -24,6 +24,7 @@
 #include "sysprof-perf-event-stream-private.h"
 #include "sysprof-recording-private.h"
 #include "sysprof-sampler.h"
+#include "sysprof-util-private.h"
 
 #define N_WAKEUP_EVENTS 149
 
@@ -332,10 +333,10 @@ sysprof_sampler_prepare_fiber (gpointer user_data)
   Prepare *prepare = user_data;
   g_autoptr(StreamData) stream_data = NULL;
   g_autoptr(GPtrArray) futures = NULL;
+  g_autoptr(GArray) cpus = NULL;
   g_autoptr(GError) error = NULL;
   struct perf_event_attr attr = {0};
   gboolean with_mmap2 = TRUE;
-  guint n_cpu;
   gboolean use_software = FALSE;
 
   g_assert (prepare != NULL);
@@ -371,7 +372,8 @@ sysprof_sampler_prepare_fiber (gpointer user_data)
    * that is more effort than it is worth, since virtually
    * nobody uses Sysprof that way.
    */
-  n_cpu = g_get_num_processors ();
+  if (!(cpus = _sysprof_get_online_cpus (&error)))
+    return dex_future_new_for_error (g_steal_pointer (&error));
   futures = g_ptr_array_new_with_free_func (dex_unref);
 
 try_again:
@@ -409,15 +411,15 @@ try_again:
       attr.sample_period = 1200000;
     }
 
-  /* Pipeline our request for n_cpu perf_event_open calls and then
+  /* Pipeline our request for per-CPU perf_event_open calls and then
    * await them all to complete.
    */
   stream_data = stream_data_new (prepare->recording);
-  for (guint i = 0; i < n_cpu; i++)
+  for (guint i = 0; i < cpus->len; i++)
     g_ptr_array_add (futures,
                      sysprof_perf_event_stream_new (prepare->connection,
                                                     &attr,
-                                                    i,
+                                                    g_array_index (cpus, guint, i),
                                                     -1,
                                                     0,
                                                     sysprof_sampler_perf_event_stream_cb,
@@ -441,8 +443,9 @@ try_again:
               if (!with_mmap2)
                 _sysprof_recording_diagnostic (prepare->recording,
                                                "Sampler",
-                                               "Failed to load Perf event stream for CPU %d: %s",
-                                               i, future_error->message);
+                                               "Failed to load Perf event stream for CPU %u: %s",
+                                               g_array_index (cpus, guint, i),
+                                               future_error->message);
               failed++;
             }
         }

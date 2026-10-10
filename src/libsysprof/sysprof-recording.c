@@ -182,7 +182,12 @@ sysprof_recording_fiber (gpointer user_data)
   }
 
   /* Include some host/kernel/arch information */
-  add_metadata_int (self, "n-cpu", g_get_num_processors ());
+  {
+    g_autoptr(GArray) cpus = _sysprof_get_online_cpus (NULL);
+
+    if (cpus != NULL)
+      add_metadata_int (self, "n-cpu", cpus->len);
+  }
   add_metadata_int (self, "page-size", sysprof_getpagesize ());
   add_metadata_int (self, "buffer-size", sysprof_capture_writer_get_buffer_size (self->writer));
   if (uname (&uts) == 0)

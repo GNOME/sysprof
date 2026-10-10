@@ -196,10 +196,10 @@ sysprof_scheduler_details_prepare_fiber (gpointer user_data)
 {
   SysprofSchedulerDetails *self = user_data;
   g_autoptr(GPtrArray) futures = NULL;
+  g_autoptr(GArray) cpus = NULL;
   g_autoptr(GBytes) format_bytes = NULL;
   g_autoptr(GError) error = NULL;
   g_autofree char *format = NULL;
-  int n_cpu;
 
   g_assert (SYSPROF_IS_SCHEDULER_DETAILS (self));
   g_assert (SYSPROF_IS_RECORDING (self->recording));
@@ -221,13 +221,16 @@ sysprof_scheduler_details_prepare_fiber (gpointer user_data)
     }
 
   futures = g_ptr_array_new_with_free_func (dex_unref);
-  n_cpu = g_get_num_processors ();
+  if (!(cpus = _sysprof_get_online_cpus (&error)))
+    goto handle_error;
 
-  self->last_switch_times = g_new0 (gint64, n_cpu);
+  /* Events carry the CPU ID, which need not be a dense array index. */
+  self->last_switch_times = g_new0 (gint64, g_array_index (cpus, guint, cpus->len - 1) + 1);
 
-  for (int cpu = 0; cpu < n_cpu; cpu++)
+  for (guint i = 0; i < cpus->len; i++)
     {
       struct perf_event_attr attr = {0};
+      guint cpu = g_array_index (cpus, guint, i);
 
       attr.type = PERF_TYPE_TRACEPOINT;
       attr.type = PERF_TYPE_TRACEPOINT;

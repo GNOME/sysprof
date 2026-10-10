@@ -35,6 +35,7 @@
 #include "sysprof-perf-event-stream-private.h"
 #include "sysprof-recording-private.h"
 #include "sysprof-user-sampler.h"
+#include "sysprof-util-private.h"
 #include "sysprof-muxer-source.h"
 #include "sysprof-fd-private.h"
 
@@ -342,9 +343,9 @@ sysprof_user_sampler_prepare_fiber (gpointer user_data)
   g_autoptr(GDBusConnection) connection = NULL;
   g_autoptr(GUnixFDList) fd_list = NULL;
   g_autoptr(GError) error = NULL;
+  g_autoptr(GArray) cpus = NULL;
   GVariantBuilder builder;
   gboolean all_failed = TRUE;
-  guint n_cpu;
 
   g_assert (prepare != NULL);
   g_assert (SYSPROF_IS_RECORDING (prepare->recording));
@@ -365,21 +366,23 @@ sysprof_user_sampler_prepare_fiber (gpointer user_data)
       g_clear_error (&error);
     }
 
-  n_cpu = g_get_num_processors ();
+  if (!(cpus = _sysprof_get_online_cpus (&error)))
+    return dex_future_new_for_error (g_steal_pointer (&error));
   fd_list = g_unix_fd_list_new ();
 
   g_variant_builder_init (&builder, G_VARIANT_TYPE ("a(hi)"));
 
-  for (guint i = 0; i < n_cpu; i++)
+  for (guint i = 0; i < cpus->len; i++)
     {
-      g_autofd int fd = _perf_event_open (connection, i, prepare->stack_size, &error);
+      guint cpu = g_array_index (cpus, guint, i);
+      g_autofd int fd = _perf_event_open (connection, cpu, prepare->stack_size, &error);
 
       if (fd == -1)
         {
           _sysprof_recording_diagnostic (prepare->recording,
                                          "Sampler",
-                                         "Failed to load Perf event stream for CPU %d with stack size %u: %s",
-                                         i, prepare->stack_size, error->message);
+                                         "Failed to load Perf event stream for CPU %u with stack size %u: %s",
+                                         cpu, prepare->stack_size, error->message);
           g_clear_error (&error);
         }
       else
@@ -399,7 +402,7 @@ sysprof_user_sampler_prepare_fiber (gpointer user_data)
               g_array_append_val (prepare->sampler->perf_fds, fd);
               fd = -1;
 
-              g_variant_builder_add (&builder, "(hi)", handle, i);
+              g_variant_builder_add (&builder, "(hi)", handle, cpu);
 
               all_failed = FALSE;
             }

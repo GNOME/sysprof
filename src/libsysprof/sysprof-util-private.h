@@ -25,7 +25,10 @@
 
 G_BEGIN_DECLS
 
-DexFuture *sysprof_get_proc_file_bytes (GDBusConnection *connection,
-                                        const char      *path);
+DexFuture *sysprof_get_proc_file_bytes (GDBusConnection  *connection,
+                                        const char       *path);
+GArray    *_sysprof_parse_cpu_list     (const char       *cpu_list,
+                                        GError          **error);
+GArray    *_sysprof_get_online_cpus    (GError          **error);
 
 G_END_DECLS

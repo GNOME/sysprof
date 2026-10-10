@@ -23,6 +23,7 @@ libsysprof_testsuite = {
   'test-callgraph'                : {'skip': true},
   'test-capture-model'            : {'skip': true},
   'test-cplusplus'                : {'cpp': true},
+  'test-cpu-list'                 : {},
   'test-elf-loader'               : {'skip': true},
   'test-flatpak-info'             : {'link_args': ['-Wl,--build-id=sha1']},
   'test-leak-detector'            : {'skip': true},

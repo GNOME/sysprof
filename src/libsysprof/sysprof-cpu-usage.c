@@ -36,6 +36,7 @@
 #include "sysprof-cpu-usage.h"
 #include "sysprof-instrument-private.h"
 #include "sysprof-recording-private.h"
+#include "sysprof-util-private.h"
 
 #define PROC_STAT_BUF_SIZE (4096*4)
 
@@ -126,7 +127,9 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
 {
   Record *record = user_data;
   g_autoptr(GArray) cpu_info = NULL;
+  g_autoptr(GArray) cpus = NULL;
   g_autoptr(GArray) freq_info = NULL;
+  g_autoptr(GError) error = NULL;
   g_autofd int stat_fd = -1;
   g_autofree char *read_buffer = NULL;
   g_autofree SysprofCaptureCounterValue *values = NULL;
@@ -141,7 +144,9 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
   g_assert (DEX_IS_FUTURE (record->cancellable));
 
   writer = _sysprof_recording_writer (record->recording);
-  n_cpu = g_get_num_processors ();
+  if (!(cpus = _sysprof_get_online_cpus (&error)))
+    return dex_future_new_for_error (g_steal_pointer (&error));
+  n_cpu = cpus->len;
   stat_fd = open ("/proc/stat", O_RDONLY|O_CLOEXEC);
   g_unix_set_fd_nonblocking (stat_fd, TRUE, NULL);
   read_buffer = g_malloc (PROC_STAT_BUF_SIZE);
@@ -151,7 +156,8 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
   values = g_new0 (SysprofCaptureCounterValue, (n_cpu * 2) + 1);
 
   cpu_info = g_array_new (FALSE, TRUE, sizeof (CpuInfo));
-  g_array_set_size (cpu_info, n_cpu);
+  /* /proc/stat identifies CPUs by ID, including gaps for offline CPUs. */
+  g_array_set_size (cpu_info, g_array_index (cpus, guint, n_cpu - 1) + 1);
 
   freq_info = g_array_new (FALSE, TRUE, sizeof (CpuFreq));
   g_array_set_clear_func (freq_info, freq_info_clear);
@@ -161,8 +167,9 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
    */
   for (guint i = 0; i < n_cpu; i++)
     {
-      g_autofree char *max_path = g_strdup_printf ("/sys/devices/system/cpu/cpu%u/cpufreq/scaling_max_freq", i);
-      g_autofree char *cur_path = g_strdup_printf ("/sys/devices/system/cpu/cpu%u/cpufreq/scaling_cur_freq", i);
+      guint cpu = g_array_index (cpus, guint, i);
+      g_autofree char *max_path = g_strdup_printf ("/sys/devices/system/cpu/cpu%u/cpufreq/scaling_max_freq", cpu);
+      g_autofree char *cur_path = g_strdup_printf ("/sys/devices/system/cpu/cpu%u/cpufreq/scaling_cur_freq", cpu);
       g_autofree char *max_value = NULL;
       CpuFreq cf;
 
@@ -174,18 +181,18 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
       counter->type = SYSPROF_CAPTURE_COUNTER_DOUBLE;
       counter->value.vdbl = 0;
       g_strlcpy (counter->category, "CPU Percent", sizeof counter->category);
-      g_snprintf (counter->name, sizeof counter->name, "Total CPU %d", i);
+      g_snprintf (counter->name, sizeof counter->name, "Total CPU %u", cpu);
       g_snprintf (counter->description, sizeof counter->description,
-                  "Total CPU usage %d", i);
+                  "Total CPU usage %u", cpu);
 
       counter = &counters[i*2+1];
       counter->id = ids[i*2+1];
       counter->type = SYSPROF_CAPTURE_COUNTER_DOUBLE;
       counter->value.vdbl = 0;
       g_strlcpy (counter->category, "CPU Frequency", sizeof counter->category);
-      g_snprintf (counter->name, sizeof counter->name, "CPU %d", i);
+      g_snprintf (counter->name, sizeof counter->name, "CPU %u", cpu);
       g_snprintf (counter->description, sizeof counter->description,
-                  "Frequency of CPU %d", i);
+                  "Frequency of CPU %u", cpu);
 
       cf.stat_fd = open (cur_path, O_RDONLY|O_CLOEXEC);
       g_unix_set_fd_nonblocking (cf.stat_fd, TRUE, NULL);
@@ -293,7 +300,7 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
 
           /* Get the CPU identifier */
           ret = sscanf (cpu, "cpu%d", &id);
-          if (ret != 1 || id < 0 || id >= n_cpu)
+          if (ret != 1 || id < 0 || id >= cpu_info->len)
             continue;
 
           ci = &g_array_index (cpu_info, CpuInfo, id);
@@ -327,13 +334,14 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
       /* Publish counters to the capture file */
       for (guint i = 0; i < n_cpu; i++)
         {
-          const CpuInfo *ci = &g_array_index (cpu_info, CpuInfo, i);
+          guint cpu = g_array_index (cpus, guint, i);
+          const CpuInfo *ci = &g_array_index (cpu_info, CpuInfo, cpu);
           CpuFreq *cf = &g_array_index (freq_info, CpuFreq, i);
           DexFuture *freq_future = g_ptr_array_index (futures, i);
           gssize len = dex_await_int64 (dex_ref (freq_future), NULL);
 
           values[i*2].vdbl = ci->total;
-          values[i*2+1].vdbl = get_cpu_freq (cf->stat_fd, i, cf->max, cf->buf, len);
+          values[i*2+1].vdbl = get_cpu_freq (cf->stat_fd, cpu, cf->max, cf->buf, len);
 
           total_usage += ci->total;
         }

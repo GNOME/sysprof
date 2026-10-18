@@ -78,6 +78,7 @@ sysprof_document_frame_finalize (GObject *object)
   SysprofDocumentFrame *self = (SysprofDocumentFrame *)object;
 
   g_clear_pointer (&self->mapped_file, g_mapped_file_unref);
+  g_clear_pointer (&self->process_info, sysprof_process_info_unref);
 
   self->frame = NULL;
   self->needs_swap = 0;

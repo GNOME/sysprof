@@ -20,7 +20,7 @@
 
 #include "config.h"
 
-#include "sysprof-multi-symbolizer.h"
+#include "sysprof-multi-symbolizer-private.h"
 #include "sysprof-symbolizer-private.h"
 
 struct _SysprofMultiSymbolizer
@@ -36,6 +36,30 @@ struct _SysprofMultiSymbolizerClass
 };
 
 G_DEFINE_FINAL_TYPE (SysprofMultiSymbolizer, sysprof_multi_symbolizer, SYSPROF_TYPE_SYMBOLIZER)
+
+SysprofElfSymbolizer *
+_sysprof_multi_symbolizer_find_elf (SysprofMultiSymbolizer *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_MULTI_SYMBOLIZER (self), NULL);
+
+  for (guint i = 0; i < self->symbolizers->len; i++)
+    {
+      SysprofSymbolizer *child = g_ptr_array_index (self->symbolizers, i);
+
+      if (SYSPROF_IS_ELF_SYMBOLIZER (child))
+        return SYSPROF_ELF_SYMBOLIZER (child);
+
+      if (SYSPROF_IS_MULTI_SYMBOLIZER (child))
+        {
+          SysprofElfSymbolizer *elf = _sysprof_multi_symbolizer_find_elf (SYSPROF_MULTI_SYMBOLIZER (child));
+
+          if (elf != NULL)
+            return elf;
+        }
+    }
+
+  return NULL;
+}
 
 static void
 sysprof_multi_symbolizer_prepare_cb (GObject      *object,

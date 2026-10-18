@@ -29,6 +29,7 @@
 #include "sysprof-document-file.h"
 #include "sysprof-document-process.h"
 #include "sysprof-document-traceable.h"
+#include "sysprof-source-location.h"
 #include "sysprof-mark-catalog.h"
 #include "sysprof-symbol.h"
 #include "sysprof-time-span.h"
@@ -89,6 +90,17 @@ SYSPROF_AVAILABLE_IN_ALL
 SysprofDocumentCounter *sysprof_document_find_counter                        (SysprofDocument           *self,
                                                                               const char                *category,
                                                                               const char                *name);
+SYSPROF_AVAILABLE_IN_ALL
+void                    sysprof_document_resolve_source_location_async       (SysprofDocument           *self,
+                                                                              SysprofDocumentTraceable  *traceable,
+                                                                              guint                      position,
+                                                                              GCancellable              *cancellable,
+                                                                              GAsyncReadyCallback        callback,
+                                                                              gpointer                   user_data);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofSourceLocation  *sysprof_document_resolve_source_location_finish      (SysprofDocument           *self,
+                                                                              GAsyncResult              *result,
+                                                                              GError                   **error);
 SYSPROF_AVAILABLE_IN_ALL
 GListModel             *sysprof_document_list_symbols_in_traceable           (SysprofDocument           *self,
                                                                               SysprofDocumentTraceable  *traceable);

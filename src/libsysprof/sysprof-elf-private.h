@@ -22,29 +22,35 @@
 
 #include <glib-object.h>
 
+#include "sysprof-source-location.h"
+#include "sysprof-mount-namespace-private.h"
+
 G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_ELF (sysprof_elf_get_type())
 
 G_DECLARE_FINAL_TYPE (SysprofElf, sysprof_elf, SYSPROF, ELF, GObject)
 
-SysprofElf *sysprof_elf_new                   (const char   *filename,
-                                               GMappedFile  *mapped_file,
-                                               guint64       file_inode,
-                                               GError      **error);
-gboolean    sysprof_elf_matches               (SysprofElf   *self,
-                                               guint64       file_inode,
-                                               const char   *build_id);
-const char *sysprof_elf_get_nick              (SysprofElf   *self);
-const char *sysprof_elf_get_file              (SysprofElf   *self);
-const char *sysprof_elf_get_build_id          (SysprofElf   *self);
-const char *sysprof_elf_get_debug_link        (SysprofElf   *self);
-char       *sysprof_elf_get_symbol_at_address (SysprofElf   *self,
-                                               guint64       address,
-                                               guint64      *begin_address,
-                                               guint64      *end_address);
-SysprofElf *sysprof_elf_get_debug_link_elf    (SysprofElf   *self);
-void        sysprof_elf_set_debug_link_elf    (SysprofElf   *self,
-                                               SysprofElf   *debug_link_elf);
+const char            *sysprof_elf_get_build_id            (SysprofElf             *self);
+const char            *sysprof_elf_get_debug_link          (SysprofElf             *self);
+SysprofElf            *sysprof_elf_get_debug_link_elf      (SysprofElf             *self);
+const char            *sysprof_elf_get_file                (SysprofElf             *self);
+const char            *sysprof_elf_get_nick                (SysprofElf             *self);
+char                  *sysprof_elf_get_symbol_at_address   (SysprofElf             *self,
+                                                            guint64                 address,
+                                                            guint64                *begin_address,
+                                                            guint64                *end_address);
+gboolean               sysprof_elf_matches                 (SysprofElf             *self,
+                                                            guint64                 file_inode,
+                                                            const char             *build_id);
+SysprofElf            *sysprof_elf_new                     (const char             *filename,
+                                                            GMappedFile            *mapped_file,
+                                                            guint64                 file_inode,
+                                                            GError                **error);
+SysprofSourceLocation *sysprof_elf_resolve_source_location (SysprofElf             *self,
+                                                            SysprofMountNamespace  *mount_namespace,
+                                                            guint64                 file_offset);
+void                   sysprof_elf_set_debug_link_elf      (SysprofElf             *self,
+                                                            SysprofElf             *debug_link_elf);
 
 G_END_DECLS

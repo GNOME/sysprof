@@ -113,6 +113,9 @@ sysprof_mount_namespace_copy (SysprofMountNamespace *self)
   for (guint i = 0; i < self->devices->len; i++)
     sysprof_mount_namespace_add_device (copy, g_object_ref (g_ptr_array_index (self->devices, i)));
 
+  for (guint i = 0; i < self->mounts->len; i++)
+    sysprof_mount_namespace_add_mount (copy, g_object_ref (g_ptr_array_index (self->mounts, i)));
+
   return copy;
 }
 

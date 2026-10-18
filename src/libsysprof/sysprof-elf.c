@@ -20,9 +20,18 @@
 
 #include "config.h"
 
+#if HAVE_LIBDW
+# include <fcntl.h>
+# include <unistd.h>
+# include <gelf.h>
+# include <elfutils/libdwfl.h>
+#endif
+
 #include "elfparser.h"
 
 #include "sysprof-elf-private.h"
+#include "sysprof-elf-loader-private.h"
+#include "sysprof-source-location-private.h"
 
 struct _SysprofElf
 {
@@ -470,6 +479,157 @@ sysprof_elf_get_symbol_at_address (SysprofElf *self,
                                                      begin_address,
                                                      end_address,
                                                      self->text_offset);
+}
+
+SysprofSourceLocation *
+sysprof_elf_resolve_source_location (SysprofElf            *self,
+                                     SysprofMountNamespace *mount_namespace,
+                                     guint64                file_offset)
+{
+#if HAVE_LIBDW
+  static const Dwfl_Callbacks callbacks = {
+    .find_debuginfo = dwfl_standard_find_debuginfo,
+    .section_address = dwfl_offline_section_address,
+  };
+  g_autoptr(GFile) file = NULL;
+  g_autofree char *source_path = NULL;
+  g_autofree char *canonical_path = NULL;
+  g_autofree char *selected_path = NULL;
+  g_auto(GStrv) translated_paths = NULL;
+  Dwfl *dwfl = NULL;
+  Dwfl_Module *module;
+  Dwfl_Line *source_line;
+  Elf *elf = NULL;
+  GElf_Ehdr ehdr;
+  GElf_Phdr phdr;
+  SysprofSourceLocation *location = NULL;
+  const char *path;
+  const char *source;
+  Dwarf_Addr vaddr = 0;
+  gboolean found = FALSE;
+  gboolean in_flatpak;
+  gboolean in_podman;
+  int line = 0;
+  int column = 0;
+  int fd = -1;
+
+  g_return_val_if_fail (SYSPROF_IS_ELF (self), NULL);
+  g_return_val_if_fail (mount_namespace == NULL || SYSPROF_IS_MOUNT_NAMESPACE (mount_namespace), NULL);
+
+  /* Convert the offset used by the capture's mmap into the ELF virtual
+   * address used by the DWARF line table. */
+  if (elf_version (EV_CURRENT) == EV_NONE ||
+      (fd = open (self->file, O_RDONLY | O_CLOEXEC)) < 0 ||
+      (elf = elf_begin (fd, ELF_C_READ, NULL)) == NULL ||
+      gelf_getehdr (elf, &ehdr) == NULL)
+    goto out;
+
+  for (size_t i = 0; i < ehdr.e_phnum; i++)
+    {
+      if (gelf_getphdr (elf, i, &phdr) == NULL)
+        goto out;
+
+      if (phdr.p_type == PT_LOAD &&
+          file_offset >= phdr.p_offset &&
+          file_offset - phdr.p_offset < phdr.p_filesz)
+        {
+          vaddr = phdr.p_vaddr + file_offset - phdr.p_offset;
+          found = TRUE;
+          break;
+        }
+    }
+
+  if (!found)
+    goto out;
+
+  path = self->debug_link_elf != NULL ? self->debug_link_elf->file : self->file;
+
+  if ((dwfl = dwfl_begin (&callbacks)) == NULL)
+    goto out;
+  if ((module = dwfl_report_offline (dwfl, path, path, -1)) == NULL)
+    goto out;
+  if (dwfl_report_end (dwfl, NULL, NULL) != 0)
+    goto out;
+  if ((source_line = dwfl_module_getsrc (module, vaddr)) == NULL)
+    goto out;
+  if ((source = dwfl_lineinfo (source_line, NULL, &line, &column, NULL, NULL)) == NULL)
+    goto out;
+
+  if (g_path_is_absolute (source))
+    source_path = g_strdup (source);
+  else
+    {
+      const char *directory = dwfl_line_comp_dir (source_line);
+
+      if (directory == NULL)
+        goto out;
+
+      source_path = g_build_filename (directory, source, NULL);
+    }
+
+  canonical_path = g_canonicalize_filename (source_path, NULL);
+  in_flatpak = g_file_test ("/.flatpak-info", G_FILE_TEST_EXISTS);
+  in_podman = g_file_test ("/run/.containerenv", G_FILE_TEST_EXISTS);
+
+  if (mount_namespace != NULL)
+    translated_paths = sysprof_mount_namespace_translate (mount_namespace, canonical_path);
+
+  if (translated_paths != NULL && translated_paths[0] != NULL)
+    {
+      for (guint i = 0; translated_paths[i] != NULL; i++)
+        {
+          g_autofree char *access_path = NULL;
+          const char *candidate = translated_paths[i];
+          gboolean exists;
+
+          if (in_flatpak || in_podman)
+            access_path = _sysprof_elf_loader_access_path (candidate, in_flatpak, in_podman);
+          if (access_path != NULL)
+            candidate = access_path;
+
+          exists = g_file_test (candidate, G_FILE_TEST_IS_REGULAR);
+
+          if (selected_path == NULL || exists)
+            g_set_str (&selected_path, candidate);
+
+          if (exists)
+            break;
+        }
+    }
+
+  if (selected_path == NULL || !g_file_test (selected_path, G_FILE_TEST_IS_REGULAR))
+    {
+      g_autofree char *access_path = NULL;
+      const char *candidate = canonical_path;
+
+      if (in_flatpak || in_podman)
+        access_path = _sysprof_elf_loader_access_path (candidate, in_flatpak, in_podman);
+      if (access_path != NULL)
+        candidate = access_path;
+
+      if (selected_path == NULL || g_file_test (candidate, G_FILE_TEST_IS_REGULAR))
+        g_set_str (&selected_path, candidate);
+    }
+
+  file = g_file_new_for_path (selected_path);
+
+  location = _sysprof_source_location_new (file, MAX (line, 0), MAX (column, 0));
+
+out:
+  if (dwfl != NULL)
+    dwfl_end (dwfl);
+  if (elf != NULL)
+    elf_end (elf);
+  if (fd >= 0)
+    close (fd);
+
+  return location;
+#else
+  g_return_val_if_fail (SYSPROF_IS_ELF (self), NULL);
+  g_return_val_if_fail (mount_namespace == NULL || SYSPROF_IS_MOUNT_NAMESPACE (mount_namespace), NULL);
+
+  return NULL;
+#endif
 }
 
 /**

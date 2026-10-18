@@ -82,6 +82,7 @@ G_BEGIN_DECLS
 # include "sysprof-spawnable.h"
 # include "sysprof-subprocess-output.h"
 # include "sysprof-symbol.h"
+# include "sysprof-source-location.h"
 # include "sysprof-symbolizer.h"
 # include "sysprof-symbols-bundle.h"
 # include "sysprof-system-logs.h"

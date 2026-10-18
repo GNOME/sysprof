@@ -17,6 +17,7 @@
 #mesondefine HAVE_LIBSYSTEMD
 
 #mesondefine HAVE_DEBUGINFOD
+#mesondefine HAVE_LIBDW
 
 #mesondefine HAVE_PERF_CLOCKID
 

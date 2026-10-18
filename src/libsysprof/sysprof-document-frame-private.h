@@ -23,6 +23,7 @@
 #include <sysprof-capture.h>
 
 #include "sysprof-document-frame.h"
+#include "sysprof-process-info-private.h"
 
 G_BEGIN_DECLS
 
@@ -30,6 +31,7 @@ struct _SysprofDocumentFrame
 {
   GObject                    parent;
   GMappedFile               *mapped_file;
+  SysprofProcessInfo        *process_info;
   const SysprofCaptureFrame *frame;
   gint64                     time_offset;
   guint32                    frame_len : 16;
@@ -39,8 +41,8 @@ struct _SysprofDocumentFrame
 
 struct _SysprofDocumentFrameClass
 {
-  GObjectClass parent_class;
-  const char *type_name;
+  GObjectClass  parent_class;
+  const char   *type_name;
   char *(*dup_tooltip) (SysprofDocumentFrame *self);
 };
 

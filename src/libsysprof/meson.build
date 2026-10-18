@@ -56,6 +56,7 @@ libsysprof_public_sources = [
   'sysprof-spawnable.c',
   'sysprof-subprocess-output.c',
   'sysprof-symbol.c',
+  'sysprof-source-location.c',
   'sysprof-symbolizer.c',
   'sysprof-symbols-bundle.c',
   'sysprof-system-logs.c',
@@ -124,6 +125,7 @@ libsysprof_public_headers = [
   'sysprof-spawnable.h',
   'sysprof-subprocess-output.h',
   'sysprof-symbol.h',
+  'sysprof-source-location.h',
   'sysprof-symbolizer.h',
   'sysprof-symbols-bundle.h',
   'sysprof-system-logs.h',
@@ -213,6 +215,7 @@ libsysprof_deps = [
   libsystemd_dep,
   polkit_dep,
   debuginfod_dep,
+  libdw_dep,
 
   libeggbitset_static_dep,
   libelfparser_static_dep,

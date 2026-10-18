@@ -34,4 +34,5 @@ if get_option('tools')
   subdir('sysprof-cat')
   subdir('sysprof-cli')
   subdir('sysprof-diff')
+  subdir('sysprof-flamegraph')
 endif

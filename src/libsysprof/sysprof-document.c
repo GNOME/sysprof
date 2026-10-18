@@ -50,6 +50,7 @@
 #include "sysprof-document-traceable-private.h"
 #include "sysprof-document-symbols-private.h"
 #include "sysprof-elf-symbolizer.h"
+#include "sysprof-frame-diagnostics-private.h"
 #include "sysprof-mark-catalog-private.h"
 #include "sysprof-mount-private.h"
 #include "sysprof-mount-device-private.h"
@@ -1911,6 +1912,11 @@ sysprof_document_load_worker (GTask        *task,
   sysprof_document_load_counters (self);
 
   load_progress (load, .9, _("Analyzing diagnostics"));
+  {
+    g_autoptr(SysprofDiagnosticProvider) provider = _sysprof_frame_diagnostics_new ();
+
+    _sysprof_diagnostic_provider_populate (provider, self, self->diagnostics);
+  }
 
   /* Ensure all our process have an exit_time set */
   sysprof_document_update_process_exit_times (self);

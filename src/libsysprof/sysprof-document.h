@@ -39,9 +39,20 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_DOCUMENT (sysprof_document_get_type())
 
+typedef enum
+{
+  SYSPROF_CPU_KIND_UNKNOWN,
+  SYSPROF_CPU_KIND_PERFORMANCE,
+  SYSPROF_CPU_KIND_EFFICIENCY,
+  SYSPROF_CPU_KIND_LOW_POWER_EFFICIENCY,
+} SysprofCpuKind;
+
 SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofDocument, sysprof_document, SYSPROF, DOCUMENT, GObject)
 
+SYSPROF_AVAILABLE_IN_ALL
+SysprofCpuKind          sysprof_document_get_cpu_kind                        (SysprofDocument           *self,
+                                                                              int                        cpu);
 SYSPROF_AVAILABLE_IN_ALL
 char                   *sysprof_document_dup_title                           (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL

@@ -65,6 +65,12 @@
 
 #define MAX_STACK_DEPTH 128
 
+typedef struct
+{
+  int first;
+  int last;
+} SysprofCpuRange;
+
 #define GDK_ARRAY_ELEMENT_TYPE SysprofDocumentFramePointer
 #define GDK_ARRAY_NAME sysprof_document_frames
 #define GDK_ARRAY_TYPE_NAME SysprofDocumentFrames
@@ -1582,6 +1588,132 @@ sysprof_document_update_process_exit_times (SysprofDocument *self)
     }
 }
 
+static GArray *
+sysprof_document_parse_cpu_ranges (GBytes *bytes)
+{
+  g_autoptr(GArray) ranges = g_array_new (FALSE, FALSE, sizeof (SysprofCpuRange));
+  g_autofree char *text = NULL;
+  const char *p;
+  gsize length;
+
+  g_assert (bytes != NULL);
+
+  p = g_bytes_get_data (bytes, &length);
+  if (length == 0 || memchr (p, 0, length) != NULL)
+    return NULL;
+
+  text = g_strndup (p, length);
+  p = text;
+
+  while (g_ascii_isspace (*p))
+    p++;
+
+  for (;;)
+    {
+      SysprofCpuRange range;
+      guint64 first;
+      guint64 last;
+      char *end;
+
+      if (!g_ascii_isdigit (*p))
+        return NULL;
+
+      first = g_ascii_strtoull (p, &end, 10);
+      if (first > G_MAXINT)
+        return NULL;
+      p = end;
+      last = first;
+
+      if (*p == '-')
+        {
+          p++;
+          if (!g_ascii_isdigit (*p))
+            return NULL;
+          last = g_ascii_strtoull (p, &end, 10);
+          if (last > G_MAXINT || last < first)
+            return NULL;
+          p = end;
+        }
+
+      if (ranges->len > 0 && first <= g_array_index (ranges, SysprofCpuRange, ranges->len - 1).last)
+        return NULL;
+
+      range.first = first;
+      range.last = last;
+      g_array_append_val (ranges, range);
+
+      if (*p != ',')
+        break;
+      p++;
+    }
+
+  while (g_ascii_isspace (*p))
+    p++;
+
+  return *p == '\0' ? g_steal_pointer (&ranges) : NULL;
+}
+
+static gboolean
+sysprof_document_cpu_ranges_overlap (GArray *a,
+                                     GArray *b)
+{
+  guint i = 0;
+  guint j = 0;
+
+  g_assert (a != NULL);
+  g_assert (b != NULL);
+
+  while (i < a->len && j < b->len)
+    {
+      const SysprofCpuRange *left = &g_array_index (a, SysprofCpuRange, i);
+      const SysprofCpuRange *right = &g_array_index (b, SysprofCpuRange, j);
+
+      if (left->last < right->first)
+        i++;
+      else if (right->last < left->first)
+        j++;
+      else
+        return TRUE;
+    }
+
+  return FALSE;
+}
+
+static void
+sysprof_document_load_cpu_topology (SysprofDocument *self)
+{
+  g_autoptr(SysprofDocumentFile) performance_file = NULL;
+  g_autoptr(SysprofDocumentFile) efficiency_file = NULL;
+  g_autoptr(SysprofDocumentFile) low_power_efficiency_file = NULL;
+  g_autoptr(GBytes) performance_bytes = NULL;
+  g_autoptr(GBytes) efficiency_bytes = NULL;
+  g_autoptr(GBytes) low_power_efficiency_bytes = NULL;
+  g_autoptr(GArray) performance = NULL;
+  g_autoptr(GArray) efficiency = NULL;
+  g_autoptr(GArray) low_power_efficiency = NULL;
+
+  g_assert (SYSPROF_IS_DOCUMENT (self));
+
+  if (!(performance_file = sysprof_document_lookup_file (self, "/sys/devices/cpu_core/cpus")) ||
+      !(efficiency_file = sysprof_document_lookup_file (self, "/sys/devices/cpu_atom/cpus")) ||
+      !(performance_bytes = sysprof_document_file_dup_bytes (performance_file)) ||
+      !(efficiency_bytes = sysprof_document_file_dup_bytes (efficiency_file)) ||
+      !(performance = sysprof_document_parse_cpu_ranges (performance_bytes)) ||
+      !(efficiency = sysprof_document_parse_cpu_ranges (efficiency_bytes)) ||
+      sysprof_document_cpu_ranges_overlap (performance, efficiency))
+    return;
+
+  self->performance_cpus = g_steal_pointer (&performance);
+  self->efficiency_cpus = g_steal_pointer (&efficiency);
+
+  if ((low_power_efficiency_file = sysprof_document_lookup_file (self, "/sys/devices/cpu_lowpower/cpus")) &&
+      (low_power_efficiency_bytes = sysprof_document_file_dup_bytes (low_power_efficiency_file)) &&
+      (low_power_efficiency = sysprof_document_parse_cpu_ranges (low_power_efficiency_bytes)) &&
+      !sysprof_document_cpu_ranges_overlap (self->performance_cpus, low_power_efficiency) &&
+      !sysprof_document_cpu_ranges_overlap (self->efficiency_cpus, low_power_efficiency))
+    self->low_power_efficiency_cpus = g_steal_pointer (&low_power_efficiency);
+}
+
 static void
 sysprof_document_load_cpu (SysprofDocument *self)
 {
@@ -1890,6 +2022,7 @@ sysprof_document_load_worker (GTask        *task,
     self->time_span.end_nsec = guessed_end_nsec;
 
   sysprof_document_load_cpu (self);
+  sysprof_document_load_cpu_topology (self);
 
   load_progress (load, .6, _("Discovering file system mounts"));
   sysprof_document_load_mounts (self);
@@ -2123,6 +2256,67 @@ _sysprof_document_is_native (SysprofDocument *self)
   return self->needs_swap == FALSE;
 }
 
+static gboolean
+sysprof_document_cpu_ranges_contain (GArray *ranges,
+                                     int     cpu)
+{
+  guint left = 0;
+  guint right;
+
+  g_assert (ranges != NULL);
+  g_assert (cpu >= 0);
+
+  right = ranges->len;
+  while (left < right)
+    {
+      guint middle = left + (right - left) / 2;
+      const SysprofCpuRange *range = &g_array_index (ranges, SysprofCpuRange, middle);
+
+      if (cpu < range->first)
+        right = middle;
+      else if (cpu > range->last)
+        left = middle + 1;
+      else
+        return TRUE;
+    }
+
+  return FALSE;
+}
+
+/**
+ * sysprof_document_get_cpu_kind:
+ * @self: a #SysprofDocument
+ * @cpu: a CPU ID from the capture
+ *
+ * Classifies @cpu using the hybrid CPU topology files stored in the capture.
+ *
+ * If either the performance or efficiency list is missing, malformed, or
+ * overlaps the other, all CPUs have unknown kind. The optional low-power
+ * efficiency list is ignored if malformed or overlapping. This does not
+ * inspect the current machine's topology.
+ *
+ * Returns: the captured CPU kind, or %SYSPROF_CPU_KIND_UNKNOWN
+ */
+SysprofCpuKind
+sysprof_document_get_cpu_kind (SysprofDocument *self,
+                               int              cpu)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), SYSPROF_CPU_KIND_UNKNOWN);
+
+  if (cpu < 0 || self->performance_cpus == NULL)
+    return SYSPROF_CPU_KIND_UNKNOWN;
+
+  if (sysprof_document_cpu_ranges_contain (self->performance_cpus, cpu))
+    return SYSPROF_CPU_KIND_PERFORMANCE;
+  if (sysprof_document_cpu_ranges_contain (self->efficiency_cpus, cpu))
+    return SYSPROF_CPU_KIND_EFFICIENCY;
+  if (self->low_power_efficiency_cpus != NULL &&
+      sysprof_document_cpu_ranges_contain (self->low_power_efficiency_cpus, cpu))
+    return SYSPROF_CPU_KIND_LOW_POWER_EFFICIENCY;
+
+  return SYSPROF_CPU_KIND_UNKNOWN;
+}
+
 /**
  * sysprof_document_lookup_file:
  * @self: a #SysprofDocument
@@ -2350,6 +2544,73 @@ _sysprof_document_foreach_mark (SysprofDocument         *self,
           if (!func (position,
                      swap_int64 (self->needs_swap, mark->frame.time),
                      swap_int64 (self->needs_swap, mark->duration),
+                     swap_int32 (self->needs_swap, mark->frame.pid),
+                     user_data))
+            break;
+        }
+      while (egg_bitset_iter_next (&iter, &position));
+    }
+}
+
+void
+_sysprof_document_foreach_sample (SysprofDocument          *self,
+                                  gint64                    begin_nsec,
+                                  gint64                    end_nsec,
+                                  SysprofDocumentSampleFunc func,
+                                  gpointer                  user_data)
+{
+  EggBitsetIter iter;
+  guint left = 0;
+  guint right;
+  guint position;
+
+  g_return_if_fail (SYSPROF_IS_DOCUMENT (self));
+  g_return_if_fail (begin_nsec <= end_nsec);
+  g_return_if_fail (func != NULL);
+
+  if (begin_nsec == end_nsec)
+    return;
+
+  /* The document frame index is sorted by time. Find the first frame in
+   * the requested half-open interval, then seek to its first sample.
+   */
+  right = sysprof_document_frames_get_size (&self->frames);
+
+  while (left < right)
+    {
+      guint middle = left + (right - left) / 2;
+      const SysprofDocumentFramePointer *ptr = sysprof_document_frames_index (&self->frames, middle);
+      const SysprofCaptureFrame *frame = (const SysprofCaptureFrame *)&self->base[ptr->offset];
+      gint64 time = swap_int64 (self->needs_swap, frame->time);
+
+      if (time < begin_nsec)
+        left = middle + 1;
+      else
+        right = middle;
+    }
+
+  if (egg_bitset_iter_init_at (&iter, self->samples, left, &position))
+    {
+      do
+        {
+          const SysprofDocumentFramePointer *ptr = sysprof_document_frames_index (&self->frames, position);
+          const SysprofCaptureFrame *frame = (const SysprofCaptureFrame *)&self->base[ptr->offset];
+          const SysprofCaptureSample *sample;
+          gint64 time = swap_int64 (self->needs_swap, frame->time);
+
+          if (time >= end_nsec)
+            break;
+
+          if (ptr->length < sizeof (SysprofCaptureSample))
+            continue;
+
+          sample = (const SysprofCaptureSample *)frame;
+
+          if (!func (position,
+                     time,
+                     swap_int32 (self->needs_swap, sample->frame.pid),
+                     swap_int32 (self->needs_swap, sample->tid),
+                     (int16_t)swap_uint16 (self->needs_swap, sample->frame.cpu),
                      user_data))
             break;
         }

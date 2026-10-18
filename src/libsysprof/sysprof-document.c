@@ -47,11 +47,14 @@
 #include "sysprof-document-overlay.h"
 #include "sysprof-document-process-private.h"
 #include "sysprof-document-sample.h"
+#include "sysprof-document-traceable-private.h"
 #include "sysprof-document-symbols-private.h"
+#include "sysprof-elf-symbolizer.h"
 #include "sysprof-mark-catalog-private.h"
 #include "sysprof-mount-private.h"
 #include "sysprof-mount-device-private.h"
 #include "sysprof-mount-namespace-private.h"
+#include "sysprof-multi-symbolizer-private.h"
 #include "sysprof-process-info-private.h"
 #include "sysprof-strings-private.h"
 #include "sysprof-symbol-private.h"
@@ -111,6 +114,8 @@ struct _SysprofDocument
   SysprofMountNamespace    *mount_namespace;
 
   SysprofDocumentSymbols   *symbols;
+  char                    **source_debug_dirs;
+  char                    **source_external_debug_dirs;
 
   guint                     busy_count;
 
@@ -251,6 +256,15 @@ sysprof_document_get_item (GListModel *model,
 
       if (process_info != NULL)
         _sysprof_document_process_set_info (SYSPROF_DOCUMENT_PROCESS (ret), process_info);
+    }
+  else if (SYSPROF_IS_DOCUMENT_TRACEABLE (ret))
+    {
+      int pid = sysprof_document_frame_get_pid (ret);
+      SysprofProcessInfo *process_info = g_hash_table_lookup (self->pid_to_process_info,
+                                                              GINT_TO_POINTER (pid));
+
+      if (process_info != NULL)
+        ret->process_info = sysprof_process_info_ref (process_info);
     }
 
   return ret;
@@ -399,6 +413,8 @@ sysprof_document_finalize (GObject *object)
   g_clear_object (&self->mount_namespace);
   g_clear_object (&self->missing_process);
   g_clear_object (&self->symbols);
+  g_clear_pointer (&self->source_debug_dirs, g_strfreev);
+  g_clear_pointer (&self->source_external_debug_dirs, g_strfreev);
 
   g_clear_pointer (&self->files_first_position, g_hash_table_unref);
 
@@ -2023,11 +2039,25 @@ _sysprof_document_symbolize_async (SysprofDocument     *self,
                                    gpointer             user_data)
 {
   g_autoptr(GTask) task = NULL;
+  SysprofElfSymbolizer *elf = NULL;
   Symbolize *state;
 
   g_return_if_fail (SYSPROF_IS_DOCUMENT (self));
   g_return_if_fail (SYSPROF_IS_SYMBOLIZER (symbolizer));
   g_return_if_fail (!cancellable || SYSPROF_IS_SYMBOLIZER (symbolizer));
+
+  if (SYSPROF_IS_ELF_SYMBOLIZER (symbolizer))
+    elf = SYSPROF_ELF_SYMBOLIZER (symbolizer);
+  else if (SYSPROF_IS_MULTI_SYMBOLIZER (symbolizer))
+    elf = _sysprof_multi_symbolizer_find_elf (SYSPROF_MULTI_SYMBOLIZER (symbolizer));
+
+  g_clear_pointer (&self->source_debug_dirs, g_strfreev);
+  g_clear_pointer (&self->source_external_debug_dirs, g_strfreev);
+  if (elf != NULL)
+    {
+      self->source_debug_dirs = g_strdupv ((char **)sysprof_elf_symbolizer_get_debug_dirs (elf));
+      self->source_external_debug_dirs = g_strdupv ((char **)sysprof_elf_symbolizer_get_external_debug_dirs (elf));
+    }
 
   task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_source_tag (task, _sysprof_document_symbolize_async);
@@ -3009,6 +3039,64 @@ sysprof_document_serialize_symbols_fiber (gpointer user_data)
   bytes = g_bytes_new_take (data, packed_len + strings->len);
 
   return dex_future_new_take_boxed (G_TYPE_BYTES, g_steal_pointer (&bytes));
+}
+
+/**
+ * sysprof_document_resolve_source_location_async:
+ * @self: a #SysprofDocument
+ * @traceable: a traceable from @self
+ * @position: zero-based position in the captured stack
+ * @cancellable: (nullable): a #GCancellable or %NULL
+ * @callback: callback to invoke on completion
+ * @user_data: closure data for @callback
+ *
+ * Resolves an instruction pointer to a source location. Caller return
+ * addresses are adjusted to the preceding instruction. Context switches
+ * and addresses outside user-space ELF mappings fail with
+ * %G_IO_ERROR_NOT_FOUND.
+ */
+void
+sysprof_document_resolve_source_location_async (SysprofDocument          *self,
+                                                SysprofDocumentTraceable *traceable,
+                                                guint                     position,
+                                                GCancellable             *cancellable,
+                                                GAsyncReadyCallback       callback,
+                                                gpointer                  user_data)
+{
+  g_autoptr(DexAsyncResult) result = NULL;
+
+  g_return_if_fail (SYSPROF_IS_DOCUMENT (self));
+  g_return_if_fail (SYSPROF_IS_DOCUMENT_TRACEABLE (traceable));
+  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  result = dex_async_result_new (self, cancellable, callback, user_data);
+  dex_async_result_await (result,
+                          _sysprof_document_traceable_resolve_source_location (
+                            traceable,
+                            position,
+                            (const char * const *)self->source_debug_dirs,
+                            (const char * const *)self->source_external_debug_dirs));
+}
+
+/**
+ * sysprof_document_resolve_source_location_finish:
+ * @self: a #SysprofDocument
+ * @result: a #GAsyncResult
+ * @error: a location for a #GError
+ *
+ * Completes source location resolution.
+ *
+ * Returns: (transfer full) (nullable): a #SysprofSourceLocation, or %NULL on error
+ */
+SysprofSourceLocation *
+sysprof_document_resolve_source_location_finish (SysprofDocument  *self,
+                                                 GAsyncResult     *result,
+                                                 GError          **error)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+  g_return_val_if_fail (DEX_IS_ASYNC_RESULT (result), NULL);
+
+  return dex_async_result_propagate_pointer (DEX_ASYNC_RESULT (result), error);
 }
 
 void

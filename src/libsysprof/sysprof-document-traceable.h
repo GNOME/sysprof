@@ -25,7 +25,7 @@
 
 G_BEGIN_DECLS
 
-#define SYSPROF_TYPE_DOCUMENT_TRACEABLE (sysprof_document_traceable_get_type ())
+#define SYSPROF_TYPE_DOCUMENT_TRACEABLE (sysprof_document_traceable_get_type())
 
 SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_INTERFACE (SysprofDocumentTraceable, sysprof_document_traceable, SYSPROF, DOCUMENT_TRACEABLE, SysprofDocumentFrame)
@@ -44,8 +44,6 @@ struct _SysprofDocumentTraceableInterface
 };
 
 SYSPROF_AVAILABLE_IN_ALL
-guint   sysprof_document_traceable_get_stack_depth     (SysprofDocumentTraceable *self);
-SYSPROF_AVAILABLE_IN_ALL
 guint64 sysprof_document_traceable_get_stack_address   (SysprofDocumentTraceable *self,
                                                         guint                     position);
 SYSPROF_AVAILABLE_IN_ALL
@@ -53,6 +51,7 @@ guint   sysprof_document_traceable_get_stack_addresses (SysprofDocumentTraceable
                                                         guint64                  *addresses,
                                                         guint                     n_addresses);
 SYSPROF_AVAILABLE_IN_ALL
+guint   sysprof_document_traceable_get_stack_depth     (SysprofDocumentTraceable *self);
+SYSPROF_AVAILABLE_IN_ALL
 int     sysprof_document_traceable_get_thread_id       (SysprofDocumentTraceable *self);
-
 G_END_DECLS

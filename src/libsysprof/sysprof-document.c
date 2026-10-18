@@ -82,6 +82,10 @@ struct _SysprofDocument
   const guint8             *base;
 
   GListStore               *cpu_info;
+  GListStore               *diagnostics;
+  GArray                   *performance_cpus;
+  GArray                   *efficiency_cpus;
+  GArray                   *low_power_efficiency_cpus;
 
   GListStore               *counters;
   GHashTable               *counter_id_to_values;
@@ -129,6 +133,7 @@ enum {
   PROP_BUSY,
   PROP_COUNTERS,
   PROP_CPU_INFO,
+  PROP_DIAGNOSTICS,
   PROP_DBUS_MESSAGES,
   PROP_FILES,
   PROP_LOGS,
@@ -409,6 +414,10 @@ sysprof_document_finalize (GObject *object)
   g_clear_pointer (&self->counter_id_to_values, g_hash_table_unref);
 
   g_clear_object (&self->cpu_info);
+  g_clear_object (&self->diagnostics);
+  g_clear_pointer (&self->performance_cpus, g_array_unref);
+  g_clear_pointer (&self->efficiency_cpus, g_array_unref);
+  g_clear_pointer (&self->low_power_efficiency_cpus, g_array_unref);
 
   g_clear_object (&self->mount_namespace);
   g_clear_object (&self->missing_process);
@@ -445,6 +454,10 @@ sysprof_document_get_property (GObject    *object,
 
     case PROP_CPU_INFO:
       g_value_take_object (value, sysprof_document_list_cpu_info (self));
+      break;
+
+    case PROP_DIAGNOSTICS:
+      g_value_take_object (value, sysprof_document_list_diagnostics (self));
       break;
 
     case PROP_DBUS_MESSAGES:
@@ -524,6 +537,11 @@ sysprof_document_class_init (SysprofDocumentClass *klass)
                          G_TYPE_LIST_MODEL,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
+  properties [PROP_DIAGNOSTICS] =
+    g_param_spec_object ("diagnostics", NULL, NULL,
+                         G_TYPE_LIST_MODEL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
   properties [PROP_DBUS_MESSAGES] =
     g_param_spec_object ("dbus-messages", NULL, NULL,
                          G_TYPE_LIST_MODEL,
@@ -590,6 +608,7 @@ sysprof_document_init (SysprofDocument *self)
   sysprof_document_frames_init (&self->frames);
 
   self->cpu_info = g_list_store_new (SYSPROF_TYPE_CPU_INFO);
+  self->diagnostics = g_list_store_new (SYSPROF_TYPE_DIAGNOSTIC);
 
   self->missing_process = _sysprof_symbol_new (g_ref_string_new (_("Unknown Process")),
                                                NULL, NULL, 0, 0, SYSPROF_SYMBOL_KIND_UNWINDABLE);
@@ -1891,6 +1910,8 @@ sysprof_document_load_worker (GTask        *task,
   load_progress (load, .85, _("Processing counters"));
   sysprof_document_load_counters (self);
 
+  load_progress (load, .9, _("Analyzing diagnostics"));
+
   /* Ensure all our process have an exit_time set */
   sysprof_document_update_process_exit_times (self);
 
@@ -2285,6 +2306,49 @@ sysprof_document_list_marks_by_group (SysprofDocument *self,
     }
 
   return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), bitset);
+}
+
+void
+_sysprof_document_foreach_mark (SysprofDocument         *self,
+                                const char              *group,
+                                const char              *name,
+                                SysprofDocumentMarkFunc  func,
+                                gpointer                 user_data)
+{
+  GHashTable *names;
+  EggBitset *indices;
+  EggBitsetIter iter;
+  guint position;
+
+  g_return_if_fail (SYSPROF_IS_DOCUMENT (self));
+  g_return_if_fail (group != NULL);
+  g_return_if_fail (name != NULL);
+  g_return_if_fail (func != NULL);
+
+  if (!(names = g_hash_table_lookup (self->mark_groups, group)) ||
+      !(indices = g_hash_table_lookup (names, name)))
+    return;
+
+  if (egg_bitset_iter_init_first (&iter, indices, &position))
+    {
+      do
+        {
+          const SysprofDocumentFramePointer *ptr = sysprof_document_frames_index (&self->frames, position);
+          const SysprofCaptureMark *mark;
+
+          if (ptr->length < sizeof (SysprofCaptureMark))
+            continue;
+
+          mark = (const SysprofCaptureMark *)&self->base[ptr->offset];
+
+          if (!func (position,
+                     swap_int64 (self->needs_swap, mark->frame.time),
+                     swap_int64 (self->needs_swap, mark->duration),
+                     user_data))
+            break;
+        }
+      while (egg_bitset_iter_next (&iter, &position));
+    }
 }
 
 /**
@@ -2842,6 +2906,22 @@ sysprof_document_get_time_span (SysprofDocument *self)
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
   return &self->time_span;
+}
+
+/**
+ * sysprof_document_list_diagnostics:
+ * @self: a #SysprofDocument
+ *
+ * Lists issues found while loading the document.
+ *
+ * Returns: (transfer full): a #GListModel of #SysprofDiagnostic
+ */
+GListModel *
+sysprof_document_list_diagnostics (SysprofDocument *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  return G_LIST_MODEL (g_object_ref (self->diagnostics));
 }
 
 /**

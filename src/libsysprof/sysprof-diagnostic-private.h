@@ -21,11 +21,29 @@
 #pragma once
 
 #include "sysprof-diagnostic.h"
+#include "sysprof-document-frame.h"
 
 G_BEGIN_DECLS
 
-SysprofDiagnostic *_sysprof_diagnostic_new (char     *domain,
-                                            char     *message,
-                                            gboolean  fatal);
+struct _SysprofDiagnostic
+{
+  GObject parent_instance;
+};
+
+struct _SysprofDiagnosticClass
+{
+  GObjectClass parent_class;
+};
+
+SysprofDiagnostic *_sysprof_diagnostic_new         (char                  *domain,
+                                                    char                  *message,
+                                                    gboolean               fatal);
+void               _sysprof_diagnostic_set_details (SysprofDiagnostic     *self,
+                                                    const char            *domain,
+                                                    const char            *category,
+                                                    const char            *message,
+                                                    const SysprofTimeSpan *time_span);
+void               _sysprof_diagnostic_add_frame   (SysprofDiagnostic     *self,
+                                                    SysprofDocumentFrame  *frame);
 
 G_END_DECLS

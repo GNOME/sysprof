@@ -134,9 +134,12 @@ libsysprof_public_headers = [
   'sysprof-tracefd-consumer.h',
   'sysprof-tracer.h',
   'sysprof-user-sampler.h',
+  'sysprof-types.h',
 ]
 
 libsysprof_private_sources = [
+  'sysprof-diagnostic-provider.c',
+  'sysprof-frame-diagnostics.c',
   'mapped-ring-buffer-source.c',
   'sysprof-address-layout.c',
   'sysprof-allocator.c',

@@ -25,6 +25,7 @@
 G_BEGIN_DECLS
 
 #define SYSPROF_INSIDE
+# include "sysprof-types.h"
 # include "sysprof-battery-charge.h"
 # include "sysprof-bundled-symbolizer.h"
 # include "sysprof-callgraph-frame.h"

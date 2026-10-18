@@ -26,6 +26,7 @@
 
 #include "sysprof-callgraph.h"
 #include "sysprof-document-counter.h"
+#include "sysprof-diagnostic.h"
 #include "sysprof-document-file.h"
 #include "sysprof-document-process.h"
 #include "sysprof-document-traceable.h"
@@ -55,6 +56,8 @@ SysprofDocumentProcess *sysprof_document_lookup_process                      (Sy
                                                                               int                        pid);
 SYSPROF_AVAILABLE_IN_ALL
 GListModel             *sysprof_document_list_cpu_info                       (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
+GListModel             *sysprof_document_list_diagnostics                    (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL
 GListModel             *sysprof_document_list_files                          (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL

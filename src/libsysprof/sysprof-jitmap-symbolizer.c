@@ -212,12 +212,18 @@ sysprof_jitmap_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
     return NULL;
 
 create_symbol:
-  return _sysprof_symbol_new (g_ref_string_acquire (match->name),
-                              NULL,
-                              NULL,
-                              match->address,
-                              match->address + 1,
-                              SYSPROF_SYMBOL_KIND_USER);
+  {
+    SysprofSymbol *symbol = _sysprof_symbol_new (g_ref_string_acquire (match->name),
+                                                 NULL,
+                                                 NULL,
+                                                 match->address,
+                                                 match->address + 1,
+                                                 SYSPROF_SYMBOL_KIND_USER);
+
+    symbol->size_unknown = TRUE;
+
+    return symbol;
+  }
 }
 
 static void

@@ -30,6 +30,7 @@ enum {
   PROP_BINARY_NICK,
   PROP_BINARY_PATH,
   PROP_KIND,
+  PROP_CODE_SIZE,
   PROP_NAME,
   PROP_TOOLTIP_TEXT,
   N_PROPS
@@ -75,6 +76,10 @@ sysprof_symbol_get_property (GObject    *object,
       g_value_set_enum (value, sysprof_symbol_get_kind (self));
       break;
 
+    case PROP_CODE_SIZE:
+      g_value_set_uint64 (value, sysprof_symbol_get_code_size (self));
+      break;
+
     case PROP_TOOLTIP_TEXT:
       g_value_take_string (value, sysprof_symbol_dup_tooltip_text (self));
       break;
@@ -117,6 +122,11 @@ sysprof_symbol_class_init (SysprofSymbolClass *klass)
                        SYSPROF_TYPE_SYMBOL_KIND,
                        SYSPROF_SYMBOL_KIND_USER,
                        (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_CODE_SIZE] =
+    g_param_spec_uint64 ("code-size", NULL, NULL,
+                         0, G_MAXUINT64, 0,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
@@ -234,6 +244,31 @@ SysprofSymbolKind
 sysprof_symbol_get_kind (SysprofSymbol *self)
 {
   return self ? self->kind : 0;
+}
+
+/**
+ * sysprof_symbol_get_code_size:
+ * @self: a #SysprofSymbol
+ *
+ * Gets the size of the symbol's code in bytes. Returns zero for synthetic
+ * symbols and when the size is unknown.
+ *
+ * Returns: the code size in bytes, or zero
+ */
+guint64
+sysprof_symbol_get_code_size (SysprofSymbol *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_SYMBOL (self), 0);
+
+  if (self->kind != SYSPROF_SYMBOL_KIND_USER &&
+      self->kind != SYSPROF_SYMBOL_KIND_KERNEL)
+    return 0;
+
+  if (self->is_fallback || self->size_unknown ||
+      self->begin_address == 0 || self->end_address <= self->begin_address)
+    return 0;
+
+  return self->end_address - self->begin_address;
 }
 
 /**

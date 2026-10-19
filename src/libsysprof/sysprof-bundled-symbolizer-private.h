@@ -24,6 +24,8 @@
 
 G_BEGIN_DECLS
 
+#define SYSPROF_PACKED_SYMBOL_SIZE_UNKNOWN 0x535a554e
+
 SYSPROF_ALIGNED_BEGIN(1)
 typedef struct _SysprofPackedSymbol
 {

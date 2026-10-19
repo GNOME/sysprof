@@ -42,6 +42,7 @@ struct _SysprofSymbol
   guint kind : 3;
   guint is_fallback : 1;
   guint is_kernel_process : 1;
+  guint size_unknown : 1;
 };
 
 SysprofSymbol *_sysprof_symbol_new (GRefString       *name,
@@ -62,6 +63,9 @@ _sysprof_symbol_copy (SysprofSymbol *self)
                               self->begin_address,
                               self->end_address,
                               self->kind);
+
+  copy->size_unknown = self->size_unknown;
+  copy->is_fallback = self->is_fallback;
 
   return copy;
 }

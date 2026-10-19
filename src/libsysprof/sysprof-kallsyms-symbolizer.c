@@ -290,12 +290,19 @@ sysprof_kallsyms_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
 
       if (address >= ksym->address &&
           (address < next->address || next->address == 0))
-        return _sysprof_symbol_new (g_ref_string_acquire (ksym->name),
-                                    NULL,
-                                    g_ref_string_acquire (linux_string),
-                                    ksym->address,
-                                    next->address ? next->address : ksym->address + LAST_SYMBOL_LEN,
-                                    SYSPROF_SYMBOL_KIND_KERNEL);
+        {
+          SysprofSymbol *symbol = _sysprof_symbol_new (g_ref_string_acquire (ksym->name),
+                                                       NULL,
+                                                       g_ref_string_acquire (linux_string),
+                                                       ksym->address,
+                                                       next->address ? next->address : ksym->address + LAST_SYMBOL_LEN,
+                                                       SYSPROF_SYMBOL_KIND_KERNEL);
+
+          /* kallsyms gives us start addresses, not function sizes. */
+          symbol->size_unknown = TRUE;
+
+          return symbol;
+        }
 
       if (address < ksym->address)
         right = mid;

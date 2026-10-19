@@ -1,0 +1,1641 @@
+# Māori translation of sysprof.
+# Copyright (C) 2026 the sysprof authors.
+# This file is distributed under the same licence as the sysprof package.
+# Arlewatyerre Tuhoro-Bell <aidan@ursa.nz>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sysprof master\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
+"POT-Creation-Date: 2026-09-13 21:33+0000\n"
+"PO-Revision-Date: 2026-10-19 13:38+1300\n"
+"Last-Translator: Arlewatyerre Tuhoro-Bell <aidan@ursa.nz>\n"
+"Language-Team: Māori <https://gitlab.gnome.org/Teams/Translation/mi>\n"
+"Language: mi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: gnomi\n"
+
+#: data/org.gnome.Sysprof.desktop.in.in:3
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:6
+#: src/sysprof/sysprof-application.c:268 src/sysprof/sysprof-application.c:316
+#: src/sysprof/sysprof-recording-pad.ui:20 src/sysprof/sysprof-window.c:253
+msgid "Sysprof"
+msgstr ""
+
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-greeter.ui:83
+msgid "Profiler"
+msgstr ""
+
+#: data/org.gnome.Sysprof.desktop.in.in:5
+msgid "Profile an application or entire system."
+msgstr ""
+
+#: data/org.gnome.Sysprof.desktop.in.in:20
+msgid "Start New Recording"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:7
+msgid "Profile an application or entire system"
+msgstr ""
+
+#. developer_name tag deprecated with Appstream 1.0
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:11
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:13
+msgid "Christian Hergert"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:17
+msgid ""
+"Sysprof allows you to profile applications to aid in debugging and "
+"optimization."
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:22
+msgid "profiler"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:23
+msgid "profiling"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:24
+msgid "performance"
+msgstr "mahinga"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:25
+msgid "latency"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:26
+msgid "speed"
+msgstr "terenga"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:27
+msgid "slowness"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:28
+msgid "power consumption"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:29
+msgid "energy efficiency"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:30
+msgid "battery life"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:31
+msgid "optimization"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:32
+msgid "optimizing"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:33
+msgid "auditing"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:34
+msgid "sampling"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:35
+msgid "sampler"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:36
+msgid "benchmarking"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:37
+msgid "measurements"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:38
+msgid "counters"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:39
+msgid "CPU usage"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:40
+msgid "stack traces"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:42
+msgid "call graphs"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:43
+msgid "flame graphs"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:45
+msgid "flame charts"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:47
+msgid "programming"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:48
+msgid "software developers"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:49
+msgid "software development"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:50
+msgid "testing"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:51
+msgid "QA"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:52
+msgid "quality assurance"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:53
+msgid "troubleshooting"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:54
+msgid "inefficiencies"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:55
+msgid "debugging"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:56
+msgid "memory allocations tracer"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:57
+msgid "memory leaks detector"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:58
+msgid "compositor"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:59
+msgid "graphics"
+msgstr "whakairoiro"
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:60
+msgid "frames timing"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:61
+msgid "system logs"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:62
+msgid "logging"
+msgstr ""
+
+#: data/org.gnome.Sysprof.metainfo.xml.in.in:63
+msgid "Linux kernel"
+msgstr ""
+
+#: src/libsysprof/sysprof-category-summary.c:136
+msgid "Uncategorized"
+msgstr ""
+
+#: src/libsysprof/sysprof-category-summary.c:139
+msgid "Accessibility"
+msgstr "Urutanga"
+
+#: src/libsysprof/sysprof-category-summary.c:142
+msgid "Actions"
+msgstr "Ngā mahi"
+
+#: src/libsysprof/sysprof-category-summary.c:145
+msgid "Crash Handler"
+msgstr ""
+
+#: src/libsysprof/sysprof-category-summary.c:148
+msgid "Context Switches"
+msgstr ""
+
+#: src/libsysprof/sysprof-category-summary.c:151
+msgid "CSS"
+msgstr ""
+
+#: src/libsysprof/sysprof-category-summary.c:154
+#: src/sysprof/sysprof-greeter.ui:396 src/sysprof/sysprof-window.ui:387
+msgid "Graphics"
+msgstr "Whakairoiro"
+
+#: src/libsysprof/sysprof-category-summary.c:157
+msgid "Icons"
+msgstr ""
+
+#: src/libsysprof/sysprof-category-summary.c:160
+msgid "Input"
+msgstr "Tāuru"
+
+#: src/libsysprof/sysprof-category-summary.c:163
+msgid "IO"
+msgstr ""
+
+#: src/libsysprof/sysprof-category-summary.c:166
+msgid "IPC"
+msgstr ""
+
+#: src/libsysprof/sysprof-category-summary.c:169
+msgid "JavaScript"
+msgstr ""
+
+#: src/libsysprof/sysprof-category-summary.c:172
+msgid "Kernel"
+msgstr ""
+
+#: src/libsysprof/sysprof-category-summary.c:175
+msgid "Layout"
+msgstr ""
+
+#: src/libsysprof/sysprof-category-summary.c:178
+msgid "Locking"
+msgstr ""
+
+#: src/libsysprof/sysprof-category-summary.c:181
+msgid "Main Loop"
+msgstr ""
+
+#: src/libsysprof/sysprof-category-summary.c:184
+msgid "Memory"
+msgstr ""
+
+#: src/libsysprof/sysprof-category-summary.c:187
+msgid "Paint"
+msgstr ""
+
+#: src/libsysprof/sysprof-category-summary.c:190
+msgid "Type System"
+msgstr ""
+
+#: src/libsysprof/sysprof-category-summary.c:193
+msgid "Unwindable"
+msgstr ""
+
+#: src/libsysprof/sysprof-category-summary.c:196
+msgid "Windowing"
+msgstr ""
+
+#: src/libsysprof/sysprof-debuginfod-task.c:97
+msgid "Downloading Symbols…"
+msgstr ""
+
+#: src/libsysprof/sysprof-document-allocation.c:151
+msgid "Allocation"
+msgstr ""
+
+#: src/libsysprof/sysprof-document.c:578
+msgid "Unknown Process"
+msgstr ""
+
+#: src/libsysprof/sysprof-document.c:1682
+#: src/libsysprof/sysprof-document.c:1690
+msgid "Indexing capture data frames"
+msgstr ""
+
+#: src/libsysprof/sysprof-document.c:1858
+msgid "Discovering file system mounts"
+msgstr ""
+
+#: src/libsysprof/sysprof-document.c:1861
+msgid "Discovering process mount namespaces"
+msgstr ""
+
+#: src/libsysprof/sysprof-document.c:1866
+msgid "Analyzing process address layouts"
+msgstr ""
+
+#: src/libsysprof/sysprof-document.c:1869
+msgid "Analyzing process command line"
+msgstr ""
+
+#: src/libsysprof/sysprof-document.c:1872
+msgid "Analyzing file system overlays"
+msgstr ""
+
+#: src/libsysprof/sysprof-document.c:1875
+msgid "Processing counters"
+msgstr ""
+
+#: src/libsysprof/sysprof-document.c:2867
+#: src/libsysprof/sysprof-document.c:2886
+#, c-format
+msgid "Recording at %X %x"
+msgstr ""
+
+#: src/libsysprof/sysprof-document.c:2870
+#: src/libsysprof/sysprof-document.c:2889
+#, c-format
+msgid "Recording at %s"
+msgstr ""
+
+#: src/libsysprof/sysprof-document-dbus-message.c:152
+msgid "D-Bus Message"
+msgstr ""
+
+#: src/libsysprof/sysprof-document-frame.c:139
+msgid "Frame"
+msgstr ""
+
+#: src/libsysprof/sysprof-document-loader.c:499
+msgid "Document loaded"
+msgstr ""
+
+#: src/libsysprof/sysprof-document-loader.c:530
+msgid "Loading failed"
+msgstr ""
+
+#: src/libsysprof/sysprof-document-loader.c:542
+#: src/libsysprof/sysprof-document-symbols.c:276
+msgid "Symbolizing stack traces"
+msgstr ""
+
+#: src/libsysprof/sysprof-document-loader.c:611
+msgid "Loading document"
+msgstr ""
+
+#: src/libsysprof/sysprof-document-log.c:85
+msgid "Log"
+msgstr ""
+
+#: src/libsysprof/sysprof-document-mark.c:134
+msgid "Mark"
+msgstr ""
+
+#: src/libsysprof/sysprof-document-process.c:293
+#, c-format
+msgid "%s [Process %d]"
+msgstr ""
+
+#: src/libsysprof/sysprof-document-process.c:295
+#, c-format
+msgid "Process %d"
+msgstr ""
+
+#: src/libsysprof/sysprof-document-sample.c:136
+msgid "Sample"
+msgstr "Tīpako"
+
+#: src/libsysprof/sysprof-system-logs.c:171
+msgid "System Logs"
+msgstr ""
+
+#: src/libsysprof/sysprof-system-logs.c:172
+msgid "Recording system logs is not supported on your platform."
+msgstr ""
+
+#: src/libsysprof/sysprof-tracer.c:65
+msgid "Tracer"
+msgstr ""
+
+#: src/libsysprof/sysprof-tracer.c:66
+msgid ""
+"Tracing requires spawning a program compiled with ‘-finstrument-functions’. "
+"Tracing will not be available."
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:122
+#, c-format
+msgid "--merge requires at least 2 filename arguments"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:326
+msgid "Disable CPU throttling while profiling [Deprecated for --power-profile]"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:327
+msgid "Make sysprof specific to a task [Deprecated]"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:327 src/sysprof/sysprof-frame-utility.ui:109
+#: src/sysprof/sysprof-logs-section.ui:181
+#: src/sysprof/sysprof-processes-section.ui:283
+#: src/sysprof/sysprof-traceables-utility.ui:52
+msgid "PID"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:328
+msgid "Run a command and profile the process"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:328
+msgid "COMMAND"
+msgstr "TONO"
+
+#: src/sysprof-cli/sysprof-cli.c:329
+msgid ""
+"Set environment variable for spawned process. Can be used multiple times."
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:329
+msgid "VAR=VALUE"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:330
+msgid "Force overwrite the capture file"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:331
+msgid "Disable recording of battery statistics"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:332
+msgid "Disable recording of CPU statistics"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:333
+msgid "Disable recording of Disk statistics"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:334
+msgid "Do not record stacktraces using Linux perf"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:335
+msgid "Do not append symbol name information from local machine"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:336
+msgid "Disable recording of memory statistics"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:337
+msgid "Disable recording of network statistics"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:338
+msgid "Set SYSPROF_TRACE_FD environment for subprocess"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:339
+msgid "Track when processes are scheduled"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:340
+msgid "Profile the D-Bus session bus"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:341
+msgid "Profile the D-Bus system bus"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:342
+msgid "Set GJS_TRACE_FD environment to trace GJS processes"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:343
+msgid "Set GTK_TRACE_FD environment to trace a GTK application"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:344
+msgid "Include RAPL energy statistics"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:345
+msgid "Profile memory allocations and frees"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:346
+msgid "Connect to org.gnome.Shell for profiler statistics"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:347
+msgid "Track performance of the applications main loop"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:349
+msgid "Merge all provided *.syscap files and write to stdout"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:350
+msgid "Print the sysprof-cli version and exit"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:351
+msgid "The size of the buffer in pages (1 = 1 page)"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:352
+msgid "Additional D-Bus address to monitor"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:353
+msgid "Stack size to copy for unwinding in user-space"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:354
+msgid "Do not use debuginfod to resolve symbols"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:355
+msgid "Do not use Sysprofd to acquire privileges"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:386
+msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:389
+msgid ""
+"\n"
+"Examples:\n"
+"\n"
+"  # Record gtk4-widget-factory using trace-fd to get application provided\n"
+"  # data as well as GTK and GNOME Shell data providers\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"  # Merge multiple syscap files into one\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+"\n"
+"  # Unwind by capturing stack/register contents instead of frame-pointers\n"
+"  # where the stack-size is a multiple of page-size\n"
+"  sysprof-cli --stack-size=8192\n"
+msgstr ""
+
+#: src/sysprof-cli/sysprof-cli.c:429
+#, c-format
+msgid "Too many arguments were passed to sysprof-cli:"
+msgstr ""
+
+#. Translators: %s is a file name.
+#: src/sysprof-cli/sysprof-cli.c:487
+#, c-format
+msgid "%s exists. Use --force to overwrite\n"
+msgstr ""
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:13
+msgid "Profile the system"
+msgstr ""
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:14
+msgid "Authentication is required to profile the system."
+msgstr ""
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:6
+msgctxt "shortcut window"
+msgid "Recording View"
+msgstr ""
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:9
+msgctxt "shortcut window"
+msgid "Start New Recording"
+msgstr ""
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:15
+msgctxt "shortcut window"
+msgid "Save As"
+msgstr "Tiaki hei"
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:25
+msgctxt "shortcut window"
+msgid "Toggle Visibility of Main Sidebar"
+msgstr ""
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:31
+msgctxt "shortcut window"
+msgid "Toggle Visibility of Stack Trace Sidebar"
+msgstr ""
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:39
+msgctxt "shortcut window"
+msgid "General"
+msgstr "Ahuwhānui"
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:42
+msgctxt "shortcut window"
+msgid "Open Recording"
+msgstr ""
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:52
+msgctxt "shortcut window"
+msgid "Close Window"
+msgstr "Kati Matapihi"
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:59
+msgctxt "shortcut window"
+msgid "Show Help"
+msgstr "Whakaatu Āwhina"
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:65
+msgctxt "shortcut window"
+msgid "Show keyboard shortcuts"
+msgstr ""
+
+#: src/sysprof/gtk/shortcuts-dialog.ui:71
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "Whakamutu"
+
+#: src/sysprof/gtk/menus.ui:6
+msgid "Make Function Root"
+msgstr ""
+
+#: src/sysprof/gtk/menus.ui:11 src/sysprof/sysprof-process-dialog.ui:520
+msgid "Options"
+msgstr ""
+
+#: src/sysprof/gtk/menus.ui:13 src/sysprof/sysprof-window.ui:491
+msgid "Categorize Frames"
+msgstr ""
+
+#: src/sysprof/gtk/menus.ui:17 src/sysprof/sysprof-window.ui:495
+msgid "Hide System Libraries"
+msgstr ""
+
+#: src/sysprof/gtk/menus.ui:21 src/sysprof/sysprof-window.ui:499
+msgid "Include Threads"
+msgstr ""
+
+#: src/sysprof/gtk/menus.ui:25 src/sysprof/sysprof-window.ui:503
+msgid "Bottom Up"
+msgstr ""
+
+#: src/sysprof/gtk/menus.ui:29 src/sysprof/sysprof-window.ui:507
+msgid "Ignore Kernel Processes"
+msgstr ""
+
+#: src/sysprof/gtk/menus.ui:33 src/sysprof/sysprof-window.ui:511
+msgid "Ignore Process 0"
+msgstr ""
+
+#: src/sysprof/gtk/menus.ui:37 src/sysprof/sysprof-window.ui:515
+msgid "Merge Similar Processes"
+msgstr ""
+
+#: src/sysprof/sysprof-animation.c:1038
+#, c-format
+msgid "Failed to find property %s in %s"
+msgstr ""
+
+#: src/sysprof/sysprof-animation.c:1047
+#, c-format
+msgid "Failed to retrieve va_list value: %s"
+msgstr ""
+
+#: src/sysprof/sysprof-application.c:38
+msgid "Start a new recording"
+msgstr ""
+
+#: src/sysprof/sysprof-application.c:39
+msgid "Show Sysprof version and exit"
+msgstr ""
+
+#: src/sysprof/sysprof-application.c:277
+msgid "A system profiler"
+msgstr ""
+
+#: src/sysprof/sysprof-application.c:278
+msgid "translator-credits"
+msgstr ""
+"Arlewatyerre Tuhoro-Bell <aidan@ursa.nz>\n"
+"Te Rōpū Whakamāori GNOME https://gitlab.gnome.org/Teams/Translation/mi"
+
+#: src/sysprof/sysprof-callgraph-view.ui:22
+msgid "Functions"
+msgstr "Ngā taumahi"
+
+#: src/sysprof/sysprof-callgraph-view.ui:71
+msgid "Filter Functions"
+msgstr ""
+
+#: src/sysprof/sysprof-callgraph-view.ui:94
+msgid "Callers"
+msgstr ""
+
+#: src/sysprof/sysprof-callgraph-view.ui:146
+msgid "Descendants"
+msgstr ""
+
+#: src/sysprof/sysprof-counters-section.ui:26
+#: src/sysprof/sysprof-cpu-section.ui:169
+#: src/sysprof/sysprof-energy-section.ui:177
+#: src/sysprof/sysprof-graphics-section.ui:88
+#: src/sysprof/sysprof-network-section.ui:86
+#: src/sysprof/sysprof-storage-section.ui:86
+msgid "Counters Chart"
+msgstr ""
+
+#: src/sysprof/sysprof-counters-section.ui:40
+#: src/sysprof/sysprof-cpu-section.ui:323
+#: src/sysprof/sysprof-energy-section.ui:312
+#: src/sysprof/sysprof-graphics-section.ui:223
+#: src/sysprof/sysprof-network-section.ui:291
+#: src/sysprof/sysprof-storage-section.ui:291
+msgid "Counters Table"
+msgstr ""
+
+#: src/sysprof/sysprof-cpu-section.ui:378
+#: src/sysprof/sysprof-dbus-section.ui:171
+#: src/sysprof/sysprof-energy-section.ui:348
+#: src/sysprof/sysprof-frame-utility.ui:49
+#: src/sysprof/sysprof-graphics-section.ui:259
+#: src/sysprof/sysprof-logs-section.ui:110
+#: src/sysprof/sysprof-metadata-section.ui:38
+#: src/sysprof/sysprof-network-section.ui:346
+#: src/sysprof/sysprof-process-dialog.ui:64
+#: src/sysprof/sysprof-processes-section.ui:215
+#: src/sysprof/sysprof-storage-section.ui:346
+#: src/sysprof/sysprof-traceables-utility.ui:23
+msgid "Time"
+msgstr "Wā"
+
+#: src/sysprof/sysprof-cpu-section.ui:412
+#: src/sysprof/sysprof-energy-section.ui:382
+#: src/sysprof/sysprof-flame-graph.c:458
+#: src/sysprof/sysprof-graphics-section.ui:293
+#: src/sysprof/sysprof-marks-section.ui:234
+#: src/sysprof/sysprof-network-section.ui:380
+#: src/sysprof/sysprof-storage-section.ui:380
+msgid "Category"
+msgstr "Kāwai"
+
+#: src/sysprof/sysprof-cpu-section.ui:450
+#: src/sysprof/sysprof-energy-section.ui:420
+#: src/sysprof/sysprof-graphics-section.ui:331
+#: src/sysprof/sysprof-marks-section.ui:268
+#: src/sysprof/sysprof-network-section.ui:418
+#: src/sysprof/sysprof-storage-section.ui:418
+msgid "Name"
+msgstr "Ingoa"
+
+#: src/sysprof/sysprof-cpu-section.ui:488
+#: src/sysprof/sysprof-energy-section.ui:458
+#: src/sysprof/sysprof-graphics-section.ui:369
+#: src/sysprof/sysprof-metadata-section.ui:105
+#: src/sysprof/sysprof-network-section.ui:456
+#: src/sysprof/sysprof-storage-section.ui:456
+msgid "Value"
+msgstr ""
+
+#: src/sysprof/sysprof-cpu-section.ui:529
+msgid "CPU Info"
+msgstr ""
+
+#: src/sysprof/sysprof-cpu-section.ui:560
+#: src/sysprof/sysprof-process-dialog.ui:248
+msgid "ID"
+msgstr ""
+
+#: src/sysprof/sysprof-cpu-section.ui:595
+msgid "Core"
+msgstr ""
+
+#: src/sysprof/sysprof-cpu-section.ui:630
+msgid "Model Name"
+msgstr ""
+
+#: src/sysprof/sysprof-dbus-section.ui:205
+msgid "Bus"
+msgstr ""
+
+#: src/sysprof/sysprof-dbus-section.ui:244
+msgid "Serial"
+msgstr ""
+
+#: src/sysprof/sysprof-dbus-section.ui:281
+msgid "Reply"
+msgstr ""
+
+#: src/sysprof/sysprof-dbus-section.ui:318
+msgid "Flags"
+msgstr "Kōwhiringa"
+
+#: src/sysprof/sysprof-dbus-section.ui:347
+#: src/sysprof/sysprof-files-section.ui:122
+#: src/sysprof/sysprof-memory-callgraph-view.ui:68
+msgid "Size"
+msgstr "Rahi"
+
+#: src/sysprof/sysprof-dbus-section.ui:383
+#: src/sysprof/sysprof-frame-utility.ui:20
+#: src/sysprof/sysprof-mark-table.ui:221
+msgid "Type"
+msgstr "Momo"
+
+#: src/sysprof/sysprof-dbus-section.ui:412
+msgid "Sender"
+msgstr ""
+
+#: src/sysprof/sysprof-dbus-section.ui:446
+msgid "Destination"
+msgstr ""
+
+#: src/sysprof/sysprof-dbus-section.ui:480
+#: src/sysprof/sysprof-files-section.ui:53
+msgid "Path"
+msgstr "Ara"
+
+#: src/sysprof/sysprof-dbus-section.ui:514
+msgid "Interface"
+msgstr "Atanga"
+
+#: src/sysprof/sysprof-dbus-section.ui:548
+msgid "Member"
+msgstr "Mema"
+
+#: src/sysprof/sysprof-dbus-section.ui:582
+msgid "Signature"
+msgstr ""
+
+#: src/sysprof/sysprof-dbus-section.ui:626
+msgid "Filter Messages"
+msgstr ""
+
+#: src/sysprof/sysprof-dbus-utility.ui:13
+#: src/sysprof/sysprof-logs-section.c:114
+#: src/sysprof/sysprof-logs-section.ui:290
+msgid "Message"
+msgstr ""
+
+#: src/sysprof/sysprof-files-section.ui:4
+msgid "Files"
+msgstr ""
+
+#: src/sysprof/sysprof-files-section.ui:88
+msgid "Compressed"
+msgstr ""
+
+#: src/sysprof/sysprof-files-section.ui:165
+msgid "Filter Files"
+msgstr ""
+
+#: src/sysprof/sysprof-flame-graph.c:462
+#: src/sysprof/sysprof-process-dialog.ui:177
+msgid "File"
+msgstr "Kōnae"
+
+#: src/sysprof/sysprof-frame-utility.ui:80
+#: src/sysprof/sysprof-logs-section.ui:143
+#: src/sysprof/sysprof-mark-table.ui:116
+#: src/sysprof/sysprof-traceables-utility.ui:81
+#: src/sysprof/sysprof-window.ui:367
+msgid "CPU"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:144
+msgid "Use KEY=VALUE to set an environment variable"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:150
+msgid "Keys may not start with a number"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:160
+msgid "Keys may only contain alpha-numerics or underline."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:357 src/sysprof/sysprof-window.c:172
+msgid "Must Capture to Local File"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:359 src/sysprof/sysprof-window.c:173
+msgid "You must choose a local file to capture using Sysprof"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:361 src/sysprof/sysprof-greeter.c:401
+#: src/sysprof/sysprof-recording-pad.c:119 src/sysprof/sysprof-window.c:174
+#: src/sysprof/sysprof-window.c:751
+msgid "Close"
+msgstr "Kati"
+
+#: src/sysprof/sysprof-greeter.c:399
+msgid "Must Select Local Folder"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:400
+msgid "You must choose a local folder to add as a debug directory"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:420
+msgid "Add debug directory"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:421 src/sysprof/sysprof-greeter.ui:589
+msgid "Add _Directory"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:445
+#, c-format
+msgid "System Capture from %s.syscap"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:449
+msgid "Record to File"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:450
+msgid "Record"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:664
+msgid "No Change"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.c:667
+msgid "Balanced"
+msgstr "Whārite"
+
+#: src/sysprof/sysprof-greeter.c:670
+msgid "Power Saver"
+msgstr "Pūtiaki Hiko"
+
+#: src/sysprof/sysprof-greeter.c:673
+msgid "Performance"
+msgstr "Mahinga"
+
+#: src/sysprof/sysprof-greeter.ui:89
+msgid "Sampling"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:92
+msgid "Sample Native Stacks"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:93
+msgid "Record native stack traces using a sampling profiler"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:99
+msgid "Unwind Stacks in User Space"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:100
+msgid "Copy stack contents and registers for unwinding in user-space"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:111
+msgid "Stack Size"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:112
+msgid "The number of bytes to copy from the stack"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:123
+msgid ""
+"Unwinding in user-space has considerable overhead but may help in situations "
+"where frame-pointers are unavailable."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:138
+msgid "Sample JavaScript Stacks"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:139
+msgid "Record JavaScript stack traces using a sampling profiler"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:145
+msgid ""
+"Sysprof must launch your application to record JavaScript stacks using GJS."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:160
+msgid "Record Scheduler Details"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:161
+msgid "Track when processes are scheduled per CPU"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:169
+msgid "Tracing"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:172
+msgid "Trace Memory Allocations"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:173
+msgid "Record a stack trace when malloc or similar functions are used"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:179
+msgid "Sysprof must launch your application to record memory allocations."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:197 src/sysprof/sysprof-greeter.ui:202
+msgid "Application"
+msgstr "Taupānga"
+
+#: src/sysprof/sysprof-greeter.ui:205
+#: src/sysprof/sysprof-processes-section.ui:317
+msgid "Command Line"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:211
+msgid "Working directory"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:217
+msgid "The application will be run as a subprocess of Sysprof."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:230
+msgid "Environment"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:233
+msgid "Clear Environment"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:234
+msgid "Clear the environment before launching application"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:255
+msgid "Add _Variable"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:261
+msgid "Add Variable"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:262
+msgid "_Add"
+msgstr "_Tāpiri"
+
+#: src/sysprof/sysprof-greeter.ui:279 src/sysprof/sysprof-greeter.ui:284
+msgid "Counters"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:287
+msgid "CPU Usage"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:288
+msgid "Record coarse-grained counters about CPU usage and frequency"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:294
+msgid "Memory Usage"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:295
+msgid "Record coarse-grained counters about system memory usage"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:301
+msgid "Disk Usage"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:302
+msgid "Record coarse-grained counters about storage throughput"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:308
+msgid "Network Usage"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:309
+msgid "Record coarse-grained counters about network traffic"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:319
+msgid "Energy Usage"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:320
+msgid "Record coarse-grained counters about energy usage in Watts"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:326
+msgid "Battery Charge"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:327
+msgid "Record coarse-grained counters about battery charge or discharge rates"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:340 src/sysprof/sysprof-greeter.ui:345
+#: src/sysprof/sysprof-window.ui:357
+msgid "D-Bus"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:349
+msgid "Record System Bus"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:350
+msgid "Record messages on the D-Bus system bus"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:366
+msgid "Record Session Bus"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:367
+msgid "Record messages on the D-Bus user session bus"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:378
+msgid ""
+"The session bus may contain sensitive information such as keyboard usage and "
+"passwords."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:401
+msgid "Timings"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:405
+msgid "Compositor Frame Timings"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:406
+msgid "Record frame-timing information from the GNOME Shell compositor"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:417
+msgid ""
+"Applications launched by Sysprof will automatically collect GTK frame timing "
+"information."
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:457
+msgid "Devices"
+msgstr "Ngā pūrere"
+
+#: src/sysprof/sysprof-greeter.ui:461
+msgid "Include GPU Information"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:462
+msgid "Records information about graphics hardware and drivers"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:480
+msgid "System"
+msgstr "Pūnaha"
+
+#: src/sysprof/sysprof-greeter.ui:485
+msgid "Power Profile"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:488
+msgid "Record with Power Profile"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:489
+msgid "Switch to power profile while recording"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:499
+msgid "Details"
+msgstr "Ngā Taipitopito"
+
+#: src/sysprof/sysprof-greeter.ui:503
+msgid "Record System Log"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:504
+msgid "Watch the system log for new messages and record them"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:520
+msgid "Include Hardware Information"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:521
+msgid "Records information about PCI and USB devices"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:534
+msgid "Symbols"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:538
+msgid "Bundle Symbols"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:539
+msgid "Make recording shareable by symbolizing stack traces after recording"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:555
+msgid "Debuginfod"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:556
+msgid "Enable Debuginfod to automatically fetch debug symbols"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:569
+msgid "Debug File Directories"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:570
+msgid "Directories to search for debug files"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:618
+msgid "_Open File…"
+msgstr "_Whakatuwhera Kōnae…"
+
+#: src/sysprof/sysprof-greeter.ui:625
+msgid "Record to _File…"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:632
+msgid "Record to _Memory"
+msgstr ""
+
+#: src/sysprof/sysprof-greeter.ui:651 src/sysprof/sysprof-window.ui:468
+msgid "_Keyboard Shortcuts"
+msgstr "Ngā Pokatata _Papapātuhi"
+
+#: src/sysprof/sysprof-greeter.ui:655 src/sysprof/sysprof-window.ui:472
+msgid "Help"
+msgstr "Āwhina"
+
+#: src/sysprof/sysprof-greeter.ui:659 src/sysprof/sysprof-window.ui:476
+msgid "About Sysprof"
+msgstr ""
+
+#: src/sysprof/sysprof-logs-section.c:105
+msgid "Critical"
+msgstr ""
+
+#: src/sysprof/sysprof-logs-section.c:108
+msgid "Warning"
+msgstr ""
+
+#: src/sysprof/sysprof-logs-section.c:111
+msgid "Debug"
+msgstr ""
+
+#: src/sysprof/sysprof-logs-section.c:117
+msgid "Info"
+msgstr ""
+
+#: src/sysprof/sysprof-logs-section.c:120
+msgid "Error"
+msgstr "Hapa"
+
+#: src/sysprof/sysprof-logs-section.ui:4 src/sysprof/sysprof-logs-section.ui:30
+msgid "Logs"
+msgstr ""
+
+#: src/sysprof/sysprof-logs-section.ui:219
+msgid "Severity"
+msgstr ""
+
+#: src/sysprof/sysprof-logs-section.ui:255
+msgid "Domain"
+msgstr "Rohe"
+
+#: src/sysprof/sysprof-marks-section.ui:4
+msgid "Marks"
+msgstr ""
+
+#: src/sysprof/sysprof-marks-section.ui:72
+msgid "Mark Chart"
+msgstr ""
+
+#: src/sysprof/sysprof-marks-section.ui:84
+msgid "Mark Table"
+msgstr ""
+
+#: src/sysprof/sysprof-marks-section.ui:97
+msgid "Mark Waterfall"
+msgstr ""
+
+#: src/sysprof/sysprof-marks-section.ui:198
+msgid "Summary"
+msgstr "Whakarāpopototanga"
+
+#: src/sysprof/sysprof-marks-section.ui:303
+msgid "Minimum"
+msgstr "Mōkito"
+
+#: src/sysprof/sysprof-marks-section.ui:337
+msgid "Maximum"
+msgstr ""
+
+#: src/sysprof/sysprof-marks-section.ui:371
+msgid "Average"
+msgstr ""
+
+#: src/sysprof/sysprof-marks-section.ui:405
+msgid "Median"
+msgstr ""
+
+#: src/sysprof/sysprof-mark-chart-row.ui:8
+msgid "Toggle marks"
+msgstr ""
+
+#: src/sysprof/sysprof-mark-chart-row.ui:12
+msgid "Set as Filter"
+msgstr ""
+
+#: src/sysprof/sysprof-mark-table.ui:47
+msgid "Start"
+msgstr "Tīmata"
+
+#: src/sysprof/sysprof-mark-table.ui:81
+#: src/sysprof/sysprof-processes-section.ui:249
+msgid "Duration"
+msgstr "Roanga"
+
+#: src/sysprof/sysprof-mark-table.ui:151
+msgid "Process"
+msgstr ""
+
+#: src/sysprof/sysprof-mark-table.ui:186
+msgid "Group"
+msgstr "Rōpū"
+
+#: src/sysprof/sysprof-mark-table.ui:256
+msgid "Description"
+msgstr "Whakaahuatanga"
+
+#: src/sysprof/sysprof-memory-callgraph-view.ui:8
+#: src/sysprof/sysprof-memory-callgraph-view.ui:105
+#: src/sysprof/sysprof-memory-callgraph-view.ui:172
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:8
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:105
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:172
+msgid "Self"
+msgstr ""
+
+#: src/sysprof/sysprof-memory-callgraph-view.ui:38
+#: src/sysprof/sysprof-memory-callgraph-view.ui:135
+#: src/sysprof/sysprof-memory-callgraph-view.ui:202
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:38
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:135
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:202
+msgid "Total"
+msgstr "Tapeke"
+
+#: src/sysprof/sysprof-memory-section.ui:4
+msgid "Memory Allocations"
+msgstr ""
+
+#: src/sysprof/sysprof-memory-section.ui:29
+#: src/sysprof/sysprof-samples-section.ui:29
+msgid "Stack Traces"
+msgstr ""
+
+#: src/sysprof/sysprof-memory-section.ui:88
+msgid "Allocations"
+msgstr ""
+
+#: src/sysprof/sysprof-memory-section.ui:144
+msgid "Leaks"
+msgstr ""
+
+#: src/sysprof/sysprof-memory-section.ui:212
+#: src/sysprof/sysprof-samples-section.ui:216
+#: src/sysprof/sysprof-traceables-utility.ui:162
+msgid "Stack Trace"
+msgstr ""
+
+#: src/sysprof/sysprof-metadata-section.ui:4
+msgid "Metadata"
+msgstr "Raraungameta"
+
+#: src/sysprof/sysprof-metadata-section.ui:71
+msgid "Key"
+msgstr "Kī"
+
+#: src/sysprof/sysprof-process-dialog.ui:35
+msgid "Address Layout"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:97
+msgid "Start Address"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:137
+msgid "End Address"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:219
+msgid "Mounts"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:282
+msgid "Parent"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:316
+msgid "Major"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:350
+msgid "Minor"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:384
+msgid "Mount Point"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:418
+msgid "Mount Source"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:452
+msgid "Root"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:486
+msgid "Filesystem"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:562
+msgid "Threads"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:591
+msgid "Thread ID"
+msgstr ""
+
+#: src/sysprof/sysprof-process-dialog.ui:625
+msgid "Main Thread"
+msgstr ""
+
+#: src/sysprof/sysprof-processes-section.ui:4
+msgid "Processes"
+msgstr ""
+
+#: src/sysprof/sysprof-processes-section.ui:73
+msgid "Process Chart"
+msgstr ""
+
+#: src/sysprof/sysprof-processes-section.ui:174
+msgid "Process Table"
+msgstr ""
+
+#. translators: this expands to the number of events recorded by the profiler as an indicator of progress
+#: src/sysprof/sysprof-recording-pad.c:58
+#, c-format
+msgid "%<PRIi64> events"
+msgstr ""
+
+#: src/sysprof/sysprof-recording-pad.c:115
+msgid "Recording Failed"
+msgstr ""
+
+#: src/sysprof/sysprof-recording-pad.c:117
+#, c-format
+msgid ""
+"Sysprof failed to record.\n"
+"\n"
+"%s"
+msgstr ""
+
+#: src/sysprof/sysprof-recording-pad.ui:71
+msgid "Stop Recording"
+msgstr "Kāti te Hopu"
+
+#: src/sysprof/sysprof-samples-section.ui:4
+msgid "Time Profiler"
+msgstr ""
+
+#: src/sysprof/sysprof-samples-section.ui:98 src/sysprof/sysprof-window.ui:489
+msgid "Callgraph"
+msgstr ""
+
+#: src/sysprof/sysprof-samples-section.ui:181 src/sysprof/sysprof-window.ui:520
+msgid "Flamegraph"
+msgstr ""
+
+#: src/sysprof/sysprof-session-filters-widget.ui:103
+msgid "Clear All Filters"
+msgstr ""
+
+#: src/sysprof/sysprof-sidebar.ui:30 src/sysprof/sysprof-window.ui:160
+msgid "Seek Backward"
+msgstr ""
+
+#: src/sysprof/sysprof-sidebar.ui:40 src/sysprof/sysprof-window.ui:170
+msgid "Zoom Out"
+msgstr "Topa atu"
+
+#: src/sysprof/sysprof-sidebar.ui:50 src/sysprof/sysprof-window.ui:180
+msgid "Reset Zoom"
+msgstr ""
+
+#: src/sysprof/sysprof-sidebar.ui:61 src/sysprof/sysprof-window.ui:190
+msgid "Zoom In"
+msgstr "Topa mai"
+
+#: src/sysprof/sysprof-sidebar.ui:71 src/sysprof/sysprof-window.ui:200
+msgid "Seek Forward"
+msgstr ""
+
+#: src/sysprof/sysprof-traceables-utility.ui:109
+msgid "Depth"
+msgstr ""
+
+#: src/sysprof/sysprof-weighted-callgraph-view.ui:68
+msgid "Hits"
+msgstr ""
+
+#: src/sysprof/sysprof-window.c:191
+msgid "Open Recording"
+msgstr ""
+
+#: src/sysprof/sysprof-window.c:192
+msgid "Open"
+msgstr "Whakatuwhera"
+
+#: src/sysprof/sysprof-window.c:196
+msgid "Sysprof Capture (*.syscap)"
+msgstr ""
+
+#: src/sysprof/sysprof-window.c:485
+msgid "Save to File"
+msgstr ""
+
+#: src/sysprof/sysprof-window.c:486
+msgid "Save"
+msgstr ""
+
+#: src/sysprof/sysprof-window.c:666
+msgid "Loading…"
+msgstr "Uta ana…"
+
+#: src/sysprof/sysprof-window.c:747
+msgid "Invalid Document"
+msgstr ""
+
+#: src/sysprof/sysprof-window.c:749
+#, c-format
+msgid ""
+"The document could not be loaded. Please check that you have the correct "
+"capture file.\n"
+"\n"
+"%s"
+msgstr ""
+
+#: src/sysprof/sysprof-window.ui:120
+msgid "Toggle Left Panel"
+msgstr ""
+
+#: src/sysprof/sysprof-window.ui:127
+msgid "View Filters"
+msgstr ""
+
+#: src/sysprof/sysprof-window.ui:215
+msgid "Main Menu"
+msgstr "Tahua Matua"
+
+#: src/sysprof/sysprof-window.ui:222
+msgid "View Options"
+msgstr ""
+
+#: src/sysprof/sysprof-window.ui:228
+msgid "Toggle Right Panel"
+msgstr ""
+
+#: src/sysprof/sysprof-window.ui:377
+msgid "Energy"
+msgstr ""
+
+#: src/sysprof/sysprof-window.ui:397
+msgid "Network"
+msgstr "Whatunga"
+
+#: src/sysprof/sysprof-window.ui:407
+msgid "Storage"
+msgstr "Rokiroki"
+
+#: src/sysprof/sysprof-window.ui:454
+msgid "_Record Again…"
+msgstr ""
+
+#: src/sysprof/sysprof-window.ui:458
+msgid "Open Recording…"
+msgstr ""
+
+#: src/sysprof/sysprof-window.ui:462
+msgid "Save As…"
+msgstr "Tiaki hei…"
+
+#: src/sysprof/sysprof-window.ui:482
+msgid "_Quit"
+msgstr "_Whakamutu"
+
+#. translators: Left Heavy means to sort larger (heavier) stack frames before others, starting from the left
+#: src/sysprof/sysprof-window.ui:523
+msgid "Left Heavy"
+msgstr ""

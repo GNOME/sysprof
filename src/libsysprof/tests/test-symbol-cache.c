@@ -45,6 +45,39 @@ create_symbol (const char *name,
   return _sysprof_symbol_new (g_ref_string_new (name), NULL, NULL, begin, end, SYSPROF_SYMBOL_KIND_USER);
 }
 
+static void
+test_code_size (void)
+{
+  g_autoptr(SysprofSymbol) symbol = create_symbol ("known", 0x1000, 0x1100);
+  g_autoptr(SysprofSymbol) copy = NULL;
+  guint64 code_size = 0;
+
+  g_assert_cmpuint (sysprof_symbol_get_code_size (symbol), ==, 0x100);
+  g_object_get (symbol, "code-size", &code_size, NULL);
+  g_assert_cmpuint (code_size, ==, 0x100);
+
+  symbol->size_unknown = TRUE;
+  g_assert_cmpuint (sysprof_symbol_get_code_size (symbol), ==, 0);
+
+  copy = _sysprof_symbol_copy (symbol);
+  g_assert_cmpuint (sysprof_symbol_get_code_size (copy), ==, 0);
+
+  symbol->size_unknown = FALSE;
+  symbol->is_fallback = TRUE;
+  g_assert_cmpuint (sysprof_symbol_get_code_size (symbol), ==, 0);
+  g_clear_object (&copy);
+  copy = _sysprof_symbol_copy (symbol);
+  g_assert_cmpuint (sysprof_symbol_get_code_size (copy), ==, 0);
+
+  symbol->is_fallback = FALSE;
+  symbol->kind = SYSPROF_SYMBOL_KIND_PROCESS;
+  g_assert_cmpuint (sysprof_symbol_get_code_size (symbol), ==, 0);
+
+  symbol->kind = SYSPROF_SYMBOL_KIND_USER;
+  symbol->end_address = symbol->begin_address;
+  g_assert_cmpuint (sysprof_symbol_get_code_size (symbol), ==, 0);
+}
+
 static int
 sort_by_key (gconstpointer a,
              gconstpointer b)
@@ -234,6 +267,7 @@ main (int argc,
       char *argv[])
 {
   g_test_init (&argc, &argv, NULL);
+  g_test_add_func ("/libsysprof/SysprofSymbol/code-size", test_code_size);
   g_test_add_func ("/libsysprof/SysprofSymbolCache/interval-tree",
                    test_interval_tree);
   g_test_add_func ("/libsysprof/SysprofSymbolCache/jitmap",

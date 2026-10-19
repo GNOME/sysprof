@@ -259,6 +259,7 @@ sysprof_symbol_cache_populate_packed (SysprofSymbolCache *self,
     packed.pid = pid;
     packed.offset = get_string (strings, strings_offset, symbol->name);
     packed.tag_offset = get_string (strings, strings_offset, symbol->binary_nick);
+    packed.padding = symbol->size_unknown ? SYSPROF_PACKED_SYMBOL_SIZE_UNKNOWN : 0;
 
     g_array_append_val (array, packed);
   }

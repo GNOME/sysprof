@@ -83,6 +83,7 @@ sysprof_bundled_symbolizer_decode (SysprofBundledSymbolizer *self,
           sym->pid = GUINT32_SWAP_LE_BE (sym->pid);
           sym->offset = GUINT32_SWAP_LE_BE (sym->offset);
           sym->tag_offset = GUINT32_SWAP_LE_BE (sym->tag_offset);
+          sym->padding = GUINT32_SWAP_LE_BE (sym->padding);
         }
     }
 
@@ -199,6 +200,7 @@ sysprof_bundled_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
     {
       const char *name = &self->beginptr[ret->offset];
       SysprofSymbolKind kind;
+      SysprofSymbol *symbol;
 
       if (g_str_has_prefix (name, "- -"))
         kind = SYSPROF_SYMBOL_KIND_CONTEXT_SWITCH;
@@ -209,12 +211,16 @@ sysprof_bundled_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
       else
         kind = SYSPROF_SYMBOL_KIND_USER;
 
-      return _sysprof_symbol_new (sysprof_strings_get (strings, name),
-                                  NULL,
-                                  g_steal_pointer (&tag),
-                                  ret->addr_begin,
-                                  ret->addr_end,
-                                  kind);
+      symbol = _sysprof_symbol_new (sysprof_strings_get (strings, name),
+                                    NULL,
+                                    g_steal_pointer (&tag),
+                                    ret->addr_begin,
+                                    ret->addr_end,
+                                    kind);
+
+      symbol->size_unknown = ret->padding == SYSPROF_PACKED_SYMBOL_SIZE_UNKNOWN;
+
+      return symbol;
     }
 
   return NULL;

@@ -69,6 +69,7 @@ sysprof_elf_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
   guint64 relative_address;
   guint64 begin_address;
   guint64 end_address;
+  gboolean size_unknown;
   guint64 file_inode;
   guint64 file_offset;
   SysprofSymbol *ret;
@@ -131,6 +132,7 @@ sysprof_elf_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
    */
   begin_address = CLAMP (begin_address, file_offset, file_offset + (map_end - map_begin));
   end_address = CLAMP (end_address, file_offset, file_offset + (map_end - map_begin));
+  size_unknown = end_address <= begin_address;
   if (end_address == begin_address)
     end_address++;
 
@@ -140,6 +142,7 @@ sysprof_elf_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
                              map_begin + (begin_address - file_offset),
                              map_begin + (end_address - file_offset),
                              SYSPROF_SYMBOL_KIND_USER);
+  ret->size_unknown = size_unknown;
 
   return ret;
 }

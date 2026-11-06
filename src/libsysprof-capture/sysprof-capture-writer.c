@@ -1493,6 +1493,8 @@ sysprof_capture_writer_define_counters (SysprofCaptureWriter        *self,
 {
   SysprofCaptureCounterDefine *def;
   size_t len;
+  size_t max_len;
+  unsigned int max_counters;
   unsigned int i;
 
   assert (self != NULL);
@@ -1500,6 +1502,20 @@ sysprof_capture_writer_define_counters (SysprofCaptureWriter        *self,
 
   if (n_counters == 0)
     return true;
+
+  max_len = self->len < USHRT_MAX ? self->len : USHRT_MAX;
+  max_len &= ~(size_t)(SYSPROF_CAPTURE_ALIGN - 1);
+  max_counters = ((max_len - sizeof (SysprofCaptureCounterDefine)) / sizeof (SysprofCaptureCounter));
+
+  while (n_counters > max_counters)
+    {
+      if (!sysprof_capture_writer_define_counters (self, time, cpu, pid,
+                                                   counters, max_counters))
+        return false;
+
+      counters += max_counters;
+      n_counters -= max_counters;
+    }
 
   len = sizeof *def + (sizeof *counters * n_counters);
 
@@ -1540,6 +1556,8 @@ sysprof_capture_writer_set_counters (SysprofCaptureWriter             *self,
 {
   SysprofCaptureCounterSet *set;
   size_t len;
+  size_t max_len;
+  unsigned int max_counters;
   unsigned int n_groups;
   unsigned int group;
   unsigned int field;
@@ -1551,6 +1569,21 @@ sysprof_capture_writer_set_counters (SysprofCaptureWriter             *self,
 
   if (n_counters == 0)
     return true;
+
+  max_len = self->len < USHRT_MAX ? self->len : USHRT_MAX;
+  max_len &= ~(size_t)(SYSPROF_CAPTURE_ALIGN - 1);
+  max_counters = ((max_len - sizeof (SysprofCaptureCounterSet)) / sizeof (SysprofCaptureCounterValues)) * 8;
+
+  while (n_counters > max_counters)
+    {
+      if (!sysprof_capture_writer_set_counters (self, time, cpu, pid,
+                                                counters_ids, values, max_counters))
+        return false;
+
+      counters_ids += max_counters;
+      values += max_counters;
+      n_counters -= max_counters;
+    }
 
   /* Determine how many value groups we need */
   n_groups = n_counters / SYSPROF_N_ELEMENTS (set->values[0].values);

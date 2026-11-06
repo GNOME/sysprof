@@ -71,10 +71,21 @@ sysprof_document_jitmap_get_property (GObject    *object,
 }
 
 static void
+sysprof_document_jitmap_finalize (GObject *object)
+{
+  SysprofDocumentJitmap *self = SYSPROF_DOCUMENT_JITMAP (object);
+
+  g_clear_pointer (&self->jitmaps, g_array_unref);
+
+  G_OBJECT_CLASS (sysprof_document_jitmap_parent_class)->finalize (object);
+}
+
+static void
 sysprof_document_jitmap_class_init (SysprofDocumentJitmapClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
+  object_class->finalize = sysprof_document_jitmap_finalize;
   object_class->get_property = sysprof_document_jitmap_get_property;
 
   properties [PROP_SIZE] =

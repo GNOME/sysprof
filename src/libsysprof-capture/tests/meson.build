@@ -19,6 +19,7 @@ libsysprof_capture_testsuite = {
   'cross-thread-frees'      : {'skip': true},
   'find-temp-allocs'        : {'skip': true},
   'rewrite-pid'             : {'skip': true},
+  'test-capture-counters'   : {},
   'test-capture'            : {},
   'test-capture-cursor'     : {},
   'test-collector'          : {},

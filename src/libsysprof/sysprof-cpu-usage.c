@@ -34,6 +34,7 @@
 #include "line-reader-private.h"
 
 #include "sysprof-cpu-usage.h"
+#include "sysprof-cpu-modes-private.h"
 #include "sysprof-instrument-private.h"
 #include "sysprof-recording-private.h"
 #include "sysprof-util-private.h"
@@ -54,18 +55,11 @@ G_DEFINE_FINAL_TYPE (SysprofCpuUsage, sysprof_cpu_usage, SYSPROF_TYPE_INSTRUMENT
 
 typedef struct _CpuInfo
 {
-  int    counter_base;
-  double total;
-  glong  last_user;
-  glong  last_idle;
-  glong  last_system;
-  glong  last_nice;
-  glong  last_iowait;
-  glong  last_irq;
-  glong  last_softirq;
-  glong  last_steal;
-  glong  last_guest;
-  glong  last_guest_nice;
+  SysprofCpuTimes last;
+  double          total;
+  double          modes[SYSPROF_CPU_MODE_N];
+  gboolean        valid;
+  gboolean        fresh;
 } CpuInfo;
 
 typedef struct _CpuFreq
@@ -107,7 +101,7 @@ get_cpu_freq (int     stat_fd,
 {
   gint64 val;
 
-  if (stat_fd == -1)
+  if (stat_fd == -1 || max <= 0.)
     return .0;
 
   if (len <= 0)
@@ -138,6 +132,8 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
   SysprofCaptureCounter *counter;
   SysprofCaptureWriter *writer;
   guint n_cpu;
+  guint n_counters;
+  gsize stat_buffer_size;
 
   g_assert (record != NULL);
   g_assert (SYSPROF_IS_RECORDING (record->recording));
@@ -147,13 +143,15 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
   if (!(cpus = _sysprof_get_online_cpus (&error)))
     return dex_future_new_for_error (g_steal_pointer (&error));
   n_cpu = cpus->len;
+  n_counters = n_cpu * 2 + 1 + (n_cpu + 1) * SYSPROF_CPU_MODE_N;
+  stat_buffer_size = MAX (PROC_STAT_BUF_SIZE, (n_cpu + 1) * 256);
   stat_fd = open ("/proc/stat", O_RDONLY|O_CLOEXEC);
   g_unix_set_fd_nonblocking (stat_fd, TRUE, NULL);
-  read_buffer = g_malloc (PROC_STAT_BUF_SIZE);
+  read_buffer = g_malloc (stat_buffer_size + 1);
 
-  counters = g_new0 (SysprofCaptureCounter, (n_cpu * 2) + 1);
-  ids = g_new0 (guint, (n_cpu * 2) + 1);
-  values = g_new0 (SysprofCaptureCounterValue, (n_cpu * 2) + 1);
+  counters = g_new0 (SysprofCaptureCounter, n_counters);
+  ids = g_new0 (guint, n_counters);
+  values = g_new0 (SysprofCaptureCounterValue, n_counters);
 
   cpu_info = g_array_new (FALSE, TRUE, sizeof (CpuInfo));
   /* /proc/stat identifies CPUs by ID, including gaps for offline CPUs. */
@@ -194,6 +192,23 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
       g_snprintf (counter->description, sizeof counter->description,
                   "Frequency of CPU %u", cpu);
 
+      for (guint mode = 0; mode < SYSPROF_CPU_MODE_N; mode++)
+        {
+          static const char *names[] = {
+            "User", "System", "Interrupts", "Guest", "I/O Wait", "Steal"
+          };
+          guint position = n_cpu * 2 + 1 + i * SYSPROF_CPU_MODE_N + mode;
+
+          ids[position] = sysprof_capture_writer_request_counter (writer, 1);
+          counter = &counters[position];
+          counter->id = ids[position];
+          counter->type = SYSPROF_CAPTURE_COUNTER_DOUBLE;
+          g_strlcpy (counter->category, "CPU Mode", sizeof counter->category);
+          g_snprintf (counter->name, sizeof counter->name, "%s CPU %u", names[mode], cpu);
+          g_snprintf (counter->description, sizeof counter->description,
+                      "%s time on CPU %u", names[mode], cpu);
+        }
+
       cf.stat_fd = open (cur_path, O_RDONLY|O_CLOEXEC);
       g_unix_set_fd_nonblocking (cf.stat_fd, TRUE, NULL);
       cf.buf[0] = 0;
@@ -214,20 +229,38 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
   g_snprintf (counter->name, sizeof counter->name, "Combined");
   g_snprintf (counter->description, sizeof counter->description, "Combined CPU usage");
 
+  for (guint mode = 0; mode < SYSPROF_CPU_MODE_N; mode++)
+    {
+      static const char *names[] = {
+        "User", "System", "Interrupts", "Guest", "I/O Wait", "Steal"
+      };
+      guint position = n_cpu * 2 + 1 + n_cpu * SYSPROF_CPU_MODE_N + mode;
+
+      ids[position] = sysprof_capture_writer_request_counter (writer, 1);
+      counter = &counters[position];
+      counter->id = ids[position];
+      counter->type = SYSPROF_CAPTURE_COUNTER_DOUBLE;
+      g_strlcpy (counter->category, "CPU Mode", sizeof counter->category);
+      g_snprintf (counter->name, sizeof counter->name, "%s Combined", names[mode]);
+      g_snprintf (counter->description, sizeof counter->description,
+                  "Combined %s CPU time", names[mode]);
+    }
+
   /* Register all the counters as a group */
   sysprof_capture_writer_define_counters (writer,
                                           SYSPROF_CAPTURE_CURRENT_TIME,
                                           -1,
                                           -1,
                                           counters,
-                                          n_cpu * 2 + 1);
+                                          n_counters);
 
   for (;;)
     {
       g_autoptr(GPtrArray) futures = g_ptr_array_new_with_free_func (dex_unref);
       g_autoptr(DexFuture) cpu_future = NULL;
       LineReader reader;
-      glong total_usage = 0;
+      SysprofCpuModeTotals totals = { 0 };
+      guint valid_cpus = 0;
       gsize line_len;
       char *line;
 
@@ -236,12 +269,14 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
        * and reads into a single set of iops.
        */
       for (guint i = 0; i < n_cpu; i++)
+        g_array_index (cpu_info, CpuInfo, g_array_index (cpus, guint, i)).fresh = FALSE;
+      for (guint i = 0; i < n_cpu; i++)
         {
           CpuFreq *cf = &g_array_index (freq_info, CpuFreq, i);
 
           g_ptr_array_add (futures, dex_aio_read (NULL, cf->stat_fd, cf->buf, sizeof cf->buf - 1, 0));
         }
-      cpu_future = dex_aio_read (NULL, stat_fd, read_buffer, PROC_STAT_BUF_SIZE, 0);
+      cpu_future = dex_aio_read (NULL, stat_fd, read_buffer, stat_buffer_size, 0);
       g_ptr_array_add (futures, dex_ref (cpu_future));
 
       /* Wait for all IO futures as they point at buffers owned by the array */
@@ -256,29 +291,9 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
         {
           CpuInfo *ci;
           char cpu[64];
-          glong user;
-          glong sys;
-          glong nice;
-          glong idle;
+          SysprofCpuTimes now = { 0 };
           int id;
           int ret;
-          glong iowait;
-          glong irq;
-          glong softirq;
-          glong steal;
-          glong guest;
-          glong guest_nice;
-          glong user_calc;
-          glong system_calc;
-          glong nice_calc;
-          glong idle_calc;
-          glong iowait_calc;
-          glong irq_calc;
-          glong softirq_calc;
-          glong steal_calc;
-          glong guest_calc;
-          glong guest_nice_calc;
-          glong total;
 
           line[line_len] = 0;
 
@@ -291,10 +306,13 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
             continue;
 
           /* Parse the various counters in order */
-          user = nice = sys = idle = id = 0;
-          ret = sscanf (line, "%63s %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld",
-                        cpu, &user, &nice, &sys, &idle,
-                        &iowait, &irq, &softirq, &steal, &guest, &guest_nice);
+          ret = sscanf (line, "%63s %" G_GUINT64_FORMAT " %" G_GUINT64_FORMAT
+                        " %" G_GUINT64_FORMAT " %" G_GUINT64_FORMAT " %" G_GUINT64_FORMAT
+                        " %" G_GUINT64_FORMAT " %" G_GUINT64_FORMAT " %" G_GUINT64_FORMAT
+                        " %" G_GUINT64_FORMAT " %" G_GUINT64_FORMAT,
+                        cpu, &now.user, &now.nice, &now.system, &now.idle,
+                        &now.iowait, &now.irq, &now.softirq, &now.steal,
+                        &now.guest, &now.guest_nice);
           if (ret != 11)
             continue;
 
@@ -305,30 +323,10 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
 
           ci = &g_array_index (cpu_info, CpuInfo, id);
 
-          user_calc = user - ci->last_user;
-          nice_calc = nice - ci->last_nice;
-          system_calc = sys - ci->last_system;
-          idle_calc = idle - ci->last_idle;
-          iowait_calc = iowait - ci->last_iowait;
-          irq_calc = irq - ci->last_irq;
-          softirq_calc = softirq - ci->last_softirq;
-          steal_calc = steal - ci->last_steal;
-          guest_calc = guest - ci->last_guest;
-          guest_nice_calc = guest_nice - ci->last_guest_nice;
-
-          total = user_calc + nice_calc + system_calc + idle_calc + iowait_calc + irq_calc + softirq_calc + steal_calc + guest_calc + guest_nice_calc;
-          ci->total = ((total - idle_calc) / (double)total) * 100.;
-
-          ci->last_user = user;
-          ci->last_nice = nice;
-          ci->last_idle = idle;
-          ci->last_system = sys;
-          ci->last_iowait = iowait;
-          ci->last_irq = irq;
-          ci->last_softirq = softirq;
-          ci->last_steal = steal;
-          ci->last_guest = guest;
-          ci->last_guest_nice = guest_nice;
+          ci->fresh = ci->valid &&
+            _sysprof_cpu_times_percentages (&ci->last, &now, ci->modes, &ci->total);
+          ci->last = now;
+          ci->valid = TRUE;
         }
 
       /* Publish counters to the capture file */
@@ -340,20 +338,50 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
           DexFuture *freq_future = g_ptr_array_index (futures, i);
           gssize len = dex_await_int64 (dex_ref (freq_future), NULL);
 
-          values[i*2].vdbl = ci->total;
-          values[i*2+1].vdbl = get_cpu_freq (cf->stat_fd, cpu, cf->max, cf->buf, len);
-
-          total_usage += ci->total;
+          if (ci->fresh)
+            {
+              ids[valid_cpus * 2] = counters[i * 2].id;
+              values[valid_cpus * 2].vdbl = ci->total;
+              ids[valid_cpus * 2 + 1] = counters[i * 2 + 1].id;
+              values[valid_cpus * 2 + 1].vdbl =
+                get_cpu_freq (cf->stat_fd, cpu, cf->max, cf->buf, len);
+              _sysprof_cpu_mode_totals_add (&totals, ci->modes, ci->total);
+              valid_cpus++;
+            }
         }
 
-      values[n_cpu*2].vdbl = total_usage / (double)n_cpu;
-      sysprof_capture_writer_set_counters (writer,
-                                           SYSPROF_CAPTURE_CURRENT_TIME,
-                                           -1,
-                                           -1,
-                                           ids,
-                                           values,
-                                           n_cpu * 2 + 1);
+      if (valid_cpus > 0)
+        {
+          guint count = valid_cpus * 2;
+
+          ids[count] = counters[n_cpu * 2].id;
+          values[count++].vdbl = totals.usage / totals.count;
+          for (guint i = 0; i < n_cpu; i++)
+            {
+              guint cpu = g_array_index (cpus, guint, i);
+              const CpuInfo *ci = &g_array_index (cpu_info, CpuInfo, cpu);
+
+              if (!ci->fresh)
+                continue;
+
+              for (guint mode = 0; mode < SYSPROF_CPU_MODE_N; mode++)
+                {
+                  guint position = n_cpu * 2 + 1 + i * SYSPROF_CPU_MODE_N + mode;
+
+                  ids[count] = counters[position].id;
+                  values[count++].vdbl = ci->modes[mode];
+                }
+            }
+          for (guint mode = 0; mode < SYSPROF_CPU_MODE_N; mode++)
+            {
+              guint position = n_cpu * 2 + 1 + n_cpu * SYSPROF_CPU_MODE_N + mode;
+
+              ids[count] = counters[position].id;
+              values[count++].vdbl = totals.modes[mode] / totals.count;
+            }
+          sysprof_capture_writer_set_counters (writer, SYSPROF_CAPTURE_CURRENT_TIME,
+                                               -1, -1, ids, values, count);
+        }
 
       /* Wait for cancellation or ⅕ second */
       dex_await (dex_future_first (dex_ref (record->cancellable),

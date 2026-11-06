@@ -146,5 +146,7 @@ gboolean                sysprof_document_save_finish                         (Sy
                                                                               GError                   **error);
 SYSPROF_AVAILABLE_IN_ALL
 gboolean                sysprof_document_get_busy                            (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_52
+GListModel             *sysprof_document_list_memory_samples                 (SysprofDocument           *self);
 
 G_END_DECLS

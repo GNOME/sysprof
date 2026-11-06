@@ -120,9 +120,23 @@ _perf_event_open (struct perf_event_attr *attr,
 {
   g_assert (attr != NULL);
 
-  /* Quick sanity check */
-  if (attr->sample_period < 100000 && attr->type != PERF_TYPE_TRACEPOINT)
-    return -EINVAL;
+  /* Precise memory events are selective, so they use a lower bounded period. */
+  if (attr->type != PERF_TYPE_TRACEPOINT)
+    {
+      guint64 memory_fields = (PERF_SAMPLE_IP | PERF_SAMPLE_ADDR |
+                               PERF_SAMPLE_WEIGHT | PERF_SAMPLE_DATA_SRC);
+      guint64 minimum = 100000;
+
+      if (attr->type >= PERF_TYPE_RAW && attr->precise_ip >= 2 &&
+          (attr->sample_type & memory_fields) == memory_fields)
+        minimum = 1000;
+
+      if (attr->sample_period < minimum)
+        {
+          errno = EINVAL;
+          return -1;
+        }
+    }
 
   return syscall (__NR_perf_event_open, attr, pid, cpu, group_fd, flags);
 }
@@ -224,6 +238,51 @@ helpers_perf_event_open (GVariant *options,
           if (!g_variant_is_of_type (value, G_VARIANT_TYPE_BOOLEAN))
             goto bad_arg;
           mmap2 = g_variant_get_boolean (value);
+        }
+      else if (strcmp (key, "config1") == 0)
+        {
+          if (!g_variant_is_of_type (value, G_VARIANT_TYPE_UINT64))
+            goto bad_arg;
+          attr.config1 = g_variant_get_uint64 (value);
+        }
+      else if (strcmp (key, "config2") == 0)
+        {
+          if (!g_variant_is_of_type (value, G_VARIANT_TYPE_UINT64))
+            goto bad_arg;
+          attr.config2 = g_variant_get_uint64 (value);
+        }
+      else if (strcmp (key, "read_format") == 0)
+        {
+          if (!g_variant_is_of_type (value, G_VARIANT_TYPE_UINT64))
+            goto bad_arg;
+          attr.read_format = g_variant_get_uint64 (value);
+        }
+      else if (strcmp (key, "precise_ip") == 0)
+        {
+          if (!g_variant_is_of_type (value, G_VARIANT_TYPE_UINT32))
+            goto bad_arg;
+
+          if (g_variant_get_uint32 (value) > 3)
+            goto bad_arg;
+          attr.precise_ip = g_variant_get_uint32 (value);
+        }
+      else if (strcmp (key, "exclude_user") == 0)
+        {
+          if (!g_variant_is_of_type (value, G_VARIANT_TYPE_BOOLEAN))
+            goto bad_arg;
+          attr.exclude_user = g_variant_get_boolean (value);
+        }
+      else if (strcmp (key, "exclude_kernel") == 0)
+        {
+          if (!g_variant_is_of_type (value, G_VARIANT_TYPE_BOOLEAN))
+            goto bad_arg;
+          attr.exclude_kernel = g_variant_get_boolean (value);
+        }
+      else if (strcmp (key, "exclude_hv") == 0)
+        {
+          if (!g_variant_is_of_type (value, G_VARIANT_TYPE_BOOLEAN))
+            goto bad_arg;
+          attr.exclude_hv = g_variant_get_boolean (value);
         }
       else if (strcmp (key, "config") == 0)
         {

@@ -129,6 +129,13 @@ _sysprof_perf_event_attr_to_variant (const struct perf_event_attr *attr)
                             "{'clockid', <%i>},"
                             "{'use_clockid', <%b>},"
 #endif
+                            "{'config1', <%t>},"
+                            "{'config2', <%t>},"
+                            "{'read_format', <%t>},"
+                            "{'precise_ip', <%u>},"
+                            "{'exclude_user', <%b>},"
+                            "{'exclude_kernel', <%b>},"
+                            "{'exclude_hv', <%b>},"
                             "{'config', <%t>},"
                             "{'disabled', <%b>},"
                             "{'exclude_idle', <%b>},"
@@ -149,6 +156,13 @@ _sysprof_perf_event_attr_to_variant (const struct perf_event_attr *attr)
                           (gint32)attr->clockid,
                           (gboolean)!!attr->use_clockid,
 #endif
+                          (guint64)attr->config1,
+                          (guint64)attr->config2,
+                          (guint64)attr->read_format,
+                          (guint32)attr->precise_ip,
+                          (gboolean)attr->exclude_user,
+                          (gboolean)attr->exclude_kernel,
+                          (gboolean)attr->exclude_hv,
                           (guint64)attr->config,
                           (gboolean)!!attr->disabled,
                           (gboolean)!!attr->exclude_idle,
@@ -210,6 +224,13 @@ sysprof_perf_event_stream_flush (SysprofPerfEventStream *self)
        */
       header = (struct perf_event_header *)(gpointer)(self->map_data + (tail & mask));
 
+      if (header->size < sizeof *header || header->size > n_bytes)
+        {
+          /* A corrupt header must not stall the ring or permit an oversized copy. */
+          tail = head;
+          break;
+        }
+
       if (header->size > head - tail)
         {
           /* The kernel did not generate a complete event.
@@ -252,13 +273,31 @@ sysprof_perf_event_stream_flush (SysprofPerfEventStream *self)
           break;
 
         case PERF_RECORD_SAMPLE:
-          is_self = event->callchain.pid == self->self_pid;
+          {
+            gsize offset = sizeof (struct perf_event_header);
+            guint32 pid;
+
+            if (self->attr.sample_type & PERF_SAMPLE_IDENTIFIER)
+              offset += sizeof (guint64);
+
+            if (self->attr.sample_type & PERF_SAMPLE_IP)
+              offset += sizeof (guint64);
+
+            if ((self->attr.sample_type & PERF_SAMPLE_TID) &&
+                header->size >= offset + sizeof pid)
+              {
+                memcpy (&pid, (const guint8 *)event + offset, sizeof pid);
+                is_self = pid == self->self_pid;
+              }
+          }
           break;
 
         case PERF_RECORD_READ:
+          goto skip_callback;
+
         case PERF_RECORD_THROTTLE:
         case PERF_RECORD_UNTHROTTLE:
-          goto skip_callback;
+          break;
 
         case PERF_RECORD_LOST:
           lost_records = TRUE;
@@ -435,6 +474,41 @@ sysprof_perf_event_stream_new_fiber (gpointer data)
       int group_fd_handle = -1;
       int handle;
 
+      if (self->attr.precise_ip || self->attr.config1 || self->attr.config2 ||
+          self->attr.read_format || self->attr.exclude_user || self->attr.exclude_kernel ||
+          self->attr.exclude_hv)
+        {
+          g_autoptr(GVariant) capabilities = NULL;
+          g_autoptr(GVariant) capabilities_reply = NULL;
+          gboolean supported = FALSE;
+
+          capabilities_reply = dex_await_variant (dex_dbus_connection_call (self->connection,
+                                                                            "org.gnome.Sysprof3",
+                                                                            "/org/gnome/Sysprof3",
+                                                                            "org.gnome.Sysprof3.Service",
+                                                                            "GetCapabilities",
+                                                                            NULL,
+                                                                            G_VARIANT_TYPE ("(a{sv})"),
+                                                                            G_DBUS_CALL_FLAGS_NONE,
+                                                                            -1), &error);
+
+          if (capabilities_reply != NULL)
+            {
+              g_variant_get (capabilities_reply, "(@a{sv})", &capabilities);
+              g_variant_lookup (capabilities, "perf-event-open-memory", "b", &supported);
+            }
+          else if (!g_error_matches (error, G_DBUS_ERROR, G_DBUS_ERROR_UNKNOWN_METHOD))
+            {
+              return dex_future_new_for_error (g_steal_pointer (&error));
+            }
+
+          /* Older daemons silently ignore these attributes. */
+          if (!supported)
+            return dex_future_new_reject (G_IO_ERROR,
+                                          G_IO_ERROR_NOT_SUPPORTED,
+                                          "sysprofd does not support the perf attributes required for memory sampling");
+        }
+
       if (self->group_fd > -1)
         {
           fd_list = g_unix_fd_list_new ();
@@ -458,7 +532,20 @@ sysprof_perf_event_stream_new_fiber (gpointer data)
                                                            fd_list);
 
       if (!dex_await (dex_ref (future), &error))
-        return dex_future_new_for_error (g_steal_pointer (&error));
+        {
+          /* The future set otherwise hides the D-Bus failure behind a generic error. */
+          if (DEX_IS_FUTURE_SET (future))
+            {
+              DexFuture *reply_future = dex_future_set_get_future_at (DEX_FUTURE_SET (future), 0);
+
+              if (dex_future_is_rejected (reply_future))
+                {
+                  g_clear_error (&error);
+                  dex_future_get_value (reply_future, &error);
+                }
+            }
+          return dex_future_new_for_error (g_steal_pointer (&error));
+        }
 
       g_assert (DEX_IS_FUTURE_SET (future));
 
@@ -607,5 +694,33 @@ sysprof_perf_event_stream_disable (SysprofPerfEventStream  *self,
 
   g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_ACTIVE]);
 
+  return TRUE;
+}
+
+/* Read final scheduling coverage even if the PMU never delivered a sample. */
+gboolean
+_sysprof_perf_event_stream_read_times (SysprofPerfEventStream *self,
+                                       guint64                *enabled,
+                                       guint64                *running)
+{
+  guint64 values[3];
+  ssize_t ret;
+
+  g_return_val_if_fail (SYSPROF_IS_PERF_EVENT_STREAM (self), FALSE);
+  g_return_val_if_fail (enabled != NULL, FALSE);
+  g_return_val_if_fail (running != NULL, FALSE);
+
+  if (self->attr.read_format != (PERF_FORMAT_TOTAL_TIME_ENABLED | PERF_FORMAT_TOTAL_TIME_RUNNING))
+    return FALSE;
+
+  do
+    ret = read (self->perf_fd, values, sizeof values);
+  while (ret < 0 && errno == EINTR);
+
+  if (ret != sizeof values)
+    return FALSE;
+
+  *enabled = values[1];
+  *running = values[2];
   return TRUE;
 }

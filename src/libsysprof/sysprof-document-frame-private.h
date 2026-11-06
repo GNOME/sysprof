@@ -65,33 +65,18 @@ SysprofDocumentFrame *_sysprof_document_frame_new (GMappedFile               *ma
 #define SYSPROF_DOCUMENT_FRAME_NEEDS_SWAP(obj) \
   (SYSPROF_DOCUMENT_FRAME (obj)->needs_swap)
 
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-# define SYSPROF_DOCUMENT_FRAME_UINT16(obj, val) \
-   (SYSPROF_DOCUMENT_FRAME_NEEDS_SWAP(obj) ? GUINT16_TO_LE(val) : (val))
-# define SYSPROF_DOCUMENT_FRAME_INT16(obj, val) \
-   (SYSPROF_DOCUMENT_FRAME_NEEDS_SWAP(obj) ? GINT16_TO_LE(val) : (val))
-# define SYSPROF_DOCUMENT_FRAME_UINT32(obj, val) \
-   (SYSPROF_DOCUMENT_FRAME_NEEDS_SWAP(obj) ? GUINT32_TO_LE(val) : (val))
-# define SYSPROF_DOCUMENT_FRAME_INT32(obj, val) \
-   (SYSPROF_DOCUMENT_FRAME_NEEDS_SWAP(obj) ? GINT32_TO_LE(val) : (val))
-# define SYSPROF_DOCUMENT_FRAME_UINT64(obj, val) \
-   (SYSPROF_DOCUMENT_FRAME_NEEDS_SWAP(obj) ? GUINT64_TO_LE(val) : (val))
-# define SYSPROF_DOCUMENT_FRAME_INT64(obj, val) \
-   (SYSPROF_DOCUMENT_FRAME_NEEDS_SWAP(obj) ? GINT64_TO_LE(val) : (val))
-#else
-# define SYSPROF_DOCUMENT_FRAME_UINT16(obj, val) \
-   (SYSPROF_DOCUMENT_FRAME_NEEDS_SWAP(obj) ? GUINT16_TO_BE(val) : (val))
-# define SYSPROF_DOCUMENT_FRAME_INT16(obj, val) \
-   (SYSPROF_DOCUMENT_FRAME_NEEDS_SWAP(obj) ? GINT16_TO_BE(val) : (val))
-# define SYSPROF_DOCUMENT_FRAME_UINT32(obj, val) \
-   (SYSPROF_DOCUMENT_FRAME_NEEDS_SWAP(obj) ? GUINT32_TO_BE(val) : (val))
-# define SYSPROF_DOCUMENT_FRAME_INT32(obj, val) \
-   (SYSPROF_DOCUMENT_FRAME_NEEDS_SWAP(obj) ? GINT32_TO_BE(val) : (val))
-# define SYSPROF_DOCUMENT_FRAME_UINT64(obj, val) \
-   (SYSPROF_DOCUMENT_FRAME_NEEDS_SWAP(obj) ? GUINT64_TO_BE(val) : (val))
-# define SYSPROF_DOCUMENT_FRAME_INT64(obj, val) \
-   (SYSPROF_DOCUMENT_FRAME_NEEDS_SWAP(obj) ? GINT64_TO_BE(val) : (val))
-#endif
+#define SYSPROF_DOCUMENT_FRAME_UINT16(obj, val) \
+  (SYSPROF_DOCUMENT_FRAME_NEEDS_SWAP(obj) ? GUINT16_SWAP_LE_BE(val) : (val))
+#define SYSPROF_DOCUMENT_FRAME_UINT32(obj, val) \
+  (SYSPROF_DOCUMENT_FRAME_NEEDS_SWAP(obj) ? GUINT32_SWAP_LE_BE(val) : (val))
+#define SYSPROF_DOCUMENT_FRAME_UINT64(obj, val) \
+  (SYSPROF_DOCUMENT_FRAME_NEEDS_SWAP(obj) ? GUINT64_SWAP_LE_BE(val) : (val))
+#define SYSPROF_DOCUMENT_FRAME_INT16(obj, val) \
+  (SYSPROF_DOCUMENT_FRAME_NEEDS_SWAP(obj) ? (gint16)GUINT16_SWAP_LE_BE(val) : (val))
+#define SYSPROF_DOCUMENT_FRAME_INT32(obj, val) \
+  (SYSPROF_DOCUMENT_FRAME_NEEDS_SWAP(obj) ? (gint32)GUINT32_SWAP_LE_BE(val) : (val))
+#define SYSPROF_DOCUMENT_FRAME_INT64(obj, val) \
+  (SYSPROF_DOCUMENT_FRAME_NEEDS_SWAP(obj) ? (gint64)GUINT64_SWAP_LE_BE(val) : (val))
 
 static inline const char *
 _SYSPROF_DOCUMENT_FRAME_CSTRING (SysprofDocumentFrame *self,

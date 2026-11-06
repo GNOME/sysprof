@@ -33,6 +33,7 @@ libsysprof_public_sources = [
   'sysprof-document-overlay.c',
   'sysprof-document-process.c',
   'sysprof-document-sample.c',
+  'sysprof-document-memory-sample.c',
   'sysprof-document-task.c',
   'sysprof-document-traceable.c',
   'sysprof-document.c',
@@ -44,6 +45,7 @@ libsysprof_public_sources = [
   'sysprof-malloc-tracing.c',
   'sysprof-mark-catalog.c',
   'sysprof-memory-usage.c',
+  'sysprof-memory-sampler.c',
   'sysprof-multi-symbolizer.c',
   'sysprof-network-usage.c',
   'sysprof-no-symbolizer.c',
@@ -101,6 +103,7 @@ libsysprof_public_headers = [
   'sysprof-document-overlay.h',
   'sysprof-document-process.h',
   'sysprof-document-sample.h',
+  'sysprof-document-memory-sample.h',
   'sysprof-document-task.h',
   'sysprof-document-traceable.h',
   'sysprof-document.h',
@@ -112,6 +115,7 @@ libsysprof_public_headers = [
   'sysprof-malloc-tracing.h',
   'sysprof-mark-catalog.h',
   'sysprof-memory-usage.h',
+  'sysprof-memory-sampler.h',
   'sysprof-mount.h',
   'sysprof-multi-symbolizer.h',
   'sysprof-network-usage.h',
@@ -137,6 +141,8 @@ libsysprof_public_headers = [
 ]
 
 libsysprof_private_sources = [
+  'sysprof-memory-sample-parser.c',
+  'sysprof-memory-pmu.c',
   'mapped-ring-buffer-source.c',
   'sysprof-address-layout.c',
   'sysprof-allocator.c',

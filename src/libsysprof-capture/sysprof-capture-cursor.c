@@ -171,6 +171,10 @@ sysprof_capture_cursor_foreach (SysprofCaptureCursor         *self,
           delegate = READ_DELEGATE (sysprof_capture_reader_read_timestamp);
           break;
 
+        case SYSPROF_CAPTURE_FRAME_MEMORY_SAMPLE:
+          delegate = READ_DELEGATE (sysprof_capture_reader_read_memory_sample);
+          break;
+
         case SYSPROF_CAPTURE_FRAME_SAMPLE:
           delegate = READ_DELEGATE (sysprof_capture_reader_read_sample);
           break;

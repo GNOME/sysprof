@@ -13,6 +13,7 @@ src/libsysprof/sysprof-document-log.c
 src/libsysprof/sysprof-document-mark.c
 src/libsysprof/sysprof-document-process.c
 src/libsysprof/sysprof-document-sample.c
+src/libsysprof/sysprof-document-memory-sample.c
 src/libsysprof/sysprof-document-symbols.c
 src/libsysprof/sysprof-system-logs.c
 src/libsysprof/sysprof-tracer.c

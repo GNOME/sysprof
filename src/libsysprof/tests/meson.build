@@ -11,6 +11,8 @@ libsysprof_testsuite_c_args = [
 ]
 
 libsysprof_testsuite = {
+  'memory-samples'                : {'skip': true},
+  'test-memory-samples'           : {},
   'log-messages'                  : {'skip': true},
   'main-migrate'                  : {'skip': true},
   'mark-summary'                  : {

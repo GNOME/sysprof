@@ -175,6 +175,7 @@ sysprof_capture_reader_discover_end_time (SysprofCaptureReader *self)
         case SYSPROF_CAPTURE_FRAME_FORK:
         case SYSPROF_CAPTURE_FRAME_LOG:
         case SYSPROF_CAPTURE_FRAME_PROCESS:
+        case SYSPROF_CAPTURE_FRAME_MEMORY_SAMPLE:
         case SYSPROF_CAPTURE_FRAME_SAMPLE:
         case SYSPROF_CAPTURE_FRAME_TIMESTAMP:
           if (end_time > self->end_time)
@@ -932,6 +933,56 @@ sysprof_capture_reader_read_jitmap (SysprofCaptureReader *self)
   self->pos += jitmap->frame.len;
 
   return jitmap;
+}
+
+const SysprofCaptureMemorySample *
+sysprof_capture_reader_read_memory_sample (SysprofCaptureReader *self)
+{
+  SysprofCaptureMemorySample *sample;
+  SysprofCaptureFrame frame;
+  uint16_t n_addrs;
+
+  assert (self != NULL);
+
+  if (!sysprof_capture_reader_peek_frame (self, &frame) ||
+      frame.type != SYSPROF_CAPTURE_FRAME_MEMORY_SAMPLE ||
+      frame.len < sizeof *sample || frame.len % SYSPROF_CAPTURE_ALIGN != 0 ||
+      !sysprof_capture_reader_ensure_space_for (self, frame.len))
+    return NULL;
+
+  sample = (SysprofCaptureMemorySample *)(void *)&self->buf[self->pos];
+  n_addrs = self->endian == __BYTE_ORDER ? sample->n_addrs : bswap_16 (sample->n_addrs);
+
+  if (n_addrs > SYSPROF_CAPTURE_MEMORY_SAMPLE_MAX_STACK ||
+      frame.len != sizeof *sample + n_addrs * sizeof (SysprofCaptureAddress))
+    return NULL;
+
+  sysprof_capture_reader_bswap_frame (self, &sample->frame);
+
+  if (self->endian != __BYTE_ORDER)
+    {
+      sample->tid = bswap_32 (sample->tid);
+      sample->flags = bswap_32 (sample->flags);
+      sample->event_id = bswap_64 (sample->event_id);
+      sample->ip = bswap_64 (sample->ip);
+      sample->address = bswap_64 (sample->address);
+      sample->period = bswap_64 (sample->period);
+      sample->weight = bswap_64 (sample->weight);
+      sample->data_src = bswap_64 (sample->data_src);
+      sample->time_enabled = bswap_64 (sample->time_enabled);
+      sample->time_running = bswap_64 (sample->time_running);
+      sample->n_addrs = n_addrs;
+      sample->weight_type = bswap_16 (sample->weight_type);
+      sample->reserved = bswap_32 (sample->reserved);
+      for (unsigned int i = 0; i < n_addrs; i++)
+        sample->addrs[i] = bswap_64 (sample->addrs[i]);
+    }
+
+  if (sample->event_id == 0)
+    return NULL;
+
+  self->pos += frame.len;
+  return sample;
 }
 
 const SysprofCaptureSample *

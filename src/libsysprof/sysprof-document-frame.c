@@ -39,6 +39,7 @@
 #include "sysprof-document-overlay.h"
 #include "sysprof-document-process.h"
 #include "sysprof-document-sample.h"
+#include "sysprof-document-memory-sample.h"
 
 G_DEFINE_TYPE (SysprofDocumentFrame, sysprof_document_frame, G_TYPE_OBJECT)
 
@@ -204,6 +205,10 @@ _sysprof_document_frame_new (GMappedFile               *mapped_file,
 
   switch (frame->type)
     {
+    case SYSPROF_CAPTURE_FRAME_MEMORY_SAMPLE:
+      gtype = SYSPROF_TYPE_DOCUMENT_MEMORY_SAMPLE;
+      break;
+
     case SYSPROF_CAPTURE_FRAME_SAMPLE:
       gtype = SYSPROF_TYPE_DOCUMENT_SAMPLE;
       break;

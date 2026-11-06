@@ -2835,7 +2835,7 @@ sysprof_document_catalog_marks (SysprofDocument *self)
       group = g_list_store_new (SYSPROF_TYPE_MARK_CATALOG);
 
       keys = (const char **)g_hash_table_get_keys_as_array (names, &len);
-      g_qsort_with_data (keys, len, sizeof (char *), (GCompareDataFunc)str_compare, NULL);
+      g_sort_array (keys, len, sizeof (char *), (GCompareDataFunc)str_compare, NULL);
 
       for (guint i = 0; i < len; i++)
         {

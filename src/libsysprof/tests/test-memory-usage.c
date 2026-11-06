@@ -90,6 +90,27 @@ test_overflow_and_missing (void)
     }
 }
 
+static void
+test_pressure_missing_and_malformed (void)
+{
+  gint64 values[2];
+  gboolean present[2];
+
+  _sysprof_memory_usage_parse_pressure ("some avg10=1.00\n"
+                                        "full avg10=0.00 total=42\n",
+                                        values, present);
+  g_assert_false (present[0]);
+  g_assert_true (present[1]);
+  g_assert_cmpint (values[1], ==, 42);
+
+  _sysprof_memory_usage_parse_pressure ("some avg10=1.00 total=123\n"
+                                        "full avg10=0.00 total=bad\n",
+                                        values, present);
+  g_assert_true (present[0]);
+  g_assert_cmpint (values[0], ==, 123);
+  g_assert_false (present[1]);
+}
+
 int
 main (int   argc,
       char *argv[])
@@ -98,5 +119,6 @@ main (int   argc,
   g_test_add_func ("/memory-usage/missing-and-unitless", test_missing_and_unitless);
   g_test_add_func ("/memory-usage/malformed-and-missing-used", test_malformed_and_missing_used);
   g_test_add_func ("/memory-usage/overflow-and-missing", test_overflow_and_missing);
+  g_test_add_func ("/memory-usage/pressure-missing-and-malformed", test_pressure_missing_and_malformed);
   return g_test_run ();
 }

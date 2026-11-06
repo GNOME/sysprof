@@ -75,6 +75,7 @@ G_STATIC_ASSERT (G_N_ELEMENTS (counter_names) == N_MEMORY_COUNTERS);
 typedef struct _MemStat
 {
   int stat_fd;
+  int pressure_fd;
 
   union {
     struct {
@@ -110,6 +111,7 @@ mem_stat_open (MemStat  *st,
                GError  **error)
 {
   memset (st, 0, sizeof *st);
+  st->pressure_fd = -1;
 
   st->stat_fd = open ("/proc/meminfo", O_RDONLY|O_CLOEXEC);
 
@@ -123,6 +125,8 @@ mem_stat_open (MemStat  *st,
       return FALSE;
     }
 
+  st->pressure_fd = open ("/proc/pressure/memory", O_RDONLY | O_CLOEXEC);
+
   return TRUE;
 }
 
@@ -131,6 +135,9 @@ mem_stat_close (MemStat  *st,
                 GError  **error)
 {
   g_assert (st != NULL);
+
+  if (st->pressure_fd >= 0)
+    close (st->pressure_fd);
 
   return g_clear_fd (&st->stat_fd, error);
 }
@@ -231,6 +238,55 @@ _sysprof_memory_usage_parse_meminfo (const char *contents,
     }
 }
 
+void
+_sysprof_memory_usage_parse_pressure (const char *contents,
+                                      gint64     *values,
+                                      gboolean   *present)
+{
+  static const char *names[] = { "some ", "full " };
+  const char *line = contents;
+
+  g_return_if_fail (contents != NULL);
+  g_return_if_fail (values != NULL);
+  g_return_if_fail (present != NULL);
+
+  memset (present, 0, 2 * sizeof *present);
+  memset (values, 0, 2 * sizeof *values);
+
+  while (*line != 0)
+    {
+      const char *line_end = strchr (line, '\n');
+      const char *total;
+      char *end = NULL;
+      guint64 value;
+
+      if (line_end == NULL)
+        line_end = line + strlen (line);
+
+      total = g_strstr_len (line, line_end - line, "total=");
+
+      if (total != NULL)
+        {
+          for (guint i = 0; i < G_N_ELEMENTS (names); i++)
+            {
+              if (g_str_has_prefix (line, names[i]))
+                {
+                  errno = 0;
+                  value = g_ascii_strtoull (total + 6, &end, 10);
+
+                  if (errno == 0 && end != total + 6 && end == line_end && value <= G_MAXINT64)
+                    {
+                      values[i] = value;
+                      present[i] = TRUE;
+                    }
+                }
+            }
+        }
+
+      line = *line_end == '\n' ? line_end + 1 : line_end;
+    }
+}
+
 typedef struct _Record
 {
   SysprofRecording *recording;
@@ -254,7 +310,7 @@ sysprof_memory_usage_record_fiber (gpointer user_data)
   Record *record = user_data;
   SysprofCaptureWriter *writer;
   g_autoptr(GError) error = NULL;
-  SysprofCaptureCounter counters[N_MEMORY_COUNTERS] = { 0 };
+  SysprofCaptureCounter counters[N_MEMORY_COUNTERS + 2] = { 0 };
   MemStat st;
   guint counter_base;
 
@@ -270,7 +326,8 @@ sysprof_memory_usage_record_fiber (gpointer user_data)
   if (!mem_stat_open (&st, &error))
     return dex_future_new_for_error (g_steal_pointer (&error));
 
-  counter_base = sysprof_capture_writer_request_counter (writer, N_MEMORY_COUNTERS);
+  counter_base = sysprof_capture_writer_request_counter (writer,
+                                                         N_MEMORY_COUNTERS + (st.pressure_fd >= 0 ? 2 : 0));
 
   for (guint i = 0; i < N_MEMORY_COUNTERS; i++)
     {
@@ -289,12 +346,30 @@ sysprof_memory_usage_record_fiber (gpointer user_data)
                                           counters,
                                           N_MEMORY_COUNTERS);
 
+  if (st.pressure_fd >= 0)
+    {
+      for (guint i = 0; i < 2; i++)
+        {
+          SysprofCaptureCounter *counter = &counters[N_MEMORY_COUNTERS + i];
+
+          memset (counter, 0, sizeof *counter);
+          g_strlcpy (counter->category, "Memory Pressure", sizeof counter->category);
+          g_strlcpy (counter->name, i == 0 ? "Some Total" : "Full Total", sizeof counter->name);
+          g_strlcpy (counter->description, "Cumulative stall time (microseconds)", sizeof counter->description);
+          counter->id = counter_base + N_MEMORY_COUNTERS + i;
+          counter->type = SYSPROF_CAPTURE_COUNTER_INT64;
+        }
+
+      sysprof_capture_writer_define_counters (writer, SYSPROF_CAPTURE_CURRENT_TIME,
+                                              -1, -1, &counters[N_MEMORY_COUNTERS], 2);
+    }
+
   for (;;)
     {
       g_autoptr(DexFuture) read_future = dex_aio_read (NULL, st.stat_fd, buf->data, buf->len-1, 0);
       gssize n_read;
-      guint ids[N_MEMORY_COUNTERS];
-      SysprofCaptureCounterValue values[N_MEMORY_COUNTERS];
+      guint ids[N_MEMORY_COUNTERS + 2];
+      SysprofCaptureCounterValue values[N_MEMORY_COUNTERS + 2];
       guint count = 0;
       gint64 time;
 
@@ -324,6 +399,32 @@ sysprof_memory_usage_record_fiber (gpointer user_data)
                 {
                   ids[count] = counter_base + i;
                   values[count++] = st.values[i];
+                }
+            }
+
+          if (st.pressure_fd >= 0)
+            {
+              char pressure[512];
+              ssize_t length = pread (st.pressure_fd, pressure, sizeof pressure - 1, 0);
+
+              if (length > 0)
+                {
+                  gint64 pressure_values[2];
+                  gboolean pressure_present[2];
+
+                  pressure[length] = 0;
+                  _sysprof_memory_usage_parse_pressure (pressure,
+                                                        pressure_values,
+                                                        pressure_present);
+
+                  for (guint i = 0; i < 2; i++)
+                    {
+                      if (pressure_present[i])
+                        {
+                          ids[count] = counter_base + N_MEMORY_COUNTERS + i;
+                          values[count++].v64 = pressure_values[i];
+                        }
+                    }
                 }
             }
 

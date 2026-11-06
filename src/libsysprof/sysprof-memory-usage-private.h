@@ -26,8 +26,11 @@
 
 G_BEGIN_DECLS
 
-void _sysprof_memory_usage_parse_meminfo (const char *contents,
-                                          gint64     *values,
-                                          gboolean   *present);
+void _sysprof_memory_usage_parse_meminfo  (const char *contents,
+                                           gint64     *values,
+                                           gboolean   *present);
+void _sysprof_memory_usage_parse_pressure (const char *contents,
+                                           gint64     *values,
+                                           gboolean   *present);
 
 G_END_DECLS

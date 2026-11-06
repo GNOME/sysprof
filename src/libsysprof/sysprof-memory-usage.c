@@ -34,6 +34,7 @@
 #include "line-reader-private.h"
 
 #include "sysprof-memory-usage.h"
+#include "sysprof-memory-usage-private.h"
 #include "sysprof-instrument-private.h"
 #include "sysprof-recording-private.h"
 
@@ -59,7 +60,17 @@ static const char *counter_names[] = {
   "Shmem",
   "Swap Total",
   "Swap Free",
+  "AnonPages",
+  "Slab",
+  "SReclaimable",
+  "SUnreclaim",
+  "Dirty",
+  "Writeback",
 };
+
+#define N_MEMORY_COUNTERS SYSPROF_MEMORY_USAGE_N_VALUES
+
+G_STATIC_ASSERT (G_N_ELEMENTS (counter_names) == N_MEMORY_COUNTERS);
 
 typedef struct _MemStat
 {
@@ -78,9 +89,16 @@ typedef struct _MemStat
       gint64 shmem;
       gint64 swap_total;
       gint64 swap_free;
+      gint64 anon_pages;
+      gint64 slab;
+      gint64 sreclaimable;
+      gint64 sunreclaim;
+      gint64 dirty;
+      gint64 writeback;
     } sys;
-    SysprofCaptureCounterValue values[11];
+    SysprofCaptureCounterValue values[N_MEMORY_COUNTERS];
   };
+  gboolean present[N_MEMORY_COUNTERS];
 } MemStat;
 
 G_DEFINE_FINAL_TYPE (SysprofMemoryUsage, sysprof_memory_usage, SYSPROF_TYPE_INSTRUMENT)
@@ -121,61 +139,96 @@ static void
 mem_stat_parse (MemStat *st,
                 char    *buf)
 {
-  char *bufptr = buf;
-  char *save = NULL;
+  char *line = buf;
 
   g_assert (st != NULL);
   g_assert (buf != NULL);
 
-  for (;;)
+  memset (st->present, 0, sizeof st->present);
+  memset (st->values, 0, sizeof st->values);
+
+  while (*line != 0)
     {
-      gssize off;
-      char *key;
+      char *end_line = strchr (line, '\n');
+      char *colon;
       char *value;
-      char *unit;
-      gint64 v64;
-      gint64 *v64ptr;
+      char *end_value;
+      guint index;
+      gint64 multiplier = 1;
+      gint64 number;
 
-      /* Get the data key name */
-      if (!(key = strtok_r (bufptr, " \n\t:", &save)))
-        break;
+      if (end_line != NULL)
+        *end_line = 0;
 
-      bufptr = NULL;
-
-      /* Offset from self to save value. Stop after getting to
-       * last value we care about.
-       */
-      if (!g_hash_table_lookup_extended (keys, key, NULL, (gpointer *)&off))
-        off = -1;
-
-      /* Get the data value */
-      if (!(value = strtok_r (bufptr, " \n\t:", &save)))
-        break;
-
-      /* Parse the numeric value of this column */
-      v64 = g_ascii_strtoll (value, NULL, 10);
-      if ((v64 == G_MININT64 || v64 == G_MAXINT64) && errno == ERANGE)
-        break;
-
-      /* Get the data unit */
-      unit = strtok_r (bufptr, " \n\t:", &save);
-
-      if (g_strcmp0 (unit, "kB") == 0)
-        v64 *= 1024L;
-      else if (g_strcmp0 (unit, "mB") == 0)
-        v64 *= 1024L * 1024L;
-      else if (g_strcmp0 (unit, "gB") == 0)
-        v64 *= 1024L * 1024L * 1024L;
-
-      if (off >= 0)
+      if ((colon = strchr (line, ':')) != NULL)
         {
-          v64ptr = (gint64 *)(gpointer)(((gchar *)st) + off);
-          *v64ptr = v64;
+          *colon = 0;
+          index = GPOINTER_TO_UINT (g_hash_table_lookup (keys, line));
+          value = colon + 1;
+
+          while (g_ascii_isspace (*value))
+            value++;
+
+          errno = 0;
+          number = g_ascii_strtoll (value, &end_value, 10);
+
+          if (index != 0 && errno == 0 && end_value != value && number >= 0)
+            {
+              while (g_ascii_isspace (*end_value))
+                end_value++;
+
+              if (strcmp (end_value, "kB") == 0)
+                multiplier = 1024;
+              else if (strcmp (end_value, "mB") == 0)
+                multiplier = 1024 * 1024;
+              else if (strcmp (end_value, "gB") == 0)
+                multiplier = G_GINT64_CONSTANT (1024) * 1024 * 1024;
+              else if (*end_value != 0)
+                multiplier = 0;
+
+              if (multiplier != 0 && number <= G_MAXINT64 / multiplier)
+                {
+                  st->values[index - 1].v64 = number * multiplier;
+                  st->present[index - 1] = TRUE;
+                }
+            }
         }
+
+      if (end_line == NULL)
+        break;
+
+      line = end_line + 1;
     }
 
-  /* Create pre-compiled value for used to simplify display */
-  st->sys.used = (gdouble)st->sys.total - (gdouble)st->sys.avail;
+  if (st->present[1] && st->present[2] && st->sys.total >= st->sys.avail)
+    {
+      st->sys.used = st->sys.total - st->sys.avail;
+      st->present[0] = TRUE;
+    }
+}
+
+void
+_sysprof_memory_usage_parse_meminfo (const char *contents,
+                                     gint64     *values,
+                                     gboolean   *present)
+{
+  g_autofree char *copy = NULL;
+  MemStat st = { 0 };
+
+  g_return_if_fail (contents != NULL);
+  g_return_if_fail (values != NULL);
+  g_return_if_fail (present != NULL);
+
+  (void)g_type_class_get (SYSPROF_TYPE_MEMORY_USAGE);
+
+  copy = g_strdup (contents);
+  mem_stat_parse (&st, copy);
+
+  for (guint i = 0; i < N_MEMORY_COUNTERS; i++)
+    {
+      values[i] = st.values[i].v64;
+      present[i] = st.present[i];
+    }
 }
 
 typedef struct _Record
@@ -201,27 +254,25 @@ sysprof_memory_usage_record_fiber (gpointer user_data)
   Record *record = user_data;
   SysprofCaptureWriter *writer;
   g_autoptr(GError) error = NULL;
-  SysprofCaptureCounter counters[11];
+  SysprofCaptureCounter counters[N_MEMORY_COUNTERS] = { 0 };
   MemStat st;
   guint counter_base;
-  g_autofree guint *counter_ids = g_new0 (guint, 11);
-  g_autofree SysprofCaptureCounterValue *values = g_new0 (SysprofCaptureCounterValue, 11);
 
   g_assert (record != NULL);
   g_assert (SYSPROF_IS_RECORDING (record->recording));
   g_assert (DEX_IS_FUTURE (record->cancellable));
 
   buf = g_byte_array_new ();
-  g_byte_array_set_size (buf, 4096);
+  g_byte_array_set_size (buf, 16384);
 
   writer = _sysprof_recording_writer (record->recording);
 
   if (!mem_stat_open (&st, &error))
     return dex_future_new_for_error (g_steal_pointer (&error));
 
-  counter_base = sysprof_capture_writer_request_counter (writer, 11);
+  counter_base = sysprof_capture_writer_request_counter (writer, N_MEMORY_COUNTERS);
 
-  for (guint i = 0; i < 11; i++)
+  for (guint i = 0; i < N_MEMORY_COUNTERS; i++)
     {
       g_strlcpy (counters[i].category, "Memory", sizeof counters[i].category);
       g_strlcpy (counters[i].name, counter_names[i], sizeof counters[i].name);
@@ -236,15 +287,16 @@ sysprof_memory_usage_record_fiber (gpointer user_data)
                                           -1,
                                           -1,
                                           counters,
-                                          11);
-
-  for (guint i = 0; i < 11; i++)
-    counter_ids[i] = counter_base + i;
+                                          N_MEMORY_COUNTERS);
 
   for (;;)
     {
       g_autoptr(DexFuture) read_future = dex_aio_read (NULL, st.stat_fd, buf->data, buf->len-1, 0);
       gssize n_read;
+      guint ids[N_MEMORY_COUNTERS];
+      SysprofCaptureCounterValue values[N_MEMORY_COUNTERS];
+      guint count = 0;
+      gint64 time;
 
       dex_await (dex_future_first (dex_ref (read_future),
                                    dex_ref (record->cancellable),
@@ -264,13 +316,20 @@ sysprof_memory_usage_record_fiber (gpointer user_data)
 
           mem_stat_parse (&st, (char *)buf->data);
 
-          sysprof_capture_writer_set_counters (writer,
-                                               SYSPROF_CAPTURE_CURRENT_TIME,
-                                               -1,
-                                               -1,
-                                               counter_ids,
-                                               st.values,
-                                               11);
+          time = SYSPROF_CAPTURE_CURRENT_TIME;
+
+          for (guint i = 0; i < N_MEMORY_COUNTERS; i++)
+            {
+              if (st.present[i])
+                {
+                  ids[count] = counter_base + i;
+                  values[count++] = st.values[i];
+                }
+            }
+
+          if (count > 0)
+            sysprof_capture_writer_set_counters (writer, time, -1, -1,
+                                                 ids, values, count);
         }
 
       dex_await (dex_future_first (dex_ref (record->cancellable),
@@ -290,8 +349,8 @@ sysprof_memory_usage_record_fiber (gpointer user_data)
 
 static DexFuture *
 sysprof_memory_usage_record (SysprofInstrument *instrument,
-                              SysprofRecording  *recording,
-                              GCancellable      *cancellable)
+                             SysprofRecording  *recording,
+                             GCancellable      *cancellable)
 {
   Record *record;
 
@@ -318,19 +377,24 @@ sysprof_memory_usage_class_init (SysprofMemoryUsageClass *klass)
 
   keys = g_hash_table_new (g_str_hash, g_str_equal);
 
-#define ADD_OFFSET(n,o) \
-  g_hash_table_insert (keys, (gchar *)n, GUINT_TO_POINTER (o))
-  ADD_OFFSET ("MemTotal", G_STRUCT_OFFSET (MemStat, sys.total));
-  ADD_OFFSET ("MemFree", G_STRUCT_OFFSET (MemStat, sys.free));
-  ADD_OFFSET ("MemAvailable", G_STRUCT_OFFSET (MemStat, sys.avail));
-  ADD_OFFSET ("Buffers", G_STRUCT_OFFSET (MemStat, sys.buffers));
-  ADD_OFFSET ("Cached", G_STRUCT_OFFSET (MemStat, sys.cached));
-  ADD_OFFSET ("SwapCached", G_STRUCT_OFFSET (MemStat, sys.swap_cached));
-  ADD_OFFSET ("Mapped", G_STRUCT_OFFSET (MemStat, sys.mapped));
-  ADD_OFFSET ("Shmem", G_STRUCT_OFFSET (MemStat, sys.shmem));
-  ADD_OFFSET ("SwapTotal", G_STRUCT_OFFSET (MemStat, sys.swap_total));
-  ADD_OFFSET ("SwapFree", G_STRUCT_OFFSET (MemStat, sys.swap_free));
-#undef ADD_OFFSET
+#define ADD_INDEX(n,i) g_hash_table_insert (keys, (gpointer)n, GUINT_TO_POINTER ((i) + 1))
+  ADD_INDEX ("MemTotal", 1);
+  ADD_INDEX ("MemAvailable", 2);
+  ADD_INDEX ("MemFree", 3);
+  ADD_INDEX ("Buffers", 4);
+  ADD_INDEX ("Cached", 5);
+  ADD_INDEX ("SwapCached", 6);
+  ADD_INDEX ("Mapped", 7);
+  ADD_INDEX ("Shmem", 8);
+  ADD_INDEX ("SwapTotal", 9);
+  ADD_INDEX ("SwapFree", 10);
+  ADD_INDEX ("AnonPages", 11);
+  ADD_INDEX ("Slab", 12);
+  ADD_INDEX ("SReclaimable", 13);
+  ADD_INDEX ("SUnreclaim", 14);
+  ADD_INDEX ("Dirty", 15);
+  ADD_INDEX ("Writeback", 16);
+#undef ADD_INDEX
 }
 
 static void

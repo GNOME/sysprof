@@ -36,6 +36,7 @@ libsysprof_testsuite = {
   'test-list-functions-by-weight' : {'skip': true},
   'test-list-jitmap'              : {'skip': true},
   'test-list-overlays'            : {'skip': true},
+  'test-memory-usage'             : {},
   'test-maps-parser'              : {'skip': true},
   'test-mark-catalog'             : {'skip': true},
   'test-print-file'               : {'skip': true},

@@ -213,7 +213,7 @@ set_default_symbolizer (SysprofDocumentLoader *self)
     g_autoptr(SysprofSymbolizer) debuginfod = NULL;
 
     if (!(debuginfod = sysprof_debuginfod_symbolizer_new (&error)))
-      g_warning ("Failed to create debuginfod symbolizer: %s", error->message);
+      g_debug ("Failed to create debuginfod symbolizer: %s", error->message);
     else
       sysprof_multi_symbolizer_take (multi, g_steal_pointer (&debuginfod));
   }

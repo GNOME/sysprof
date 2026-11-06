@@ -486,42 +486,50 @@ sort_by_count (gconstpointer a,
   return 0;
 }
 
-static void
-sort_children (SysprofCallgraphNode  *node,
-               SysprofCallgraphFlags  flags)
+static gboolean
+sort_children (SysprofCallgraphNode  *root,
+               SysprofCallgraphFlags  flags,
+               GCancellable          *cancellable)
 {
-  SysprofCallgraphNode **children;
-  guint n_children = 0;
-  guint i = 0;
+  g_autoptr(GPtrArray) pending = g_ptr_array_new ();
+  g_autoptr(GPtrArray) children = g_ptr_array_new ();
 
-  if (node->children == NULL)
-    return;
+  g_ptr_array_add (pending, root);
 
-  for (SysprofCallgraphNode *child = node->children; child; child = child->next)
+  while (pending->len > 0)
     {
-      sort_children (child, flags);
-      n_children++;
+      SysprofCallgraphNode *node = g_ptr_array_steal_index_fast (pending, pending->len - 1);
+
+      if (g_cancellable_is_cancelled (cancellable))
+        return FALSE;
+
+      g_ptr_array_set_size (children, 0);
+      for (SysprofCallgraphNode *child = node->children; child; child = child->next)
+        {
+          if ((children->len % 1024) == 0 && g_cancellable_is_cancelled (cancellable))
+            return FALSE;
+
+          g_ptr_array_add (children, child);
+          if (child->children != NULL)
+            g_ptr_array_add (pending, child);
+        }
+
+      if (children->len == 0)
+        continue;
+
+      g_ptr_array_sort (children, (flags & SYSPROF_CALLGRAPH_FLAGS_LEFT_HEAVY)
+                                 ? sort_by_count : sort_by_symbol_name);
+      node->children = g_ptr_array_index (children, 0);
+      for (guint i = 0; i < children->len; i++)
+        {
+          SysprofCallgraphNode *child = g_ptr_array_index (children, i);
+
+          child->prev = i > 0 ? g_ptr_array_index (children, i - 1) : NULL;
+          child->next = i + 1 < children->len ? g_ptr_array_index (children, i + 1) : NULL;
+        }
     }
 
-  children = g_alloca (sizeof (SysprofCallgraphNode *) * (n_children + 1));
-  for (SysprofCallgraphNode *child = node->children; child; child = child->next)
-    children[i++] = child;
-  children[i] = NULL;
-
-  if (flags & SYSPROF_CALLGRAPH_FLAGS_LEFT_HEAVY)
-    qsort (children, n_children, sizeof (SysprofCallgraphNode *), sort_by_count);
-  else
-    qsort (children, n_children, sizeof (SysprofCallgraphNode *), sort_by_symbol_name);
-
-  node->children = children[0];
-  node->children->prev = NULL;
-  node->children->next = children[1];
-
-  for (i = 1; i < n_children; i++)
-    {
-      children[i]->next = children[i+1];
-      children[i]->prev = children[i-1];
-    }
+  return TRUE;
 }
 
 static void
@@ -551,13 +559,21 @@ sysprof_callgraph_new_worker (GTask        *task,
       if (traceable == NULL)
         break;
 
+      if (g_task_return_error_if_cancelled (task))
+        return;
+
       sysprof_callgraph_add_traceable (self, traceable, i);
     }
 
   /* Sort callgraph nodes alphabetically so that we can use them in the
    * flamegraph without any further processing.
    */
-  sort_children (&self->root, self->flags);
+  if (!sort_children (&self->root, self->flags, cancellable) ||
+      g_cancellable_is_cancelled (cancellable))
+    {
+      g_task_return_error_if_cancelled (task);
+      return;
+    }
 
   g_task_return_pointer (task, g_object_ref (self), g_object_unref);
 }

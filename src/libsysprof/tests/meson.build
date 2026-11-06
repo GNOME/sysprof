@@ -20,6 +20,7 @@ libsysprof_testsuite = {
   'read-build-id'                 : {'skip': true},
   'ninja-to-marks'                : {'skip': true},
   'test-allocs-by-func'           : {'skip': true},
+  'test-callgraph-build'          : {},
   'test-callgraph-augment'        : {},
   'test-callgraph'                : {'skip': true},
   'test-capture-model'            : {'skip': true},

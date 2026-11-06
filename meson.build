@@ -46,7 +46,7 @@ need_libsysprof = (need_gtk or
                    get_option('tests'))
 
 dex_req = '1.2'
-glib_req = '2.76.0'
+glib_req = '2.84.0'
 gtk_req = '4.19.4'
 polkit_req = '0.105'
 

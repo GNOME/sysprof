@@ -118,6 +118,7 @@ struct _SysprofCaptureWriter
    * the address name should come from the JIT map.
    */
   size_t addr_seq;
+  uint64_t memory_event_seq;
 
   /* Our position in addr_buf. */
   size_t addr_buf_pos;
@@ -875,6 +876,13 @@ sysprof_capture_writer_add_metadata (SysprofCaptureWriter *self,
 
   self->stat.frame_count[SYSPROF_CAPTURE_FRAME_METADATA]++;
 
+  {
+    uint64_t event_id = _sysprof_capture_memory_event_id (id);
+
+    if (event_id > self->memory_event_seq)
+      self->memory_event_seq = event_id;
+  }
+
   return true;
 }
 
@@ -974,6 +982,74 @@ sysprof_capture_writer_add_process (SysprofCaptureWriter *self,
 
   self->stat.frame_count[SYSPROF_CAPTURE_FRAME_PROCESS]++;
 
+  return true;
+}
+
+/**
+ * sysprof_capture_writer_request_memory_event:
+ * @self: a capture writer
+ *
+ * Reserves an ID in this writer's memory-event namespace. IDs are not perf IDs.
+ *
+ * Returns: a nonzero ID, or zero if the namespace is exhausted
+ */
+uint64_t
+sysprof_capture_writer_request_memory_event (SysprofCaptureWriter *self)
+{
+  assert (self != NULL);
+
+  if (self->memory_event_seq == UINT64_MAX)
+    return 0;
+
+  return ++self->memory_event_seq;
+}
+
+/**
+ * sysprof_capture_writer_add_memory_sample: (skip)
+ * @self: a capture writer
+ * @sample: fixed fields; frame length and type are set by the writer
+ * @addrs: (nullable): delivery-time callchain with sample->n_addrs entries
+ *
+ * Writes a memory-access sample without changing ordinary sample statistics.
+ *
+ * Returns: whether the frame was written
+ */
+bool
+sysprof_capture_writer_add_memory_sample (SysprofCaptureWriter             *self,
+                                          const SysprofCaptureMemorySample *sample,
+                                          const SysprofCaptureAddress      *addrs)
+{
+  SysprofCaptureMemorySample *ev;
+  size_t len;
+
+  assert (self != NULL);
+  assert (sample != NULL);
+
+  if (sample->n_addrs > SYSPROF_CAPTURE_MEMORY_SAMPLE_MAX_STACK ||
+      (sample->n_addrs != 0 && addrs == NULL) || sample->event_id == 0)
+    {
+      errno = EINVAL;
+      return false;
+    }
+
+  len = sizeof *ev + sample->n_addrs * sizeof *addrs;
+
+  if (!(ev = (SysprofCaptureMemorySample *)sysprof_capture_writer_allocate (self, &len)))
+    return false;
+
+  memcpy (ev, sample, sizeof *ev);
+  sysprof_capture_writer_frame_init (&ev->frame, len, sample->frame.cpu,
+                                     sample->frame.pid, sample->frame.time,
+                                     SYSPROF_CAPTURE_FRAME_MEMORY_SAMPLE);
+  ev->reserved = 0;
+
+  if (sample->n_addrs != 0)
+    memcpy (ev->addrs, addrs, sample->n_addrs * sizeof *addrs);
+
+  if (sample->event_id > self->memory_event_seq)
+    self->memory_event_seq = sample->event_id;
+
+  /* The public statistics array only covers types 0 through 15. */
   return true;
 }
 
@@ -1324,6 +1400,56 @@ _sysprof_capture_writer_splice_from_fd (SysprofCaptureWriter *self,
       errno = EBADMSG;
       return false;
     }
+
+  {
+    SysprofCaptureReader *reader;
+    SysprofCaptureFrameType type;
+    int copy_fd;
+
+    if ((copy_fd = dup (fd)) == -1)
+      goto handle_errno;
+
+    if (!(reader = sysprof_capture_reader_new_from_fd (copy_fd)))
+      goto handle_errno;
+
+    while (sysprof_capture_reader_peek_type (reader, &type))
+      {
+        bool has_memory = type == SYSPROF_CAPTURE_FRAME_MEMORY_SAMPLE;
+
+        if (type == SYSPROF_CAPTURE_FRAME_METADATA)
+          {
+            const SysprofCaptureMetadata *metadata = sysprof_capture_reader_read_metadata (reader);
+
+            if (metadata == NULL)
+              {
+                sysprof_capture_reader_unref (reader);
+
+                errno = EBADMSG;
+                goto handle_errno;
+              }
+
+            has_memory = _sysprof_capture_memory_event_id (metadata->id) != 0;
+          }
+        else if (!has_memory && !sysprof_capture_reader_skip (reader))
+          {
+            sysprof_capture_reader_unref (reader);
+
+            errno = EBADMSG;
+            goto handle_errno;
+          }
+
+        if (has_memory)
+          {
+            bool ret = sysprof_capture_writer_cat (self, reader);
+
+            sysprof_capture_reader_unref (reader);
+
+            return ret;
+          }
+      }
+
+    sysprof_capture_reader_unref (reader);
+  }
 
   if (!sysprof_capture_writer_write_frame_index (self, true))
     goto handle_errno;
@@ -1960,6 +2086,29 @@ _sysprof_capture_writer_add_raw (SysprofCaptureWriter      *self,
   assert (fr->type < SYSPROF_CAPTURE_FRAME_LAST);
 
   memcpy (begin, fr, fr->len);
+
+  if (fr->type == SYSPROF_CAPTURE_FRAME_MEMORY_SAMPLE &&
+      fr->len >= sizeof (SysprofCaptureMemorySample))
+    {
+      const SysprofCaptureMemorySample *sample = (const SysprofCaptureMemorySample *)fr;
+
+      if (sample->event_id > self->memory_event_seq)
+        self->memory_event_seq = sample->event_id;
+    }
+  else if (fr->type == SYSPROF_CAPTURE_FRAME_METADATA &&
+           fr->len >= sizeof (SysprofCaptureMetadata))
+    {
+      const SysprofCaptureMetadata *metadata = (const SysprofCaptureMetadata *)fr;
+      char id[sizeof metadata->id];
+      uint64_t event_id;
+
+      memcpy (id, metadata->id, sizeof id);
+      id[sizeof id - 1] = 0;
+      event_id = _sysprof_capture_memory_event_id (id);
+
+      if (event_id > self->memory_event_seq)
+        self->memory_event_seq = event_id;
+    }
 
   if (fr->type < SYSPROF_N_ELEMENTS (self->stat.frame_count))
     self->stat.frame_count[fr->type]++;

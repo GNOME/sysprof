@@ -26,6 +26,7 @@
 #include "sysprof-document-private.h"
 #include "sysprof-document-symbols-private.h"
 #include "sysprof-document-traceable.h"
+#include "sysprof-document-memory-sample.h"
 #include "sysprof-mount-namespace-private.h"
 #include "sysprof-no-symbolizer.h"
 #include "sysprof-symbol-private.h"
@@ -159,8 +160,22 @@ add_traceable (SysprofDocumentSymbols   *self,
   g_assert (SYSPROF_IS_SYMBOLIZER (symbolizer));
 
   n_addresses = sysprof_document_traceable_get_stack_depth (traceable);
-  addresses = g_alloca (sizeof (guint64) * n_addresses);
+  addresses = g_alloca (sizeof (guint64) * (n_addresses + 2));
   sysprof_document_traceable_get_stack_addresses (traceable, addresses, n_addresses);
+
+  if (SYSPROF_IS_DOCUMENT_MEMORY_SAMPLE (traceable))
+    {
+      SysprofDocumentMemorySample *sample = SYSPROF_DOCUMENT_MEMORY_SAMPLE (traceable);
+      guint flags = sysprof_document_memory_sample_get_flags (sample);
+
+      if (flags & SYSPROF_CAPTURE_MEMORY_SAMPLE_IP)
+        {
+          addresses[n_addresses++] = (flags & SYSPROF_CAPTURE_MEMORY_SAMPLE_KERNEL)
+                                     ? (guint64)-128
+                                     : (guint64)-512;
+          addresses[n_addresses++] = sysprof_document_memory_sample_get_ip (sample);
+        }
+    }
 
   last_context = SYSPROF_ADDRESS_CONTEXT_NONE;
 

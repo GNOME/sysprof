@@ -112,7 +112,8 @@ typedef uint64_t SysprofCaptureAddress;
 typedef struct
 {
   /*
-   * The number of frames indexed by SysprofCaptureFrameType
+   * The number of frames for types 0 through 15, indexed by SysprofCaptureFrameType.
+   * Newer frame types are not accounted for in this legacy ABI array.
    */
   size_t frame_count[16];
 
@@ -130,27 +131,52 @@ typedef union
 
 typedef enum
 {
-  SYSPROF_CAPTURE_FRAME_TIMESTAMP    = 1,
-  SYSPROF_CAPTURE_FRAME_SAMPLE       = 2,
-  SYSPROF_CAPTURE_FRAME_MAP          = 3,
-  SYSPROF_CAPTURE_FRAME_PROCESS      = 4,
-  SYSPROF_CAPTURE_FRAME_FORK         = 5,
-  SYSPROF_CAPTURE_FRAME_EXIT         = 6,
-  SYSPROF_CAPTURE_FRAME_JITMAP       = 7,
-  SYSPROF_CAPTURE_FRAME_CTRDEF       = 8,
-  SYSPROF_CAPTURE_FRAME_CTRSET       = 9,
-  SYSPROF_CAPTURE_FRAME_MARK         = 10,
-  SYSPROF_CAPTURE_FRAME_METADATA     = 11,
-  SYSPROF_CAPTURE_FRAME_LOG          = 12,
-  SYSPROF_CAPTURE_FRAME_FILE_CHUNK   = 13,
-  SYSPROF_CAPTURE_FRAME_ALLOCATION   = 14,
-  SYSPROF_CAPTURE_FRAME_OVERLAY      = 15,
-  SYSPROF_CAPTURE_FRAME_TRACE        = 16,
-  SYSPROF_CAPTURE_FRAME_DBUS_MESSAGE = 17,
+  SYSPROF_CAPTURE_FRAME_TIMESTAMP     = 1,
+  SYSPROF_CAPTURE_FRAME_SAMPLE        = 2,
+  SYSPROF_CAPTURE_FRAME_MAP           = 3,
+  SYSPROF_CAPTURE_FRAME_PROCESS       = 4,
+  SYSPROF_CAPTURE_FRAME_FORK          = 5,
+  SYSPROF_CAPTURE_FRAME_EXIT          = 6,
+  SYSPROF_CAPTURE_FRAME_JITMAP        = 7,
+  SYSPROF_CAPTURE_FRAME_CTRDEF        = 8,
+  SYSPROF_CAPTURE_FRAME_CTRSET        = 9,
+  SYSPROF_CAPTURE_FRAME_MARK          = 10,
+  SYSPROF_CAPTURE_FRAME_METADATA      = 11,
+  SYSPROF_CAPTURE_FRAME_LOG           = 12,
+  SYSPROF_CAPTURE_FRAME_FILE_CHUNK    = 13,
+  SYSPROF_CAPTURE_FRAME_ALLOCATION    = 14,
+  SYSPROF_CAPTURE_FRAME_OVERLAY       = 15,
+  SYSPROF_CAPTURE_FRAME_TRACE         = 16,
+  SYSPROF_CAPTURE_FRAME_DBUS_MESSAGE  = 17,
+  SYSPROF_CAPTURE_FRAME_MEMORY_SAMPLE = 18,
 } SysprofCaptureFrameType;
 
 /* Not part of ABI */
-#define SYSPROF_CAPTURE_FRAME_LAST 18
+#define SYSPROF_CAPTURE_FRAME_LAST 19
+
+#define SYSPROF_CAPTURE_MEMORY_SAMPLE_MAX_STACK 256
+#define SYSPROF_CAPTURE_MEMORY_EVENT_PREFIX "sysprof-memory-event-"
+
+typedef enum
+{
+  SYSPROF_CAPTURE_MEMORY_SAMPLE_IP              = 1 << 0,
+  SYSPROF_CAPTURE_MEMORY_SAMPLE_ADDR            = 1 << 1,
+  SYSPROF_CAPTURE_MEMORY_SAMPLE_PERIOD          = 1 << 2,
+  SYSPROF_CAPTURE_MEMORY_SAMPLE_WEIGHT          = 1 << 3,
+  SYSPROF_CAPTURE_MEMORY_SAMPLE_DATA_SRC        = 1 << 4,
+  SYSPROF_CAPTURE_MEMORY_SAMPLE_EXACT_IP        = 1 << 5,
+  SYSPROF_CAPTURE_MEMORY_SAMPLE_TIME_ENABLED    = 1 << 6,
+  SYSPROF_CAPTURE_MEMORY_SAMPLE_TIME_RUNNING    = 1 << 7,
+  SYSPROF_CAPTURE_MEMORY_SAMPLE_STACK_TRUNCATED = 1 << 8,
+  SYSPROF_CAPTURE_MEMORY_SAMPLE_KERNEL          = 1 << 9,
+} SysprofCaptureMemorySampleFlags;
+
+typedef enum
+{
+  SYSPROF_CAPTURE_MEMORY_WEIGHT_NONE        = 0,
+  SYSPROF_CAPTURE_MEMORY_WEIGHT_PERF        = 1,
+  SYSPROF_CAPTURE_MEMORY_WEIGHT_PERF_STRUCT = 2,
+} SysprofCaptureMemoryWeightType;
 
 SYSPROF_ALIGNED_BEGIN(1)
 typedef struct
@@ -236,6 +262,28 @@ typedef struct
   int32_t               tid;
   SysprofCaptureAddress addrs[0];
 } SysprofCaptureSample
+SYSPROF_ALIGNED_END(1);
+
+/* See doc/memory-samples.md for the versioned event metadata and weight encoding. */
+SYSPROF_ALIGNED_BEGIN(1)
+typedef struct
+{
+  SysprofCaptureFrame   frame;
+  int32_t               tid;
+  uint32_t              flags;
+  uint64_t              event_id;
+  SysprofCaptureAddress ip;
+  SysprofCaptureAddress address;
+  uint64_t              period;
+  uint64_t              weight;
+  uint64_t              data_src;
+  uint64_t              time_enabled;
+  uint64_t              time_running;
+  uint16_t              n_addrs;
+  uint16_t              weight_type;
+  uint32_t              reserved;
+  SysprofCaptureAddress addrs[0];
+} SysprofCaptureMemorySample
 SYSPROF_ALIGNED_END(1);
 
 SYSPROF_ALIGNED_BEGIN(1)
@@ -414,6 +462,8 @@ SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureMap) == 56, "SysprofCaptureMap chan
 SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureJitmap) == 28, "SysprofCaptureJitmap changed size");
 SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureProcess) == 24, "SysprofCaptureProcess changed size");
 SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureSample) == 32, "SysprofCaptureSample changed size");
+SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureMemorySample) == 104, "SysprofCaptureMemorySample changed size");
+SYSPROF_STATIC_ASSERT ((offsetof (SysprofCaptureMemorySample, addrs) % SYSPROF_CAPTURE_ALIGN) == 0, "Memory sample stack alignment");
 SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureTrace) == 32, "SysprofCaptureTrace changed size");
 SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureFork) == 28, "SysprofCaptureFork changed size");
 SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureExit) == 24, "SysprofCaptureExit changed size");

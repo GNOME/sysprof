@@ -47,6 +47,7 @@
 #include "sysprof-document-overlay.h"
 #include "sysprof-document-process-private.h"
 #include "sysprof-document-sample.h"
+#include "sysprof-document-memory-sample.h"
 #include "sysprof-document-traceable-private.h"
 #include "sysprof-document-symbols-private.h"
 #include "sysprof-elf-symbolizer.h"
@@ -103,6 +104,7 @@ struct _SysprofDocument
   EggBitset                *pids;
   EggBitset                *processes;
   EggBitset                *samples;
+  EggBitset                *memory_samples;
   EggBitset                *samples_with_context_switch;
   EggBitset                *traceables;
 
@@ -400,6 +402,7 @@ sysprof_document_finalize (GObject *object)
   g_clear_pointer (&self->pids, egg_bitset_unref);
   g_clear_pointer (&self->processes, egg_bitset_unref);
   g_clear_pointer (&self->samples, egg_bitset_unref);
+  g_clear_pointer (&self->memory_samples, egg_bitset_unref);
   g_clear_pointer (&self->samples_with_context_switch, egg_bitset_unref);
   g_clear_pointer (&self->traceables, egg_bitset_unref);
 
@@ -612,6 +615,7 @@ sysprof_document_init (SysprofDocument *self)
   self->pids = egg_bitset_new_empty ();
   self->processes = egg_bitset_new_empty ();
   self->samples = egg_bitset_new_empty ();
+  self->memory_samples = egg_bitset_new_empty ();
   self->samples_with_context_switch = egg_bitset_new_empty ();
   self->traceables = egg_bitset_new_empty ();
 
@@ -1049,6 +1053,7 @@ is_data_type (SysprofCaptureFrameType type)
     case SYSPROF_CAPTURE_FRAME_MAP:
     case SYSPROF_CAPTURE_FRAME_MARK:
     case SYSPROF_CAPTURE_FRAME_PROCESS:
+    case SYSPROF_CAPTURE_FRAME_MEMORY_SAMPLE:
     case SYSPROF_CAPTURE_FRAME_SAMPLE:
     case SYSPROF_CAPTURE_FRAME_TRACE:
       return TRUE;
@@ -1256,6 +1261,21 @@ frame_scan_run (FrameScan *scan)
         break;
 
       frame = (const SysprofCaptureFrame *)(const void *)&scan->base[pos];
+
+      if (frame->type == SYSPROF_CAPTURE_FRAME_MEMORY_SAMPLE)
+        {
+          const SysprofCaptureMemorySample *sample = (const SysprofCaptureMemorySample *)frame;
+          guint n_addrs;
+
+          if (frame_len < sizeof *sample)
+            break;
+          n_addrs = swap_uint16 (scan->needs_swap, sample->n_addrs);
+
+          if (n_addrs > SYSPROF_CAPTURE_MEMORY_SAMPLE_MAX_STACK ||
+              frame_len != sizeof *sample + n_addrs * sizeof (guint64) ||
+              sample->event_id == 0)
+            break;
+        }
 
       if (!frame_is_index (frame, frame_len))
         {
@@ -1722,6 +1742,17 @@ sysprof_document_load_worker (GTask        *task,
         case SYSPROF_CAPTURE_FRAME_ALLOCATION:
           egg_bitset_add (self->allocations, f);
           egg_bitset_add (self->traceables, f);
+          break;
+
+        case SYSPROF_CAPTURE_FRAME_MEMORY_SAMPLE:
+          {
+            const SysprofCaptureMemorySample *sample = (const SysprofCaptureMemorySample *)tainted;
+            SysprofProcessInfo *info = _sysprof_document_process_info (self, pid, TRUE);
+
+            egg_bitset_add (self->memory_samples, f);
+            egg_bitset_add (self->traceables, f);
+            sysprof_process_info_seen_thread (info, swap_int32 (self->needs_swap, sample->tid));
+          }
           break;
 
         case SYSPROF_CAPTURE_FRAME_SAMPLE:
@@ -2302,6 +2333,25 @@ sysprof_document_list_allocations (SysprofDocument *self)
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
   return _sysprof_document_bitset_index_new_full (G_LIST_MODEL (self), self->allocations, SYSPROF_TYPE_DOCUMENT_ALLOCATION);
+}
+
+/**
+ * sysprof_document_list_memory_samples:
+ * @self: a document
+ *
+ * Lists memory-access traceables, separately from CPU samples. Frame time and
+ * PID, traceable TID, and memory event ID can be used to filter this model.
+ *
+ * Returns: (transfer full): a list of [class@Sysprof.DocumentMemorySample]
+ * Since: 52
+ */
+GListModel *
+sysprof_document_list_memory_samples (SysprofDocument *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  return _sysprof_document_bitset_index_new_full (G_LIST_MODEL (self), self->memory_samples,
+                                                  SYSPROF_TYPE_DOCUMENT_MEMORY_SAMPLE);
 }
 
 /**

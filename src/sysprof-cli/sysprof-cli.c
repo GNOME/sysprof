@@ -302,6 +302,7 @@ main (int   argc,
   gboolean no_cpu = FALSE;
   gboolean no_disk = FALSE;
   gboolean no_memory = FALSE;
+  gboolean memory_samples = FALSE;
   gboolean no_network = FALSE;
   gboolean no_perf = FALSE;
   gboolean no_throttle = FALSE;
@@ -333,6 +334,7 @@ main (int   argc,
     { "no-disk", 0, 0, G_OPTION_ARG_NONE, &no_disk, N_("Disable recording of Disk statistics") },
     { "no-perf", 0, 0, G_OPTION_ARG_NONE, &no_perf, N_("Do not record stacktraces using Linux perf") },
     { "no-decode", 0, 0, G_OPTION_ARG_NONE, &no_decode, N_("Do not append symbol name information from local machine") },
+    { "memory-samples", 0, 0, G_OPTION_ARG_NONE, &memory_samples, N_("Record precise CPU memory loads (supported Intel PMUs)") },
     { "no-memory", 0, 0, G_OPTION_ARG_NONE, &no_memory, N_("Disable recording of memory statistics") },
     { "no-network", 0, 0, G_OPTION_ARG_NONE, &no_network, N_("Disable recording of network statistics") },
     { "use-trace-fd", 0, 0, G_OPTION_ARG_NONE, &use_trace_fd, N_("Set SYSPROF_TRACE_FD environment for subprocess") },
@@ -576,6 +578,9 @@ Examples:\n\
 
   if (!no_cpu)
     sysprof_profiler_add_instrument (profiler, sysprof_cpu_usage_new ());
+
+  if (memory_samples)
+    sysprof_profiler_add_instrument (profiler, sysprof_memory_sampler_new ());
 
   if (!no_memory)
     sysprof_profiler_add_instrument (profiler, sysprof_memory_usage_new ());

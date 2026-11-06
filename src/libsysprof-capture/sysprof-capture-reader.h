@@ -64,6 +64,9 @@
 
 SYSPROF_BEGIN_DECLS
 
+SYSPROF_AVAILABLE_IN_52
+const SysprofCaptureMemorySample   *sysprof_capture_reader_read_memory_sample  (SysprofCaptureReader     *self);
+
 SYSPROF_AVAILABLE_IN_ALL
 SysprofCaptureReader               *sysprof_capture_reader_new                 (const char                *filename);
 SYSPROF_AVAILABLE_IN_ALL

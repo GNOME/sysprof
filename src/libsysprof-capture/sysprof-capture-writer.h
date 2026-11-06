@@ -65,6 +65,13 @@
 
 SYSPROF_BEGIN_DECLS
 
+SYSPROF_AVAILABLE_IN_52
+uint64_t               sysprof_capture_writer_request_memory_event  (SysprofCaptureWriter             *self);
+SYSPROF_AVAILABLE_IN_52
+bool                   sysprof_capture_writer_add_memory_sample     (SysprofCaptureWriter             *self,
+                                                                     const SysprofCaptureMemorySample *sample,
+                                                                     const SysprofCaptureAddress      *addrs);
+
 SYSPROF_AVAILABLE_IN_ALL
 SysprofCaptureWriter *sysprof_capture_writer_new_from_env                    (size_t                             buffer_size);
 SYSPROF_AVAILABLE_IN_ALL

@@ -13,6 +13,10 @@
 
       Performs the perf_event_open() syscall with elevated privileges and passes
       the resulting fd back to the calling process.
+
+      The perf-event-open-memory capability indicates support for precise_ip,
+      config1, config2, read_format, exclude_user, exclude_kernel and exclude_hv,
+      and the lower minimum sampling period for precise memory events.
     -->
     <method name="PerfEventOpen">
       <annotation name="org.gtk.GDBus.C.UnixFD" value="true"/>
@@ -22,6 +26,22 @@
       <arg name="group_fd" type="h" direction="in"/>
       <arg name="flags" type="t" direction="in"/>
       <arg name="perf_stream_fd" type="h" direction="out"/>
+    </method>
+
+    <!--
+      GetCapabilities:
+      @capabilities: (out): a dictionary of supported service features.
+
+      Returns service capabilities without requiring profiling authorization.
+      Missing keys indicate unsupported features. Unknown keys should be ignored.
+      Older services may not implement this method.
+
+      perf-event-open-memory (boolean): PerfEventOpen supports the attributes
+      and sampling period required for precise memory sampling. This describes
+      service support, not hardware availability or permission to open an event.
+    -->
+    <method name="GetCapabilities">
+      <arg name="capabilities" type="a{sv}" direction="out"/>
     </method>
 
     <!--

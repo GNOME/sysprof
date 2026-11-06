@@ -256,6 +256,24 @@ ipc_service_impl_handle_perf_event_open (IpcService            *service,
 }
 
 static gboolean
+ipc_service_impl_handle_get_capabilities (IpcService            *service,
+                                          GDBusMethodInvocation *invocation)
+{
+  GVariantBuilder builder;
+
+  g_assert (IPC_IS_SERVICE_IMPL (service));
+  g_assert (G_IS_DBUS_METHOD_INVOCATION (invocation));
+
+  g_variant_builder_init (&builder, G_VARIANT_TYPE_VARDICT);
+#ifdef __linux__
+  g_variant_builder_add (&builder, "{sv}", "perf-event-open-memory", g_variant_new_boolean (TRUE));
+#endif
+  ipc_service_complete_get_capabilities (service, invocation, g_variant_builder_end (&builder));
+
+  return TRUE;
+}
+
+static gboolean
 ipc_service_impl_g_authorize_method (GDBusInterfaceSkeleton *skeleton,
                                      GDBusMethodInvocation  *invocation)
 {
@@ -269,6 +287,9 @@ ipc_service_impl_g_authorize_method (GDBusInterfaceSkeleton *skeleton,
   g_assert (G_IS_DBUS_METHOD_INVOCATION (invocation));
 
   g_signal_emit (skeleton, signals [ACTIVITY], 0);
+
+  if (g_str_equal (g_dbus_method_invocation_get_method_name (invocation), "GetCapabilities"))
+    return TRUE;
 
   peer_name = g_dbus_method_invocation_get_sender (invocation);
 
@@ -429,6 +450,7 @@ init_service_iface (IpcServiceIface *iface)
   iface->handle_get_proc_file = ipc_service_impl_handle_get_proc_file;
   iface->handle_get_proc_fd = ipc_service_impl_handle_get_proc_fd;
   iface->handle_perf_event_open = ipc_service_impl_handle_perf_event_open;
+  iface->handle_get_capabilities = ipc_service_impl_handle_get_capabilities;
   iface->handle_get_process_info = ipc_service_impl_handle_get_process_info;
   iface->handle_set_governor = ipc_service_impl_handle_set_governor;
   iface->handle_set_paranoid = ipc_service_impl_handle_set_paranoid;

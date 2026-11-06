@@ -60,6 +60,8 @@
 # include <sys/sendfile.h>
 #endif
 
+#include "sysprof-capture-types.h"
+
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
@@ -125,3 +127,31 @@ void *_sysprof_reallocarray  (void       *ptr,
                               size_t      m,
                               size_t      n);
 #endif
+
+/* Metadata IDs have a fixed-width lowercase hexadecimal suffix. */
+static inline uint64_t
+_sysprof_capture_memory_event_id (const char *id)
+{
+  const char *prefix = SYSPROF_CAPTURE_MEMORY_EVENT_PREFIX;
+  uint64_t value = 0;
+  size_t len = strlen (prefix);
+
+  if (strncmp (id, prefix, len) != 0 || strlen (id) != len + 16)
+    return 0;
+
+  for (size_t i = len; i < len + 16; i++)
+    {
+      unsigned int digit;
+
+      if (id[i] >= '0' && id[i] <= '9')
+        digit = id[i] - '0';
+      else if (id[i] >= 'a' && id[i] <= 'f')
+        digit = id[i] - 'a' + 10;
+      else
+        return 0;
+
+      value = (value << 4) | digit;
+    }
+
+  return value;
+}

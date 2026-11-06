@@ -58,6 +58,8 @@
 
 #include <assert.h>
 #include <errno.h>
+#include <inttypes.h>
+#include <stdio.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -83,6 +85,7 @@ typedef struct
 enum {
   TRANSLATE_ADDR,
   TRANSLATE_CTR,
+  TRANSLATE_MEMORY_EVENT,
   N_TRANSLATE
 };
 
@@ -169,6 +172,25 @@ translate_table_translate (TranslateTable *tables,
   return item != NULL ? item->dst : src;
 }
 
+static uint64_t
+translate_memory_event (SysprofCaptureWriter *writer,
+                        TranslateTable       *tables,
+                        uint64_t              src)
+{
+  TranslateTable *table = &tables[TRANSLATE_MEMORY_EVENT];
+  uint64_t dst;
+
+  for (size_t i = 0; i < table->n_items; i++)
+    if (table->items[i].src == src)
+      return table->items[i].dst;
+
+  if (src == 0 || !(dst = sysprof_capture_writer_request_memory_event (writer)))
+    return 0;
+
+  translate_table_add (tables, TRANSLATE_MEMORY_EVENT, src, dst);
+  return dst;
+}
+
 bool
 sysprof_capture_writer_cat (SysprofCaptureWriter *self,
                             SysprofCaptureReader *reader)
@@ -185,6 +207,7 @@ sysprof_capture_writer_cat (SysprofCaptureWriter *self,
   sysprof_capture_reader_reset (reader);
 
   translate_table_clear (tables, TRANSLATE_CTR);
+  translate_table_clear (tables, TRANSLATE_MEMORY_EVENT);
   translate_table_clear (tables, TRANSLATE_ADDR);
 
   start_time = sysprof_capture_reader_get_start_time (reader);
@@ -382,15 +405,28 @@ sysprof_capture_writer_cat (SysprofCaptureWriter *self,
         case SYSPROF_CAPTURE_FRAME_METADATA:
           {
             const SysprofCaptureMetadata *frame;
+            char id[40];
+            uint64_t event_id;
 
             if (!(frame = sysprof_capture_reader_read_metadata (reader)))
               goto panic;
+
+            memcpy (id, frame->id, sizeof id);
+            id[sizeof id - 1] = 0;
+
+            if ((event_id = _sysprof_capture_memory_event_id (id)))
+              {
+                if (!(event_id = translate_memory_event (self, tables, event_id)))
+                  goto panic;
+                snprintf (id, sizeof id, SYSPROF_CAPTURE_MEMORY_EVENT_PREFIX "%016" PRIx64,
+                          event_id);
+              }
 
             sysprof_capture_writer_add_metadata (self,
                                                  frame->frame.time,
                                                  frame->frame.cpu,
                                                  frame->frame.pid,
-                                                 frame->id,
+                                                 id,
                                                  frame->metadata,
                                                  frame->frame.len - offsetof (SysprofCaptureMetadata, metadata));
             break;
@@ -411,6 +447,26 @@ sysprof_capture_writer_cat (SysprofCaptureWriter *self,
                                                      frame->flags,
                                                      frame->message,
                                                      frame->message_len);
+            break;
+          }
+
+        case SYSPROF_CAPTURE_FRAME_MEMORY_SAMPLE:
+          {
+            const SysprofCaptureMemorySample *frame;
+            SysprofCaptureMemorySample sample;
+            SysprofCaptureAddress addrs[SYSPROF_CAPTURE_MEMORY_SAMPLE_MAX_STACK];
+
+            if (!(frame = sysprof_capture_reader_read_memory_sample (reader)))
+              goto panic;
+
+            sample = *frame;
+            sample.event_id = translate_memory_event (self, tables, frame->event_id);
+            sample.ip = translate_table_translate (tables, TRANSLATE_ADDR, frame->ip);
+            for (unsigned int i = 0; i < frame->n_addrs; i++)
+              addrs[i] = translate_table_translate (tables, TRANSLATE_ADDR, frame->addrs[i]);
+
+            if (!sysprof_capture_writer_add_memory_sample (self, &sample, addrs))
+              goto panic;
             break;
           }
 
@@ -622,12 +678,14 @@ sysprof_capture_writer_cat (SysprofCaptureWriter *self,
 
   translate_table_clear (tables, TRANSLATE_ADDR);
   translate_table_clear (tables, TRANSLATE_CTR);
+  translate_table_clear (tables, TRANSLATE_MEMORY_EVENT);
 
   return true;
 
 panic:
   translate_table_clear (tables, TRANSLATE_ADDR);
   translate_table_clear (tables, TRANSLATE_CTR);
+  translate_table_clear (tables, TRANSLATE_MEMORY_EVENT);
 
   errno = EIO;
   return false;

@@ -179,4 +179,8 @@ gboolean   sysprof_perf_event_stream_disable   (SysprofPerfEventStream        *s
                                                 GError                       **error);
 GVariant  *_sysprof_perf_event_attr_to_variant (const struct perf_event_attr  *attr);
 
+gboolean   _sysprof_perf_event_stream_read_times (SysprofPerfEventStream        *self,
+                                                  guint64                       *enabled,
+                                                  guint64                       *running);
+
 G_END_DECLS

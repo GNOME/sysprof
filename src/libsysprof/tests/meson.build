@@ -36,6 +36,7 @@ libsysprof_testsuite = {
   'test-maps-parser'              : {'skip': true},
   'test-mark-catalog'             : {'skip': true},
   'test-print-file'               : {'skip': true},
+  'test-recording-stop'           : {},
   'test-profiler'                 : {'skip': true},
   'test-list-processes'           : {'skip': true},
   'test-list-address-layout'      : {'skip': true},

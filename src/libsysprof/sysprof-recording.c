@@ -509,10 +509,20 @@ sysprof_recording_stop_finish (SysprofRecording  *self,
                                GAsyncResult      *result,
                                GError           **error)
 {
+  g_autoptr(GError) local_error = NULL;
+
   g_return_val_if_fail (SYSPROF_IS_RECORDING (self), FALSE);
   g_return_val_if_fail (DEX_IS_ASYNC_RESULT (result), FALSE);
 
-  return dex_async_result_propagate_boolean (DEX_ASYNC_RESULT (result), error);
+  /* A channel send resolves with its queue length, not a boolean. */
+  dex_async_result_propagate_int (DEX_ASYNC_RESULT (result), &local_error);
+  if (local_error != NULL)
+    {
+      g_propagate_error (error, g_steal_pointer (&local_error));
+      return FALSE;
+    }
+
+  return TRUE;
 }
 
 void

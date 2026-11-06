@@ -640,6 +640,14 @@ sysprof_callgraph_get_augment (SysprofCallgraph     *self,
   if (node == NULL)
     node = &self->root;
 
+  if (self->augment_size > INLINE_AUGMENT_SIZE)
+    {
+      if (node->augment[0] == NULL)
+        node->augment[0] = sysprof_allocator_alloc0 (self->allocator, self->augment_size);
+
+      return node->augment[0];
+    }
+
   return get_augmentation (self, &node->augment[0]);
 }
 

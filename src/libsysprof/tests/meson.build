@@ -29,6 +29,7 @@ libsysprof_testsuite = {
   'test-cplusplus'                : {'cpp': true},
   'test-cpu-modes'                : {},
   'test-cpu-list'                 : {},
+  'test-cpu-kind'                 : {},
   'test-elf-loader'               : {'skip': true},
   'test-flatpak-info'             : {'link_args': ['-Wl,--build-id=sha1']},
   'test-leak-detector'            : {'skip': true},

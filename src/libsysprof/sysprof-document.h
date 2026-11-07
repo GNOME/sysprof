@@ -38,78 +38,17 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_DOCUMENT (sysprof_document_get_type())
 
+typedef enum
+{
+  SYSPROF_CPU_KIND_UNKNOWN,
+  SYSPROF_CPU_KIND_PERFORMANCE,
+  SYSPROF_CPU_KIND_EFFICIENCY,
+  SYSPROF_CPU_KIND_LOW_POWER_EFFICIENCY,
+} SysprofCpuKind;
+
 SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofDocument, sysprof_document, SYSPROF, DOCUMENT, GObject)
 
-SYSPROF_AVAILABLE_IN_ALL
-char                   *sysprof_document_dup_title                           (SysprofDocument           *self);
-SYSPROF_AVAILABLE_IN_ALL
-char                   *sysprof_document_dup_subtitle                        (SysprofDocument           *self);
-SYSPROF_AVAILABLE_IN_ALL
-const SysprofTimeSpan  *sysprof_document_get_time_span                       (SysprofDocument           *self);
-SYSPROF_AVAILABLE_IN_ALL
-SysprofDocumentFile    *sysprof_document_lookup_file                         (SysprofDocument           *self,
-                                                                              const char                *path);
-SYSPROF_AVAILABLE_IN_ALL
-SysprofDocumentProcess *sysprof_document_lookup_process                      (SysprofDocument           *self,
-                                                                              int                        pid);
-SYSPROF_AVAILABLE_IN_ALL
-GListModel             *sysprof_document_list_cpu_info                       (SysprofDocument           *self);
-SYSPROF_AVAILABLE_IN_ALL
-GListModel             *sysprof_document_list_files                          (SysprofDocument           *self);
-SYSPROF_AVAILABLE_IN_ALL
-GListModel             *sysprof_document_list_traceables                     (SysprofDocument           *self);
-SYSPROF_AVAILABLE_IN_ALL
-GListModel             *sysprof_document_list_allocations                    (SysprofDocument           *self);
-SYSPROF_AVAILABLE_IN_ALL
-GListModel             *sysprof_document_list_dbus_messages                  (SysprofDocument           *self);
-SYSPROF_AVAILABLE_IN_ALL
-GListModel             *sysprof_document_list_logs                           (SysprofDocument           *self);
-SYSPROF_AVAILABLE_IN_ALL
-GListModel             *sysprof_document_list_metadata                       (SysprofDocument           *self);
-SYSPROF_AVAILABLE_IN_ALL
-GListModel             *sysprof_document_list_samples                        (SysprofDocument           *self);
-SYSPROF_AVAILABLE_IN_ALL
-GListModel             *sysprof_document_list_samples_with_context_switch    (SysprofDocument           *self);
-SYSPROF_AVAILABLE_IN_ALL
-GListModel             *sysprof_document_list_samples_without_context_switch (SysprofDocument           *self);
-SYSPROF_AVAILABLE_IN_ALL
-GListModel             *sysprof_document_list_processes                      (SysprofDocument           *self);
-SYSPROF_AVAILABLE_IN_ALL
-GListModel             *sysprof_document_list_jitmaps                        (SysprofDocument           *self);
-SYSPROF_AVAILABLE_IN_ALL
-GListModel             *sysprof_document_list_counters                       (SysprofDocument           *self);
-SYSPROF_AVAILABLE_IN_ALL
-GListModel             *sysprof_document_list_marks                          (SysprofDocument           *self);
-SYSPROF_AVAILABLE_IN_ALL
-GListModel             *sysprof_document_list_marks_by_group                 (SysprofDocument           *self,
-                                                                              const char                *group);
-SYSPROF_AVAILABLE_IN_ALL
-GListModel             *sysprof_document_catalog_marks                       (SysprofDocument           *self);
-SYSPROF_AVAILABLE_IN_ALL
-SysprofDocumentCounter *sysprof_document_find_counter                        (SysprofDocument           *self,
-                                                                              const char                *category,
-                                                                              const char                *name);
-SYSPROF_AVAILABLE_IN_ALL
-void                    sysprof_document_resolve_source_location_async       (SysprofDocument           *self,
-                                                                              SysprofDocumentTraceable  *traceable,
-                                                                              guint                      position,
-                                                                              GCancellable              *cancellable,
-                                                                              GAsyncReadyCallback        callback,
-                                                                              gpointer                   user_data);
-SYSPROF_AVAILABLE_IN_ALL
-SysprofSourceLocation  *sysprof_document_resolve_source_location_finish      (SysprofDocument           *self,
-                                                                              GAsyncResult              *result,
-                                                                              GError                   **error);
-SYSPROF_AVAILABLE_IN_ALL
-GListModel             *sysprof_document_list_symbols_in_traceable           (SysprofDocument           *self,
-                                                                              SysprofDocumentTraceable  *traceable);
-SYSPROF_AVAILABLE_IN_ALL
-guint                   sysprof_document_symbolize_traceable                 (SysprofDocument           *self,
-                                                                              SysprofDocumentTraceable  *traceable,
-                                                                              SysprofSymbol            **symbols,
-                                                                              guint                      n_symbols,
-                                                                              SysprofAddressContext     *final_context);
 SYSPROF_AVAILABLE_IN_ALL
 void                    sysprof_document_callgraph_async                     (SysprofDocument           *self,
                                                                               SysprofCallgraphFlags      flags,
@@ -126,12 +65,73 @@ SysprofCallgraph       *sysprof_document_callgraph_finish                    (Sy
                                                                               GAsyncResult              *result,
                                                                               GError                   **error);
 SYSPROF_AVAILABLE_IN_ALL
-void                    sysprof_document_serialize_symbols_async             (SysprofDocument           *self,
+GListModel             *sysprof_document_catalog_marks                       (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
+char                   *sysprof_document_dup_subtitle                        (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
+char                   *sysprof_document_dup_title                           (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofDocumentCounter *sysprof_document_find_counter                        (SysprofDocument           *self,
+                                                                              const char                *category,
+                                                                              const char                *name);
+SYSPROF_AVAILABLE_IN_ALL
+gboolean                sysprof_document_get_busy                            (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_52
+SysprofCpuKind          sysprof_document_get_cpu_kind                        (SysprofDocument           *self,
+                                                                              int                        cpu);
+SYSPROF_AVAILABLE_IN_ALL
+const SysprofTimeSpan  *sysprof_document_get_time_span                       (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
+GListModel             *sysprof_document_list_allocations                    (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
+GListModel             *sysprof_document_list_counters                       (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
+GListModel             *sysprof_document_list_cpu_info                       (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
+GListModel             *sysprof_document_list_dbus_messages                  (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
+GListModel             *sysprof_document_list_files                          (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
+GListModel             *sysprof_document_list_jitmaps                        (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
+GListModel             *sysprof_document_list_logs                           (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
+GListModel             *sysprof_document_list_marks                          (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
+GListModel             *sysprof_document_list_marks_by_group                 (SysprofDocument           *self,
+                                                                              const char                *group);
+SYSPROF_AVAILABLE_IN_52
+GListModel             *sysprof_document_list_memory_samples                 (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
+GListModel             *sysprof_document_list_metadata                       (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
+GListModel             *sysprof_document_list_processes                      (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
+GListModel             *sysprof_document_list_samples                        (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
+GListModel             *sysprof_document_list_samples_with_context_switch    (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
+GListModel             *sysprof_document_list_samples_without_context_switch (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
+GListModel             *sysprof_document_list_symbols_in_traceable           (SysprofDocument           *self,
+                                                                              SysprofDocumentTraceable  *traceable);
+SYSPROF_AVAILABLE_IN_ALL
+GListModel             *sysprof_document_list_traceables                     (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofDocumentFile    *sysprof_document_lookup_file                         (SysprofDocument           *self,
+                                                                              const char                *path);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofDocumentProcess *sysprof_document_lookup_process                      (SysprofDocument           *self,
+                                                                              int                        pid);
+SYSPROF_AVAILABLE_IN_ALL
+void                    sysprof_document_resolve_source_location_async       (SysprofDocument           *self,
+                                                                              SysprofDocumentTraceable  *traceable,
+                                                                              guint                      position,
                                                                               GCancellable              *cancellable,
                                                                               GAsyncReadyCallback        callback,
                                                                               gpointer                   user_data);
 SYSPROF_AVAILABLE_IN_ALL
-GBytes                 *sysprof_document_serialize_symbols_finish            (SysprofDocument           *self,
+SysprofSourceLocation  *sysprof_document_resolve_source_location_finish      (SysprofDocument           *self,
                                                                               GAsyncResult              *result,
                                                                               GError                   **error);
 SYSPROF_AVAILABLE_IN_ALL
@@ -145,8 +145,19 @@ gboolean                sysprof_document_save_finish                         (Sy
                                                                               GAsyncResult              *result,
                                                                               GError                   **error);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean                sysprof_document_get_busy                            (SysprofDocument           *self);
-SYSPROF_AVAILABLE_IN_52
-GListModel             *sysprof_document_list_memory_samples                 (SysprofDocument           *self);
+void                    sysprof_document_serialize_symbols_async             (SysprofDocument           *self,
+                                                                              GCancellable              *cancellable,
+                                                                              GAsyncReadyCallback        callback,
+                                                                              gpointer                   user_data);
+SYSPROF_AVAILABLE_IN_ALL
+GBytes                 *sysprof_document_serialize_symbols_finish            (SysprofDocument           *self,
+                                                                              GAsyncResult              *result,
+                                                                              GError                   **error);
+SYSPROF_AVAILABLE_IN_ALL
+guint                   sysprof_document_symbolize_traceable                 (SysprofDocument           *self,
+                                                                              SysprofDocumentTraceable  *traceable,
+                                                                              SysprofSymbol            **symbols,
+                                                                              guint                      n_symbols,
+                                                                              SysprofAddressContext     *final_context);
 
 G_END_DECLS

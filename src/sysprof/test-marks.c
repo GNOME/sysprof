@@ -39,10 +39,11 @@ new_document (guint count)
   g_autoptr(SysprofDocumentLoader) loader = NULL;
   SysprofDocument *document;
   int fd = g_file_open_tmp ("sysprof-marks-XXXXXX", &path, &error);
-  gint64 base = SYSPROF_CAPTURE_CURRENT_TIME;
+  gint64 base;
 
   g_assert_no_error (error);
   writer = sysprof_capture_writer_new_from_fd (fd, 0);
+  base = SYSPROF_CAPTURE_CURRENT_TIME;
   for (guint i = 0; i < count; i++)
     g_assert_true (sysprof_capture_writer_add_mark (writer, base + i / 2, -1, 42,
                                                    (i * 13) % 1000,
@@ -287,6 +288,7 @@ test_table (void)
   while (!gtk_widget_get_mapped (table) || gtk_sort_list_model_get_pending (sort))
     g_main_context_iteration (NULL, TRUE);
   g_assert_nonnull (sysprof_time_filter_model_get_model (filter));
+  g_assert_cmpuint (g_list_model_get_n_items (G_LIST_MODEL (sort)), ==, 20000);
   assert_order (G_LIST_MODEL (sort));
   {
     g_autoptr(GtkColumnViewColumn) column = g_list_model_get_item (gtk_column_view_get_columns (view), 1);

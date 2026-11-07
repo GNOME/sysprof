@@ -34,7 +34,8 @@ struct _SysprofTimeFilterModel
   guint              inclusive : 1;
 };
 
-enum {
+enum
+{
   PROP_0,
   PROP_EXPRESSION,
   PROP_INCLUSIVE,
@@ -75,7 +76,7 @@ list_model_iface_init (GListModelInterface *iface)
 G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofTimeFilterModel, sysprof_time_filter_model, G_TYPE_OBJECT,
                                G_IMPLEMENT_INTERFACE (G_TYPE_LIST_MODEL, list_model_iface_init))
 
-static GParamSpec *properties [N_PROPS];
+static GParamSpec *properties[N_PROPS];
 
 static inline gint64
 get_item_time (SysprofTimeFilterModel *self,
@@ -83,8 +84,9 @@ get_item_time (SysprofTimeFilterModel *self,
 {
   g_auto(GValue) value = G_VALUE_INIT;
 
-  g_value_init (&value, G_TYPE_INT64);
-  gtk_expression_evaluate (self->expression, item, &value);
+  if (!gtk_expression_evaluate (self->expression, item, &value))
+    return 0;
+
   return g_value_get_int64 (&value);
 }
 
@@ -185,17 +187,23 @@ sysprof_time_filter_model_class_init (SysprofTimeFilterModelClass *klass)
   properties[PROP_INCLUSIVE] =
     g_param_spec_boolean ("inclusive", NULL, NULL,
                           TRUE,
-                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+                          (G_PARAM_READWRITE |
+                           G_PARAM_EXPLICIT_NOTIFY |
+                           G_PARAM_STATIC_STRINGS));
 
   properties[PROP_MODEL] =
     g_param_spec_object ("model", NULL, NULL,
                          G_TYPE_LIST_MODEL,
-                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READWRITE |
+                          G_PARAM_EXPLICIT_NOTIFY |
+                          G_PARAM_STATIC_STRINGS));
 
   properties[PROP_TIME_SPAN] =
     g_param_spec_boxed ("time-span", NULL, NULL,
                         SYSPROF_TYPE_TIME_SPAN,
-                        (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+                        (G_PARAM_READWRITE |
+                         G_PARAM_EXPLICIT_NOTIFY |
+                         G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
@@ -225,132 +233,48 @@ sysprof_time_filter_model_init (SysprofTimeFilterModel *self)
                            G_CONNECT_SWAPPED);
 }
 
-static inline void
-uint_order (guint *a,
-            guint *b)
-{
-  if (*a > *b)
-    {
-      guint what_was_a = *a;
-      *a = *b;
-      *b = what_was_a;
-    }
-}
-
 static guint
-binary_search_lte (SysprofTimeFilterModel *self,
-                   GListModel             *model,
-                   gint64                  value)
+binary_search_lower_bound (SysprofTimeFilterModel *self,
+                           GListModel             *model,
+                           gint64                  value)
 {
-  g_autoptr(GObject) first = NULL;
-  g_autoptr(GObject) last = NULL;
-  guint lo;
-  guint hi;
-  guint n_items;
+  guint lo = 0;
+  guint hi = g_list_model_get_n_items (model);
 
-  g_assert (G_IS_LIST_MODEL (model));
-  g_assert (g_list_model_get_n_items (model) > 0);
-
-  n_items = g_list_model_get_n_items (model);
-  first = g_list_model_get_item (model, 0);
-  last = g_list_model_get_item (model, n_items - 1);
-
-  if (value < get_item_time (self, first))
-    return GTK_INVALID_LIST_POSITION;
-  else if (value == get_item_time (self, first))
-    return 0;
-  else if (value >= get_item_time (self, last))
-    return n_items - 1;
-
-  g_clear_object (&first);
-  g_clear_object (&last);
-
-  lo = 0;
-  hi = n_items - 1;
-
-  while (lo <= hi)
+  while (lo < hi)
     {
       guint mid = lo + (hi - lo) / 2;
       g_autoptr(GObject) item = g_list_model_get_item (model, mid);
 
-      if (value < get_item_time (self, item))
-        hi = mid - 1;
-      else if (value > get_item_time (self, item))
+      if (get_item_time (self, item) < value)
         lo = mid + 1;
       else
-        return mid;
+        hi = mid;
     }
 
-  uint_order (&lo, &hi);
-
-  first = g_list_model_get_item (model, lo);
-  last = g_list_model_get_item (model, hi);
-
-  if (value < get_item_time (self, first))
-    return lo - 1;
-  else if (value > get_item_time (self, first))
-    return lo;
-  else if (value < get_item_time (self, last))
-    return hi;
-
-  return GTK_INVALID_LIST_POSITION;
+  return lo;
 }
 
 static guint
-binary_search_gte (SysprofTimeFilterModel *self,
-                   GListModel             *model,
-                   gint64                  value)
+binary_search_upper_bound (SysprofTimeFilterModel *self,
+                           GListModel             *model,
+                           gint64                  value)
 {
-  g_autoptr(GObject) first = NULL;
-  g_autoptr(GObject) last = NULL;
-  guint lo;
-  guint hi;
-  guint n_items;
+  guint lo = 0;
+  guint hi = g_list_model_get_n_items (model);
 
-  g_assert (G_IS_LIST_MODEL (model));
-  g_assert (g_list_model_get_n_items (model) > 0);
-
-  n_items = g_list_model_get_n_items (model);
-  first = g_list_model_get_item (model, 0);
-  last = g_list_model_get_item (model, n_items - 1);
-
-  if (value <= get_item_time (self, first))
-    return 0;
-  else if (value == get_item_time (self, last))
-    return n_items - 1;
-  else if (value > get_item_time (self, last))
-    return GTK_INVALID_LIST_POSITION;
-
-  g_clear_object (&first);
-  g_clear_object (&last);
-
-  lo = 0;
-  hi = n_items - 1;
-
-  while (lo <= hi)
+  while (lo < hi)
     {
       guint mid = lo + (hi - lo) / 2;
       g_autoptr(GObject) item = g_list_model_get_item (model, mid);
 
-      if (value < get_item_time (self, item))
-        hi = mid - 1;
-      else if (value > get_item_time (self, item))
+      if (get_item_time (self, item) <= value)
         lo = mid + 1;
       else
-        return mid;
+        hi = mid;
     }
 
-  uint_order (&lo, &hi);
-
-  first = g_list_model_get_item (model, lo);
-  last = g_list_model_get_item (model, hi);
-
-  if (value > get_item_time (self, first))
-    return lo + 1;
-  else if (value < get_item_time (self, last))
-    return hi - 1;
-
-  return GTK_INVALID_LIST_POSITION;
+  return lo;
 }
 
 static void
@@ -362,6 +286,7 @@ calculate_bounds (SysprofTimeFilterModel *self,
 {
   guint begin;
   guint end;
+  guint n_items;
 
   g_assert (SYSPROF_IS_TIME_FILTER_MODEL (self));
   g_assert (!model || G_IS_LIST_MODEL (model));
@@ -370,24 +295,42 @@ calculate_bounds (SysprofTimeFilterModel *self,
   g_assert (size != NULL);
 
   *offset = 0;
-  *size = GTK_INVALID_LIST_POSITION-1;
+  *size = 0;
 
-  if (model == NULL || g_list_model_get_n_items (model) == 0)
+  if (model == NULL || time_span->begin_nsec > time_span->end_nsec)
+    return;
+
+  n_items = g_list_model_get_n_items (model);
+
+  if (n_items == 0)
     return;
 
   if (time_span->begin_nsec == G_MININT64 && time_span->end_nsec == G_MAXINT64)
-    return;
+    {
+      *size = n_items;
+      return;
+    }
 
-  begin = binary_search_gte (self, model, time_span->begin_nsec);
-  end = binary_search_lte (self, model, time_span->end_nsec);
+  begin = binary_search_lower_bound (self, model, time_span->begin_nsec);
+  end = binary_search_upper_bound (self, model, time_span->end_nsec);
 
-  if (begin > end || begin == GTK_INVALID_LIST_POSITION)
-    return;
+  /* We want to extend our selection to adjacent values so that we
+   * are more likely to include enough data to overlap the boundaries
+   * when drawing graphs.
+   *
+   * This can sort of muck up callgraphs, so it's disabled in those.
+   */
+  if (self->inclusive)
+    {
+      if (begin > 0)
+        begin--;
+
+      if (end < n_items)
+        end++;
+    }
 
   *offset = begin;
-
-  if (end != GTK_INVALID_LIST_POSITION)
-    *size = end - begin + 1;
+  *size = end - begin;
 }
 
 static void
@@ -402,19 +345,6 @@ sysprof_time_filter_model_update (SysprofTimeFilterModel *self)
   model = sysprof_time_filter_model_get_model (self);
 
   calculate_bounds (self, model, &self->time_span, &offset, &size);
-
-  /* We want to extend our selection to adjacent values so that we
-   * are more likely to include enough data to overlap the boundaries
-   * when drawing graphs.
-   *
-   * This can sort of muck up callgraphs, so it's disabled in those.
-   */
-  if (self->inclusive)
-    {
-      if (offset > 0)
-        offset--;
-      size++;
-    }
 
   gtk_slice_list_model_set_offset (self->slice, offset);
   gtk_slice_list_model_set_size (self->slice, size);
@@ -474,7 +404,7 @@ void
 sysprof_time_filter_model_set_time_span (SysprofTimeFilterModel *self,
                                          const SysprofTimeSpan  *time_span)
 {
-  SysprofTimeSpan empty = {G_MININT64, G_MAXINT64};
+  SysprofTimeSpan empty = { G_MININT64, G_MAXINT64 };
 
   g_return_if_fail (SYSPROF_IS_TIME_FILTER_MODEL (self));
 

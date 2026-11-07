@@ -121,3 +121,10 @@ marks_test = executable('test-marks',
   dependencies: sysprof_deps,
 )
 test('test-marks', marks_test, env: ['GSETTINGS_BACKEND=memory'])
+
+time_filter_test = executable('test-time-filter-model',
+  'test-time-filter-model.c',
+  'sysprof-time-filter-model.c',
+  dependencies: sysprof_deps,
+)
+test('test-time-filter-model', time_filter_test)

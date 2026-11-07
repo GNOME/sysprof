@@ -31,7 +31,8 @@ libsysprof_testsuite = {
   'test-callgraph'                : {'skip': true},
   'test-capture-model'            : {'skip': true},
   'test-cplusplus'                : {'cpp': true},
-  'test-bitset-index'             : {},
+  # Concurrent random reads take longer with coverage instrumentation.
+  'test-bitset-index'             : {'timeout': 120},
   'test-cpu-modes'                : {},
   'test-cpu-list'                 : {},
   'test-device-info'              : {},
@@ -83,6 +84,6 @@ foreach test, params: libsysprof_testsuite
   endif
 
   if not params.get('skip', false)
-    test(test, test_exe, env: libsysprof_test_env)
+    test(test, test_exe, env: libsysprof_test_env, timeout: params.get('timeout', 30))
   endif
 endforeach

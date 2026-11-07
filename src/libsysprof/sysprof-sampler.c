@@ -44,10 +44,10 @@ struct _SysprofSamplerClass
 
 typedef struct
 {
-  SysprofRecording *recording;
+  SysprofRecording     *recording;
   SysprofCaptureWriter *writer;
-  guint lost_counter_id;
-  gint64 lost;
+  guint                 lost_counter_id;
+  gint64                lost;
 } StreamData;
 
 G_DEFINE_FINAL_TYPE (SysprofSampler, sysprof_sampler, SYSPROF_TYPE_INSTRUMENT)
@@ -55,7 +55,7 @@ G_DEFINE_FINAL_TYPE (SysprofSampler, sysprof_sampler, SYSPROF_TYPE_INSTRUMENT)
 static StreamData *
 stream_data_new (SysprofRecording *recording)
 {
-  SysprofCaptureCounter info = {0};
+  SysprofCaptureCounter info = { 0 };
   StreamData *data;
 
   g_assert (SYSPROF_IS_RECORDING (recording));
@@ -74,8 +74,11 @@ stream_data_new (SysprofRecording *recording)
   info.value.v64 = 0;
 
   sysprof_capture_writer_define_counters (data->writer,
-                                          SYSPROF_CAPTURE_CURRENT_TIME, -1, -1,
-                                          &info, 1);
+                                          SYSPROF_CAPTURE_CURRENT_TIME,
+                                          -1,
+                                          -1,
+                                          &info,
+                                          1);
 
   return data;
 }
@@ -106,7 +109,7 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (StreamData, stream_data_unref)
 static char **
 sysprof_sampler_list_required_policy (SysprofInstrument *instrument)
 {
-  static const char *policy[] = {"org.gnome.sysprof3.profile", NULL};
+  static const char *policy[] = { "org.gnome.sysprof3.profile", NULL };
 
   return g_strdupv ((char **)policy);
 }
@@ -226,15 +229,26 @@ sysprof_sampler_perf_event_stream_cb (const SysprofPerfEvent *event,
         gint64 now = SYSPROF_CAPTURE_CURRENT_TIME;
         char message[64];
 
-        g_snprintf (message, sizeof message,
+        g_snprintf (message,
+                    sizeof message,
                     "Lost %"G_GUINT64_FORMAT" samples",
                     event->lost.lost);
-        sysprof_capture_writer_add_log (writer, now, -1, -1, G_LOG_LEVEL_CRITICAL,
-                                        "Sampler", message);
+        sysprof_capture_writer_add_log (writer,
+                                        now,
+                                        -1,
+                                        -1,
+                                        G_LOG_LEVEL_CRITICAL,
+                                        "Sampler",
+                                        message);
 
         value.v64 = (data->lost += event->lost.lost);
-        sysprof_capture_writer_set_counters (writer, now, -1, -1,
-                                             &data->lost_counter_id, &value, 1);
+        sysprof_capture_writer_set_counters (writer,
+                                             now,
+                                             -1,
+                                             -1,
+                                             &data->lost_counter_id,
+                                             &value,
+                                             1);
         break;
       }
 
@@ -265,6 +279,7 @@ sysprof_sampler_perf_event_stream_cb (const SysprofPerfEvent *event,
       if ((event->header.misc & PERF_RECORD_MISC_MMAP_BUILD_ID) != 0)
         {
           char build_id[G_N_ELEMENTS (event->mmap2.build_id) * 2 + 1];
+
           guint len = MIN (G_N_ELEMENTS (event->mmap2.build_id), event->mmap2.build_id_size);
 
           for (guint i = 0; i < len; i++)
@@ -335,7 +350,7 @@ sysprof_sampler_prepare_fiber (gpointer user_data)
   g_autoptr(GPtrArray) futures = NULL;
   g_autoptr(GArray) cpus = NULL;
   g_autoptr(GError) error = NULL;
-  struct perf_event_attr attr = {0};
+  struct perf_event_attr attr = { 0 };
   gboolean with_mmap2 = TRUE;
   gboolean use_software = FALSE;
 
@@ -419,6 +434,7 @@ try_again:
     g_ptr_array_add (futures,
                      sysprof_perf_event_stream_new (prepare->connection,
                                                     &attr,
+                                                    32,
                                                     g_array_index (cpus, guint, i),
                                                     -1,
                                                     0,
@@ -529,8 +545,8 @@ sysprof_sampler_prepare (SysprofInstrument *instrument,
 typedef struct _Record
 {
   SysprofRecording *recording;
-  SysprofSampler *sampler;
-  DexFuture *cancellable;
+  SysprofSampler   *sampler;
+  DexFuture        *cancellable;
 } Record;
 
 static void

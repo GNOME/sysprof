@@ -252,6 +252,7 @@ sysprof_scheduler_details_prepare_fiber (gpointer user_data)
       g_ptr_array_add (futures,
                        sysprof_perf_event_stream_new (self->connection,
                                                       &attr,
+                                                      64,
                                                       cpu,
                                                       -1,
                                                       0,

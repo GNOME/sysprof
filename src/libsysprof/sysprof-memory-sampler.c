@@ -107,7 +107,9 @@ write_description (MemoryStream     *stream,
 
   g_assert (stream != NULL);
 
-  g_snprintf (id, sizeof id, SYSPROF_CAPTURE_MEMORY_EVENT_PREFIX "%016" G_GINT64_MODIFIER "x",
+  g_snprintf (id,
+              sizeof id,
+              SYSPROF_CAPTURE_MEMORY_EVENT_PREFIX "%016" G_GINT64_MODIFIER "x",
               stream->event_id);
 
   payload = g_key_file_to_data (stream->description, NULL, NULL);
@@ -154,17 +156,14 @@ record_process_event (SysprofRecording       *recording,
     case PERF_RECORD_FORK:
       if (event->header.size < sizeof (SysprofPerfEventFork))
         return FALSE;
-
       return sysprof_capture_writer_add_fork (writer, event->fork.time, cpu,
                                                event->fork.ptid, event->fork.tid);
 
     case PERF_RECORD_EXIT:
       if (event->header.size < sizeof (SysprofPerfEventExit))
         return FALSE;
-
       if (event->exit.pid == event->exit.tid)
         return sysprof_capture_writer_add_exit (writer, event->exit.time, cpu, event->exit.pid);
-
       return TRUE;
 
     default:
@@ -258,7 +257,6 @@ memory_event_cb (const SysprofPerfEvent *event,
         stream->lost += event->lost.lost;
       else
         stream->malformed++;
-
       break;
 
     case PERF_RECORD_LOST_SAMPLES:
@@ -285,7 +283,6 @@ memory_event_cb (const SysprofPerfEvent *event,
     case PERF_RECORD_EXIT:
       if (!record_process_event (recording, event, cpu))
         stream->malformed++;
-
       break;
 
     case PERF_RECORD_THROTTLE:
@@ -410,6 +407,7 @@ prepare_fiber (gpointer data)
       for (guint i = 0; i < cpus->len; i++)
         {
           MemoryStream *stream;
+
           guint cpu = g_array_index (cpus, guint, i);
           gboolean is_online = FALSE;
 
@@ -429,6 +427,7 @@ prepare_fiber (gpointer data)
 
           if (!(stream->stream = dex_await_object (sysprof_perf_event_stream_new (op->self->connection,
                                                                                   &attr,
+                                                                                  32,
                                                                                   cpu,
                                                                                   -1,
                                                                                   PERF_FLAG_FD_CLOEXEC,
@@ -526,8 +525,11 @@ prepare_fiber (gpointer data)
                      "Intel load-latency sampling: %u/%u online CPUs covered, %u opens attempted; "
                      "period=%u, ldlat=%u, user-space accesses, perf delivery callchains. "
                      "Unavailable CPUs do not indicate zero expensive accesses.",
-                     g_hash_table_size (covered), online->len, attempted,
-                     MEMORY_PERIOD, MEMORY_LATENCY);
+                     g_hash_table_size (covered),
+                     online->len,
+                     attempted,
+                     MEMORY_PERIOD,
+                     MEMORY_LATENCY);
 
   return dex_future_new_for_boolean (TRUE);
 }
@@ -563,7 +565,9 @@ record_fiber (gpointer data)
             memory_diagnostic (op->recording,
                                "CPU %d: PMU ran for %" G_GUINT64_FORMAT "/%" G_GUINT64_FORMAT
                                " ns; samples do not describe complete coverage",
-                               stream->cpu, running, enabled);
+                               stream->cpu,
+                               running,
+                               enabled);
         }
       else
         {
@@ -578,11 +582,16 @@ record_fiber (gpointer data)
       g_key_file_set_uint64 (stream->description, "coverage", "throttles", stream->throttles);
       write_description (stream, op->recording);
 
-      if (stream->lost || stream->malformed || stream->throttles)
+      if (stream->lost ||
+          stream->malformed ||
+          stream->throttles)
         memory_diagnostic (op->recording,
                            "CPU %d: lost=%" G_GUINT64_FORMAT ", malformed=%" G_GUINT64_FORMAT
                            ", throttles=%" G_GUINT64_FORMAT,
-                           stream->cpu, stream->lost, stream->malformed, stream->throttles);
+                           stream->cpu,
+                           stream->lost,
+                           stream->malformed,
+                           stream->throttles);
     }
 
   g_ptr_array_set_size (op->self->streams, 0);

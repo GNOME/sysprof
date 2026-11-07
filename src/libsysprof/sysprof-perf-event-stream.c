@@ -56,50 +56,48 @@
 
 #include "sysprof-perf-event-stream-private.h"
 
-/*
- * Number of pages to map for the ring buffer.  We map one additional buffer
- * at the beginning for header information to communicate with perf.
- */
-#define N_PAGES 32
+#define MIN_RING_PAGES 16
 
 struct _SysprofPerfEventStream
 {
-  GObject parent_instance;
+  GObject                      parent_instance;
 
-  GDBusConnection *connection;
+  GDBusConnection             *connection;
 
-  GSource *source;
+  GSource                     *source;
 
-  struct perf_event_attr attr;
+  struct perf_event_attr       attr;
 
-  int self_pid;
-  int cpu;
-  int group_fd;
-  gulong flags;
+  int                          self_pid;
+  int                          cpu;
+  int                          group_fd;
+  gulong                       flags;
 
-  SysprofPerfEventCallback callback;
-  gpointer callback_data;
-  GDestroyNotify callback_data_destroy;
+  SysprofPerfEventCallback     callback;
+  gpointer                     callback_data;
+  GDestroyNotify               callback_data_destroy;
 
-  int perf_fd;
+  int                          perf_fd;
 
   struct perf_event_mmap_page *map;
-  guint8 *map_data;
-  guint64 tail;
-  gsize map_size;
+  guint8                      *map_data;
+  guint64                      tail;
+  gsize                        map_size;
+  guint                        ring_pages;
 
-  guint active : 1;
+  guint                        active : 1;
 };
 
 typedef struct _SysprofPerfEventSource
 {
-  GSource source;
+  GSource                 source;
   SysprofPerfEventStream *stream;
-  gint64 next_ready_time;
-  int timeout_msec;
+  gint64                  next_ready_time;
+  int                     timeout_msec;
 } SysprofPerfEventSource;
 
-enum {
+enum
+{
   PROP_0,
   PROP_ACTIVE,
   N_PROPS
@@ -107,7 +105,7 @@ enum {
 
 G_DEFINE_FINAL_TYPE (SysprofPerfEventStream, sysprof_perf_event_stream, G_TYPE_OBJECT)
 
-static GParamSpec *properties [N_PROPS];
+static GParamSpec *properties[N_PROPS];
 
 static int
 _perf_event_open (const struct perf_event_attr *attr,
@@ -183,7 +181,7 @@ static void
 sysprof_perf_event_stream_flush (SysprofPerfEventStream *self)
 {
   SysprofPerfEventSource *source = (SysprofPerfEventSource *)self->source;
-  guint64 n_bytes = N_PAGES * sysprof_getpagesize ();
+  guint64 n_bytes = self->ring_pages * sysprof_getpagesize ();
   guint64 mask = n_bytes - 1;
   guint64 head;
   guint64 tail;
@@ -325,26 +323,14 @@ sysprof_perf_event_stream_flush (SysprofPerfEventStream *self)
 
   self->map->data_tail = tail;
 
-  /* If we lost records them we took too long to process events and
-   * need to speed up how often we process incoming records. However,
-   * if we are the cause of that (due to running to frequently), then
-   * we need to back-off.
-   */
-  if (lost_records && us < them/3)
-    {
-      if (source->timeout_msec > 1)
-        source->timeout_msec -= 5;
-    }
+  if (lost_records)
+    source->timeout_msec = 1;
+  else if (them >= 32)
+    source->timeout_msec = 5;
+  else if (us + them > 0)
+    source->timeout_msec = MIN (25, source->timeout_msec + 5);
   else
-    {
-      if (source->timeout_msec < 500)
-        {
-          if (us < 5 && them < 5)
-            source->timeout_msec += 100;
-          else
-            source->timeout_msec += 10;
-        }
-    }
+    source->timeout_msec = MIN (50, source->timeout_msec + 10);
 }
 
 static gboolean
@@ -362,7 +348,7 @@ sysprof_perf_event_source_dispatch (GSource     *gsource,
       self->tail != self->map->data_head)
     sysprof_perf_event_stream_flush (self);
   else
-    source->timeout_msec = MIN (500, source->timeout_msec + 50);
+    source->timeout_msec = MIN (50, source->timeout_msec + 10);
 
   source->next_ready_time = g_get_monotonic_time () + (source->timeout_msec * 1000);
   g_source_set_ready_time (self->source, source->next_ready_time);
@@ -440,7 +426,9 @@ sysprof_perf_event_stream_class_init (SysprofPerfEventStreamClass *klass)
   properties[PROP_ACTIVE] =
     g_param_spec_boolean ("active", NULL, NULL,
                           FALSE,
-                          (G_PARAM_READABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+                          (G_PARAM_READABLE |
+                           G_PARAM_EXPLICIT_NOTIFY |
+                           G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
@@ -490,7 +478,8 @@ sysprof_perf_event_stream_new_fiber (gpointer data)
                                                                             NULL,
                                                                             G_VARIANT_TYPE ("(a{sv})"),
                                                                             G_DBUS_CALL_FLAGS_NONE,
-                                                                            -1), &error);
+                                                                            -1),
+                                                  &error);
 
           if (capabilities_reply != NULL)
             {
@@ -576,15 +565,25 @@ sysprof_perf_event_stream_new_fiber (gpointer data)
 
   self->perf_fd = g_steal_fd (&perf_fd);
 
-  map_size = N_PAGES * sysprof_getpagesize () + sysprof_getpagesize ();
-  map = mmap (NULL, map_size, PROT_READ | PROT_WRITE, MAP_SHARED, self->perf_fd, 0);
-
-  if ((gpointer)map == MAP_FAILED)
+  for (guint pages = self->ring_pages; pages >= MIN_RING_PAGES; pages /= 2)
     {
-      int errsv = errno;
-      return dex_future_new_reject (G_IO_ERROR,
-                                    g_io_error_from_errno (errsv),
-                                    "%s", g_strerror (errsv));
+      map_size = (pages + 1) * sysprof_getpagesize ();
+      map = mmap (NULL, map_size, PROT_READ | PROT_WRITE, MAP_SHARED, self->perf_fd, 0);
+
+      if ((gpointer)map != MAP_FAILED)
+        {
+          self->ring_pages = pages;
+          break;
+        }
+
+      if (pages == MIN_RING_PAGES)
+        {
+          int errsv = errno;
+
+          return dex_future_new_reject (G_IO_ERROR,
+                                        g_io_error_from_errno (errsv),
+                                        "%s", g_strerror (errsv));
+        }
     }
 
   self->map_size = map_size;
@@ -598,6 +597,7 @@ sysprof_perf_event_stream_new_fiber (gpointer data)
 DexFuture *
 sysprof_perf_event_stream_new (GDBusConnection          *connection,
                                struct perf_event_attr   *attr,
+                               guint                     ring_pages,
                                int                       cpu,
                                int                       group_fd,
                                guint64                   flags,
@@ -611,12 +611,15 @@ sysprof_perf_event_stream_new (GDBusConnection          *connection,
 
   g_return_val_if_fail (!connection || G_IS_DBUS_CONNECTION (connection), NULL);
   g_return_val_if_fail (attr != NULL, NULL);
+  g_return_val_if_fail (ring_pages >= MIN_RING_PAGES &&
+                        (ring_pages & (ring_pages - 1)) == 0, NULL);
   g_return_val_if_fail (cpu > -1, NULL);
   g_return_val_if_fail (group_fd >= -1, NULL);
 
   self = g_object_new (SYSPROF_TYPE_PERF_EVENT_STREAM, NULL);
   self->connection = connection ? g_object_ref (connection) : NULL;
   self->attr = *attr;
+  self->ring_pages = ring_pages;
   self->cpu = cpu;
   self->group_fd = group_fd > -1 ? dup (group_fd) : -1;
   self->flags = flags;
@@ -655,6 +658,7 @@ sysprof_perf_event_stream_enable (SysprofPerfEventStream  *self,
   if (0 != ioctl (self->perf_fd, PERF_EVENT_IOC_ENABLE))
     {
       int errsv = errno;
+
       g_set_error_literal (error,
                            G_IO_ERROR,
                            g_io_error_from_errno (errsv),
@@ -664,7 +668,7 @@ sysprof_perf_event_stream_enable (SysprofPerfEventStream  *self,
 
   self->active = TRUE;
 
-  g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_ACTIVE]);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ACTIVE]);
 
   return TRUE;
 }
@@ -681,6 +685,7 @@ sysprof_perf_event_stream_disable (SysprofPerfEventStream  *self,
   if (0 != ioctl (self->perf_fd, PERF_EVENT_IOC_DISABLE))
     {
       int errsv = errno;
+
       g_set_error_literal (error,
                            G_IO_ERROR,
                            g_io_error_from_errno (errsv),
@@ -692,7 +697,7 @@ sysprof_perf_event_stream_disable (SysprofPerfEventStream  *self,
 
   sysprof_perf_event_stream_flush (self);
 
-  g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_ACTIVE]);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ACTIVE]);
 
   return TRUE;
 }

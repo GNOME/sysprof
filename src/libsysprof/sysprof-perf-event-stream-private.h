@@ -32,11 +32,11 @@ SYSPROF_ALIGNED_BEGIN(1)
 typedef struct _SysprofPerfEventFork
 {
   struct perf_event_header header;
-  guint32 pid;
-  guint32 ppid;
-  guint32 tid;
-  guint32 ptid;
-  guint64 time;
+  guint32                  pid;
+  guint32                  ppid;
+  guint32                  tid;
+  guint32                  ptid;
+  guint64                  time;
 } SysprofPerfEventFork
 SYSPROF_ALIGNED_END(1);
 
@@ -44,9 +44,9 @@ SYSPROF_ALIGNED_BEGIN(1)
 typedef struct _SysprofPerfEventComm
 {
   struct perf_event_header header;
-  guint32 pid;
-  guint32 tid;
-  gchar comm[0];
+  guint32                  pid;
+  guint32                  tid;
+  gchar                    comm[0];
 } SysprofPerfEventComm
 SYSPROF_ALIGNED_END(1);
 
@@ -54,11 +54,11 @@ SYSPROF_ALIGNED_BEGIN(1)
 typedef struct _SysprofPerfEventExit
 {
   struct perf_event_header header;
-  guint32 pid;
-  guint32 ppid;
-  guint32 tid;
-  guint32 ptid;
-  guint64 time;
+  guint32                  pid;
+  guint32                  ppid;
+  guint32                  tid;
+  guint32                  ptid;
+  guint64                  time;
 } SysprofPerfEventExit
 SYSPROF_ALIGNED_END(1);
 
@@ -66,12 +66,12 @@ SYSPROF_ALIGNED_BEGIN(1)
 typedef struct _SysprofPerfEventMmap
 {
   struct perf_event_header header;
-  guint32 pid;
-  guint32 tid;
-  guint64 addr;
-  guint64 len;
-  guint64 pgoff;
-  char filename[0];
+  guint32                  pid;
+  guint32                  tid;
+  guint64                  addr;
+  guint64                  len;
+  guint64                  pgoff;
+  char                     filename[0];
 } SysprofPerfEventMmap
 SYSPROF_ALIGNED_END(1);
 
@@ -79,11 +79,11 @@ SYSPROF_ALIGNED_BEGIN(1)
 typedef struct _SysprofPerfEventMmap2
 {
   struct perf_event_header header;
-  guint32 pid;
-  guint32 tid;
-  guint64 addr;
-  guint64 len;
-  guint64 pgoff;
+  guint32                  pid;
+  guint32                  tid;
+  guint64                  addr;
+  guint64                  len;
+  guint64                  pgoff;
   union {
     struct {
       guint32 maj;
@@ -98,23 +98,22 @@ typedef struct _SysprofPerfEventMmap2
       guint8  build_id[20];
     };
   };
-  guint32 prot;
-  guint32 flags;
-  char filename[0];
-} SysprofPerfEventMmap2
-SYSPROF_ALIGNED_END(1);
+  guint32                  prot;
+  guint32                  flags;
+  char                     filename[0];
+} SysprofPerfEventMmap2 SYSPROF_ALIGNED_END (1 );
 
 SYSPROF_ALIGNED_BEGIN(1)
 typedef struct _SysprofPerfEventCallchain
 {
   struct perf_event_header header;
-  guint64 identifier;
-  guint64 ip;
-  guint32 pid;
-  guint32 tid;
-  guint64 time;
-  guint64 n_ips;
-  guint64 ips[0];
+  guint64                  identifier;
+  guint64                  ip;
+  guint32                  pid;
+  guint32                  tid;
+  guint64                  time;
+  guint64                  n_ips;
+  guint64                  ips[0];
 } SysprofPerfEventCallchain
 SYSPROF_ALIGNED_END(1);
 
@@ -122,13 +121,13 @@ SYSPROF_ALIGNED_BEGIN(1)
 typedef struct _SysprofPerfEventTracepoint
 {
   struct perf_event_header header;
-  guint64 identifier;
-  guint64 ip;
-  guint32 pid;
-  guint32 tid;
-  guint64 time;
-  guint32 raw_size;
-  guchar raw[];
+  guint64                  identifier;
+  guint64                  ip;
+  guint32                  pid;
+  guint32                  tid;
+  guint64                  time;
+  guint32                  raw_size;
+  guchar                   raw[];
 } SysprofPerfEventTracepoint
 SYSPROF_ALIGNED_END(1);
 
@@ -136,8 +135,8 @@ SYSPROF_ALIGNED_BEGIN(1)
 typedef struct _SysprofPerfEventLost
 {
   struct perf_event_header header;
-  guint64 identifier;
-  guint64 lost;
+  guint64                  identifier;
+  guint64                  lost;
 } SysprofPerfEventLost
 SYSPROF_ALIGNED_END(1);
 
@@ -165,22 +164,22 @@ typedef void (*SysprofPerfEventCallback) (const SysprofPerfEvent *event,
 
 G_DECLARE_FINAL_TYPE (SysprofPerfEventStream, sysprof_perf_event_stream, SYSPROF, PERF_EVENT_STREAM, GObject)
 
-DexFuture *sysprof_perf_event_stream_new       (GDBusConnection               *connection,
-                                                struct perf_event_attr        *attr,
-                                                int                            cpu,
-                                                int                            group_fd,
-                                                guint64                        flags,
-                                                SysprofPerfEventCallback       callback,
-                                                gpointer                       callback_data,
-                                                GDestroyNotify                 callback_data_destroy);
-gboolean   sysprof_perf_event_stream_enable    (SysprofPerfEventStream        *self,
-                                                GError                       **error);
-gboolean   sysprof_perf_event_stream_disable   (SysprofPerfEventStream        *self,
-                                                GError                       **error);
-GVariant  *_sysprof_perf_event_attr_to_variant (const struct perf_event_attr  *attr);
-
+GVariant  *_sysprof_perf_event_attr_to_variant   (const struct perf_event_attr  *attr);
 gboolean   _sysprof_perf_event_stream_read_times (SysprofPerfEventStream        *self,
                                                   guint64                       *enabled,
                                                   guint64                       *running);
+gboolean   sysprof_perf_event_stream_disable     (SysprofPerfEventStream        *self,
+                                                  GError                       **error);
+gboolean   sysprof_perf_event_stream_enable      (SysprofPerfEventStream        *self,
+                                                  GError                       **error);
+DexFuture *sysprof_perf_event_stream_new         (GDBusConnection               *connection,
+                                                  struct perf_event_attr        *attr,
+                                                  guint                          ring_pages,
+                                                  int                            cpu,
+                                                  int                            group_fd,
+                                                  guint64                        flags,
+                                                  SysprofPerfEventCallback       callback,
+                                                  gpointer                       callback_data,
+                                                  GDestroyNotify                 callback_data_destroy);
 
 G_END_DECLS

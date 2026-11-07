@@ -32,6 +32,7 @@ libsysprof_testsuite = {
   'test-device-info'              : {},
   'test-cpu-kind'                 : {},
   'test-elf-loader'               : {'skip': true},
+  'test-file-io'                  : {},
   'test-flatpak-info'             : {'link_args': ['-Wl,--build-id=sha1']},
   'test-frame-diagnostics'        : {},
   'test-leak-detector'            : {'skip': true},

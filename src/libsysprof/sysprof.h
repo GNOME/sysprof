@@ -38,6 +38,7 @@ G_BEGIN_DECLS
 # include "sysprof-debuginfod-symbolizer.h"
 # include "sysprof-diagnostic.h"
 # include "sysprof-disk-usage.h"
+# include "sysprof-disk-io.h"
 # include "sysprof-document-allocation.h"
 # include "sysprof-document-dbus-message.h"
 # include "sysprof-document-counter-value.h"

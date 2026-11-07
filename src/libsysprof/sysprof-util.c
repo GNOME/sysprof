@@ -69,7 +69,7 @@ sysprof_get_proc_file_bytes (GDBusConnection *connection,
 /* Parse the kernel's sorted CPU list, preserving IDs when CPUs are offline. */
 GArray *
 _sysprof_parse_cpu_list (const char  *cpu_list,
-                        GError     **error)
+                         GError     **error)
 {
   g_autoptr(GArray) cpus = NULL;
   const char *p = cpu_list;
@@ -150,4 +150,114 @@ _sysprof_get_online_cpus (GError **error)
     return NULL;
 
   return _sysprof_parse_cpu_list (contents, error);
+}
+
+static DexFuture *
+sysprof_load_file_cb (DexFuture *completed,
+                      gpointer   user_data)
+{
+  g_autoptr(GBytes) bytes = NULL;
+
+  g_assert (DEX_IS_FUTURE (completed));
+
+  bytes = dex_await_boxed (dex_ref (completed), NULL);
+
+  return dex_future_new_take_string (g_strndup (g_bytes_get_data (bytes, NULL),
+                                                g_bytes_get_size (bytes)));
+}
+
+DexFuture *
+_sysprof_load_file (const char *path)
+{
+  g_autoptr(GFile) file = NULL;
+
+  dex_return_error_if_fail (path != NULL);
+
+  file = g_file_new_for_path (path);
+
+  return dex_future_then (dex_file_load_contents_bytes (file),
+                          sysprof_load_file_cb,
+                          NULL,
+                          NULL);
+}
+
+static DexFuture *
+sysprof_list_directory_fiber (GFile *directory)
+{
+  g_autoptr(GFileEnumerator) enumerator = NULL;
+  g_autoptr(GPtrArray) children = NULL;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (G_IS_FILE (directory));
+
+  if (!(enumerator = dex_await_object (dex_file_enumerate_children (directory,
+                                                                    G_FILE_ATTRIBUTE_STANDARD_NAME "," G_FILE_ATTRIBUTE_STANDARD_TYPE "," G_FILE_ATTRIBUTE_ID_FILE,
+                                                                    G_FILE_QUERY_INFO_NONE,
+                                                                    G_PRIORITY_DEFAULT),
+                                       &error)))
+    return dex_future_new_for_error (g_steal_pointer (&error));
+
+  children = g_ptr_array_new_with_free_func (g_object_unref);
+
+  for (;;)
+    {
+      g_autolist(GFileInfo) infos = NULL;
+
+      infos = dex_await_boxed (dex_file_enumerator_next_files (enumerator, 100, G_PRIORITY_DEFAULT),
+                               &error);
+      if (infos == NULL)
+        break;
+
+      for (GList *iter = infos; iter != NULL; iter = iter->next)
+        g_ptr_array_add (children, g_object_ref (iter->data));
+    }
+
+  dex_future_disown (dex_file_enumerator_close (enumerator, G_PRIORITY_DEFAULT));
+
+  if (error != NULL)
+    return dex_future_new_for_error (g_steal_pointer (&error));
+
+  return dex_future_new_take_boxed (G_TYPE_PTR_ARRAY, g_steal_pointer (&children));
+}
+
+DexFuture *
+_sysprof_list_directory (const char *path)
+{
+  g_autoptr(GFile) directory = NULL;
+
+  dex_return_error_if_fail (path != NULL);
+
+  directory = g_file_new_for_path (path);
+
+  return dex_scheduler_spawnv (NULL, 0,
+                               G_CALLBACK (sysprof_list_directory_fiber),
+                               1,
+                               G_TYPE_FILE, directory);
+}
+
+static DexFuture *
+sysprof_list_online_cpus_cb (DexFuture *completed,
+                             gpointer   user_data)
+{
+  g_autofree char *contents = NULL;
+  g_autoptr(GArray) cpus = NULL;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (DEX_IS_FUTURE (completed));
+
+  contents = dex_await_string (dex_ref (completed), NULL);
+
+  if (!(cpus = _sysprof_parse_cpu_list (contents, &error)))
+    return dex_future_new_for_error (g_steal_pointer (&error));
+
+  return dex_future_new_take_boxed (G_TYPE_ARRAY, g_steal_pointer (&cpus));
+}
+
+DexFuture *
+_sysprof_list_online_cpus (void)
+{
+  return dex_future_then (_sysprof_load_file ("/sys/devices/system/cpu/online"),
+                           sysprof_list_online_cpus_cb,
+                           NULL,
+                           NULL);
 }

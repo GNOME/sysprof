@@ -32,14 +32,14 @@
 
 typedef struct _Jitmap
 {
-  SysprofAddress address;
-  GRefString *name;
+  SysprofAddress  address;
+  GRefString     *name;
 } Jitmap;
 
 struct _SysprofJitmapSymbolizer
 {
-  SysprofSymbolizer parent_instance;
-  GArray *jitmaps;
+  SysprofSymbolizer  parent_instance;
+  GArray            *jitmaps;
 };
 
 struct _SysprofJitmapSymbolizerClass
@@ -52,7 +52,7 @@ G_DEFINE_FINAL_TYPE (SysprofJitmapSymbolizer, sysprof_jitmap_symbolizer, SYSPROF
 typedef struct
 {
   SysprofDocument *document;
-  GListModel *model;
+  GListModel      *model;
 } Prepare;
 
 static void
@@ -69,6 +69,7 @@ static void
 jitmap_clear (gpointer data)
 {
   Jitmap *j = data;
+
   g_clear_pointer (&j->name, g_ref_string_release);
 }
 
@@ -119,7 +120,7 @@ sysprof_jitmap_symbolizer_prepare_worker (GTask        *task,
           if (!(name = sysprof_document_jitmap_get_mapping (jitmap, j, &map.address)))
             continue;
 
-          map.name = _sysprof_document_ref_string (prepare->document, name);
+          map.name = _sysprof_document_dup_string (prepare->document, name);
           g_array_append_val (self->jitmaps, map);
         }
     }

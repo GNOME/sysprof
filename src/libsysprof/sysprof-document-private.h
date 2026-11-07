@@ -49,6 +49,11 @@ typedef struct _SysprofDocumentTimedValue
 typedef void     (*ProgressFunc)              (double      fraction,
                                                const char *message,
                                                gpointer    user_data);
+typedef gboolean (*SysprofDocumentMarkFunc)   (guint       position,
+                                               gint64      time,
+                                               gint64      duration,
+                                               int         pid,
+                                               gpointer    user_data);
 typedef gboolean (*SysprofDocumentSampleFunc) (guint       position,
                                                gint64      time,
                                                int         pid,
@@ -56,6 +61,15 @@ typedef gboolean (*SysprofDocumentSampleFunc) (guint       position,
                                                int         cpu,
                                                gpointer    user_data);
 
+GRefString                        *_sysprof_document_dup_string        (SysprofDocument            *self,
+                                                                        const char                 *name);
+EggBitset                         *_sysprof_document_find_marks        (SysprofDocument            *self,
+                                                                        const char * const         *names);
+void                               _sysprof_document_foreach_mark      (SysprofDocument            *self,
+                                                                        const char                 *group,
+                                                                        const char                 *name,
+                                                                        SysprofDocumentMarkFunc     func,
+                                                                        gpointer                    user_data);
 void                               _sysprof_document_foreach_sample    (SysprofDocument            *self,
                                                                         gint64                      begin_nsec,
                                                                         gint64                      end_nsec,
@@ -78,8 +92,6 @@ SysprofDocument                   *_sysprof_document_new_finish        (GAsyncRe
 SysprofSymbol                     *_sysprof_document_process_symbol    (SysprofDocument            *self,
                                                                         int                         pid,
                                                                         gboolean                    want_shared);
-GRefString                        *_sysprof_document_ref_string        (SysprofDocument            *self,
-                                                                        const char                 *name);
 GArray                            *_sysprof_document_sample_cpus       (SysprofDocument            *self);
 EggBitset                         *_sysprof_document_samples           (SysprofDocument            *self);
 EggBitset                         *_sysprof_document_samples_on_cpu    (SysprofDocument            *self,

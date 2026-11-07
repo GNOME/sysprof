@@ -143,6 +143,7 @@ libsysprof_public_headers = [
 libsysprof_private_sources = [
   'sysprof-memory-sample-parser.c',
   'sysprof-memory-pmu.c',
+  'sysprof-document-storage.c',
   'mapped-ring-buffer-source.c',
   'sysprof-address-layout.c',
   'sysprof-allocator.c',

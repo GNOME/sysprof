@@ -30,6 +30,7 @@
 #include "timsort/gtktimsortprivate.h"
 
 #include "sysprof-document-private.h"
+#include "sysprof-document-storage-private.h"
 
 #include "sysprof-bundled-symbolizer-private.h"
 #include "sysprof-callgraph-private.h"
@@ -44,6 +45,7 @@
 #include "sysprof-document-frame-private.h"
 #include "sysprof-document-jitmap.h"
 #include "sysprof-document-mmap.h"
+#include "sysprof-document-metadata.h"
 #include "sysprof-document-overlay.h"
 #include "sysprof-document-process-private.h"
 #include "sysprof-document-sample.h"
@@ -77,16 +79,33 @@ typedef struct
 #define GDK_ARRAY_TYPE_NAME SysprofDocumentFrames
 #include "gdkarrayimpl.c"
 
+struct _SysprofDocumentStorage
+{
+  gatomicrefcount           ref_count;
+  SysprofDocumentFrames     frames;
+  GMappedFile              *mapped_file;
+  const guint8             *base;
+  SysprofTimeSpan           time_span;
+  SysprofCaptureFileHeader  header;
+  gboolean                  needs_swap;
+  gboolean                  frozen;
+  EggBitset                *marks;
+  EggBitset                *logs;
+  EggBitset                *file_chunks;
+  GHashTable               *files_first_position;
+  GArray                   *processes;
+  GHashTable               *metadata;
+  GHashTable               *mark_groups;
+  GHashTable               *mark_names;
+  GArray                   *counters;
+  guint                     counts[SYSPROF_DOCUMENT_N_COUNTS];
+};
+
 struct _SysprofDocument
 {
   GObject                  parent_instance;
 
-  SysprofTimeSpan           time_span;
-  SysprofDocumentFrames     frames;
-  GMappedFile              *mapped_file;
-  const guint8             *base;
-  SysprofCaptureFileHeader  header;
-  guint                     needs_swap : 1;
+  SysprofDocumentStorage  *storage;
 
   char                    *title;
 
@@ -240,7 +259,7 @@ sysprof_document_get_n_items (GListModel *model)
 {
   SysprofDocument *self = SYSPROF_DOCUMENT (model);
 
-  return sysprof_document_frames_get_size (&self->frames);
+  return sysprof_document_frames_get_size (&self->storage->frames);
 }
 
 static gpointer
@@ -251,16 +270,16 @@ sysprof_document_get_item (GListModel *model,
   SysprofDocumentFramePointer *ptr;
   SysprofDocumentFrame *ret;
 
-  if (position >= sysprof_document_frames_get_size (&self->frames))
+  if (position >= sysprof_document_frames_get_size (&self->storage->frames))
     return NULL;
 
-  ptr = sysprof_document_frames_index (&self->frames, position);
-  ret = _sysprof_document_frame_new (self->mapped_file,
-                                     (gconstpointer)&self->base[ptr->offset],
+  ptr = sysprof_document_frames_index (&self->storage->frames, position);
+  ret = _sysprof_document_frame_new (self->storage->mapped_file,
+                                     (gconstpointer)&self->storage->base[ptr->offset],
                                      ptr->length,
-                                     self->needs_swap,
-                                     self->header.time,
-                                     self->header.end_time);
+                                     self->storage->needs_swap,
+                                     self->storage->header.time,
+                                     self->storage->header.end_time);
 
   /* Annotate processes with pre-calculated info */
   if (SYSPROF_IS_DOCUMENT_PROCESS (ret))
@@ -421,8 +440,7 @@ sysprof_document_finalize (GObject *object)
 
   g_clear_pointer (&self->pid_to_process_info, g_hash_table_unref);
   g_clear_pointer (&self->tid_to_symbol, g_hash_table_unref);
-  g_clear_pointer (&self->mapped_file, g_mapped_file_unref);
-  sysprof_document_frames_clear (&self->frames);
+  g_clear_pointer (&self->storage, _sysprof_document_storage_unref);
 
   g_clear_pointer (&self->allocations, egg_bitset_unref);
   g_clear_pointer (&self->ctrdefs, egg_bitset_unref);
@@ -629,9 +647,13 @@ sysprof_document_class_init (SysprofDocumentClass *klass)
 static void
 sysprof_document_init (SysprofDocument *self)
 {
+  self->storage = g_new0 (SysprofDocumentStorage, 1);
+  g_atomic_ref_count_init (&self->storage->ref_count);
+  self->storage->counters = g_array_new (FALSE, FALSE, sizeof (SysprofCounterMetadata));
+
   self->strings = sysprof_strings_new ();
 
-  sysprof_document_frames_init (&self->frames);
+  sysprof_document_frames_init (&self->storage->frames);
 
   self->cpu_info = g_list_store_new (SYSPROF_TYPE_CPU_INFO);
 
@@ -988,7 +1010,7 @@ sysprof_document_load_counters (SysprofDocument *self,
    * a bitset of which counters need swapping. That way we have a fast
    * lookup below we can use when reading in counter values.
    */
-  if (self->needs_swap)
+  if (self->storage->needs_swap)
     swap_ids = egg_bitset_new_empty ();
 
   /* First create our counter objects which we will use to hold values that
@@ -1034,7 +1056,7 @@ sysprof_document_load_counters (SysprofDocument *self,
                                                               sysprof_strings_get (self->strings, name),
                                                               sysprof_strings_get (self->strings, description),
                                                               g_steal_pointer (&values),
-                                                              self->time_span.begin_nsec));
+                                                              self->storage->time_span.begin_nsec));
             }
         }
       while (egg_bitset_iter_next (&iter, &i));
@@ -1088,11 +1110,21 @@ sysprof_document_load_counters (SysprofDocument *self,
     {
       g_autoptr(SysprofDocumentCounter) counter = g_list_model_get_item (G_LIST_MODEL (self->counters), i);
 
+      SysprofCounterMetadata metadata;
+
       _sysprof_document_counter_calculate_range (counter, cancellable);
 
       if (g_cancellable_is_cancelled (cancellable))
         return;
 
+      metadata.category = g_strdup (sysprof_document_counter_get_category (counter));
+      metadata.name = g_strdup (sysprof_document_counter_get_name (counter));
+      metadata.description = g_strdup (sysprof_document_counter_get_description (counter));
+      metadata.n_values = sysprof_document_counter_get_n_values (counter);
+      metadata.minimum = sysprof_document_counter_get_min_value (counter);
+      metadata.maximum = sysprof_document_counter_get_max_value (counter);
+
+      g_array_append_val (self->storage->counters, metadata);
     }
 }
 
@@ -1395,12 +1427,12 @@ sysprof_document_create_frame_scans (SysprofDocument *self,
   gsize begin;
 
   g_assert (SYSPROF_IS_DOCUMENT (self));
-  g_assert (len >= sizeof self->header);
+  g_assert (len >= sizeof self->storage->header);
   g_assert (has_index != NULL);
 
   *has_index = FALSE;
-  current = swap_uint64 (self->needs_swap,
-                         self->header.frame_index.last_frame_index);
+  current = swap_uint64 (self->storage->needs_swap,
+                         self->storage->header.frame_index.last_frame_index);
 
   if (current == 0)
     return NULL;
@@ -1414,20 +1446,20 @@ sysprof_document_create_frame_scans (SysprofDocument *self,
       guint64 previous;
       guint16 frame_len;
 
-      if (current < sizeof self->header ||
+      if (current < sizeof self->storage->header ||
           current > len - sizeof (SysprofCaptureFrameIndex) ||
           current % SYSPROF_CAPTURE_ALIGN != 0 ||
           offsets->len > len / sizeof (SysprofCaptureFrameIndex))
         return NULL;
 
-      frame_index = (const SysprofCaptureFrameIndex *)(const void *)&self->base[current];
-      frame_len = swap_uint16 (self->needs_swap, frame_index->frame.len);
+      frame_index = (const SysprofCaptureFrameIndex *)(const void *)&self->storage->base[current];
+      frame_len = swap_uint16 (self->storage->needs_swap, frame_index->frame.len);
 
       if (!frame_is_index (&frame_index->frame, frame_len) ||
           frame_len != sizeof *frame_index)
         return NULL;
 
-      previous = swap_uint64 (self->needs_swap, frame_index->previous_frame_index);
+      previous = swap_uint64 (self->storage->needs_swap, frame_index->previous_frame_index);
 
       if (previous >= current)
         return NULL;
@@ -1447,7 +1479,7 @@ sysprof_document_create_frame_scans (SysprofDocument *self,
     }
 
   scans = g_ptr_array_new_with_free_func ((GDestroyNotify)frame_scan_free);
-  begin = sizeof self->header;
+  begin = sizeof self->storage->header;
 
   for (guint i = 0; i < offsets->len; i++)
     {
@@ -1461,10 +1493,10 @@ sysprof_document_create_frame_scans (SysprofDocument *self,
 
       if (offset > begin)
         g_ptr_array_add (scans,
-                         frame_scan_new (self->base,
+                         frame_scan_new (self->storage->base,
                                          begin,
                                          offset,
-                                         self->needs_swap,
+                                         self->storage->needs_swap,
                                          cancellable));
 
       begin = offset + sizeof (SysprofCaptureFrameIndex);
@@ -1472,10 +1504,10 @@ sysprof_document_create_frame_scans (SysprofDocument *self,
 
   if (begin < len)
     g_ptr_array_add (scans,
-                     frame_scan_new (self->base,
+                     frame_scan_new (self->storage->base,
                                      begin,
                                      len,
-                                     self->needs_swap,
+                                     self->storage->needs_swap,
                                      cancellable));
 
   return scans;
@@ -1491,10 +1523,10 @@ sysprof_document_scan_frames_serial (SysprofDocument *self,
 
   g_assert (SYSPROF_IS_DOCUMENT (self));
 
-  scan = frame_scan_new (self->base,
-                         sizeof self->header,
+  scan = frame_scan_new (self->storage->base,
+                         sizeof self->storage->header,
                          len,
-                         self->needs_swap,
+                         self->storage->needs_swap,
                          cancellable);
 
   if (!frame_scan_run (scan))
@@ -1509,8 +1541,8 @@ sysprof_document_scan_frames_serial (SysprofDocument *self,
   if (!scan->valid)
     g_warning ("Capture contained an invalid or truncated frame");
 
-  sysprof_document_frames_clear (&self->frames);
-  self->frames = scan->frames;
+  sysprof_document_frames_clear (&self->storage->frames);
+  self->storage->frames = scan->frames;
   sysprof_document_frames_init (&scan->frames);
 
   return TRUE;
@@ -1588,7 +1620,7 @@ sysprof_document_scan_frames (SysprofDocument *self,
       return sysprof_document_scan_frames_serial (self, len, cancellable, error);
     }
 
-  sysprof_document_frames_set_size (&self->frames, 0);
+  sysprof_document_frames_set_size (&self->storage->frames, 0);
 
   for (guint i = 0; i < scans->len; i++)
     {
@@ -1597,8 +1629,8 @@ sysprof_document_scan_frames (SysprofDocument *self,
       gsize n_frames = sysprof_document_frames_get_size (&scan->frames);
 
       if (n_frames > 0)
-        sysprof_document_frames_splice (&self->frames,
-                                        sysprof_document_frames_get_size (&self->frames),
+        sysprof_document_frames_splice (&self->storage->frames,
+                                        sysprof_document_frames_get_size (&self->storage->frames),
                                         0,
                                         FALSE,
                                         sysprof_document_frames_get_data (&scan->frames),
@@ -1606,18 +1638,18 @@ sysprof_document_scan_frames (SysprofDocument *self,
       sysprof_document_frames_clear (&scan->frames);
     }
 
-  if G_UNLIKELY (self->needs_swap)
-    gtk_tim_sort (sysprof_document_frames_get_data (&self->frames),
-                  sysprof_document_frames_get_size (&self->frames),
+  if G_UNLIKELY (self->storage->needs_swap)
+    gtk_tim_sort (sysprof_document_frames_get_data (&self->storage->frames),
+                  sysprof_document_frames_get_size (&self->storage->frames),
                   sizeof (SysprofDocumentFramePointer),
                   sort_by_time_swapped,
-                  (gpointer)self->base);
+                  (gpointer)self->storage->base);
   else
-    gtk_tim_sort (sysprof_document_frames_get_data (&self->frames),
-                  sysprof_document_frames_get_size (&self->frames),
+    gtk_tim_sort (sysprof_document_frames_get_data (&self->storage->frames),
+                  sysprof_document_frames_get_size (&self->storage->frames),
                   sizeof (SysprofDocumentFramePointer),
                   sort_by_time,
-                  (gpointer)self->base);
+                  (gpointer)self->storage->base);
 
   return TRUE;
 }
@@ -1634,7 +1666,7 @@ sysprof_document_update_process_exit_times (SysprofDocument *self)
   while (g_hash_table_iter_next (&iter, NULL, (gpointer *)&info))
     {
       if (info->exit_time == 0)
-        info->exit_time = self->time_span.end_nsec;
+        info->exit_time = self->storage->time_span.end_nsec;
     }
 }
 
@@ -1860,6 +1892,127 @@ sysprof_document_load_cpu (SysprofDocument *self)
     }
 }
 
+static void
+sysprof_document_freeze_storage (SysprofDocument *self,
+                                 GCancellable    *cancellable)
+{
+  SysprofDocumentStorage *storage = self->storage;
+  GHashTableIter iter;
+  const char *group;
+  GHashTable *names;
+  EggBitsetIter process_iter;
+  guint position;
+  GHashTableIter file_iter;
+  gpointer path, first;
+
+  storage->metadata = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+
+  if (egg_bitset_iter_init_first (&process_iter, self->metadata, &position))
+    {
+      do
+        {
+          g_autoptr(SysprofDocumentMetadata) item = g_list_model_get_item (G_LIST_MODEL (self), position);
+          const char *id = sysprof_document_metadata_get_id (item);
+          const char *text = sysprof_document_metadata_get_value (item);
+
+          if (g_cancellable_is_cancelled (cancellable))
+            return;
+
+          if (id != NULL &&
+              text != NULL &&
+              g_utf8_validate (text, -1, NULL))
+            g_hash_table_replace (storage->metadata, g_strdup (id), g_strdup (text));
+        }
+      while (egg_bitset_iter_next (&process_iter, &position));
+    }
+
+  storage->logs = egg_bitset_copy (self->logs);
+  storage->file_chunks = egg_bitset_copy (self->file_chunks);
+  storage->files_first_position = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+
+  g_hash_table_iter_init (&file_iter, self->files_first_position);
+
+  while (g_hash_table_iter_next (&file_iter, &path, &first))
+    {
+      if (g_cancellable_is_cancelled (cancellable))
+        return;
+
+      g_hash_table_insert (storage->files_first_position, g_strdup (path), first);
+    }
+
+  storage->processes = g_array_new (FALSE, FALSE, sizeof (SysprofProcessMetadata));
+
+  if (egg_bitset_iter_init_first (&process_iter, self->processes, &position))
+    {
+      do
+        {
+          g_autoptr(SysprofDocumentProcess) process = g_list_model_get_item (G_LIST_MODEL (self), position);
+          SysprofProcessMetadata metadata = { 0 };
+
+          if (g_cancellable_is_cancelled (cancellable))
+            return;
+
+          metadata.title = sysprof_document_process_dup_title (process);
+          metadata.command = g_strdup (sysprof_document_process_get_command_line (process));
+          metadata.pid = sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (process));
+          metadata.begin = MAX (storage->time_span.begin_nsec,
+                                sysprof_document_frame_get_time (SYSPROF_DOCUMENT_FRAME (process)));
+          metadata.end = MAX (metadata.begin, MIN (storage->time_span.end_nsec,
+                                                   sysprof_document_process_get_exit_time (process)));
+
+          g_array_append_val (storage->processes, metadata);
+        }
+      while (egg_bitset_iter_next (&process_iter, &position));
+    }
+
+  storage->marks = egg_bitset_copy (self->marks);
+  storage->mark_names = g_hash_table_new_full (g_str_hash,
+                                               g_str_equal,
+                                               g_free,
+                                               (GDestroyNotify)egg_bitset_unref);
+  storage->mark_groups = g_hash_table_new_full (g_str_hash,
+                                                g_str_equal,
+                                                g_free,
+                                                (GDestroyNotify)egg_bitset_unref);
+
+  g_hash_table_iter_init (&iter, self->mark_groups);
+
+  while (g_hash_table_iter_next (&iter, (gpointer *)&group, (gpointer *)&names))
+    {
+      g_autoptr(EggBitset) bits = egg_bitset_new_empty ();
+      GHashTableIter name_iter;
+      EggBitset *indices;
+      const char *name;
+
+      g_hash_table_iter_init (&name_iter, names);
+
+      while (g_hash_table_iter_next (&name_iter, (gpointer *)&name, (gpointer *)&indices))
+        {
+          EggBitset *named = g_hash_table_lookup (storage->mark_names, name);
+
+          if (g_cancellable_is_cancelled (cancellable))
+            return;
+
+          egg_bitset_union (bits, indices);
+
+          if (named == NULL)
+            g_hash_table_insert (storage->mark_names, g_strdup (name), egg_bitset_copy (indices));
+          else
+            egg_bitset_union (named, indices);
+        }
+
+      g_hash_table_insert (storage->mark_groups, g_strdup (group), g_steal_pointer (&bits));
+    }
+
+  storage->counts[SYSPROF_DOCUMENT_COUNT_MARKS] = egg_bitset_get_size (self->marks);
+  storage->counts[SYSPROF_DOCUMENT_COUNT_LOGS] = egg_bitset_get_size (self->logs);
+  storage->counts[SYSPROF_DOCUMENT_COUNT_PROCESSES] = egg_bitset_get_size (self->processes);
+  storage->counts[SYSPROF_DOCUMENT_COUNT_SAMPLES] = egg_bitset_get_size (self->samples);
+  storage->counts[SYSPROF_DOCUMENT_COUNT_DBUS] = egg_bitset_get_size (self->dbus_messages);
+  storage->counts[SYSPROF_DOCUMENT_COUNT_FILES] = g_hash_table_size (self->files_first_position);
+  storage->frozen = TRUE;
+}
+
 static int
 compare_sample_cpu_ids (gconstpointer a,
                         gconstpointer b)
@@ -1887,11 +2040,11 @@ sysprof_document_load_worker (GTask        *task,
   g_assert (load != NULL);
 
   self = g_object_new (SYSPROF_TYPE_DOCUMENT, NULL);
-  self->mapped_file = g_mapped_file_ref (load->mapped_file);
-  self->base = (const guint8 *)g_mapped_file_get_contents (load->mapped_file);
+  self->storage->mapped_file = g_mapped_file_ref (load->mapped_file);
+  self->storage->base = (const guint8 *)g_mapped_file_get_contents (load->mapped_file);
   len = g_mapped_file_get_length (load->mapped_file);
 
-  if (len < sizeof self->header)
+  if (len < sizeof self->storage->header)
     {
       g_task_return_new_error (task,
                                G_IO_ERROR,
@@ -1901,19 +2054,19 @@ sysprof_document_load_worker (GTask        *task,
     }
 
   /* Keep a copy of our header */
-  memcpy (&self->header, self->base, sizeof self->header);
+  memcpy (&self->storage->header, self->storage->base, sizeof self->storage->header);
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
-  self->needs_swap = !self->header.little_endian;
+  self->storage->needs_swap = !self->storage->header.little_endian;
 #else
-  self->needs_swap = !!self->header.little_endian;
+  self->storage->needs_swap = !!self->storage->header.little_endian;
 #endif
 
-  self->header.time = swap_uint64 (self->needs_swap, self->header.time);
-  self->header.end_time = swap_uint64 (self->needs_swap, self->header.end_time);
-  self->header.capture_time[sizeof self->header.capture_time - 1] = 0;
+  self->storage->header.time = swap_uint64 (self->storage->needs_swap, self->storage->header.time);
+  self->storage->header.end_time = swap_uint64 (self->storage->needs_swap, self->storage->header.end_time);
+  self->storage->header.capture_time[sizeof self->storage->header.capture_time - 1] = 0;
 
-  self->time_span.begin_nsec = self->header.time;
-  self->time_span.end_nsec = self->header.end_time;
+  self->storage->time_span.begin_nsec = self->storage->header.time;
+  self->storage->time_span.end_nsec = self->storage->header.end_time;
 
   load_progress (load, .1, _("Indexing capture data frames"));
 
@@ -1925,12 +2078,12 @@ sysprof_document_load_worker (GTask        *task,
 
   load_progress (load, .4, _("Indexing capture data frames"));
 
-  for (guint f = 0; f < sysprof_document_frames_get_size (&self->frames); f++)
+  for (guint f = 0; f < sysprof_document_frames_get_size (&self->storage->frames); f++)
     {
-      SysprofDocumentFramePointer *ptr = sysprof_document_frames_index (&self->frames, f);
-      const SysprofCaptureFrame *tainted = (const SysprofCaptureFrame *)(gpointer)&self->base[ptr->offset];
-      gint64 t = swap_int64 (self->needs_swap, tainted->time);
-      int pid = swap_int32 (self->needs_swap, tainted->pid);
+      SysprofDocumentFramePointer *ptr = sysprof_document_frames_index (&self->storage->frames, f);
+      const SysprofCaptureFrame *tainted = (const SysprofCaptureFrame *)(gpointer)&self->storage->base[ptr->offset];
+      gint64 t = swap_int64 (self->storage->needs_swap, tainted->time);
+      int pid = swap_int32 (self->storage->needs_swap, tainted->pid);
 
       if (t > guessed_end_nsec && is_data_type (tainted->type))
         guessed_end_nsec = t;
@@ -1951,13 +2104,13 @@ sysprof_document_load_worker (GTask        *task,
 
             egg_bitset_add (self->memory_samples, f);
             egg_bitset_add (self->traceables, f);
-            sysprof_process_info_seen_thread (info, swap_int32 (self->needs_swap, sample->tid));
+            sysprof_process_info_seen_thread (info, swap_int32 (self->storage->needs_swap, sample->tid));
           }
           break;
 
         case SYSPROF_CAPTURE_FRAME_SAMPLE:
           {
-            int cpu = (int16_t)swap_uint16 (self->needs_swap, tainted->cpu);
+            int cpu = (int16_t)swap_uint16 (self->storage->needs_swap, tainted->cpu);
 
             egg_bitset_add (self->samples, f);
             egg_bitset_add (self->traceables, f);
@@ -2042,7 +2195,7 @@ sysprof_document_load_worker (GTask        *task,
       else if (tainted->type == SYSPROF_CAPTURE_FRAME_SAMPLE)
         {
           const SysprofCaptureSample *sample = (const SysprofCaptureSample *)tainted;
-          guint n_addrs = swap_uint16 (self->needs_swap, sample->n_addrs);
+          guint n_addrs = swap_uint16 (self->storage->needs_swap, sample->n_addrs);
           const guint8 *endptr = (const guint8 *)tainted + ptr->length;
 
           /* If the sample contains a context-switch, record it */
@@ -2052,7 +2205,7 @@ sysprof_document_load_worker (GTask        *task,
 
               for (guint i = 0; i < n_addrs; i++)
                 {
-                  SysprofAddress addr = swap_uint64 (self->needs_swap, sample->addrs[i]);
+                  SysprofAddress addr = swap_uint64 (self->storage->needs_swap, sample->addrs[i]);
 
                   if (sysprof_address_is_context_switch (addr, &last_context) &&
                       last_context == SYSPROF_ADDRESS_CONTEXT_KERNEL)
@@ -2067,7 +2220,7 @@ sysprof_document_load_worker (GTask        *task,
             {
               SysprofProcessInfo *info = _sysprof_document_process_info (self, pid, TRUE);
 
-              sysprof_process_info_seen_thread (info, swap_int32 (self->needs_swap, sample->tid));
+              sysprof_process_info_seen_thread (info, swap_int32 (self->storage->needs_swap, sample->tid));
             }
         }
       else if (tainted->type == SYSPROF_CAPTURE_FRAME_ALLOCATION)
@@ -2075,7 +2228,7 @@ sysprof_document_load_worker (GTask        *task,
           const SysprofCaptureAllocation *alloc = (const SysprofCaptureAllocation *)tainted;
           SysprofProcessInfo *info = _sysprof_document_process_info (self, pid, TRUE);
 
-          sysprof_process_info_seen_thread (info, swap_int32 (self->needs_swap, alloc->tid));
+          sysprof_process_info_seen_thread (info, swap_int32 (self->storage->needs_swap, alloc->tid));
         }
       else if (tainted->type == SYSPROF_CAPTURE_FRAME_EXIT)
         {
@@ -2087,7 +2240,7 @@ sysprof_document_load_worker (GTask        *task,
         {
           const SysprofCaptureMark *mark = (const SysprofCaptureMark *)tainted;
           const char *endptr = (const char *)tainted + ptr->length;
-          gint64 duration = swap_int64 (self->needs_swap, mark->duration);
+          gint64 duration = swap_int64 (self->storage->needs_swap, mark->duration);
 
           if (t + duration > guessed_end_nsec)
             guessed_end_nsec = t + duration;
@@ -2122,8 +2275,8 @@ sysprof_document_load_worker (GTask        *task,
 
   g_array_sort (self->sample_cpus, compare_sample_cpu_ids);
 
-  if (guessed_end_nsec > self->time_span.begin_nsec)
-    self->time_span.end_nsec = guessed_end_nsec;
+  if (guessed_end_nsec > self->storage->time_span.begin_nsec)
+    self->storage->time_span.end_nsec = guessed_end_nsec;
 
   sysprof_document_load_cpu (self);
   sysprof_document_load_cpu_topology (self);
@@ -2152,6 +2305,10 @@ sysprof_document_load_worker (GTask        *task,
     return;
 
   sysprof_document_update_process_exit_times (self);
+  sysprof_document_freeze_storage (self, cancellable);
+
+  if (g_task_return_error_if_cancelled (task))
+    return;
 
   g_task_return_pointer (task, g_steal_pointer (&self), g_object_unref);
 }
@@ -2197,7 +2354,7 @@ _sysprof_document_new_finish (GAsyncResult  *result,
 }
 
 GRefString *
-_sysprof_document_ref_string (SysprofDocument *self,
+_sysprof_document_dup_string (SysprofDocument *self,
                               const char      *name)
 {
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
@@ -2352,7 +2509,7 @@ _sysprof_document_is_native (SysprofDocument *self)
 {
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), FALSE);
 
-  return self->needs_swap == FALSE;
+  return self->storage->needs_swap == FALSE;
 }
 
 static gboolean
@@ -2611,6 +2768,78 @@ sysprof_document_list_marks_by_group (SysprofDocument *self,
   return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), bitset);
 }
 
+EggBitset *
+_sysprof_document_find_marks (SysprofDocument    *self,
+                              const char * const *names)
+{
+  EggBitset *matches;
+  GHashTableIter iter;
+  GHashTable *group_names;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+  g_return_val_if_fail (names != NULL, NULL);
+
+  matches = egg_bitset_new_empty ();
+  g_hash_table_iter_init (&iter, self->mark_groups);
+
+  while (g_hash_table_iter_next (&iter, NULL, (gpointer *)&group_names))
+    {
+      for (guint i = 0; names[i] != NULL; i++)
+        {
+          EggBitset *indices;
+
+          if ((indices = g_hash_table_lookup (group_names, names[i])))
+            egg_bitset_union (matches, indices);
+        }
+    }
+
+  return matches;
+}
+
+void
+_sysprof_document_foreach_mark (SysprofDocument         *self,
+                                const char              *group,
+                                const char              *name,
+                                SysprofDocumentMarkFunc  func,
+                                gpointer                 user_data)
+{
+  GHashTable *names;
+  EggBitset *indices;
+  EggBitsetIter iter;
+  guint position;
+
+  g_return_if_fail (SYSPROF_IS_DOCUMENT (self));
+  g_return_if_fail (group != NULL);
+  g_return_if_fail (name != NULL);
+  g_return_if_fail (func != NULL);
+
+  if (!(names = g_hash_table_lookup (self->mark_groups, group)) ||
+      !(indices = g_hash_table_lookup (names, name)))
+    return;
+
+  if (egg_bitset_iter_init_first (&iter, indices, &position))
+    {
+      do
+        {
+          const SysprofDocumentFramePointer *ptr = sysprof_document_frames_index (&self->storage->frames, position);
+          const SysprofCaptureMark *mark;
+
+          if (ptr->length < sizeof (SysprofCaptureMark))
+            continue;
+
+          mark = (const SysprofCaptureMark *)&self->storage->base[ptr->offset];
+
+          if (!func (position,
+                     swap_int64 (self->storage->needs_swap, mark->frame.time),
+                     swap_int64 (self->storage->needs_swap, mark->duration),
+                     swap_int32 (self->storage->needs_swap, mark->frame.pid),
+                     user_data))
+            break;
+        }
+      while (egg_bitset_iter_next (&iter, &position));
+    }
+}
+
 void
 _sysprof_document_foreach_sample (SysprofDocument           *self,
                                   gint64                     begin_nsec,
@@ -2630,14 +2859,14 @@ _sysprof_document_foreach_sample (SysprofDocument           *self,
   if (begin_nsec == end_nsec)
     return;
 
-  right = sysprof_document_frames_get_size (&self->frames);
+  right = sysprof_document_frames_get_size (&self->storage->frames);
 
   while (left < right)
     {
       guint middle = left + (right - left) / 2;
-      const SysprofDocumentFramePointer *ptr = sysprof_document_frames_index (&self->frames, middle);
-      const SysprofCaptureFrame *frame = (const SysprofCaptureFrame *)&self->base[ptr->offset];
-      gint64 time = swap_int64 (self->needs_swap, frame->time);
+      const SysprofDocumentFramePointer *ptr = sysprof_document_frames_index (&self->storage->frames, middle);
+      const SysprofCaptureFrame *frame = (const SysprofCaptureFrame *)&self->storage->base[ptr->offset];
+      gint64 time = swap_int64 (self->storage->needs_swap, frame->time);
 
       if (time < begin_nsec)
         left = middle + 1;
@@ -2649,10 +2878,10 @@ _sysprof_document_foreach_sample (SysprofDocument           *self,
     {
       do
         {
-          const SysprofDocumentFramePointer *ptr = sysprof_document_frames_index (&self->frames, position);
-          const SysprofCaptureFrame *frame = (const SysprofCaptureFrame *)&self->base[ptr->offset];
+          const SysprofDocumentFramePointer *ptr = sysprof_document_frames_index (&self->storage->frames, position);
+          const SysprofCaptureFrame *frame = (const SysprofCaptureFrame *)&self->storage->base[ptr->offset];
           const SysprofCaptureSample *sample;
-          gint64 time = swap_int64 (self->needs_swap, frame->time);
+          gint64 time = swap_int64 (self->storage->needs_swap, frame->time);
 
           if (time >= end_nsec)
             break;
@@ -2664,9 +2893,9 @@ _sysprof_document_foreach_sample (SysprofDocument           *self,
 
           if (!func (position,
                      time,
-                     swap_int32 (self->needs_swap, sample->frame.pid),
-                     swap_int32 (self->needs_swap, sample->tid),
-                     (int16_t)swap_uint16 (self->needs_swap, sample->frame.cpu),
+                     swap_int32 (self->storage->needs_swap, sample->frame.pid),
+                     swap_int32 (self->storage->needs_swap, sample->tid),
+                     (int16_t)swap_uint16 (self->storage->needs_swap, sample->frame.cpu),
                      user_data))
             break;
         }
@@ -3095,7 +3324,7 @@ sysprof_document_get_clock_at_start (SysprofDocument *self)
 {
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), 0);
 
-  return self->header.time;
+  return self->storage->header.time;
 }
 
 /**
@@ -3212,9 +3441,9 @@ sysprof_document_catalog_marks (SysprofDocument *self)
             {
               do
                 {
-                  const SysprofDocumentFramePointer *ptr = sysprof_document_frames_index (&self->frames, pos);
-                  const SysprofCaptureMark *tainted = (const SysprofCaptureMark *)(gpointer)&self->base[ptr->offset];
-                  gint64 duration = swap_int64 (self->needs_swap, tainted->duration);
+                  const SysprofDocumentFramePointer *ptr = sysprof_document_frames_index (&self->storage->frames, pos);
+                  const SysprofCaptureMark *tainted = (const SysprofCaptureMark *)(gpointer)&self->storage->base[ptr->offset];
+                  gint64 duration = swap_int64 (self->storage->needs_swap, tainted->duration);
 
                   g_array_append_val (median, duration);
 
@@ -3247,7 +3476,7 @@ sysprof_document_get_time_span (SysprofDocument *self)
 {
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
-  return &self->time_span;
+  return &self->storage->time_span;
 }
 
 /**
@@ -3300,13 +3529,13 @@ sysprof_document_dup_title (SysprofDocument *self)
   if (self->title != NULL)
     return g_strdup (self->title);
 
-  if ((date_time = g_date_time_new_from_iso8601 (self->header.capture_time, NULL)))
+  if ((date_time = g_date_time_new_from_iso8601 (self->storage->header.capture_time, NULL)))
     {
       g_autoptr(GDateTime) local_date_time = g_date_time_to_local(date_time);
       return g_date_time_format (local_date_time, _("Recording at %X %x"));
     }
 
-  return g_strdup_printf (_("Recording at %s"), self->header.capture_time);
+  return g_strdup_printf (_("Recording at %s"), self->storage->header.capture_time);
 }
 
 char *
@@ -3319,13 +3548,13 @@ sysprof_document_dup_subtitle (SysprofDocument *self)
   if (self->title == NULL)
     return NULL;
 
-  if ((date_time = g_date_time_new_from_iso8601 (self->header.capture_time, NULL)))
+  if ((date_time = g_date_time_new_from_iso8601 (self->storage->header.capture_time, NULL)))
     {
       g_autoptr(GDateTime) local_date_time = g_date_time_to_local(date_time);
       return g_date_time_format (local_date_time, _("Recording at %X %x"));
     }
 
-  return g_strdup_printf (_("Recording at %s"), self->header.capture_time);
+  return g_strdup_printf (_("Recording at %s"), self->storage->header.capture_time);
 }
 
 void
@@ -3652,7 +3881,7 @@ sysprof_document_save_async (SysprofDocument     *self,
   basename = g_file_get_basename (file);
   _sysprof_document_set_title (self, basename);
 
-  bytes = g_mapped_file_get_bytes (self->mapped_file);
+  bytes = g_mapped_file_get_bytes (self->storage->mapped_file);
 
   g_file_replace_contents_bytes_async (file,
                                        bytes,
@@ -3682,8 +3911,8 @@ _sysprof_document_get_frames (SysprofDocument *self,
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
   g_return_val_if_fail (n_frames != NULL, NULL);
 
-  *n_frames = sysprof_document_frames_get_size (&self->frames);
-  return sysprof_document_frames_get_data (&self->frames);
+  *n_frames = sysprof_document_frames_get_size (&self->storage->frames);
+  return sysprof_document_frames_get_data (&self->storage->frames);
 }
 
 EggBitset *
@@ -3742,4 +3971,248 @@ _sysprof_document_serialize_symbols (SysprofDocument *document)
                                             sysprof_document_serialize_symbols_cb,
                                             dex_ref (promise));
   return DEX_FUTURE (promise);
+}
+
+SysprofDocumentStorage *
+_sysprof_document_dup_storage (SysprofDocument *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+  g_return_val_if_fail (self->storage->frozen, NULL);
+
+  return _sysprof_document_storage_ref (self->storage);
+}
+
+SysprofDocumentStorage *
+_sysprof_document_storage_ref (SysprofDocumentStorage *self)
+{
+  g_return_val_if_fail (self != NULL, NULL);
+
+  g_atomic_ref_count_inc (&self->ref_count);
+
+  return self;
+}
+
+static void
+_sysprof_document_storage_unref_destroy (gpointer data)
+{
+  SysprofDocumentStorage *self = data;
+
+  for (guint i = 0; i < self->counters->len; i++)
+    {
+      SysprofCounterMetadata *counter = &g_array_index (self->counters, SysprofCounterMetadata, i);
+
+      g_free (counter->category);
+      g_free (counter->name);
+      g_free (counter->description);
+    }
+
+  if (self->processes != NULL)
+    for (guint i = 0; i < self->processes->len; i++)
+      {
+        g_free (g_array_index (self->processes, SysprofProcessMetadata, i).title);
+        g_free (g_array_index (self->processes, SysprofProcessMetadata, i).command);
+      }
+
+  g_clear_pointer (&self->processes, g_array_unref);
+  g_clear_pointer (&self->metadata, g_hash_table_unref);
+  g_clear_pointer (&self->logs, egg_bitset_unref);
+  g_clear_pointer (&self->file_chunks, egg_bitset_unref);
+  g_clear_pointer (&self->files_first_position, g_hash_table_unref);
+  g_clear_pointer (&self->counters, g_array_unref);
+  g_clear_pointer (&self->marks, egg_bitset_unref);
+  g_clear_pointer (&self->mark_groups, g_hash_table_unref);
+  g_clear_pointer (&self->mark_names, g_hash_table_unref);
+  g_clear_pointer (&self->mapped_file, g_mapped_file_unref);
+  sysprof_document_frames_clear (&self->frames);
+  g_free (self);
+}
+
+void
+_sysprof_document_storage_unref (SysprofDocumentStorage *self)
+{
+  g_return_if_fail (self != NULL);
+
+  if (g_atomic_ref_count_dec (&self->ref_count))
+    {
+      if (dex_scheduler_get_default () != NULL)
+        dex_scheduler_push (dex_thread_pool_scheduler_get_default (),
+                            _sysprof_document_storage_unref_destroy,
+                            self);
+      else
+        _sysprof_document_storage_unref_destroy (self);
+    }
+}
+
+guint
+_sysprof_document_storage_get_count (SysprofDocumentStorage *self,
+                                     SysprofDocumentCount    count)
+{
+  g_return_val_if_fail (self != NULL && self->frozen, 0);
+  g_return_val_if_fail (count < SYSPROF_DOCUMENT_N_COUNTS, 0);
+
+  return self->counts[count];
+}
+
+const SysprofCounterMetadata *
+_sysprof_document_storage_get_counters (SysprofDocumentStorage *self,
+                                        guint                  *n_counters)
+{
+  g_return_val_if_fail (self != NULL && self->frozen, NULL);
+  g_return_val_if_fail (n_counters != NULL, NULL);
+
+  *n_counters = self->counters->len;
+
+  return (const SysprofCounterMetadata *)self->counters->data;
+}
+
+guint
+_sysprof_document_storage_get_n_frames (SysprofDocumentStorage *self)
+{
+  g_return_val_if_fail (self != NULL && self->frozen, 0);
+
+  return sysprof_document_frames_get_size (&self->frames);
+}
+
+SysprofDocumentFrame *
+_sysprof_document_storage_get_frame (SysprofDocumentStorage *self,
+                                     guint                   position)
+{
+  const SysprofDocumentFramePointer *ptr;
+
+  g_return_val_if_fail (self != NULL && self->frozen, NULL);
+
+  if (position >= sysprof_document_frames_get_size (&self->frames))
+    return NULL;
+
+  ptr = sysprof_document_frames_index (&self->frames, position);
+
+  return _sysprof_document_frame_new (self->mapped_file, (gconstpointer)(self->base + ptr->offset),
+                                      ptr->length, self->needs_swap,
+                                      self->header.time, self->header.end_time);
+}
+
+EggBitset *
+_sysprof_document_storage_copy_marks (SysprofDocumentStorage *self,
+                                      const char             *group)
+{
+  EggBitset *bits;
+
+  g_return_val_if_fail (self != NULL && self->frozen, NULL);
+
+  bits = group ? g_hash_table_lookup (self->mark_groups, group) : self->marks;
+
+  return bits ? egg_bitset_copy (bits) : egg_bitset_new_empty ();
+}
+
+GListModel *
+_sysprof_document_storage_list_files (SysprofDocumentStorage *self,
+                                      GCancellable           *cancellable)
+{
+  g_autoptr(EggBitset) chunks = NULL;
+  GHashTableIter hiter;
+  EggBitsetIter iter;
+  GListStore *model;
+
+  gpointer key, value;
+
+  g_return_val_if_fail (self != NULL && self->frozen, NULL);
+
+  chunks = egg_bitset_copy (self->file_chunks);
+
+  model = g_list_store_new (SYSPROF_TYPE_DOCUMENT_FILE);
+
+  g_hash_table_iter_init (&hiter, self->files_first_position);
+
+  while (!g_cancellable_is_cancelled (cancellable) &&
+         g_hash_table_iter_next (&hiter, &key, &value))
+    {
+      g_autoptr(SysprofDocumentFile) file = NULL;
+      g_autoptr(GPtrArray) file_chunks = g_ptr_array_new_with_free_func (g_object_unref);
+      g_autofree char *no_gz_path = NULL;
+      const char *path = key;
+      guint target = GPOINTER_TO_SIZE (value);
+      guint i;
+
+      if (egg_bitset_iter_init_at (&iter, chunks, target, &i))
+        {
+          do
+            {
+              g_autoptr(SysprofDocumentFileChunk) file_chunk = SYSPROF_DOCUMENT_FILE_CHUNK (_sysprof_document_storage_get_frame (self, i));
+
+              if (g_strcmp0 (path, sysprof_document_file_chunk_get_path (file_chunk)) == 0)
+                {
+                  gboolean is_last = sysprof_document_file_chunk_get_is_last (file_chunk);
+
+                  g_ptr_array_add (file_chunks, g_steal_pointer (&file_chunk));
+
+                  if (is_last)
+                    break;
+                }
+            }
+          while (!g_cancellable_is_cancelled (cancellable) && egg_bitset_iter_next (&iter, &i));
+        }
+
+      if (g_str_has_suffix (path, ".gz"))
+        path = no_gz_path = g_strndup (path, strlen (path) - 3);
+
+      file = _sysprof_document_file_new (path,
+                                         g_steal_pointer (&file_chunks),
+                                         no_gz_path != NULL);
+
+      g_list_store_append (model, file);
+    }
+
+  return G_LIST_MODEL (model);
+}
+
+const SysprofProcessMetadata *
+_sysprof_document_storage_get_processes (SysprofDocumentStorage *self,
+                                         guint                  *n_processes)
+{
+  g_return_val_if_fail (self != NULL && self->frozen, NULL);
+  g_return_val_if_fail (n_processes != NULL, NULL);
+
+  *n_processes = self->processes->len;
+
+  return (const SysprofProcessMetadata *)self->processes->data;
+}
+
+EggBitset *
+_sysprof_document_storage_copy_logs (SysprofDocumentStorage *self)
+{
+  g_return_val_if_fail (self != NULL && self->frozen, NULL);
+
+  return egg_bitset_copy (self->logs);
+}
+
+const char *
+_sysprof_document_storage_get_metadata (SysprofDocumentStorage *self,
+                                        const char             *key)
+{
+  g_return_val_if_fail (self != NULL && self->frozen, NULL);
+  g_return_val_if_fail (key != NULL, NULL);
+
+  return g_hash_table_lookup (self->metadata, key);
+}
+
+EggBitset *
+_sysprof_document_storage_copy_named_marks (SysprofDocumentStorage *self,
+                                            const char *const      *names)
+{
+  EggBitset *bits;
+
+  g_return_val_if_fail (self != NULL && self->frozen, NULL);
+  g_return_val_if_fail (names != NULL, NULL);
+
+  bits = egg_bitset_new_empty ();
+
+  for (guint i = 0; names[i] != NULL; i++)
+    {
+      EggBitset *named = g_hash_table_lookup (self->mark_names, names[i]);
+
+      if (named != NULL)
+        egg_bitset_union (bits, named);
+    }
+
+  return bits;
 }

@@ -20,24 +20,28 @@
 
 #pragma once
 
+#include <gio/gio.h>
+
 #include "sysprof-document-counter.h"
 
 G_BEGIN_DECLS
 
 struct _SysprofDocumentCounter
 {
-  GObject parent_instance;
+  GObject     parent_instance;
   GRefString *category;
   GRefString *description;
   GRefString *name;
-  GArray *values;
-  double min_value;
-  double max_value;
-  gint64 begin_time;
-  guint id;
-  guint type;
+  GArray     *values;
+  double      min_value;
+  double      max_value;
+  gint64      begin_time;
+  guint       id;
+  guint       type;
 };
 
+void                    _sysprof_document_counter_calculate_range (SysprofDocumentCounter *self,
+                                                                   GCancellable           *cancellable);
 SysprofDocumentCounter *_sysprof_document_counter_new             (guint                   id,
                                                                    guint                   type,
                                                                    GRefString             *category,
@@ -45,6 +49,5 @@ SysprofDocumentCounter *_sysprof_document_counter_new             (guint        
                                                                    GRefString             *description,
                                                                    GArray                 *values,
                                                                    gint64                  begin_time);
-void                    _sysprof_document_counter_calculate_range (SysprofDocumentCounter *self);
 
 G_END_DECLS

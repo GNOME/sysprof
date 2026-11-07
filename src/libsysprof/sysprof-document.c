@@ -317,7 +317,6 @@ sysprof_document_mark_busy_for_task (SysprofDocument *self,
   sysprof_document_mark_busy (self);
 }
 
-
 EggBitset *
 _sysprof_document_traceables (SysprofDocument *self)
 {
@@ -923,7 +922,8 @@ sysprof_document_load_processes (SysprofDocument *self)
 }
 
 static void
-sysprof_document_load_counters (SysprofDocument *self)
+sysprof_document_load_counters (SysprofDocument *self,
+                                GCancellable    *cancellable)
 {
   g_autoptr(GPtrArray) counters = NULL;
   g_autoptr(EggBitset) swap_ids = NULL;
@@ -955,6 +955,9 @@ sysprof_document_load_counters (SysprofDocument *self)
       do
         {
           g_autoptr(SysprofDocumentCtrdef) ctrdef = g_list_model_get_item (model, i);
+
+          if (g_cancellable_is_cancelled (cancellable))
+            return;
 
           n_counters = sysprof_document_ctrdef_get_n_counters (ctrdef);
 
@@ -1004,6 +1007,9 @@ sysprof_document_load_counters (SysprofDocument *self)
           guint n_values = sysprof_document_ctrset_get_n_values (ctrset);
           SysprofDocumentTimedValue ctrval;
 
+          if (g_cancellable_is_cancelled (cancellable))
+            return;
+
           ctrval.time = sysprof_document_frame_get_time (SYSPROF_DOCUMENT_FRAME (ctrset));
 
           for (guint j = 0; j < n_values; j++)
@@ -1035,7 +1041,10 @@ sysprof_document_load_counters (SysprofDocument *self)
     {
       g_autoptr(SysprofDocumentCounter) counter = g_list_model_get_item (G_LIST_MODEL (self->counters), i);
 
-      _sysprof_document_counter_calculate_range (counter);
+      _sysprof_document_counter_calculate_range (counter, cancellable);
+
+      if (g_cancellable_is_cancelled (cancellable))
+        return;
     }
 }
 
@@ -1920,7 +1929,10 @@ sysprof_document_load_worker (GTask        *task,
   sysprof_document_load_overlays (self);
 
   load_progress (load, .85, _("Processing counters"));
-  sysprof_document_load_counters (self);
+  sysprof_document_load_counters (self, cancellable);
+
+  if (g_task_return_error_if_cancelled (task))
+    return;
 
   /* Ensure all our process have an exit_time set */
   sysprof_document_update_process_exit_times (self);

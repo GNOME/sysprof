@@ -22,13 +22,13 @@
 
 #include <math.h>
 
-#include "timsort/gtktimsortprivate.h"
-
 #include "sysprof-document-counter-private.h"
 #include "sysprof-document-counter-value-private.h"
 #include "sysprof-document-private.h"
+#include "timsort/gtktimsortprivate.h"
 
-enum {
+enum
+{
   PROP_0,
   PROP_CATEGORY,
   PROP_DESCRIPTION,
@@ -78,7 +78,7 @@ list_model_iface_init (GListModelInterface *iface)
 G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofDocumentCounter, sysprof_document_counter, G_TYPE_OBJECT,
                                G_IMPLEMENT_INTERFACE (G_TYPE_LIST_MODEL, list_model_iface_init))
 
-static GParamSpec *properties [N_PROPS];
+static GParamSpec *properties[N_PROPS];
 
 static void
 sysprof_document_counter_finalize (GObject *object)
@@ -144,40 +144,47 @@ sysprof_document_counter_class_init (SysprofDocumentCounterClass *klass)
   object_class->finalize = sysprof_document_counter_finalize;
   object_class->get_property = sysprof_document_counter_get_property;
 
-  properties [PROP_ID] =
+  properties[PROP_ID] =
     g_param_spec_uint ("id", NULL, NULL,
                        0, G_MAXUINT, 0,
-                       (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+                       (G_PARAM_READABLE |
+                        G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_CATEGORY] =
+  properties[PROP_CATEGORY] =
     g_param_spec_string ("category", NULL, NULL,
                          NULL,
-                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READABLE |
+                          G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_DESCRIPTION] =
+  properties[PROP_DESCRIPTION] =
     g_param_spec_string ("description", NULL, NULL,
                          NULL,
-                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READABLE |
+                          G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_KEY] =
+  properties[PROP_KEY] =
     g_param_spec_string ("key", NULL, NULL,
                          NULL,
-                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READABLE |
+                          G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_NAME] =
+  properties[PROP_NAME] =
     g_param_spec_string ("name", NULL, NULL,
                          NULL,
-                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READABLE |
+                          G_PARAM_STATIC_STRINGS));
 
   properties[PROP_MIN_VALUE] =
     g_param_spec_double ("min-value", NULL, NULL,
                          -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READABLE |
+                          G_PARAM_STATIC_STRINGS));
 
   properties[PROP_MAX_VALUE] =
     g_param_spec_double ("max-value", NULL, NULL,
                          -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READABLE |
+                          G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
@@ -329,9 +336,13 @@ value_as_double_with_correction (guint                      type,
       return value->v_double;
     }
   else if (type == SYSPROF_CAPTURE_COUNTER_INT64)
-    return value->v_int64;
+    {
+      return value->v_int64;
+    }
   else
-    return .0;
+    {
+      return .0;
+    }
 }
 
 static int
@@ -351,7 +362,8 @@ sort_by_time (gconstpointer aptr,
 }
 
 void
-_sysprof_document_counter_calculate_range (SysprofDocumentCounter *self)
+_sysprof_document_counter_calculate_range (SysprofDocumentCounter *self,
+                                           GCancellable           *cancellable)
 {
   SysprofDocumentTimedValue *values;
   gboolean min_value_changed = FALSE;
@@ -363,6 +375,9 @@ _sysprof_document_counter_calculate_range (SysprofDocumentCounter *self)
   g_return_if_fail (SYSPROF_IS_DOCUMENT_COUNTER (self));
 
   if (self->values->len == 0)
+    return;
+
+  if (g_cancellable_is_cancelled (cancellable))
     return;
 
   gtk_tim_sort (self->values->data,
@@ -380,6 +395,9 @@ _sysprof_document_counter_calculate_range (SysprofDocumentCounter *self)
   for (guint i = 1; i < n_values; i++)
     {
       double value = value_as_double_with_correction (self->type, &values[i]);
+
+      if ((i & 4095) == 0 && g_cancellable_is_cancelled (cancellable))
+        return;
 
       min_value = MIN (min_value, value);
       max_value = MAX (max_value, value);

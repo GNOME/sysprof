@@ -20,6 +20,7 @@ sysprofd_sources = [
   'sysprofd.c',
   'ipc-rapl-profiler.c',
   'ipc-service-impl.c',
+  'ipc-peer.c',
   'ipc-unwinder-impl.c',
   'sysprof-turbostat.c',
   'helpers.c',
@@ -91,3 +92,20 @@ install_data(
   'org.gnome.Sysprof3.Service.xml',
   install_dir: join_paths(datadir, 'dbus-1/interfaces'),
 )
+
+if get_option('tests') and need_libsysprof
+  test_recording_connection = executable('test-recording-connection',
+    'test-recording-connection.c',
+    'ipc-peer.c',
+    'ipc-service-impl.c',
+    'ipc-rapl-profiler.c',
+    'ipc-unwinder-impl.c',
+    'sysprof-turbostat.c',
+    ipc_service_src,
+    ipc_profiler_src,
+    ipc_unwinder_src,
+    dependencies: [libsysprof_static_dep, polkit_dep],
+    c_args: ['-UG_DISABLE_ASSERT', '-UG_DISABLE_CAST_CHECKS'],
+  )
+  test('recording-connection', test_recording_connection, timeout: 60)
+endif

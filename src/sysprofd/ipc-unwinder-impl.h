@@ -29,6 +29,7 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (IpcUnwinderImpl, ipc_unwinder_impl, IPC, UNWINDER_IMPL, IpcUnwinderSkeleton)
 
-IpcUnwinder *ipc_unwinder_impl_new (void);
+IpcUnwinder *ipc_unwinder_impl_new      (gboolean         authorized);
+void         ipc_unwinder_impl_shutdown (IpcUnwinderImpl *self);
 
 G_END_DECLS

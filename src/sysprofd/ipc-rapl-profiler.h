@@ -28,6 +28,7 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (IpcRaplProfiler, ipc_rapl_profiler, IPC, RAPL_PROFILER, IpcProfilerSkeleton)
 
-IpcProfiler *ipc_rapl_profiler_new (void);
+IpcProfiler *ipc_rapl_profiler_new      (gboolean         authorized);
+void         ipc_rapl_profiler_shutdown (IpcRaplProfiler *self);
 
 G_END_DECLS

@@ -49,7 +49,6 @@ typedef struct
 struct _SysprofMemorySampler
 {
   SysprofInstrument  parent_instance;
-  GDBusConnection   *connection;
   GPtrArray         *streams;
 };
 
@@ -327,6 +326,7 @@ static DexFuture *
 prepare_fiber (gpointer data)
 {
   Operation *op = data;
+  g_autoptr(GDBusConnection) connection = NULL;
   g_autoptr(GArray) online = NULL;
   g_autoptr(GError) error = NULL;
   g_autoptr(GDir) dir = NULL;
@@ -335,6 +335,8 @@ prepare_fiber (gpointer data)
   guint attempted = 0;
 
   g_assert (op != NULL);
+
+  connection = _sysprof_recording_dup_connection (op->recording);
 
   covered = g_hash_table_new (g_direct_hash, g_direct_equal);
 
@@ -425,7 +427,7 @@ prepare_fiber (gpointer data)
           stream->description = g_key_file_new ();
           stream->event_id = sysprof_capture_writer_request_memory_event (_sysprof_recording_writer (op->recording));
 
-          if (!(stream->stream = dex_await_object (sysprof_perf_event_stream_new (op->self->connection,
+          if (!(stream->stream = dex_await_object (sysprof_perf_event_stream_new (connection,
                                                                                   &attr,
                                                                                   32,
                                                                                   cpu,
@@ -639,15 +641,6 @@ sysprof_memory_sampler_record (SysprofInstrument *instrument,
                               (GDestroyNotify)operation_free);
 }
 
-static void
-sysprof_memory_sampler_set_connection (SysprofInstrument *instrument,
-                                       GDBusConnection   *connection)
-{
-  SysprofMemorySampler *self = SYSPROF_MEMORY_SAMPLER (instrument);
-
-  g_set_object (&self->connection, connection);
-}
-
 static char **
 sysprof_memory_sampler_list_required_policy (SysprofInstrument *instrument)
 {
@@ -662,7 +655,6 @@ sysprof_memory_sampler_finalize (GObject *object)
   SysprofMemorySampler *self = SYSPROF_MEMORY_SAMPLER (object);
 
   g_clear_pointer (&self->streams, g_ptr_array_unref);
-  g_clear_object (&self->connection);
 
   G_OBJECT_CLASS (sysprof_memory_sampler_parent_class)->finalize (object);
 }
@@ -678,7 +670,6 @@ sysprof_memory_sampler_class_init (SysprofMemorySamplerClass *klass)
   instrument_class->list_required_policy = sysprof_memory_sampler_list_required_policy;
   instrument_class->prepare = sysprof_memory_sampler_prepare;
   instrument_class->record = sysprof_memory_sampler_record;
-  instrument_class->set_connection = sysprof_memory_sampler_set_connection;
 }
 
 static void

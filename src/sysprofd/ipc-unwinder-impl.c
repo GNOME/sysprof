@@ -37,7 +37,11 @@
 
 struct _IpcUnwinderImpl
 {
-  IpcUnwinderSkeleton parent_instance;
+  IpcUnwinderSkeleton  parent_instance;
+
+  gboolean             authorized;
+  gboolean             shutdown;
+  GPtrArray           *subprocesses;
 };
 
 static void
@@ -53,8 +57,13 @@ ipc_unwinder_impl_wait_cb (GObject      *object,
   g_assert (G_IS_ASYNC_RESULT (result));
   g_assert (IPC_IS_UNWINDER_IMPL (self));
 
+  g_ptr_array_remove (self->subprocesses, subprocess);
+
   if (!g_subprocess_wait_check_finish (subprocess, result, &error))
-    g_warning ("wait_check failure: %s", error->message);
+    {
+      if (!self->shutdown)
+        g_warning ("wait_check failure: %s", error->message);
+    }
   else
     g_info ("sysprof-live-unwinder exited");
 }
@@ -82,6 +91,15 @@ ipc_unwinder_impl_handle_unwind (IpcUnwinder           *unwinder,
   g_assert (IPC_IS_UNWINDER_IMPL (unwinder));
   g_assert (G_IS_DBUS_METHOD_INVOCATION (invocation));
   g_assert (!fd_list || G_IS_UNIX_FD_LIST (fd_list));
+
+  if (IPC_UNWINDER_IMPL (unwinder)->shutdown)
+    {
+      g_dbus_method_invocation_return_error_literal (invocation,
+                                                     G_IO_ERROR,
+                                                     G_IO_ERROR_CLOSED,
+                                                     "Recording connection is closed");
+      return TRUE;
+    }
 
   if (stack_size == 0 || stack_size % sysconf (_SC_PAGESIZE) != 0)
     {
@@ -152,6 +170,8 @@ ipc_unwinder_impl_handle_unwind (IpcUnwinder           *unwinder,
 
   ipc_unwinder_complete_unwind (unwinder, g_steal_pointer (&invocation), NULL);
 
+  g_ptr_array_add (IPC_UNWINDER_IMPL (unwinder)->subprocesses, g_object_ref (subprocess));
+
   g_subprocess_wait_check_async (subprocess,
                                  NULL,
                                  ipc_unwinder_impl_wait_cb,
@@ -181,6 +201,9 @@ ipc_unwinder_impl_g_authorize_method (GDBusInterfaceSkeleton *skeleton,
 
   g_assert (IPC_IS_UNWINDER_IMPL (skeleton));
   g_assert (G_IS_DBUS_METHOD_INVOCATION (invocation));
+
+  if (((IpcUnwinderImpl *)skeleton)->authorized)
+    return TRUE;
 
   peer_name = g_dbus_method_invocation_get_sender (invocation);
 
@@ -212,6 +235,10 @@ ipc_unwinder_impl_g_authorize_method (GDBusInterfaceSkeleton *skeleton,
 static void
 ipc_unwinder_impl_finalize (GObject *object)
 {
+  IpcUnwinderImpl *self = (IpcUnwinderImpl *)object;
+
+  g_clear_pointer (&self->subprocesses, g_ptr_array_unref);
+
   G_OBJECT_CLASS (ipc_unwinder_impl_parent_class)->finalize (object);
 }
 
@@ -229,10 +256,26 @@ ipc_unwinder_impl_class_init (IpcUnwinderImplClass *klass)
 static void
 ipc_unwinder_impl_init (IpcUnwinderImpl *self)
 {
+  self->subprocesses = g_ptr_array_new_with_free_func (g_object_unref);
 }
 
 IpcUnwinder *
-ipc_unwinder_impl_new (void)
+ipc_unwinder_impl_new (gboolean authorized)
 {
-  return g_object_new (IPC_TYPE_UNWINDER_IMPL, NULL);
+  IpcUnwinderImpl *self = g_object_new (IPC_TYPE_UNWINDER_IMPL, NULL);
+
+  self->authorized = !!authorized;
+
+  return IPC_UNWINDER (self);
+}
+
+void
+ipc_unwinder_impl_shutdown (IpcUnwinderImpl *self)
+{
+  g_return_if_fail (IPC_IS_UNWINDER_IMPL (self));
+
+  self->shutdown = TRUE;
+
+  for (guint i = 0; i < self->subprocesses->len; i++)
+    g_subprocess_force_exit (g_ptr_array_index (self->subprocesses, i));
 }

@@ -28,6 +28,6 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (IpcServiceImpl, ipc_service_impl, IPC, SERVICE_IMPL, IpcServiceSkeleton)
 
-IpcService *ipc_service_impl_new (void);
+IpcService *ipc_service_impl_new (gboolean authorized);
 
 G_END_DECLS

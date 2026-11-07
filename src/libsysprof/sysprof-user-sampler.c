@@ -31,6 +31,7 @@
 
 #include <glib/gstdio.h>
 
+#include "sysprof-service-private.h"
 #include "sysprof-instrument-private.h"
 #include "sysprof-perf-event-stream-private.h"
 #include "sysprof-recording-private.h"
@@ -249,7 +250,7 @@ try_again:
   promise = dex_promise_new ();
 
   g_dbus_connection_call_with_unix_fd_list (connection,
-                                            "org.gnome.Sysprof3",
+                                            _sysprof_service_get_name (connection),
                                             "/org/gnome/Sysprof3",
                                             "org.gnome.Sysprof3.Service",
                                             "PerfEventOpen",
@@ -332,7 +333,7 @@ create_unwinder (GDBusConnection  *connection,
 
   ipc_unwinder_proxy_new (connection,
                           G_DBUS_PROXY_FLAGS_NONE,
-                          "org.gnome.Sysprof3",
+                          _sysprof_service_get_name (connection),
                           "/org/gnome/Sysprof3/Unwinder",
                           NULL,
                           create_unwinder_cb,
@@ -355,8 +356,10 @@ sysprof_user_sampler_prepare_fiber (gpointer user_data)
   g_assert (SYSPROF_IS_RECORDING (prepare->recording));
   g_assert (SYSPROF_IS_USER_SAMPLER (prepare->sampler));
 
-  if (!(connection = dex_await_object (dex_bus_get (G_BUS_TYPE_SYSTEM), &error)))
-    return dex_future_new_for_error (g_steal_pointer (&error));
+  if (!(connection = _sysprof_recording_dup_connection (prepare->recording)))
+    return dex_future_new_reject (G_IO_ERROR,
+                                  G_IO_ERROR_NOT_SUPPORTED,
+                                  "User stack sampling requires a sysprofd connection");
 
   if (!dex_await (_sysprof_recording_add_file (prepare->recording,
                                                "/proc/kallsyms",

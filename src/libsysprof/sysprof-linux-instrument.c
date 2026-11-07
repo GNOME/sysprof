@@ -22,6 +22,7 @@
 
 #include <stdio.h>
 
+#include "sysprof-service-private.h"
 #include "sysprof-linux-instrument-private.h"
 #include "sysprof-maps-parser-private.h"
 #include "sysprof-podman-private.h"
@@ -36,7 +37,6 @@
 struct _SysprofLinuxInstrument
 {
   SysprofInstrument  parent_instance;
-  GDBusConnection   *connection;
   SysprofRecording  *recording;
   GHashTable        *seen;
 };
@@ -49,15 +49,6 @@ sysprof_linux_instrument_list_required_policy (SysprofInstrument *instrument)
   static const char *policy[] = { "org.gnome.sysprof3.profile", NULL };
 
   return g_strdupv ((char **)policy);
-}
-
-static void
-sysprof_linux_instrument_set_connection (SysprofInstrument *instrument,
-                                         GDBusConnection   *connection)
-{
-  SysprofLinuxInstrument *self = SYSPROF_LINUX_INSTRUMENT (instrument);
-
-  g_set_object (&self->connection, connection);
 }
 
 static void
@@ -294,6 +285,7 @@ static DexFuture *
 sysprof_linux_instrument_prepare_fiber (gpointer user_data)
 {
   SysprofLinuxInstrument *self = user_data;
+  g_autoptr(GDBusConnection) connection = NULL;
   g_autoptr(GVariant) process_info_reply = NULL;
   g_autoptr(GVariant) process_info = NULL;
   g_autoptr(GPtrArray) futures = NULL;
@@ -302,6 +294,8 @@ sysprof_linux_instrument_prepare_fiber (gpointer user_data)
 
   g_assert (SYSPROF_IS_LINUX_INSTRUMENT (self));
   g_assert (SYSPROF_IS_RECORDING (self->recording));
+
+  connection = _sysprof_recording_dup_connection (self->recording);
 
   /* First get some basic information about the system into the capture. We can
    * get the contents for all of these concurrently.
@@ -333,13 +327,13 @@ sysprof_linux_instrument_prepare_fiber (gpointer user_data)
 
   at_time = SYSPROF_CAPTURE_CURRENT_TIME;
 
-  if (self->connection != NULL)
+  if (connection != NULL)
     {
       /* We also want to get a bunch of info on user processes so that we can add
        * records about them to the recording.
        */
-      if (!(process_info_reply = dex_await_variant (dex_dbus_connection_call (self->connection,
-                                                                              "org.gnome.Sysprof3",
+      if (!(process_info_reply = dex_await_variant (dex_dbus_connection_call (connection,
+                                                                              _sysprof_service_get_name (connection),
                                                                               "/org/gnome/Sysprof3",
                                                                               "org.gnome.Sysprof3.Service",
                                                                               "GetProcessInfo",
@@ -467,63 +461,11 @@ watch_spawned_process_maps (SysprofRecording *recording,
   g_source_unref (source);
 }
 
-typedef struct
-{
-  SysprofRecording *recording;
-  GPtrArray        *paths;
-  int               pid;
-} ProcessStarted;
-
-static void
-process_started_free (gpointer data)
-{
-  ProcessStarted *state = data;
-
-  g_clear_object (&state->recording);
-  g_clear_pointer (&state->paths, g_ptr_array_unref);
-  g_free (state);
-}
-
 static DexFuture *
 process_started_cb (DexFuture *completed,
                     gpointer   user_data)
 {
-  ProcessStarted *state = user_data;
-  guint size;
-
-  g_assert (DEX_IS_FUTURE_SET (completed));
-  g_assert (state != NULL);
-  g_assert (SYSPROF_IS_RECORDING (state->recording));
-  g_assert (state->pid > 0);
-  g_assert (state->paths != NULL);
-
-  size = dex_future_set_get_size (DEX_FUTURE_SET (completed));
-
-  g_assert (state->paths->len == size);
-
-  for (guint i = 0; i < size; i++)
-    {
-      g_autoptr(GError) error = NULL;
-      const GValue *value = NULL;
-      GVariant *variant = NULL;
-      const char *path = g_ptr_array_index (state->paths, i);
-      const char *bytestring = NULL;
-
-      if (!(value = dex_future_set_get_value_at (DEX_FUTURE_SET (completed), i, &error)))
-        continue;
-
-      if (!(variant = g_value_get_variant (value)) ||
-          !g_variant_is_of_type (variant, G_VARIANT_TYPE ("(ay)")))
-        g_return_val_if_reached (NULL);
-
-      g_variant_get (variant, "(^&ay)", &bytestring);
-
-      if (bytestring == NULL)
-        g_return_val_if_reached (NULL);
-
-      _sysprof_recording_add_file_data (state->recording, path, bytestring, -1, TRUE);
-    }
-
+  /* Processes may have exited, and most do not have a .flatpak-info file. */
   return dex_future_new_for_boolean (TRUE);
 }
 
@@ -534,13 +476,10 @@ sysprof_linux_instrument_process_started (SysprofInstrument *instrument,
                                           const char        *comm)
 {
   SysprofLinuxInstrument *self = (SysprofLinuxInstrument *)instrument;
-  g_autoptr(GDBusConnection) bus = NULL;
-  g_autoptr(GError) error = NULL;
   g_autofree char *mountinfo_path = NULL;
   g_autofree char *flatpak_info_path = NULL;
   DexFuture *mountinfo;
   DexFuture *flatpak_info;
-  ProcessStarted *state;
 
   g_assert (SYSPROF_IS_LINUX_INSTRUMENT (self));
   g_assert (SYSPROF_IS_RECORDING (recording));
@@ -591,46 +530,15 @@ sysprof_linux_instrument_process_started (SysprofInstrument *instrument,
     watch_spawned_process_maps (recording, pid, maps);
   }
 
-  /* Get the bus synchronously so we don't have to suspend the fiber. This
-   * will always return immediately anyway.
-   */
-  if (!(bus = g_bus_get_sync (G_BUS_TYPE_SYSTEM, NULL, &error)))
-    return dex_future_new_for_error (g_steal_pointer (&error));
-
   mountinfo_path = g_strdup_printf ("/proc/%d/mountinfo", pid);
-  mountinfo = dex_dbus_connection_call (bus,
-                                        "org.gnome.Sysprof3",
-                                        "/org/gnome/Sysprof3",
-                                        "org.gnome.Sysprof3.Service",
-                                        "GetProcFile",
-                                        g_variant_new ("(^ay)", mountinfo_path),
-                                        G_VARIANT_TYPE ("(ay)"),
-                                        G_DBUS_CALL_FLAGS_NONE,
-                                        -1);
-
   flatpak_info_path = g_strdup_printf ("/proc/%d/root/.flatpak-info", pid);
-  flatpak_info = dex_dbus_connection_call (bus,
-                                           "org.gnome.Sysprof3",
-                                           "/org/gnome/Sysprof3",
-                                           "org.gnome.Sysprof3.Service",
-                                           "GetProcFile",
-                                           g_variant_new ("(^ay)", flatpak_info_path),
-                                           G_VARIANT_TYPE ("(ay)"),
-                                           G_DBUS_CALL_FLAGS_NONE,
-                                           -1);
-
-  state = g_new0 (ProcessStarted, 1);
-  state->pid = pid;
-  state->recording = g_object_ref (recording);
-  state->paths = g_ptr_array_new_with_free_func (g_free);
-
-  g_ptr_array_add (state->paths, g_steal_pointer (&mountinfo_path));
-  g_ptr_array_add (state->paths, g_steal_pointer (&flatpak_info_path));
+  mountinfo = _sysprof_recording_add_file (recording, mountinfo_path, TRUE);
+  flatpak_info = _sysprof_recording_add_file (recording, flatpak_info_path, TRUE);
 
   return dex_future_finally (dex_future_all (mountinfo, flatpak_info, NULL),
                              process_started_cb,
-                             state,
-                             process_started_free);
+                             NULL,
+                             NULL);
 }
 
 static void
@@ -638,7 +546,6 @@ sysprof_linux_instrument_dispose (GObject *object)
 {
   SysprofLinuxInstrument *self = (SysprofLinuxInstrument *)object;
 
-  g_clear_object (&self->connection);
   g_clear_object (&self->recording);
   g_hash_table_remove_all (self->seen);
 
@@ -667,7 +574,6 @@ sysprof_linux_instrument_class_init (SysprofLinuxInstrumentClass *klass)
   instrument_class->list_required_policy = sysprof_linux_instrument_list_required_policy;
   instrument_class->prepare = sysprof_linux_instrument_prepare;
   instrument_class->process_started = sysprof_linux_instrument_process_started;
-  instrument_class->set_connection = sysprof_linux_instrument_set_connection;
 }
 
 static void

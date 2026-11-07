@@ -38,6 +38,11 @@ struct _SysprofRecording
 {
   GObject               parent_instance;
 
+  /* Selected once before preparing instruments: a private peer, the system
+   * bus for older daemons, or NULL when recording without sysprofd.
+   */
+  GDBusConnection      *connection;
+
   /* Used to calculate the duration of the recording */
   gint64                start_time;
   gint64                end_time;
@@ -98,6 +103,7 @@ void              _sysprof_recording_diagnostic     (SysprofRecording      *self
                                                      const char            *domain,
                                                      const char            *format,
                                                      ...) G_GNUC_PRINTF (3, 4);
+GDBusConnection  *_sysprof_recording_dup_connection (SysprofRecording      *self);
 void              _sysprof_recording_error          (SysprofRecording      *self,
                                                      const char            *domain,
                                                      const char            *format,

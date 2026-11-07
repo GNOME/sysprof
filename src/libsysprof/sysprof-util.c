@@ -21,6 +21,7 @@
 
 #include "config.h"
 
+#include "sysprof-service-private.h"
 #include "sysprof-util-private.h"
 
 DexFuture *
@@ -39,7 +40,7 @@ sysprof_get_proc_file_bytes (GDBusConnection *connection,
       const char *contents = NULL;
 
       if (!(reply = dex_await_variant (dex_dbus_connection_call (connection,
-                                                                 "org.gnome.Sysprof3",
+                                                                 _sysprof_service_get_name (connection),
                                                                  "/org/gnome/Sysprof3",
                                                                  "org.gnome.Sysprof3.Service",
                                                                  "GetProcFile",

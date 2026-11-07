@@ -31,7 +31,6 @@
 struct _SysprofSampler
 {
   SysprofInstrument  parent_instance;
-  GDBusConnection   *connection;
   GPtrArray         *perf_event_streams;
   guint              sample_lost_counter_id;
   gint64             lost_count;
@@ -330,7 +329,6 @@ typedef struct _Prepare
 {
   SysprofRecording *recording;
   SysprofSampler   *sampler;
-  GDBusConnection  *connection;
 } Prepare;
 
 static void
@@ -338,7 +336,6 @@ prepare_free (Prepare *prepare)
 {
   g_clear_object (&prepare->recording);
   g_clear_object (&prepare->sampler);
-  g_clear_object (&prepare->connection);
   g_free (prepare);
 }
 
@@ -346,6 +343,7 @@ static DexFuture *
 sysprof_sampler_prepare_fiber (gpointer user_data)
 {
   Prepare *prepare = user_data;
+  g_autoptr(GDBusConnection) connection = NULL;
   g_autoptr(StreamData) stream_data = NULL;
   g_autoptr(GPtrArray) futures = NULL;
   g_autoptr(GArray) cpus = NULL;
@@ -357,7 +355,8 @@ sysprof_sampler_prepare_fiber (gpointer user_data)
   g_assert (prepare != NULL);
   g_assert (SYSPROF_IS_RECORDING (prepare->recording));
   g_assert (SYSPROF_IS_SAMPLER (prepare->sampler));
-  g_assert (!prepare->connection || G_IS_DBUS_CONNECTION (prepare->connection));
+
+  connection = _sysprof_recording_dup_connection (prepare->recording);
 
   /* First thing we need to do is to ensure the consumer has
    * access to kallsyms, which may be from a machine, or boot
@@ -432,7 +431,7 @@ try_again:
   stream_data = stream_data_new (prepare->recording);
   for (guint i = 0; i < cpus->len; i++)
     g_ptr_array_add (futures,
-                     sysprof_perf_event_stream_new (prepare->connection,
+                     sysprof_perf_event_stream_new (connection,
                                                     &attr,
                                                     32,
                                                     g_array_index (cpus, guint, i),
@@ -534,7 +533,6 @@ sysprof_sampler_prepare (SysprofInstrument *instrument,
   prepare = g_new0 (Prepare, 1);
   g_set_object (&prepare->recording, recording);
   g_set_object (&prepare->sampler, self);
-  g_set_object (&prepare->connection, self->connection);
 
   return dex_scheduler_spawn (NULL, 0,
                               sysprof_sampler_prepare_fiber,
@@ -611,21 +609,11 @@ sysprof_sampler_record (SysprofInstrument *instrument,
 }
 
 static void
-sysprof_sampler_set_connection (SysprofInstrument *instrument,
-                                GDBusConnection   *connection)
-{
-  SysprofSampler *self = SYSPROF_SAMPLER (instrument);
-
-  g_set_object (&self->connection, connection);
-}
-
-static void
 sysprof_sampler_finalize (GObject *object)
 {
   SysprofSampler *self = (SysprofSampler *)object;
 
   g_clear_pointer (&self->perf_event_streams, g_ptr_array_unref);
-  g_clear_object (&self->connection);
 
   G_OBJECT_CLASS (sysprof_sampler_parent_class)->finalize (object);
 }
@@ -641,7 +629,6 @@ sysprof_sampler_class_init (SysprofSamplerClass *klass)
   instrument_class->list_required_policy = sysprof_sampler_list_required_policy;
   instrument_class->prepare = sysprof_sampler_prepare;
   instrument_class->record = sysprof_sampler_record;
-  instrument_class->set_connection = sysprof_sampler_set_connection;
 }
 
 static void

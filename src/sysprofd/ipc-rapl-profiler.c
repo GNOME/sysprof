@@ -38,6 +38,9 @@ struct _IpcRaplProfiler
 {
   IpcProfilerSkeleton   parent_instance;
 
+  gboolean              authorized;
+  gboolean              shutdown;
+
   GMutex                mutex;
   GArray               *counter_ids;
   SysprofTurbostat     *turbostat;
@@ -198,6 +201,9 @@ ipc_rapl_profiler_g_authorize_method (GDBusInterfaceSkeleton *skeleton,
 
   ipc_rapl_profiler_activity (IPC_RAPL_PROFILER (skeleton));
 
+  if (((IpcRaplProfiler *)skeleton)->authorized)
+    return TRUE;
+
   peer_name = g_dbus_method_invocation_get_sender (invocation);
 
   if (!(authority = polkit_authority_get_sync (NULL, NULL)) ||
@@ -272,9 +278,13 @@ ipc_rapl_profiler_init (IpcRaplProfiler *self)
 }
 
 IpcProfiler *
-ipc_rapl_profiler_new (void)
+ipc_rapl_profiler_new (gboolean authorized)
 {
-  return g_object_new (IPC_TYPE_RAPL_PROFILER, NULL);
+  IpcRaplProfiler *self = g_object_new (IPC_TYPE_RAPL_PROFILER, NULL);
+
+  self->authorized = !!authorized;
+
+  return IPC_PROFILER (self);
 }
 
 static gboolean
@@ -398,6 +408,16 @@ ipc_rapl_profiler_handle_start (IpcProfiler           *profiler,
 
   locker = g_mutex_locker_new (&self->mutex);
 
+  if (self->shutdown)
+    {
+      close (fd);
+      g_dbus_method_invocation_return_error_literal (invocation,
+                                                     G_IO_ERROR,
+                                                     G_IO_ERROR_CLOSED,
+                                                     "Recording connection is closed");
+      return TRUE;
+    }
+
   if (self->turbostat != NULL)
     {
       close (fd);
@@ -457,4 +477,16 @@ profiler_iface_init (IpcProfilerIface *iface)
 {
   iface->handle_start = ipc_rapl_profiler_handle_start;
   iface->handle_stop = ipc_rapl_profiler_handle_stop;
+}
+
+void
+ipc_rapl_profiler_shutdown (IpcRaplProfiler *self)
+{
+  g_autoptr(GMutexLocker) locker = NULL;
+
+  g_return_if_fail (IPC_IS_RAPL_PROFILER (self));
+
+  locker = g_mutex_locker_new (&self->mutex);
+  self->shutdown = TRUE;
+  ipc_rapl_profiler_stop_locked (self);
 }

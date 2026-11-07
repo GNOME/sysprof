@@ -33,15 +33,15 @@ typedef struct _SysprofDBusMonitor      SysprofDBusMonitor;
 typedef struct _SysprofDBusMonitorClass SysprofDBusMonitorClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType              sysprof_dbus_monitor_get_type            (void) G_GNUC_CONST;
+const char        *sysprof_dbus_monitor_get_bus_address     (SysprofDBusMonitor *self);
+SYSPROF_AVAILABLE_IN_ALL
+GBusType           sysprof_dbus_monitor_get_bus_type        (SysprofDBusMonitor *self);
+SYSPROF_AVAILABLE_IN_ALL
+GType              sysprof_dbus_monitor_get_type            (void);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofInstrument *sysprof_dbus_monitor_new                 (GBusType            bus_type);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofInstrument *sysprof_dbus_monitor_new_for_bus_address (const char         *bus_address);
-SYSPROF_AVAILABLE_IN_ALL
-GBusType           sysprof_dbus_monitor_get_bus_type        (SysprofDBusMonitor *self);
-SYSPROF_AVAILABLE_IN_ALL
-const char        *sysprof_dbus_monitor_get_bus_address     (SysprofDBusMonitor *self);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofDBusMonitor, g_object_unref)
 

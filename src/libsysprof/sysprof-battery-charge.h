@@ -33,7 +33,7 @@ typedef struct _SysprofBatteryCharge      SysprofBatteryCharge;
 typedef struct _SysprofBatteryChargeClass SysprofBatteryChargeClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType              sysprof_battery_charge_get_type (void) G_GNUC_CONST;
+GType              sysprof_battery_charge_get_type (void);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofInstrument *sysprof_battery_charge_new      (void);
 

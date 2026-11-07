@@ -6,6 +6,7 @@ include:
     inputs:
       job-stage: "test"
       meson-options: "-Ddevelopment=true -Dsysprofd=host"
+      lsan-options: "suppressions=${CI_PROJECT_DIR}/testsuite/lsan.supp"
 
   - component: gitlab.gnome.org/GNOME/citemplates/release-service@master
     inputs:

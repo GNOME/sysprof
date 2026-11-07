@@ -35,9 +35,9 @@ typedef struct _SysprofDocumentCtrset      SysprofDocumentCtrset;
 typedef struct _SysprofDocumentCtrsetClass SysprofDocumentCtrsetClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType       sysprof_document_ctrset_get_type         (void) G_GNUC_CONST;
+guint sysprof_document_ctrset_get_n_values (SysprofDocumentCtrset *self);
 SYSPROF_AVAILABLE_IN_ALL
-guint       sysprof_document_ctrset_get_n_values     (SysprofDocumentCtrset *self);
+GType sysprof_document_ctrset_get_type     (void);
 SYSPROF_AVAILABLE_IN_ALL
 void        sysprof_document_ctrset_get_raw_value    (SysprofDocumentCtrset  *self,
                                                       guint                   nth,

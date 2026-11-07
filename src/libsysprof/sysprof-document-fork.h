@@ -33,9 +33,9 @@ typedef struct _SysprofDocumentFork      SysprofDocumentFork;
 typedef struct _SysprofDocumentForkClass SysprofDocumentForkClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType sysprof_document_fork_get_type      (void) G_GNUC_CONST;
-SYSPROF_AVAILABLE_IN_ALL
 int   sysprof_document_fork_get_child_pid (SysprofDocumentFork *self);
+SYSPROF_AVAILABLE_IN_ALL
+GType sysprof_document_fork_get_type      (void);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofDocumentFork, g_object_unref)
 

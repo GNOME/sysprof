@@ -25,7 +25,7 @@ struct _SysprofExpressionMapModel
 {
   GObject parent_instance;
 
-  GListModel *model;
+  GListModel    *model;
   GtkExpression *expression;
 
   GSequence *mapped_items; /* NULL if either model or expression are NULL */
@@ -42,7 +42,7 @@ static GParamSpec *properties [N_PROPS];
 
 typedef struct _ItemData
 {
-  gpointer mapped_item;
+  gpointer            mapped_item;
   GtkExpressionWatch *watch;
 } ItemData;
 
@@ -148,7 +148,7 @@ G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofExpressionMapModel, sysprof_expression_map
 typedef struct _WatchData
 {
   SysprofExpressionMapModel *self;
-  gpointer item;
+  gpointer                   item;
 } WatchData;
 
 static void
@@ -315,7 +315,10 @@ sysprof_expression_map_model_finalize (GObject *object)
 {
   SysprofExpressionMapModel *self = (SysprofExpressionMapModel *)object;
 
+  g_clear_pointer (&self->mapped_items, g_sequence_free);
   sysprof_expression_map_model_clear_model (self);
+
+  g_clear_pointer (&self->expression, gtk_expression_unref);
 
   G_OBJECT_CLASS (sysprof_expression_map_model_parent_class)->finalize (object);
 }

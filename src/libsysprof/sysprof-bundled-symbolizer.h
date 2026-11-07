@@ -33,7 +33,7 @@ typedef struct _SysprofBundledSymbolizer      SysprofBundledSymbolizer;
 typedef struct _SysprofBundledSymbolizerClass SysprofBundledSymbolizerClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType              sysprof_bundled_symbolizer_get_type (void) G_GNUC_CONST;
+GType              sysprof_bundled_symbolizer_get_type (void);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofSymbolizer *sysprof_bundled_symbolizer_new      (void);
 

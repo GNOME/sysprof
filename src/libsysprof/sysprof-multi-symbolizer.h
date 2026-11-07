@@ -33,7 +33,7 @@ typedef struct _SysprofMultiSymbolizer      SysprofMultiSymbolizer;
 typedef struct _SysprofMultiSymbolizerClass SysprofMultiSymbolizerClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType                   sysprof_multi_symbolizer_get_type (void) G_GNUC_CONST;
+GType                   sysprof_multi_symbolizer_get_type (void);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofMultiSymbolizer *sysprof_multi_symbolizer_new      (void);
 SYSPROF_AVAILABLE_IN_ALL

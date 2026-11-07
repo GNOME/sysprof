@@ -25,10 +25,13 @@
 
 G_BEGIN_DECLS
 
-DexFuture *sysprof_get_proc_file_bytes (GDBusConnection  *connection,
-                                        const char       *path);
+GArray    *_sysprof_get_online_cpus    (GError          **error);
+DexFuture *_sysprof_list_directory     (const char       *path) G_GNUC_WARN_UNUSED_RESULT;
+DexFuture *_sysprof_list_online_cpus   (void) G_GNUC_WARN_UNUSED_RESULT;
+DexFuture *_sysprof_load_file          (const char       *path) G_GNUC_WARN_UNUSED_RESULT;
 GArray    *_sysprof_parse_cpu_list     (const char       *cpu_list,
                                         GError          **error);
-GArray    *_sysprof_get_online_cpus    (GError          **error);
+DexFuture *sysprof_get_proc_file_bytes (GDBusConnection  *connection,
+                                        const char       *path);
 
 G_END_DECLS

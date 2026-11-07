@@ -36,6 +36,7 @@
 #include "sysprof-battery-charge.h"
 #include "sysprof-instrument-private.h"
 #include "sysprof-recording-private.h"
+#include "sysprof-util-private.h"
 
 #define SYS_CLASS_POWER_SUPPLY "/sys/class/power_supply/"
 
@@ -67,53 +68,93 @@ record_free (gpointer data)
   g_free (record);
 }
 
-static void
-clear_fd (gpointer ptr)
-{
-  int *fdptr = ptr;
-  g_clear_fd (fdptr, NULL);
-}
-
 static char **
 collect_battery_names (void)
 {
-  GPtrArray *ar = g_ptr_array_new ();
-  g_autoptr(GDir) dir = NULL;
+  g_autoptr(GPtrArray) names = g_ptr_array_new_with_free_func (g_free);
+  g_autoptr(GPtrArray) children = NULL;
 
-  if ((dir = g_dir_open (SYS_CLASS_POWER_SUPPLY, 0, NULL)))
+  if ((children = dex_await_boxed (_sysprof_list_directory (SYS_CLASS_POWER_SUPPLY), NULL)))
     {
-      const char *name;
-
-      while ((name = g_dir_read_name (dir)))
+      for (guint i = 0; i < children->len; i++)
         {
-          if (strcmp (name, "AC") == 0)
-            continue;
+          GFileInfo *info = g_ptr_array_index (children, i);
+          const char *name = g_file_info_get_name (info);
 
-          g_ptr_array_add (ar, g_strdup (name));
+          if (strcmp (name, "AC") != 0)
+            g_ptr_array_add (names, g_strdup (name));
         }
     }
 
-  g_ptr_array_add (ar, NULL);
+  g_ptr_array_add (names, NULL);
 
-  return (char **)g_ptr_array_free (ar, FALSE);
+  return (char **)g_ptr_array_free (g_steal_pointer (&names), FALSE);
 }
 
-typedef struct _ReadBuffer
+typedef struct
 {
-  char buf[32];
-} ReadBuffer;
+  char  *path;
+  guint  id;
+  guint  status : 1;
+} BatteryField;
+
+static void
+battery_field_free (gpointer data)
+{
+  BatteryField *field = data;
+
+  g_free (field->path);
+  g_free (field);
+}
+
+static void
+add_battery_field (SysprofCaptureWriter *writer,
+                   GPtrArray            *fields,
+                   const char           *device,
+                   const char           *filename,
+                   const char           *category,
+                   const char           *unit,
+                   gboolean              status)
+{
+  g_autofree char *path = g_build_filename (SYS_CLASS_POWER_SUPPLY, device, filename, NULL);
+  SysprofCaptureCounter counter = { 0 };
+  g_autofree char *contents = NULL;
+  BatteryField *field;
+
+  if (!(contents = dex_await_string (_sysprof_load_file (path), NULL)))
+    return;
+
+  field = g_new0 (BatteryField, 1);
+  field->path = g_steal_pointer (&path);
+  field->id = sysprof_capture_writer_request_counter (writer, 1);
+  field->status = status;
+
+  counter.id = field->id;
+  counter.type = SYSPROF_CAPTURE_COUNTER_INT64;
+  g_strlcpy (counter.category, category, sizeof counter.category);
+  g_strlcpy (counter.name, device, sizeof counter.name);
+  g_snprintf (counter.description, sizeof counter.description, "%s (%s)", device, unit);
+
+  sysprof_capture_writer_define_counters (writer,
+                                          SYSPROF_CAPTURE_CURRENT_TIME,
+                                          -1,
+                                          -1,
+                                          &counter,
+                                          1);
+
+  g_ptr_array_add (fields, field);
+}
 
 static DexFuture *
 sysprof_battery_charge_record_fiber (gpointer user_data)
 {
-  const int invalid_fd = -1;
   g_autofree guint *ids = NULL;
   g_autofree SysprofCaptureCounterValue *values = NULL;
   g_autofree SysprofCaptureCounter *counters = NULL;
-  g_autofree ReadBuffer *bufs = NULL;
   SysprofCaptureWriter *writer;
   Record *record = user_data;
-  g_autoptr(GArray) charge_fds = NULL;
+  g_autoptr(GPtrArray) charge_paths = NULL;
+  g_autoptr(GPtrArray) fields = g_ptr_array_new_with_free_func (battery_field_free);
   g_auto(GStrv) names = NULL;
   guint n_names;
   guint n_counters = 1;
@@ -130,7 +171,6 @@ sysprof_battery_charge_record_fiber (gpointer user_data)
   ids = g_new0 (guint, n_names + 1);
   counters = g_new0 (SysprofCaptureCounter, n_names + 1);
   values = g_new0 (SysprofCaptureCounterValue, n_names + 1);
-  bufs = g_new0 (ReadBuffer, n_names + 1);
 
   /* Setup the combined counter which is the total charge of all of
    * the batteries we discover on the system.
@@ -142,43 +182,58 @@ sysprof_battery_charge_record_fiber (gpointer user_data)
   counters[0].type = SYSPROF_CAPTURE_COUNTER_INT64;
   counters[0].value.v64 = 0;
 
-  /* Create array to store open FDs to the charge file. We'll do a
-   * positioned read at 0 on these so we get new data on each subsequent
-   * read via AIO. Set the first FD to invalid since that will map to the
-   * position of the combined-counter.
-   */
-  charge_fds = g_array_new (FALSE, FALSE, sizeof (int));
-  g_array_set_clear_func (charge_fds, clear_fd);
-  g_array_append_val (charge_fds, invalid_fd);
+  charge_paths = g_ptr_array_new_with_free_func (g_free);
 
   for (guint i = 0; names[i]; i++)
     {
       SysprofCaptureCounter *counter = &counters[n_counters];
       const char *name = names[i];
-      g_autofree char *charge_path = g_build_filename (SYS_CLASS_POWER_SUPPLY, name, "charge_now", NULL);
-      g_autofree char *model_name_path = g_build_filename (SYS_CLASS_POWER_SUPPLY, name, "model_name", NULL);
+      g_autofree char *charge_path = g_build_filename (SYS_CLASS_POWER_SUPPLY,
+                                                       name,
+                                                       "charge_now",
+                                                       NULL);
+      g_autofree char *model_name_path = g_build_filename (SYS_CLASS_POWER_SUPPLY,
+                                                           name,
+                                                           "model_name",
+                                                           NULL);
       g_autofree char *type_path = g_build_filename (SYS_CLASS_POWER_SUPPLY, name, "type", NULL);
       g_autofree char *model_name_data = NULL;
       g_autofree char *type_data = NULL;
-      g_autofd int charge_fd = -1;
+      g_autofree char *charge_data = NULL;
 
-      if (!g_file_get_contents (type_path, &type_data, NULL, NULL) ||
-          !g_str_has_prefix (type_data, "Battery") ||
-          -1 == (charge_fd = open (charge_path, O_RDONLY|O_CLOEXEC)))
+      if ((type_data = dex_await_string (_sysprof_load_file (type_path), NULL)))
+        {
+          if (g_str_has_prefix (type_data, "Battery"))
+            {
+              add_battery_field (writer, fields, name, "energy_now",
+                                 "Battery Energy", "µWh", FALSE);
+              add_battery_field (writer, fields, name, "power_now",
+                                 "Battery Power", "µW snapshot", FALSE);
+              add_battery_field (writer, fields, name, "capacity",
+                                 "Battery Percent", "% snapshot", FALSE);
+              add_battery_field (writer, fields, name, "status",
+                                 "Battery Status", "1 discharging, 2 charging, 3 full", TRUE);
+            }
+          else
+            add_battery_field (writer, fields, name, "online",
+                               "External Power", "boolean", FALSE);
+        }
+
+      if (type_data == NULL || !g_str_has_prefix (type_data, "Battery") ||
+          !(charge_data = dex_await_string (_sysprof_load_file (charge_path), NULL)))
         continue;
 
       counter->id = ids[n_counters] = sysprof_capture_writer_request_counter (writer, 1);
       counter->type = SYSPROF_CAPTURE_COUNTER_INT64;
       g_strlcpy (counter->category, "Battery Charge", sizeof counter->category);
-      if (g_file_get_contents (model_name_path, &model_name_data, NULL, NULL))
+      if ((model_name_data = dex_await_string (_sysprof_load_file (model_name_path), NULL)))
         g_strlcpy (counter->name, g_strstrip (model_name_data), sizeof counter->name);
       else
         g_strlcpy (counter->name, name, sizeof counter->name);
       g_snprintf (counter->description, sizeof counter->description, "%s (µAh)", counter->name);
       counter->value.v64 = 0;
 
-      g_array_append_val (charge_fds, charge_fd);
-      charge_fd = -1;
+      g_ptr_array_add (charge_paths, g_steal_pointer (&charge_path));
 
       n_counters++;
     }
@@ -187,54 +242,46 @@ sysprof_battery_charge_record_fiber (gpointer user_data)
    * don't record any counters. Otherwise the battery charge row might
    * show up in UI which we would want to omit.
    */
-  if (n_counters == 1)
+  if (n_counters == 1 && fields->len == 0)
     return dex_future_new_for_boolean (TRUE);
 
-  sysprof_capture_writer_define_counters (writer,
-                                          SYSPROF_CAPTURE_CURRENT_TIME,
-                                          -1,
-                                          -1,
-                                          counters,
-                                          n_counters);
+  if (n_counters > 1)
+    sysprof_capture_writer_define_counters (writer,
+                                            SYSPROF_CAPTURE_CURRENT_TIME,
+                                            -1,
+                                            -1,
+                                            counters,
+                                            n_counters);
 
   /* Main recording loop */
   for (;;)
     {
       g_autoptr(GPtrArray) futures = g_ptr_array_new_with_free_func (dex_unref);
+      g_autoptr(GError) error = NULL;
 
-      /* Read the contents of all the charge buffers in a single
-       * submission to the AIO layer.
-       */
-      g_ptr_array_add (futures, dex_future_new_for_boolean (TRUE));
-      for (guint i = 1; i < charge_fds->len; i++)
+      for (guint i = 0; i < charge_paths->len; i++)
+        g_ptr_array_add (futures, _sysprof_load_file (g_ptr_array_index (charge_paths, i)));
+
+      for (guint i = 0; i < fields->len; i++)
         {
-          int charge_fd = g_array_index (charge_fds, int, i);
+          BatteryField *field = g_ptr_array_index (fields, i);
 
-          g_ptr_array_add (futures,
-                           dex_aio_read (NULL,
-                                         charge_fd,
-                                         &bufs[i].buf,
-                                         sizeof bufs[i].buf-1,
-                                         0));
+          g_ptr_array_add (futures, _sysprof_load_file (field->path));
         }
-
-      /* Now wait until all the reads complete */
-      if (futures->len > 0)
-        dex_await (dex_future_anyv ((DexFuture **)futures->pdata, futures->len), NULL);
 
       /* Parse the current charge values */
       values[0].v64 = 0;
-      for (guint i = 1; i < charge_fds->len; i++)
+      for (guint i = 1; i <= charge_paths->len; i++)
         {
-          gssize len = dex_await_int64 (dex_ref (g_ptr_array_index (futures, i)), NULL);
+          g_autofree char *contents = NULL;
           guint64 v64;
 
-          if (len <= 0)
+          if (!(contents = dex_await_string (dex_ref (g_ptr_array_index (futures, i - 1)), NULL)) ||
+              contents[0] == 0)
             continue;
 
           errno = 0;
-          bufs[i].buf[len] = 0;
-          v64 = g_ascii_strtoull (bufs[i].buf, NULL, 10);
+          v64 = g_ascii_strtoull (contents, NULL, 10);
           if (v64 == G_MAXUINT64 || errno != 0)
             continue;
 
@@ -243,22 +290,57 @@ sysprof_battery_charge_record_fiber (gpointer user_data)
         }
 
       /* Deliver new values to capture */
-      sysprof_capture_writer_set_counters (writer,
-                                           SYSPROF_CAPTURE_CURRENT_TIME,
-                                           -1,
-                                           -1,
-                                           ids,
-                                           values,
-                                           n_counters);
+      if (n_counters > 1)
+        sysprof_capture_writer_set_counters (writer,
+                                             SYSPROF_CAPTURE_CURRENT_TIME,
+                                             -1,
+                                             -1,
+                                             ids,
+                                             values,
+                                             n_counters);
+
+      for (guint i = 0; i < fields->len; i++)
+        {
+          BatteryField *field = g_ptr_array_index (fields, i);
+          g_autofree char *contents = NULL;
+          SysprofCaptureCounterValue value = { 0 };
+          char *end = NULL;
+
+          if (!(contents = dex_await_string (dex_ref (g_ptr_array_index (futures, charge_paths->len + i)), NULL)))
+            continue;
+
+          if (field->status)
+            {
+              if (g_str_has_prefix (contents, "Discharging"))
+                value.v64 = 1;
+              else if (g_str_has_prefix (contents, "Charging"))
+                value.v64 = 2;
+              else if (g_str_has_prefix (contents, "Full"))
+                value.v64 = 3;
+              else
+                continue;
+            }
+          else
+            {
+              errno = 0;
+              value.v64 = g_ascii_strtoull (contents, &end, 10);
+
+              if (errno != 0 || end == contents || value.v64 > G_MAXINT64)
+                continue;
+            }
+
+          sysprof_capture_writer_set_counters (writer,
+                                               SYSPROF_CAPTURE_CURRENT_TIME,
+                                               -1, -1, &field->id, &value, 1);
+        }
 
       /* Wait for cancellation or ½ second */
       dex_await (dex_future_first (dex_ref (record->cancellable),
                                    dex_timeout_new_usec (G_USEC_PER_SEC / 2),
                                    NULL),
-                 NULL);
+                 &error);
 
-      /* If cancellable is rejected, then we're done recording */
-      if (dex_future_get_status (record->cancellable) != DEX_FUTURE_STATUS_PENDING)
+      if (!g_error_matches (error, DEX_ERROR, DEX_ERROR_TIMED_OUT))
         break;
     }
 
@@ -267,8 +349,8 @@ sysprof_battery_charge_record_fiber (gpointer user_data)
 
 static DexFuture *
 sysprof_battery_charge_record (SysprofInstrument *instrument,
-                              SysprofRecording  *recording,
-                              GCancellable      *cancellable)
+                               SysprofRecording  *recording,
+                               GCancellable      *cancellable)
 {
   Record *record;
 

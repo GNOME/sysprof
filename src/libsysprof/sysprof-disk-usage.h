@@ -33,7 +33,7 @@ typedef struct _SysprofDiskUsage      SysprofDiskUsage;
 typedef struct _SysprofDiskUsageClass SysprofDiskUsageClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType              sysprof_disk_usage_get_type (void) G_GNUC_CONST;
+GType              sysprof_disk_usage_get_type (void);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofInstrument *sysprof_disk_usage_new      (void);
 

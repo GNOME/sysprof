@@ -33,13 +33,13 @@ typedef struct _SysprofDocumentAllocation      SysprofDocumentAllocation;
 typedef struct _SysprofDocumentAllocationClass SysprofDocumentAllocationClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType    sysprof_document_allocation_get_type    (void) G_GNUC_CONST;
-SYSPROF_AVAILABLE_IN_ALL
 guint64  sysprof_document_allocation_get_address (SysprofDocumentAllocation *self);
 SYSPROF_AVAILABLE_IN_ALL
 gint64   sysprof_document_allocation_get_size    (SysprofDocumentAllocation *self);
 SYSPROF_AVAILABLE_IN_ALL
 int      sysprof_document_allocation_get_tid     (SysprofDocumentAllocation *self);
+SYSPROF_AVAILABLE_IN_ALL
+GType    sysprof_document_allocation_get_type    (void);
 SYSPROF_AVAILABLE_IN_ALL
 gboolean sysprof_document_allocation_is_free     (SysprofDocumentAllocation *self);
 

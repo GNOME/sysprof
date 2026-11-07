@@ -33,7 +33,7 @@ typedef struct _SysprofSchedulerDetails      SysprofSchedulerDetails;
 typedef struct _SysprofSchedulerDetailsClass SysprofSchedulerDetailsClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType              sysprof_scheduler_details_get_type (void) G_GNUC_CONST;
+GType              sysprof_scheduler_details_get_type (void);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofInstrument *sysprof_scheduler_details_new      (void);
 

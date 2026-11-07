@@ -33,7 +33,7 @@ typedef struct _SysprofTracer      SysprofTracer;
 typedef struct _SysprofTracerClass SysprofTracerClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType              sysprof_tracer_get_type (void) G_GNUC_CONST;
+GType              sysprof_tracer_get_type (void);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofInstrument *sysprof_tracer_new      (void);
 

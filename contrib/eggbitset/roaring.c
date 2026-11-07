@@ -4546,7 +4546,6 @@ void *convert_run_optimize(void *c, uint8_t typecode_original,
 
         int long_ctr = 0;
         uint64_t cur_word = c_qua_bitset->array[0];
-        int run_count = 0;
         while (true) {
             while (cur_word == UINT64_C(0) &&
                    long_ctr < BITSET_CONTAINER_SIZE_IN_WORDS - 1)
@@ -4577,7 +4576,6 @@ void *convert_run_optimize(void *c, uint8_t typecode_original,
             int local_run_end = __builtin_ctzll(~cur_word_with_1s);
             run_end = local_run_end + long_ctr * 64;
             add_run(answer, run_start, run_end - 1);
-            run_count++;
             cur_word = cur_word_with_1s & (cur_word_with_1s + 1);
         }
         return answer;

@@ -35,11 +35,11 @@ typedef struct _SysprofTimeSpan
 } SysprofTimeSpan;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType            sysprof_time_span_get_type (void) G_GNUC_CONST;
-SYSPROF_AVAILABLE_IN_ALL
 SysprofTimeSpan *sysprof_time_span_copy     (const SysprofTimeSpan *self);
 SYSPROF_AVAILABLE_IN_ALL
 void             sysprof_time_span_free     (SysprofTimeSpan       *self);
+SYSPROF_AVAILABLE_IN_ALL
+GType            sysprof_time_span_get_type (void);
 
 #ifndef __GI_SCANNER__
 static inline gint64
@@ -108,11 +108,11 @@ sysprof_time_offset_to_string (gint64 o)
   if (o == 0)
     g_snprintf (str, sizeof str, "%.3lfs", .0);
   else if (o < 1000000)
-    g_snprintf (str, sizeof str, "%.3lfμs", o/1000.);
+    g_snprintf (str, sizeof str, "%.3lfμs", o / 1000.);
   else if (o < (gint64)SYSPROF_NSEC_PER_SEC)
-    g_snprintf (str, sizeof str, "%.3lfms", o/1000000.);
+    g_snprintf (str, sizeof str, "%.3lfms", o / 1000000.);
   else
-    g_snprintf (str, sizeof str, "%.3lfs", o/(double)SYSPROF_NSEC_PER_SEC);
+    g_snprintf (str, sizeof str, "%.3lfs", o / (double)SYSPROF_NSEC_PER_SEC);
 
   return g_strdup (str);
 }

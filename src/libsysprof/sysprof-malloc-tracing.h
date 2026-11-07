@@ -33,7 +33,7 @@ typedef struct _SysprofMallocTracing      SysprofMallocTracing;
 typedef struct _SysprofMallocTracingClass SysprofMallocTracingClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType              sysprof_malloc_tracing_get_type (void) G_GNUC_CONST;
+GType              sysprof_malloc_tracing_get_type (void);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofInstrument *sysprof_malloc_tracing_new      (void);
 

@@ -33,11 +33,11 @@ typedef struct _SysprofPowerProfile      SysprofPowerProfile;
 typedef struct _SysprofPowerProfileClass SysprofPowerProfileClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType              sysprof_power_profile_get_type  (void) G_GNUC_CONST;
+const char        *sysprof_power_profile_get_id   (SysprofPowerProfile *self);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofInstrument *sysprof_power_profile_new       (const char           *id);
+GType              sysprof_power_profile_get_type (void);
 SYSPROF_AVAILABLE_IN_ALL
-const char        *sysprof_power_profile_get_id    (SysprofPowerProfile *self);
+SysprofInstrument *sysprof_power_profile_new      (const char          *id);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofPowerProfile, g_object_unref)
 

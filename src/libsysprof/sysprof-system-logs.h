@@ -33,7 +33,7 @@ typedef struct _SysprofSystemLogs      SysprofSystemLogs;
 typedef struct _SysprofSystemLogsClass SysprofSystemLogsClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType              sysprof_system_logs_get_type (void) G_GNUC_CONST;
+GType              sysprof_system_logs_get_type (void);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofInstrument *sysprof_system_logs_new      (void);
 

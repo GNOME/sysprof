@@ -34,34 +34,34 @@ typedef struct _SysprofSubprocessOutput      SysprofSubprocessOutput;
 typedef struct _SysprofSubprocessOutputClass SysprofSubprocessOutputClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType                  sysprof_subprocess_output_get_type            (void) G_GNUC_CONST;
-SYSPROF_AVAILABLE_IN_ALL
-SysprofRecordingPhase  sysprof_subprocess_output_get_phase           (SysprofSubprocessOutput *self);
-SYSPROF_AVAILABLE_IN_ALL
-void                   sysprof_subprocess_output_set_phase           (SysprofSubprocessOutput *self,
-                                                                      SysprofRecordingPhase    phase);
-SYSPROF_AVAILABLE_IN_ALL
-SysprofInstrument     *sysprof_subprocess_output_new                 (void);
-SYSPROF_AVAILABLE_IN_ALL
-const char            *sysprof_subprocess_output_get_stdout_path     (SysprofSubprocessOutput *self);
+const char * const    *sysprof_subprocess_output_get_command_argv    (SysprofSubprocessOutput *self);
 SYSPROF_AVAILABLE_IN_ALL
 const char            *sysprof_subprocess_output_get_command_cwd     (SysprofSubprocessOutput *self);
 SYSPROF_AVAILABLE_IN_ALL
-const char * const    *sysprof_subprocess_output_get_command_argv    (SysprofSubprocessOutput *self);
-SYSPROF_AVAILABLE_IN_ALL
 const char * const    *sysprof_subprocess_output_get_command_environ (SysprofSubprocessOutput *self);
 SYSPROF_AVAILABLE_IN_ALL
-void                   sysprof_subprocess_output_set_stdout_path     (SysprofSubprocessOutput *self,
-                                                                      const char              *stdout_path);
+SysprofRecordingPhase  sysprof_subprocess_output_get_phase           (SysprofSubprocessOutput *self);
 SYSPROF_AVAILABLE_IN_ALL
-void                   sysprof_subprocess_output_set_command_cwd     (SysprofSubprocessOutput *self,
-                                                                      const char              *command_cwd);
+const char            *sysprof_subprocess_output_get_stdout_path     (SysprofSubprocessOutput *self);
+SYSPROF_AVAILABLE_IN_ALL
+GType                  sysprof_subprocess_output_get_type            (void);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofInstrument     *sysprof_subprocess_output_new                 (void);
 SYSPROF_AVAILABLE_IN_ALL
 void                   sysprof_subprocess_output_set_command_argv    (SysprofSubprocessOutput *self,
                                                                       const char * const      *command_argv);
 SYSPROF_AVAILABLE_IN_ALL
+void                   sysprof_subprocess_output_set_command_cwd     (SysprofSubprocessOutput *self,
+                                                                      const char              *command_cwd);
+SYSPROF_AVAILABLE_IN_ALL
 void                   sysprof_subprocess_output_set_command_environ (SysprofSubprocessOutput *self,
                                                                       const char * const      *command_environ);
+SYSPROF_AVAILABLE_IN_ALL
+void                   sysprof_subprocess_output_set_phase           (SysprofSubprocessOutput *self,
+                                                                      SysprofRecordingPhase    phase);
+SYSPROF_AVAILABLE_IN_ALL
+void                   sysprof_subprocess_output_set_stdout_path     (SysprofSubprocessOutput *self,
+                                                                      const char              *stdout_path);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofSubprocessOutput, g_object_unref)
 

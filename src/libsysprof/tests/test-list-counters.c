@@ -19,6 +19,7 @@
  */
 
 #include <sysprof.h>
+#include <libdex.h>
 
 #include "sysprof-document-private.h"
 
@@ -39,6 +40,7 @@ main (int   argc,
   g_autoptr(GError) error = NULL;
   guint n_items;
 
+  dex_init ();
   g_option_context_add_main_entries (context, entries, NULL);
 
   if (!g_option_context_parse (context, &argc, &argv, &error))

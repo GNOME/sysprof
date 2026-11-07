@@ -34,12 +34,12 @@
 
 struct _SysprofMarksSection
 {
-  SysprofSection       parent_instance;
+  SysprofSection            parent_instance;
 
-  SysprofMarkChart    *mark_chart;
-  SysprofMarkTable    *mark_table;
-  GtkColumnView       *summary_column_view;
-  GtkColumnViewColumn *median_column;
+  SysprofMarkChart         *mark_chart;
+  SysprofMarkTable         *mark_table;
+  GtkColumnView            *summary_column_view;
+  GtkColumnViewColumn      *median_column;
   SysprofMarksSectionModel *section_model;
 };
 
@@ -74,6 +74,16 @@ toggle_group_action (GtkWidget  *widget,
     }
 }
 
+static void
+retry_action (GtkWidget  *widget,
+              const char *action_name,
+              GVariant   *parameters)
+{
+  SysprofMarksSection *self = SYSPROF_MARKS_SECTION (widget);
+
+  sysprof_marks_section_model_retry (self->section_model);
+}
+
 static char *
 format_mark_label (gpointer             unused,
                    SysprofDocumentMark *mark)
@@ -87,7 +97,10 @@ format_mark_label (gpointer             unused,
   name = sysprof_document_mark_get_name (mark);
   message = sysprof_document_mark_get_message (mark);
 
-  if (name && *name && message && *message)
+  if (name &&
+      *name &&
+      message &&
+      *message)
     return g_strdup_printf ("%s – %s", name, message);
   else
     return g_strdup_printf ("%s", name);
@@ -129,7 +142,11 @@ sysprof_marks_section_class_init (SysprofMarksSectionClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, format_mark_label);
   gtk_widget_class_bind_template_callback (widget_class, format_number);
 
-  gtk_widget_class_install_action (widget_class, "markssection.toggle-group", "(sb)", toggle_group_action);
+  gtk_widget_class_install_action (widget_class, "markssection.retry", NULL, retry_action);
+  gtk_widget_class_install_action (widget_class,
+                                   "markssection.toggle-group",
+                                   "(sb)",
+                                   toggle_group_action);
 
   g_type_ensure (SYSPROF_TYPE_CHART);
   g_type_ensure (SYSPROF_TYPE_DOCUMENT_MARK);

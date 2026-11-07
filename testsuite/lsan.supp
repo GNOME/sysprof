@@ -1,0 +1,8 @@
+# Fontconfig retains font matching caches after the GTK tests exit.
+leak:libfontconfig.so
+
+# GTK leaks CSS color values while resolving settings colors.
+leak:gtk_settings_style_provider_get_color
+
+# Mesa retains EGL display configurations initialized by GTK on Wayland.
+leak:libEGL_mesa.so

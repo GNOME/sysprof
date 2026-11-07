@@ -32,12 +32,12 @@ G_BEGIN_DECLS
 typedef struct _SysprofSymbolsBundle      SysprofSymbolsBundle;
 typedef struct _SysprofSymbolsBundleClass SysprofSymbolsBundleClass;
 
-SYSPROF_AVAILABLE_IN_ALL
-GType              sysprof_symbols_bundle_get_type              (void) G_GNUC_CONST;
-SYSPROF_AVAILABLE_IN_ALL
-SysprofInstrument *sysprof_symbols_bundle_new                   (void);
 SYSPROF_AVAILABLE_IN_48
 gboolean           sysprof_symbols_bundle_get_enable_debuginfod (SysprofSymbolsBundle *self);
+SYSPROF_AVAILABLE_IN_ALL
+GType              sysprof_symbols_bundle_get_type              (void);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofInstrument *sysprof_symbols_bundle_new                   (void);
 SYSPROF_AVAILABLE_IN_48
 void               sysprof_symbols_bundle_set_enable_debuginfod (SysprofSymbolsBundle *self,
                                                                  gboolean              enable_debuginfod);

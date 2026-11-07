@@ -29,7 +29,8 @@
 #include "sysprof-recording-private.h"
 #include "sysprof-util-private.h"
 
-enum {
+enum
+{
   PROP_0,
   PROP_DURATION,
   PROP_EVENT_COUNT,
@@ -69,7 +70,11 @@ add_metadata (SysprofRecording *self,
 
   sysprof_capture_writer_add_metadata (self->writer,
                                        SYSPROF_CAPTURE_CURRENT_TIME,
-                                       -1, -1, id, value, -1);
+                                       -1,
+                                       -1,
+                                       id,
+                                       value,
+                                       -1);
 }
 
 static inline void
@@ -78,10 +83,15 @@ add_metadata_int (SysprofRecording *self,
                   int               value)
 {
   char str[16];
+
   g_snprintf (str, sizeof str, "%d", value);
   sysprof_capture_writer_add_metadata (self->writer,
                                        SYSPROF_CAPTURE_CURRENT_TIME,
-                                       -1, -1, id, str, -1);
+                                       -1,
+                                       -1,
+                                       id,
+                                       str,
+                                       -1);
 }
 
 static inline void
@@ -90,10 +100,131 @@ add_metadata_int64 (SysprofRecording *self,
                     gint64            value)
 {
   char str[32];
+
   g_snprintf (str, sizeof str, "%"G_GINT64_FORMAT, value);
   sysprof_capture_writer_add_metadata (self->writer,
                                        SYSPROF_CAPTURE_CURRENT_TIME,
-                                       -1, -1, id, str, -1);
+                                       -1,
+                                       -1,
+                                       id,
+                                       str,
+                                       -1);
+}
+
+static void
+add_display_metadata (SysprofRecording *self,
+                      GVariant         *state)
+{
+  g_autoptr(GVariant) monitors = NULL;
+  g_autoptr(GVariant) logical_monitors = NULL;
+
+  g_assert (SYSPROF_IS_RECORDING (self));
+  g_assert (state != NULL);
+
+  monitors = g_variant_get_child_value (state, 1);
+  logical_monitors = g_variant_get_child_value (state, 2);
+
+  for (gsize i = 0; i < g_variant_n_children (monitors); i++)
+    {
+      g_autoptr(GVariant) monitor = g_variant_get_child_value (monitors, i);
+      g_autoptr(GVariant) spec = g_variant_get_child_value (monitor, 0);
+      g_autoptr(GVariant) modes = g_variant_get_child_value (monitor, 1);
+      const char *connector;
+      const char *vendor;
+      const char *product;
+      const char *serial;
+
+      g_variant_get (spec, "(&s&s&s&s)", &connector, &vendor, &product, &serial);
+
+      for (gsize j = 0; j < g_variant_n_children (modes); j++)
+        {
+          g_autoptr(GVariant) mode = g_variant_get_child_value (modes, j);
+          g_autoptr(GVariant) mode_properties = g_variant_get_child_value (mode, 6);
+          g_autofree char *id = NULL;
+          g_autofree char *description = NULL;
+          char rate_string[G_ASCII_DTOSTR_BUF_SIZE];
+          int width;
+          int height;
+          double refresh_rate;
+          gboolean current = FALSE;
+
+          if (!g_variant_lookup (mode_properties, "is-current", "b", &current) || !current)
+            continue;
+
+          g_variant_get_child (mode, 1, "i", &width);
+          g_variant_get_child (mode, 2, "i", &height);
+          g_variant_get_child (mode, 3, "d", &refresh_rate);
+
+          id = g_strdup_printf ("display.monitor.%s.refresh-rate", connector);
+          g_ascii_formatd (rate_string, sizeof rate_string, "%.3f", refresh_rate);
+          add_metadata (self, id, rate_string);
+
+          g_clear_pointer (&id, g_free);
+          id = g_strdup_printf ("display.monitor.%s", connector);
+          description = g_strdup_printf ("%s %s (%s, %s), %d×%d @ %.3f Hz",
+                                         vendor,
+                                         product,
+                                         connector,
+                                         serial,
+                                         width,
+                                         height,
+                                         refresh_rate);
+          add_metadata (self, id, description);
+          break;
+        }
+    }
+
+  for (gsize i = 0; i < g_variant_n_children (logical_monitors); i++)
+    {
+      g_autoptr(GVariant) logical = g_variant_get_child_value (logical_monitors, i);
+      g_autoptr(GVariant) specs = NULL;
+      gboolean primary;
+
+      g_variant_get_child (logical, 4, "b", &primary);
+
+      if (!primary)
+        continue;
+
+      specs = g_variant_get_child_value (logical, 5);
+
+      if (g_variant_n_children (specs) > 0)
+        {
+          g_autoptr(GVariant) spec = g_variant_get_child_value (specs, 0);
+          const char *connector;
+
+          g_variant_get_child (spec, 0, "&s", &connector);
+          add_metadata (self, "display.primary-monitor", connector);
+        }
+
+      break;
+    }
+}
+
+static void
+record_display_metadata (SysprofRecording *self)
+{
+  g_autoptr(GDBusConnection) bus = NULL;
+  g_autoptr(GVariant) state = NULL;
+
+  g_assert (SYSPROF_IS_RECORDING (self));
+
+  if (!(bus = dex_await_object (dex_bus_get (G_BUS_TYPE_SESSION), NULL)))
+    return;
+
+  state = dex_await_variant (dex_dbus_connection_call (bus,
+                                                       "org.gnome.Mutter.DisplayConfig",
+                                                       "/org/gnome/Mutter/DisplayConfig",
+                                                       "org.gnome.Mutter.DisplayConfig",
+                                                       "GetCurrentState",
+                                                       NULL,
+                                                       G_VARIANT_TYPE ("(ua((ssss)a(siiddada{sv})a{sv})"
+                                                                       "a(iiduba(ssss)a{sv})a{sv})"),
+                                                       G_DBUS_CALL_FLAGS_NO_AUTO_START,
+                                                       1000),
+                             NULL);
+
+  if (state != NULL)
+    add_display_metadata (self, state);
 }
 
 static DexFuture *
@@ -111,7 +242,7 @@ sysprof_recording_fiber (gpointer user_data)
   struct sysinfo si;
   gint64 begin_time;
   gint64 end_time;
-  char hostname[64] = {0};
+  char hostname[64] = { 0 };
 
   g_assert (SYSPROF_IS_RECORDING (self));
 
@@ -158,6 +289,7 @@ sysprof_recording_fiber (gpointer user_data)
           const char *identifier = g_subprocess_get_identifier (self->subprocess);
           const char * const *argv = sysprof_spawnable_get_argv (self->spawnable);
           char *endptr = NULL;
+
           if (identifier != NULL)
             {
               gint64 pid = g_ascii_strtoll (identifier, &endptr, 10);
@@ -168,7 +300,9 @@ sysprof_recording_fiber (gpointer user_data)
         }
     }
   else
-    monitor = dex_future_new_infinite ();
+    {
+      monitor = dex_future_new_infinite ();
+    }
 
   /* Track various app metadata */
   add_metadata (self, "org.gnome.sysprof.app-id", APP_ID_S);
@@ -178,6 +312,7 @@ sysprof_recording_fiber (gpointer user_data)
   {
     g_autoptr(GDateTime) now = g_date_time_new_now_local ();
     g_autofree char *now_str = g_date_time_format_iso8601 (now);
+
     add_metadata (self, "capture-time", now_str);
   }
 
@@ -198,7 +333,7 @@ sysprof_recording_fiber (gpointer user_data)
       add_metadata (self, "uname.machine", uts.machine);
     }
 
-  if (gethostname (hostname, sizeof hostname-1) == 0)
+  if (gethostname (hostname, sizeof hostname - 1) == 0)
     add_metadata (self, "hostname", hostname);
 
   /* More system information via sysinfo */
@@ -222,6 +357,7 @@ sysprof_recording_fiber (gpointer user_data)
   add_metadata (self, "DISPLAY", g_getenv ("DISPLAY"));
   add_metadata (self, "WAYLAND_DISPLAY", g_getenv ("WAYLAND_DISPLAY"));
   add_metadata (self, "DESKTOP_SESSION", g_getenv ("DESKTOP_SESSION"));
+  record_display_metadata (self);
   add_metadata (self, "HOSTTYPE", g_getenv ("HOSTTYPE"));
   add_metadata (self, "OSTYPE", g_getenv ("OSTYPE"));
 
@@ -430,15 +566,17 @@ sysprof_recording_class_init (SysprofRecordingClass *klass)
   object_class->finalize = sysprof_recording_finalize;
   object_class->get_property = sysprof_recording_get_property;
 
-  properties [PROP_DURATION] =
+  properties[PROP_DURATION] =
     g_param_spec_int64 ("duration", NULL, NULL,
                         0, G_MAXINT64, 0,
-                        (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+                        (G_PARAM_READABLE |
+                         G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_EVENT_COUNT] =
+  properties[PROP_EVENT_COUNT] =
     g_param_spec_int64 ("event-count", NULL, NULL,
                         0, G_MAXINT64, 0,
-                        (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+                        (G_PARAM_READABLE |
+                         G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
@@ -562,9 +700,9 @@ _sysprof_recording_get_spawnable (SysprofRecording *self)
 typedef struct _AddFile
 {
   SysprofCaptureWriter *writer;
-  char *path;
-  guint compress : 1;
-  guint use_sysprofd : 1;
+  char                 *path;
+  guint                 compress : 1;
+  guint                 use_sysprofd : 1;
 } AddFile;
 
 static void
@@ -598,8 +736,8 @@ sysprof_recording_add_file_fiber (gpointer user_data)
   /* If we are compressing the file, store it as ".gz" in the capture
    * so that the reader knows to decompress it automatically.
    */
-  dest_path = add_file->compress ? g_strdup_printf ("%s.gz", add_file->path)
-                                 : g_strdup (add_file->path);
+  dest_path = add_file->compress
+            ? g_strdup_printf ("%s.gz", add_file->path) : g_strdup (add_file->path);
 
   file = g_file_new_for_path (add_file->path);
   proc = g_file_new_for_path ("/proc");
@@ -724,9 +862,15 @@ do_compress (const char *data,
 
   *out_length = 0;
 
-  res = g_converter_convert (G_CONVERTER (compressor), data, length, compressed, length,
+  res = g_converter_convert (G_CONVERTER (compressor),
+                             data,
+                             length,
+                             compressed,
+                             length,
                              G_CONVERTER_INPUT_AT_END | G_CONVERTER_FLUSH,
-                             &n_read, &n_written, NULL);
+                             &n_read,
+                             &n_written,
+                             NULL);
 
   if (res == G_CONVERTER_FINISHED)
     {

@@ -19,6 +19,10 @@ libsysprof_testsuite = {
     'skip': true,
     'dependencies': [cc.find_library('m', required: false)],
   },
+  'capture-summary'               : {
+    'skip': true,
+    'dependencies': [dependency('json-glib-1.0'), cc.find_library('m', required: false)],
+  },
   'read-build-id'                 : {'skip': true},
   'ninja-to-marks'                : {'skip': true},
   'test-allocs-by-func'           : {'skip': true},
@@ -27,10 +31,16 @@ libsysprof_testsuite = {
   'test-callgraph'                : {'skip': true},
   'test-capture-model'            : {'skip': true},
   'test-cplusplus'                : {'cpp': true},
+  # Concurrent random reads take longer with coverage instrumentation.
+  'test-bitset-index'             : {'timeout': 120},
   'test-cpu-modes'                : {},
   'test-cpu-list'                 : {},
+  'test-device-info'              : {},
+  'test-cpu-kind'                 : {},
   'test-elf-loader'               : {'skip': true},
+  'test-file-io'                  : {},
   'test-flatpak-info'             : {'link_args': ['-Wl,--build-id=sha1']},
+  'test-frame-diagnostics'        : {},
   'test-leak-detector'            : {'skip': true},
   'test-list-counters'            : {'skip': true},
   'test-list-cpu'                 : {'skip': true},
@@ -48,6 +58,7 @@ libsysprof_testsuite = {
   'test-list-address-layout'      : {'skip': true},
   'test-symbolize'                : {'skip': true},
   'test-strings'                  : {},
+  'test-vblank'                   : {},
   'test-symbol-cache'             : {},
   'top-offenders'                 : {'skip': true},
 }
@@ -73,6 +84,6 @@ foreach test, params: libsysprof_testsuite
   endif
 
   if not params.get('skip', false)
-    test(test, test_exe, env: libsysprof_test_env)
+    test(test, test_exe, env: libsysprof_test_env, timeout: params.get('timeout', 30))
   endif
 endforeach

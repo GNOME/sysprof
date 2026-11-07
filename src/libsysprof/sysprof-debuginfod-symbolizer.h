@@ -33,7 +33,7 @@ typedef struct _SysprofDebuginfodSymbolizer      SysprofDebuginfodSymbolizer;
 typedef struct _SysprofDebuginfodSymbolizerClass SysprofDebuginfodSymbolizerClass;
 
 SYSPROF_AVAILABLE_IN_48
-GType              sysprof_debuginfod_symbolizer_get_type (void) G_GNUC_CONST;
+GType              sysprof_debuginfod_symbolizer_get_type (void);
 SYSPROF_AVAILABLE_IN_48
 SysprofSymbolizer *sysprof_debuginfod_symbolizer_new      (GError **error);
 

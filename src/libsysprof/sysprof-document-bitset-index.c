@@ -24,10 +24,16 @@
 
 struct _SysprofDocumentBitsetIndex
 {
-  GObject parent_instance;
-  GListModel *model;
-  EggBitset *bitset;
-  GType type;
+  GObject        parent_instance;
+  GListModel    *model;
+  EggBitset     *bitset;
+  GType          type;
+  GMutex         mutex;
+  EggBitsetIter  iter;
+  guint          n_items;
+  guint          last_position;
+  guint          last_frame;
+  gboolean       have_position;
 };
 
 static GType
@@ -49,10 +55,7 @@ sysprof_document_bitset_index_get_n_items (GListModel *model)
 {
   SysprofDocumentBitsetIndex *self = SYSPROF_DOCUMENT_BITSET_INDEX (model);
 
-  if (self->bitset != NULL)
-    return egg_bitset_get_size (self->bitset);
-
-  return 0;
+  return self->n_items;
 }
 
 static gpointer
@@ -61,14 +64,34 @@ sysprof_document_bitset_index_get_item (GListModel *model,
 {
   SysprofDocumentBitsetIndex *self = SYSPROF_DOCUMENT_BITSET_INDEX (model);
 
-  if (self->model == NULL || self->bitset == NULL)
+  guint frame;
+
+  if (position >= self->n_items)
     return NULL;
 
-  if (position >= egg_bitset_get_size (self->bitset))
-    return NULL;
+  g_mutex_lock (&self->mutex);
 
-  return g_list_model_get_item (self->model,
-                                egg_bitset_get_nth (self->bitset, position));
+  if (self->have_position && position == self->last_position)
+    {
+      frame = self->last_frame;
+    }
+  else if (self->have_position && position == self->last_position + 1)
+    {
+      egg_bitset_iter_next (&self->iter, &frame);
+    }
+  else
+    {
+      frame = egg_bitset_get_nth (self->bitset, position);
+      egg_bitset_iter_init_at (&self->iter, self->bitset, frame, NULL);
+    }
+
+  self->last_position = position;
+  self->last_frame = frame;
+  self->have_position = TRUE;
+
+  g_mutex_unlock (&self->mutex);
+
+  return g_list_model_get_item (self->model, frame);
 }
 
 static void
@@ -82,7 +105,8 @@ list_model_iface_init (GListModelInterface *iface)
 G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofDocumentBitsetIndex, sysprof_document_bitset_index, G_TYPE_OBJECT,
                                G_IMPLEMENT_INTERFACE (G_TYPE_LIST_MODEL, list_model_iface_init))
 
-enum {
+enum
+{
   PROP_0,
   PROP_N_ITEMS,
   N_PROPS
@@ -121,17 +145,29 @@ sysprof_document_bitset_index_dispose (GObject *object)
 }
 
 static void
+sysprof_document_bitset_index_finalize (GObject *object)
+{
+  SysprofDocumentBitsetIndex *self = (SysprofDocumentBitsetIndex *)object;
+
+  g_mutex_clear (&self->mutex);
+
+  G_OBJECT_CLASS (sysprof_document_bitset_index_parent_class)->finalize (object);
+}
+
+static void
 sysprof_document_bitset_index_class_init (SysprofDocumentBitsetIndexClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
+  object_class->finalize = sysprof_document_bitset_index_finalize;
   object_class->dispose = sysprof_document_bitset_index_dispose;
   object_class->get_property = sysprof_document_bitset_index_get_property;
 
   properties[PROP_N_ITEMS] =
     g_param_spec_uint ("n-items", NULL, NULL,
                        0, G_MAXUINT, 0,
-                       (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+                       (G_PARAM_READABLE |
+                        G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
@@ -139,6 +175,7 @@ sysprof_document_bitset_index_class_init (SysprofDocumentBitsetIndexClass *klass
 static void
 sysprof_document_bitset_index_init (SysprofDocumentBitsetIndex *self)
 {
+  g_mutex_init (&self->mutex);
 }
 
 GListModel *
@@ -153,7 +190,8 @@ _sysprof_document_bitset_index_new_full (GListModel *model,
 
   self = g_object_new (SYSPROF_TYPE_DOCUMENT_BITSET_INDEX, NULL);
   self->model = g_object_ref (model);
-  self->bitset = egg_bitset_ref (bitset);
+  self->bitset = egg_bitset_copy (bitset);
+  self->n_items = egg_bitset_get_size (self->bitset);
   self->type = type;
 
   return G_LIST_MODEL (self);

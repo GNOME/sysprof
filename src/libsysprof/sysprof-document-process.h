@@ -35,15 +35,15 @@ typedef struct _SysprofDocumentProcess      SysprofDocumentProcess;
 typedef struct _SysprofDocumentProcessClass SysprofDocumentProcessClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType       sysprof_document_process_get_type         (void) G_GNUC_CONST;
+char       *sysprof_document_process_dup_title        (SysprofDocumentProcess *self);
 SYSPROF_AVAILABLE_IN_ALL
 const char *sysprof_document_process_get_command_line (SysprofDocumentProcess *self);
 SYSPROF_AVAILABLE_IN_ALL
-gint64      sysprof_document_process_get_exit_time    (SysprofDocumentProcess *self);
-SYSPROF_AVAILABLE_IN_ALL
 gint64      sysprof_document_process_get_duration     (SysprofDocumentProcess *self);
 SYSPROF_AVAILABLE_IN_ALL
-char       *sysprof_document_process_dup_title        (SysprofDocumentProcess *self);
+gint64      sysprof_document_process_get_exit_time    (SysprofDocumentProcess *self);
+SYSPROF_AVAILABLE_IN_ALL
+GType       sysprof_document_process_get_type         (void);
 SYSPROF_AVAILABLE_IN_ALL
 GListModel *sysprof_document_process_list_memory_maps (SysprofDocumentProcess *self);
 SYSPROF_AVAILABLE_IN_ALL

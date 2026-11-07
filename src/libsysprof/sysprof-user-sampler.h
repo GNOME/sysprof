@@ -34,9 +34,9 @@ typedef struct _SysprofUserSampler      SysprofUserSampler;
 typedef struct _SysprofUserSamplerClass SysprofUserSamplerClass;
 
 SYSPROF_AVAILABLE_IN_48
-GType              sysprof_user_sampler_get_type       (void) G_GNUC_CONST;
+GType              sysprof_user_sampler_get_type (void);
 SYSPROF_AVAILABLE_IN_48
-SysprofInstrument *sysprof_user_sampler_new            (guint stack_size);
+SysprofInstrument *sysprof_user_sampler_new      (guint stack_size);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofUserSampler, g_object_unref)
 

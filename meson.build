@@ -64,6 +64,7 @@ gio_unix_dep = dependency('gio-unix-2.0', version: glib_req_version,
                           required: need_glib and host_machine.system() != 'windows')
 gtk_dep = dependency('gtk4', version: gtk_req_version, required: need_gtk)
 libsystemd_dep = dependency('libsystemd', required: false)
+pipewire_dep = dependency('libpipewire-0.3', required: false)
 debuginfod_dep = dependency('libdebuginfod', required: get_option('debuginfod'))
 libdw_dep = dependency('libdw', required: false)
 
@@ -102,6 +103,10 @@ config_h.set10('ENABLE_NLS', true)
 config_h.set_quoted('GETTEXT_PACKAGE', 'sysprof')
 config_h.set_quoted('PACKAGE_LOCALE_DIR', join_paths(get_option('prefix'), get_option('datadir'), 'locale'))
 config_h.set10('HAVE_LIBSYSTEMD', libsystemd_dep.found())
+if pipewire_dep.found()
+  config_h.set_quoted('PIPEWIRE_GSTREAMER_PLUGIN_DIR',
+                      join_paths(pipewire_dep.get_variable(pkgconfig: 'libdir'), 'gstreamer-1.0'))
+endif
 config_h.set10('HAVE_DEBUGINFOD', debuginfod_dep.found())
 config_h.set10('HAVE_LIBDW', libdw_dep.found())
 

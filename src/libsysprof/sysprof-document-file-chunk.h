@@ -33,16 +33,16 @@ typedef struct _SysprofDocumentFileChunk      SysprofDocumentFileChunk;
 typedef struct _SysprofDocumentFileChunkClass SysprofDocumentFileChunkClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType         sysprof_document_file_chunk_get_type     (void) G_GNUC_CONST;
+const guint8 *sysprof_document_file_chunk_get_data    (SysprofDocumentFileChunk *self,
+                                                       guint                    *size);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean      sysprof_document_file_chunk_get_is_last  (SysprofDocumentFileChunk *self);
+gboolean      sysprof_document_file_chunk_get_is_last (SysprofDocumentFileChunk *self);
 SYSPROF_AVAILABLE_IN_ALL
-guint         sysprof_document_file_chunk_get_size     (SysprofDocumentFileChunk *self);
+const char   *sysprof_document_file_chunk_get_path    (SysprofDocumentFileChunk *self);
 SYSPROF_AVAILABLE_IN_ALL
-const char   *sysprof_document_file_chunk_get_path     (SysprofDocumentFileChunk *self);
+guint         sysprof_document_file_chunk_get_size    (SysprofDocumentFileChunk *self);
 SYSPROF_AVAILABLE_IN_ALL
-const guint8 *sysprof_document_file_chunk_get_data     (SysprofDocumentFileChunk *self,
-                                                        guint                    *size);
+GType         sysprof_document_file_chunk_get_type    (void);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofDocumentFileChunk, g_object_unref)
 

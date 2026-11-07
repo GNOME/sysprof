@@ -27,6 +27,7 @@
 #include "sysprof-disk-usage.h"
 #include "sysprof-instrument-private.h"
 #include "sysprof-recording-private.h"
+#include "sysprof-util-private.h"
 
 #include "line-reader-private.h"
 
@@ -45,25 +46,29 @@ struct _SysprofDiskUsageClass
 typedef struct _DiskUsage
 {
   /* Counter IDs */
-  guint reads_total_id;
-  guint writes_total_id;
+  guint    reads_total_id;
+  guint    writes_total_id;
+  guint    read_bytes_id;
+  guint    write_bytes_id;
+  guint    busy_msec_id;
 
   /* Index where values are stored */
-  guint values_at;
+  guint    values_at;
 
-  char  device[32];
+  char     device[32];
+  gboolean whole_disk;
 
-  gint64 reads_total;
-  gint64 reads_merged;
-  gint64 reads_sectors;
-  gint64 reads_msec;
-  gint64 writes_total;
-  gint64 writes_merged;
-  gint64 writes_sectors;
-  gint64 writes_msec;
-  gint64 iops_active;
-  gint64 iops_msec;
-  gint64 iops_msec_weighted;
+  gint64   reads_total;
+  gint64   reads_merged;
+  gint64   reads_sectors;
+  gint64   reads_msec;
+  gint64   writes_total;
+  gint64   writes_merged;
+  gint64   writes_sectors;
+  gint64   writes_msec;
+  gint64   iops_active;
+  gint64   iops_msec;
+  gint64   iops_msec_weighted;
 } DiskUsage;
 
 typedef enum _Column
@@ -112,10 +117,10 @@ static DiskUsage *
 register_counters_by_name (Record     *record,
                            const char *name)
 {
-  static const SysprofCaptureCounterValue zeroval = {0};
-  SysprofCaptureCounter ctr[2] = {0};
+  static const SysprofCaptureCounterValue zeroval = { 0 };
+  SysprofCaptureCounter ctr[5] = { 0 };
   SysprofCaptureWriter *writer;
-  DiskUsage ds = {0};
+  DiskUsage ds = { 0 };
 
   g_assert (record != NULL);
   g_assert (name != NULL);
@@ -125,6 +130,9 @@ register_counters_by_name (Record     *record,
   ds.values_at = record->ids->len;
   ds.reads_total_id = sysprof_capture_writer_request_counter (writer, 1);
   ds.writes_total_id = sysprof_capture_writer_request_counter (writer, 1);
+  ds.read_bytes_id = sysprof_capture_writer_request_counter (writer, 1);
+  ds.write_bytes_id = sysprof_capture_writer_request_counter (writer, 1);
+  ds.busy_msec_id = sysprof_capture_writer_request_counter (writer, 1);
 
   g_strlcpy (ds.device, name, sizeof ds.device);
 
@@ -142,6 +150,20 @@ register_counters_by_name (Record     *record,
   ctr[1].type = SYSPROF_CAPTURE_COUNTER_INT64;
   ctr[1].value.v64 = 0;
 
+  for (guint i = 2; i < G_N_ELEMENTS (ctr); i++)
+    {
+      g_strlcpy (ctr[i].category, "Disk", sizeof ctr[i].category);
+      g_strlcpy (ctr[i].description, name, sizeof ctr[i].description);
+      ctr[i].type = SYSPROF_CAPTURE_COUNTER_INT64;
+    }
+
+  g_snprintf (ctr[2].name, sizeof ctr[2].name, "Read Bytes (%s)", name);
+  ctr[2].id = ds.read_bytes_id;
+  g_snprintf (ctr[3].name, sizeof ctr[3].name, "Write Bytes (%s)", name);
+  ctr[3].id = ds.write_bytes_id;
+  g_snprintf (ctr[4].name, sizeof ctr[4].name, "Busy Milliseconds (%s)", name);
+  ctr[4].id = ds.busy_msec_id;
+
   sysprof_capture_writer_define_counters (writer,
                                           SYSPROF_CAPTURE_CURRENT_TIME,
                                           -1,
@@ -152,10 +174,16 @@ register_counters_by_name (Record     *record,
   g_array_append_val (record->devices, ds);
   g_array_append_val (record->ids, ds.reads_total_id);
   g_array_append_val (record->ids, ds.writes_total_id);
+  g_array_append_val (record->ids, ds.read_bytes_id);
+  g_array_append_val (record->ids, ds.write_bytes_id);
+  g_array_append_val (record->ids, ds.busy_msec_id);
+  g_array_append_val (record->values, zeroval);
+  g_array_append_val (record->values, zeroval);
+  g_array_append_val (record->values, zeroval);
   g_array_append_val (record->values, zeroval);
   g_array_append_val (record->values, zeroval);
 
-  return &g_array_index (record->devices, DiskUsage, record->devices->len-1);
+  return &g_array_index (record->devices, DiskUsage, record->devices->len - 1);
 }
 
 static DiskUsage *
@@ -188,6 +216,9 @@ sysprof_disk_usage_record_fiber (gpointer user_data)
   DiskUsage *combined;
   gint64 combined_reads_total = 0;
   gint64 combined_writes_total = 0;
+  gint64 combined_read_bytes = 0;
+  gint64 combined_write_bytes = 0;
+  gint64 combined_busy_msec = 0;
   gboolean skip_publish = TRUE;
 
   g_assert (record != NULL);
@@ -197,7 +228,7 @@ sysprof_disk_usage_record_fiber (gpointer user_data)
   buf = g_byte_array_new ();
   g_byte_array_set_size (buf, 4096*4);
 
-  if (-1 == (stat_fd = open ("/proc/diskstats", O_RDONLY|O_CLOEXEC)))
+  if (-1 == (stat_fd = open ("/proc/diskstats", O_RDONLY | O_CLOEXEC)))
     return dex_future_new_for_errno (errno);
 
   writer = _sysprof_recording_writer (record->recording);
@@ -211,11 +242,17 @@ sysprof_disk_usage_record_fiber (gpointer user_data)
       char *line;
       gsize line_len;
 
+      combined_reads_total = 0;
+      combined_writes_total = 0;
+      combined_read_bytes = 0;
+      combined_write_bytes = 0;
+      combined_busy_msec = 0;
+
       /* Read a new copy of our diskstats or bail from our
        * recording loop. If cancellation future rejects, then
        * we also break out of our recording loop.
        */
-      read_future = dex_aio_read (NULL, stat_fd, buf->data, buf->len-1, 0);
+      read_future = dex_aio_read (NULL, stat_fd, buf->data, buf->len - 1, 0);
       if (!dex_await (dex_future_first (dex_ref (record->cancellable),
                                         dex_ref (read_future),
                                         NULL),
@@ -229,7 +266,7 @@ sysprof_disk_usage_record_fiber (gpointer user_data)
       line_reader_init (&reader, (char *)buf->data, n_read);
       while ((line = line_reader_next (&reader, &line_len)))
         {
-          DiskUsage ds = {0};
+          DiskUsage ds = { 0 };
           DiskUsage *found;
           gint64 dummy = 0;
           int column = COLUMN_MAJOR;
@@ -327,51 +364,81 @@ sysprof_disk_usage_record_fiber (gpointer user_data)
               guint p;
               gint64 reads_total;
               gint64 writes_total;
+              gint64 read_sectors;
+              gint64 write_sectors;
+              gint64 busy_msec;
+              gboolean new_device = FALSE;
 
               if (!(found = find_device_by_name (record, ds.device)))
-                found = register_counters_by_name (record, ds.device);
+                {
+                  g_autoptr(GFile) file = NULL;
+                  g_autoptr(GFileInfo) info = NULL;
+                  g_autofree char *path = g_build_filename ("/sys/block", ds.device, NULL);
+
+                  file = g_file_new_for_path (path);
+                  info = dex_await_object (dex_file_query_info (file,
+                                                                G_FILE_ATTRIBUTE_STANDARD_TYPE,
+                                                                G_FILE_QUERY_INFO_NONE,
+                                                                G_PRIORITY_DEFAULT),
+                                            NULL);
+                  found = register_counters_by_name (record, ds.device);
+                  found->whole_disk = info != NULL && g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY;
+                  new_device = TRUE;
+                }
 
               /* Calculate new value, based on diff from previous */
-              reads_total = ds.reads_total - found->reads_total;
-              writes_total = ds.writes_total - found->writes_total;
+              reads_total = MAX (0, ds.reads_total - found->reads_total);
+              writes_total = MAX (0, ds.writes_total - found->writes_total);
+              read_sectors = MAX (0, ds.reads_sectors - found->reads_sectors);
+              write_sectors = MAX (0, ds.writes_sectors - found->writes_sectors);
+              busy_msec = MAX (0, ds.iops_msec - found->iops_msec);
+
+              if (new_device)
+                reads_total = writes_total = read_sectors = write_sectors = busy_msec = 0;
 
               /* Update value for publishing */
               p = found->values_at;
               g_array_index (record->values, SysprofCaptureCounterValue, p).v64 = reads_total;
-              g_array_index (record->values, SysprofCaptureCounterValue, p+1).v64 = writes_total;
+              g_array_index (record->values, SysprofCaptureCounterValue, p + 1).v64 = writes_total;
+              g_array_index (record->values, SysprofCaptureCounterValue, p + 2).v64 = read_sectors * 512;
+              g_array_index (record->values, SysprofCaptureCounterValue, p + 3).v64 = write_sectors * 512;
+              g_array_index (record->values, SysprofCaptureCounterValue, p + 4).v64 = busy_msec;
 
               /* Update combined values */
-              combined_reads_total += reads_total;
-              combined_writes_total += writes_total;
+              if (found->whole_disk)
+                {
+                  combined_reads_total += reads_total;
+                  combined_writes_total += writes_total;
+                  combined_read_bytes += read_sectors * 512;
+                  combined_write_bytes += write_sectors * 512;
+                  combined_busy_msec = MAX (combined_busy_msec, busy_msec);
+                }
 
               /* Save current value for diff on next poll */
               found->reads_total = ds.reads_total;
               found->writes_total = ds.writes_total;
+              found->reads_sectors = ds.reads_sectors;
+              found->writes_sectors = ds.writes_sectors;
+              found->iops_msec = ds.iops_msec;
             }
         }
 
       if ((combined = find_device_by_name (record, "Combined")))
         {
-          /* TODO: It would be nice to not double count disk ops multiple
-           * times based on the parition, etc.
-           *
-           * For example:  nvme0n1 nvme0n1p1 nvme0n1p2 nvme0n1p3 may get
-           * accounted multiple times even though they are all nvme0n1.
-           *
-           * The other option, is to just not do "Combined" counters.
-           */
-
           g_array_index (record->values,
                          SysprofCaptureCounterValue,
                          combined->values_at).v64
-            = combined_reads_total - combined->reads_total;
+            = combined_reads_total;
           g_array_index (record->values,
                          SysprofCaptureCounterValue,
-                         combined->values_at+1).v64
-            = combined_writes_total - combined->writes_total;
-
-          combined->reads_total = combined_reads_total;
-          combined->writes_total = combined_writes_total;
+                         combined->values_at + 1).v64
+            = combined_writes_total;
+          g_array_index (record->values, SysprofCaptureCounterValue,
+                         combined->values_at + 2).v64 = combined_read_bytes;
+          g_array_index (record->values, SysprofCaptureCounterValue,
+                         combined->values_at + 3).v64 = combined_write_bytes;
+          g_array_index (record->values, SysprofCaptureCounterValue,
+                         combined->values_at + 4).v64 = combined_busy_msec;
         }
 
       g_assert (record->ids->len == record->values->len);

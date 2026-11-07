@@ -46,7 +46,7 @@ G_DEFINE_FINAL_TYPE (SysprofLinuxInstrument, sysprof_linux_instrument, SYSPROF_T
 static char **
 sysprof_linux_instrument_list_required_policy (SysprofInstrument *instrument)
 {
-  static const char *policy[] = {"org.gnome.sysprof3.profile", NULL};
+  static const char *policy[] = { "org.gnome.sysprof3.profile", NULL };
 
   return g_strdupv ((char **)policy);
 }
@@ -69,6 +69,7 @@ add_mmaps (SysprofRecording *recording,
 {
   SysprofCaptureWriter *writer;
   SysprofMapsParser parser;
+
   guint64 begin, end, offset, inode;
   char *file;
 
@@ -84,8 +85,14 @@ add_mmaps (SysprofRecording *recording,
       if (ignore_inode)
         inode = 0;
 
-      sysprof_capture_writer_add_map (writer, at_time, -1, pid,
-                                      begin, end, offset, inode,
+      sysprof_capture_writer_add_map (writer,
+                                      at_time,
+                                      -1,
+                                      pid,
+                                      begin,
+                                      end,
+                                      offset,
+                                      inode,
                                       file);
       g_free (file);
     }
@@ -133,7 +140,10 @@ populate_overlays (SysprofRecording *recording,
 
   if (flatpak_regex == NULL)
     {
-      flatpak_regex = g_regex_new ("app-flatpak-([a-zA-Z_\\-\\.]+)-[0-9]+\\.scope", G_REGEX_OPTIMIZE, 0, NULL);
+      flatpak_regex = g_regex_new ("app-flatpak-([a-zA-Z_\\-\\.]+)-[0-9]+\\.scope",
+                                   G_REGEX_OPTIMIZE,
+                                   0,
+                                   NULL);
       g_assert (flatpak_regex != NULL);
     }
 
@@ -220,7 +230,10 @@ add_process_info (SysprofLinuxInstrument *self,
         cgroup = "";
 
       /* Notify the capture that a process was spawned */
-      sysprof_capture_writer_add_process (writer, at_time, -1, pid,
+      sysprof_capture_writer_add_process (writer,
+                                          at_time,
+                                          -1,
+                                          pid,
                                           *cmdline ? cmdline : comm);
 
       /* Give the capture access to the mountinfo of that process to aid
@@ -270,6 +283,7 @@ static DexFuture *
 get_process_info (void)
 {
   DexPromise *promise = dex_promise_new ();
+
   dex_scheduler_push (dex_thread_pool_scheduler_get_default (),
                       get_process_info_task,
                       dex_ref (promise));
@@ -296,20 +310,25 @@ sysprof_linux_instrument_prepare_fiber (gpointer user_data)
   g_ptr_array_add (futures, _sysprof_recording_add_file (self->recording, "/proc/cpuinfo", TRUE));
   g_ptr_array_add (futures, _sysprof_recording_add_file (self->recording, "/proc/mounts", TRUE));
 
-  if (g_file_test ("/sys/devices/cpu_atom/cpus", G_FILE_TEST_EXISTS))
-    g_ptr_array_add (futures,
-                     _sysprof_recording_add_file (self->recording,
-                                                  "/sys/devices/cpu_atom/cpus",
-                                                  TRUE));
+  for (guint i = 0; i < 3; i++)
+    {
+      static const char * const paths[] = {
+        "/sys/devices/cpu_atom/cpus",
+        "/sys/devices/cpu_core/cpus",
+        "/sys/devices/cpu_lowpower/cpus",
+      };
+      g_autoptr(GFile) file = g_file_new_for_path (paths[i]);
+      g_autoptr(GFileInfo) info = NULL;
 
-  if (g_file_test ("/sys/devices/cpu_core/cpus", G_FILE_TEST_EXISTS))
-    g_ptr_array_add (futures,
-                     _sysprof_recording_add_file (self->recording,
-                                                  "/sys/devices/cpu_core/cpus",
-                                                  TRUE));
+      if ((info = dex_await_object (dex_file_query_info (file,
+                                                         G_FILE_ATTRIBUTE_STANDARD_TYPE,
+                                                         G_FILE_QUERY_INFO_NONE,
+                                                         G_PRIORITY_DEFAULT),
+                                     NULL)))
+        g_ptr_array_add (futures, _sysprof_recording_add_file (self->recording, paths[i], TRUE));
+    }
 
-  if (!dex_await (dex_future_allv ((DexFuture **)futures->pdata, futures->len),
-                  &error))
+  if (!dex_await (dex_future_allv ((DexFuture **)futures->pdata, futures->len), &error))
     return dex_future_new_for_error (g_steal_pointer (&error));
 
   at_time = SYSPROF_CAPTURE_CURRENT_TIME;
@@ -368,9 +387,9 @@ sysprof_linux_instrument_prepare (SysprofInstrument *instrument,
 typedef struct
 {
   SysprofRecording *recording;
-  char *previous_maps;
-  int pid;
-  guint attempts;
+  char             *previous_maps;
+  int               pid;
+  guint             attempts;
 } ProcessMapsSnapshot;
 
 static void
@@ -403,7 +422,10 @@ process_maps_snapshot_cb (gpointer data)
 
   if (g_strcmp0 (maps, state->previous_maps) != 0)
     {
-      add_mmaps (state->recording, state->pid, maps, FALSE,
+      add_mmaps (state->recording,
+                 state->pid,
+                 maps,
+                 FALSE,
                  SYSPROF_CAPTURE_CURRENT_TIME);
       g_free (state->previous_maps);
       state->previous_maps = g_steal_pointer (&maps);
@@ -437,8 +459,10 @@ watch_spawned_process_maps (SysprofRecording *recording,
   state->pid = pid;
 
   source = g_timeout_source_new (250);
-  g_source_set_callback (source, process_maps_snapshot_cb,
-                         state, process_maps_snapshot_free);
+  g_source_set_callback (source,
+                         process_maps_snapshot_cb,
+                         state,
+                         process_maps_snapshot_free);
   g_source_attach (source, g_main_context_get_thread_default ());
   g_source_unref (source);
 }
@@ -446,8 +470,8 @@ watch_spawned_process_maps (SysprofRecording *recording,
 typedef struct
 {
   SysprofRecording *recording;
-  GPtrArray *paths;
-  int pid;
+  GPtrArray        *paths;
+  int               pid;
 } ProcessStarted;
 
 static void

@@ -29,18 +29,18 @@ G_BEGIN_DECLS
 #define SYSPROF_VALUE_AXIS(obj)         (G_TYPE_CHECK_INSTANCE_CAST(obj, SYSPROF_TYPE_VALUE_AXIS, SysprofValueAxis))
 #define SYSPROF_VALUE_AXIS_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST(klass, SYSPROF_TYPE_VALUE_AXIS, SysprofValueAxisClass))
 
-typedef struct _SysprofValueAxis SysprofValueAxis;
+typedef struct _SysprofValueAxis      SysprofValueAxis;
 typedef struct _SysprofValueAxisClass SysprofValueAxisClass;
 
-GType        sysprof_value_axis_get_type      (void) G_GNUC_CONST;
+double       sysprof_value_axis_get_max_value (SysprofValueAxis *self);
+double       sysprof_value_axis_get_min_value (SysprofValueAxis *self);
+GType        sysprof_value_axis_get_type      (void);
 SysprofAxis *sysprof_value_axis_new           (double            min_value,
                                                double            max_value);
-double       sysprof_value_axis_get_min_value (SysprofValueAxis *self);
-void         sysprof_value_axis_set_min_value (SysprofValueAxis *self,
-                                               double            min_value);
-double       sysprof_value_axis_get_max_value (SysprofValueAxis *self);
 void         sysprof_value_axis_set_max_value (SysprofValueAxis *self,
                                                double            max_value);
+void         sysprof_value_axis_set_min_value (SysprofValueAxis *self,
+                                               double            min_value);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofValueAxis, g_object_unref)
 

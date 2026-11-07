@@ -34,19 +34,19 @@ typedef struct _SysprofDocumentMmap      SysprofDocumentMmap;
 typedef struct _SysprofDocumentMmapClass SysprofDocumentMmapClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType       sysprof_document_mmap_get_type          (void) G_GNUC_CONST;
-SYSPROF_AVAILABLE_IN_ALL
-guint64     sysprof_document_mmap_get_start_address (SysprofDocumentMmap *self);
+const char *sysprof_document_mmap_get_build_id      (SysprofDocumentMmap *self);
 SYSPROF_AVAILABLE_IN_ALL
 guint64     sysprof_document_mmap_get_end_address   (SysprofDocumentMmap *self);
+SYSPROF_AVAILABLE_IN_ALL
+const char *sysprof_document_mmap_get_file          (SysprofDocumentMmap *self);
 SYSPROF_AVAILABLE_IN_ALL
 guint64     sysprof_document_mmap_get_file_inode    (SysprofDocumentMmap *self);
 SYSPROF_AVAILABLE_IN_ALL
 guint64     sysprof_document_mmap_get_file_offset   (SysprofDocumentMmap *self);
 SYSPROF_AVAILABLE_IN_ALL
-const char *sysprof_document_mmap_get_file          (SysprofDocumentMmap *self);
+guint64     sysprof_document_mmap_get_start_address (SysprofDocumentMmap *self);
 SYSPROF_AVAILABLE_IN_ALL
-const char *sysprof_document_mmap_get_build_id      (SysprofDocumentMmap *self);
+GType       sysprof_document_mmap_get_type          (void);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofDocumentMmap, g_object_unref)
 

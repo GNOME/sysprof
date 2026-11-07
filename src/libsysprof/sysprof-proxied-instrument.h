@@ -35,7 +35,7 @@ typedef struct _SysprofProxiedInstrument      SysprofProxiedInstrument;
 typedef struct _SysprofProxiedInstrumentClass SysprofProxiedInstrumentClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType              sysprof_proxied_instrument_get_type (void) G_GNUC_CONST;
+GType              sysprof_proxied_instrument_get_type         (void);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofInstrument *sysprof_proxied_instrument_new              (GBusType    bus_type,
                                                                 const char *bus_name,

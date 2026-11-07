@@ -103,3 +103,21 @@ sysprof = executable('sysprof', sysprof_resources + sysprof_sources,
   dependencies: sysprof_deps,
        install: true,
 )
+
+marks_test = executable('test-marks',
+  sysprof_resources,
+  'test-marks.c',
+  'sysprof-marks-section-model.c',
+  'sysprof-marks-section-model-item.c',
+  'sysprof-expression-map-model.c',
+  'sysprof-session.c',
+  'sysprof-axis.c',
+  'sysprof-value-axis.c',
+  'sysprof-mark-filter.c',
+  'sysprof-mark-table.c',
+  'sysprof-css.c',
+  'sysprof-time-filter-model.c',
+  'sysprof-time-label.c',
+  dependencies: sysprof_deps,
+)
+test('test-marks', marks_test, env: ['GSETTINGS_BACKEND=memory'])

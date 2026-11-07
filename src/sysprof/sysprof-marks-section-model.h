@@ -39,5 +39,6 @@ GListModel     *sysprof_marks_section_model_get_mark_catalog          (SysprofMa
 GListModel     *sysprof_marks_section_model_get_filtered_mark_catalog (SysprofMarksSectionModel *self);
 GListModel     *sysprof_marks_section_model_get_marks                 (SysprofMarksSectionModel *self);
 GListModel     *sysprof_marks_section_model_get_filtered_marks        (SysprofMarksSectionModel *self);
+void            sysprof_marks_section_model_retry                     (SysprofMarksSectionModel *self);
 
 G_END_DECLS

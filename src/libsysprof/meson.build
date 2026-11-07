@@ -160,6 +160,7 @@ libsysprof_private_sources = [
   'sysprof-memory-pmu.c',
   'sysprof-device-info.c',
   'sysprof-document-storage.c',
+  'sysprof-mark-preparation.c',
   'sysprof-diagnostic-provider.c',
   'sysprof-frame-diagnostics.c',
   'mapped-ring-buffer-source.c',

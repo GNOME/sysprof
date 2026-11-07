@@ -65,6 +65,30 @@
           </object>
         </child>
         <child>
+          <object class="GtkBox">
+            <property name="spacing">6</property>
+            <property name="halign">center</property>
+            <child>
+              <object class="GtkSpinner">
+                <binding name="spinning"><lookup name="loading">section_model</lookup></binding>
+                <binding name="visible"><lookup name="loading">section_model</lookup></binding>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <binding name="label"><lookup name="status">section_model</lookup></binding>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton">
+                <property name="label" translatable="yes">Retry</property>
+                <property name="action-name">markssection.retry</property>
+                <binding name="visible"><lookup name="error">section_model</lookup></binding>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
           <object class="AdwViewStack" id="stack">
             <property name="vexpand">true</property>
             <child>
@@ -217,11 +241,7 @@
                                 <property name="model">
                                   <object class="GtkFlattenListModel">
                                     <binding name="model">
-                                      <lookup name="marks-catalog" type="SysprofDocument">
-                                        <lookup name="document" type="SysprofSession">
-                                          <lookup name="session">SysprofMarksSection</lookup>
-                                        </lookup>
-                                      </lookup>
+                                      <lookup name="summary">section_model</lookup>
                                     </binding>
                                   </object>
                                 </property>

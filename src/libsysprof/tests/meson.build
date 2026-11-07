@@ -31,6 +31,7 @@ libsysprof_testsuite = {
   'test-callgraph'                : {'skip': true},
   'test-capture-model'            : {'skip': true},
   'test-cplusplus'                : {'cpp': true},
+  'test-bitset-index'             : {},
   'test-cpu-modes'                : {},
   'test-cpu-list'                 : {},
   'test-device-info'              : {},

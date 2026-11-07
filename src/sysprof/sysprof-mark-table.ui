@@ -5,6 +5,11 @@
       <object class="GtkBox" id="box">
         <property name="orientation">vertical</property>
         <child>
+          <object class="GtkProgressBar" id="sort_progress">
+            <property name="visible">false</property>
+          </object>
+        </child>
+        <child>
           <object class="GtkScrolledWindow">
             <property name="vexpand">true</property>
             <child>
@@ -18,22 +23,16 @@
                 <property name="model">
                   <object class="GtkSingleSelection">
                     <property name="model">
-                      <object class="GtkSortListModel">
+                      <object class="GtkSortListModel" id="sort_model">
+                        <property name="incremental">true</property>
                         <binding name="sorter">
                           <lookup name="sorter">column_view</lookup>
                         </binding>
                         <property name="model">
-                          <object class="SysprofTimeFilterModel">
+                          <object class="SysprofTimeFilterModel" id="time_filter">
                             <binding name="time-span">
                               <lookup name="selected-time" type="SysprofSession">
                                 <lookup name="session">SysprofMarkTable</lookup>
-                              </lookup>
-                            </binding>
-                            <binding name="model">
-                              <lookup name="marks" type="SysprofDocument">
-                                <lookup name="document" type="SysprofSession">
-                                  <lookup name="session">SysprofMarkTable</lookup>
-                                </lookup>
                               </lookup>
                             </binding>
                           </object>

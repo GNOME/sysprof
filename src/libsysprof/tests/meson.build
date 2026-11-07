@@ -52,6 +52,7 @@ libsysprof_testsuite = {
   'test-list-address-layout'      : {'skip': true},
   'test-symbolize'                : {'skip': true},
   'test-strings'                  : {},
+  'test-vblank'                   : {},
   'test-symbol-cache'             : {},
   'top-offenders'                 : {'skip': true},
 }

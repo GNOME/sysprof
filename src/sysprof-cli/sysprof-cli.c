@@ -310,6 +310,7 @@ main (int   argc,
   gboolean force = FALSE;
   gboolean use_trace_fd = FALSE;
   gboolean gnome_shell = FALSE;
+  gboolean vblank = FALSE;
   gboolean rapl = FALSE;
   gboolean memprof = FALSE;
   gboolean merge = FALSE;
@@ -346,6 +347,7 @@ main (int   argc,
     { "rapl", 0, 0, G_OPTION_ARG_NONE, &rapl, N_("Include RAPL energy statistics") },
     { "memprof", 0, 0, G_OPTION_ARG_NONE, &memprof, N_("Profile memory allocations and frees") },
     { "gnome-shell", 0, 0, G_OPTION_ARG_NONE, &gnome_shell, N_("Connect to org.gnome.Shell for profiler statistics") },
+    { "vblank", 0, 0, G_OPTION_ARG_NONE, &vblank, N_("Record DRM vblank boundaries") },
     { "speedtrack", 0, 0, G_OPTION_ARG_NONE, &speedtrack, N_("Track performance of the applications main loop") },
     { "power-profile", 0, 0, G_OPTION_ARG_STRING, &power_profile, "Use POWER_PROFILE for duration of recording", "power-saver|balanced|performance" },
     { "merge", 0, 0, G_OPTION_ARG_NONE, &merge, N_("Merge all provided *.syscap files and write to stdout") },
@@ -604,6 +606,9 @@ Examples:\n\
                                      sysprof_proxied_instrument_new (G_BUS_TYPE_SESSION,
                                                                      "org.gnome.Shell",
                                                                      "/org/gnome/Sysprof3/Profiler"));
+
+  if (gnome_shell || vblank)
+    sysprof_profiler_add_instrument (profiler, sysprof_vblank_new ());
 
   if (session_bus)
     sysprof_profiler_add_instrument (profiler, sysprof_dbus_monitor_new (G_BUS_TYPE_SESSION));

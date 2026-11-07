@@ -20,22 +20,31 @@
 
 #pragma once
 
-#include <glib-object.h>
+#include <gio/gio.h>
 
 #include <sysprof-capture.h>
+
+#include "sysprof-types.h"
+#include "sysprof-time-span.h"
 
 G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_DIAGNOSTIC (sysprof_diagnostic_get_type())
 
 SYSPROF_AVAILABLE_IN_ALL
-G_DECLARE_FINAL_TYPE (SysprofDiagnostic, sysprof_diagnostic, SYSPROF, DIAGNOSTIC, GObject)
+SYSPROF_DECLARE_INTERNAL_TYPE (SysprofDiagnostic, sysprof_diagnostic, SYSPROF, DIAGNOSTIC, GObject)
 
+SYSPROF_AVAILABLE_IN_52
+const char            *sysprof_diagnostic_get_category  (SysprofDiagnostic *self);
 SYSPROF_AVAILABLE_IN_ALL
-const char *sysprof_diagnostic_get_domain  (SysprofDiagnostic *self);
+const char            *sysprof_diagnostic_get_domain    (SysprofDiagnostic *self);
 SYSPROF_AVAILABLE_IN_ALL
-const char *sysprof_diagnostic_get_message (SysprofDiagnostic *self);
+gboolean               sysprof_diagnostic_get_fatal     (SysprofDiagnostic *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean    sysprof_diagnostic_get_fatal   (SysprofDiagnostic *self);
+const char            *sysprof_diagnostic_get_message   (SysprofDiagnostic *self);
+SYSPROF_AVAILABLE_IN_52
+const SysprofTimeSpan *sysprof_diagnostic_get_time_span (SysprofDiagnostic *self);
+SYSPROF_AVAILABLE_IN_52
+GListModel            *sysprof_diagnostic_list_frames   (SysprofDiagnostic *self);
 
 G_END_DECLS

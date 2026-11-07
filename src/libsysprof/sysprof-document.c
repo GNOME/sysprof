@@ -53,6 +53,7 @@
 #include "sysprof-document-traceable-private.h"
 #include "sysprof-document-symbols-private.h"
 #include "sysprof-elf-symbolizer.h"
+#include "sysprof-frame-diagnostics-private.h"
 #include "sysprof-mark-catalog-private.h"
 #include "sysprof-mount-private.h"
 #include "sysprof-mount-device-private.h"
@@ -111,6 +112,7 @@ struct _SysprofDocument
   char                    *title;
 
   GListStore              *cpu_info;
+  GListStore              *diagnostics;
   GArray                  *performance_cpus;
   GArray                  *efficiency_cpus;
   GArray                  *low_power_efficiency_cpus;
@@ -163,6 +165,7 @@ enum
   PROP_BUSY,
   PROP_COUNTERS,
   PROP_CPU_INFO,
+  PROP_DIAGNOSTICS,
   PROP_DBUS_MESSAGES,
   PROP_FILES,
   PROP_LOGS,
@@ -349,6 +352,7 @@ sysprof_document_mark_busy_for_task (SysprofDocument *self,
   sysprof_document_mark_busy (self);
 }
 
+
 EggBitset *
 _sysprof_document_traceables (SysprofDocument *self)
 {
@@ -412,6 +416,7 @@ decode_space (gchar **str)
   if (strstr (*str, "\\040"))
     {
       g_auto(GStrv) parts = g_strsplit (*str, "\\040", 0);
+
       g_free (*str);
       *str = g_strjoinv (" ", parts);
     }
@@ -469,6 +474,7 @@ sysprof_document_finalize (GObject *object)
   g_clear_pointer (&self->counter_id_to_values, g_hash_table_unref);
 
   g_clear_object (&self->cpu_info);
+  g_clear_object (&self->diagnostics);
   g_clear_pointer (&self->performance_cpus, g_array_unref);
   g_clear_pointer (&self->efficiency_cpus, g_array_unref);
   g_clear_pointer (&self->low_power_efficiency_cpus, g_array_unref);
@@ -508,6 +514,10 @@ sysprof_document_get_property (GObject    *object,
 
     case PROP_CPU_INFO:
       g_value_take_object (value, sysprof_document_list_cpu_info (self));
+      break;
+
+    case PROP_DIAGNOSTICS:
+      g_value_take_object (value, sysprof_document_list_diagnostics (self));
       break;
 
     case PROP_DBUS_MESSAGES:
@@ -567,80 +577,101 @@ sysprof_document_class_init (SysprofDocumentClass *klass)
   object_class->finalize = sysprof_document_finalize;
   object_class->get_property = sysprof_document_get_property;
 
-  properties [PROP_ALLOCATIONS] =
+  properties[PROP_ALLOCATIONS] =
     g_param_spec_object ("allocations", NULL, NULL,
                          G_TYPE_LIST_MODEL,
-                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READABLE |
+                          G_PARAM_STATIC_STRINGS));
 
   properties[PROP_BUSY] =
     g_param_spec_boolean ("busy", NULL, NULL,
-                         FALSE,
-                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+                          FALSE,
+                          (G_PARAM_READABLE |
+                           G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_COUNTERS] =
+  properties[PROP_COUNTERS] =
     g_param_spec_object ("counters", NULL, NULL,
                          G_TYPE_LIST_MODEL,
-                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READABLE |
+                          G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_CPU_INFO] =
+  properties[PROP_CPU_INFO] =
     g_param_spec_object ("cpu-info", NULL, NULL,
                          G_TYPE_LIST_MODEL,
-                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READABLE |
+                          G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_DIAGNOSTICS] =
+    g_param_spec_object ("diagnostics", NULL, NULL,
+                         G_TYPE_LIST_MODEL,
+                         (G_PARAM_READABLE |
+                          G_PARAM_STATIC_STRINGS));
 
   properties[PROP_DBUS_MESSAGES] =
     g_param_spec_object ("dbus-messages", NULL, NULL,
                          G_TYPE_LIST_MODEL,
-                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READABLE |
+                          G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_FILES] =
+  properties[PROP_FILES] =
     g_param_spec_object ("files", NULL, NULL,
                          G_TYPE_LIST_MODEL,
-                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READABLE |
+                          G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_LOGS] =
+  properties[PROP_LOGS] =
     g_param_spec_object ("logs", NULL, NULL,
                          G_TYPE_LIST_MODEL,
-                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READABLE |
+                          G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_MARKS] =
+  properties[PROP_MARKS] =
     g_param_spec_object ("marks", NULL, NULL,
                          G_TYPE_LIST_MODEL,
-                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READABLE |
+                          G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_MARKS_CATALOG] =
+  properties[PROP_MARKS_CATALOG] =
     g_param_spec_object ("marks-catalog", NULL, NULL,
                          G_TYPE_LIST_MODEL,
-                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READABLE |
+                          G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_METADATA] =
+  properties[PROP_METADATA] =
     g_param_spec_object ("metadata", NULL, NULL,
                          G_TYPE_LIST_MODEL,
-                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READABLE |
+                          G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_PROCESSES] =
+  properties[PROP_PROCESSES] =
     g_param_spec_object ("processes", NULL, NULL,
                          G_TYPE_LIST_MODEL,
-                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READABLE |
+                          G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_SAMPLES] =
+  properties[PROP_SAMPLES] =
     g_param_spec_object ("samples", NULL, NULL,
                          G_TYPE_LIST_MODEL,
-                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READABLE |
+                          G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_TIME_SPAN] =
+  properties[PROP_TIME_SPAN] =
     g_param_spec_boxed ("time-span", NULL, NULL,
                         SYSPROF_TYPE_TIME_SPAN,
-                        (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+                        (G_PARAM_READABLE |
+                         G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_TITLE] =
+  properties[PROP_TITLE] =
     g_param_spec_string ("title", NULL, NULL,
                          NULL,
-                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READABLE |
+                          G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_SUBTITLE] =
+  properties[PROP_SUBTITLE] =
     g_param_spec_string ("subtitle", NULL, NULL,
                          NULL,
-                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READABLE |
+                          G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
@@ -657,12 +688,19 @@ sysprof_document_init (SysprofDocument *self)
   sysprof_document_frames_init (&self->storage->frames);
 
   self->cpu_info = g_list_store_new (SYSPROF_TYPE_CPU_INFO);
+  self->diagnostics = g_list_store_new (SYSPROF_TYPE_DIAGNOSTIC);
 
   self->missing_process = _sysprof_symbol_new (g_ref_string_new (_("Unknown Process")),
-                                               NULL, NULL, 0, 0, SYSPROF_SYMBOL_KIND_UNWINDABLE);
+                                               NULL,
+                                               NULL,
+                                               0,
+                                               0,
+                                               SYSPROF_SYMBOL_KIND_UNWINDABLE);
 
   self->counters = g_list_store_new (SYSPROF_TYPE_DOCUMENT_COUNTER);
-  self->counter_id_to_values = g_hash_table_new_full (NULL, NULL, NULL,
+  self->counter_id_to_values = g_hash_table_new_full (NULL,
+                                                      NULL,
+                                                      NULL,
                                                       (GDestroyNotify)g_array_unref);
 
   self->allocations = egg_bitset_new_empty ();
@@ -689,9 +727,15 @@ sysprof_document_init (SysprofDocument *self)
   self->sample_cpus = g_array_new (FALSE, FALSE, sizeof (guint));
 
   self->files_first_position = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
-  self->pid_to_process_info = g_hash_table_new_full (NULL, NULL, NULL, (GDestroyNotify)sysprof_process_info_unref);
+  self->pid_to_process_info = g_hash_table_new_full (NULL,
+                                                     NULL,
+                                                     NULL,
+                                                     (GDestroyNotify)sysprof_process_info_unref);
   self->tid_to_symbol = g_hash_table_new_full (NULL, NULL, NULL, (GDestroyNotify)g_object_unref);
-  self->mark_groups = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (GDestroyNotify)g_hash_table_unref);
+  self->mark_groups = g_hash_table_new_full (g_str_hash,
+                                             g_str_equal,
+                                             g_free,
+                                             (GDestroyNotify)g_hash_table_unref);
 
   self->mount_namespace = sysprof_mount_namespace_new ();
 }
@@ -918,7 +962,10 @@ sysprof_document_load_overlays (SysprofDocument *self)
               const char *mount_point = sysprof_document_overlay_get_destination (overlay);
               const char *host_path = sysprof_document_overlay_get_source (overlay);
               int layer = sysprof_document_overlay_get_layer (overlay);
-              g_autoptr(SysprofMount) mount = _sysprof_mount_new_for_overlay (self->strings, mount_point, host_path, layer);
+              g_autoptr(SysprofMount) mount = _sysprof_mount_new_for_overlay (self->strings,
+                                                                              mount_point,
+                                                                              host_path,
+                                                                              layer);
 
               sysprof_mount_namespace_add_mount (process_info->mount_namespace,
                                                  g_steal_pointer (&mount));
@@ -958,6 +1005,7 @@ sysprof_document_load_processes (SysprofDocument *self)
             {
               GRefString *nick = g_ref_string_acquire (process_info->fallback_symbol->binary_nick);
               g_autofree char *shared_name_copy = NULL;
+
               const char *space = strchr (cmdline, ' ');
               const char *shared_name = cmdline;
 
@@ -967,13 +1015,19 @@ sysprof_document_load_processes (SysprofDocument *self)
               g_clear_object (&process_info->symbol);
               process_info->symbol =
                 _sysprof_symbol_new (sysprof_strings_get (self->strings, cmdline),
-                                     NULL, g_steal_pointer (&nick), 0, 0,
+                                     NULL,
+                                     g_steal_pointer (&nick),
+                                     0,
+                                     0,
                                      SYSPROF_SYMBOL_KIND_PROCESS);
 
               g_clear_object (&process_info->shared_symbol);
               process_info->shared_symbol =
                 _sysprof_symbol_new (sysprof_strings_get (self->strings, shared_name),
-                                     NULL, NULL, 0, 0,
+                                     NULL,
+                                     NULL,
+                                     0,
+                                     0,
                                      SYSPROF_SYMBOL_KIND_PROCESS);
             }
 
@@ -1033,14 +1087,22 @@ sysprof_document_load_counters (SysprofDocument *self,
 
           for (guint j = 0; j < n_counters; j++)
             {
-              g_autoptr(GArray) values = g_array_new (FALSE, FALSE, sizeof (SysprofDocumentTimedValue));
+              g_autoptr(GArray) values = g_array_new (FALSE,
+                                                      FALSE,
+                                                      sizeof (SysprofDocumentTimedValue));
               const char *category;
               const char *name;
               const char *description;
               guint id;
               guint type;
 
-              sysprof_document_ctrdef_get_counter (ctrdef, j, &id, &type, &category, &name, &description);
+              sysprof_document_ctrdef_get_counter (ctrdef,
+                                                   j,
+                                                   &id,
+                                                   &type,
+                                                   &category,
+                                                   &name,
+                                                   &description);
 
               /* Keep track if this counter will need int64 endian swaps */
               if (swap_ids != NULL && type == SYSPROF_CAPTURE_COUNTER_INT64)
@@ -1161,10 +1223,10 @@ is_data_type (SysprofCaptureFrameType type)
 
 typedef struct _Load
 {
-  GMappedFile *mapped_file;
-  ProgressFunc progress;
-  gpointer progress_data;
-  GDestroyNotify progress_data_destroy;
+  GMappedFile    *mapped_file;
+  ProgressFunc    progress;
+  gpointer        progress_data;
+  GDestroyNotify  progress_data_destroy;
 } Load;
 
 static void
@@ -1267,13 +1329,13 @@ sort_by_time_swapped (gconstpointer a,
 
 typedef struct _FrameScan
 {
-  const guint8 *base;
-  SysprofDocumentFrames frames;
-  GCancellable *cancellable;
-  gsize begin;
-  gsize end;
-  guint needs_swap : 1;
-  guint valid : 1;
+  const guint8          *base;
+  SysprofDocumentFrames  frames;
+  GCancellable          *cancellable;
+  gsize                  begin;
+  gsize                  end;
+  guint                  needs_swap : 1;
+  guint                  valid : 1;
 } FrameScan;
 
 static void
@@ -1515,10 +1577,10 @@ sysprof_document_create_frame_scans (SysprofDocument *self,
 }
 
 static gboolean
-sysprof_document_scan_frames_serial (SysprofDocument *self,
-                                     gsize            len,
-                                     GCancellable    *cancellable,
-                                     GError         **error)
+sysprof_document_scan_frames_serial (SysprofDocument  *self,
+                                     gsize             len,
+                                     GCancellable     *cancellable,
+                                     GError          **error)
 {
   g_autoptr(FrameScan) scan = NULL;
 
@@ -1550,10 +1612,10 @@ sysprof_document_scan_frames_serial (SysprofDocument *self,
 }
 
 static gboolean
-sysprof_document_scan_frames (SysprofDocument *self,
-                              gsize            len,
-                              GCancellable    *cancellable,
-                              GError         **error)
+sysprof_document_scan_frames (SysprofDocument  *self,
+                              gsize             len,
+                              GCancellable     *cancellable,
+                              GError          **error)
 {
   g_autoptr(DexThreadPool) pool = NULL;
   g_autoptr(GPtrArray) futures = NULL;
@@ -1567,7 +1629,9 @@ sysprof_document_scan_frames (SysprofDocument *self,
 
   scans = sysprof_document_create_frame_scans (self, len, cancellable, &has_index);
 
-  if (!has_index || scans == NULL || scans->len < 2)
+  if (!has_index ||
+      scans == NULL ||
+      scans->len < 2)
     return sysprof_document_scan_frames_serial (self, len, cancellable, error);
 
   n_threads = MIN (g_get_num_processors (), scans->len);
@@ -2011,6 +2075,7 @@ sysprof_document_freeze_storage (SysprofDocument *self,
   storage->counts[SYSPROF_DOCUMENT_COUNT_SAMPLES] = egg_bitset_get_size (self->samples);
   storage->counts[SYSPROF_DOCUMENT_COUNT_DBUS] = egg_bitset_get_size (self->dbus_messages);
   storage->counts[SYSPROF_DOCUMENT_COUNT_FILES] = g_hash_table_size (self->files_first_position);
+  storage->counts[SYSPROF_DOCUMENT_COUNT_DIAGNOSTICS] = g_list_model_get_n_items (G_LIST_MODEL (self->diagnostics));
   storage->frozen = TRUE;
 }
 
@@ -2082,6 +2147,7 @@ sysprof_document_load_worker (GTask        *task,
   for (guint f = 0; f < sysprof_document_frames_get_size (&self->storage->frames); f++)
     {
       SysprofDocumentFramePointer *ptr = sysprof_document_frames_index (&self->storage->frames, f);
+
       const SysprofCaptureFrame *tainted = (const SysprofCaptureFrame *)(gpointer)&self->storage->base[ptr->offset];
       gint64 t = swap_int64 (self->storage->needs_swap, tainted->time);
       int pid = swap_int32 (self->storage->needs_swap, tainted->pid);
@@ -2320,6 +2386,17 @@ sysprof_document_load_worker (GTask        *task,
       return;
   }
 
+  load_progress (load, .9, _("Analyzing diagnostics"));
+
+  {
+    g_autoptr(SysprofDiagnosticProvider) provider = _sysprof_frame_diagnostics_new ();
+
+    _sysprof_diagnostic_provider_populate (provider, self, self->diagnostics);
+  }
+
+  self->storage->counts[SYSPROF_DOCUMENT_COUNT_DIAGNOSTICS] =
+    g_list_model_get_n_items (G_LIST_MODEL (self->diagnostics));
+
   g_task_return_pointer (task, g_steal_pointer (&self), g_object_unref);
 }
 
@@ -2357,6 +2434,7 @@ _sysprof_document_new_finish (GAsyncResult  *result,
   SysprofDocument *ret;
 
   g_return_val_if_fail (G_IS_TASK (result), NULL);
+
   ret = g_task_propagate_pointer (G_TASK (result), error);
   g_return_val_if_fail (!ret || SYSPROF_IS_DOCUMENT (ret), NULL);
 
@@ -2403,8 +2481,8 @@ sysprof_document_symbolize_symbols_cb (GObject      *object,
 
 typedef struct _Symbolize
 {
-  ProgressFunc progress_func;
-  gpointer progress_data;
+  ProgressFunc   progress_func;
+  gpointer       progress_data;
   GDestroyNotify progress_data_destroy;
 } Symbolize;
 
@@ -2492,7 +2570,7 @@ _sysprof_document_symbolize_async (SysprofDocument     *self,
   state->progress_func = progress_func;
   state->progress_data = progress_data;
   state->progress_data_destroy = progress_data_destroy;
-  g_task_set_task_data(task, state, (GDestroyNotify)symbolize_free);
+  g_task_set_task_data (task, state, (GDestroyNotify)symbolize_free);
 
   _sysprof_symbolizer_prepare_async (symbolizer,
                                      self,
@@ -2875,6 +2953,7 @@ _sysprof_document_foreach_sample (SysprofDocument           *self,
     {
       guint middle = left + (right - left) / 2;
       const SysprofDocumentFramePointer *ptr = sysprof_document_frames_index (&self->storage->frames, middle);
+
       const SysprofCaptureFrame *frame = (const SysprofCaptureFrame *)&self->storage->base[ptr->offset];
       gint64 time = swap_int64 (self->storage->needs_swap, frame->time);
 
@@ -2889,6 +2968,7 @@ _sysprof_document_foreach_sample (SysprofDocument           *self,
       do
         {
           const SysprofDocumentFramePointer *ptr = sysprof_document_frames_index (&self->storage->frames, position);
+
           const SysprofCaptureFrame *frame = (const SysprofCaptureFrame *)&self->storage->base[ptr->offset];
           const SysprofCaptureSample *sample;
           gint64 time = swap_int64 (self->storage->needs_swap, frame->time);
@@ -3088,7 +3168,7 @@ sysprof_document_symbolize_traceable (SysprofDocument           *self,
 
       if (symbols[n_symbolized] != NULL &&
           /* if we symbolized recursively, skip this one */
-          (n_symbolized == 0 || symbols[n_symbolized-1] != symbols[n_symbolized]))
+          (n_symbolized == 0 || symbols[n_symbolized - 1] != symbols[n_symbolized]))
         n_symbolized++;
 
       if (sysprof_address_is_context_switch (addresses[i], &context))
@@ -3301,7 +3381,8 @@ _sysprof_document_thread_symbol (SysprofDocument *self,
           ret = _sysprof_symbol_new (g_ref_string_new (tidstr),
                                      NULL,
                                      g_ref_string_new (pidstr),
-                                     0, 0,
+                                     0,
+                                     0,
                                      SYSPROF_SYMBOL_KIND_THREAD);
 
           g_hash_table_insert (self->tid_to_symbol, GINT_TO_POINTER (tid), ret);
@@ -3363,7 +3444,11 @@ sysprof_document_list_symbols_in_traceable (SysprofDocument          *self,
 
   stack_depth = MIN (MAX_STACK_DEPTH, sysprof_document_traceable_get_stack_depth (traceable));
   symbols = g_alloca (sizeof (SysprofSymbol *) * stack_depth);
-  n_symbols = sysprof_document_symbolize_traceable (self, traceable, symbols, stack_depth, &final_context);
+  n_symbols = sysprof_document_symbolize_traceable (self,
+                                                    traceable,
+                                                    symbols,
+                                                    stack_depth,
+                                                    &final_context);
 
   if (n_symbols > 0 && _sysprof_symbol_is_context_switch (symbols[0]))
     {
@@ -3379,6 +3464,7 @@ sysprof_document_list_symbols_in_traceable (SysprofDocument          *self,
   for (guint i = 0; i < n_symbols; i++)
     {
       g_autoptr(SysprofSymbol) copy = _sysprof_symbol_copy (symbols[i]);
+
       g_list_store_append (ret, copy);
     }
 
@@ -3470,8 +3556,8 @@ sysprof_document_catalog_marks (SysprofDocument *self)
                                                      model,
                                                      min,
                                                      max,
-                                                     count ? total/count : 0,
-                                                     median->len ? g_array_index (median, gint64, median->len/2) : 0);
+                                                     count ? total / count : 0,
+                                                     median->len ? g_array_index (median, gint64, median->len / 2) : 0);
           g_list_store_append (group, names_catalog);
         }
 
@@ -3487,6 +3573,22 @@ sysprof_document_get_time_span (SysprofDocument *self)
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
   return &self->storage->time_span;
+}
+
+/**
+ * sysprof_document_list_diagnostics:
+ * @self: a #SysprofDocument
+ *
+ * Lists issues found while loading the document.
+ *
+ * Returns: (transfer full): a #GListModel of #SysprofDiagnostic
+ */
+GListModel *
+sysprof_document_list_diagnostics (SysprofDocument *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  return G_LIST_MODEL (g_object_ref (self->diagnostics));
 }
 
 /**
@@ -3541,7 +3643,8 @@ sysprof_document_dup_title (SysprofDocument *self)
 
   if ((date_time = g_date_time_new_from_iso8601 (self->storage->header.capture_time, NULL)))
     {
-      g_autoptr(GDateTime) local_date_time = g_date_time_to_local(date_time);
+      g_autoptr(GDateTime) local_date_time = g_date_time_to_local (date_time);
+
       return g_date_time_format (local_date_time, _("Recording at %X %x"));
     }
 
@@ -3560,7 +3663,8 @@ sysprof_document_dup_subtitle (SysprofDocument *self)
 
   if ((date_time = g_date_time_new_from_iso8601 (self->storage->header.capture_time, NULL)))
     {
-      g_autoptr(GDateTime) local_date_time = g_date_time_to_local(date_time);
+      g_autoptr(GDateTime) local_date_time = g_date_time_to_local (date_time);
+
       return g_date_time_format (local_date_time, _("Recording at %X %x"));
     }
 
@@ -3569,7 +3673,7 @@ sysprof_document_dup_subtitle (SysprofDocument *self)
 
 void
 _sysprof_document_set_title (SysprofDocument *self,
-                             const char *title)
+                             const char      *title)
 {
   g_return_if_fail (SYSPROF_IS_DOCUMENT (self));
 
@@ -3621,8 +3725,8 @@ sort_symbols_for_bsearch (gconstpointer a,
 static DexFuture *
 sysprof_document_serialize_symbols_fiber (gpointer user_data)
 {
-  static const guint8 empty_string[1] = {0};
-  static const SysprofPackedSymbol empty_symbol = {0};
+  static const guint8 empty_string[1] = { 0 };
+  static const SysprofPackedSymbol empty_symbol = { 0 };
   SysprofDocument *self = user_data;
   g_autoptr(GByteArray) strings = NULL;
   g_autoptr(GHashTable) strings_offset = NULL;
@@ -3671,7 +3775,7 @@ sysprof_document_serialize_symbols_fiber (gpointer user_data)
    * section containing our packed symbols. Ignore the last symbol
    * so that it stays all zero.
    */
-  for (guint i = 0; i < packed_symbols->len-1; i++)
+  for (guint i = 0; i < packed_symbols->len - 1; i++)
     {
       g_array_index (packed_symbols, SysprofPackedSymbol, i).offset += packed_len;
       g_array_index (packed_symbols, SysprofPackedSymbol, i).tag_offset += packed_len;
@@ -3682,7 +3786,7 @@ sysprof_document_serialize_symbols_fiber (gpointer user_data)
 
   data = g_malloc (packed_len + strings->len);
   memcpy (data, packed_symbols->data, packed_len);
-  memcpy (data+packed_len, strings->data, strings->len);
+  memcpy (data + packed_len, strings->data, strings->len);
 
   bytes = g_bytes_new_take (data, packed_len + strings->len);
 
@@ -4123,7 +4227,6 @@ _sysprof_document_storage_list_files (SysprofDocumentStorage *self,
   GHashTableIter hiter;
   EggBitsetIter iter;
   GListStore *model;
-
   gpointer key, value;
 
   g_return_val_if_fail (self != NULL && self->frozen, NULL);

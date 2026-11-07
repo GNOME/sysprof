@@ -6,6 +6,7 @@ src/libsysprof/sysprof-category-summary.c
 src/libsysprof/sysprof-debuginfod-task.c
 src/libsysprof/sysprof-document-allocation.c
 src/libsysprof/sysprof-document.c
+src/libsysprof/sysprof-frame-diagnostics.c
 src/libsysprof/sysprof-document-dbus-message.c
 src/libsysprof/sysprof-document-frame.c
 src/libsysprof/sysprof-document-loader.c

@@ -94,6 +94,7 @@ struct _SysprofDocumentStorage
   EggBitset                *file_chunks;
   GHashTable               *files_first_position;
   GArray                   *processes;
+  SysprofFrameCycle        *frame_cycle;
   GHashTable               *metadata;
   GHashTable               *mark_groups;
   GHashTable               *mark_names;
@@ -2310,6 +2311,15 @@ sysprof_document_load_worker (GTask        *task,
   if (g_task_return_error_if_cancelled (task))
     return;
 
+  {
+    g_autoptr(SysprofDocumentReader) reader = _sysprof_document_reader_new (self->storage, cancellable);
+
+    self->storage->frame_cycle = _sysprof_document_reader_create_frames (reader);
+
+    if (g_task_return_error_if_cancelled (task))
+      return;
+  }
+
   g_task_return_pointer (task, g_steal_pointer (&self), g_object_unref);
 }
 
@@ -4014,6 +4024,7 @@ _sysprof_document_storage_unref_destroy (gpointer data)
       }
 
   g_clear_pointer (&self->processes, g_array_unref);
+  g_clear_pointer (&self->frame_cycle, sysprof_frame_cycle_unref);
   g_clear_pointer (&self->metadata, g_hash_table_unref);
   g_clear_pointer (&self->logs, egg_bitset_unref);
   g_clear_pointer (&self->file_chunks, egg_bitset_unref);
@@ -4183,6 +4194,14 @@ _sysprof_document_storage_copy_logs (SysprofDocumentStorage *self)
   g_return_val_if_fail (self != NULL && self->frozen, NULL);
 
   return egg_bitset_copy (self->logs);
+}
+
+SysprofFrameCycle *
+_sysprof_document_storage_dup_frames (SysprofDocumentStorage *self)
+{
+  g_return_val_if_fail (self != NULL && self->frozen, NULL);
+
+  return self->frame_cycle ? sysprof_frame_cycle_ref (self->frame_cycle) : NULL;
 }
 
 const char *

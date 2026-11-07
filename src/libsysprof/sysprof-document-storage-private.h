@@ -21,6 +21,7 @@
 #pragma once
 
 #include "sysprof-document-private.h"
+#include "sysprof-frame-cycle.h"
 
 G_BEGIN_DECLS
 
@@ -60,6 +61,7 @@ typedef enum
 G_DECLARE_FINAL_TYPE (SysprofDocumentReader, _sysprof_document_reader, SYSPROF, DOCUMENT_READER, GObject)
 
 SysprofDocumentStorage       *_sysprof_document_dup_storage              (SysprofDocument        *document);
+SysprofFrameCycle            *_sysprof_document_reader_create_frames     (SysprofDocumentReader  *self);
 GCancellable                 *_sysprof_document_reader_get_cancellable   (SysprofDocumentReader  *self);
 guint                         _sysprof_document_reader_get_count         (SysprofDocumentReader  *self,
                                                                           SysprofDocumentCount    count);
@@ -83,6 +85,7 @@ EggBitset                    *_sysprof_document_storage_copy_marks       (Syspro
                                                                           const char             *group);
 EggBitset                    *_sysprof_document_storage_copy_named_marks (SysprofDocumentStorage *self,
                                                                           const char * const     *names);
+SysprofFrameCycle            *_sysprof_document_storage_dup_frames       (SysprofDocumentStorage *self);
 guint                         _sysprof_document_storage_get_count        (SysprofDocumentStorage *self,
                                                                           SysprofDocumentCount    count);
 const SysprofCounterMetadata *_sysprof_document_storage_get_counters     (SysprofDocumentStorage *self,

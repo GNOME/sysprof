@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include "sysprof-frame-cycle-private.h"
 #include "sysprof-document-storage-private.h"
 
 struct _SysprofDocumentReader
@@ -33,6 +34,7 @@ struct _SysprofDocumentReader
   guint                   last_position;
   guint                   last_frame;
   gboolean                have_position;
+  SysprofFrameCycle      *frames;
 };
 
 static void list_model_iface_init (GListModelInterface *iface);
@@ -46,6 +48,7 @@ _sysprof_document_reader_finalize (GObject *object)
   SysprofDocumentReader *self = SYSPROF_DOCUMENT_READER (object);
 
   g_clear_pointer (&self->bits, egg_bitset_unref);
+  g_clear_pointer (&self->frames, sysprof_frame_cycle_unref);
   g_clear_pointer (&self->storage, _sysprof_document_storage_unref);
   g_clear_object (&self->cancellable);
 
@@ -183,6 +186,20 @@ _sysprof_document_reader_is_cancelled (SysprofDocumentReader *self)
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT_READER (self), TRUE);
 
   return self->cancellable != NULL && g_cancellable_is_cancelled (self->cancellable);
+}
+
+SysprofFrameCycle *
+_sysprof_document_reader_create_frames (SysprofDocumentReader *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_READER (self), NULL);
+
+  if (self->frames == NULL)
+    self->frames = _sysprof_document_storage_dup_frames (self->storage);
+
+  if (self->frames == NULL)
+    self->frames = _sysprof_frame_cycle_new_for_reader (self);
+
+  return self->frames ? sysprof_frame_cycle_ref (self->frames) : NULL;
 }
 
 GListModel *

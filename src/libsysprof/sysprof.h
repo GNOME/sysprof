@@ -62,6 +62,7 @@ G_BEGIN_DECLS
 # include "sysprof-document-traceable.h"
 # include "sysprof-document.h"
 # include "sysprof-elf-symbolizer.h"
+# include "sysprof-frame-cycle.h"
 # include "sysprof-energy-usage.h"
 # include "sysprof-enums.h"
 # include "sysprof-instrument.h"

@@ -302,7 +302,10 @@ _sysprof_instruments_process_started (GPtrArray        *instruments,
     {
       SysprofInstrument *instrument = g_ptr_array_index (instruments, i);
 
-      g_ptr_array_add (futures, _sysprof_instrument_process_started (instrument, recording, pid, comm));
+      g_ptr_array_add (futures, _sysprof_instrument_process_started (instrument,
+                                                                     recording,
+                                                                     pid,
+                                                                     comm));
     }
 
   if (futures->len == 0)

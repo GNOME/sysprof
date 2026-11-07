@@ -39,9 +39,9 @@
 #define INACTIVITY_TIMEOUT_SECS 120
 
 static const gchar *bus_names[] = { "org.gnome.Sysprof3" };
-static GMainLoop   *main_loop;
-static gboolean     name_acquired;
-static gint         exit_status = EXIT_SUCCESS;
+static GMainLoop *main_loop;
+static gboolean name_acquired;
+static gint exit_status = EXIT_SUCCESS;
 
 static guint inactivity;
 static G_LOCK_DEFINE (activity);
@@ -135,9 +135,18 @@ main (gint   argc,
 
       activity_cb (NULL, NULL);
 
-      if (g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (v3_service), bus, V3_PATH, &error) &&
-          g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (rapl), bus, RAPL_PATH, &error) &&
-          g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (unwinder), bus, UNWINDER_PATH, &error))
+      if (g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (v3_service),
+                                            bus,
+                                            V3_PATH,
+                                            &error) &&
+          g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (rapl),
+                                            bus,
+                                            RAPL_PATH,
+                                            &error) &&
+          g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (unwinder),
+                                            bus,
+                                            UNWINDER_PATH,
+                                            &error))
         {
           for (guint i = 0; i < G_N_ELEMENTS (bus_names); i++)
             {

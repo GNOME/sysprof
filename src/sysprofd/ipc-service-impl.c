@@ -39,12 +39,13 @@ struct _IpcServiceImpl
   IpcServiceSkeleton parent_instance;
 };
 
-enum {
+enum
+{
   ACTIVITY,
   N_SIGNALS
 };
 
-static guint signals [N_SIGNALS];
+static guint signals[N_SIGNALS];
 
 static gboolean
 file_set_contents_no_backup (const gchar  *path,
@@ -71,10 +72,12 @@ file_set_contents_no_backup (const gchar  *path,
   if (fd == -1)
     {
       int errsv = errno;
+
       g_set_error (error,
                    G_FILE_ERROR,
                    g_file_error_from_errno (errsv),
-                   "%s", g_strerror (errsv));
+                   "%s",
+                   g_strerror (errsv));
       return FALSE;
     }
 
@@ -83,10 +86,12 @@ file_set_contents_no_backup (const gchar  *path,
   if (write (fd, contents, len) != len)
     {
       int errsv = errno;
+
       g_set_error (error,
                    G_FILE_ERROR,
                    g_file_error_from_errno (errsv),
-                   "%s", g_strerror (errsv));
+                   "%s",
+                   g_strerror (errsv));
       close (fd);
       return FALSE;
     }
@@ -286,7 +291,7 @@ ipc_service_impl_g_authorize_method (GDBusInterfaceSkeleton *skeleton,
   g_assert (IPC_IS_SERVICE_IMPL (skeleton));
   g_assert (G_IS_DBUS_METHOD_INVOCATION (invocation));
 
-  g_signal_emit (skeleton, signals [ACTIVITY], 0);
+  g_signal_emit (skeleton, signals[ACTIVITY], 0);
 
   if (g_str_equal (g_dbus_method_invocation_get_method_name (invocation), "GetCapabilities"))
     return TRUE;
@@ -466,13 +471,15 @@ ipc_service_impl_class_init (IpcServiceImplClass *klass)
 
   skeleton_class->g_authorize_method = ipc_service_impl_g_authorize_method;
 
-  signals [ACTIVITY] =
+  signals[ACTIVITY] =
     g_signal_new ("activity",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
-                  0, NULL, NULL,
+                  0,
+                  NULL, NULL,
                   NULL,
-                  G_TYPE_NONE, 0);
+                  G_TYPE_NONE,
+                  0);
 }
 
 static void

@@ -57,19 +57,20 @@ static void profiler_iface_init (IpcProfilerIface *iface);
 G_DEFINE_TYPE_WITH_CODE (IpcRaplProfiler, ipc_rapl_profiler, IPC_TYPE_PROFILER_SKELETON,
                          G_IMPLEMENT_INTERFACE (IPC_TYPE_PROFILER, profiler_iface_init))
 
-enum {
+enum
+{
   ACTIVITY,
   N_SIGNALS
 };
 
-static guint signals [N_SIGNALS];
+static guint signals[N_SIGNALS];
 
 static void
 ipc_rapl_profiler_activity (IpcRaplProfiler *self)
 {
   g_assert (IPC_IS_RAPL_PROFILER (self));
 
-  g_signal_emit (self, signals [ACTIVITY], 0);
+  g_signal_emit (self, signals[ACTIVITY], 0);
 }
 
 static void
@@ -118,21 +119,26 @@ add_counter_base (SysprofCaptureWriter *writer,
 
   {
     SysprofCaptureCounter ctrs[4] = {
-      { .name = "Package Watt",
+      {
+        .name = "Package Watt",
         .id = id.counter_base,
-        .type = SYSPROF_CAPTURE_COUNTER_DOUBLE },
-
-      { .name = "Core Watt",
+        .type = SYSPROF_CAPTURE_COUNTER_DOUBLE
+      },
+      {
+        .name = "Core Watt",
         .id = id.counter_base + 1,
-        .type = SYSPROF_CAPTURE_COUNTER_DOUBLE },
-
-      { .name = "GFX Watt",
+        .type = SYSPROF_CAPTURE_COUNTER_DOUBLE
+      },
+      {
+        .name = "GFX Watt",
         .id = id.counter_base + 2,
-        .type = SYSPROF_CAPTURE_COUNTER_DOUBLE },
-
-      { .name = "RAM Watt",
+        .type = SYSPROF_CAPTURE_COUNTER_DOUBLE
+      },
+      {
+        .name = "RAM Watt",
         .id = id.counter_base + 3,
-        .type = SYSPROF_CAPTURE_COUNTER_DOUBLE },
+        .type = SYSPROF_CAPTURE_COUNTER_DOUBLE
+      },
     };
 
     for (guint j = 0; j < G_N_ELEMENTS (ctrs); j++)
@@ -246,11 +252,15 @@ ipc_rapl_profiler_class_init (IpcRaplProfilerClass *klass)
    * The "activity" signal is used to denote that some amount of activity
    * has occurred and therefore the process should be kept alive longer.
    */
-  signals [ACTIVITY] =
+  signals[ACTIVITY] =
     g_signal_new ("activity",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
-                  0, NULL, NULL, NULL, G_TYPE_NONE, 0);
+                  0,
+                  NULL, NULL,
+                  NULL,
+                  G_TYPE_NONE,
+                  0);
 }
 
 static void

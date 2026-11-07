@@ -65,12 +65,12 @@
 
 struct _SysprofUserSampler
 {
-  SysprofInstrument parent_instance;
-  GArray *perf_fds;
-  int capture_fd_read;
-  int capture_fd_write;
-  int event_fd;
-  guint stack_size;
+  SysprofInstrument  parent_instance;
+  GArray            *perf_fds;
+  int                capture_fd_read;
+  int                capture_fd_write;
+  int                event_fd;
+  guint              stack_size;
 };
 
 struct _SysprofUserSamplerClass
@@ -96,7 +96,8 @@ static void
 promise_resolve_fd (DexPromise *promise,
                     int         fd)
 {
-  GValue gvalue = {SYSPROF_TYPE_FD, {{.v_pointer = &fd}, {.v_int = 0}}};
+  GValue gvalue = { SYSPROF_TYPE_FD, { { .v_pointer = &fd }, { .v_int = 0 } } };
+
   dex_promise_resolve (promise, &gvalue);
 }
 
@@ -127,6 +128,7 @@ sysprof_user_sampler_ioctl (SysprofUserSampler *self,
       if (0 != ioctl (perf_fd, enable ? PERF_EVENT_IOC_ENABLE : PERF_EVENT_IOC_DISABLE))
         {
           int errsv = errno;
+
           g_warning ("Failed to toggle perf_fd: %s", g_strerror (errsv));
         }
     }
@@ -135,16 +137,16 @@ sysprof_user_sampler_ioctl (SysprofUserSampler *self,
 static char **
 sysprof_user_sampler_list_required_policy (SysprofInstrument *instrument)
 {
-  static const char *policy[] = {"org.gnome.sysprof3.profile", NULL};
+  static const char *policy[] = { "org.gnome.sysprof3.profile", NULL };
 
   return g_strdupv ((char **)policy);
 }
 
 typedef struct _Prepare
 {
-  SysprofRecording *recording;
+  SysprofRecording   *recording;
   SysprofUserSampler *sampler;
-  guint stack_size;
+  guint               stack_size;
 } Prepare;
 
 static void
@@ -197,7 +199,7 @@ _perf_event_open (GDBusConnection  *connection,
   g_autoptr(DexPromise) promise = NULL;
   g_autoptr(GVariant) options = NULL;
   g_autofd int perf_fd = -1;
-  struct perf_event_attr attr = {0};
+  struct perf_event_attr attr = { 0 };
   gboolean with_mmap2 = TRUE;
   gboolean use_software = FALSE;
 
@@ -327,7 +329,9 @@ create_unwinder (GDBusConnection  *connection,
                  GError          **error)
 {
   g_autoptr(DexPromise) promise = dex_promise_new ();
-  ipc_unwinder_proxy_new (connection, G_DBUS_PROXY_FLAGS_NONE,
+
+  ipc_unwinder_proxy_new (connection,
+                          G_DBUS_PROXY_FLAGS_NONE,
                           "org.gnome.Sysprof3",
                           "/org/gnome/Sysprof3/Unwinder",
                           NULL,
@@ -425,7 +429,9 @@ sysprof_user_sampler_prepare_fiber (gpointer user_data)
         {
           g_autoptr(DexPromise) promise = dex_promise_new ();
           int event_fd_handle = g_unix_fd_list_append (fd_list, prepare->sampler->event_fd, NULL);
-          int capture_fd_handle = g_unix_fd_list_append (fd_list, prepare->sampler->capture_fd_write, NULL);
+          int capture_fd_handle = g_unix_fd_list_append (fd_list,
+                                                         prepare->sampler->capture_fd_write,
+                                                         NULL);
 
           ipc_unwinder_call_unwind (unwinder,
                                     prepare->stack_size,
@@ -476,9 +482,9 @@ sysprof_user_sampler_prepare (SysprofInstrument *instrument,
 
 typedef struct _Record
 {
-  SysprofRecording *recording;
+  SysprofRecording   *recording;
   SysprofUserSampler *sampler;
-  DexFuture *cancellable;
+  DexFuture          *cancellable;
 } Record;
 
 static void

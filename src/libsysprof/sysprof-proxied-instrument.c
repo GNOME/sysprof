@@ -25,7 +25,8 @@
 #include "sysprof-proxied-instrument-private.h"
 #include "sysprof-recording-private.h"
 
-enum {
+enum
+{
   PROP_0,
   PROP_BUS_TYPE,
   PROP_BUS_NAME,
@@ -35,17 +36,17 @@ enum {
 
 G_DEFINE_TYPE (SysprofProxiedInstrument, sysprof_proxied_instrument, SYSPROF_TYPE_INSTRUMENT)
 
-static GParamSpec *properties [N_PROPS];
+static GParamSpec *properties[N_PROPS];
 
 typedef struct _Record
 {
   SysprofRecording *recording;
-  DexFuture *cancellable;
-  char *bus_name;
-  char *object_path;
-  GVariant *options;
-  GBusType bus_type;
-  guint call_stop_first : 1;
+  DexFuture        *cancellable;
+  char             *bus_name;
+  char             *object_path;
+  GVariant         *options;
+  GBusType          bus_type;
+  guint             call_stop_first : 1;
 } Record;
 
 static void
@@ -172,6 +173,7 @@ static GVariant *
 create_empty_dictionary (void)
 {
   GVariantDict dict = G_VARIANT_DICT_INIT (NULL);
+
   return g_variant_take_ref (g_variant_dict_end (&dict));
 }
 
@@ -284,21 +286,27 @@ sysprof_proxied_instrument_class_init (SysprofProxiedInstrumentClass *klass)
 
   instrument_class->record = sysprof_proxied_instrument_record;
 
-  properties [PROP_BUS_TYPE] =
+  properties[PROP_BUS_TYPE] =
     g_param_spec_enum ("bus-type", NULL, NULL,
                        G_TYPE_BUS_TYPE,
                        G_BUS_TYPE_NONE,
-                       (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+                       (G_PARAM_READWRITE |
+                        G_PARAM_CONSTRUCT_ONLY |
+                        G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_BUS_NAME] =
+  properties[PROP_BUS_NAME] =
     g_param_spec_string ("bus-name", NULL, NULL,
                          NULL,
-                         (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READWRITE |
+                          G_PARAM_CONSTRUCT_ONLY |
+                          G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_OBJECT_PATH] =
+  properties[PROP_OBJECT_PATH] =
     g_param_spec_string ("object-path", NULL, NULL,
                          NULL,
-                         (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READWRITE |
+                          G_PARAM_CONSTRUCT_ONLY |
+                          G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }

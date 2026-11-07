@@ -37,6 +37,7 @@ struct _SysprofSchedulerDetails
   DexFuture         *cancellable;
   GPtrArray         *streams;
   gint64            *last_switch_times;
+  GHashTable        *waiting_threads;
 
   gint64             started_at;
   gint64             ended_at;
@@ -45,7 +46,32 @@ struct _SysprofSchedulerDetails
   gint64             prev_comm_offset;
   gint64             prev_pid_offset;
   gint64             prev_state_offset;
+  gint64             next_pid_offset;
 };
+
+typedef struct
+{
+  gint64 time;
+  glong  state;
+} WaitingThread;
+
+static const char *
+state_name (glong state)
+{
+  if (state == 0)
+    return "Runnable";
+
+  if (state & 2)
+    return "Uninterruptible sleep";
+
+  if (state & 1)
+    return "Interruptible sleep";
+
+  if (state & (4 | 8))
+    return "Stopped";
+
+  return "Other wait";
+}
 
 struct _SysprofSchedulerDetailsClass
 {
@@ -61,11 +87,15 @@ sysprof_scheduler_details_event_cb (const SysprofPerfEvent *event,
 {
   SysprofSchedulerDetails *self = user_data;
   const guint8 *raw;
+
   gint64 begin, end;
   glong prev_state;
   char prev_comm[16];
   char name[8];
   GPid prev_pid;
+  GPid next_pid;
+
+  WaitingThread *waiting;
 
   g_assert (SYSPROF_IS_SCHEDULER_DETAILS (self));
 
@@ -75,22 +105,48 @@ sysprof_scheduler_details_event_cb (const SysprofPerfEvent *event,
   begin = self->last_switch_times[cpu];
   end = event->tracepoint.time;
 
-  if (begin == 0)
-    goto finish;
-
-  if (self->started_at == 0 || end < self->started_at)
-    goto finish;
-
-  if (self->ended_at != 0 && begin > self->ended_at)
+  if (self->started_at == 0 || end < self->started_at ||
+      (self->ended_at != 0 && end > self->ended_at))
     goto finish;
 
   raw = event->tracepoint.raw;
 
   memcpy (&prev_pid, raw + self->prev_pid_offset, sizeof prev_pid);
+  memcpy (&next_pid, raw + self->next_pid_offset, sizeof next_pid);
   memcpy (&prev_state, raw + self->prev_state_offset, sizeof prev_state);
   memcpy (&prev_comm[0], raw + self->prev_comm_offset, sizeof prev_comm);
 
-  prev_comm[sizeof prev_comm-1] = 0;
+  prev_comm[sizeof prev_comm - 1] = 0;
+
+  if (next_pid > 0 &&
+      (waiting = g_hash_table_lookup (self->waiting_threads, GINT_TO_POINTER (next_pid))))
+    {
+      if (waiting->time >= self->started_at &&
+          (self->ended_at == 0 || waiting->time < self->ended_at) &&
+          end > waiting->time)
+        sysprof_capture_writer_add_mark (self->recording->writer,
+                                         waiting->time, cpu, next_pid,
+                                         end - waiting->time,
+                                         "Process State", state_name (waiting->state), "");
+
+      g_hash_table_remove (self->waiting_threads, GINT_TO_POINTER (next_pid));
+    }
+
+  if (prev_pid > 0)
+    {
+      if (begin > 0)
+        sysprof_capture_writer_add_mark (self->recording->writer,
+                                         begin, cpu, prev_pid, end - begin,
+                                         "Process State", "Running", "");
+
+      waiting = g_new (WaitingThread, 1);
+      waiting->time = end;
+      waiting->state = prev_state;
+      g_hash_table_replace (self->waiting_threads, GINT_TO_POINTER (prev_pid), waiting);
+    }
+
+  if (begin == 0)
+    goto finish;
 
   /* Ignore the kswapper events because they just clutter up the
    * timeline from things that would otherwise stand out.
@@ -152,6 +208,11 @@ sysprof_scheduler_details_parse_field (SysprofSchedulerDetails  *self,
       if (size == sizeof (glong))
         self->prev_state_offset = offset;
     }
+  else if (g_str_equal (parts[0], "field:pid_t next_pid;"))
+    {
+      if (size == 4)
+        self->next_pid_offset = offset;
+    }
 }
 
 static gboolean
@@ -188,7 +249,8 @@ sysprof_scheduler_details_parse_format (SysprofSchedulerDetails *self,
   return self->sched_switch_id > 0 &&
          self->prev_comm_offset > 0 &&
          self->prev_state_offset > 0 &&
-         self->prev_pid_offset > 0;
+         self->prev_pid_offset > 0 &&
+         self->next_pid_offset > 0;
 }
 
 static DexFuture *
@@ -229,7 +291,7 @@ sysprof_scheduler_details_prepare_fiber (gpointer user_data)
 
   for (guint i = 0; i < cpus->len; i++)
     {
-      struct perf_event_attr attr = {0};
+      struct perf_event_attr attr = { 0 };
       guint cpu = g_array_index (cpus, guint, i);
 
       attr.type = PERF_TYPE_TRACEPOINT;
@@ -385,6 +447,7 @@ sysprof_scheduler_details_dispose (GObject *object)
   g_clear_object (&self->connection);
   g_clear_object (&self->recording);
   g_clear_pointer (&self->last_switch_times, g_free);
+  g_clear_pointer (&self->waiting_threads, g_hash_table_unref);
   dex_clear (&self->cancellable);
 
   G_OBJECT_CLASS (sysprof_scheduler_details_parent_class)->dispose (object);
@@ -410,7 +473,9 @@ sysprof_scheduler_details_init (SysprofSchedulerDetails *self)
   self->prev_comm_offset = -1;
   self->prev_pid_offset = -1;
   self->prev_state_offset = -1;
+  self->next_pid_offset = -1;
   self->streams = g_ptr_array_new_with_free_func (g_object_unref);
+  self->waiting_threads = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, g_free);
 }
 
 SysprofInstrument *

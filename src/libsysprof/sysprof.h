@@ -88,6 +88,7 @@ G_BEGIN_DECLS
 # include "sysprof-sampler.h"
 # include "sysprof-scheduler-details.h"
 # include "sysprof-vblank.h"
+# include "sysprof-screencast.h"
 # include "sysprof-spawnable.h"
 # include "sysprof-subprocess-output.h"
 # include "sysprof-symbol.h"

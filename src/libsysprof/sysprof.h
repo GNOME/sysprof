@@ -66,6 +66,8 @@ G_BEGIN_DECLS
 # include "sysprof-frame-cycle.h"
 # include "sysprof-energy-usage.h"
 # include "sysprof-enums.h"
+# include "sysprof-graphics-info.h"
+# include "sysprof-hardware-info.h"
 # include "sysprof-instrument.h"
 # include "sysprof-jitmap-symbolizer.h"
 # include "sysprof-kallsyms-symbolizer.h"

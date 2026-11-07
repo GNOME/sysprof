@@ -26,6 +26,8 @@
 
 G_BEGIN_DECLS
 
+typedef struct _SysprofGraphicsInfo SysprofGraphicsInfo;
+typedef struct _SysprofHardwareInfo SysprofHardwareInfo;
 
 /*<private>
  * SYSPROF_DECLARE_INTERNAL_TYPE:

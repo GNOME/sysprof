@@ -81,6 +81,7 @@ G_BEGIN_DECLS
 # include "sysprof-network-usage.h"
 # include "sysprof-no-symbolizer.h"
 # include "sysprof-power-profile.h"
+# include "sysprof-powercap-usage.h"
 # include "sysprof-profiler.h"
 # include "sysprof-proxied-instrument.h"
 # include "sysprof-recording.h"

@@ -28,11 +28,11 @@ G_BEGIN_DECLS
 
 typedef struct _SysprofFD SysprofFD;
 
-GType      sysprof_fd_get_type (void) G_GNUC_CONST;
-int        sysprof_fd_peek     (const SysprofFD *fd);
-int        sysprof_fd_steal    (SysprofFD       *fd);
 SysprofFD *sysprof_fd_dup      (const SysprofFD *fd);
 void       sysprof_fd_free     (SysprofFD       *fd);
+GType      sysprof_fd_get_type (void);
+int        sysprof_fd_peek     (const SysprofFD *fd);
+int        sysprof_fd_steal    (SysprofFD       *fd);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofFD, sysprof_fd_free)
 

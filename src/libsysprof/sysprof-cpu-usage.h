@@ -33,7 +33,7 @@ typedef struct _SysprofCpuUsage      SysprofCpuUsage;
 typedef struct _SysprofCpuUsageClass SysprofCpuUsageClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType              sysprof_cpu_usage_get_type (void) G_GNUC_CONST;
+GType              sysprof_cpu_usage_get_type (void);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofInstrument *sysprof_cpu_usage_new      (void);
 

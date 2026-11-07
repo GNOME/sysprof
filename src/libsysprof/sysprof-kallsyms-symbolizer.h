@@ -35,7 +35,7 @@ typedef struct _SysprofKallsymsSymbolizer      SysprofKallsymsSymbolizer;
 typedef struct _SysprofKallsymsSymbolizerClass SysprofKallsymsSymbolizerClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType              sysprof_kallsyms_symbolizer_get_type        (void) G_GNUC_CONST;
+GType              sysprof_kallsyms_symbolizer_get_type        (void);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofSymbolizer *sysprof_kallsyms_symbolizer_new             (void);
 SYSPROF_AVAILABLE_IN_ALL

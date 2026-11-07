@@ -28,7 +28,7 @@ G_BEGIN_DECLS
 
 typedef struct _EggBitset EggBitset;
 
-GType                   egg_bitset_get_type                     (void) G_GNUC_CONST;
+GType                   egg_bitset_get_type                     (void);
 EggBitset *             egg_bitset_ref                          (EggBitset              *self);
 void                    egg_bitset_unref                        (EggBitset              *self);
 G_DEFINE_AUTOPTR_CLEANUP_FUNC(EggBitset, egg_bitset_unref)
@@ -115,7 +115,7 @@ struct _EggBitsetIter
   gpointer private_data[10];
 };
 
-GType                   egg_bitset_iter_get_type                (void) G_GNUC_CONST;
+GType                   egg_bitset_iter_get_type                (void);
 gboolean                egg_bitset_iter_init_first              (EggBitsetIter          *iter,
                                                                  const EggBitset        *set,
                                                                  guint                  *value);

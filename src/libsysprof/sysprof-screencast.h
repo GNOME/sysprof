@@ -34,7 +34,7 @@ typedef struct _SysprofScreencastClass SysprofScreencastClass;
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofScreencast, g_object_unref)
 
 SYSPROF_AVAILABLE_IN_52
-GType              sysprof_screencast_get_type     (void) G_GNUC_CONST;
+GType              sysprof_screencast_get_type     (void);
 SYSPROF_AVAILABLE_IN_52
 SysprofInstrument *sysprof_screencast_new          (void);
 SYSPROF_AVAILABLE_IN_52

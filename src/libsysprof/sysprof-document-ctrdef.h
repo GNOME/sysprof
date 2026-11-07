@@ -35,17 +35,17 @@ typedef struct _SysprofDocumentCtrdef      SysprofDocumentCtrdef;
 typedef struct _SysprofDocumentCtrdefClass SysprofDocumentCtrdefClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType       sysprof_document_ctrdef_get_type         (void) G_GNUC_CONST;
+void  sysprof_document_ctrdef_get_counter    (SysprofDocumentCtrdef  *self,
+                                              guint                   nth,
+                                              guint                  *id,
+                                              guint                  *type,
+                                              const char            **category,
+                                              const char            **name,
+                                              const char            **description);
 SYSPROF_AVAILABLE_IN_ALL
-guint       sysprof_document_ctrdef_get_n_counters   (SysprofDocumentCtrdef *self);
+guint sysprof_document_ctrdef_get_n_counters (SysprofDocumentCtrdef  *self);
 SYSPROF_AVAILABLE_IN_ALL
-void        sysprof_document_ctrdef_get_counter      (SysprofDocumentCtrdef  *self,
-                                                      guint                   nth,
-                                                      guint                  *id,
-                                                      guint                  *type,
-                                                      const char            **category,
-                                                      const char            **name,
-                                                      const char            **description);
+GType sysprof_document_ctrdef_get_type       (void);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofDocumentCtrdef, g_object_unref)
 

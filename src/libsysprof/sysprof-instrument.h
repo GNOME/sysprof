@@ -35,7 +35,7 @@ typedef struct _SysprofInstrument      SysprofInstrument;
 typedef struct _SysprofInstrumentClass SysprofInstrumentClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType sysprof_instrument_get_type (void) G_GNUC_CONST;
+GType sysprof_instrument_get_type (void);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofInstrument, g_object_unref)
 

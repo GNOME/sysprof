@@ -31,14 +31,14 @@ G_BEGIN_DECLS
 #define SYSPROF_SERIES(obj)         (G_TYPE_CHECK_INSTANCE_CAST(obj, SYSPROF_TYPE_SERIES, SysprofSeries))
 #define SYSPROF_SERIES_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST(klass, SYSPROF_TYPE_SERIES, SysprofSeriesClass))
 
-typedef struct _SysprofSeries SysprofSeries;
+typedef struct _SysprofSeries      SysprofSeries;
 typedef struct _SysprofSeriesClass SysprofSeriesClass;
 
-GType       sysprof_series_get_type  (void) G_GNUC_CONST;
 GListModel *sysprof_series_get_model (SysprofSeries *self);
+const char *sysprof_series_get_title (SysprofSeries *self);
+GType       sysprof_series_get_type  (void);
 void        sysprof_series_set_model (SysprofSeries *self,
                                       GListModel    *model);
-const char *sysprof_series_get_title (SysprofSeries *self);
 void        sysprof_series_set_title (SysprofSeries *self,
                                       const char    *title);
 

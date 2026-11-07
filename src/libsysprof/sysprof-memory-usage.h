@@ -33,7 +33,7 @@ typedef struct _SysprofMemoryUsage      SysprofMemoryUsage;
 typedef struct _SysprofMemoryUsageClass SysprofMemoryUsageClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType              sysprof_memory_usage_get_type (void) G_GNUC_CONST;
+GType              sysprof_memory_usage_get_type (void);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofInstrument *sysprof_memory_usage_new      (void);
 

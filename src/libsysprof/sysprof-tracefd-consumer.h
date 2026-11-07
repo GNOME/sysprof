@@ -33,7 +33,7 @@ typedef struct _SysprofTracefdConsumer      SysprofTracefdConsumer;
 typedef struct _SysprofTracefdConsumerClass SysprofTracefdConsumerClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType              sysprof_tracefd_consumer_get_type (void) G_GNUC_CONST;
+GType              sysprof_tracefd_consumer_get_type (void);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofInstrument *sysprof_tracefd_consumer_new      (int trace_fd);
 

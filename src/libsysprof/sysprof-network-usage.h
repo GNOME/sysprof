@@ -33,7 +33,7 @@ typedef struct _SysprofNetworkUsage      SysprofNetworkUsage;
 typedef struct _SysprofNetworkUsageClass SysprofNetworkUsageClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType              sysprof_network_usage_get_type (void) G_GNUC_CONST;
+GType              sysprof_network_usage_get_type (void);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofInstrument *sysprof_network_usage_new      (void);
 

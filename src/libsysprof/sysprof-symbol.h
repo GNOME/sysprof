@@ -45,23 +45,23 @@ SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofSymbol, sysprof_symbol, SYSPROF, SYMBOL, GObject)
 
 SYSPROF_AVAILABLE_IN_ALL
-GType              sysprof_symbol_kind_get_type    (void) G_GNUC_CONST;
+char              *sysprof_symbol_dup_tooltip_text (SysprofSymbol       *self);
 SYSPROF_AVAILABLE_IN_ALL
-const char        *sysprof_symbol_get_name         (SysprofSymbol       *self);
+gboolean           sysprof_symbol_equal            (const SysprofSymbol *a,
+                                                    const SysprofSymbol *b);
 SYSPROF_AVAILABLE_IN_ALL
 const char        *sysprof_symbol_get_binary_nick  (SysprofSymbol       *self);
 SYSPROF_AVAILABLE_IN_ALL
 const char        *sysprof_symbol_get_binary_path  (SysprofSymbol       *self);
 SYSPROF_AVAILABLE_IN_ALL
+guint64            sysprof_symbol_get_code_size    (SysprofSymbol       *self);
+SYSPROF_AVAILABLE_IN_ALL
 SysprofSymbolKind  sysprof_symbol_get_kind         (SysprofSymbol       *self);
 SYSPROF_AVAILABLE_IN_ALL
-guint64            sysprof_symbol_get_code_size    (SysprofSymbol       *self);
+const char        *sysprof_symbol_get_name         (SysprofSymbol       *self);
 SYSPROF_AVAILABLE_IN_ALL
 guint              sysprof_symbol_hash             (const SysprofSymbol *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean           sysprof_symbol_equal            (const SysprofSymbol *a,
-                                                    const SysprofSymbol *b);
-SYSPROF_AVAILABLE_IN_ALL
-char              *sysprof_symbol_dup_tooltip_text (SysprofSymbol       *self);
+GType              sysprof_symbol_kind_get_type    (void);
 
 G_END_DECLS

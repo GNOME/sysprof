@@ -31,13 +31,13 @@ G_BEGIN_DECLS
 #define SYSPROF_AXIS(obj)         (G_TYPE_CHECK_INSTANCE_CAST(obj, SYSPROF_TYPE_AXIS, SysprofAxis))
 #define SYSPROF_AXIS_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST(klass, SYSPROF_TYPE_AXIS, SysprofAxisClass))
 
-typedef struct _SysprofAxis SysprofAxis;
+typedef struct _SysprofAxis      SysprofAxis;
 typedef struct _SysprofAxisClass SysprofAxisClass;
 
-GType       sysprof_axis_get_type  (void) G_GNUC_CONST;
 const char *sysprof_axis_get_title (SysprofAxis *self);
+GType       sysprof_axis_get_type  (void);
 void        sysprof_axis_set_title (SysprofAxis *self,
-                                    const char *title);
+                                    const char  *title);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofAxis, g_object_unref)
 

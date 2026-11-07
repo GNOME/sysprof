@@ -33,13 +33,13 @@ typedef struct _SysprofDocumentOverlay      SysprofDocumentOverlay;
 typedef struct _SysprofDocumentOverlayClass SysprofDocumentOverlayClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType       sysprof_document_overlay_get_type        (void) G_GNUC_CONST;
+const char *sysprof_document_overlay_get_destination (SysprofDocumentOverlay *self);
 SYSPROF_AVAILABLE_IN_ALL
 guint       sysprof_document_overlay_get_layer       (SysprofDocumentOverlay *self);
 SYSPROF_AVAILABLE_IN_ALL
 const char *sysprof_document_overlay_get_source      (SysprofDocumentOverlay *self);
 SYSPROF_AVAILABLE_IN_ALL
-const char *sysprof_document_overlay_get_destination (SysprofDocumentOverlay *self);
+GType       sysprof_document_overlay_get_type        (void);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofDocumentOverlay, g_object_unref)
 

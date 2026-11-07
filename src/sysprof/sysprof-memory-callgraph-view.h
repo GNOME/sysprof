@@ -32,7 +32,7 @@ G_BEGIN_DECLS
 typedef struct _SysprofMemoryCallgraphView      SysprofMemoryCallgraphView;
 typedef struct _SysprofMemoryCallgraphViewClass SysprofMemoryCallgraphViewClass;
 
-GType      sysprof_memory_callgraph_view_get_type (void) G_GNUC_CONST;
+GType      sysprof_memory_callgraph_view_get_type (void);
 GtkWidget *sysprof_memory_callgraph_view_new      (void);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofMemoryCallgraphView, g_object_unref)

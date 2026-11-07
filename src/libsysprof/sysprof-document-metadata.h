@@ -33,9 +33,9 @@ typedef struct _SysprofDocumentMetadata      SysprofDocumentMetadata;
 typedef struct _SysprofDocumentMetadataClass SysprofDocumentMetadataClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType       sysprof_document_metadata_get_type  (void) G_GNUC_CONST;
-SYSPROF_AVAILABLE_IN_ALL
 const char *sysprof_document_metadata_get_id    (SysprofDocumentMetadata *self);
+SYSPROF_AVAILABLE_IN_ALL
+GType       sysprof_document_metadata_get_type  (void);
 SYSPROF_AVAILABLE_IN_ALL
 const char *sysprof_document_metadata_get_value (SysprofDocumentMetadata *self);
 

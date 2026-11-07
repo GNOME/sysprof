@@ -35,13 +35,13 @@ typedef struct _SysprofDocumentJitmap      SysprofDocumentJitmap;
 typedef struct _SysprofDocumentJitmapClass SysprofDocumentJitmapClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType       sysprof_document_jitmap_get_type    (void) G_GNUC_CONST;
-SYSPROF_AVAILABLE_IN_ALL
-guint       sysprof_document_jitmap_get_size    (SysprofDocumentJitmap *self);
-SYSPROF_AVAILABLE_IN_ALL
 const char *sysprof_document_jitmap_get_mapping (SysprofDocumentJitmap *self,
                                                  guint                  position,
                                                  SysprofAddress        *address);
+SYSPROF_AVAILABLE_IN_ALL
+guint       sysprof_document_jitmap_get_size    (SysprofDocumentJitmap *self);
+SYSPROF_AVAILABLE_IN_ALL
+GType       sysprof_document_jitmap_get_type    (void);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofDocumentJitmap, g_object_unref)
 

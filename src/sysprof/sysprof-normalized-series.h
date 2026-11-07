@@ -32,29 +32,29 @@ G_BEGIN_DECLS
 #define SYSPROF_NORMALIZED_SERIES(obj)         (G_TYPE_CHECK_INSTANCE_CAST(obj, SYSPROF_TYPE_NORMALIZED_SERIES, SysprofNormalizedSeries))
 #define SYSPROF_NORMALIZED_SERIES_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST(klass, SYSPROF_TYPE_NORMALIZED_SERIES, SysprofNormalizedSeriesClass))
 
-typedef struct _SysprofNormalizedSeries SysprofNormalizedSeries;
+typedef struct _SysprofNormalizedSeries      SysprofNormalizedSeries;
 typedef struct _SysprofNormalizedSeriesClass SysprofNormalizedSeriesClass;
 
-GType          sysprof_normalized_series_get_type       (void) G_GNUC_CONST;
+SysprofAxis   *sysprof_normalized_series_get_axis       (SysprofNormalizedSeries *self);
+GtkExpression *sysprof_normalized_series_get_expression (SysprofNormalizedSeries *self);
+gboolean       sysprof_normalized_series_get_inverted   (SysprofNormalizedSeries *self);
+SysprofSeries *sysprof_normalized_series_get_series     (SysprofNormalizedSeries *self);
+GType          sysprof_normalized_series_get_type       (void);
+const double  *sysprof_normalized_series_get_values     (SysprofNormalizedSeries *self,
+                                                         guint                   *n_values);
 SysprofSeries *sysprof_normalized_series_new            (SysprofSeries           *series,
                                                          SysprofAxis             *axis,
                                                          GtkExpression           *expression);
-gboolean       sysprof_normalized_series_get_inverted   (SysprofNormalizedSeries *self);
-void           sysprof_normalized_series_set_inverted   (SysprofNormalizedSeries *self,
-                                                         gboolean                 inverted);
-GtkExpression *sysprof_normalized_series_get_expression (SysprofNormalizedSeries *self);
-void           sysprof_normalized_series_set_expression (SysprofNormalizedSeries *self,
-                                                         GtkExpression           *expression);
-SysprofAxis   *sysprof_normalized_series_get_axis       (SysprofNormalizedSeries *self);
 void           sysprof_normalized_series_set_axis       (SysprofNormalizedSeries *self,
                                                          SysprofAxis             *axis);
-SysprofSeries *sysprof_normalized_series_get_series     (SysprofNormalizedSeries *self);
+void           sysprof_normalized_series_set_expression (SysprofNormalizedSeries *self,
+                                                         GtkExpression           *expression);
+void           sysprof_normalized_series_set_inverted   (SysprofNormalizedSeries *self,
+                                                         gboolean                 inverted);
 void           sysprof_normalized_series_set_series     (SysprofNormalizedSeries *self,
                                                          SysprofSeries           *series);
 double         sysprof_normalized_series_value_at       (SysprofNormalizedSeries *self,
                                                          guint                    position);
-const double  *sysprof_normalized_series_get_values     (SysprofNormalizedSeries *self,
-                                                         guint                   *n_values);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofNormalizedSeries, g_object_unref)
 

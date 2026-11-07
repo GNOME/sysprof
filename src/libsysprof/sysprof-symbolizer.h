@@ -35,7 +35,7 @@ typedef struct _SysprofSymbolizer      SysprofSymbolizer;
 typedef struct _SysprofSymbolizerClass SysprofSymbolizerClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType sysprof_symbolizer_get_type (void) G_GNUC_CONST;
+GType sysprof_symbolizer_get_type (void);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofSymbolizer, g_object_unref)
 

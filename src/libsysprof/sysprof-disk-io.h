@@ -32,7 +32,7 @@ typedef struct _SysprofDiskIo      SysprofDiskIo;
 typedef struct _SysprofDiskIoClass SysprofDiskIoClass;
 
 SYSPROF_AVAILABLE_IN_52
-GType              sysprof_disk_io_get_type (void) G_GNUC_CONST;
+GType              sysprof_disk_io_get_type (void);
 SYSPROF_AVAILABLE_IN_52
 SysprofInstrument *sysprof_disk_io_new      (void);
 

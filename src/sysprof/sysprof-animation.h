@@ -39,35 +39,35 @@ typedef enum _SysprofAnimationMode
   SYSPROF_ANIMATION_LAST
 } SysprofAnimationMode;
 
-GType            sysprof_animation_mode_get_type      (void) G_GNUC_CONST;
-void             sysprof_animation_start              (SysprofAnimation     *animation);
-void             sysprof_animation_stop               (SysprofAnimation     *animation);
-void             sysprof_animation_add_property       (SysprofAnimation     *animation,
-                                                       GParamSpec           *pspec,
-                                                       const GValue         *value);
-SysprofAnimation *sysprof_object_animatev             (gpointer              object,
-                                                       SysprofAnimationMode  mode,
-                                                       guint                 duration_msec,
-                                                       GdkFrameClock        *frame_clock,
-                                                       const gchar          *first_property,
-                                                       va_list               args);
-SysprofAnimation *sysprof_object_animate              (gpointer              object,
-                                                       SysprofAnimationMode  mode,
-                                                       guint                 duration_msec,
-                                                       GdkFrameClock        *frame_clock,
-                                                       const gchar          *first_property,
-                                                       ...) G_GNUC_NULL_TERMINATED;
-SysprofAnimation *sysprof_object_animate_full         (gpointer              object,
-                                                       SysprofAnimationMode  mode,
-                                                       guint                 duration_msec,
-                                                       GdkFrameClock        *frame_clock,
-                                                       GDestroyNotify        notify,
-                                                       gpointer              notify_data,
-                                                       const gchar          *first_property,
-                                                       ...) G_GNUC_NULL_TERMINATED;
-guint            sysprof_animation_calculate_duration (GdkMonitor           *monitor,
-                                                       gdouble               from_value,
-                                                       gdouble               to_value);
+void              sysprof_animation_add_property       (SysprofAnimation     *animation,
+                                                        GParamSpec           *pspec,
+                                                        const GValue         *value);
+guint             sysprof_animation_calculate_duration (GdkMonitor           *monitor,
+                                                        gdouble               from_value,
+                                                        gdouble               to_value);
+GType             sysprof_animation_mode_get_type      (void);
+void              sysprof_animation_start              (SysprofAnimation     *animation);
+void              sysprof_animation_stop               (SysprofAnimation     *animation);
+SysprofAnimation *sysprof_object_animate               (gpointer              object,
+                                                        SysprofAnimationMode  mode,
+                                                        guint                 duration_msec,
+                                                        GdkFrameClock        *frame_clock,
+                                                        const gchar          *first_property,
+                                                        ...) G_GNUC_NULL_TERMINATED;
+SysprofAnimation *sysprof_object_animate_full          (gpointer              object,
+                                                        SysprofAnimationMode  mode,
+                                                        guint                 duration_msec,
+                                                        GdkFrameClock        *frame_clock,
+                                                        GDestroyNotify        notify,
+                                                        gpointer              notify_data,
+                                                        const gchar          *first_property,
+                                                        ...) G_GNUC_NULL_TERMINATED;
+SysprofAnimation *sysprof_object_animatev              (gpointer              object,
+                                                        SysprofAnimationMode  mode,
+                                                        guint                 duration_msec,
+                                                        GdkFrameClock        *frame_clock,
+                                                        const gchar          *first_property,
+                                                        va_list               args);
 
 G_END_DECLS
 

@@ -33,7 +33,7 @@ typedef struct _SysprofJitmapSymbolizer      SysprofJitmapSymbolizer;
 typedef struct _SysprofJitmapSymbolizerClass SysprofJitmapSymbolizerClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType              sysprof_jitmap_symbolizer_get_type (void) G_GNUC_CONST;
+GType              sysprof_jitmap_symbolizer_get_type (void);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofSymbolizer *sysprof_jitmap_symbolizer_new      (void);
 

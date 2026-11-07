@@ -33,7 +33,7 @@ typedef struct _SysprofEnergyUsage      SysprofEnergyUsage;
 typedef struct _SysprofEnergyUsageClass SysprofEnergyUsageClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType              sysprof_energy_usage_get_type (void) G_GNUC_CONST;
+GType              sysprof_energy_usage_get_type (void);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofInstrument *sysprof_energy_usage_new      (void);
 

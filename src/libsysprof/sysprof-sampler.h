@@ -33,7 +33,7 @@ typedef struct _SysprofSampler      SysprofSampler;
 typedef struct _SysprofSamplerClass SysprofSamplerClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType              sysprof_sampler_get_type (void) G_GNUC_CONST;
+GType              sysprof_sampler_get_type (void);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofInstrument *sysprof_sampler_new      (void);
 

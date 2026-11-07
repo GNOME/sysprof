@@ -33,13 +33,13 @@ typedef struct _SysprofDocumentLog      SysprofDocumentLog;
 typedef struct _SysprofDocumentLogClass SysprofDocumentLogClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType           sysprof_document_log_get_type     (void) G_GNUC_CONST;
+const char     *sysprof_document_log_get_domain   (SysprofDocumentLog *self);
 SYSPROF_AVAILABLE_IN_ALL
 const char     *sysprof_document_log_get_message  (SysprofDocumentLog *self);
 SYSPROF_AVAILABLE_IN_ALL
 GLogLevelFlags  sysprof_document_log_get_severity (SysprofDocumentLog *self);
 SYSPROF_AVAILABLE_IN_ALL
-const char     *sysprof_document_log_get_domain   (SysprofDocumentLog *self);
+GType           sysprof_document_log_get_type     (void);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofDocumentLog, g_object_unref)
 

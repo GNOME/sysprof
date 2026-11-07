@@ -31,26 +31,26 @@ G_BEGIN_DECLS
 #define SYSPROF_TIME_SERIES(obj)         (G_TYPE_CHECK_INSTANCE_CAST(obj, SYSPROF_TYPE_TIME_SERIES, SysprofTimeSeries))
 #define SYSPROF_TIME_SERIES_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST(klass, SYSPROF_TYPE_TIME_SERIES, SysprofTimeSeriesClass))
 
-typedef struct _SysprofTimeSeries SysprofTimeSeries;
+typedef struct _SysprofTimeSeries      SysprofTimeSeries;
 typedef struct _SysprofTimeSeriesClass SysprofTimeSeriesClass;
 
-GType          sysprof_time_series_get_type                  (void) G_GNUC_CONST;
+char          *sysprof_time_series_dup_label                 (SysprofTimeSeries *self,
+                                                              guint              position);
+GtkExpression *sysprof_time_series_get_begin_time_expression (SysprofTimeSeries *self);
+GtkExpression *sysprof_time_series_get_end_time_expression   (SysprofTimeSeries *self);
+GtkExpression *sysprof_time_series_get_label_expression      (SysprofTimeSeries *self);
+GType          sysprof_time_series_get_type                  (void);
 SysprofSeries *sysprof_time_series_new                       (const char        *title,
                                                               GListModel        *model,
                                                               GtkExpression     *begin_time_expression,
                                                               GtkExpression     *end_time_expression,
                                                               GtkExpression     *label_expression);
-GtkExpression *sysprof_time_series_get_begin_time_expression (SysprofTimeSeries *self);
 void           sysprof_time_series_set_begin_time_expression (SysprofTimeSeries *self,
                                                               GtkExpression     *time_expression);
-GtkExpression *sysprof_time_series_get_end_time_expression   (SysprofTimeSeries *self);
 void           sysprof_time_series_set_end_time_expression   (SysprofTimeSeries *self,
                                                               GtkExpression     *end_time_expression);
-GtkExpression *sysprof_time_series_get_label_expression      (SysprofTimeSeries *self);
 void           sysprof_time_series_set_label_expression      (SysprofTimeSeries *self,
                                                               GtkExpression     *label_expression);
-char          *sysprof_time_series_dup_label                 (SysprofTimeSeries *self,
-                                                              guint              position);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofTimeSeries, g_object_unref)
 

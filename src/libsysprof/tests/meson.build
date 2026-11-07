@@ -19,6 +19,10 @@ libsysprof_testsuite = {
     'skip': true,
     'dependencies': [cc.find_library('m', required: false)],
   },
+  'capture-summary'               : {
+    'skip': true,
+    'dependencies': [dependency('json-glib-1.0'), cc.find_library('m', required: false)],
+  },
   'read-build-id'                 : {'skip': true},
   'ninja-to-marks'                : {'skip': true},
   'test-allocs-by-func'           : {'skip': true},

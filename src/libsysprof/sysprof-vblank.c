@@ -35,7 +35,6 @@
 struct _SysprofVblank
 {
   SysprofInstrument    parent_instance;
-  GDBusConnection     *connection;
   SysprofRecording    *recording;
   DexFuture           *cancellable;
   GPtrArray           *streams;
@@ -391,6 +390,7 @@ static DexFuture *
 vblank_prepare_fiber (gpointer user_data)
 {
   SysprofVblank *self = user_data;
+  g_autoptr(GDBusConnection) connection = NULL;
   g_autoptr(GBytes) bytes = NULL;
   g_autoptr(GArray) cpus = NULL;
   g_autoptr(GPtrArray) futures = NULL;
@@ -398,20 +398,22 @@ vblank_prepare_fiber (gpointer user_data)
   g_autofree char *format = NULL;
   g_autofree char *nvidia = NULL;
 
+  connection = _sysprof_recording_dup_connection (self->recording);
+
   if ((nvidia = dex_await_string (_sysprof_load_file ("/sys/module/nvidia_drm/parameters/vblank"), NULL)) &&
       (nvidia[0] == 'N' || nvidia[0] == '0'))
     _sysprof_recording_diagnostic (self->recording,
                                    "DRM VBlank",
                                    "nvidia-drm.vblank is disabled; set nvidia-drm.vblank=1");
 
-  bytes = dex_await_boxed (sysprof_get_proc_file_bytes (self->connection,
+  bytes = dex_await_boxed (sysprof_get_proc_file_bytes (connection,
                                                         "/sys/kernel/tracing/events/drm/drm_vblank_event/format"),
                            &error);
 
   if (bytes == NULL)
     {
       g_clear_error (&error);
-      bytes = dex_await_boxed (sysprof_get_proc_file_bytes (self->connection,
+      bytes = dex_await_boxed (sysprof_get_proc_file_bytes (connection,
                                                             "/sys/kernel/debug/tracing/events/drm/drm_vblank_event/format"),
                                &error);
     }
@@ -453,7 +455,7 @@ vblank_prepare_fiber (gpointer user_data)
       attr.use_clockid = 1;
 #endif
       g_ptr_array_add (futures,
-                       sysprof_perf_event_stream_new (self->connection,
+                       sysprof_perf_event_stream_new (connection,
                                                       &attr,
                                                       64,
                                                       cpu,
@@ -546,15 +548,6 @@ vblank_record (SysprofInstrument *instrument,
 }
 
 static void
-vblank_set_connection (SysprofInstrument *instrument,
-                       GDBusConnection   *connection)
-{
-  SysprofVblank *self = SYSPROF_VBLANK (instrument);
-
-  g_set_object (&self->connection, connection);
-}
-
-static void
 vblank_dispose (GObject *object)
 {
   SysprofVblank *self = SYSPROF_VBLANK (object);
@@ -567,7 +560,6 @@ vblank_dispose (GObject *object)
 
   g_clear_handle_id (&self->calibration_source, g_source_remove);
   g_clear_pointer (&self->streams, g_ptr_array_unref);
-  g_clear_object (&self->connection);
   g_clear_object (&self->recording);
   dex_clear (&self->cancellable);
 
@@ -595,7 +587,6 @@ sysprof_vblank_class_init (SysprofVblankClass *klass)
 
   instrument_class->prepare = vblank_prepare;
   instrument_class->record = vblank_record;
-  instrument_class->set_connection = vblank_set_connection;
 }
 
 static void

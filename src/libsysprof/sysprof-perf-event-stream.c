@@ -54,6 +54,7 @@
 #include <gio/gio.h>
 #include <gio/gunixfdlist.h>
 
+#include "sysprof-service-private.h"
 #include "sysprof-perf-event-stream-private.h"
 
 #define MIN_RING_PAGES 16
@@ -471,7 +472,7 @@ sysprof_perf_event_stream_new_fiber (gpointer data)
           gboolean supported = FALSE;
 
           capabilities_reply = dex_await_variant (dex_dbus_connection_call (self->connection,
-                                                                            "org.gnome.Sysprof3",
+                                                                            _sysprof_service_get_name (self->connection),
                                                                             "/org/gnome/Sysprof3",
                                                                             "org.gnome.Sysprof3.Service",
                                                                             "GetCapabilities",
@@ -505,7 +506,7 @@ sysprof_perf_event_stream_new_fiber (gpointer data)
         }
 
       future = dex_dbus_connection_call_with_unix_fd_list (self->connection,
-                                                           "org.gnome.Sysprof3",
+                                                           _sysprof_service_get_name (self->connection),
                                                            "/org/gnome/Sysprof3",
                                                            "org.gnome.Sysprof3.Service",
                                                            "PerfEventOpen",

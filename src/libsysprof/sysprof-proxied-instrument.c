@@ -24,8 +24,10 @@
 
 #include "sysprof-proxied-instrument-private.h"
 #include "sysprof-recording-private.h"
+#include "sysprof-service-private.h"
 
-enum {
+enum
+{
   PROP_0,
   PROP_BUS_TYPE,
   PROP_BUS_NAME,
@@ -35,17 +37,17 @@ enum {
 
 G_DEFINE_TYPE (SysprofProxiedInstrument, sysprof_proxied_instrument, SYSPROF_TYPE_INSTRUMENT)
 
-static GParamSpec *properties [N_PROPS];
+static GParamSpec *properties[N_PROPS];
 
 typedef struct _Record
 {
   SysprofRecording *recording;
-  DexFuture *cancellable;
-  char *bus_name;
-  char *object_path;
-  GVariant *options;
-  GBusType bus_type;
-  guint call_stop_first : 1;
+  DexFuture        *cancellable;
+  char             *bus_name;
+  char             *object_path;
+  GVariant         *options;
+  GBusType          bus_type;
+  guint             call_stop_first : 1;
 } Record;
 
 static void
@@ -70,6 +72,7 @@ sysprof_proxied_instrument_record_fiber (gpointer user_data)
   g_autoptr(DexFuture) started = NULL;
   g_autoptr(GError) error = NULL;
   g_autofd int proxy_fd = -1;
+  const char *bus_name;
   int handle;
 
   g_assert (record != NULL);
@@ -79,9 +82,21 @@ sysprof_proxied_instrument_record_fiber (gpointer user_data)
   g_assert (SYSPROF_IS_RECORDING (record->recording));
   g_assert (DEX_IS_CANCELLABLE (record->cancellable));
 
-  /* Wait for our connection to be available */
-  if (!(connection = dex_await_object (dex_bus_get (record->bus_type), &error)))
-    return dex_future_new_for_error (g_steal_pointer (&error));
+  bus_name = record->bus_name;
+  if (record->bus_type == G_BUS_TYPE_SYSTEM &&
+      g_str_equal (record->bus_name, "org.gnome.Sysprof3"))
+    {
+      if (!(connection = _sysprof_recording_dup_connection (record->recording)))
+        return dex_future_new_reject (G_IO_ERROR,
+                                      G_IO_ERROR_NOT_SUPPORTED,
+                                      "This profiler requires a sysprofd connection");
+
+      bus_name = _sysprof_service_get_name (connection);
+    }
+  else if (!(connection = dex_await_object (dex_bus_get (record->bus_type), &error)))
+    {
+      return dex_future_new_for_error (g_steal_pointer (&error));
+    }
 
   /* If we should try calling stop first to cancel any in-flight
    * recording. We could pipeline this, but if the other side
@@ -89,7 +104,7 @@ sysprof_proxied_instrument_record_fiber (gpointer user_data)
    */
   if (record->call_stop_first)
     dex_await (dex_dbus_connection_call (connection,
-                                         record->bus_name,
+                                         bus_name,
                                          record->object_path,
                                          "org.gnome.Sysprof3.Profiler",
                                          "Stop",
@@ -112,7 +127,7 @@ sysprof_proxied_instrument_record_fiber (gpointer user_data)
 
   /* Call the proxy and give it our FD to start recording */
   if (!dex_await (dex_dbus_connection_call_with_unix_fd_list (connection,
-                                                              record->bus_name,
+                                                              bus_name,
                                                               record->object_path,
                                                               "org.gnome.Sysprof3.Profiler",
                                                               "Start",
@@ -137,7 +152,7 @@ sysprof_proxied_instrument_record_fiber (gpointer user_data)
 
   /* Call the proxy and let them know to stop */
   dex_await (dex_dbus_connection_call (connection,
-                                       record->bus_name,
+                                       bus_name,
                                        record->object_path,
                                        "org.gnome.Sysprof3.Profiler",
                                        "Stop",
@@ -172,6 +187,7 @@ static GVariant *
 create_empty_dictionary (void)
 {
   GVariantDict dict = G_VARIANT_DICT_INIT (NULL);
+
   return g_variant_take_ref (g_variant_dict_end (&dict));
 }
 
@@ -284,21 +300,27 @@ sysprof_proxied_instrument_class_init (SysprofProxiedInstrumentClass *klass)
 
   instrument_class->record = sysprof_proxied_instrument_record;
 
-  properties [PROP_BUS_TYPE] =
+  properties[PROP_BUS_TYPE] =
     g_param_spec_enum ("bus-type", NULL, NULL,
                        G_TYPE_BUS_TYPE,
                        G_BUS_TYPE_NONE,
-                       (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+                       (G_PARAM_READWRITE |
+                        G_PARAM_CONSTRUCT_ONLY |
+                        G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_BUS_NAME] =
+  properties[PROP_BUS_NAME] =
     g_param_spec_string ("bus-name", NULL, NULL,
                          NULL,
-                         (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READWRITE |
+                          G_PARAM_CONSTRUCT_ONLY |
+                          G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_OBJECT_PATH] =
+  properties[PROP_OBJECT_PATH] =
     g_param_spec_string ("object-path", NULL, NULL,
                          NULL,
-                         (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READWRITE |
+                          G_PARAM_CONSTRUCT_ONLY |
+                          G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }

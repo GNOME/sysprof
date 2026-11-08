@@ -183,6 +183,7 @@ libsysprof_private_sources = [
   'sysprof-podman.c',
   'sysprof-process-info.c',
   'sysprof-strings.c',
+  'sysprof-service.c',
   'sysprof-symbol-cache.c',
   'sysprof-util.c',
   'timsort/gtktimsort.c',

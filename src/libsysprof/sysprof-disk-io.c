@@ -31,7 +31,6 @@
 struct _SysprofDiskIo
 {
   SysprofInstrument  parent_instance;
-  GDBusConnection   *connection;
   SysprofRecording  *recording;
   DexFuture         *cancellable;
   GPtrArray         *streams;
@@ -281,13 +280,16 @@ static DexFuture *
 sysprof_disk_io_prepare_fiber (gpointer user_data)
 {
   SysprofDiskIo *self = user_data;
+  g_autoptr(GDBusConnection) connection = NULL;
   g_autoptr(GBytes) format_bytes = NULL;
   g_autoptr(GArray) cpus = NULL;
   g_autoptr(GPtrArray) futures = g_ptr_array_new_with_free_func (dex_unref);
   g_autoptr(GError) error = NULL;
   g_autofree char *format = NULL;
 
-  format_bytes = dex_await_boxed (sysprof_get_proc_file_bytes (self->connection,
+  connection = _sysprof_recording_dup_connection (self->recording);
+
+  format_bytes = dex_await_boxed (sysprof_get_proc_file_bytes (connection,
                                                                "/sys/kernel/debug/tracing/events/block/block_rq_issue/format"),
                                   &error);
 
@@ -319,7 +321,7 @@ sysprof_disk_io_prepare_fiber (gpointer user_data)
       attr.use_clockid = 1;
 #endif
       g_ptr_array_add (futures,
-                       sysprof_perf_event_stream_new (self->connection,
+                       sysprof_perf_event_stream_new (connection,
                                                       &attr,
                                                       16,
                                                       cpu,
@@ -418,15 +420,6 @@ sysprof_disk_io_record (SysprofInstrument *instrument,
 }
 
 static void
-sysprof_disk_io_set_connection (SysprofInstrument *instrument,
-                                GDBusConnection   *connection)
-{
-  SysprofDiskIo *self = (SysprofDiskIo *)instrument;
-
-  g_set_object (&self->connection, connection);
-}
-
-static void
 sysprof_disk_io_dispose (GObject *object)
 {
   SysprofDiskIo *self = (SysprofDiskIo *)object;
@@ -438,7 +431,6 @@ sysprof_disk_io_dispose (GObject *object)
   g_clear_pointer (&self->device_names, g_hash_table_unref);
   g_clear_pointer (&self->buckets, g_hash_table_unref);
   g_mutex_clear (&self->buckets_lock);
-  g_clear_object (&self->connection);
   g_clear_object (&self->recording);
   dex_clear (&self->cancellable);
 
@@ -455,7 +447,6 @@ sysprof_disk_io_class_init (SysprofDiskIoClass *klass)
 
   instrument_class->prepare = sysprof_disk_io_prepare;
   instrument_class->record = sysprof_disk_io_record;
-  instrument_class->set_connection = sysprof_disk_io_set_connection;
 }
 
 static void

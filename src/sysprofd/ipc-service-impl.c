@@ -25,6 +25,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <gio/gunixfdlist.h>
+#include <glib/gstdio.h>
 #include <polkit/polkit.h>
 #include <string.h>
 #include <sys/syscall.h>
@@ -32,19 +33,23 @@
 #include <unistd.h>
 
 #include "helpers.h"
+#include "ipc-peer-private.h"
 #include "ipc-service-impl.h"
 
 struct _IpcServiceImpl
 {
   IpcServiceSkeleton parent_instance;
+
+  gboolean           authorized;
 };
 
-enum {
+enum
+{
   ACTIVITY,
   N_SIGNALS
 };
 
-static guint signals [N_SIGNALS];
+static guint signals[N_SIGNALS];
 
 static gboolean
 file_set_contents_no_backup (const gchar  *path,
@@ -71,10 +76,12 @@ file_set_contents_no_backup (const gchar  *path,
   if (fd == -1)
     {
       int errsv = errno;
+
       g_set_error (error,
                    G_FILE_ERROR,
                    g_file_error_from_errno (errsv),
-                   "%s", g_strerror (errsv));
+                   "%s",
+                   g_strerror (errsv));
       return FALSE;
     }
 
@@ -83,10 +90,12 @@ file_set_contents_no_backup (const gchar  *path,
   if (write (fd, contents, len) != len)
     {
       int errsv = errno;
+
       g_set_error (error,
                    G_FILE_ERROR,
                    g_file_error_from_errno (errsv),
-                   "%s", g_strerror (errsv));
+                   "%s",
+                   g_strerror (errsv));
       close (fd);
       return FALSE;
     }
@@ -286,9 +295,12 @@ ipc_service_impl_g_authorize_method (GDBusInterfaceSkeleton *skeleton,
   g_assert (IPC_IS_SERVICE_IMPL (skeleton));
   g_assert (G_IS_DBUS_METHOD_INVOCATION (invocation));
 
-  g_signal_emit (skeleton, signals [ACTIVITY], 0);
+  g_signal_emit (skeleton, signals[ACTIVITY], 0);
 
   if (g_str_equal (g_dbus_method_invocation_get_method_name (invocation), "GetCapabilities"))
+    return TRUE;
+
+  if (((IpcServiceImpl *)skeleton)->authorized)
     return TRUE;
 
   peer_name = g_dbus_method_invocation_get_sender (invocation);
@@ -443,9 +455,52 @@ finish:
   return TRUE;
 }
 
+static gboolean
+ipc_service_impl_handle_open_recording_connection (IpcService            *service,
+                                                   GDBusMethodInvocation *invocation,
+                                                   GUnixFDList           *in_fd_list)
+{
+  IpcServiceImpl *self = (IpcServiceImpl *)service;
+  g_autoptr(GUnixFDList) fd_list = NULL;
+  g_autoptr(GError) error = NULL;
+  g_autofd int fd = -1;
+  int handle;
+
+  g_assert (IPC_IS_SERVICE_IMPL (self));
+  g_assert (G_IS_DBUS_METHOD_INVOCATION (invocation));
+
+  /* New grants must always originate from an authorized system-bus call. */
+  if (self->authorized)
+    {
+      g_dbus_method_invocation_return_error_literal (invocation,
+                                                     G_DBUS_ERROR,
+                                                     G_DBUS_ERROR_ACCESS_DENIED,
+                                                     "Open recording connections through the system bus");
+      return TRUE;
+    }
+
+  if ((fd = _ipc_peer_open (&error)) == -1)
+    {
+      g_dbus_method_invocation_return_gerror (invocation, error);
+      return TRUE;
+    }
+
+  fd_list = g_unix_fd_list_new ();
+  if ((handle = g_unix_fd_list_append (fd_list, fd, &error)) == -1)
+    g_dbus_method_invocation_return_gerror (invocation, error);
+  else
+    ipc_service_complete_open_recording_connection (service,
+                                                    invocation,
+                                                    fd_list,
+                                                    g_variant_new ("h", handle));
+
+  return TRUE;
+}
+
 static void
 init_service_iface (IpcServiceIface *iface)
 {
+  iface->handle_open_recording_connection = ipc_service_impl_handle_open_recording_connection;
   iface->handle_list_processes = ipc_service_impl_handle_list_processes;
   iface->handle_get_proc_file = ipc_service_impl_handle_get_proc_file;
   iface->handle_get_proc_fd = ipc_service_impl_handle_get_proc_fd;
@@ -466,13 +521,15 @@ ipc_service_impl_class_init (IpcServiceImplClass *klass)
 
   skeleton_class->g_authorize_method = ipc_service_impl_g_authorize_method;
 
-  signals [ACTIVITY] =
+  signals[ACTIVITY] =
     g_signal_new ("activity",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
-                  0, NULL, NULL,
+                  0,
+                  NULL, NULL,
                   NULL,
-                  G_TYPE_NONE, 0);
+                  G_TYPE_NONE,
+                  0);
 }
 
 static void
@@ -483,7 +540,11 @@ ipc_service_impl_init (IpcServiceImpl *self)
 }
 
 IpcService *
-ipc_service_impl_new (void)
+ipc_service_impl_new (gboolean authorized)
 {
-  return g_object_new (IPC_TYPE_SERVICE_IMPL, NULL);
+  IpcServiceImpl *self = g_object_new (IPC_TYPE_SERVICE_IMPL, NULL);
+
+  self->authorized = !!authorized;
+
+  return IPC_SERVICE (self);
 }

@@ -38,6 +38,9 @@ struct _IpcRaplProfiler
 {
   IpcProfilerSkeleton   parent_instance;
 
+  gboolean              authorized;
+  gboolean              shutdown;
+
   GMutex                mutex;
   GArray               *counter_ids;
   SysprofTurbostat     *turbostat;
@@ -57,19 +60,20 @@ static void profiler_iface_init (IpcProfilerIface *iface);
 G_DEFINE_TYPE_WITH_CODE (IpcRaplProfiler, ipc_rapl_profiler, IPC_TYPE_PROFILER_SKELETON,
                          G_IMPLEMENT_INTERFACE (IPC_TYPE_PROFILER, profiler_iface_init))
 
-enum {
+enum
+{
   ACTIVITY,
   N_SIGNALS
 };
 
-static guint signals [N_SIGNALS];
+static guint signals[N_SIGNALS];
 
 static void
 ipc_rapl_profiler_activity (IpcRaplProfiler *self)
 {
   g_assert (IPC_IS_RAPL_PROFILER (self));
 
-  g_signal_emit (self, signals [ACTIVITY], 0);
+  g_signal_emit (self, signals[ACTIVITY], 0);
 }
 
 static void
@@ -118,21 +122,26 @@ add_counter_base (SysprofCaptureWriter *writer,
 
   {
     SysprofCaptureCounter ctrs[4] = {
-      { .name = "Package Watt",
+      {
+        .name = "Package Watt",
         .id = id.counter_base,
-        .type = SYSPROF_CAPTURE_COUNTER_DOUBLE },
-
-      { .name = "Core Watt",
+        .type = SYSPROF_CAPTURE_COUNTER_DOUBLE
+      },
+      {
+        .name = "Core Watt",
         .id = id.counter_base + 1,
-        .type = SYSPROF_CAPTURE_COUNTER_DOUBLE },
-
-      { .name = "GFX Watt",
+        .type = SYSPROF_CAPTURE_COUNTER_DOUBLE
+      },
+      {
+        .name = "GFX Watt",
         .id = id.counter_base + 2,
-        .type = SYSPROF_CAPTURE_COUNTER_DOUBLE },
-
-      { .name = "RAM Watt",
+        .type = SYSPROF_CAPTURE_COUNTER_DOUBLE
+      },
+      {
+        .name = "RAM Watt",
         .id = id.counter_base + 3,
-        .type = SYSPROF_CAPTURE_COUNTER_DOUBLE },
+        .type = SYSPROF_CAPTURE_COUNTER_DOUBLE
+      },
     };
 
     for (guint j = 0; j < G_N_ELEMENTS (ctrs); j++)
@@ -192,6 +201,9 @@ ipc_rapl_profiler_g_authorize_method (GDBusInterfaceSkeleton *skeleton,
 
   ipc_rapl_profiler_activity (IPC_RAPL_PROFILER (skeleton));
 
+  if (((IpcRaplProfiler *)skeleton)->authorized)
+    return TRUE;
+
   peer_name = g_dbus_method_invocation_get_sender (invocation);
 
   if (!(authority = polkit_authority_get_sync (NULL, NULL)) ||
@@ -246,11 +258,15 @@ ipc_rapl_profiler_class_init (IpcRaplProfilerClass *klass)
    * The "activity" signal is used to denote that some amount of activity
    * has occurred and therefore the process should be kept alive longer.
    */
-  signals [ACTIVITY] =
+  signals[ACTIVITY] =
     g_signal_new ("activity",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
-                  0, NULL, NULL, NULL, G_TYPE_NONE, 0);
+                  0,
+                  NULL, NULL,
+                  NULL,
+                  G_TYPE_NONE,
+                  0);
 }
 
 static void
@@ -262,9 +278,13 @@ ipc_rapl_profiler_init (IpcRaplProfiler *self)
 }
 
 IpcProfiler *
-ipc_rapl_profiler_new (void)
+ipc_rapl_profiler_new (gboolean authorized)
 {
-  return g_object_new (IPC_TYPE_RAPL_PROFILER, NULL);
+  IpcRaplProfiler *self = g_object_new (IPC_TYPE_RAPL_PROFILER, NULL);
+
+  self->authorized = !!authorized;
+
+  return IPC_PROFILER (self);
 }
 
 static gboolean
@@ -388,6 +408,16 @@ ipc_rapl_profiler_handle_start (IpcProfiler           *profiler,
 
   locker = g_mutex_locker_new (&self->mutex);
 
+  if (self->shutdown)
+    {
+      close (fd);
+      g_dbus_method_invocation_return_error_literal (invocation,
+                                                     G_IO_ERROR,
+                                                     G_IO_ERROR_CLOSED,
+                                                     "Recording connection is closed");
+      return TRUE;
+    }
+
   if (self->turbostat != NULL)
     {
       close (fd);
@@ -447,4 +477,16 @@ profiler_iface_init (IpcProfilerIface *iface)
 {
   iface->handle_start = ipc_rapl_profiler_handle_start;
   iface->handle_stop = ipc_rapl_profiler_handle_stop;
+}
+
+void
+ipc_rapl_profiler_shutdown (IpcRaplProfiler *self)
+{
+  g_autoptr(GMutexLocker) locker = NULL;
+
+  g_return_if_fail (IPC_IS_RAPL_PROFILER (self));
+
+  locker = g_mutex_locker_new (&self->mutex);
+  self->shutdown = TRUE;
+  ipc_rapl_profiler_stop_locked (self);
 }

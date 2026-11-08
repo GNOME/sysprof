@@ -36,11 +36,9 @@ struct _SysprofInstrument
 
 struct _SysprofInstrumentClass
 {
-  GObjectClass parent_class;
+  GObjectClass   parent_class;
 
   char      **(*list_required_policy) (SysprofInstrument *self);
-  void        (*set_connection)       (SysprofInstrument *self,
-                                       GDBusConnection   *connection);
   DexFuture  *(*prepare)              (SysprofInstrument *self,
                                        SysprofRecording  *recording);
   DexFuture  *(*record)               (SysprofInstrument *self,
@@ -54,20 +52,18 @@ struct _SysprofInstrumentClass
                                        const char        *comm);
 };
 
-void       _sysprof_instruments_set_connection  (GPtrArray        *instruments,
-                                                 GDBusConnection  *connection);
 DexFuture *_sysprof_instruments_acquire_policy  (GPtrArray        *instruments,
                                                  SysprofRecording *recording);
-DexFuture *_sysprof_instruments_prepare         (GPtrArray        *instruments,
-                                                 SysprofRecording *recording);
-DexFuture *_sysprof_instruments_record          (GPtrArray        *instruments,
-                                                 SysprofRecording *recording,
-                                                 GCancellable     *cancellable);
 DexFuture *_sysprof_instruments_augment         (GPtrArray        *instruments,
+                                                 SysprofRecording *recording);
+DexFuture *_sysprof_instruments_prepare         (GPtrArray        *instruments,
                                                  SysprofRecording *recording);
 DexFuture *_sysprof_instruments_process_started (GPtrArray        *instruments,
                                                  SysprofRecording *recording,
                                                  int               pid,
                                                  const char       *comm);
+DexFuture *_sysprof_instruments_record          (GPtrArray        *instruments,
+                                                 SysprofRecording *recording,
+                                                 GCancellable     *cancellable);
 
 G_END_DECLS

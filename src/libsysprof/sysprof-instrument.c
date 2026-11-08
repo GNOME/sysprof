@@ -21,6 +21,8 @@
 #include "config.h"
 
 #include "sysprof-instrument-private.h"
+#include "sysprof-recording-private.h"
+#include "sysprof-service-private.h"
 
 #if HAVE_POLKIT
 # include "sysprof-polkit-private.h"
@@ -180,9 +182,12 @@ _sysprof_instruments_acquire_policy (GPtrArray        *instruments,
   g_autoptr(GDBusConnection) connection = NULL;
   g_autoptr(GError) error = NULL;
   g_auto(GStrv) required_policy = NULL;
+  g_autoptr(GDBusConnection) recording_connection = NULL;
 
   g_return_val_if_fail (instruments != NULL, NULL);
   g_return_val_if_fail (SYSPROF_IS_RECORDING (recording), NULL);
+
+  recording_connection = _sysprof_recording_dup_connection (recording);
 
   /* Ensure we have access to the System D-Bus so that we can get
    * access to sysprofd for system information.
@@ -199,6 +204,11 @@ _sysprof_instruments_acquire_policy (GPtrArray        *instruments,
 #if HAVE_POLKIT
       for (guint i = 0; required_policy[i]; i++)
         {
+          if (recording_connection != NULL &&
+              _sysprof_service_get_name (recording_connection) == NULL &&
+              g_str_equal (required_policy[i], "org.gnome.sysprof3.profile"))
+            continue;
+
           if (!dex_await_boolean (_sysprof_polkit_authorize (connection,
                                                              required_policy[i],
                                                              NULL,
@@ -302,27 +312,14 @@ _sysprof_instruments_process_started (GPtrArray        *instruments,
     {
       SysprofInstrument *instrument = g_ptr_array_index (instruments, i);
 
-      g_ptr_array_add (futures, _sysprof_instrument_process_started (instrument, recording, pid, comm));
+      g_ptr_array_add (futures, _sysprof_instrument_process_started (instrument,
+                                                                     recording,
+                                                                     pid,
+                                                                     comm));
     }
 
   if (futures->len == 0)
     return dex_future_new_for_boolean (TRUE);
 
   return dex_future_allv ((DexFuture **)futures->pdata, futures->len);
-}
-
-void
-_sysprof_instruments_set_connection (GPtrArray       *instruments,
-                                     GDBusConnection *connection)
-{
-  g_return_if_fail (instruments != NULL);
-  g_return_if_fail (!connection || G_IS_DBUS_CONNECTION (connection));
-
-  for (guint i = 0; i < instruments->len; i++)
-    {
-      SysprofInstrument *instrument = g_ptr_array_index (instruments, i);
-
-      if (SYSPROF_INSTRUMENT_GET_CLASS (instrument)->set_connection)
-        SYSPROF_INSTRUMENT_GET_CLASS (instrument)->set_connection (instrument, connection);
-    }
 }

@@ -41,3 +41,14 @@ test('sysprof-cli-unprivileged',
   ],
   env: ['G_DEBUG=fatal-criticals'],
 )
+
+if get_option('tests')
+  test_no_dbus = executable('test-no-dbus', 'test-no-dbus.c',
+    dependencies: [gio_dep, libsysprof_capture_dep],
+          c_args: ['-UG_DISABLE_ASSERT'],
+  )
+
+  test('sysprof-cli-no-dbus', test_no_dbus,
+    args: [sysprof_cli],
+  )
+endif

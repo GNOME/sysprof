@@ -27,6 +27,7 @@
 #include <sysprof-capture.h>
 
 #include "ipc-service.h"
+#include "ipc-peer-private.h"
 
 #include "ipc-rapl-profiler.h"
 #include "ipc-service-impl.h"
@@ -39,9 +40,9 @@
 #define INACTIVITY_TIMEOUT_SECS 120
 
 static const gchar *bus_names[] = { "org.gnome.Sysprof3" };
-static GMainLoop   *main_loop;
-static gboolean     name_acquired;
-static gint         exit_status = EXIT_SUCCESS;
+static GMainLoop *main_loop;
+static gboolean name_acquired;
+static gint exit_status = EXIT_SUCCESS;
 
 static guint inactivity;
 static G_LOCK_DEFINE (activity);
@@ -49,6 +50,9 @@ static G_LOCK_DEFINE (activity);
 static gboolean
 inactivity_cb (gpointer data)
 {
+  if (_ipc_peer_has_active ())
+    return G_SOURCE_CONTINUE;
+
   inactivity = 0;
   g_main_loop_quit (main_loop);
   return G_SOURCE_REMOVE;
@@ -126,18 +130,27 @@ main (gint   argc,
 
   if ((bus = g_bus_get_sync (bus_type, NULL, &error)))
     {
-      g_autoptr(IpcProfiler) rapl = ipc_rapl_profiler_new ();
-      g_autoptr(IpcService) v3_service = ipc_service_impl_new ();
-      g_autoptr(IpcUnwinder) unwinder = ipc_unwinder_impl_new ();
+      g_autoptr(IpcProfiler) rapl = ipc_rapl_profiler_new (FALSE);
+      g_autoptr(IpcService) v3_service = ipc_service_impl_new (FALSE);
+      g_autoptr(IpcUnwinder) unwinder = ipc_unwinder_impl_new (FALSE);
 
       g_signal_connect (v3_service, "activity", G_CALLBACK (activity_cb), NULL);
       g_signal_connect (rapl, "activity", G_CALLBACK (activity_cb), NULL);
 
       activity_cb (NULL, NULL);
 
-      if (g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (v3_service), bus, V3_PATH, &error) &&
-          g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (rapl), bus, RAPL_PATH, &error) &&
-          g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (unwinder), bus, UNWINDER_PATH, &error))
+      if (g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (v3_service),
+                                            bus,
+                                            V3_PATH,
+                                            &error) &&
+          g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (rapl),
+                                            bus,
+                                            RAPL_PATH,
+                                            &error) &&
+          g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (unwinder),
+                                            bus,
+                                            UNWINDER_PATH,
+                                            &error))
         {
           for (guint i = 0; i < G_N_ELEMENTS (bus_names); i++)
             {

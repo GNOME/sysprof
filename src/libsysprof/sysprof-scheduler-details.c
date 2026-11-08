@@ -32,7 +32,6 @@ struct _SysprofSchedulerDetails
 {
   SysprofInstrument  parent_instance;
 
-  GDBusConnection   *connection;
   SysprofRecording  *recording;
   DexFuture         *cancellable;
   GPtrArray         *streams;
@@ -257,6 +256,7 @@ static DexFuture *
 sysprof_scheduler_details_prepare_fiber (gpointer user_data)
 {
   SysprofSchedulerDetails *self = user_data;
+  g_autoptr(GDBusConnection) connection = NULL;
   g_autoptr(GPtrArray) futures = NULL;
   g_autoptr(GArray) cpus = NULL;
   g_autoptr(GBytes) format_bytes = NULL;
@@ -266,7 +266,9 @@ sysprof_scheduler_details_prepare_fiber (gpointer user_data)
   g_assert (SYSPROF_IS_SCHEDULER_DETAILS (self));
   g_assert (SYSPROF_IS_RECORDING (self->recording));
 
-  if (!(format_bytes = dex_await_boxed (sysprof_get_proc_file_bytes (self->connection,
+  connection = _sysprof_recording_dup_connection (self->recording);
+
+  if (!(format_bytes = dex_await_boxed (sysprof_get_proc_file_bytes (connection,
                                                                      "/sys/kernel/debug/tracing/events/sched/sched_switch/format"),
                                         &error)))
     goto handle_error;
@@ -312,7 +314,7 @@ sysprof_scheduler_details_prepare_fiber (gpointer user_data)
       attr.size = sizeof attr;
 
       g_ptr_array_add (futures,
-                       sysprof_perf_event_stream_new (self->connection,
+                       sysprof_perf_event_stream_new (connection,
                                                       &attr,
                                                       64,
                                                       cpu,
@@ -420,15 +422,6 @@ sysprof_scheduler_details_record (SysprofInstrument *instrument,
 }
 
 static void
-sysprof_scheduler_details_set_connection (SysprofInstrument *instrument,
-                                          GDBusConnection   *connection)
-{
-  SysprofSchedulerDetails *self = SYSPROF_SCHEDULER_DETAILS (instrument);
-
-  g_set_object (&self->connection, connection);
-}
-
-static void
 sysprof_scheduler_details_dispose (GObject *object)
 {
   SysprofSchedulerDetails *self = (SysprofSchedulerDetails *)object;
@@ -444,7 +437,6 @@ sysprof_scheduler_details_dispose (GObject *object)
       g_clear_pointer (&self->streams, g_ptr_array_unref);
     }
 
-  g_clear_object (&self->connection);
   g_clear_object (&self->recording);
   g_clear_pointer (&self->last_switch_times, g_free);
   g_clear_pointer (&self->waiting_threads, g_hash_table_unref);
@@ -463,7 +455,6 @@ sysprof_scheduler_details_class_init (SysprofSchedulerDetailsClass *klass)
 
   instrument_class->prepare = sysprof_scheduler_details_prepare;
   instrument_class->record = sysprof_scheduler_details_record;
-  instrument_class->set_connection = sysprof_scheduler_details_set_connection;
 }
 
 static void

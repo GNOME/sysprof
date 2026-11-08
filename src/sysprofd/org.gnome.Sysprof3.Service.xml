@@ -3,6 +3,31 @@
 <node>
   <interface name="org.gnome.Sysprof3.Service">
     <!--
+      OpenRecordingConnection:
+      @connection: (out): A Unix socket for a private D-Bus connection.
+
+      Authorizes the caller for org.gnome.sysprof3.profile and returns a
+      recording connection. Use D-Bus client authentication with ANONYMOUS
+      on the socket, including Unix FD negotiation. This is a peer connection,
+      not a message bus; method calls must not specify a destination bus name.
+
+      The Service, Profiler (RAPL), and Unwinder interfaces are available at
+      their usual object paths without further polkit checks. The returned
+      FD grants access for the lifetime of the connection. Close it when the
+      recording finishes. OpenRecordingConnection itself is only available
+      through the system bus. Existing connections are not revoked when the
+      original polkit authorization expires.
+
+      Older daemons return UnknownMethod; clients may then use the existing
+      system-bus APIs. Authorization and connection errors must not trigger
+      that fallback.
+    -->
+    <method name="OpenRecordingConnection">
+      <annotation name="org.gtk.GDBus.C.UnixFD" value="true"/>
+      <arg name="connection" type="h" direction="out"/>
+    </method>
+
+    <!--
       PerfEventOpen:
       @options: key-value pair of attributes for the perf_event_open() syscall.
       @pid: the process id to monitor, or -1 for system-wide.

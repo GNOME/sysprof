@@ -28,6 +28,7 @@
 
 #include "sysprof-recording-private.h"
 #include "sysprof-util-private.h"
+#include "sysprof-service-private.h"
 
 enum
 {
@@ -228,7 +229,7 @@ record_display_metadata (SysprofRecording *self)
 }
 
 static DexFuture *
-sysprof_recording_fiber (gpointer user_data)
+sysprof_recording_run (gpointer user_data)
 {
   SysprofRecording *self = user_data;
   g_autoptr(GDBusConnection) connection = NULL;
@@ -251,17 +252,14 @@ sysprof_recording_fiber (gpointer user_data)
   if (self->use_sysprofd)
     {
       /* Get our D-Bus system connection if we're using sysprofd. */
-      if (!(connection = dex_await_object (dex_bus_get (G_BUS_TYPE_SYSTEM), NULL)))
+      if (!(connection = dex_await_object (dex_bus_get (G_BUS_TYPE_SYSTEM), &error)))
         return dex_future_new_for_error (g_steal_pointer (&error));
 
-      /* Let every instrument know what bus we're using so that they can
-       * automatically enable/disable sysprofd/policy-kit integration.
-       */
-      _sysprof_instruments_set_connection (self->instruments, connection);
+      if (!(self->connection = dex_await_object (_sysprof_service_connect (connection), &error)))
+        return dex_future_new_for_error (g_steal_pointer (&error));
 
-      /* First ensure that all our required policy have been acquired on
-       * the bus so that we don't need to individually acquire them from
-       * each of the instruments after the recording starts.
+      /* Acquire any remaining policies. The private connection already
+       * grants org.gnome.sysprof3.profile for this recording.
        */
       if (!dex_await (_sysprof_instruments_acquire_policy (self->instruments, self), &error))
         return dex_future_new_for_error (g_steal_pointer (&error));
@@ -514,6 +512,38 @@ stop_recording:
   return dex_future_new_for_boolean (TRUE);
 }
 
+static DexFuture *
+sysprof_recording_fiber (gpointer user_data)
+{
+  SysprofRecording *self = user_data;
+  DexFuture *result;
+
+  g_assert (SYSPROF_IS_RECORDING (self));
+
+  result = sysprof_recording_run (self);
+
+  if (self->connection != NULL)
+    {
+      if (_sysprof_service_get_name (self->connection) == NULL)
+        g_dbus_connection_close (self->connection, NULL, NULL, NULL);
+      g_clear_object (&self->connection);
+    }
+
+  return result;
+}
+
+/* The recording selects its transport before preparing instruments. NULL
+ * means sysprofd is disabled, so callers should use their local collection
+ * path or report that their instrument requires the daemon.
+ */
+GDBusConnection *
+_sysprof_recording_dup_connection (SysprofRecording *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_RECORDING (self), NULL);
+
+  return self->connection ? g_object_ref (self->connection) : NULL;
+}
+
 static void
 sysprof_recording_finalize (GObject *object)
 {
@@ -530,6 +560,7 @@ sysprof_recording_finalize (GObject *object)
   g_clear_object (&self->spawnable);
   g_clear_object (&self->diagnostics);
   g_clear_object (&self->subprocess);
+  g_clear_object (&self->connection);
   dex_clear (&self->fiber);
 
   G_OBJECT_CLASS (sysprof_recording_parent_class)->finalize (object);
@@ -701,8 +732,8 @@ typedef struct _AddFile
 {
   SysprofCaptureWriter *writer;
   char                 *path;
+  GDBusConnection      *connection;
   guint                 compress : 1;
-  guint                 use_sysprofd : 1;
 } AddFile;
 
 static void
@@ -710,6 +741,7 @@ add_file_free (AddFile *add_file)
 {
   g_clear_pointer (&add_file->writer, sysprof_capture_writer_unref);
   g_clear_pointer (&add_file->path, g_free);
+  g_clear_object (&add_file->connection);
   g_free (add_file);
 }
 
@@ -757,17 +789,9 @@ sysprof_recording_add_file_fiber (gpointer user_data)
    */
   if (g_file_has_prefix (file, proc))
     {
-      g_autoptr(GDBusConnection) connection = NULL;
       g_autoptr(GBytes) input_bytes = NULL;
 
-      if (add_file->use_sysprofd)
-        {
-          /* Only use D-Bus if sysprofd use is requested */
-          if (!(connection = dex_await_object (dex_bus_get (G_BUS_TYPE_SYSTEM), &error)))
-            return dex_future_new_for_error (g_steal_pointer (&error));
-        }
-
-      if (!(input_bytes = dex_await_boxed (sysprof_get_proc_file_bytes (connection, g_file_get_path (file)), &error)))
+      if (!(input_bytes = dex_await_boxed (sysprof_get_proc_file_bytes (add_file->connection, g_file_get_path (file)), &error)))
         return dex_future_new_for_error (g_steal_pointer (&error));
 
       input = g_memory_input_stream_new_from_bytes (input_bytes);
@@ -841,7 +865,7 @@ _sysprof_recording_add_file (SysprofRecording *self,
   add_file->writer = sysprof_capture_writer_ref (self->writer);
   add_file->path = g_strdup (path);
   add_file->compress = !!compress;
-  add_file->use_sysprofd = self->use_sysprofd;
+  add_file->connection = _sysprof_recording_dup_connection (self);
 
   return dex_scheduler_spawn (NULL, 0,
                               sysprof_recording_add_file_fiber,

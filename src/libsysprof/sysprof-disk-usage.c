@@ -268,7 +268,6 @@ sysprof_disk_usage_record_fiber (gpointer user_data)
         {
           DiskUsage ds = { 0 };
           DiskUsage *found;
-          gint64 dummy = 0;
           int column = COLUMN_MAJOR;
 
           line[line_len] = 0;
@@ -296,7 +295,6 @@ sysprof_disk_usage_record_fiber (gpointer user_data)
                 case COLUMN_MAJOR:
                 case COLUMN_MINOR:
                 default:
-                  dummy = ADD_FROM_CHAR (dummy, ch);
                   break;
 
                 case COLUMN_NAME:

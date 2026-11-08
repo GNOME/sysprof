@@ -36,11 +36,13 @@
                     <property name="series">
                       <object class="SysprofTimeSeries">
                         <property name="model">
-                          <object class="SysprofTimeFilterModel">
-                            <binding name="time-span">
-                              <lookup name="visible-time" type="SysprofSession">
-                                <lookup name="session">SysprofProcessesSection</lookup>
-                              </lookup>
+                          <object class="GtkFilterListModel">
+                            <binding name="filter">
+                              <closure type="GtkFilter" function="create_process_filter">
+                                <lookup name="visible-time" type="SysprofSession">
+                                  <lookup name="session">SysprofProcessesSection</lookup>
+                                </lookup>
+                              </closure>
                             </binding>
                             <binding name="model">
                               <lookup name="processes" type="SysprofDocument">
@@ -87,11 +89,13 @@
                                   <lookup name="session">SysprofProcessesSection</lookup>
                                 </binding>
                                 <property name="model">
-                                  <object class="SysprofTimeFilterModel">
-                                    <binding name="time-span">
-                                      <lookup name="selected-time" type="SysprofSession">
-                                        <lookup name="session">SysprofProcessesSection</lookup>
-                                      </lookup>
+                                  <object class="GtkFilterListModel">
+                                    <binding name="filter">
+                                      <closure type="GtkFilter" function="create_process_filter">
+                                        <lookup name="selected-time" type="SysprofSession">
+                                          <lookup name="session">SysprofProcessesSection</lookup>
+                                        </lookup>
+                                      </closure>
                                     </binding>
                                     <binding name="model">
                                       <lookup name="processes" type="SysprofDocument">
@@ -191,11 +195,13 @@
                                   <lookup name="sorter">column_view</lookup>
                                 </binding>
                                 <property name="model">
-                                  <object class="SysprofTimeFilterModel">
-                                    <binding name="time-span">
-                                      <lookup name="selected-time" type="SysprofSession">
-                                        <lookup name="session">SysprofProcessesSection</lookup>
-                                      </lookup>
+                                  <object class="GtkFilterListModel">
+                                    <binding name="filter">
+                                      <closure type="GtkFilter" function="create_process_filter">
+                                        <lookup name="selected-time" type="SysprofSession">
+                                          <lookup name="session">SysprofProcessesSection</lookup>
+                                        </lookup>
+                                      </closure>
                                     </binding>
                                     <binding name="model">
                                       <lookup name="processes" type="SysprofDocument">

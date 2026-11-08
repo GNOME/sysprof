@@ -46,6 +46,7 @@ sysprof_sources = [
   'sysprof-pair.c',
   'sysprof-power-profiles.c',
   'sysprof-process-dialog.c',
+  'sysprof-process-filter.c',
   'sysprof-processes-section.c',
   'sysprof-progress-cell.c',
   'sysprof-recording-pad.c',
@@ -128,3 +129,10 @@ time_filter_test = executable('test-time-filter-model',
   dependencies: sysprof_deps,
 )
 test('test-time-filter-model', time_filter_test)
+
+process_filter_test = executable('test-process-filter',
+  'test-process-filter.c',
+  'sysprof-process-filter.c',
+  dependencies: sysprof_deps,
+)
+test('test-process-filter', process_filter_test)

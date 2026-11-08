@@ -28,6 +28,7 @@
 #include "sysprof-chart.h"
 #include "sysprof-document-process.h"
 #include "sysprof-process-dialog.h"
+#include "sysprof-process-filter-private.h"
 #include "sysprof-processes-section.h"
 #include "sysprof-session-model-item.h"
 #include "sysprof-session-model.h"
@@ -55,6 +56,13 @@ format_number (gpointer unused,
   if (number == 0)
     return NULL;
   return g_strdup_printf ("%'u", number);
+}
+
+static GtkFilter *
+create_process_filter (gpointer               unused,
+                       const SysprofTimeSpan *time_span)
+{
+  return _sysprof_process_filter_new (time_span);
 }
 
 static void
@@ -141,6 +149,7 @@ sysprof_processes_section_class_init (SysprofProcessesSectionClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, activate_layer_item_cb);
   gtk_widget_class_bind_template_callback (widget_class, process_table_activate_cb);
   gtk_widget_class_bind_template_callback (widget_class, format_number);
+  gtk_widget_class_bind_template_callback (widget_class, create_process_filter);
 
   g_type_ensure (SYSPROF_TYPE_CHART);
   g_type_ensure (SYSPROF_TYPE_CHART_LAYER);

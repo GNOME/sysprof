@@ -26,6 +26,7 @@
 
 G_BEGIN_DECLS
 
+typedef struct _SysprofGpuJobs      SysprofGpuJobs;
 typedef struct _SysprofGraphicsInfo SysprofGraphicsInfo;
 typedef struct _SysprofHardwareInfo SysprofHardwareInfo;
 

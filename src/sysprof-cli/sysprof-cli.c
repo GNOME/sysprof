@@ -66,7 +66,7 @@ diagnostics_items_changed_cb (GListModel *model,
 
   for (guint i = 0; i < added; i++)
     {
-      g_autoptr(SysprofDiagnostic) diagnostic = g_list_model_get_item (model, position+i);
+      g_autoptr(SysprofDiagnostic) diagnostic = g_list_model_get_item (model, position + i);
 
       g_printerr ("%s: %s\n",
                   sysprof_diagnostic_get_domain (diagnostic),
@@ -155,6 +155,7 @@ merge_files (int              argc,
       if (!(reader = sysprof_capture_reader_new (argv[i])))
         {
           int errsv = errno;
+
           g_printerr ("Failed to create reader for \"%s\": %s\n",
                       argv[i], g_strerror (errsv));
           return EXIT_FAILURE;
@@ -163,6 +164,7 @@ merge_files (int              argc,
       if (!sysprof_capture_writer_cat (writer, reader))
         {
           int errsv = errno;
+
           g_printerr ("Failed to join \"%s\": %s\n",
                       argv[i], g_strerror (errsv));
           return EXIT_FAILURE;
@@ -316,6 +318,7 @@ main (int   argc,
   gboolean merge = FALSE;
   gboolean speedtrack = FALSE;
   gboolean scheduler_details = FALSE;
+  gboolean gpu_jobs = FALSE;
   gboolean system_bus = FALSE;
   gboolean session_bus = FALSE;
   gboolean no_sysprofd = FALSE;
@@ -339,6 +342,7 @@ main (int   argc,
     { "no-memory", 0, 0, G_OPTION_ARG_NONE, &no_memory, N_("Disable recording of memory statistics") },
     { "no-network", 0, 0, G_OPTION_ARG_NONE, &no_network, N_("Disable recording of network statistics") },
     { "use-trace-fd", 0, 0, G_OPTION_ARG_NONE, &use_trace_fd, N_("Set SYSPROF_TRACE_FD environment for subprocess") },
+    { "gpu-jobs", 0, 0, G_OPTION_ARG_NONE, &gpu_jobs, N_("Track DRM scheduler jobs") },
     { "scheduler", 0, 0, G_OPTION_ARG_NONE, &scheduler_details, N_("Track when processes are scheduled") },
     { "session-bus", 0, 0, G_OPTION_ARG_NONE, &session_bus, N_("Profile the D-Bus session bus") },
     { "system-bus", 0, 0, G_OPTION_ARG_NONE, &system_bus, N_("Profile the D-Bus system bus") },
@@ -433,7 +437,7 @@ Examples:\n\
       g_printerr (_("Too many arguments were passed to sysprof-cli:"));
 
       for (i = 2; i < argc; i++)
-        g_printerr (" %s", argv [i]);
+        g_printerr (" %s", argv[i]);
       g_printerr ("\n");
 
       return EXIT_FAILURE;
@@ -536,7 +540,7 @@ Examples:\n\
                 }
 
               key = g_strndup (envs[i], eq - envs[i]);
-              sysprof_spawnable_setenv (spawnable, key, eq+1);
+              sysprof_spawnable_setenv (spawnable, key, eq + 1);
             }
         }
 
@@ -616,6 +620,9 @@ Examples:\n\
   if (system_bus)
     sysprof_profiler_add_instrument (profiler, sysprof_dbus_monitor_new (G_BUS_TYPE_SYSTEM));
 
+  if (gpu_jobs)
+    sysprof_profiler_add_instrument (profiler, sysprof_gpu_jobs_new ());
+
   if (scheduler_details)
     sysprof_profiler_add_instrument (profiler, sysprof_scheduler_details_new ());
 
@@ -629,12 +636,12 @@ Examples:\n\
   sysprof_profiler_add_instrument (profiler,
                                    g_object_new (SYSPROF_TYPE_SUBPROCESS_OUTPUT,
                                                  "stdout-path", "eglinfo",
-                                                 "command-argv", (const char * const[]) {"eglinfo", NULL},
+                                                 "command-argv", (const char * const[]) { "eglinfo", NULL },
                                                  NULL));
   sysprof_profiler_add_instrument (profiler,
                                    g_object_new (SYSPROF_TYPE_SUBPROCESS_OUTPUT,
                                                  "stdout-path", "glxinfo",
-                                                 "command-argv", (const char * const[]) {"glxinfo", NULL},
+                                                 "command-argv", (const char * const[]) { "glxinfo", NULL },
                                                  NULL));
 
   sysprof_profiler_record_async (profiler,

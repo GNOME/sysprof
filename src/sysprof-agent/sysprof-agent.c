@@ -71,6 +71,7 @@ static gboolean decode;
 static gboolean do_system_bus;
 static gboolean do_session_bus;
 static gboolean scheduler_details;
+static gboolean gpu_jobs;
 static const GOptionEntry options[] = {
   { "read-fd", 0, 0, G_OPTION_ARG_INT, &read_fd, "The read side of the FD to use for D-Bus" },
   { "write-fd", 0, 0, G_OPTION_ARG_INT, &write_fd, "The write side of the FD to use for D-Bus" },
@@ -93,6 +94,7 @@ static const GOptionEntry options[] = {
   { "no-throttle", 0, 0, G_OPTION_ARG_NONE, &no_throttle, "Disable CPU throttling [Deprecated for --power-profile]" },
   { "tracefd", 0, 0, G_OPTION_ARG_NONE, &aid_tracefd, "Provide TRACEFD to subprocess" },
   { "power-profile", 0, 0, G_OPTION_ARG_STRING, &power_profile, "Use POWER_PROFILE for duration of recording", "power-saver|balanced|performance" },
+  { "gpu-jobs", 0, 0, G_OPTION_ARG_NONE, &gpu_jobs, "Track DRM scheduler jobs" },
   { "scheduler", 0, 0, G_OPTION_ARG_NONE, &scheduler_details, "Track when processes are scheduled per CPU" },
   { "session-bus", 0, 0, G_OPTION_ARG_NONE, &do_session_bus, "Profile the D-Bus session bus" },
   { "system-bus", 0, 0, G_OPTION_ARG_NONE, &do_system_bus, "Profile the D-Bus system bus" },
@@ -126,7 +128,7 @@ struct _IpcAgentImpl
 };
 
 static gboolean
-handle_force_exit (IpcAgent            *sysprof,
+handle_force_exit (IpcAgent              *sysprof,
                    GDBusMethodInvocation *invocation)
 {
   GSubprocess *subprocess;
@@ -141,7 +143,7 @@ handle_force_exit (IpcAgent            *sysprof,
 }
 
 static gboolean
-handle_send_signal (IpcAgent            *sysprof,
+handle_send_signal (IpcAgent              *sysprof,
                     GDBusMethodInvocation *invocation,
                     int                    signum)
 {
@@ -192,6 +194,7 @@ forward_fd_func (const char  *option_name,
   if (!(fd = atoi (option_value)) && errno != 0)
     {
       int errsv = errno;
+
       g_set_error (error,
                    G_IO_ERROR,
                    g_io_error_from_errno (errsv),
@@ -240,14 +243,14 @@ split_argv (int     argc,
         {
           (*sub_argv) = g_realloc_n (*sub_argv, *sub_argc + 2, sizeof (char *));
           (*sub_argv)[*sub_argc] = g_strdup (argv[i]);
-          (*sub_argv)[*sub_argc+1] = NULL;
+          (*sub_argv)[*sub_argc + 1] = NULL;
           (*sub_argc)++;
         }
       else
         {
           (*our_argv) = g_realloc_n (*our_argv, *our_argc + 2, sizeof (char *));
           (*our_argv)[*our_argc] = g_strdup (argv[i]);
-          (*our_argv)[*our_argc+1] = NULL;
+          (*our_argv)[*our_argc + 1] = NULL;
           (*our_argc)++;
         }
     }
@@ -296,7 +299,7 @@ sysprof_agent_recording_diagnostics_items_changed_cb (GListModel *model,
 
   for (guint i = 0; i < added; i++)
     {
-      g_autoptr(SysprofDiagnostic) diagnostic = g_list_model_get_item (model, position+i);
+      g_autoptr(SysprofDiagnostic) diagnostic = g_list_model_get_item (model, position + i);
 
       message ("%s: %s",
                sysprof_diagnostic_get_domain (diagnostic),
@@ -440,6 +443,7 @@ main (int   argc,
   /* First spin up our bus connections */
   if (!(session_bus = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error)))
     warn_error (&error);
+
   if (!(system_bus = g_bus_get_sync (G_BUS_TYPE_SYSTEM, NULL, NULL)))
     warn_error (&error);
 
@@ -461,8 +465,7 @@ main (int   argc,
       if (!g_unix_set_fd_nonblocking (read_fd, TRUE, &error) ||
           !g_unix_set_fd_nonblocking (write_fd, TRUE, &error))
         {
-          g_printerr ("Failed to set FDs in nonblocking mode: %s\n",
-                      error->message);
+          g_printerr ("Failed to set FDs in nonblocking mode: %s\n", error->message);
           return EXIT_FAILURE;
         }
 
@@ -474,8 +477,7 @@ main (int   argc,
       /* Create connection using our private stream from the controller */
       if (!(connection = create_connection (stream, &error)))
         {
-          g_printerr ("Failed to setup P2P D-Bus connection: %s\n",
-                      error->message);
+          g_printerr ("Failed to setup P2P D-Bus connection: %s\n", error->message);
           return EXIT_FAILURE;
         }
 
@@ -484,10 +486,11 @@ main (int   argc,
        */
       service = g_object_new (IPC_TYPE_AGENT_IMPL, NULL);
       if (!g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (service),
-                                             connection, "/", &error))
+                                             connection,
+                                             "/",
+                                             &error))
         {
-          g_printerr ("Failed to export service over D-Bus connection: %s",
-                      error->message);
+          g_printerr ("Failed to export service over D-Bus connection: %s", error->message);
           return EXIT_FAILURE;
         }
     }
@@ -535,6 +538,9 @@ main (int   argc,
   if (do_system_bus)
     sysprof_profiler_add_instrument (profiler, sysprof_dbus_monitor_new (G_BUS_TYPE_SYSTEM));
 
+  if (gpu_jobs)
+    sysprof_profiler_add_instrument (profiler, sysprof_gpu_jobs_new ());
+
   if (scheduler_details)
     sysprof_profiler_add_instrument (profiler, sysprof_scheduler_details_new ());
 
@@ -576,7 +582,7 @@ main (int   argc,
                 }
 
               key = g_strndup (env[i], eq - env[i]);
-              sysprof_spawnable_setenv (spawnable, key, eq+1);
+              sysprof_spawnable_setenv (spawnable, key, eq + 1);
             }
         }
 
@@ -596,6 +602,7 @@ main (int   argc,
           for (guint f = 0; f < forward_fds->len; f++)
             {
               int fd = g_array_index (forward_fds, int, f);
+
               sysprof_spawnable_take_fd (spawnable, dup (fd), fd);
             }
         }
@@ -614,20 +621,24 @@ main (int   argc,
   sysprof_profiler_add_instrument (profiler,
                                    g_object_new (SYSPROF_TYPE_SUBPROCESS_OUTPUT,
                                                  "stdout-path", "eglinfo",
-                                                 "command-argv", (const char * const[]) {"eglinfo", NULL},
+                                                 "command-argv", (const char * const[]) {
+                                                    "eglinfo", NULL
+                                                  },
                                                  NULL));
   sysprof_profiler_add_instrument (profiler,
                                    g_object_new (SYSPROF_TYPE_SUBPROCESS_OUTPUT,
                                                  "stdout-path", "glxinfo",
-                                                 "command-argv", (const char * const[]) {"glxinfo", NULL},
+                                                 "command-argv", (const char * const[]) {
+                                                    "glxinfo", NULL
+                                                  },
                                                  NULL));
 
   /* Now open the writer for our session */
   if (!(writer = sysprof_capture_writer_new (capture_filename, BUFFER_SIZE)))
     {
       int errsv = errno;
-      g_printerr ("Failed to open capture writer: %s\n",
-                  g_strerror (errsv));
+
+      g_printerr ("Failed to open capture writer: %s\n", g_strerror (errsv));
       return EXIT_FAILURE;
     }
 
@@ -661,6 +672,7 @@ main (int   argc,
       if (g_subprocess_get_if_signaled (subprocess))
         {
           int signum = g_subprocess_get_term_sig (subprocess);
+
           /* Try to exit in the same manner, or SIGKILL if that doesn't
            * work, or just EXIT_FAILURE as last resort.
            */

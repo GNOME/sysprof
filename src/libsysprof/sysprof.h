@@ -67,6 +67,7 @@ G_BEGIN_DECLS
 # include "sysprof-frame-cycle.h"
 # include "sysprof-energy-usage.h"
 # include "sysprof-enums.h"
+# include "sysprof-gpu-jobs.h"
 # include "sysprof-graphics-info.h"
 # include "sysprof-hardware-info.h"
 # include "sysprof-instrument.h"

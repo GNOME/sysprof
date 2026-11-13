@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues/\n"
 "POT-Creation-Date: 2026-11-11 17:13+0000\n"
-"PO-Revision-Date: 2026-11-12 10:00+0100\n"
+"PO-Revision-Date: 2026-11-13 16:12+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
@@ -515,9 +515,8 @@ msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr "Nastavi okolje SYSPROF_TRACE_FD za podproces"
 
 #: src/sysprof-cli/sysprof-cli.c:345
-#, fuzzy
 msgid "Track DRM scheduler jobs"
-msgstr "Sledi poslom razporejevalnika DRM"
+msgstr "Spremljaj posle razporejevalnika DRM"
 
 #: src/sysprof-cli/sysprof-cli.c:346
 msgid "Track when processes are scheduled"
@@ -552,7 +551,6 @@ msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr "Poveži se z org.gnome.Shell za statistiko profilnikov"
 
 #: src/sysprof-cli/sysprof-cli.c:354
-#, fuzzy
 msgid "Record DRM vblank boundaries"
 msgstr "Beleži meje vblank DRM"
 
